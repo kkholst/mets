@@ -4,6 +4,7 @@
 ##' CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
 ##'
+##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data frame
 ##' @param cause of interest 
@@ -391,10 +392,23 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
  colnames(cumhaz)    <- c("time","cumhaz")
 
+ ## SE of estimator ignoring some censoring terms 
+ if (no.opt==FALSE & p!=0) { 
+     DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
+     varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
+     ### covariance is 0 for cox model 
+     ### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
+ } else varbetat <- 0
+ var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
+ se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
+ colnames(se.cumhaz) <- c("time","se.cumhaz")
+
+
 out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,UUiid=UUiid,Uiid=Uiid,
 	    ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	    ploglik=opt$ploglik,gradient=opt$gradient,
-	    cumhaz=cumhaz,strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
+	    cumhaz=cumhaz, se.cumhaz=se.cumhaz,
+	    strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
 	    strata.level=strata.level,propodds=propodds,
 	    S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,
             jumps=jumps,II=iH,exit=exit,p=p,opt=opt,n=nrow(X),nevent=length(jumps)

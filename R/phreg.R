@@ -436,7 +436,7 @@ iid.phreg  <- function(x,type="robust",all=FALSE,orig.order=FALSE,...) {# {{{
   invhess <- -solve(x$hessian)
 
 if (is.null(x$propodds)) {
-  if (type=="robust") {	# {{{
+  if (type=="robust") {	# {{{ cox model 
 	  xx <- x$cox.prep
 	  ii <- invhess 
 	  S0i <- rep(0,length(xx$strata))
@@ -461,7 +461,7 @@ if (is.null(x$propodds)) {
      MGt <- x$U; MG.base <- 1/x$S0; 
   }# }}}
 } else {
-  if (type=="robust") {	# {{{
+  if (type=="robust") {	# {{{  prop-odds model logitSurv
 	  xx <- x$cox.prep
 	  ii <- invhess 
 	  S0i <- rep(0,length(xx$strata))
@@ -1060,7 +1060,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @aliases revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi
 ##' @export
 predict.phreg <- function(object,newdata,
-	      times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,...) 
+ times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,...) 
 {# {{{ default is all time-points from the object
 
    ### take baseline and strata from object# {{{
@@ -1089,10 +1089,11 @@ predict.phreg <- function(object,newdata,
    X <- desX$X
    strataNew <- desX$strata
 
-###    print(dim(X)); print(head(X)); print(strataNew)
-###    print(dim(X)); print(head(X)); print(table(strataNew))
+###   print(length(strata)); 
+###   if (se) print(length(se.chaz)); 
+###   print(dim(X)); print(head(X)); print(length(strataNew)) 
 
-    if (is.null(times)) times <- c(sort(unique(object$exit))) 
+   if (is.null(times)) times <- c(object$exit) 
 
     se.cumhaz <- NULL
     if (!individual.time) {
@@ -1138,7 +1139,7 @@ predict.phreg <- function(object,newdata,
 	    if (object$p>0)  {
 	       if (!individual.time) se.cumhaz[strataNew==j,]  <- 
 		     ((RR %o% se.hazt)^2+(c(RR*seXbeta) %o% hazt)^2-2*RR^2*cov1)^.5
-	        else se.cumhaz[strataNew==j,]  <- RR* (se.hazt^2+(c(seXbeta)*hazt)^2-2*cov1)^.5
+	        else se.cumhaz[strataNew==j,]  <- RR* (se.hazt^2+(c(seXbeta)*hazt)^2-2*diag(cov1))^.5
 	    } else {
 	       if (!individual.time) se.cumhaz[strataNew==j,]  <- RR %o% (se.hazt)
 	        else se.cumhaz[strataNew==j,]  <- RR* se.hazt[strataNew==j]  
@@ -1193,9 +1194,10 @@ predict.phreg <- function(object,newdata,
 }# }}}
 
 ##' @export
-plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz"),ylab=NULL,xlab=NULL,
+plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
     polygon=TRUE,level=0.95,whichx=NULL,robust=FALSE,...) {# {{{
    if (type[1]=="surv" & is.null(ylab)) ylab <- "Survival probability"
+   if (type[1]=="cif" & is.null(ylab)) ylab <- "Cumulative probability"
    if (type[1]=="surv" & length(class(x))==2) ylab <- "Cumulative probability"
    if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative  hazard"
    if (is.null(xlab)) xlab <- "time"
@@ -1254,11 +1256,16 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
   if (type[1]=="surv") { 
 	  xx <- x$surv 
 	  if (cifreg)  xx <- x$cif 
+  } else if (type[1]=="cif") {
+	  xx <- 1-x$surv 
   } else xx <- x$cumhaz
   if (se) {
      if (type[1]=="surv") {
 	     upper <- x$surv.upper; lower <- x$surv.lower 
 	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
+     } else if (type[1]=="cif") {
+	     upper <- 1-x$surv.lower; lower <- 1-x$surv.upper
+
      } else { upper <- cumhaz.upper; lower <- cumhaz.lower}
   }
 
