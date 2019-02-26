@@ -4,7 +4,6 @@
 ##' CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
 ##'
-##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data frame
 ##' @param cause of interest 
@@ -29,8 +28,7 @@
 ##' plot(pll)
 ##' 
 ##' ## Fine-Gray model
-##' llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,
-##'                   propodds=NULL)
+##' llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
 ##' bplot(ll)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pll <- predict(ll,nd)
@@ -234,7 +232,6 @@ U <- (Xj-E)
 ploglik <- (log(rr2now)-log(S0))*weightsJ; 
 
 if (!is.null(propodds)) {
-   strataJ <- xx2$strata[jumps]
    pow <- c(.Call("cumsumstrataPOR",weightsJ,S0,strataJ,nstrata,propodds,rr2now,PACKAGE="mets")$pow); 
    DLam <-.Call("DLambetaR",weightsJ,S0,E,Xj,strataJ,nstrata,propodds,rr2now,PACKAGE="mets")$res; 
    Dwbeta <- DLam*rr2now+(pow-1)*Xj
@@ -268,6 +265,7 @@ ploglik <- sum(ploglik)
 
 out <- list(ploglik=ploglik,gradient=U,hessian=-DU,cox.prep=xx2,
 	    hessiantime=DUt,weightsJ=weightsJ,
+	    jumptimes=jumptimes,strata=strataJ,nstrata=nstrata,
 	    time=jumptimes,S0=S0/weightsJ,S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
 
 if (all) return(out) else with(out,structure(-ploglik, gradient=-gradient, hessian=-hessian))
@@ -377,6 +375,9 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  ### Martingale  as a function of time and for all subjects to handle strata 
  MGc <- qc[,drop=FALSE]*S0i-EdLam0q
  MGc <- apply(MGc,2,sumstrata,cxx$id,mid+1)
+### print(crossprod(MGc))
+### print(crossprod(UU))
+### print(t(UU) %*% MGc )
 # }}}
 } else MGc <- 0
 

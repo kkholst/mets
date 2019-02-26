@@ -1,7 +1,6 @@
 ###{{{ phreg0 
-
-phreg0 <- function(X,entry,exit,status,id=NULL,strata=NULL,beta,stderr=TRUE,method="NR",...) {# {{{
-  p <- ncol(X)
+phreg0 <- function(X,entry,exit,status,id=NULL,strata=NULL,beta,stderr=TRUE,method="NR",...) {# {{{ 
+  p <- ncol(X) 
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(exit)))
   if (!is.null(strata)) { # {{{
@@ -1093,7 +1092,8 @@ predict.phreg <- function(object,newdata,
 ###   if (se) print(length(se.chaz)); 
 ###   print(dim(X)); print(head(X)); print(length(strataNew)) 
 
-   if (is.null(times)) times <- c(object$exit) 
+   if (is.null(times)) times <- sort(unique(c(object$exit)))
+   if (individual.time & is.null(times)) times <- c(object$exit)
 
     se.cumhaz <- NULL
     if (!individual.time) {
