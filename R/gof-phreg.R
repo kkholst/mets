@@ -426,6 +426,8 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 		rsU <- max(max(abs(obsz)),max(abs(x$simUtlast[1:50,])))
 		plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
 		matlines(times,t(x$simUtlast[1:50,]),type="l",lwd=0.3,col=col)
+	        ## redraw with thick to make observed clear 
+	        lines(times,obsz,lwd=2,col=1)
 	} else {
 	   for (i in 1:length(x$Zres))
 	   {
@@ -435,6 +437,8 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 	    rsU <- max(max(abs(obsz)),max(abs(xr$simUtlast[1:50,])))
 	    plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
 	    matlines(times,t(xr$simUtlast[1:50,]),type="l",lwd=0.3,col=col)
+	    ## redraw with thick to make observed clear 
+	    lines(times,obsz,lwd=2,col=1)
            }
 	}
 }
@@ -454,7 +458,6 @@ if (!is.null(object$res.last)) {
    cat("Cumulative score process versus covariates (discrete z via model.matrix):\n")
    print(object$res.last)
 }
-
 
 } # }}}
 
