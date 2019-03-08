@@ -40,5 +40,5 @@ gg <- gof(m1)
 
 }
 \author{
-THomas Scheike and Klaus K. Holst
+Thomas Scheike and Klaus K. Holst
 }

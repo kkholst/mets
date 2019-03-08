@@ -199,14 +199,17 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
   II <- NULL
   ### computes Breslow estimator 
   if (cumhaz==TRUE) { # {{{
-	 if (no.opt==FALSE & p!=0) II <- -solve(val$hessian) else II <- matrix(0,p,p)
+	 if (no.opt==FALSE & p!=0) {
+               II <- - tryCatch(solve(val$hessian),error=
+	              function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
+	 } else II <- matrix(0,p,p)
 	 strata <- val$strata[val$jumps]
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
 
 	 ## Brewslow estimator
 	 cumhaz <- cbind(jumptimes,cumsumstrata(1/val$S0,strata,nstrata))
-	 if (no.opt==FALSE & p!=0) { 
+	 if ((no.opt==FALSE & p!=0)) { 
 	     DLambeta.t <- apply(val$E/c(val$S0),2,cumsumstrata,strata,nstrata)
 	     varbetat <-   rowSums((DLambeta.t %*% II)*DLambeta.t)
 	 ### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction

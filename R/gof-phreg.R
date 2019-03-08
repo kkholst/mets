@@ -7,7 +7,7 @@
 ##' @param silent to show timing estimate will be produced for longer jobs
 ##' @param robust to control wether robust dM_i(t) or dN_i  are used for simulations
 ##' @param ... Additional arguments to lower level funtions
-##' @author THomas Scheike and Klaus K. Holst
+##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @aliases gof.phreg 
 ##' @examples
@@ -101,6 +101,18 @@ return(out)
 ##'
 ##' Cumulative residuals after model matrix for Cox PH regression
 ##' p-values based on Lin, Wei, Ying resampling.
+##'
+##' That is, computes 
+##' \deqn{
+##'  U(t) = \int_0^t M^t d \hat M 
+##' }
+##' and resamples its asymptotic distribution. 
+##'
+##' This will show if the residuals are consistent with the model. Typically,
+##' M will be a design matrix for the continous covariates that gives for example
+##' the quartiles, and then the plot will show if for the different quartiles of the covariate the risk
+##' prediction is consistent over time  (time x covariate interaction).
+##'
 ##' @param formula formula for cox regression 
 ##' @param data data for model
 ##' @param offset offset 
@@ -109,7 +121,7 @@ return(out)
 ##' @param n.sim number of simulations for score processes
 ##' @param silent to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.
 ##' @param ... Additional arguments to lower level funtions
-##' @author THomas Scheike and Klaus K. Holst
+##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @examples
 ##' library(mets)
@@ -135,14 +147,6 @@ return(out)
 ##' 		  modelmatrix=mm,silent=0)
 ##' summary(m1)
 ##' 
-##' ## cumulative sums in covariates, via design matrix mm
-##' \donttest{ ## Reduce Ex.Timings
-##' m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam,
-##'                  vars=c("wmi","age"))
-##' summary(m1) 
-##' plot(m1,type="z")
-##' }
-##' @aliases cumContr gofZ.phreg
 ##' @export
 gofM.phreg  <- function(formula,data,offset=NULL,weights=NULL,modelmatrix=NULL,
 			n.sim=1000,silent=1,...)
@@ -199,6 +203,47 @@ class(out) <- "gof.phreg"
 return(out)
 }# }}}
 
+##' GOF for Cox covariates in  PH regression
+##'
+##' That is, computes 
+##' \deqn{
+##'  U(z,\tau) = \int_0^\tau M(z)^t d \hat M 
+##' }
+##' and resamples its asymptotic distribution. 
+##'
+##' This will show if the residuals are consistent with the model evaulated in the z covariate. 
+##' M is here chosen based on a grid (z_1, ..., z_m) and the different columns are \eqn{I(Z_i \leq z_l)}.
+##' for \eqn{l=1,...,m}. 
+##' The process in z is resampled to find extreme values. 
+##'
+##' The p-value is valid but depends on the chosen grid. When the number of break points are high
+##' this will give the orginal test of Lin, Wei and Ying for linearity, that is also computed in 
+##' the timereg package. 
+##'
+##' @param formula formula for cox regression 
+##' @param data data for model
+##' @param offset offset 
+##' @param weights weights 
+##' @param modelmatrix  matrix for cumulating residuals
+##' @param n.sim number of simulations for score processes
+##' @param silent to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.
+##' @param ... Additional arguments to lower level funtions
+##' @author Thomas Scheike and Klaus K. Holst
+##' @export
+##' @examples
+##' library(mets)
+##' data(TRACE)
+##' set.seed(1)
+##' TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
+##' 
+##' ## cumulative sums in covariates, via design matrix mm
+##' \donttest{ ## Reduce Ex.Timings
+##' m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam,
+##'                  vars=c("wmi","age"))
+##' summary(m1) 
+##' plot(m1,type="z")
+##' }
+##' @aliases cumContr 
 ##' @export
 gofZ.phreg  <- function(formula,data,vars,offset=NULL,weights=NULL,breaks=20,equi=TRUE,
 			n.sim=1000,silent=1,...)
@@ -333,7 +378,7 @@ cumContr <- function(data, breaks = 4, probs = NULL,equi = TRUE,na.rm=TRUE,...)
 ##' @param silent to keep it absolutely silent 
 ##' @param lm addd line to plot, regressing the cumulatives on each other  
 ##' @param ... Additional arguments to lower level funtions
-##' @author THomas Scheike and Klaus K. Holst
+##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @examples
 ##' data(TRACE)

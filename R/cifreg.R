@@ -3,7 +3,6 @@
 ##' CIF logistic for propodds=1 default
 ##' CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
-##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data frame
 ##' @param cause of interest 
@@ -95,9 +94,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,
 
  res <- c(cifreg01(data,X,exit,status,id,strata,offset,weights,strata.name,
 		   cause=cause,cens.code=cens.code,Gc=Gc,propodds=propodds,...),
-   list(call=cl,model.frame=m,
-	formula=formula,
-	strata.pos=pos.strata,cluster.pos=pos.cluster)
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster)
    )
 
   class(res) <- c("phreg","cif.reg")
@@ -105,8 +102,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,
 }# }}}
 
 cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
-             strata.name=NULL,beta,stderr=TRUE,
-	     method="NR",no.opt=FALSE,propodds=1,profile=0,
+             strata.name=NULL,beta,stderr=TRUE,method="NR",no.opt=FALSE,propodds=1,profile=0,
 	     case.weights=NULL,cause=1,cens.code=0,Gc=NULL,...) {# {{{
 ##  setting up weights, strata, beta and so forth before the action starts# {{{
  p <- ncol(X)
@@ -143,7 +139,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
    } else id <- as.integer(seq_along(entry))-1; 
-   ## orginal id coding into integers 
+   ## orginal id coding into integers 1:...
    id.orig <- id+1; 
 # }}}
 
@@ -151,10 +147,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
  whereC <- which(status==cens.code)
  time <- exit
  if (is.null(Gc)) {
- cens.model <- km(Surv(exit,status==cens.code)~+1,data=data)
- wpredS <- fast.approx(c(0,cens.model$time),exit,type="left")
-### wpredS <- timereg:::sindex.prodlim(c(0,cens.model$time),exit)
- Stime <- c(1,cens.model$surv)[wpredS]
+	 cens.model <- km(Surv(exit,status==cens.code)~+1,data=data)
+	 wpredS <- fast.approx(c(0,cens.model$time),exit,type="left")
+	 ### wpredS <- timereg:::sindex.prodlim(c(0,cens.model$time),exit)
+	 Stime <- c(1,cens.model$surv)[wpredS]
  } else { 
         if (length(whereC)>0) Ctimes <- sort(unique(exit[whereC]))
 	else Ctimes <- 0
@@ -170,7 +166,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
  jumptimes <- xx2$time[jumps]
  Xj <- xx2$X[jumps,,drop=FALSE]
 
- ## G(T_j-)
+ ## G(T_j-) at jumps of type "cause"
  if (length(whereC)>0) {
 	 whereJ <- fast.approx(c(0,cens.model$time),jumptimes,type="left")
 	 Gjumps <- c(1,cens.model$surv)[whereJ]
