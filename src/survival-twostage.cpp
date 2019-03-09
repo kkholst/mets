@@ -1924,7 +1924,7 @@ RcppExport SEXP twostageloglike(
 //  double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0; 
   double dl1,dl2,ll1,ll2,ll=1,Li,Lk,sdj=0,diff=0,loglikecont=0;
   double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
-  double d2,asign=-1; 
+  double d2=0,asign=-1; 
 //  double plack(); 
   int pt=theta.n_rows; 
   vec dplack(pt); dplack.fill(pt);
@@ -2045,7 +2045,8 @@ for (j=0;j<antclust;j++) if (clustsize(j)>=2) {
 	   // }}}
 	} else if (depmodel==2) { // plackett model  // {{{
 
-	if (varlink==1) d2=deppar;  if (varlink==0) d2=1; 
+	  if (varlink==1) { d2=deppar; }
+	  if (varlink==0) { d2=1; }
 
         if (trunkp(i)<1 || trunkp(k)<1) {	/*{{{*/
            Lit=trunkp(i); Lkt=trunkp(k); 
@@ -2236,12 +2237,12 @@ RcppExport SEXP twostageloglikeRV(
 
   int ci,ck,i,j,c,s=0,k,v,c1; 
 //  double ll=1,Li,Lk,diff=0,loglikecont=0,sdj=0;
-  double dl1,dl2,ll1,ll2,ll=1,Li,Lk,sdj=0,diff=0,loglikecont=0;
+  double dl1,dl2,ll1,ll2,ll=1,Li,Lk,diff=0,loglikecont=0,sdj;
   double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
 //  double plack(); 
  
   int pt=theta.n_rows; 
-  double d2,asign=-1; if (ascertained==2) asign=1; 
+  double d2=0,asign=-1; if (ascertained==2) asign=1; 
   vec dplack(pt); dplack.fill(0);
   vec dplackt(pt); dplackt.fill(0);
   vec dplackt1(pt); dplackt1.fill(0);
@@ -2417,7 +2418,8 @@ for (j=0;j<antclust;j++) if (clustsize(j)>=2) {
 	   // }}}
 	} else if (depmodel==2) { // plackett model  // {{{
 
-	if (varlink==1) d2=deppar;  if (varlink==0) d2=1; 
+	  if (varlink==1) { d2=deppar; }
+	  if (varlink==0) { d2=1; }
 
         if (trunkp(i)<1 || trunkp(k)<1) {	/*{{{*/
            Lit=trunkp(i); Lkt=trunkp(k); 
@@ -2636,7 +2638,7 @@ mat rvdes=mat(rvdesvec.begin(),arrayDims2[0],arrayDims2[1]*arrayDD[2],false);
   int ci,ck,i,j,s=0,k,c1; 
   double dl1,dl2,ll1,ll2,ll=1,Li,Lk,sdj=0,diff=0,loglikecont=0;
   double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
-  double d2,asign=-1; if (ascertained==2) asign=1; 
+  double d2=0,asign=-1; if (ascertained==2) asign=1; 
 //  double plack(); 
  
   vec dplack(pt); dplack.fill(0);
@@ -2839,7 +2841,8 @@ for (j=0;j<antclust;j++) {
 	   // }}} 
 	} else if (depmodel==2) { // plackett model  //  // {{{ 
 
-	if (varlink==1) d2=deppar;  if (varlink==0) d2=1; 
+	  if (varlink==1) { d2=deppar; }
+	  if (varlink==0) { d2=1; }
 
         if (trunkp(i)<1 || trunkp(k)<1) {	/*{{{*/
            Lit=trunkp(i); Lkt=trunkp(k); 

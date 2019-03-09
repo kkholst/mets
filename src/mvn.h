@@ -14,8 +14,8 @@ using namespace Rcpp;
 using namespace arma;
 
 
-const double twopi = 2*datum::pi;
-const double itwopi = 1.0/2/datum::pi;
+const double twopi = 2*M_PI; //datum::pi;
+const double itwopi = 0.5/M_PI; //datum::pi;
 const double log2pi = log(twopi);
 
 struct vecmat

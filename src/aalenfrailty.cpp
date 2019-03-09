@@ -323,7 +323,7 @@ RcppExport SEXP BhatAddGamCC(SEXP itwostage,SEXP idBaalen,SEXP icause,
     uvec                 cause = Rcpp::as<uvec>(icause); 
     vec                  theta = Rcpp::as<vec>(itheta); 
     mat                    ags = Rcpp::as<mat>(iags);
-    int                varlink = Rcpp::as<int>(ivarlink);
+    //int                varlink = Rcpp::as<int>(ivarlink);
     uvec                  nrvs = Rcpp::as<uvec>(inrvs); 
     int                     it = Rcpp::as<int>(iit);
     mat                    Bit = Rcpp::as<mat>(iBit);

@@ -1,5 +1,6 @@
 // [[Rcpp::interfaces(cpp)]]
 
+
 #include "mvn.h"
 #include "tools.h"
 #include <math.h>
@@ -807,6 +808,5 @@ arma::mat rmvn(unsigned n, arma::mat mu, arma::mat rho) {
   }
   return res;
 }
-
 
 
