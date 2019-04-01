@@ -347,6 +347,29 @@ RcppExport SEXP cumsumstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
   return(rres);
 } 
 
+RcppExport SEXP tailstrataR(SEXP in, SEXP istrata, SEXP instrata) {
+  IntegerVector intstrata(istrata); 
+  int nstrata = Rcpp::as<int>(instrata);
+  int n = Rcpp::as<int>(in);
+  int nfound=0; 
+
+  colvec tmpsum(nstrata); tmpsum.zeros(); 
+  colvec foundss(nstrata); foundss.zeros(); 
+  colvec wheress(nstrata); foundss.zeros(); 
+
+  for (signed i=0; i<n; i++) {
+       int ss=intstrata(n-1-i); 
+       if (foundss(ss) < 0.5 )  { foundss(ss)=1; nfound=+1; wheress(ss)=n-1-i+1; }
+       if (nfound==nstrata) break; 
+  }  
+
+  List rres; 
+  rres["nfound"]=nfound; 
+  rres["found"]=foundss; 
+  rres["where"]=wheress; 
+  return(rres);
+}
+
 colvec  cumsumstrata(colvec a,IntegerVector strata,int nstrata) {
   unsigned n = a.n_rows;
   colvec tmpsum(nstrata); 
@@ -363,6 +386,7 @@ colvec  cumsumstrata(colvec a,IntegerVector strata,int nstrata) {
 
   return(res);
 } 
+
 
 colvec  cumsumstrataPO(colvec w,colvec S0,IntegerVector strata,int nstrata,double propodds,colvec exb) {
   unsigned n = S0.n_rows;

@@ -173,15 +173,15 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	      val$nstrata <- dd$nstrata
 	      val$strata <- dd$strata
 	      return(val)
-	  }
-	  with(val, structure(-ploglik,gradient=-gradient,hessian=-hessian))
+	  } 
+	 with(val,structure(-ploglik,gradient=-gradient,hessian=-hessian))
 	}# }}}
 
   opt <- NULL
   if (p>0) {
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
-          opt <- lava::NR(beta,obj,...)
+          opt <- lava:::NR(beta,obj,...)
           opt$estimate <- opt$par
       } else {
           opt <- nlm(obj,beta,...)
@@ -613,6 +613,16 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
 }
 
 ###}}} print.summary
+
+##' @export
+tailstrata <- function(strata,nstrata)
+{# {{{
+if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
+res <- .Call("tailstrataR",length(strata),strata,nstrata,PACKAGE="mets")
+if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res$found>0.5]); }
+return(res$where)
+}# }}}
+
 
 ##' @export
 sumstrata <- function(x,strata,nstrata)

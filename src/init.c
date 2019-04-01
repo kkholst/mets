@@ -60,6 +60,7 @@ extern SEXP ModelMatrixTestCox(SEXP,SEXP,SEXP,SEXP,SEXP);
 //extern SEXP simBandCumHazCox(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP revcumsumR(SEXP);
 extern SEXP revcumsumstrataR(SEXP,SEXP, SEXP);
+extern SEXP tailstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumstratasumR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumR(SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumCovR(SEXP,SEXP,SEXP, SEXP,SEXP, SEXP);
@@ -127,6 +128,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"DLambetaR",                         (DL_FUNC) &DLambetaR,                          8},
     {"cumsumidstratasumR",                (DL_FUNC) &cumsumidstratasumR,                 5},
     {"cumsumASR",                         (DL_FUNC) &cumsumidstratasumR,                 3},
+    {"tailstrataR",                       (DL_FUNC) &tailstrataR,                        3},
     {"cumsumidstratasumCovR",             (DL_FUNC) &cumsumidstratasumCovR,              6},
     {"revcumsumidstratasumR",             (DL_FUNC) &revcumsumidstratasumR,              5},
     {"revcumsumidstratasumCovR",          (DL_FUNC) &revcumsumidstratasumCovR,           6},

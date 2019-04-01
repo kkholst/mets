@@ -276,14 +276,14 @@ summary(ts)
 
 }
 \references{
-Estimating heritability for cause specific mortality based on twins studies
-Scheike, Holst, Hjelmborg (2014), LIDA  
+Twostage estimation of additive gamma frailty models for survival data. 
+Scheike (2019), work in progress
 
 Measuring early or late dependence for bivariate twin data
 Scheike, Holst, Hjelmborg (2015), LIDA  
 
-Twostage modelling of additive gamma frailty models for survival data. 
-Scheike, working paper 
+Estimating heritability for cause specific mortality based on twins studies
+Scheike, Holst, Hjelmborg (2014), LIDA  
 
 Additive Gamma frailty models for competing risks data, Biometrics (2015)
 Eriksson and Scheike (2015), 
