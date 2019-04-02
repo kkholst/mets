@@ -181,7 +181,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
   if (p>0) {
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
-          opt <- lava:::NR(beta,obj,...)
+          tim <- system.time(opt <- lava::NR(beta,obj,...))
+          opt$timing <- tim
           opt$estimate <- opt$par
       } else {
           opt <- nlm(obj,beta,...)
@@ -320,7 +321,6 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   if (!is.null(intpos  <- attributes(Terms)$intercept))
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-
   res <- c(phreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
 	   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
   class(res) <- "phreg"
