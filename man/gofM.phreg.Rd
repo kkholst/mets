@@ -2,8 +2,6 @@
 % Please edit documentation in R/gof-phreg.R
 \name{gofM.phreg}
 \alias{gofM.phreg}
-\alias{cumContr}
-\alias{gofZ.phreg}
 \title{GOF for Cox covariates in  PH regression}
 \usage{
 gofM.phreg(formula, data, offset = NULL, weights = NULL,
@@ -30,6 +28,18 @@ gofM.phreg(formula, data, offset = NULL, weights = NULL,
 Cumulative residuals after model matrix for Cox PH regression
 p-values based on Lin, Wei, Ying resampling.
 }
+\details{
+That is, computes 
+\deqn{
+ U(t) = \int_0^t M^t d \hat M 
+}
+and resamples its asymptotic distribution.
+
+This will show if the residuals are consistent with the model. Typically,
+M will be a design matrix for the continous covariates that gives for example
+the quartiles, and then the plot will show if for the different quartiles of the covariate the risk
+prediction is consistent over time  (time x covariate interaction).
+}
 \examples{
 library(mets)
 data(TRACE)
@@ -54,14 +64,7 @@ m1 <- gofM.phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,
 		  modelmatrix=mm,silent=0)
 summary(m1)
 
-## cumulative sums in covariates, via design matrix mm
-\donttest{ ## Reduce Ex.Timings
-m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam,
-                 vars=c("wmi","age"))
-summary(m1) 
-plot(m1,type="z")
-}
 }
 \author{
-THomas Scheike and Klaus K. Holst
+Thomas Scheike and Klaus K. Holst
 }

@@ -3,7 +3,6 @@
 ##' CIF logistic for propodds=1 default
 ##' CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
-##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data frame
 ##' @param cause of interest 
@@ -28,8 +27,7 @@
 ##' plot(pll)
 ##' 
 ##' ## Fine-Gray model
-##' llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,
-##'                   propodds=NULL)
+##' llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
 ##' bplot(ll)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pll <- predict(ll,nd)
@@ -96,9 +94,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,
 
  res <- c(cifreg01(data,X,exit,status,id,strata,offset,weights,strata.name,
 		   cause=cause,cens.code=cens.code,Gc=Gc,propodds=propodds,...),
-   list(call=cl,model.frame=m,
-	formula=formula,
-	strata.pos=pos.strata,cluster.pos=pos.cluster)
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster)
    )
 
   class(res) <- c("phreg","cif.reg")
@@ -106,8 +102,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,
 }# }}}
 
 cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
-             strata.name=NULL,beta,stderr=TRUE,
-	     method="NR",no.opt=FALSE,propodds=1,profile=0,
+             strata.name=NULL,beta,stderr=TRUE,method="NR",no.opt=FALSE,propodds=1,profile=0,
 	     case.weights=NULL,cause=1,cens.code=0,Gc=NULL,...) {# {{{
 ##  setting up weights, strata, beta and so forth before the action starts# {{{
  p <- ncol(X)
@@ -144,7 +139,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
    } else id <- as.integer(seq_along(entry))-1; 
-   ## orginal id coding into integers 
+   ## orginal id coding into integers 1:...
    id.orig <- id+1; 
 # }}}
 
@@ -152,10 +147,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
  whereC <- which(status==cens.code)
  time <- exit
  if (is.null(Gc)) {
- cens.model <- km(Surv(exit,status==cens.code)~+1,data=data)
- wpredS <- fast.approx(c(0,cens.model$time),exit,type="left")
-### wpredS <- timereg:::sindex.prodlim(c(0,cens.model$time),exit)
- Stime <- c(1,cens.model$surv)[wpredS]
+	 cens.model <- km(Surv(exit,status==cens.code)~+1,data=data)
+	 wpredS <- fast.approx(c(0,cens.model$time),exit,type="left")
+	 ### wpredS <- timereg:::sindex.prodlim(c(0,cens.model$time),exit)
+	 Stime <- c(1,cens.model$surv)[wpredS]
  } else { 
         if (length(whereC)>0) Ctimes <- sort(unique(exit[whereC]))
 	else Ctimes <- 0
@@ -171,7 +166,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
  jumptimes <- xx2$time[jumps]
  Xj <- xx2$X[jumps,,drop=FALSE]
 
- ## G(T_j-)
+ ## G(T_j-) at jumps of type "cause"
  if (length(whereC)>0) {
 	 whereJ <- fast.approx(c(0,cens.model$time),jumptimes,type="left")
 	 Gjumps <- c(1,cens.model$surv)[whereJ]
@@ -233,7 +228,6 @@ U <- (Xj-E)
 ploglik <- (log(rr2now)-log(S0))*weightsJ; 
 
 if (!is.null(propodds)) {
-   strataJ <- xx2$strata[jumps]
    pow <- c(.Call("cumsumstrataPOR",weightsJ,S0,strataJ,nstrata,propodds,rr2now,PACKAGE="mets")$pow); 
    DLam <-.Call("DLambetaR",weightsJ,S0,E,Xj,strataJ,nstrata,propodds,rr2now,PACKAGE="mets")$res; 
    Dwbeta <- DLam*rr2now+(pow-1)*Xj
@@ -267,6 +261,7 @@ ploglik <- sum(ploglik)
 
 out <- list(ploglik=ploglik,gradient=U,hessian=-DU,cox.prep=xx2,
 	    hessiantime=DUt,weightsJ=weightsJ,
+	    jumptimes=jumptimes,strata=strataJ,nstrata=nstrata,
 	    time=jumptimes,S0=S0/weightsJ,S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
 
 if (all) return(out) else with(out,structure(-ploglik, gradient=-gradient, hessian=-hessian))
@@ -376,6 +371,9 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  ### Martingale  as a function of time and for all subjects to handle strata 
  MGc <- qc[,drop=FALSE]*S0i-EdLam0q
  MGc <- apply(MGc,2,sumstrata,cxx$id,mid+1)
+### print(crossprod(MGc))
+### print(crossprod(UU))
+### print(t(UU) %*% MGc )
 # }}}
 } else MGc <- 0
 
@@ -391,10 +389,23 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
  colnames(cumhaz)    <- c("time","cumhaz")
 
+ ## SE of estimator ignoring some censoring terms 
+ if (no.opt==FALSE & p!=0) { 
+     DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
+     varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
+     ### covariance is 0 for cox model 
+     ### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
+ } else varbetat <- 0
+ var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
+ se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
+ colnames(se.cumhaz) <- c("time","se.cumhaz")
+
+
 out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,UUiid=UUiid,Uiid=Uiid,
 	    ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	    ploglik=opt$ploglik,gradient=opt$gradient,
-	    cumhaz=cumhaz,strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
+	    cumhaz=cumhaz, se.cumhaz=se.cumhaz,
+	    strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
 	    strata.level=strata.level,propodds=propodds,
 	    S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,
             jumps=jumps,II=iH,exit=exit,p=p,opt=opt,n=nrow(X),nevent=length(jumps)

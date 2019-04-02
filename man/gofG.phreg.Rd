@@ -36,5 +36,5 @@ bplot(m1,log="y")
 bplot(m2,log="y")
 }
 \author{
-THomas Scheike and Klaus K. Holst
+Thomas Scheike and Klaus K. Holst
 }

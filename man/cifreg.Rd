@@ -30,10 +30,6 @@ cifreg(formula, data = data, cause = 1, cens.code = 0,
 CIF logistic for propodds=1 default
 CIF Fine-Gray (cloglog) regression for propodds=NULL
 }
-\details{
-For the logit link the standard errors assume that the
-censoring weights are known, this does not change the standard much.
-}
 \examples{
 ## data with no ties
 data(bmt,package="timereg")
@@ -48,8 +44,7 @@ pll <- predict(ll,nd)
 plot(pll)
 
 ## Fine-Gray model
-llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,
-                  propodds=NULL)
+llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
 bplot(ll)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pll <- predict(ll,nd)
