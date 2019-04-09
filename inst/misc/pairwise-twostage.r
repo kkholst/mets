@@ -18,15 +18,15 @@ aa <- phreg(Surv(time,status)~+cluster(cluster),data=data)
 
 ### simple random effects call 
 ts0 <- survival.twostage(aa,data=data,clusters=data$cluster,
-	detail=0,var.par=0,var.link=0,
+	detail=1,var.par=1,var.link=0,
         theta=c(2,1),
         random.design=out$des.rv,theta.des=out$pardes)
 summary(ts0)
 
 ### simple random effects call 
 ts1 <- survival.twostage(aa,data=data,clusters=data$cluster,
-	detail=0,var.par=1,var.link=0,
-        theta=c(2,1),
+	detail=1,var.par=0,var.link=0,
+        theta=c(2,1)/9,
         random.design=out$des.rv,theta.des=out$pardes)
 summary(ts1)
 ### parameters c(2,1)/(2+1)^2
@@ -74,11 +74,30 @@ pairs <- matrix(mm$familypairindex,ncol=2,byrow=TRUE)
 tail(pairs,n=12)
 ## make all pairs and pair specific design and pardes 
 ## same as ts0 but pairs specified 
-ts <- twostage(aa,data=data,clusters=data$cluster,
-               theta=c(2,1)/9,var.link=0,step=1.0,
-               random.design=out$des.rv,
+tsp <- twostage(aa,data=data,clusters=data$cluster,
+               theta=c(2,1)/9,var.link=0,step=1.0,var.par=0,
+               random.design=out$des.rv,detail=0,
                theta.des=out$pardes,pairs=pairs)
-summary(ts)
+summary(tsp)
+
+tsp1 <- twostage(aa,data=data,clusters=data$cluster,
+               theta=c(2,1),var.link=0,step=1.0,var.par=1,
+               random.design=out$des.rv,detail=0,
+               theta.des=out$pardes,pairs=pairs)
+summary(tsp1)
+
+
+ source("../../R/twostage.R")
+aa <- aalen(Surv(time,status)~+1,data=data,robust=0)
+
+tsp2 <- twostage(aa,data=data,clusters=data$cluster,
+               theta=c(2,1),var.link=0,step=1.0,
+               random.design=out$des.rv,detail=0,
+               theta.des=out$pardes,pairs=pairs)
+summary(tsp2)
+
+c(tsp1$marginal.surv-tsp2$marginal.surv)
+
 
 ### random sample of pairs 
 ssid <- sort(sample(1:32000,20000))

@@ -633,6 +633,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
             hess1 <- hess  <- -1*out$Dscore 
            if (iid==1) {  ## {{{
 		score.iid <- out$score.iid
+		out$theta.iid <- score.iid  
 		theta.iid <- score.iid  
 		ucc <-  unique(cluster.call) 
 		if (length(ucc)== nrow(theta.iid))
