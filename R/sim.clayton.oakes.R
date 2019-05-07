@@ -548,7 +548,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-kendall.ClaytonOakes.twin.ace <- function(parg,parc,K=10000)  ## {{{ 
+kendall.ClaytonOakes.twin.ace <- function(parg,parc,K=10000,test=0)  ## {{{ 
 { 
   ## K antal clustre, n=antal i clustre
   ### total variance of gene and env. 
@@ -570,6 +570,14 @@ kendall.ClaytonOakes.twin.ace <- function(parg,parc,K=10000)  ## {{{
   dzrv1 <- Gams1[,2]+Gams1[,3]+Gams1[,5] ### 0.5 shared gene + 0.5 non-shared + env 
   dzrv2 <- Gams1[,2]+Gams1[,4]+Gams1[,5] ### 0.5 shared gene + 0.5 non-shared + env 
   Gam1 <- cbind(mz*mzrv+dz*dzrv1,mz*mzrv+dz*dzrv2)
+  if (test==1) {
+	  cat("mz cor")
+	  print(apply(Gam1[mz==1,1:2],2,var))
+	  print(cor(Gam1[mz==1,1:2]))
+	  cat("dz cor")
+	  print(apply(Gam1[mz==0,1:2],2,var))
+	  print(cor(Gam1[mz==0,1:2]))
+  }
   Gam1 <- data.frame(cbind(Gam1,mz,id))
 
   ## Silence false R CMD CHECK warnings:
