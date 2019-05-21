@@ -44,6 +44,16 @@ To cite the =mets= package please use one of the following references
 
 BibTeX:
 #+BEGIN_EXAMPLE
+
+@Manual{metsR,
+  title      = {mets: Analysis of Multivariate Event Times},
+  author     = {Klaus K. Holst and Thomas Scheike},
+  year       = {2014},
+  note       = {R package version 1.2.4},
+  bdsk-url-1 = {http://lava.r-forge.r-project.org/},
+  url        = {http://lava.r-forge.r-project.org/},
+}
+
   @Article{,
     title={The Liability Threshold Model for Censored Twin Data},
     author={Holst, Klaus K. and Scheike, Thomas H. and Hjelmborg, Jacob B.},
