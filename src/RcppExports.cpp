@@ -158,6 +158,78 @@ RcppExport SEXP _mets_rmvn(SEXP nSEXP, SEXP muSEXP, SEXP rhoSEXP) {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// rpch
+arma::vec rpch(unsigned n, std::vector<double> lambda, std::vector<double> time);
+static SEXP _mets_rpch_try(SEXP nSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< unsigned >::type n(nSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(rpch(n, lambda, time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _mets_rpch(SEXP nSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_mets_rpch_try(nSEXP, lambdaSEXP, timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// cpch
+arma::vec cpch(arma::vec& x, std::vector<double> lambda, std::vector<double> time);
+static SEXP _mets_cpch_try(SEXP xSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpch(x, lambda, time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _mets_cpch(SEXP xSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_mets_cpch_try(xSEXP, lambdaSEXP, timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _mets_RcppExport_validate(const char* sig) { 
@@ -166,6 +238,8 @@ static int _mets_RcppExport_validate(const char* sig) {
         signatures.insert("arma::mat(*.loglikMVN)(arma::mat,SEXP,SEXP,arma::mat,SEXP,arma::mat,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,bool)");
         signatures.insert("NumericVector(*.dmvn)(arma::mat,arma::mat,arma::mat)");
         signatures.insert("arma::mat(*.rmvn)(unsigned,arma::mat,arma::mat)");
+        signatures.insert("arma::vec(*.rpch)(unsigned,std::vector<double>,std::vector<double>)");
+        signatures.insert("arma::vec(*.cpch)(arma::vec&,std::vector<double>,std::vector<double>)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -175,6 +249,8 @@ RcppExport SEXP _mets_RcppExport_registerCCallable() {
     R_RegisterCCallable("mets", "_mets_.loglikMVN", (DL_FUNC)_mets_loglikMVN_try);
     R_RegisterCCallable("mets", "_mets_.dmvn", (DL_FUNC)_mets_dmvn_try);
     R_RegisterCCallable("mets", "_mets_.rmvn", (DL_FUNC)_mets_rmvn_try);
+    R_RegisterCCallable("mets", "_mets_.rpch", (DL_FUNC)_mets_rpch_try);
+    R_RegisterCCallable("mets", "_mets_.cpch", (DL_FUNC)_mets_cpch_try);
     R_RegisterCCallable("mets", "_mets_RcppExport_validate", (DL_FUNC)_mets_RcppExport_validate);
     return R_NilValue;
 }

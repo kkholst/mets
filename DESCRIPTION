@@ -34,6 +34,7 @@ Suggests:
 VignetteBuilder: R.rsp
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo
+SystemRequirements: C++11
 Encoding: UTF-8
 Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.1.1

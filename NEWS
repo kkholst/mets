@@ -7,6 +7,7 @@
   - Prototype of wildbootstrap for Cox regression with 
     - confidence bands for baseline
     - with confidenence bands cumulative incidence for two cox's 
+  - Piecewise constant hazard: rpch, ppch
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 

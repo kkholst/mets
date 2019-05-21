@@ -88,6 +88,48 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
+    inline arma::vec _rpch(unsigned n, std::vector<double> lambda, std::vector<double> time) {
+        typedef SEXP(*Ptr__rpch)(SEXP,SEXP,SEXP);
+        static Ptr__rpch p__rpch = NULL;
+        if (p__rpch == NULL) {
+            validateSignature("arma::vec(*_rpch)(unsigned,std::vector<double>,std::vector<double>)");
+            p__rpch = (Ptr__rpch)R_GetCCallable("mets", "_mets__rpch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__rpch(Shield<SEXP>(Rcpp::wrap(n)), Shield<SEXP>(Rcpp::wrap(lambda)), Shield<SEXP>(Rcpp::wrap(time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::vec >(rcpp_result_gen);
+    }
+
+    inline arma::vec _cpch(arma::vec& x, std::vector<double> lambda, std::vector<double> time) {
+        typedef SEXP(*Ptr__cpch)(SEXP,SEXP,SEXP);
+        static Ptr__cpch p__cpch = NULL;
+        if (p__cpch == NULL) {
+            validateSignature("arma::vec(*_cpch)(arma::vec&,std::vector<double>,std::vector<double>)");
+            p__cpch = (Ptr__cpch)R_GetCCallable("mets", "_mets__cpch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__cpch(Shield<SEXP>(Rcpp::wrap(x)), Shield<SEXP>(Rcpp::wrap(lambda)), Shield<SEXP>(Rcpp::wrap(time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::vec >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_mets_RCPPEXPORTS_H_GEN_
