@@ -116,7 +116,7 @@
 ##' @export
 dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	 x.base.names=NULL,z.arg=c("clever","base","group","condition"),
-         fun.=lm,summary.=summary,regex=FALSE,convert=NULL,
+         fun.=lm,summary.=summary,regex=FALSE,convert=NULL,do.summary=TRUE,
 	 special=NULL,equal=TRUE,test=1,...) {# {{{
 ### z.arg=clever,  if z is logical then condition
 ###                if z is factor  then group variable 
@@ -192,7 +192,9 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 ###		     val <- with(data,do.call(fun,c(list(formula=form),list(...))))
 	     capture.output(
              val <- do.call(fun.,c(list(formula=form),list(data=datal),list(...))))
-	     val$call <- paste(y,"~",basel)
+###	     print(y)
+###	     print(basel)
+###	     val$call <- paste(y,"~",basel)
              val <- list(val)
 	     nn <- paste(y,"~",basel)
 	     if (z.arg[1]=="group") {
@@ -200,9 +202,10 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	     }
 	     names(val) <- nn
              res <- c(res, val)
-	     if (!is.null(summary)) {
+	     if (do.summary) {
 	        sval <- list(do.call(summary.,list(val[[1]])))
                 names(sval) <- nn
+###	        sval$call <- NULL
 	        sum <- c(sum, sval)
 	    }
 	 }
@@ -216,11 +219,11 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	     if (z.arg[1]=="group") {
 		     if (equal==TRUE) nn <- paste(nn,"|",g)  else nn <- paste(nn,"| not",g);
 	     }
-	     val$call <- nn
+###	     val$call <- nn
              val <- list(val)
 	     names(val) <- paste(y,"~",basel)
              res <- c(res, val)
-	     if (!is.null(summary)) {
+	     if (do.summary) {
 	       sval <- list(do.call(summary.,list(val[[1]])))
 	       names(sval) <- nn
 	       sum <- c(sum, sval)
