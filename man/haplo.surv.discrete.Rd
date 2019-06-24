@@ -2,12 +2,14 @@
 % Please edit documentation in R/discrete-survival-haplo.r
 \name{haplo.surv.discrete}
 \alias{haplo.surv.discrete}
+\alias{sim.glm}
+\alias{sim.haplo}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
   Haplos = NULL, id = "id", desnames = NULL, designfunc = NULL,
   beta = NULL, no.opt = FALSE, method = "NR", stderr = TRUE,
-  designMatrix = NULL, covnames = NULL, ...)
+  designMatrix = NULL, design.only = FALSE, covnames = NULL, ...)
 }
 \arguments{
 \item{X}{}
@@ -29,6 +31,8 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 \item{method}{NR, nlm}
 
 \item{designMatrix}{}
+
+\item{design.only}{to return only design matrices for haplo-type analyses.}
 
 \item{covnames}{names of}
 
@@ -57,6 +61,53 @@ logit(P(T=t| T \geq t, x,h)) = \alpha_t + x(h) \beta
 where x(h) is a regression design of x and haplotypes \eqn{h=(h_1,h_2)}
 
 Take all names that begins with "haplo" and uses for design and sub-grouping (the h's)
+}
+\examples{
+## some haplotypes of interest
+types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
+
+## some haplotypes frequencies for simulations 
+data(hapfreqs)
+
+www <-which(hapfreqs$haplotype \%in\% types)
+hapfreqs$freq[www]
+
+baseline=hapfreqs$haplotype[9]
+baseline
+
+designftypes <- function(x,sm=0) {# {{{
+hap1=x[1]
+hap2=x[2]
+if (sm==0) y <- 1*( (hap1==types) | (hap2==types))
+if (sm==1) y <- 1*(hap1==types) + 1*(hap2==types)
+return(y)
+}# }}}
+
+tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
+0.88830288,0.60756224,0.39802821,0.32706859)
+
+## uses HaploSurvival package of github install via devtools
+## devtools::install_github("scheike/HaploSurvival")
+## this is only used for simulations 
+## out <- sim.haplo(1,100,tcoef)
+
+data(hHaplos)
+data(haploX)
+
+## load("hHaplos.rda")
+## load("haploX.rda")
+haploX$time <- haploX$times
+Xdes <- model.matrix(~factor(time),haploX)
+colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
+X <- dkeep(haploX,~id+y+time)
+X <- cbind(X,Xdes)
+Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
+desnames=paste("X",1:6,sep="")   # six X's related to 6 cycles 
+out <- haplo.surv.discrete(X=X,y="y",time.name="time",
+         Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
+names(out$coef) <- c(desnames,types)
+out$coef
+
 }
 \author{
 Thomas Scheike

@@ -36,6 +36,53 @@
 ##' @param covnames names of 
 ##' @param ... Additional arguments to lower level funtions lava:::NR  optimizer or nlm
 ##' @author Thomas Scheike
+##' @aliases sim.glm sim.haplo 
+##' @examples
+##' ## some haplotypes of interest
+##' types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
+##' 
+##' ## some haplotypes frequencies for simulations 
+##' data(hapfreqs)
+##'
+##' www <-which(hapfreqs$haplotype %in% types)
+##' hapfreqs$freq[www]
+##'
+##' baseline=hapfreqs$haplotype[9]
+##' baseline
+##'
+##' designftypes <- function(x,sm=0) {# {{{
+##' hap1=x[1]
+##' hap2=x[2]
+##' if (sm==0) y <- 1*( (hap1==types) | (hap2==types))
+##' if (sm==1) y <- 1*(hap1==types) + 1*(hap2==types)
+##' return(y)
+##' }# }}}
+##'
+##' tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
+##' 0.88830288,0.60756224,0.39802821,0.32706859)
+##' 
+##' ## uses HaploSurvival package of github install via devtools
+##' ## devtools::install_github("scheike/HaploSurvival")
+##' ## this is only used for simulations 
+##' ## out <- sim.haplo(1,100,tcoef)
+##' 
+##' data(hHaplos)
+##' data(haploX)
+##' 
+##' ## load("hHaplos.rda")
+##' ## load("haploX.rda")
+##' haploX$time <- haploX$times
+##' Xdes <- model.matrix(~factor(time),haploX)
+##' colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
+##' X <- dkeep(haploX,~id+y+time)
+##' X <- cbind(X,Xdes)
+##' Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
+##' desnames=paste("X",1:6,sep="")   # six X's related to 6 cycles 
+##' out <- haplo.surv.discrete(X=X,y="y",time.name="time",
+##'          Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
+##' names(out$coef) <- c(desnames,types)
+##' out$coef
+##' 
 ##' @export
 haplo.surv.discrete <- function (
 ###	formula = formula(data),data=sys.parent(),
@@ -241,4 +288,122 @@ hessian <- D2log
   return(val)
 } ## }}} 
 
+##' @export
+sim.glm <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
+{# {{{
+###  if (!missing(glm)) beta <- glm$coef else 
+###	 browser()
+
+###  if (is.null(Xglm)) {
+###	  X <- model.matrix(glm)
+###	  rownames(X) <- NULL
+###          if (n==0)  n <- nrow(X)
+###	  rows <- sample(1:n,n,replace=TRUE)
+###	  Z <- X[rows,]
+###  }  
+	  
+  Z <- Xglm  
+  if (!is.null(Z)) n <- nrow(Z) 
+
+  if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
+###  data <- cbind(y,data.frame(Z))
+
+  if (!is.null(times)) {
+     timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+     data <- merge(data,timesf,by.x="id",by.y="id")
+     mt <- model.matrix(~factor(times),data)
+     nm <- match(c("id","times"),names(data))
+     Z <- cbind(mt,data[,-nm])
+  }
+
+  p <- c(expit(as.matrix(Z) %*% coef))
+  y <- rbinom(length(p),1,p)
+
+  data <- cbind(y,data)
+  data <- count.history(data,status="y",id="id",type=1)
+  data <- subset(data,Count1<=0)
+
+  attr(data,"coef") <- beta
+  return(data)
+ }# }}}
+
+##' @export
+sim.haplo <- function(i,n,tcoef)
+{ ## {{{  
+  print(i)
+
+   haplos <- sample(19,2*n,replace=TRUE,prob=hapfreqs$freq)
+   haplos <- matrix(haplos,n,2) 
+   hap1 <- hapfreqs$haplotype[haplos[,1]]
+   hap2 <- hapfreqs$haplotype[haplos[,2]]
+   ###
+   X <- t(apply(cbind(hap1,hap2),1,designftypes))
+   X <- data.frame(X,id=1:n)
+   sud <- sim.glm(coef=tcoef,Xglm=X,n=n,times=1:6)
+   ## known haplotypes
+   ssud <- glm(y~factor(times)+X1+X2+X3+X4+X5,data=sud,family=binomial())
+
+   genotype <- c()
+   for (i in 1:11)
+     genotype <- cbind(genotype,substr(hap1,i,i), substr(hap2,i,i) )
+
+   setup <- geno.setup(genotype,haplo.baseline=baseline,sep="") 
+   wh <- match(setup$uniqueHaploNames,hapfreqs$haplotype)
+   wwf <- wh[!is.na(wh)]
+   ghaplos <- matrix(unlist(setup$HPIordered),byrow=TRUE,ncol=2)
+   ghaplos <- cbind(rep(1:n,setup$nPossHaps),ghaplos)
+   ghaplos <- data.frame(ghaplos)
+   names(ghaplos) <- c("id","haplo1","haplo2")
+   haploff <- rep(0,length(setup$uniqueHaploNames))
+   haploff[!is.na(wh)] <- hapfreqs[wwf,"freq"]
+###
+   hap1f <- haploff[ghaplos[,2]]
+   hap2f <- haploff[ghaplos[,3]]
+   hap12f <- hap1f*hap2f
+   hapsshed  <- hap12f
+   ghaplos$p <- hapsshed
+   ghaplos <- subset(ghaplos,p>0)
+   ## back to characters for indentification of design
+   ghaplos$haplo1 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo1])
+   ghaplos$haplo2 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo2])
+   ptot <- sumstrata(ghaplos$p,ghaplos$id-1,n)
+   ghaplos$p <- ghaplos$p/ptot[ghaplos$id]
+
+sud$time <- sud$times
+Xdes <- model.matrix(~factor(time),sud)
+colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
+X <- dkeep(sud,~id+y+time)
+X <- cbind(X,Xdes)
+Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
+dtable(Haplos,~"haplo*",level=1)
+###Haplos
+###
+y <- "y"
+time.name="time"
+desnames=paste("X",1:6,sep="")
+###
+###
+mm <- system.time(
+mud <- haplo.surv.discrete(X=X,y="y",time.name="time",##design.only=TRUE,
+		  Haplos=Haplos,designfunc=designftypes,desnames=desnames)
+)
+
+   ### max haplo-type
+   Haplos$nhaplo1 <- as.numeric(Haplos$haplo1)
+   Haplos$nhaplo2 <- as.numeric(Haplos$haplo2)
+   dsort(Haplos) <- ~id+nhaplo1+nhaplo2-p
+   Haplos <- count.history(Haplos,status="p",types="1")
+   mHaplos <- subset(Haplos,lbnr__id==1)
+   bothid <- intersect(X$id, mHaplos$id)
+   X <- subset(X, id %in% bothid)
+   mHaplos <- subset(mHaplos, id %in% bothid)
+   Xhap <- merge(X, mHaplos, by.x = "id", by.y = "id")
+   mm <- grep("haplo*", names(Xhap))
+   X <- t(as.matrix(apply(Xhap[, mm], 1, designftypes)))
+   ###
+   mmud <- glm(y~factor(time)+X,data=Xhap,family=binomial())
+
+ud <- list(coef=mud$coef,se=mud$se,se.robust=mud$se.robust,mcoef=mmud$coef,kcoef=ssud$coef)
+return(ud)
+} ## }}} 
 
