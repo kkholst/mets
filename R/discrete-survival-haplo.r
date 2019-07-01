@@ -34,6 +34,7 @@
 ##' @param design.only to return only design matrices for haplo-type analyses. 
 ##' @param beta 
 ##' @param covnames names of 
+##' @param fam family of models, now logistic regression default
 ##' @param ... Additional arguments to lower level funtions lava:::NR  optimizer or nlm
 ##' @author Thomas Scheike
 ##' @aliases sim.glm sim.haplo 
@@ -92,7 +93,7 @@ haplo.surv.discrete <- function (
     designMatrix=NULL,design.only=FALSE,
 ###    geno.type = NULL, geno.setup=NULL, haplo.freq = NULL,stderr=TRUE,
 ###    haplo.design=NULL,haplo.baseline=NULL,alpha=NULL, 
-    covnames=NULL,...)
+    covnames=NULL,fam=binomial,...)
 { ## {{{ 
 
 ###	browser()
@@ -148,12 +149,14 @@ if (is.null(beta)) beta <- rep(0,ncol(X))
 
 obj <- function(pp,all=FALSE)
 { # {{{
+
 lp <- X %*% pp
+## plp <- family$linkinv(lp)
 plp <- expit(lp)
 nplp <- 1-plp
-lognp <- log(nplp)
+###lognp <- log(nplp)
 
-###
+### logpht <-  (response - plp)/family$variance(plp)
 logpht <- log(plp)*response+log(nplp)*(1-response)
 pht <-c(exp(logpht))
 Dlogpht <-  X* c(response-plp)
@@ -178,6 +181,7 @@ D2pg <-apply(D2ph*hgiveng,2,sumstrata,iid,nid)
 D2logi <- (pg*D2pg-DpgDpg)/pg^2
 D2log <- apply(D2logi,2,sum)
 D2log <- matrix(D2log,ncol(X),ncol(X))
+
 
 ploglik <- sum(logl)
 gradient <- apply(Dlogl,2,sum)
