@@ -12,6 +12,7 @@
 ##' @param summary. summary to use 
 ##' @param regex regex
 ##' @param convert convert
+##' @param doSummary doSummary or not 
 ##' @param special special's 
 ##' @param equal to do pairwise stuff
 ##' @param test development argument
@@ -116,7 +117,7 @@
 ##' @export
 dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	 x.base.names=NULL,z.arg=c("clever","base","group","condition"),
-         fun.=lm,summary.=summary,regex=FALSE,convert=NULL,do.summary=TRUE,
+         fun.=lm,summary.=summary,regex=FALSE,convert=NULL,doSummary=TRUE,
 	 special=NULL,equal=TRUE,test=1,...) {# {{{
 ### z.arg=clever,  if z is logical then condition
 ###                if z is factor  then group variable 
@@ -202,7 +203,7 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	     }
 	     names(val) <- nn
              res <- c(res, val)
-	     if (do.summary) {
+	     if (doSummary) {
 	        sval <- list(do.call(summary.,list(val[[1]])))
                 names(sval) <- nn
 ###	        sval$call <- NULL
@@ -223,7 +224,7 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
              val <- list(val)
 	     names(val) <- paste(y,"~",basel)
              res <- c(res, val)
-	     if (do.summary) {
+	     if (doSummary) {
 	       sval <- list(do.call(summary.,list(val[[1]])))
 	       names(sval) <- nn
 	       sum <- c(sum, sval)

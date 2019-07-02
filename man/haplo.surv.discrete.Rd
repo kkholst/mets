@@ -2,8 +2,7 @@
 % Please edit documentation in R/discrete-survival-haplo.r
 \name{haplo.surv.discrete}
 \alias{haplo.surv.discrete}
-\alias{sim.glm}
-\alias{sim.haplo}
+\alias{simGlm}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
@@ -13,35 +12,37 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
   fam = binomial, ...)
 }
 \arguments{
-\item{X}{}
+\item{X}{design matrix}
 
-\item{y}{name of response (binary response with logistic link)}
+\item{y}{name of response (binary response with logistic link) from X}
 
-\item{time.name}{(to construct design ~factor(time))}
+\item{time.name}{(to construct design ~factor(time))  from X}
 
-\item{Haplos}{(data.frame with id, haplo1, haplo2 (haplotypes (h)) and  P(h|G))}
+\item{Haplos}{(data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G))}
 
-\item{id}{name of id variale}
+\item{id}{name of id variale from X}
 
-\item{designfunc}{function that computes x(h)}
+\item{desnames}{names for design matrix}
 
-\item{beta}{}
+\item{designfunc}{function that computes design given haplotypes h=(h1,h2) x(h)}
+
+\item{beta}{starting values}
 
 \item{no.opt}{optimization TRUE/FALSE}
 
 \item{method}{NR, nlm}
 
-\item{designMatrix}{}
+\item{stderr}{to return only estimate}
+
+\item{designMatrix}{designMatrix not implemented}
 
 \item{design.only}{to return only design matrices for haplo-type analyses.}
 
-\item{covnames}{names of}
+\item{covnames}{names of covariates to extract from object for regression}
 
-\item{fam}{family of models, now logistic regression default}
+\item{fam}{family of models, now binomial default and only option}
 
 \item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
-
-\item{des.names}{names for design matrix}
 }
 \description{
 Can be used for logistic regression when time variable is "1" for all.
@@ -63,7 +64,10 @@ logit(P(T=t| T \geq t, x,h)) = \alpha_t + x(h) \beta
 }
 where x(h) is a regression design of x and haplotypes \eqn{h=(h_1,h_2)}
 
-Take all names that begins with "haplo" and uses for design and sub-grouping (the h's)
+Likelihood is maximized and standard errors assumes that P(H|G) is known.
+
+The design over the possible haplotypes is constructed by merging X with Haplos and  
+can be viewed by design.only=TRUE
 }
 \examples{
 ## some haplotypes of interest
@@ -89,16 +93,9 @@ return(y)
 tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
 0.88830288,0.60756224,0.39802821,0.32706859)
 
-## uses HaploSurvival package of github install via devtools
-## devtools::install_github("scheike/HaploSurvival")
-## this is only used for simulations 
-## out <- sim.haplo(1,100,tcoef)
-
 data(hHaplos)
 data(haploX)
 
-## load("hHaplos.rda")
-## load("haploX.rda")
 haploX$time <- haploX$times
 Xdes <- model.matrix(~factor(time),haploX)
 colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")

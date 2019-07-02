@@ -13,17 +13,21 @@ gofZ.phreg(formula, data, vars, offset = NULL, weights = NULL,
 
 \item{data}{data for model}
 
+\item{vars}{which variables to test for linearity}
+
 \item{offset}{offset}
 
 \item{weights}{weights}
+
+\item{breaks}{number of breaks for cumulatives in covarirate direction}
+
+\item{equi}{equidistant breaks  or not}
 
 \item{n.sim}{number of simulations for score processes}
 
 \item{silent}{to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.}
 
 \item{...}{Additional arguments to lower level funtions}
-
-\item{modelmatrix}{matrix for cumulating residuals}
 }
 \description{
 That is, computes 

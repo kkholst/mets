@@ -17,7 +17,7 @@
 ##'
 ##' ## with direct asignment
 ##' dsort(hubble) <- ~sigma-v
-##' @aliases dsort dsort<-
+##' @aliases dsort2 dsort dsort<-
 ##' @export
 dsort <- function(data,x,...,decreasing=FALSE,return.order=FALSE)
 {# {{{
@@ -61,9 +61,6 @@ dsort2 <- function(data,x,...,decreasing=FALSE,return.order=FALSE,regex=FALSE)
     ord <- do.call("order",c(c(x,args),list(decreasing=decreasing,method="radix")))
     data[ord,]
 }# }}}
-
-
-
 
 ##' @export
 "dsort<-" <- function(data,...,value)  dsort(data,value,...)

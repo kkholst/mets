@@ -11,6 +11,8 @@ mlogit(formula, data, ref = NULL, ...)
 
 \item{data}{data frame}
 
+\item{ref}{to set reference category (not working yet)}
+
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{

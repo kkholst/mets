@@ -222,9 +222,11 @@ return(out)
 ##'
 ##' @param formula formula for cox regression 
 ##' @param data data for model
+##' @param vars which variables to test for linearity 
 ##' @param offset offset 
 ##' @param weights weights 
-##' @param modelmatrix  matrix for cumulating residuals
+##' @param breaks number of breaks for cumulatives in covarirate direction
+##' @param equi equidistant breaks  or not 
 ##' @param n.sim number of simulations for score processes
 ##' @param silent to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.
 ##' @param ... Additional arguments to lower level funtions

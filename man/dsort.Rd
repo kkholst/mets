@@ -2,6 +2,7 @@
 % Please edit documentation in R/dsort.R
 \name{dsort}
 \alias{dsort}
+\alias{dsort2}
 \alias{dsort<-}
 \title{Sort data frame}
 \usage{

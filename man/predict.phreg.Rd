@@ -2,6 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{predict.phreg}
 \alias{predict.phreg}
+\alias{tailstrata}
 \alias{revcumsumstrata}
 \alias{revcumsumstratasum}
 \alias{cumsumstrata}

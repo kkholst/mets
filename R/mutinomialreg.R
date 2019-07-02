@@ -4,6 +4,7 @@
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
+##' @param ref to set reference category (not working yet)
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
