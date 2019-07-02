@@ -9,7 +9,8 @@
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
   Haplos = NULL, id = "id", desnames = NULL, designfunc = NULL,
   beta = NULL, no.opt = FALSE, method = "NR", stderr = TRUE,
-  designMatrix = NULL, design.only = FALSE, covnames = NULL, ...)
+  designMatrix = NULL, design.only = FALSE, covnames = NULL,
+  fam = binomial, ...)
 }
 \arguments{
 \item{X}{}
@@ -35,6 +36,8 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 \item{design.only}{to return only design matrices for haplo-type analyses.}
 
 \item{covnames}{names of}
+
+\item{fam}{family of models, now logistic regression default}
 
 \item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
 

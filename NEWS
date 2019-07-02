@@ -8,6 +8,7 @@
     - confidence bands for baseline
     - with confidenence bands cumulative incidence for two cox's 
   - Piecewise constant hazard: rpch, ppch
+  - Test-version of multinomial regression model (via phreg)
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
@@ -23,8 +24,7 @@
     - robust standard errors for clustered case 
   - twostageMLE for fast twostage fitting for clustered survival data
     with robust standard errors. 
-  - standard errors for twostage models now also with uncertainty from Cox 
-    baseline
+  - standard errors for twostage models now also with uncertainty from Cox baseline
   - cumulative score process test gof now also for marginal Cox models 
 
 * Version 1.2.4    <2018-05-18 Wed>
