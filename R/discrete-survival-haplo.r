@@ -1,6 +1,6 @@
 ##' Discrete time to event haplo type analysis 
 ##'
-##' Can be used for logistic regression when time variable is "1" for all. 
+##' Can be used for logistic regression when time variable is "1" for all id. 
 ##'
 ##' Cycle-specific logistic regression of haplo-type effects with known 
 ##' haplo-type probabilities. Given observed genotype G and unobserved haplotypes H
@@ -23,10 +23,10 @@
 ##' The design over the possible haplotypes is constructed by merging X with Haplos and  
 ##' can be viewed by design.only=TRUE
 ##' 
-##' @param X design matrix 
+##' @param X design matrix data-frame (sorted after id and time variable) with id time response  and desnames 
 ##' @param y name of response (binary response with logistic link) from X
-##' @param time.name (to construct design ~factor(time))  from X
-##' @param Haplos (data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G))
+##' @param time.name to sort after time  for X
+##' @param Haplos (data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G)) haplotypes given as factor.  
 ##' @param id name of id variale from X
 ##' @param desnames names for design matrix
 ##' @param designfunc function that computes design given haplotypes h=(h1,h2) x(h) 
@@ -128,9 +128,8 @@ haplo.surv.discrete <- function (
 ## creates sub-index for haplo-types within each id
    nmm <- names(Xhap)[mm]
    lll <- lapply(Xhap[,c("id",nmm)],as.numeric)
-###   stratidhap <-    as.numeric(survival::strata(lll))
    stratidhap <-    as.numeric(survival::strata(lll))
-   stratidhap <- fast.approx(unique(stratidhap),stratidhap) 
+###   stratidhap <- fast.approx(unique(stratidhap),stratidhap) 
 ###   print(cbind(Xhap$id,stratidhap))
 
    nidhap <- length(unique(stratidhap))
@@ -194,8 +193,6 @@ hessian <- D2log
 		  se=diag(ihess)^.5,se.robust=diag(robvar)^.5)
       return(val)
   }  
-### structure(-ploglik,gradient=-gradient,hessian=-hessian)
-### hessian <- NULL 
  structure(-ploglik,gradient=-gradient,hessian=hessian)
 }# }}}
 
@@ -319,6 +316,8 @@ simGlm <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
   attr(data,"coef") <- beta
   return(data)
  }# }}}
+
+
 
 ##' ## uses HaploSurvival package of github install via devtools
 ##' ## devtools::install_github("scheike/HaploSurvival")
