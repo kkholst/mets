@@ -317,6 +317,74 @@ simGlm <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
   return(data)
  }# }}}
 
+##' @export
+predict.haplo.surv.discrete <- function(Z,hsd,times=1:6,se=FALSE,type="prob")
+{# {{{
+  if (!is.null(Z)) n <- nrow(Z) 
+  if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
+  Z <- data.frame(Z)
+  Z$id <- 1:n
+
+  if (!se) {
+	  data <- Z
+	  if (!is.null(times)) {
+	     timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+	     data <- merge(data,timesf,by.x="id",by.y="id")
+	     mt <- model.matrix(~factor(times),data)
+	     nm <- match(c("id","times"),names(data))
+	     Z <- cbind(mt,data[,-nm])
+	  }
+	  ccc <- hsd$coef
+	  if (ncol(Z)!=length(c(ccc))) {
+		  print(head(Z))
+		  print(ccc)
+		  stop("dimension of Z not consistent with length of coefficients"); 
+	  }
+
+	  p <- c(expit(as.matrix(Z) %*% ccc))
+
+	  pred <- data.frame(p=p,id=data$id,times=data$times)
+	  survt <- 1-exp(cumsumstrata(log(1-pred$p),data$id-1,6))
+	  if (type=="prob") survt <- 1-survt
+	  if (type=="hazard") survt <- p
+	  pred <- cbind(pred,survt)
+
+  } else {
+    ccc <- hsd$coef
+
+    expit <- function(p) exp(p)/(1+exp(p))
+    Ft <- function(p)
+    {
+	   xp <- as.matrix(Zi) %*% p
+	   lam <- expit(xp)
+	   st <- cumprod(1-lam)
+	   if (type=="prob") st <- 1-st 
+	   if (type=="hazard") st <- lam
+	   return(st)
+    }
+
+  preds <- c()
+  for (i in 1:nrow(Z)) {
+     Zi <- data.frame(Z[i,,drop=FALSE])
+     data <- Zi
+     if (!is.null(times)) {
+        timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+        data <- merge(data,timesf,by.x="id",by.y="id")
+        mt <- model.matrix(~factor(times),data)
+        nm <- match(c("id","times"),names(data))
+        Zi <- cbind(mt,data[,-nm])
+     }
+     eud <- estimate(coef=hsd$coef,vcov=hsd$var,f=function(p) Ft(p))
+     cmat <- data.frame(eud$coefmat)
+     cmat$id <- i
+     cmat$times <- times
+     names(cmat)[1:4] <- c("pred","se","lower","upper")
+     preds <- rbind(preds,cmat)
+  } 
+
+  }
+return(preds)
+}# }}}
 
 
 ##' ## uses HaploSurvival package of github install via devtools

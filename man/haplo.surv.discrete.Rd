@@ -12,13 +12,13 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
   fam = binomial, ...)
 }
 \arguments{
-\item{X}{design matrix}
+\item{X}{design matrix data-frame (sorted after id and time variable) with id time response  and desnames}
 
 \item{y}{name of response (binary response with logistic link) from X}
 
-\item{time.name}{(to construct design ~factor(time))  from X}
+\item{time.name}{to sort after time  for X}
 
-\item{Haplos}{(data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G))}
+\item{Haplos}{(data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G)) haplotypes given as factor.}
 
 \item{id}{name of id variale from X}
 
@@ -45,7 +45,7 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 \item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
 }
 \description{
-Can be used for logistic regression when time variable is "1" for all.
+Can be used for logistic regression when time variable is "1" for all id.
 }
 \details{
 Cycle-specific logistic regression of haplo-type effects with known 
