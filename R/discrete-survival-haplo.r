@@ -79,7 +79,7 @@
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
 ##' 
-##' @aliases simGlm 
+##' @aliases simGlm  predictSurvd
 ##' @export
 haplo.surv.discrete <- function (
 ###	formula = formula(data),data=sys.parent(),
