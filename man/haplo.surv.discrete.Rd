@@ -4,6 +4,7 @@
 \alias{haplo.surv.discrete}
 \alias{simGlm}
 \alias{predictSurvd}
+\alias{plotSurvd}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",

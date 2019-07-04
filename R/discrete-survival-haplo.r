@@ -79,7 +79,7 @@
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
 ##' 
-##' @aliases simGlm  predictSurvd
+##' @aliases simGlm  predictSurvd plotSurvd
 ##' @export
 haplo.surv.discrete <- function (
 ###	formula = formula(data),data=sys.parent(),
@@ -318,12 +318,13 @@ simGlm <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
  }# }}}
 
 ##' @export
-predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
+predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 {# {{{
   if (!is.null(Z)) n <- nrow(Z) 
   if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
   Z <- data.frame(Z)
   Z$id <- 1:n
+  ccc <- ds$coef
 
   if (!se) {# {{{{{{
 	  data <- Z
@@ -334,7 +335,6 @@ predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
 	     nm <- match(c("id","times"),names(data))
 	     Z <- cbind(mt,data[,-nm])
 	  }
-	  ccc <- hsd$coef
 	  if (ncol(Z)!=length(c(ccc))) {
 		  print(head(Z))
 		  print(ccc)
@@ -350,7 +350,6 @@ predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
 	  pred <- cbind(pred,survt)
 # }}}
   } else {# {{{
-    ccc <- hsd$coef
 
     expit <- function(p) exp(p)/(1+exp(p))
     Ft <- function(p)
@@ -374,7 +373,7 @@ predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
         nm <- match(c("id","times"),names(data))
         Zi <- cbind(mt,data[,-nm])
      }
-     eud <- estimate(coef=hsd$coef,vcov=hsd$var,f=function(p) Ft(p))
+     eud <- estimate(coef=ds$coef,vcov=ds$var,f=function(p) Ft(p))
      cmat <- data.frame(eud$coefmat)
      cmat$id <- i
      cmat$times <- times
@@ -386,6 +385,38 @@ predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
 
 return(preds)
 }# }}}
+
+## }}} 
+
+##' @export
+plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
+{# {{{
+
+ if (is.null(ids)) ids <- unique(ds$id)
+ if (is.null(cols)) cols <- 1:length(ids)
+ if (is.null(ltys)) ltys <- 1:length(ids)
+
+  k <- 1
+  fplot <- 0
+  for (i in ids) {
+	  timei <- ds$time[ds$id==i]
+	  predi <- ds$pred[ds$id==i]
+
+ 	  if (fplot==0) {
+	  if (!add) plot(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+	  if (add) lines(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+	  fplot <- 1
+	  } else lines(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+
+          if (se) {
+	  loweri <- ds$lower[ds$id==i]
+	  upperi <- ds$upper[ds$id==i]
+	  mets:::plot.conf.region(timei,cbind(loweri,upperi),col=cols[k])
+	  }
+	  k <- k+1
+  }
+
+} ## }}} 
 
 
 ##' ## uses HaploSurvival package of github install via devtools
@@ -471,3 +502,7 @@ return(preds)
 ###return(ud)
 ###} ## }}} 
 ###
+
+
+
+
