@@ -283,7 +283,7 @@ hessian <- D2log
 }  else val <- NULL
 
   val <- c(list(Xhap=Xhap,X=X,Haplos=Haplos),val)
-  class(val) <- "haplo.surv.discrete"
+  class(val) <- "survd"
   return(val)
 } ## }}} 
 
@@ -318,14 +318,14 @@ simGlm <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
  }# }}}
 
 ##' @export
-predict.haplo.surv.discrete <- function(Z,hsd,times=1:6,se=FALSE,type="prob")
+predictSurvd <- function(hsd,Z,times=1:6,se=FALSE,type="prob")
 {# {{{
   if (!is.null(Z)) n <- nrow(Z) 
   if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
   Z <- data.frame(Z)
   Z$id <- 1:n
 
-  if (!se) {
+  if (!se) {# {{{{{{
 	  data <- Z
 	  if (!is.null(times)) {
 	     timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
@@ -348,8 +348,8 @@ predict.haplo.surv.discrete <- function(Z,hsd,times=1:6,se=FALSE,type="prob")
 	  if (type=="prob") survt <- 1-survt
 	  if (type=="hazard") survt <- p
 	  pred <- cbind(pred,survt)
-
-  } else {
+# }}}
+  } else {# {{{
     ccc <- hsd$coef
 
     expit <- function(p) exp(p)/(1+exp(p))
@@ -382,7 +382,8 @@ predict.haplo.surv.discrete <- function(Z,hsd,times=1:6,se=FALSE,type="prob")
      preds <- rbind(preds,cmat)
   } 
 
-  }
+  }# }}}
+
 return(preds)
 }# }}}
 
