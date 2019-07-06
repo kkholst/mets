@@ -1621,9 +1621,24 @@ if (3 %in% which) {
 ##' base1 <- base1cumhaz
 ##' base4 <- base4cumhaz
 ##'
-##' iddata <- simMultistateII(10,base1,base1,dr,dr2)
+##' iddata <- simMultistateII(1000,base1,base1,dr,dr2)
+##' dlist(iddata,.~id|id<3,n=0)
 ##'  
-##' dlist(iddata,.~id,n=0)
+##' c3 <- phreg(Surv(start,stop,status==3)~+strata(from),iddata)
+##' c1 <- phreg(Surv(start,stop,status==1)~+1,subset(iddata,from==2))
+##' c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
+##' ###
+##' par(mfrow=c(1,3))
+##' bplot(c3,main="rates 1-> 3 , 2->3")
+##' lines(dr,col=1,lwd=2)
+##' lines(dr2,col=2,lwd=2)
+##' ###
+##' bplot(c1,main="rate 1->2")
+##' lines(base1,lwd=2)
+##' ###
+##' bplot(c2,main="rate 2->1")
+##' lines(base1,lwd=2)
+##'  
 ##' @aliases simMultistateII 
 ##' @export
 simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
@@ -1767,11 +1782,10 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
 		    gap.time=FALSE,max.recurrent=100,
 		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
-  {# {{{
+{# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
-  dhaz <- NULL
-  dhaz2 <- NULL
+  dhaz <- NULL; dhaz2 <- NULL
 
   if (dependence==0) { z <- z1 <- z2 <- zd  <- zd2 <-  rep(1,n) # {{{
      } else if (dependence==1) {
@@ -1814,25 +1828,46 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   haz <- haz2 <- NULL
   ## extend cumulative for cause 2 to full range of cause 1
   if (!is.null(cumhaz2)) {# {{{
-###      cumhaz2 <- rbind(c(0,0),cumhaz2)
-	      if (is.null(haz2)) 
-		      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-	      ### linear extrapolation of mortality using given dhaz or 
+      cumhaz2 <- rbind(c(0,0),cumhaz2)
+      ### linear extrapolation of mortality using given dhaz or 
       if (tail(cumhaz2[,1],1)<max.time) {
-	      cumhaz2 <- rbind(cumhaz2,c(max.time,haz2*max.time)) 
+	      if (is.null(haz2)) 
+	      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
+              cumlast <- tail(death.cumhaz2[,2],1)
+	      timelast <- tail(death.cumhaz2[,1],1)
+              cumhaz2 <- rbind(cumhaz2,
+			  c(max.time,cumlast+dhaz2*(max.time-timelast))) 
        }
   }# }}}
 
   ## extend cumulative for death to full range  of cause 1
   if (!is.null(death.cumhaz)) {# {{{
-###     cumhazd <- rbind(c(0,0),death.cumhaz)
+     cumhazd <- rbind(c(0,0),death.cumhaz)
      if (tail(death.cumhaz[,1],1)<max.time) {
 	      ### linear extrapolation of mortality using given dhaz or 
 	      if (is.null(dhaz)) 
                  dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-              cumhazd <- rbind(cumhazd,c(max.time,dhaz*max.time)) 
+                 cumlast <- tail(death.cumhaz[,2],1)
+		 timelast <- tail(death.cumhaz[,1],1)
+                 cumhazd <- rbind(cumhazd,
+			  c(max.time,cumlast+dhaz*(max.time-timelast))) 
        }
   }# }}}
+
+ ## extend cumulative for death to full range  of cause 1
+  if (!is.null(death.cumhaz2)) {# {{{
+     cumhazd2 <- rbind(c(0,0),death.cumhaz2)
+     if (tail(death.cumhaz2[,1],1)<max.time) {
+	      ### linear extrapolation of mortality using given dhaz or 
+	      if (is.null(dhaz2)) 
+                 dhaz2 <- tail(death.cumhaz2[,2],1)/tail(death.cumhaz2[,1],1)
+                 cumlast <- tail(death.cumhaz2[,2],1)
+		 timelast <- tail(death.cumhaz2[,1],1)
+                 cumhazd2 <- rbind(cumhazd2,
+			  c(max.time,cumlast+dhaz2*(max.time-timelast))) 
+       }
+  }# }}}
+
 
   tall <- timereg::cause.pchazard.sim(cumhaz,cumhazd,z1,zd)
   tall$id <- 1:n
@@ -1844,12 +1879,14 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   tall <- dtransform(tall,death=1,status==3)
   tall <- dtransform(tall,status=2,status==1)
   deadid <- which(tall$status==3)
-  ## id's that are dead
-  idsd <- tall$id %in% deadid
-  tt <- tall[!idsd,]
   tall$from <- 1
   tall$to <- tall$status
-
+  ## id's that are dead
+  idsd <- tall$id %in% deadid
+  ## go furhter with those that are not yet dead 
+  tt <- tall[!idsd,]
+  ## also check that we are before max.time
+  tt <- subset(tt,tt$time<max.time)
 
 ###  
   i <- 1; 
@@ -1879,8 +1916,11 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  idsd <- tt1$id %in% deadid
 	  ### add to data 
 	  tall <- rbind(tall,tt1,row.names=NULL)
+
 	  ### those that are still under risk 
 	  tt <- tt1[!idsd,]
+	  ## also keep only those before max.time
+          tt <- subset(tt,time<max.time)
 		  
 	  } else { ## in state 1
 	  ## out of 1 for those in 1
@@ -1893,6 +1933,11 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  tt1 <- dtransform(tt1,status=2,status==1)
 	  tt1$from <- 1
 	  tt1$to <- tt1$status
+	  tt1$id <-  tt$id
+
+	  ### add to data 
+	  tall <- rbind(tall,tt1,row.names=NULL)
+
 	  ## take id from tt
 	  tt1$id <-  tt$id
 	  deadid <- which(tt1$status==3)
@@ -1900,11 +1945,10 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  ## id's that are dead
 	  idsd <- tt1$id %in% deadid
 
-	  ### add to data 
-	  tall <- rbind(tall,tt1,row.names=NULL)
-
 	  ### those that are still under risk 
 	  tt <- tt1[!idsd,]
+	  ### also only keep those before max.time
+          tt <- subset(tt,time<max.time)
 	  }
 
   }  # }}}
