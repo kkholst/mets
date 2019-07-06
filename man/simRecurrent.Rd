@@ -8,6 +8,7 @@
 \alias{recurrentMarginalgam}
 \alias{squareintHdM}
 \alias{addCums}
+\alias{simMultistate}
 \title{Simulation of recurrent events data based on cumulative hazards}
 \usage{
 simRecurrent(n, cumhaz, death.cumhaz = NULL, cumhaz2 = NULL,
