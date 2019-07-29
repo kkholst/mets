@@ -21,6 +21,10 @@ and [[http://cran.r-project.org/bin/macosx/tools/][development tools]] (+Xcode) 
 #+BEGIN_SRC R :exports both :eval never
 devtools::install_github("kkholst/mets")
 #+END_SRC
+or to get development version 
+#+BEGIN_SRC R :exports both :eval never
+devtools::install_github("kkholst/mets",ref="develop")
+#+END_SRC
 or download the source 
 #+BEGIN_EXAMPLE
 git@github.com:kkholst/mets.git
