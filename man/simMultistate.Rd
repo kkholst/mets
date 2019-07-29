@@ -5,9 +5,10 @@
 \alias{simMultistateII}
 \title{Simulation of illness-death model}
 \usage{
-simMultistate(n, cumhaz, cumhaz2, death.cumhaz = NULL,
-  gap.time = FALSE, max.recurrent = 100, dhaz = NULL, haz2 = NULL,
-  dependence = 0, var.z = 0.22, cor.mat = NULL, cens = NULL, ...)
+simMultistate(n, cumhaz, cumhaz2, death.cumhaz, death.cumhaz2, rr = NULL,
+  rr2 = NULL, rd = NULL, rd2 = NULL, gap.time = FALSE,
+  max.recurrent = 100, dependence = 0, var.z = 0.22,
+  cor.mat = NULL, cens = NULL, ...)
 }
 \arguments{
 \item{n}{number of id's}
@@ -22,10 +23,6 @@ simMultistate(n, cumhaz, cumhaz2, death.cumhaz = NULL,
 
 \item{max.recurrent}{limits number recurrent events to 100}
 
-\item{dhaz}{rate for death hazard if it is extended to time-range of first event}
-
-\item{haz2}{rate of second cause  if it is extended to time-range of first event}
-
 \item{dependence}{0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death}
 
 \item{var.z}{variance of random effects}
@@ -35,6 +32,10 @@ simMultistate(n, cumhaz, cumhaz2, death.cumhaz = NULL,
 \item{cens}{rate of censoring exponential distribution}
 
 \item{...}{Additional arguments to lower level funtions}
+
+\item{dhaz}{rate for death hazard if it is extended to time-range of first event}
+
+\item{haz2}{rate of second cause  if it is extended to time-range of first event}
 }
 \description{
 Simulation of illness-death model
@@ -58,7 +59,7 @@ dr2[,2] <- 1.5*drcumhaz[,2]
 base1 <- base1cumhaz
 base4 <- base4cumhaz
 
-iddata <- simMultistateII(1000,base1,base1,dr,dr2)
+iddata <- simMultistate(1000,base1,base1,dr,dr2)
 dlist(iddata,.~id|id<3,n=0)
  
 c3 <- phreg(Surv(start,stop,status==3)~+strata(from),iddata)
