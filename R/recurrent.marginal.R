@@ -1061,42 +1061,6 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 
 ##' @export
 tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE)
-{# {{{
-
-   if (!is.null(id)) id <- data[,id]
-   ord <- 1:nrow(data)
-   stat <- data[,status]
-   time <- data[,stop]
-   dupexit <- duplicated(time)
-   time1 <- data[stat==1,stop]
-   time0 <- data[stat!=1,stop]
-   lt0 <- length(time0)
-   ddp <- duplicated(c(time0,time1))
-   if (exit.unique) ties <-ddp[(lt0+1):nrow(data)] else ties <- duplicated(c(time1))
-   nties <- sum(ties)
-   ordties <- ord[stat==1][ties]
-   if (is.null(ddt)) {
-	   abd <- abs(diff(data[,stop]))
-	   abd <- min(abd[abd>0])
-	   ddt <- abd*0.5
-   }
-   time[ordties] <- time[ordties]+runif(nties)*ddt
-
-   data[ordties,stop] <- time[ordties]
-   ties <- (ord %in% ordties)
-   if (!is.null(id)) {
-   lagties <- dlag(ties)
-   ### also move next start time if id the same 
-   change.start <- lagties==TRUE & id==dlag(id)
-   change.start[is.na(change.start)] <- FALSE
-   ocs <- ord[change.start]
-   data[ocs,start] <- data[ocs-1,stop]
-   data[,"tiebreaker"] <- FALSE
-   data[ocs,"tiebreaker"] <- TRUE
-   }
-   
-   return(data)
- } # }}}
 
 ##' Simulation of recurrent events data based on cumulative hazards 
 ##'
@@ -1679,7 +1643,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
       } else stop("dependence 0-3"); # }}}
 
   ## covariate adjustment 
-  if (is.null(rr))   rr <- z1; 
+  if (is.null(rr))  rr <- z1; 
   if (is.null(rr2)) rr2 <- z2; 
   if (is.null(rd))  rd  <- zd; 
   if (is.null(rd2)) rd2 <- zd2; 
@@ -1734,8 +1698,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
        }
   }# }}}
 
-
-  tall <- timereg::cause.pchazard.sim(cumhaz,cumhazd,z1,zd)
+  tall <- timereg::cause.pchazard.sim(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
 ###
 ### fixing the first time to event
@@ -1744,7 +1707,8 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   tall <- dtransform(tall,status=3,status==2)
   tall <- dtransform(tall,death=1,status==3)
   tall <- dtransform(tall,status=2,status==1)
-  deadid <- which(tall$status==3)
+  ### dead or censored
+  deadid <- which(tall$status==3 | tall$status==0)
   tall$from <- 1
   tall$to <- tall$status
   ## id's that are dead
@@ -1760,14 +1724,14 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  i <- i+1
 	  nn <- nrow(tt)
 
-	  z1r <- z1[tt$id]
-	  zdr <- zd[tt$id]
-	  z2r <- z2[tt$id]
-	  zd2r <- zd2[tt$id]
+	  z1r <- rr[tt$id]
+	  zdr <- rd[tt$id]
+	  z2r <- rr2[tt$id]
+	  zd2r <- rd2[tt$id]
 
 	  if (i%%2==0) { ## in state 2
 	  ## out of 2 for those in 2
-          tt1 <- timereg::cause.pchazard.sim(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time)
+          tt1 <- timereg::cause.pchazard.sim(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 1
 	  tt1 <- dtransform(tt1,status=3,status==2)
@@ -1790,7 +1754,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		  
 	  } else { ## in state 1
 	  ## out of 1 for those in 1
-          tt1 <- timereg::cause.pchazard.sim(cumhaz,cumhazd,z1r,zdr,entry=tt$time)
+          tt1 <- timereg::cause.pchazard.sim(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
 
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 2
