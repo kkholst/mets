@@ -1791,6 +1791,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   attr(tall,"death.cumhaz2") <- cumhazd2
   attr(tall,"cumhaz") <- cumhaz
   attr(tall,"cumhaz2") <- cumhaz2
+  attr(tall,"cens.cumhaz") <- cens
   attr(tall,"z") <- z
 
   return(tall)
