@@ -411,7 +411,7 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
           if (se) {
 	  loweri <- ds$lower[ds$id==i]
 	  upperi <- ds$upper[ds$id==i]
-	  mets:::plot.conf.region(timei,cbind(loweri,upperi),col=cols[k])
+	  plotConfRegion(timei,cbind(loweri,upperi),col=cols[k])
 	  }
 	  k <- k+1
   }
