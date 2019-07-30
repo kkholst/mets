@@ -4,6 +4,7 @@
 \alias{basehazplot.phreg}
 \alias{bplot}
 \alias{basecumhaz}
+\alias{plotConfRegion}
 \title{Plotting the baslines of stratified Cox}
 \usage{
 basehazplot.phreg(x, se = FALSE, time = NULL, add = FALSE,

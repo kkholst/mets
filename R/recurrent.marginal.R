@@ -91,8 +91,8 @@
 ##'  out <- recurrentMarginal(xr,dr,km=TRUE)
 ##'  bplot(out,se=TRUE,ylab="cumulative incidence")
 ##' 
+##' @aliases tie.breaker recmarg
 ##' @export
-##' @aliases recurrentMarginal tie.breaker  recmarg
 recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 {# {{{
   xr <- recurrent
@@ -1061,6 +1061,43 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 
 ##' @export
 tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE)
+{# {{{
+
+   if (!is.null(id)) id <- data[,id]
+   ord <- 1:nrow(data)
+   stat <- data[,status]
+   time <- data[,stop]
+   dupexit <- duplicated(time)
+   time1 <- data[stat==1,stop]
+   time0 <- data[stat!=1,stop]
+   lt0 <- length(time0)
+   ddp <- duplicated(c(time0,time1))
+   if (exit.unique) ties <-ddp[(lt0+1):nrow(data)] else ties <- duplicated(c(time1))
+   nties <- sum(ties)
+   ordties <- ord[stat==1][ties]
+   if (is.null(ddt)) {
+	   abd <- abs(diff(data[,stop]))
+	   abd <- min(abd[abd>0])
+	   ddt <- abd*0.5
+   }
+   time[ordties] <- time[ordties]+runif(nties)*ddt
+
+   data[ordties,stop] <- time[ordties]
+   ties <- (ord %in% ordties)
+   if (!is.null(id)) {
+   lagties <- dlag(ties)
+   ### also move next start time if id the same 
+   change.start <- lagties==TRUE & id==dlag(id)
+   change.start[is.na(change.start)] <- FALSE
+   ocs <- ord[change.start]
+   data[ocs,start] <- data[ocs-1,stop]
+   data[,"tiebreaker"] <- FALSE
+   data[ocs,"tiebreaker"] <- TRUE
+   }
+   
+   return(data)
+ } # }}}
+
 
 ##' Simulation of recurrent events data based on cumulative hazards 
 ##'
@@ -1088,7 +1125,6 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##'
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
@@ -1133,8 +1169,8 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'  par(mfrow=c(2,2))
 ##'  showfitsim(causes=1,rr,dr,base1,base1)
 ##'
+##' @aliases showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 recurrentMarginalgam squareintHdM addCums simMultistate
 ##' @export
-##' @aliases simRecurrent showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 recurrentMarginalgam squareintHdM addCums simMultistate
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
 			    gap.time=FALSE,
 			    max.recurrent=100,dhaz=NULL,haz2=NULL,
@@ -1193,11 +1229,11 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
   }# }}}
 
 ### recurrent first time
-  tall <- timereg::pc.hazard(cumhaz,z1)
+  tall <- timereg::rchaz(cumhaz,z1)
   tall$id <- 1:n
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::pc.hazard(cumhazd,zd)
+	  timed   <- timereg::rchaz(cumhazd,zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
   } else { tall$dtime <- max.time; tall$fdeath <- 0; cumhazd <- NULL }
@@ -1213,7 +1249,7 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
   while (any(tt$time<tt$dtime) & i < max.recurrent) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
-          tt <- timereg::pc.hazard(cumhaz,z1[still$id],entry=still$time)
+          tt <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=1,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
@@ -1288,11 +1324,11 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
   cumhaz <- cbind(times,cumhaz1+cumhaz2)
 
 ### recurrent first time
-  tall <- timereg::pc.hazard(cumhaz,z)
+  tall <- timereg::rchaz(cumhaz,z)
   tall$id <- 1:n
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::pc.hazard(cumhazd,n)
+	  timed   <- timereg::rchaz(cumhazd,n)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
   } else { tall$dtime <- max.time; tall$fdeath <- 0; cumhazd <- NULL }
@@ -1307,7 +1343,7 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
   while (any(tt$time<tt$dtime) & i < max.recurrent) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
-          tt <- timereg::pc.hazard(cumhaz,z[still$id],entry=still$time)
+          tt <- timereg::rchaz(cumhaz,z[still$id],entry=still$time)
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=1,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
@@ -1444,8 +1480,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 
 
 ### recurrent first time
-  tall1 <- timereg::pc.hazard(cumhaz,z1)
-  tall2 <- timereg::pc.hazard(cumhaz2,z2)
+  tall1 <- timereg::rchaz(cumhaz,z1)
+  tall2 <- timereg::rchaz(cumhaz2,z2)
   tall <- tall1 
   tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
   tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -1453,7 +1489,7 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::pc.hazard(cumhazd,zd)
+	  timed   <- timereg::rchaz(cumhazd,zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -1488,8 +1524,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::pc.hazard(cumhaz,z1[still$id],entry=still$time)
-          tt2 <- timereg::pc.hazard(cumhaz2,z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
+          tt2 <- timereg::rchaz(cumhaz2,z2[still$id],entry=still$time)
 	  tt <- tt1
 ###          drename(tt1,paste(names(tt1),"1",sep="")) <- ~.
 ###          drename(tt2,paste(names(tt2),"2",sep="")) <- ~.
@@ -1607,7 +1643,6 @@ if (3 %in% which) {
 ##'  
 ##' @aliases simMultistateII 
 ##' @export
-##' @export
 simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
 		    gap.time=FALSE,max.recurrent=100,
@@ -1698,7 +1733,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
        }
   }# }}}
 
-  tall <- timereg::cause.pchazard.sim(cumhaz,cumhazd,rr,rd,cens=cens)
+  tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
 ###
 ### fixing the first time to event
@@ -1731,7 +1766,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
 	  if (i%%2==0) { ## in state 2
 	  ## out of 2 for those in 2
-          tt1 <- timereg::cause.pchazard.sim(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
+          tt1 <- timereg::rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 1
 	  tt1 <- dtransform(tt1,status=3,status==2)
@@ -1740,9 +1775,9 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  tt1$to <- tt1$status
 	  ## take id from tt
 	  tt1$id <-  tt$id
-	  deadid <- which(tt1$status==3)
+          deadid <- which(tt1$status==3 | tt1$status==0)
 	  deadid <- tt1$id[deadid]
-	  ## id's that are dead
+	  ## id's that are dead or censored
 	  idsd <- tt1$id %in% deadid
 	  ### add to data 
 	  tall <- rbind(tall,tt1,row.names=NULL)
@@ -1754,7 +1789,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		  
 	  } else { ## in state 1
 	  ## out of 1 for those in 1
-          tt1 <- timereg::cause.pchazard.sim(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
+          tt1 <- timereg::rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
 
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 2
@@ -1770,9 +1805,9 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
 	  ## take id from tt
 	  tt1$id <-  tt$id
-	  deadid <- which(tt1$status==3)
+          deadid <- which(tt1$status==3 | tt1$status==0)
 	  deadid <- tt1$id[deadid]
-	  ## id's that are dead
+	  ## id's that are dead or censored 
 	  idsd <- tt1$id %in% deadid
 
 	  ### those that are still under risk 
@@ -1797,6 +1832,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   return(tall)
   }# }}}
 
+##' @export
 simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 		    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
 		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
@@ -1856,8 +1892,8 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   }# }}}
 
 ### recurrent first time
-  tall1 <- timereg::pc.hazard(cumhaz,z1)
-###  tall2 <- timereg::pc.hazard(cumhaz2,z2)
+  tall1 <- timereg::rchaz(cumhaz,z1)
+###  tall2 <- timereg::rchaz(cumhaz2,z2)
   tall <- tall1 
 ###  tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
 ###  tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -1865,7 +1901,7 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 ###  tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::pc.hazard(cumhazd,zd)
+	  timed   <- timereg::rchaz(cumhazd,zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -1900,8 +1936,8 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::pc.hazard(cumhaz,z1[still$id],entry=still$time)
-          tt2 <- timereg::pc.hazard(cumhaz2,z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
+          tt2 <- timereg::rchaz(cumhaz2,z2[still$id],entry=still$time)
 	  tt2$status <- tt2$status*2
 	  ## go to 2 if in 1, otherwise go to 2
 	  tt <- rbind(tt1[still$status==2,],tt2[still$status==1,])
@@ -2070,8 +2106,8 @@ zs <- cbind(z1,z2,zd)
   }# }}}
 
 ### recurrent first time
-  tall1 <- timereg::pc.hazard(cumhaz,rr=z1)
-  tall2 <- timereg::pc.hazard(cumhaz2,rr=z2)
+  tall1 <- timereg::rchaz(cumhaz,rr=z1)
+  tall2 <- timereg::rchaz(cumhaz2,rr=z2)
   tall <- tall1 
   tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
   tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -2079,7 +2115,7 @@ zs <- cbind(z1,z2,zd)
   tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {# {{{
-	  timed   <- timereg::pc.hazard(cumhazd,rr=zd)
+	  timed   <- timereg::rchaz(cumhazd,rr=zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -2111,8 +2147,8 @@ zs <- cbind(z1,z2,zd)
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::pc.hazard(cumhaz,rr=z1[still$id],entry=still$time)
-          tt2 <- timereg::pc.hazard(cumhaz2,rr=z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,rr=z1[still$id],entry=still$time)
+          tt2 <- timereg::rchaz(cumhaz2,rr=z2[still$id],entry=still$time)
 	  tt <- tt1
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)

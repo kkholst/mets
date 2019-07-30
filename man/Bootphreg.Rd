@@ -51,9 +51,9 @@ wild bootstrap for uniform bands for Cox models
  cif.true <- (1-exp(-out$time))*.5
  with(out,plot(time,cif,ylim=c(0,1),type="l"))
  lines(out$time,cif.true,col=3)
- with(out,mets:::plot.conf.region(time,band.EE,col=1))
- with(out,mets:::plot.conf.region(time,band.EE.log,col=3))
- with(out,mets:::plot.conf.region(time,band.EE.log.o,col=2))
+ with(out,plotConfRegion(time,band.EE,col=1))
+ with(out,plotConfRegion(time,band.EE.log,col=3))
+ with(out,plotConfRegion(time,band.EE.log.o,col=2))
 
 }
 \references{

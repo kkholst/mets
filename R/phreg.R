@@ -1344,8 +1344,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param robust to use robust standard errors if possible
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @export
-##' @aliases basehazplot.phreg  bplot  basecumhaz
+##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion 
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -1466,7 +1465,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 }# }}}
 
 ##' @export
-plot.conf.region <- function(x,band,add=TRUE,polygon=TRUE,cols=1,...)
+plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,cols=1,...)
 {# {{{
 nl <- cbind(x,band[,1])
 ul <- cbind(x,band[,2])
