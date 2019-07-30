@@ -1651,7 +1651,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 {# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
-  dhaz <- NULL; dhaz2 <- NULL
+  status <- dhaz <- NULL; dhaz2 <- NULL
 
   if (dependence==0) { z <- z1 <- z2 <- zd  <- zd2 <-  rep(1,n) # {{{
      } else if (dependence==1) {

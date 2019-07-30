@@ -1465,7 +1465,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 }# }}}
 
 ##' @export
-plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,cols=1,...)
+plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,...)
 {# {{{
 nl <- cbind(x,band[,1])
 ul <- cbind(x,band[,2])
@@ -1480,7 +1480,7 @@ ul <- cbind(x,band[,2])
          tt <- c(ttp,rev(ttp))
          yy <- c(rep(nl[-ll,2],each=rep(2)),rep(rev(ul[-ll,2]),each=2))
          col.alpha<-0.1
-         col.ci<-cols[1]
+         col.ci<-col[1]
          col.trans <- sapply(col.ci, FUN=function(x) 
            do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
 	 polygon(tt,yy,lty=0,col=col.trans,...)
