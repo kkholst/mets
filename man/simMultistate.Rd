@@ -64,15 +64,20 @@ dr2 <- drcumhaz
 dr2[,2] <- 1.5*drcumhaz[,2]
 base1 <- base1cumhaz
 base4 <- base4cumhaz
+cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
-iddata <- simMultistate(1000,base1,base1,dr,dr2)
+iddata <- simMultistate(100,base1,base1,dr,dr2,cens=cens)
 dlist(iddata,.~id|id<3,n=0)
  
+### estimating rates from simulated data  
+c0 <- phreg(Surv(start,stop,status==0)~+1,iddata)
 c3 <- phreg(Surv(start,stop,status==3)~+strata(from),iddata)
 c1 <- phreg(Surv(start,stop,status==1)~+1,subset(iddata,from==2))
 c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
 ###
-par(mfrow=c(1,3))
+par(mfrow=c(2,3))
+bplot(c0)
+lines(cens,col=2) 
 bplot(c3,main="rates 1-> 3 , 2->3")
 lines(dr,col=1,lwd=2)
 lines(dr2,col=2,lwd=2)
