@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{simMultistate}
 \alias{simMultistate}
-\alias{simMultistateII}
+\alias{extendCums}
 \title{Simulation of illness-death model}
 \usage{
 simMultistate(n, cumhaz, cumhaz2, death.cumhaz, death.cumhaz2, rr = NULL,
