@@ -9,6 +9,7 @@
     - with confidenence bands cumulative incidence for two cox's 
   - Piecewise constant hazard: rpch, ppch
   - Test-version of multinomial regression model (via phreg)
+  - simulation for illness-death model simMultistate 
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
