@@ -1194,30 +1194,18 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
       } # }}}
 
   cumhaz <- rbind(c(0,0),cumhaz)
+
+  ## range max of cumhaz and cumhaz2 
+  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
+  cumhaz <- out$cumA
+  cumhaz2 <- out$cumB
+  ## extend cumulative for death to full range  of cause 1
+  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
+  cumhazd <- out$cumB
+
   ll <- nrow(cumhaz)
   max.time <- tail(cumhaz[,1],1)
 
-  ## extend cumulative for cause 2 to full range of cause 1
-  if (!is.null(cumhaz2)) {# {{{
-      cumhaz2 <- rbind(c(0,0),cumhaz2)
-	      if (is.null(haz2)) 
-		      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-	      ### linear extrapolation of mortality using given dhaz or 
-      if (tail(cumhaz2[,1],1)<max.time) {
-	      cumhaz2 <- rbind(cumhaz2,c(max.time,haz2*max.time)) 
-       }
-  }# }}}
-
-  ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {# {{{
-      cumhazd <- rbind(c(0,0),death.cumhaz) 
-     if (tail(death.cumhaz[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-	      if (is.null(dhaz)) 
-	        dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-              cumhazd <- rbind(cumhazd,c(max.time,dhaz*max.time)) 
-       } 
-  }# }}}
 
   ## sum two cumulatives to get combined events 
   if (!is.null(cumhaz2)) {# {{{
@@ -1453,31 +1441,17 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
       } else stop("dependence 0-3"); # }}}
 
   cumhaz <- rbind(c(0,0),cumhaz)
+
+  ## range max of cumhaz and cumhaz2 
+  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
+  cumhaz <- out$cumA
+  cumhaz2 <- out$cumB
+  ## extend cumulative for death to full range  of cause 1
+  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
+  cumhazd <- out$cumB
+
   ll <- nrow(cumhaz)
   max.time <- tail(cumhaz[,1],1)
-
-  ## extend cumulative for cause 2 to full range of cause 1
-  if (!is.null(cumhaz2)) {# {{{
-      cumhaz2 <- rbind(c(0,0),cumhaz2)
-	      if (is.null(haz2)) 
-		      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-	      ### linear extrapolation of mortality using given dhaz or 
-      if (tail(cumhaz2[,1],1)<max.time) {
-	      cumhaz2 <- rbind(cumhaz2,c(max.time,haz2*max.time)) 
-       }
-  }# }}}
-
-  ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {# {{{
-     cumhazd <- rbind(c(0,0),death.cumhaz)
-     if (tail(death.cumhaz[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-	      if (is.null(dhaz)) 
-                 dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-              cumhazd <- rbind(cumhazd,c(max.time,dhaz*max.time)) 
-       }
-  }# }}}
-
 
 ### recurrent first time
   tall1 <- timereg::rchaz(cumhaz,z1)
@@ -1647,7 +1621,7 @@ if (3 %in% which) {
 ##' bplot(c2,main="rate 2->1")
 ##' lines(base1,lwd=2)
 ##'  
-##' @aliases simMultistateII 
+##' @aliases extendCums 
 ##' @export
 simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
@@ -1698,48 +1672,20 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   death.cumhaz2 <- rbind(c(0,0),death.cumhaz2)
 
   haz <- haz2 <- NULL
-  ## extend cumulative for cause 2 to full range of cause 1
-  if (!is.null(cumhaz2)) {# {{{
-      cumhaz2 <- rbind(c(0,0),cumhaz2)
-      ### linear extrapolation of mortality using given dhaz or 
-      if (tail(cumhaz2[,1],1)<max.time) {
-	      if (is.null(haz2)) 
-	      dhaz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-              cumlast <- tail(cumhaz2[,2],1)
-	      timelast <- tail(cumhaz2[,1],1)
-              cumhaz2 <- rbind(cumhaz2,c(max.time,cumlast+dhaz2*(max.time-timelast))) 
-       }
-  }# }}}
-
+  ## range max of cumhaz and cumhaz2 
+  out <- extendCums(cumhaz,cumhaz2,both=TRUE)
+  cumhaz <- out$cumA
+  cumhaz2 <- out$cumB
   ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {# {{{
-     cumhazd <- rbind(c(0,0),death.cumhaz)
-     if (tail(death.cumhaz[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-	      if (is.null(dhaz)) 
-                 dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-                 cumlast <- tail(death.cumhaz[,2],1)
-		 timelast <- tail(death.cumhaz[,1],1)
-                 cumhazd <- rbind(cumhazd,c(max.time,cumlast+dhaz*(max.time-timelast))) 
-       }
-  }# }}}
-
+  out <- extendCums(cumhaz,death.cumhaz)
+  cumhazd <- out$cumB
  ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz2)) {# {{{
-     cumhazd2 <- rbind(c(0,0),death.cumhaz2)
-     if (tail(death.cumhaz2[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-	      if (is.null(dhaz2)) 
-                 dhaz2 <- tail(death.cumhaz2[,2],1)/tail(death.cumhaz2[,1],1)
-                 cumlast <- tail(death.cumhaz2[,2],1)
-		 timelast <- tail(death.cumhaz2[,1],1)
-                 cumhazd2 <- rbind(cumhazd2,c(max.time,cumlast+dhaz2*(max.time-timelast))) 
-       }
-  }# }}}
+  out <- extendCums(cumhaz,death.cumhaz2)
+  cumhazd2 <- out$cumB
 
   tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
-### fixing the first time to event
+  ### fixing the first time to event
   tall$death <- 0
   ### cause 2 is death state 3, cause 1 is state 2
   tall <- dtransform(tall,status=3,status==2)
@@ -1834,13 +1780,14 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   return(tall)
   }# }}}
 
-##' @export
 simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
-		    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
+		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
+		    gap.time=FALSE,max.recurrent=100,dhaz=NULL,
 		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
   {# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
+  status <- NULL; 
 
   if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
      } else if (dependence==1) {
@@ -1867,50 +1814,37 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 ###	      print(cor(z))
       } else stop("dependence 0-3"); # }}}
 
-  cumhaz <- rbind(c(0,0),cumhaz)
-  ll <- nrow(cumhaz)
-  max.time <- tail(cumhaz[,1],1)
+  ## covariate adjustment 
+  if (is.null(rr))  rr <- z1; 
+  if (is.null(rr2)) rr2 <- z2; 
+  if (is.null(rd))  rd  <- zd; 
+  if (is.null(rd2)) rd2 <- zd2; 
 
-  ## extend cumulative for cause 2 to full range of cause 1
-  if (!is.null(cumhaz2)) {# {{{
-      cumhaz2 <- rbind(c(0,0),cumhaz2)
-	      if (is.null(haz2)) 
-		      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-	      ### linear extrapolation of mortality using given dhaz or 
-      if (tail(cumhaz2[,1],1)<max.time) {
-	      cumhaz2 <- rbind(cumhaz2,c(max.time,haz2*max.time)) 
-       }
-  }# }}}
+  ll <- nrow(cumhaz)
+  ### extend of cumulatives
+  max.time <- tail(cumhaz[,1],1)
+  cumhaz <- rbind(c(0,0),cumhaz)
+  cumhaz2 <- rbind(c(0,0),cumhaz2)
+  death.cumhaz <- rbind(c(0,0),death.cumhaz)
+
+  ## range max of cumhaz and cumhaz2 
+  out <- extendCums(cumhaz,cumhaz2,both=TRUE)
+  cumhaz <- out$cumA
+  cumhaz2 <- out$cumB
 
   ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {# {{{
-     cumhazd <- rbind(c(0,0),death.cumhaz)
-     if (tail(death.cumhaz[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-	      if (is.null(dhaz)) 
-                 dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-              cumhazd <- rbind(cumhazd,c(max.time,dhaz*max.time)) 
-       }
-  }# }}}
+  out <- extendCums(cumhaz,death.cumhaz)
+  cumhazd <- out$cumB
 
 ### recurrent first time
   tall1 <- timereg::rchaz(cumhaz,z1)
-###  tall2 <- timereg::rchaz(cumhaz2,z2)
   tall <- tall1 
-###  tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
-###  tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
   tall$id <- 1:n
-###  tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::rchaz(cumhazd,zd)
+	  timed   <- timereg::simrchaz(cumhazd,zd,cens=cens)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
-	  if (!is.null(cens)) { 
-             ctime <- rexp(n)/cens
-	     tall$fdeath[tall$dtime>ctime] <- 0; 
-	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
-	  }
   } else { 
 	  tall$dtime <- max.time; 
 	  tall$fdeath <- 0; 
@@ -1928,11 +1862,8 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   tall <- dtransform(tall,status=0,time>dtime)
   tall <- dtransform(tall,time=dtime,time>dtime)
   tt <- tall
-  ### setting aside memory 
   tt1 <- tt2 <- tt
-###  gemsim <- as.data.frame(matrix(0,max.recurrent*n,ncol(tall)))
-###  names(gemsim) <- names(tall)
-###  gemsim[1:n,] <- tall; nrr <- n
+
   i <- 1; 
   while (any(tt$time<tt$dtime) & i < max.recurrent) {
 	  i <- i+1
@@ -1943,22 +1874,14 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 	  tt2$status <- tt2$status*2
 	  ## go to 2 if in 1, otherwise go to 2
 	  tt <- rbind(tt1[still$status==2,],tt2[still$status==1,])
-###          drename(tt1,paste(names(tt1),"1",sep="")) <- ~.
-###          drename(tt2,paste(names(tt2),"2",sep="")) <- ~.
-###          tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
-###          tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
-###	  tt$rr2 <- tt2$rr
-###
+           ###
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=fdeath,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
 	  tt <- dtransform(tt,time=dtime,time>dtime)
 	  nt <- nrow(tt)
-###	  gemsim[(nrr+1):(nrr+nt),] <- tt
 	  tall <- rbind(tall,tt[1:nn,],row.names=NULL)
-###	  nrr <- nrr+nt
   }
-###  tall <- gemsim[1:nrr,]
   dsort(tall) <- ~id+entry+time
   tall$start <- tall$entry
   tall$stop  <- tall$time
@@ -1972,17 +1895,37 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   }# }}}
 
 ##' @export
-extendCums <- function(cumB,cumA)
+extendCums <- function(cumA,cumB,both=TRUE,hazb=NULL,haza=NULL)
 {# {{{
- times <- sort(unique(c(cumB[,1],cumA[,1])))
- times <- times[times<max]
- cumBjx <- lin.approx(times,cumB,x=1)
- cumAjx <- lin.approx(times,cumA,x=1)
- cumBA <- cumBjx+cumAjx
- return(cbind(times,cumBA))
+  max1 <- tail(cumA[,1],1)
+  max2 <- tail(cumB[,1],1)
+  ## extend to max of both or max of cumA
+  if (both) mmax <- max(max1,max2) else mmax <- max1
+
+  ## extend cumulative for cause 2 to full range of cause 1
+  cumB <- rbind(c(0,0),cumB)
+  ### linear extrapolation of mortality using given dhaz or 
+  if (tail(cumB[,1],1)<mmax) {
+      if (is.null(hazb)) hazb <- tail(cumB[,2],1)/tail(cumB[,1],1)
+      cumlast <- tail(cumB[,2],1)
+      timelast <- tail(cumB[,1],1)
+      cumB <- rbind(cumB,c(mmax,cumlast+hazb*(mmax-timelast))) 
+  }
+
+  if (both) { ## extend only cumA if both is TRUE
+  ## extend cumulative for cause 2 to full range of cause 1
+  cumA <- rbind(c(0,0),cumA)
+  ### linear extrapolation of mortality using given dhaz or 
+  if (tail(cumA[,1],1)<mmax) {
+      if (is.null(haza)) haza <- tail(cumA[,2],1)/tail(cumA[,1],1)
+      cumlast <- tail(cumA[,2],1)
+      timelast <- tail(cumA[,1],1)
+      cumA <- rbind(cumA,c(mmax,cumlast+haza*(mmax-timelast))) 
+  }
+  }
+
+  return(list(cumA=cumA,cumB=cumB))
 }# }}}
-
-
 
 ##' Simulation of recurrent events data based on cumulative hazards: Two-stage model  
 ##'
@@ -2097,26 +2040,16 @@ zs <- cbind(z1,z2,zd)
  cumhaz2 <- rbind(c(0,0),cumhaz2)
  death.cumhaz <- rbind(c(0,0),death.cumhaz)
 
- ## extend cumulative for cause 2 to full range of cause 1
-  if (!is.null(cumhaz2)) {# {{{
-      cumhaz2 <- rbind(c(0,0),cumhaz2)
-		      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-	      ### linear extrapolation of mortality using given dhaz or 
-      if (tail(cumhaz2[,1],1)<max.time) {
-	      cumhaz2 <- rbind(cumhaz2,c(max.time,haz2*max.time)) 
-       }
-  }# }}}
-
+## range max of cumhaz and cumhaz2 
+  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
+  cumhaz <- out$cumA
+  cumhaz2 <- out$cumB
   ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {# {{{
-     cumhazd <- rbind(c(0,0),death.cumhaz)
-     if (tail(death.cumhaz[,1],1)<max.time) {
-	      ### linear extrapolation of mortality using given dhaz or 
-###	      if (is.null(dhaz)) 
-                 dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
-              cumhazd <- rbind(cumhazd,c(max.time,dhaz*max.time)) 
-       }
-  }# }}}
+  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
+  cumhazd <- out$cumB
+
+
+  max.time <- tail(cumhaz[,1],1)
 
 ### recurrent first time
   tall1 <- timereg::rchaz(cumhaz,rr=z1)
@@ -2188,7 +2121,6 @@ zs <- cbind(z1,z2,zd)
 
   return(tall)
   }# }}}
-
 
 
 ##' Counts the number of previous events of two types for recurrent events processes
