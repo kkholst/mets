@@ -1690,6 +1690,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   if (is.null(rd2)) rd2 <- zd2; 
 
   ll <- nrow(cumhaz)
+  ### extend of cumulatives
   max.time <- tail(cumhaz[,1],1)
   cumhaz <- rbind(c(0,0),cumhaz)
   cumhaz2 <- rbind(c(0,0),cumhaz2)
@@ -1703,11 +1704,10 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
       ### linear extrapolation of mortality using given dhaz or 
       if (tail(cumhaz2[,1],1)<max.time) {
 	      if (is.null(haz2)) 
-	      haz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
-              cumlast <- tail(death.cumhaz2[,2],1)
-	      timelast <- tail(death.cumhaz2[,1],1)
-              cumhaz2 <- rbind(cumhaz2,
-			  c(max.time,cumlast+dhaz2*(max.time-timelast))) 
+	      dhaz2 <- tail(cumhaz2[,2],1)/tail(cumhaz2[,1],1)
+              cumlast <- tail(cumhaz2[,2],1)
+	      timelast <- tail(cumhaz2[,1],1)
+              cumhaz2 <- rbind(cumhaz2,c(max.time,cumlast+dhaz2*(max.time-timelast))) 
        }
   }# }}}
 
@@ -1720,8 +1720,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
                  dhaz <- tail(death.cumhaz[,2],1)/tail(death.cumhaz[,1],1)
                  cumlast <- tail(death.cumhaz[,2],1)
 		 timelast <- tail(death.cumhaz[,1],1)
-                 cumhazd <- rbind(cumhazd,
-			  c(max.time,cumlast+dhaz*(max.time-timelast))) 
+                 cumhazd <- rbind(cumhazd,c(max.time,cumlast+dhaz*(max.time-timelast))) 
        }
   }# }}}
 
@@ -1734,14 +1733,12 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
                  dhaz2 <- tail(death.cumhaz2[,2],1)/tail(death.cumhaz2[,1],1)
                  cumlast <- tail(death.cumhaz2[,2],1)
 		 timelast <- tail(death.cumhaz2[,1],1)
-                 cumhazd2 <- rbind(cumhazd2,
-			  c(max.time,cumlast+dhaz2*(max.time-timelast))) 
+                 cumhazd2 <- rbind(cumhazd2,c(max.time,cumlast+dhaz2*(max.time-timelast))) 
        }
   }# }}}
 
   tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
-###
 ### fixing the first time to event
   tall$death <- 0
   ### cause 2 is death state 3, cause 1 is state 2
@@ -1754,12 +1751,11 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   tall$to <- tall$status
   ## id's that are dead
   idsd <- tall$id %in% deadid
-  ## go furhter with those that are not yet dead 
+  ## go furhter with those that are not yet dead  or censored
   tt <- tall[!idsd,]
   ## also check that we are before max.time
   tt <- subset(tt,tt$time<max.time)
 
-###  
   i <- 1; 
   while ( (nrow(tt)>0) & (i < max.recurrent)) {# {{{
 	  i <- i+1
@@ -1974,6 +1970,17 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 
   return(tall)
   }# }}}
+
+##' @export
+extendCums <- function(cumB,cumA)
+{# {{{
+ times <- sort(unique(c(cumB[,1],cumA[,1])))
+ times <- times[times<max]
+ cumBjx <- lin.approx(times,cumB,x=1)
+ cumAjx <- lin.approx(times,cumA,x=1)
+ cumBA <- cumBjx+cumAjx
+ return(cbind(times,cumBA))
+}# }}}
 
 
 
