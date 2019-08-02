@@ -1,6 +1,6 @@
 #-*- mode: org -*-
 
-* Version 1.2.6    <2019-02-01 Sun>
+* Version 1.2.6    <2019-08-02 Fri>
   - Cumulative incidence regression cifreg function
     - Fine-Gray model with cloglog link of (1-F_1(t,x))
     - Logit link 
@@ -8,8 +8,8 @@
     - confidence bands for baseline
     - with confidenence bands cumulative incidence for two cox's 
   - Piecewise constant hazard: rpch, ppch
-  - Test-version of multinomial regression model (via phreg)
-  - simulation for illness-death model simMultistate 
+  - Test-version of multinomial regression model (via phreg): mlogit
+  - Simulation for illness-death model simMultistate 
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
