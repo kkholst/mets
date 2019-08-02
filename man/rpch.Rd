@@ -17,6 +17,3 @@ rpch(n, lambda = 1, breaks = c(0, Inf))
 \description{
 Piecewise constant hazard distribution
 }
-\examples{
-
-}
