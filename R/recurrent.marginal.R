@@ -1682,11 +1682,18 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   cumhaz <- out$cumA
   cumhaz2 <- out$cumB
   ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz)
+  out <- extendCums(cumhaz,death.cumhaz,both=FALSE)
   cumhazd <- out$cumB
  ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz2)
+  out <- extendCums(cumhaz,death.cumhaz2,both=FALSE)
   cumhazd2 <- out$cumB
+
+  if (!is.null(cens)) {
+	  if (is.matrix(cens))  {
+                 out <- extendCums(cumhaz,cens,both=FALSE)
+	  cens <- out$cumB
+	  }
+  }
 
   tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
