@@ -1196,16 +1196,19 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
   cumhaz <- rbind(c(0,0),cumhaz)
 
   ## range max of cumhaz and cumhaz2 
-  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
-  cumhaz <- out$cumA
-  cumhaz2 <- out$cumB
+  if (!is.null(cumhaz2)) {
+     out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
+     cumhaz <- out$cumA
+     cumhaz2 <- out$cumB
+  }
   ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-  cumhazd <- out$cumB
+  if (!is.null(death.cumhaz)) {
+    out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
+    cumhazd <- out$cumB
+  }
 
   ll <- nrow(cumhaz)
   max.time <- tail(cumhaz[,1],1)
-
 
   ## sum two cumulatives to get combined events 
   if (!is.null(cumhaz2)) {# {{{
@@ -1447,8 +1450,10 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   cumhaz <- out$cumA
   cumhaz2 <- out$cumB
   ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-  cumhazd <- out$cumB
+  if (!is.null(death.cumhaz)) {
+     out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
+     cumhazd <- out$cumB
+  }
 
   ll <- nrow(cumhaz)
   max.time <- tail(cumhaz[,1],1)
@@ -1789,7 +1794,7 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   fdeath <- dtime <- NULL # to avoid R-check 
   status <- NULL; 
 
-  if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
+  if (dependence==0) { z <- z1 <- z2 <- zd <- zd2 <- rep(1,n)   # {{{
      } else if (dependence==1) {
 	      z <- rgamma(n,1/var.z[1])*var.z[1]
 ###	      z <- exp(rnorm(n,1)*var.z[1]^.5)
@@ -1804,11 +1809,13 @@ simMultistateII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 ###	      print(summary(z))
 ###	      print(cor(z))
 	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
+	      zd2 <- zd; 
       } else if (dependence==3) {
 	      z <- matrix(rgamma(3*n,1),n,3)
               z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3])
               z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
               zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
+              zd2 <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
 	      z <- cbind(z1,z2,zd)
 ###	      print(summary(z))
 ###	      print(cor(z))
@@ -2005,6 +2012,7 @@ egamma12nu3 <- (gamma(agam12+nu3)/gamma(agam12))*1/(betagam12)^nu3
 zs <- cbind(z1,z2,zd)
 
   fdeath <- dtime <- NULL # to avoid R-check 
+  dhaz <- haz2 <- dhaz <- NULL
 
 ###  cumhaz <- rbind(c(0,0),cumhaz)
  ll <- nrow(cumhaz)
