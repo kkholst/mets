@@ -1707,10 +1707,9 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   deadid <- (tall$status==3 | tall$status==0)
   tall$from <- 1
   tall$to <- tall$status
-  ## id's that are dead
-  tall[deadid,]
+  ## id's that are dead: tall[deadid,]
   ## go furhter with those that are not yet dead  or censored
-  tt <- tall[!deadid,]
+  tt <- tall[!deadid,,drop=FALSE]
   ## also check that we are before max.time
   tt <- subset(tt,tt$time<max.time)
 
@@ -1739,7 +1738,6 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  tall <- rbind(tall,tt1,row.names=NULL)
 
           deadid <- (tt1$status==3 | tt1$status==0)
-	  tt1[deadid,]
 	  ### those that are still under risk 
 	  tt <- tt1[!deadid,,drop=FALSE]
 	  ## also keep only those before max.time
@@ -1763,7 +1761,6 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
 	  ## take id from tt
           deadid <- (tt1$status==3 | tt1$status==0)
-	  tt1[deadid,]
 	  ### those that are still under risk 
 	  tt <- tt1[!deadid,,drop=FALSE]
 	  ### also only keep those before max.time
