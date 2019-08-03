@@ -39,3 +39,5 @@ test
 *.dvi
 _region*
 symbols.rds
+doc
+Meta
