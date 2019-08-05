@@ -3157,8 +3157,7 @@ if (!is.null(margsurv))  {
 
             if (iid==1) { theta.iid <- out$theta.iid
                 if (class(margsurv)=="phreg") {  ## {{{
-		       browser()
-		       ## order after time
+                    ## order after time
 		       D1dltheta1 <- out$D1dltheta1[xx$order+1,]
 		       D2dltheta1 <- out$D1dltheta1[xx$order+1,]
 
