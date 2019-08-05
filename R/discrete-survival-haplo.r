@@ -343,11 +343,12 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 
 	  p <- c(expit(as.matrix(Z) %*% ccc))
 
-	  pred <- data.frame(p=p,id=data$id,times=data$times)
-	  survt <- 1-exp(cumsumstrata(log(1-pred$p),data$id-1,6))
-	  if (type=="prob") survt <- 1-survt
-	  if (type=="hazard") survt <- p
-	  pred <- cbind(pred,survt)
+	  preds <- data.frame(p=p,id=data$id,times=data$times)
+	  survt <- exp(cumsumstrata(log(1-preds$p),data$id-1,6))
+	  if (type=="prob") pred <- 1-survt
+	  if (type=="surv") pred <- survt
+	  if (type=="hazard") pred <- p
+	  preds <- cbind(preds,pred)
 # }}}
   } else {# {{{
 
@@ -358,6 +359,7 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 	   lam <- expit(xp)
 	   st <- cumprod(1-lam)
 	   if (type=="prob") st <- 1-st 
+	   if (type=="surv") st <- st 
 	   if (type=="hazard") st <- lam
 	   return(st)
     }
@@ -373,7 +375,8 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
         nm <- match(c("id","times"),names(data))
         Zi <- cbind(mt,data[,-nm])
      }
-     eud <- estimate(coef=ds$coef,vcov=ds$var,f=function(p) Ft(p))
+     if (is.null(ds$var)) covv <- vcov(ds)  else covv <- ds$var
+     eud <- estimate(coef=ds$coef,vcov=covv,f=function(p) Ft(p))
      cmat <- data.frame(eud$coefmat)
      cmat$id <- i
      cmat$times <- times
