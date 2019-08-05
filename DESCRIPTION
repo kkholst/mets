@@ -21,6 +21,7 @@ Depends:
     timereg (>= 1.9.4),
     lava (>= 1.6.6)
 Imports:
+    mvtnorm (>= 1.0-11),
     numDeriv,
     compiler,
     Rcpp,
@@ -33,7 +34,7 @@ Suggests:
     R.rsp (>= 0.40)
 VignetteBuilder: R.rsp
 ByteCompile: yes
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 SystemRequirements: C++11
 Encoding: UTF-8
 Roxygen: list(wrap = FALSE)

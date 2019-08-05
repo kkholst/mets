@@ -37,7 +37,6 @@ RcppExport SEXP Dpmvn(SEXP lower, SEXP upper, SEXP mu, SEXP sigma, SEXP std);
 /* 			  SEXP threshold, SEXP dthreshold, */
 /* 			  SEXP score); */
 
-extern "C" double bvnd_(const double *dh, const double *dk, const double *r);
 
 RcppExport SEXP bvncdf(SEXP a, SEXP b, SEXP r);
 
@@ -51,22 +50,6 @@ inline double Fbvn(double u1, double u2, double r) {
 vecmat Dbvn(double y1, double y2, double R);
 
 double dbvnorm(double y1, double y2, double R);
-
-
-
-extern "C" double mvtdst_(const int *N, 
-		      const int *NU,
-		      const double *LOWER, 
-		      const double *UPPER,
-		      const int *INFIN,
-		      const double *CORREL,
-		      const double *DELTA,
-		      const int *MAXPTS,
-		      const double *ABSEPS,
-		      const double *RELEPS,
-		      const double *ERS,
-		      const double *VAL,
-		      const int *INFORM);
 
 double mvtdst(int* n,
 	      int* nu,
@@ -82,5 +65,6 @@ double mvtdst(int* n,
 	      double* value, 
 	      int* inform);  
 
+extern "C" double bvnd_(const double *dh, const double *dk, const double *r);
 
 #endif /* MVN_H */
