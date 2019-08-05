@@ -39,7 +39,7 @@ extern SEXP pBhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP pmvn0(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP Dpmvn(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP survivalRV(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP RsurvivalRVCmarg(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP RsurvivalRVCmarg(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP survivalRV2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP survivalloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP twostageloglikebin(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -139,7 +139,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"sumstrataR",                        (DL_FUNC) &sumstrataR,                         3},
     {"Dpmvn",                             (DL_FUNC) &Dpmvn,                              5},
 //    {"simBandCumHazCox",                  (DL_FUNC) &simBandCumHazCox,                   5},
-    {"RsurvivalRVCmarg",                  (DL_FUNC) &RsurvivalRVCmarg,                   8},
+    {"RsurvivalRVCmarg",                  (DL_FUNC) &RsurvivalRVCmarg,                   7},
     {"survivalRV",                        (DL_FUNC) &survivalRV,                        10},
     {"survivalRV2",                       (DL_FUNC) &survivalRV2,                       10},
     {"survivalloglikeRVpairs",            (DL_FUNC) &survivalloglikeRVpairs,            25},
