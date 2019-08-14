@@ -917,11 +917,11 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
   statusD <- 1*(status!=cens.code)
   if (ncol(Y)==3) {
 	  if (!is.null(strata)) {
-  formE <- as.formula(paste("Surv(entry=entry,exit,statusE)~strata(strata)+cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(entry=entry,exit,statusD)~strata(strata)+cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(entry,exit,statusE)~strata(strata)+cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(entry,exit,statusD)~strata(strata)+cluster(id_1_)",sep=""))
 	  } else {
-  formE <- as.formula(paste("Surv(entry=entry,exit,statusE)~1+cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(entry=entry,exit,statusD)~1+cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(entry,exit,statusE)~1+cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(entry,exit,statusD)~1+cluster(id_1_)",sep=""))
 
 	  }
   } else {

@@ -21,7 +21,7 @@ Depends:
     timereg (>= 1.9.4),
     lava (>= 1.6.6)
 Imports:
-    mvtnorm (>= 1.0-11),
+    mvtnorm,
     numDeriv,
     compiler,
     Rcpp,
