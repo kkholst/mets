@@ -4,26 +4,39 @@
 \alias{mlogit}
 \title{Multinomial regression based on phreg regression}
 \usage{
-mlogit(formula, data, ref = NULL, ...)
+mlogit(formula, data, offset = NULL, weights = NULL, ref = NULL, ...)
 }
 \arguments{
 \item{formula}{formula with outcome (see \code{coxph})}
 
 \item{data}{data frame}
 
+\item{offset}{offsets for partial likelihood}
+
+\item{weights}{for score equations}
+
 \item{ref}{to set reference category (not working yet)}
 
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-returns also influence functions (possibly robust)
+Can also get influence functions (possibly robust), response should be a factor
+}
+\details{
+Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).
 }
 \examples{
 
 data(bmt)
-mreg <- mlogit(cause~tcell+platelet,bmt)
+dfactor(bmt) <- cause1f~cause
+drelevel(bmt,ref=3) <- cause3f~cause
+dlevels(bmt)
+
+mreg <- mlogit(cause1f~tcell+platelet,bmt)
 summary(mreg,type="martingale")
 
+mreg3 <- mlogit(cause3f~tcell+platelet,bmt)
+summary(mreg3,type="martingale")
 
 }
 \author{

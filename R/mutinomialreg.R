@@ -1,21 +1,31 @@
 ##' Multinomial regression based on phreg regression
 ##'
-##' returns also influence functions (possibly robust) 
+##' Can also get influence functions (possibly robust), response should be a factor 
+##'
+##' Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
 ##' @param ref to set reference category (not working yet)
+##' @param weights for score equations 
+##' @param offset offsets for partial likelihood 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
 ##'
 ##' data(bmt)
-##' mreg <- mlogit(cause~tcell+platelet,bmt)
+##' dfactor(bmt) <- cause1f~cause
+##' drelevel(bmt,ref=3) <- cause3f~cause
+##' dlevels(bmt)
+##'
+##' mreg <- mlogit(cause1f~tcell+platelet,bmt)
 ##' summary(mreg,type="martingale")
 ##' 
+##' mreg3 <- mlogit(cause3f~tcell+platelet,bmt)
+##' summary(mreg3,type="martingale")
 ##' 
 ##' @export
-mlogit <- function(formula,data,ref=NULL,...)
+mlogit <- function(formula,data,offset=NULL,weights=NULL,ref=NULL,...)
 {# {{{
 
   cl <- match.call()
@@ -111,18 +121,22 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   Y <- Y[id]
   status <- rep(0,nrow(X))
   nY <- as.numeric(Y)
+
+  if (is.null(ref)) refg <- 1 else refg <- match(ref,types)
+  nrefs <- (1:nlev)[-refg]
   for (i in 1:nlev) status[nY==i] <- rep(((1:nlev)==i),sum(nY==i)/nlev)
   time <- id
   strat <- rep(1:nlev,nX)
   XX <- c()
-  if (is.null(ref)) refg <- nlev else refg <- match(ref,types)
-  nrefs <- (1:nlev)[-refg]
   for (i in nrefs) XX <- cbind(XX,X*(strat==i))
   rownames(XX) <- NULL
 
   datph=data.frame(time=time,status=status,XX=XX,id=id)
+  loffset <- offset[id]
+  lweights<- weights[id]
 
-  res <- phreg(Surv(time,status)~XX+strata(id),datph)
+  res <- phreg(Surv(time,status)~XX+strata(id),datph,weights=lweights,
+	       offset=loffset)
 
   return(res)
 }# }}}
