@@ -15,15 +15,14 @@ mlogit(formula, data, offset = NULL, weights = NULL, ref = NULL, ...)
 
 \item{weights}{for score equations}
 
-\item{ref}{to set reference category (not working yet)}
-
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Can also get influence functions (possibly robust), response should be a factor
+Can also get influence functions (possibly robust) via iid() function, response should be a factor
 }
 \details{
-Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).
+Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
+Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}
 }
 \examples{
 
@@ -33,10 +32,13 @@ drelevel(bmt,ref=3) <- cause3f~cause
 dlevels(bmt)
 
 mreg <- mlogit(cause1f~tcell+platelet,bmt)
-summary(mreg,type="martingale")
+summary(mreg)
 
 mreg3 <- mlogit(cause3f~tcell+platelet,bmt)
-summary(mreg3,type="martingale")
+summary(mreg3)
+
+## inverse information standard errors 
+estimate(coef=mreg3$coef,vcov=mreg3$II)
 
 }
 \author{

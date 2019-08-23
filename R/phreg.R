@@ -322,7 +322,7 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
   res <- c(phreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
-	   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
   class(res) <- "phreg"
   
   res
