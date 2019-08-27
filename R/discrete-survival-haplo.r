@@ -348,6 +348,10 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 	  if (type=="prob") pred <- 1-survt
 	  if (type=="surv") pred <- survt
 	  if (type=="hazard") pred <- p
+	  if (type=="rrm") { ## restricted residual mean 
+		  ll <- length(survt)
+	        pred <- cumsum(c(1,survt[-ll]))
+	  }
 	  preds <- cbind(preds,pred)
 # }}}
   } else {# {{{
@@ -361,6 +365,10 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 	   if (type=="prob") st <- 1-st 
 	   if (type=="surv") st <- st 
 	   if (type=="hazard") st <- lam
+           if (type=="rrm") { ## restricted residual mean 
+		ll <- length(st)
+	        st <- cumsum(c(1,st[-ll]))
+	   }
 	   return(st)
     }
 

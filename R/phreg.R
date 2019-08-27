@@ -250,6 +250,10 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 ##'
 ##' Fast Cox PH regression
 ##' Robust variance is default variance with the summary. 
+##'
+##' influence functions (iid) will follow numerical order of given cluster variable
+##' so ordering after $id will give iid in order of data-set.
+##'
 ##' @param formula formula with 'Surv' outcome (see \code{coxph})
 ##' @param data data frame
 ##' @param offset offsets for cox model
@@ -434,8 +438,9 @@ coef.phreg  <- function(object,...) {
 ###{{{ iid & Robust variances 
 
 ##' @export
-iid.phreg  <- function(x,type="robust",all=FALSE,orig.order=FALSE,...) {# {{{
+iid.phreg  <- function(x,type="robust",all=FALSE,...) {# {{{
   invhess <- -solve(x$hessian)
+  orig.order <- FALSE
 
 if (is.null(x$propodds)) {
   if (type=="robust") {	# {{{ cox model 
@@ -455,8 +460,8 @@ if (is.null(x$propodds)) {
 	  if (orig.order) {
 	     oo <- (1:nrow(xx$X))[xx$ord+1]
 	     oo <- order(oo)
-	     ### back to order of data-set
-	     MGt <- MGt[oo,,drop=FALSE]
+	     ### back to order of iid variable 
+	     MGt <- MGt[oo,,drop=FALSE]   ## sum after id later so not needed
 	     id <- xx$id[oo]
 	  } else id <-  xx$id
   } else  { 
@@ -500,7 +505,7 @@ if (is.null(x$propodds)) {
 	     oo <- (1:nrow(xx$X))[xx$ord+1]
 	     oo <- order(oo)
 	     ### back to order of data-set
-	     MGt <- MGt[oo,,drop=FALSE]
+	     MGt <- MGt[oo,,drop=FALSE]  
 	     id <- xx$id[oo]
 	  } else id <-  xx$id
   } else  { 
