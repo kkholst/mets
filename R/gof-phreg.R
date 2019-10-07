@@ -258,7 +258,6 @@ if (is.null(vars)) {
 	avars <- all.vars(formula[-2])
 	avars <- avars[-svar]
 	}
-	    print(avars)
      ## check that it is not a factor and that there are more than 2 levels
      for (vv in avars) {
 	  if (length(unique(data[,vv]))>2 & !is.factor(data[,vv]))
