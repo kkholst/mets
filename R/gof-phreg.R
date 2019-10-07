@@ -477,7 +477,7 @@ if (is.null(type)) {
 	if (x$type=="Zmodelmatrix") type <- "z"
 }
 
-if (type=="time") {
+if (type=="time" || type=="modelmatrix") {
 p <- ncol(x$score)
 for (i in 1:p)
 {
