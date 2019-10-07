@@ -2,7 +2,7 @@
 % Please edit documentation in R/discrete-survival-haplo.r
 \name{haplo.surv.discrete}
 \alias{haplo.surv.discrete}
-\alias{simGlm}
+\alias{simTTP}
 \alias{predictSurvd}
 \alias{plotSurvd}
 \title{Discrete time to event haplo type analysis}
@@ -10,8 +10,9 @@
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
   Haplos = NULL, id = "id", desnames = NULL, designfunc = NULL,
   beta = NULL, no.opt = FALSE, method = "NR", stderr = TRUE,
-  designMatrix = NULL, design.only = FALSE, covnames = NULL,
-  fam = binomial, ...)
+  designMatrix = NULL, response = NULL, idhap = NULL,
+  design.only = FALSE, covnames = NULL, fam = binomial,
+  weights = NULL, offsets = NULL, idhapweights = NULL, ...)
 }
 \arguments{
 \item{X}{design matrix data-frame (sorted after id and time variable) with id time response  and desnames}
@@ -36,7 +37,11 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 
 \item{stderr}{to return only estimate}
 
-\item{designMatrix}{designMatrix not implemented}
+\item{designMatrix}{gives response and designMatrix directly not implemented (mush contain: p, id, idhap)}
+
+\item{response}{gives response and design directly designMatrix not implemented}
+
+\item{idhap}{name of id-hap variable to specify different haplotypes for different id}
 
 \item{design.only}{to return only design matrices for haplo-type analyses.}
 
@@ -44,7 +49,13 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 
 \item{fam}{family of models, now binomial default and only option}
 
+\item{weights}{weights following id for GLM}
+
+\item{offsets}{following id  for GLM}
+
 \item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
+
+\item{weightsidhap}{weights following id-hap for GLM (WIP)}
 }
 \description{
 Can be used for logistic regression when time variable is "1" for all id.

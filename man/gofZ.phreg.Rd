@@ -5,7 +5,7 @@
 \alias{cumContr}
 \title{GOF for Cox covariates in  PH regression}
 \usage{
-gofZ.phreg(formula, data, vars, offset = NULL, weights = NULL,
+gofZ.phreg(formula, data, vars = NULL, offset = NULL, weights = NULL,
   breaks = 20, equi = TRUE, n.sim = 1000, silent = 1, ...)
 }
 \arguments{
@@ -54,8 +54,7 @@ TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
 
 ## cumulative sums in covariates, via design matrix mm
 \donttest{ ## Reduce Ex.Timings
-m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam,
-                 vars=c("wmi","age"))
+m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
 summary(m1) 
 plot(m1,type="z")
 }

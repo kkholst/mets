@@ -4,7 +4,7 @@
 \alias{mlogit}
 \title{Multinomial regression based on phreg regression}
 \usage{
-mlogit(formula, data, offset = NULL, weights = NULL, ref = NULL, ...)
+mlogit(formula, data, offset = NULL, weights = NULL, ...)
 }
 \arguments{
 \item{formula}{formula with outcome (see \code{coxph})}

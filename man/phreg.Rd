@@ -24,6 +24,10 @@ phreg(formula, data, offset = NULL, weights = NULL, ...)
 Fast Cox PH regression
 Robust variance is default variance with the summary.
 }
+\details{
+influence functions (iid) will follow numerical order of given cluster variable
+so ordering after $id will give iid in order of data-set.
+}
 \examples{
 data(TRACE)
 dcut(TRACE) <- ~.

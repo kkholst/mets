@@ -240,16 +240,32 @@ return(out)
 ##' 
 ##' ## cumulative sums in covariates, via design matrix mm
 ##' \donttest{ ## Reduce Ex.Timings
-##' m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam,
-##'                  vars=c("wmi","age"))
+##' m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
 ##' summary(m1) 
 ##' plot(m1,type="z")
 ##' }
 ##' @aliases cumContr 
 ##' @export
-gofZ.phreg  <- function(formula,data,vars,offset=NULL,weights=NULL,breaks=20,equi=TRUE,
+gofZ.phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=20,equi=TRUE,
 			n.sim=1000,silent=1,...)
 {# {{{
+if (is.null(vars)) {
+     vars <- NULL
+      ## find strata var's 
+      yxzf <- procform(formula,x=NULL,z=NULL,data=data,do.filter=FALSE,regex=regex)
+      svar <- grep("strata",yxzf$predictor)
+    if (length(svar)>=1) {
+	avars <- all.vars(formula[-2])
+	avars <- avars[-svar]
+	}
+	    print(avars)
+     ## check that it is not a factor and that there are more than 2 levels
+     for (vv in avars) {
+	  if (length(unique(data[,vv]))>2 & !is.factor(data[,vv]))
+	  vars  <-  c(vars,vv)
+     }
+ }
+
  gres <- list()
  res <- matrix(0,length(vars),2)
  colnames(res) <- c("Sup_z |U(tau,z)|","pval")
@@ -269,7 +285,7 @@ for (vv in vars) {
 }
 
 out <- list(res=res,Zres=gres,type="Zmodelmatrix")
-class(out) <- "gof.phreg"
+class(out) <- c("gof.phreg")
 
 return(out)
 }# }}}
@@ -320,6 +336,7 @@ class(out) <- "gof.phreg"
 
 return(out)
 }# }}}
+
 
 ##' @export
 cumContr <- function(data, breaks = 4, probs = NULL,equi = TRUE,na.rm=TRUE,...)
@@ -451,8 +468,14 @@ for (j in (i+1):(nstrata-1)) {
 }# }}}
 
 ##' @export
-plot.gof.phreg <-  function(x,col=3,type="time",...)
+plot.gof.phreg <-  function(x,col=3,type=NULL,...)
 {# {{{
+
+if (is.null(type)) {
+	if (x$type=="prop") type <- "time"
+	if (x$type=="modelmatrix" ) type <- "modelmatrix"
+	if (x$type=="Zmodelmatrix") type <- "z"
+}
 
 if (type=="time") {
 p <- ncol(x$score)
@@ -467,7 +490,7 @@ matlines(x$jumptimes,simU,type="s",lwd=0.3,col=col)
 lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 }
 } else {
-	if (x$type=="modelmatrix") {
+	if (type=="modelmatrix") {
 		obsz <- c(tail(x$score,1))
 		times <- 1:length(obsz)
 		rsU <- max(max(abs(obsz)),max(abs(x$simUtlast[1:50,])))
@@ -483,6 +506,7 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 	    times <- 1:length(obsz)
 	    rsU <- max(max(abs(obsz)),max(abs(xr$simUtlast[1:50,])))
 	    plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
+	    title(main=rownames(m1$res)[i])
 	    matlines(times,t(xr$simUtlast[1:50,]),type="l",lwd=0.3,col=col)
 	    ## redraw with thick to make observed clear 
 	    lines(times,obsz,lwd=2,col=1)
