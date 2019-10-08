@@ -1220,7 +1220,6 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
    if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative  hazard"
    if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
-###   if (log==FALSE) 
    if (type[1]=="surv") rr <- c(0,1) 
    if (type[1]=="cumhaz") rr <- range(c(0,x$cumhaz))
    ylimo <- ylim
@@ -1247,16 +1246,23 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
    ## all covriates 
    nx <- nrow(x$surv)
    if (is.null(whichx)) whichx <- 1:nx
+   stratas <- whichx
+
+   ltys <- lty
+   cols <- col
 
    if (length(whichx)>0 ) { ## with X 
+
       if (!is.matrix(lty)) {
-         if (is.null(lty)) ltys <- 1:length(whichx) else if (length(lty)!=length(whichx)) ltys <- rep(lty[1],length(whichx))
+         if (is.null(lty)) ltys <- 1:length(whichx) else 
+		 if (length(lty)!=length(whichx)) ltys <- rep(lty[1],length(whichx)) else ltys <- lty
       } else ltys <- lty
+
       if (!is.matrix(col)) {
-         if (is.null(col)) cols <- 1:length(whichx) else 
-		 if (length(col)!=length(whichx)) cols <- rep(col[1],length(whichx))
+         if (is.null(col)) cols <- 1:length(stratas) else 
+		 if (length(col)!=length(stratas)) cols <- rep(col[1],length(stratas))
       } else cols <- col
-    } else { 
+   } else { 
      if (is.matrix(col))  cols <- col
      if (is.null(col)) cols <- 1  else cols <- col[1]
      if (is.matrix(lty))  ltys <- lty
@@ -1288,12 +1294,10 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
   }
 
   if (!add) 
-  plot(x$times,xx[j,],type="s",
-         lty=ltys[i,1],col=cols[i,1],ylim=ylim,ylab=ylab,xlim=xlim,xlab=xlab,...)
+  plot(x$times,xx[j,],type="s",lty=ltys[i,1],col=cols[i,1],ylim=ylim,ylab=ylab,xlim=xlim,xlab=xlab,...)
   else lines(x$times,xx[j,],type="s", lty=ltys[i,1],col=cols[i,1],...)
   if (length(whichx)>1) 
-  for (i in seq(2,length(whichx))) 
-       lines(x$times,xx[whichx[i],],type="s",lty=ltys[i,1],col=cols[i,1],...)
+  for (i in seq(2,length(whichx))) lines(x$times,xx[whichx[i],],type="s",lty=ltys[i,1],col=cols[i,1],...)
 
     if (se==TRUE) {
     for (i in seq(1,length(whichx))) {
@@ -1310,7 +1314,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
          tt <- c(ttp,rev(ttp))
          yy <- c(rep(nl[-ll],each=rep(2)),rep(rev(ul[-ll]),each=2))
          col.alpha<-0.1
-         col.ci<-cols[i]
+         col.ci<-cols[i,1]
          col.trans <- sapply(col.ci, FUN=function(x) 
          do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
 	 polygon(tt,yy,lty=0,col=col.trans)
@@ -1396,6 +1400,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
    lstrata <- x$strata.level[(stratas+1)]
    stratn <-  substring(x$strata.name,8,nchar(x$strata.name)-1)
    stratnames <- paste(stratn,lstrata,sep=":")
+   
       if (!is.matrix(lty)) {
          if (is.null(lty)) ltys <- 1:length(stratas) else if (length(lty)!=length(stratas)) ltys <- rep(lty[1],length(stratas))
       } else ltys <- lty
@@ -1462,10 +1467,11 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
      }
     }
 
+
     where <- "topleft"; 
     if (class(x)[1]=="km") where <-  "topright"
     if (legend & (!add)) 
-    graphics::legend(where,legend=stratnames[stratas+1],col=cols[,1],lty=ltys[,1])
+    graphics::legend(where,legend=stratnames,col=cols[,1],lty=ltys[,1])
 
 }# }}}
 

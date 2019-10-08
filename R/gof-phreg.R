@@ -252,7 +252,7 @@ gofZ.phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=2
 if (is.null(vars)) {
      vars <- NULL
       ## find strata var's 
-      yxzf <- procform(formula,x=NULL,z=NULL,data=data,do.filter=FALSE,regex=regex)
+      yxzf <- procform(formula,x=NULL,z=NULL,data=data,do.filter=FALSE)
       svar <- grep("strata",yxzf$predictor)
     if (length(svar)>=1) {
 	avars <- all.vars(formula[-2])
@@ -505,7 +505,7 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 	    times <- 1:length(obsz)
 	    rsU <- max(max(abs(obsz)),max(abs(xr$simUtlast[1:50,])))
 	    plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
-	    title(main=rownames(m1$res)[i])
+	    title(main=rownames(x$res)[i])
 	    matlines(times,t(xr$simUtlast[1:50,]),type="l",lwd=0.3,col=col)
 	    ## redraw with thick to make observed clear 
 	    lines(times,obsz,lwd=2,col=1)
