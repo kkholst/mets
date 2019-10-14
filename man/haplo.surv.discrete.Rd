@@ -5,6 +5,7 @@
 \alias{simTTP}
 \alias{predictSurvd}
 \alias{plotSurvd}
+\alias{mystrata}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
@@ -53,9 +54,9 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 
 \item{offsets}{following id  for GLM}
 
-\item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
+\item{idhapweights}{weights following id-hap for GLM (WIP)}
 
-\item{weightsidhap}{weights following id-hap for GLM (WIP)}
+\item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
 }
 \description{
 Can be used for logistic regression when time variable is "1" for all id.

@@ -573,12 +573,16 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
   if (length(object$p)>0 & object$p>0 & !is.null(object$opt)) {
     I <- -solve(object$hessian)
-    if ( (length(class(object))==2) && class(object)[2]=="cif.reg") V <- object$var
-	    else V <- vcov(object,type=type[1])
+    if ( (length(class(object))==2) && class(object)[2]=="cif.reg") {
+	    V <- object$var
+	    ncluster <- nrow(object$Uiid)
+    } else  { 
+	    V <- vcov(object,type=type[1])
+            ncluster <- object$n
+    }
     cc <- cbind(coef(object),diag(V)^0.5,diag(I)^0.5)
     cc  <- cbind(cc,2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE)))
     colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
-    ncluster <- object$n
     if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
     rownames(cc) <- names(coef(object))
   } 
@@ -627,7 +631,6 @@ res <- .Call("tailstrataR",length(strata),strata,nstrata,PACKAGE="mets")
 if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res$found>0.5]); }
 return(res$where)
 }# }}}
-
 
 ##' @export
 sumstrata <- function(x,strata,nstrata)

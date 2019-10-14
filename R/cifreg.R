@@ -9,7 +9,7 @@
 ##' @param cens.code code of censoring 
 ##' @param offset offsets for cox model
 ##' @param weights weights for Cox score equations
-##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator 
+##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-) 
 ##' @param propodds 1 is logistic model, NULL is fine-gray model 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
@@ -80,15 +80,15 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  if (!is.null(id)) {
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else id <- as.integer(seq_along(exit))-1; 
-  ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
+###  if (!is.null(id)) {
+###	  ids <- sort(unique(id))
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else id <- as.integer(seq_along(exit))-1; 
+###  ### id from call coded as numeric 1 -> 
+###  id.orig <- id; 
 
 # }}}
 
@@ -125,6 +125,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
       strata <- as.integer(factor(strata,labels=seq(nstrata)))-1
     }
   }
+
  if (!trunc) entry <- rep(0,length(exit))
  if (is.null(offset)) offset <- rep(0,length(exit)) 
  if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -141,6 +142,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
    } else id <- as.integer(seq_along(entry))-1; 
    ## orginal id coding into integers 1:...
    id.orig <- id+1; 
+
 # }}}
 
  ### censoring weights constructed
@@ -195,6 +197,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	 ## timeo
 	 where <- fast.approx(c(0,timeo),jumptimes,type="right")
  }# }}}
+
 
 obj <- function(pp,all=FALSE) {# {{{
 
@@ -287,6 +290,7 @@ if (all) return(out) else with(out,structure(-ploglik, gradient=-gradient, hessi
       val <- obj(0,all=TRUE)
   }# }}}
 
+
 ### opt <- lava::NR(beta,obj); beta.s <- opt$par 
  beta.s <- val$coef 
  ## getting final S's 
@@ -357,7 +361,8 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  ###
  q <- -(Xos*rcumhazGt-rEdLam0Gt*rro)
 
- cens.mgs = phreg(Surv(exit,status==0)~+cluster(id),data=data,no.opt=TRUE)
+ idloc__ <- id
+ cens.mgs = phreg(Surv(exit,status==0)~+cluster(idloc__),data=data,no.opt=TRUE)
  cxx <- cens.mgs$cox.prep
  ###
  Gt <- S0i <-  S0i2 <- rep(0,length(cxx$strata))
