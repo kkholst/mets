@@ -62,9 +62,9 @@ covrpS <- covarianceRecurrentS(rr,1,2,status="status",death="death",
 
 }
 \references{
-Scheike, Eriksson, Tribler (2018) 
+Scheike, Eriksson, Tribler (2019) 
             The mean, variance and correlation for bivariate recurrent events
-            with a terminal event,  work in progress
+            with a terminal event,  JRSS-C
 }
 \author{
 Thomas Scheike

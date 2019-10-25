@@ -20,7 +20,7 @@ cifreg(formula, data = data, cause = 1, cens.code = 0,
 
 \item{offset}{offsets for cox model}
 
-\item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator}
+\item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
 
 \item{propodds}{1 is logistic model, NULL is fine-gray model}
 

@@ -13,7 +13,6 @@
 ##' print(d)
 ##' @seealso familycluster.index familyclusterWithProbands.index
 ##' @author Klaus Holst, Thomas Scheike
-##' @export
 ##' @param clusters  list of indeces
 ##' @param index.type if TRUE then already list of integers of index.type
 ##' @param num to get numbering according to num-type in separate columns
@@ -21,6 +20,7 @@
 ##' @param mat to return matrix of indeces
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
+##' @export
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
   n <- length(clusters)
@@ -50,6 +50,35 @@ cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,r
   
   clustud
 } ## }}}
+
+countID <- function(data,id="id",names.count="Count",total.count="Total",reverse=TRUE)
+{# {{{
+
+clusters <- data[,id]
+if (is.numeric(clusters)) {
+   ## integeres from 0 to max.clust
+   uc <- unique(clusters)
+   max.clust <- length(uc)
+   clusters <- fast.approx(uc, clusters) - 1
+}
+else {
+     max.clust <- length(unique(clusters))
+     clusters <- as.integer(factor(clusters, labels = seq(max.clust))) - 1
+}
+
+###tabid <- table(clusters)
+
+data[,paste(names.count,id,sep="")] <- cumsumstrata(rep(1,nrow(data)),data[,id],max.clust+1) 
+###data[,paste(total.count,id,sep="")] <- rep( clusteres,each=tableid)
+###
+###if (reverse==TRUE) {
+###data[,paste("reverse",names.count,id,sep="")] <- data[,paste(total.count,id,sep="")] - cumsumstrata(rep(1,nrow(data)),data[,id],max.clust+1) +1
+###}
+
+return(data)
+}# }}}
+
+
 
 ##' Finds all pairs within a cluster (family)
 ##' 
@@ -126,7 +155,6 @@ familyclusterWithProbands.index <- function(clusters,probands,index.type=FALSE,n
 ###ilusters <- cluster.index(clusters,Rindex=1)
 ###ud <- familycluster.index(clusters)
 ###ud1 <- familyclusterWithProbands.index(clusters,probands)
-
 
 ##' @export
 coarse.clust <- function(clusters,max.clust=100)

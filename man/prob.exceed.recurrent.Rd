@@ -8,7 +8,7 @@
 \usage{
 prob.exceed.recurrent(data, type, status = "status", death = "death",
   start = "start", stop = "stop", id = "id", times = NULL,
-  exceed = NULL)
+  exceed = NULL, cifmets = FALSE, strata = NULL, all.cifs = FALSE)
 }
 \arguments{
 \item{data}{data-frame}
@@ -28,6 +28,12 @@ prob.exceed.recurrent(data, type, status = "status", death = "death",
 \item{times}{time at which to get probabilites P(N1(t) >= n)}
 
 \item{exceed}{n's for which which to compute probabilites P(N1(t) >= n)}
+
+\item{cifmets}{if true uses cif of mets package rather than prodlim}
+
+\item{strata}{to stratify according to variable, only for cifmets=TRUE, when strata is given then only consider the output in the all.cifs}
+
+\item{all.cifs}{if true then returns list of all fitted objects in cif.exceed}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -83,9 +89,9 @@ with(pp, matlines(times,se.upper,type="s"))
 }
 }
 \references{
-Scheike, Eriksson, Tribler (2018) 
+Scheike, Eriksson, Tribler (2019) 
             The mean, variance and correlation for bivariate recurrent events
-            with a terminal event,  work in progress
+            with a terminal event,  JRSS-C
 }
 \author{
 Thomas Scheike

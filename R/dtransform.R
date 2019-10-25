@@ -75,7 +75,6 @@ dtrans <- function(data,...) dtransform(data,...)
     return(data)
 }
 
-
 ##' @export
 `dtransform<-` <- function(data,...,value) {
     cl <- match.call()
