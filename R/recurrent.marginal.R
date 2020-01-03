@@ -2885,8 +2885,8 @@ pstrata2[1] <- 0
   colnames(pe1e2) <- nn
 
   out=list(time=times,pe1e2=pe1e2,x1=x1,x2=x2,
-	   nstrata=base$nstrata,
-	   strata.name=base$strata.name,strata.level=base$strata.levels)
+	   nstrata=base1$nstrata,
+	   strata.name=base1$strata.name,strata.level=base1$strata.levels)
   class(out) <- "BiRecurrent"
 
   return(out)
