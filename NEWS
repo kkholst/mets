@@ -10,6 +10,8 @@
   - Piecewise constant hazard: rpch, ppch
   - Test-version of multinomial regression model (via phreg): mlogit
   - Simulation for illness-death model simMultistate 
+  - Haplotype modelling for discrete time-to-pregnancy models 
+  - Interval censoring for discrete time logit-survival model
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
