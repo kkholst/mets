@@ -105,7 +105,7 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP,
 		SEXP offsetsSEXP, 
 		SEXP ZSEXP,
 		SEXP caseweightsSEXP
-		) {
+		) {/*{{{*/
 	BEGIN_RCPP
 		arma::vec Entry = Rcpp::as<arma::vec>(EntrySEXP);
 	arma::vec  Exit  = Rcpp::as<arma::vec>(ExitSEXP);
@@ -174,6 +174,7 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP,
 		// vec Entry = Rcpp::as<vec>(entry);  
 		Exit.insert_rows(0,Entry);
 		X.insert_rows(0,X);
+		Z.insert_rows(0,Z);
 		Status.insert_rows(0,Status);
 		Id.insert_rows(0,Id);
 		strata.insert_rows(0,strata);
@@ -211,6 +212,9 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP,
 		XX = XX.rows(idx);
 		X = X.rows(idx);  
 	}
+	if (Z.n_rows==X.n_rows) {
+		Z = Z.rows(idx);  
+	}
 	if ((ZX.n_rows==XX.n_rows) & (XX.n_rows>0)) {
 		ZX = ZX.rows(idx);  
 	}
@@ -243,10 +247,11 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP,
 					Rcpp::Named("caseweights")=caseweights,
 					Rcpp::Named("offset")=offsets,				       
 					Rcpp::Named("strata")=strata,				       
-					Rcpp::Named("ZX")=ZX				       
+					Rcpp::Named("ZX")=ZX,				       
+					Rcpp::Named("Z")=Z				       
 					)));
 	END_RCPP
-}
+}/*}}}*/
 
 colvec  whichi(IntegerVector a,int n, int j) {
 	colvec res(n); 
@@ -523,6 +528,60 @@ RcppExport SEXP revcumsumstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	return(rres);
 } 
 
+RcppExport SEXP wherestrataR(SEXP ir,SEXP ia,SEXP istrata, SEXP instrata) {
+	colvec a = Rcpp::as<colvec>(ia);
+	colvec r = Rcpp::as<colvec>(ir);
+	IntegerVector intstrata(istrata); 
+	int nstrata = Rcpp::as<int>(instrata);
+	unsigned n = a.n_rows;
+
+	colvec tmpsum(nstrata); tmpsum.zeros(); 
+	colvec nsum(nstrata); nsum.zeros(); 
+	colvec maxv(nstrata); maxv.zeros(); 
+	colvec minv(nstrata); minv.zeros(); 
+	for (unsigned i=0; i<n; i++) {
+		int ss=intstrata(i); 
+		double irs = r(ss);  
+		if ((a(i) > maxv(ss)) | (nsum(ss)==0)) maxv(ss)=a(i); 
+		if ((a(i) < minv(ss)) | (nsum(ss)==0)) minv(ss)=a(i); 
+		if (irs>a(i)) tmpsum(ss)=nsum(ss); 
+		nsum(ss)+=1; 
+	}
+
+	List rres; 
+	rres["where"]=tmpsum; 
+	rres["max"]=maxv; 
+	rres["min"]=minv; 
+	rres["nstrata"]=nsum; 
+	return(rres);
+}
+
+
+RcppExport SEXP maxminidR(SEXP ia,SEXP istrata, SEXP instrata) {
+	colvec a = Rcpp::as<colvec>(ia);
+	IntegerVector intstrata(istrata); 
+	int nstrata = Rcpp::as<int>(instrata);
+	unsigned n = a.n_rows;
+
+	colvec nsum(nstrata); nsum.zeros(); 
+	colvec maxv(nstrata); maxv.zeros(); 
+	colvec minv(nstrata); minv.zeros(); 
+	for (unsigned i=0; i<n; i++) {
+		int ss=intstrata(i); 
+		if ((a(i) > maxv(ss)) | (nsum(ss)==0)) maxv(ss)=a(i); 
+		if ((a(i) < minv(ss)) | (nsum(ss)==0)) minv(ss)=a(i); 
+		nsum(ss)+=1; 
+	}
+
+	List rres; 
+	rres["max"]=maxv; 
+	rres["min"]=minv; 
+	rres["nstrata"]=nsum; 
+	return(rres);
+}
+
+
+
 RcppExport SEXP riskstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector intstrata(istrata); 
@@ -791,31 +850,31 @@ RcppExport SEXP cumsumidstratasumR(SEXP ia,SEXP iid,SEXP inid,SEXP istrata, SEXP
 		ressum(i) = cumsum(ss);
 		ressumid(i) = tmpsum(ss,lid);
 		tmpsqr(ss)=ressqu(i); 
-				}  
+	}  
 
-				List rres; 
-				rres["sumsquare"]=ressqu; 
-				rres["sum"]=ressum; 
-				rres["lagsum"]=lagressum; 
-				rres["sumidstrata"]=ressumid; 
-				rres["lagsumidstrata"]=lagressumid; 
-				return(rres);
-				} 
+List rres; 
+rres["sumsquare"]=ressqu; 
+rres["sum"]=ressum; 
+rres["lagsum"]=lagressum; 
+rres["sumidstrata"]=ressumid; 
+rres["lagsumidstrata"]=lagressumid; 
+return(rres);
+} 
 
 
-				colvec cumsumAS(const colvec &a,IntegerVector strata,int nstrata) {
-				unsigned n = a.n_rows;
-				colvec tmpsum(nstrata); tmpsum.zeros(); 
-				colvec ressum = a; 
-				double sums=0; 
-				for (unsigned i=0; i<n; i++) {
-				int ss=strata(i); 
-				ressum(i) = sums+a(i)-tmpsum(ss); 
-				tmpsum(ss)=a(i); 
-				sums=ressum(i); 
-				}  
-				return(ressum);
-				} 
+colvec cumsumAS(const colvec &a,IntegerVector strata,int nstrata) {
+unsigned n = a.n_rows;
+colvec tmpsum(nstrata); tmpsum.zeros(); 
+colvec ressum = a; 
+double sums=0; 
+for (unsigned i=0; i<n; i++) {
+int ss=strata(i); 
+ressum(i) = sums+a(i)-tmpsum(ss); 
+tmpsum(ss)=a(i); 
+sums=ressum(i); 
+}  
+return(ressum);
+} 
 
 RcppExport SEXP cumsumASR(SEXP ia, SEXP istrata, SEXP instrata) {
 	colvec a = Rcpp::as<colvec>(ia);
@@ -831,15 +890,15 @@ RcppExport SEXP cumsumASR(SEXP ia, SEXP istrata, SEXP instrata) {
 	double sums=0; 
 	for (unsigned i=0; i<n; i++) {
 		int ss=intstrata(i); 
-		Rprintf(" %ld %ld %ld \n",n,ss,i); 
+//		Rprintf(" %ld %ld %ld \n",n,ss,i); 
 		ressum(i) = sums+a(i)-tmpsum(ss); 
 		tmpsum(ss)=a(i); 
 		sums=ressum(i); 
 	}  
 
-	List rres; 
-	rres["sum"]=ressum; 
-	return(rres);
+List rres; 
+rres["sum"]=ressum; 
+return(rres);
 } 
 
 
@@ -1114,7 +1173,7 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,
 		SEXP ZXSEXP,
 		SEXP caseweightsSEXP) {
 	BEGIN_RCPP
-		colvec beta = Rcpp::as<colvec>(betaSEXP);
+	colvec beta = Rcpp::as<colvec>(betaSEXP);
 	mat X = Rcpp::as<mat>(XSEXP);
 	mat XX = Rcpp::as<mat>(XXSEXP);
 	mat ZX = Rcpp::as<mat>(ZXSEXP);
@@ -1445,15 +1504,28 @@ RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 }
 
 
-RcppExport SEXP Matdoubleindex(SEXP im,SEXP irow,SEXP icols,SEXP ilength) {
+RcppExport SEXP Matdoubleindex(SEXP im,SEXP irow,SEXP icols,SEXP ilength,SEXP iassign,SEXP ixvec ) {
 	mat m = Rcpp::as<mat>(im);
 	IntegerVector rows(irow); 
 	IntegerVector cols(icols); 
+	colvec xvec = Rcpp::as<colvec>(ixvec);
 	unsigned l = Rcpp::as<int>(ilength);
+	unsigned assign = Rcpp::as<int>(iassign);
 	vec res(l); 
-	for (unsigned i=0; i<l; i++) res(i)=m(rows(i),cols(i)); 
+	vec where(l); 
 	List rres; 
+
+	int mn = m.n_rows;
+	int mp = m.n_cols;
+
+	for (unsigned i=0; i<l; i++) where(i)= ((rows(i) > -1) & (rows(i)< mn)) * ((cols(i) > -1) & (cols(i)< mp)) ;
+	if (assign==0)  {
+	for (unsigned i=0; i<l; i++) if (where(i)>0) { res(i)=m(rows(i),cols(i)); } else res(i)=0; 
 	rres["mat"]=res; 
+	} else  {
+	for (unsigned i=0; i<l; i++) if (where(i)>0) { m(rows(i),cols(i))=xvec(i);  }
+	rres["mat"]=m; 
+	}
 	return(rres);
 } 
 
@@ -1592,7 +1664,7 @@ RcppExport SEXP PropTestCoxClust(SEXP iU, SEXP idUt, SEXP iwrr, SEXP iZ,
 		SEXP inclust,SEXP iid, SEXP istrata,SEXP instrata,
 		SEXP iJumps) {
 	BEGIN_RCPP
-		mat U      = Rcpp::as<mat>(iU);
+	mat U      = Rcpp::as<mat>(iU);
 	mat dUt = Rcpp::as<mat>(idUt);
 	arma::vec wrr = Rcpp::as<arma::vec>(iwrr);
 	arma::vec Lam = Rcpp::as<arma::vec>(iLam);

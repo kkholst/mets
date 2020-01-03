@@ -4,6 +4,7 @@
 \alias{prob.exceed.recurrent}
 \alias{prob.exceedRecurrent}
 \alias{prob.exceedBiRecurrent}
+\alias{prob.exceedRecurrentStrata}
 \title{Estimation of probability of more that k events for recurrent events process}
 \usage{
 prob.exceed.recurrent(data, type, status = "status", death = "death",

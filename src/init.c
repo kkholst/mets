@@ -52,7 +52,7 @@ extern SEXP CubeVec(SEXP, SEXP);
 extern SEXP vecMatMat(SEXP, SEXP);
 extern SEXP OutCov(SEXP, SEXP);
 extern SEXP MatxCube(SEXP, SEXP, SEXP);
-extern SEXP Matdoubleindex(SEXP, SEXP, SEXP,SEXP);
+extern SEXP Matdoubleindex(SEXP, SEXP, SEXP,SEXP,SEXP,SEXP);
 extern SEXP CubeMat(SEXP, SEXP);
 extern SEXP PropTestCox(SEXP, SEXP,SEXP,SEXP);
 extern SEXP PropTestCoxClust(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP);
@@ -69,6 +69,8 @@ extern SEXP cumsumstrataPOR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP DLambetaR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP riskstrataR(SEXP,SEXP,SEXP); 
 extern SEXP meanriskR(SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP wherestrataR(SEXP,SEXP,SEXP,SEXP);
+extern SEXP maxminidR(SEXP,SEXP,SEXP);
 extern SEXP cumsumstratasumR(SEXP,SEXP, SEXP);
 extern SEXP cumsumidstratasumR(SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP cumsumASR(SEXP,SEXP, SEXP);
@@ -109,10 +111,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"FastPattern",                       (DL_FUNC) &FastPattern,                        3},
     {"MatxCube",                          (DL_FUNC) &MatxCube,                           3},
     {"meanriskR",                        (DL_FUNC) &meanriskR,                           5},
-    {"Matdoubleindex",                    (DL_FUNC) &Matdoubleindex,                     4},
-    {"_mets_ApplyBy",                      (DL_FUNC) &_mets_ApplyBy,                     3},
-    {"_mets_ApplyBy2",                     (DL_FUNC) &_mets_ApplyBy2,                    8},
-    {"_mets_loglikMVN",                    (DL_FUNC) &_mets_loglikMVN,                   13},
+    {"wherestrataR",                     (DL_FUNC) &wherestrataR,                        4},
+    {"maxminidR",                        (DL_FUNC) &maxminidR,                           3},
+    {"Matdoubleindex",                   (DL_FUNC) &Matdoubleindex,                     6},
+    {"_mets_ApplyBy",                    (DL_FUNC) &_mets_ApplyBy,                     3},
+    {"_mets_ApplyBy2",                   (DL_FUNC) &_mets_ApplyBy2,                    8},
+    {"_mets_loglikMVN",                  (DL_FUNC) &_mets_loglikMVN,                   13},
     {"_mets_RcppExport_registerCCallable", (DL_FUNC) &_mets_RcppExport_registerCCallable,0},
     {"pBhat",                             (DL_FUNC) &pBhat,                              6},
     {"PropTestCox",                       (DL_FUNC) &PropTestCox,                        4},

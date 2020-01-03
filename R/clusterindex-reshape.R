@@ -21,6 +21,7 @@
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
 ##' @export
+##' @aliases countID pairRisk
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
   n <- length(clusters)
@@ -51,7 +52,8 @@ cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,r
   clustud
 } ## }}}
 
-countID <- function(data,id="id",names.count="Count",total.count="Total",reverse=TRUE)
+##' @export
+countID <- function(data,id="id",names.count="Count",total.count="Total",index.name="index",reverse=TRUE,sep="",addid=TRUE)
 {# {{{
 
 clusters <- data[,id]
@@ -67,17 +69,74 @@ else {
 }
 
 ###tabid <- table(clusters)
+nclust <- table(clusters)
 
-data[,paste(names.count,id,sep="")] <- cumsumstrata(rep(1,nrow(data)),data[,id],max.clust+1) 
-###data[,paste(total.count,id,sep="")] <- rep( clusteres,each=tableid)
-###
-###if (reverse==TRUE) {
-###data[,paste("reverse",names.count,id,sep="")] <- data[,paste(total.count,id,sep="")] - cumsumstrata(rep(1,nrow(data)),data[,id],max.clust+1) +1
-###}
+if (addid)  {
+name1 <- paste(names.count,id,sep=sep)
+name2 <- paste("index",id,sep=sep)
+name3 <- paste(total.count,id,sep=sep)
+} else {
+name1 <- names.count
+name2 <- index.name
+name3 <- total.count
+}
 
-return(data)
+out <- data[,id,drop=FALSE]
+out[,name1]=cumsumstrata(rep(1,nrow(data)),clusters,max.clust)
+out[,name2]=clusters 
+out[,name3]=nclust[clusters+1]
+
+attr(out,"max.clust") <- max.clust
+
+return(out)
 }# }}}
 
+##' @export
+pairRisk <- function(start,stop,status,expo,clust)
+{# {{{
+    n <- length(start)
+    id <- 1:n
+    nclust <- length(unique(clust))
+    sig <- c(rep(-1, each = n), rep(1, each = n))
+    clust.seq <- c(as.numeric(as.factor(clust)), as.numeric(as.factor(clust)))
+    clust <- c(clust, clust)
+    expo <- c(expo, expo)
+    id <- c(id, id)
+    sstatus <- c(rep(0, length(start)), status)
+    tts <- c(start, stop)
+    ot <- order(clust.seq, tts, -rank(sstatus))
+    tts <- tts[ot]
+    sstatus <- sstatus[ot]
+    sig <- sig[ot]
+    expo <- expo[ot]
+    clust <- clust[ot]
+    clust.seq <- clust.seq[ot]
+    id <- id[ot]
+    cbind(id,sig,start,stop,expo,sstatus)
+    cc <- c(mets::revcumsumstrata(sig * expo * 10 + sig * (expo == 0), clust.seq - 1, nclust))
+    ### both under risk when cc>10
+    pair.risk <- which(cc > 10)
+    clustpl <- clust[pair.risk]
+    weightpl <- cc[pair.risk] - 10
+    caseweightpl <- rep(-1, length(weightpl))
+    casepl <- expo[pair.risk]
+    caseweightpl[casepl == 1] <- weightpl[casepl == 1]
+    ttexit <- tts[pair.risk]
+    ttentry <- tts[pair.risk - 1]
+    ttid <- id[pair.risk]
+    tstatus <- sstatus[pair.risk]
+    timesout <- cbind(rep(ttentry, times = weightpl), rep(ttexit, times = weightpl))
+    whichnotsame <- which(timesout[, 1] != timesout[, 2])
+    caseweightrep <- rep(caseweightpl, times = weightpl) * (!duplicated(cbind(rep(ttexit,
+        times = weightpl), rep(clustpl, time = weightpl)))) * 1
+    weightstatusrep <- rep(tstatus, times = weightpl) * (caseweightrep != 0)
+    idout <- rep(ttid, times = weightpl) * (caseweightrep != 0)
+    clustplrep <- rep(clustpl, times = weightpl)
+    out <- data.frame(timesout, weightstatusrep, caseweightrep,
+        clustplrep, idout, stringsAsFactors = FALSE)[whichnotsame, ]
+    out <- out[order(out[, 5]), ]
+    return(out)
+}# }}}
 
 
 ##' Finds all pairs within a cluster (family)

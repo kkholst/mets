@@ -212,5 +212,13 @@ NULL
 ##' @source Simulated data
 NULL
 
+##' ttpd discrete survival data on interval form 
+##'
+##' @name ttpd
+##' @docType data
+##' @keywords data
+##' @source Simulated data
+NULL
+
 
 

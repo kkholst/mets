@@ -33,8 +33,7 @@ simRecurrent(n, cumhaz, death.cumhaz = NULL, cumhaz2 = NULL,
 
 \item{dependence}{=0 independence, =1 all share same random effect with variance var.z
 =2 random effect exp(normal) with correlation structure from cor.mat,
-first random effect is z1 and shared for a possible second cause,
-second random effect is for death}
+first random effect is z1 and shared for a possible second cause,  second random effect is for death}
 
 \item{var.z}{variance of random effects}
 
@@ -48,8 +47,7 @@ Simulation of recurrent events data based on cumulative hazards
 \details{
 Must give hazard of death and recurrent events.  Possible with two
 event types and their dependence can be specified but the two recurrent events need
-to share random effect.
-combined to prducte the estimator
+to have the same random effect,  simRecurrentII more flexible !
 }
 \examples{
 ########################################
@@ -62,8 +60,6 @@ data(drcumhaz)
 dr <- drcumhaz
 base1 <- base1cumhaz
 base4 <- base4cumhaz
-
- cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
 
  ######################################################################
  ### simulating simple model that mimicks data 
@@ -90,8 +86,7 @@ base4 <- base4cumhaz
 ### random effect for all causes (Z shared for death and recurrent) 
 ######################################################################
 
- rr <- simRecurrent(1000,base1,
-        death.cumhaz=dr,dependence=1,var.gamma=0.4)
+ rr <- simRecurrent(1000,base1,death.cumhaz=dr,dependence=1,var.gamma=0.4)
  ### marginals do fit after input after integrating out
  par(mfrow=c(2,2))
  showfitsim(causes=1,rr,dr,base1,base1)
