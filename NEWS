@@ -9,9 +9,9 @@
     - with confidenence bands cumulative incidence for two cox's 
   - Piecewise constant hazard: rpch, ppch
   - Test-version of multinomial regression model (via phreg): mlogit
-  - Simulation for illness-death model simMultistate 
-  - Haplotype modelling for discrete time-to-pregnancy models 
-  - Interval censoring for discrete time logit-survival model
+  - Simulation for illness-death model: simMultistate 
+  - Haplotype modelling for discrete time-to-pregnancy models:  haplo.surv.discrete
+  - Interval censoring for discrete time logit-survival model: interval.logitsurv.discrete
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
