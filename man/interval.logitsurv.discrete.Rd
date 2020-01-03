@@ -46,7 +46,7 @@ When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an o
 
 Likelihood is maximized:
 \deqn{
-   P(T >t_l | x) - P(T> t_r| x) 
+ \prod  P(T_i >t_{il} | x) - P(T_I> t_{ir}| x) 
 }
 }
 \examples{
@@ -66,6 +66,18 @@ Z <- matrix(0,5,4)
 Z[2:5,1:4] <- diag(4)
 pred <- predictlogitSurvd(out,se=FALSE)
 plotSurvd(pred)
+
+## simulations 
+n <- 100
+Z <- matrix(rbinom(n*4,1,0.5),n,4)
+outsim <- simlogitSurvd(out$coef,Z)
+###
+outsim <- transform(outsim,left=time,right=time+1)
+outsim <- dtransform(outsim,right=Inf,status==0)
+
+out$coef
+outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
+summary(outss)
 
 }
 \author{
