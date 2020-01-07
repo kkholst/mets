@@ -39,16 +39,6 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,...)
   m[[1]] <- as.name("model.frame")
   m <- eval(m, parent.frame())
   Y <- model.extract(m, "response")
-###  if (!is.Surv(Y)) stop("Expected a 'Surv'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
   id <- strata <- NULL
   if (!is.null(attributes(Terms)$specials$cluster)) {
     ts <- survival::untangle.specials(Terms, "cluster")
@@ -63,12 +53,6 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,...)
     strata <- m[[ts$vars]]
     strata.name <- ts$vars
   }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    pos.offset <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  else pos.offset <- NULL
   X <- model.matrix(Terms, m)
 ###  if (!is.null(intpos  <- attributes(Terms)$intercept))
 ###    X <- X[,-intpos,drop=FALSE]

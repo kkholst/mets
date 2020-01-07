@@ -6,7 +6,7 @@
 \title{GOF for Cox covariates in  PH regression}
 \usage{
 gofZ.phreg(formula, data, vars = NULL, offset = NULL, weights = NULL,
-  breaks = 20, equi = TRUE, n.sim = 1000, silent = 1, ...)
+  breaks = 50, equi = FALSE, n.sim = 1000, silent = 1, ...)
 }
 \arguments{
 \item{formula}{formula for cox regression}

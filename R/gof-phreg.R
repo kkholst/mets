@@ -246,18 +246,18 @@ return(out)
 ##' }
 ##' @aliases cumContr 
 ##' @export
-gofZ.phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=20,equi=TRUE,
+gofZ.phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=50,equi=FALSE,
 			n.sim=1000,silent=1,...)
 {# {{{
 if (is.null(vars)) {
      vars <- NULL
       ## find strata var's 
       yxzf <- procform(formula,x=NULL,z=NULL,data=data,do.filter=FALSE)
+      avars <- all.vars(formula[-2])
       svar <- grep("strata",yxzf$predictor)
     if (length(svar)>=1) {
-	avars <- all.vars(formula[-2])
 	avars <- avars[-svar]
-	}
+     }
      ## check that it is not a factor and that there are more than 2 levels
      for (vv in avars) {
 	  if (length(unique(data[,vv]))>2 & !is.factor(data[,vv]))
@@ -274,6 +274,7 @@ i <- 1
 for (vv in vars) {
  modelmatrix <- cumContr(data[,vv],breaks=breaks,equi=equi)
  lres <- gofM.phreg(formula,data,modelmatrix=modelmatrix) 
+ lres$xaxs <- attr(modelmatrix,"breaks")
 
  res[i,] <- c(lres$Utlast,lres$pval.last)
  i <- i+1
@@ -336,9 +337,8 @@ class(out) <- "gof.phreg"
 return(out)
 }# }}}
 
-
 ##' @export
-cumContr <- function(data, breaks = 4, probs = NULL,equi = TRUE,na.rm=TRUE,...)
+cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks=TRUE,...)
  {# {{{
  if (is.vector(data)) {
         if (is.list(breaks))
@@ -352,6 +352,7 @@ cumContr <- function(data, breaks = 4, probs = NULL,equi = TRUE,na.rm=TRUE,...)
                 if (!equi) {
                   probs <- seq(0, 1, length.out = breaks + 1)
                   breaks <- quantile(data, probs, na.rm = na.rm, ...)
+	          if (unique.breaks) breaks <- unique(breaks)
 	          breaks <- breaks[-1]
                 }
                 if (equi) {
@@ -502,7 +503,8 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 	   {
 	    xr <- x$Zres[[i]]
 	    obsz <- c(tail(xr$score,1))
-	    times <- 1:length(obsz)
+###	    times <- 1:length(obsz)
+	    times <- xr$xaxs
 	    rsU <- max(max(abs(obsz)),max(abs(xr$simUtlast[1:50,])))
 	    plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
 	    title(main=rownames(x$res)[i])

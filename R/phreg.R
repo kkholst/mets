@@ -601,6 +601,7 @@ phreg01R <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights
   res
 }# }}}
 
+##' @export
 FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights, offsets, ZX, caseweights) 
 {# {{{
 	p=length(beta)
