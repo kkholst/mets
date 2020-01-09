@@ -33,11 +33,18 @@ interval.logitsurv.discrete(formula, data, beta = NULL, no.opt = FALSE,
 
 \item{offsets}{following id  for GLM}
 
-\item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
+\item{exp.link}{parametrize increments exp(alpha) > 0}
+
+\item{increment}{using increments dG(t)=exp(alpha) as parameters}
+
+\item{...}{Additional arguments to lower level funtions lava::NR  optimizer or nlm}
 }
 \description{
 \deqn{
-   logit(P(T >t | x)) = \alpha_t + x \beta
+   logit(P(T >t | x)) = log(G(t)) + x \beta
+}
+\deqn{
+   P(T >t | x) =  \frac{1}{1 + G(t) exp( x \beta) }
 }
 }
 \details{

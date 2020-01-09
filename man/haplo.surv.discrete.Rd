@@ -56,7 +56,7 @@ haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
 
 \item{idhapweights}{weights following id-hap for GLM (WIP)}
 
-\item{...}{Additional arguments to lower level funtions lava:::NR  optimizer or nlm}
+\item{...}{Additional arguments to lower level funtions lava::NR  optimizer or nlm}
 }
 \description{
 Can be used for logistic regression when time variable is "1" for all id.

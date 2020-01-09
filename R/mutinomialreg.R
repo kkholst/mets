@@ -1,9 +1,12 @@
 ##' Multinomial regression based on phreg regression
 ##'
-##' Can also get influence functions (possibly robust) via iid() function, response should be a factor 
+##' Fits multinomial regression model \deqn{ P_i = \frac{ \exp( X^\beta_i ) }{ \sum_{j=1}^K \exp( X^\beta_j ) }} for \deqn{i=1,..,K}
+##' where $\beta_1 = 0$, such that \deqn{\sum_j P_j = 1} using phreg function. Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}
 ##'
 ##' Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
-##' Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}
+##' Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.  
+##'
+##' Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
@@ -87,7 +90,6 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   strata.call <- strata
   Zcall <- matrix(1,1,1) ## to not use for ZX products when Z is not given 
   if (!is.null(Z)) Zcall <- Z
-
   ## possible casewights to use for bootstrapping and other things
   if (is.null(case.weights)) case.weights <- rep(1,length(Y)) 
 
@@ -105,9 +107,10 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   nlev <- length(types)
 
   nX <- nrow(X)
-  id <- rep(1:nX,each=nlev)
-  X <- X[id,,drop=FALSE]
-  Y <- Y[id]
+  idrow <- rep(1:nX,each=nlev)
+  X <- X[idrow,,drop=FALSE]
+  Y <- Y[idrow]
+  id <- id[idrow]
   status <- rep(0,nrow(X))
   nY <- as.numeric(Y)
 
@@ -120,13 +123,12 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   for (i in nrefs) XX <- cbind(XX,X*(strat==i))
   rownames(XX) <- NULL
 
-  datph=data.frame(time=time,status=status,XX=XX,id=id)
-  loffset <- offset[id]
-  lweights<- weights[id]
+  datph=data.frame(time=time,status=status,XX=XX,id=id,idrow=idrow)
+  loffset <- offset[idrow]
+  lweights<- weights[idrow]
 
 ###  print(list(...))
-  res <- phreg(Surv(time,status)~XX+strata(id)+cluster(id),datph,
-	       weights=lweights,offset=loffset,...)
+  res <- phreg(Surv(time,status)~XX+strata(idrow)+cluster(id),datph,weights=lweights,offset=loffset,...)
 
   return(res)
 }# }}}

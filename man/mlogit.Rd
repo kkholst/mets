@@ -18,11 +18,14 @@ mlogit(formula, data, offset = NULL, weights = NULL, ...)
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Can also get influence functions (possibly robust) via iid() function, response should be a factor
+Fits multinomial regression model \deqn{ P_i = \frac{ \exp( X^\beta_i ) }{ \sum_{j=1}^K \exp( X^\beta_j ) }} for \deqn{i=1,..,K}
+where $\beta_1 = 0$, such that \deqn{\sum_j P_j = 1} using phreg function. Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}.
 }
 \details{
 Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
-Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}
+Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.
+
+Can also get influence functions (possibly robust) via iid() function, response should be a factor.
 }
 \examples{
 

@@ -785,8 +785,9 @@ if (is.null(x$propodds)) {
 
 
 ##' @export
-residuals.phreg  <- function(x,cumsum=FALSE,...) {# {{{
+residuals.phreg  <- function(object,cumsum=FALSE,...) {# {{{
   orig.order <- FALSE
+x <- object
 
 if (is.null(x$propodds)) { # {{{ cox model 
 	  xx <- x$cox.prep
@@ -816,6 +817,9 @@ if (is.null(x$propodds)) { # {{{ cox model
 	  dN <- S0i <- rep(0,length(xx$strata))
 	  S0i[xx$jumps+1] <- 1/x$S0
 	  dN[xx$jumps+1] <- 1 
+	  U <- E <- matrix(0,nrow(xx$X),x$p)
+	  E[xx$jumps+1,] <- x$E
+	  U[xx$jumps+1,] <- x$U
 	  S0i <- rep(0,length(xx$strata))
 	  S0i[xx$jumps+1] <- 1/x$S0
 	  cumhazA <- cumsumstratasum(S0i,xx$strata,xx$nstrata,type="all")
@@ -976,7 +980,6 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
 tailstrata <- function(strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
-if (length(x)!=length(strata)) stop("length of x and strata must be same\n"); 
 res <- .Call("tailstrataR",length(strata),strata,nstrata,PACKAGE="mets")
 if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res$found>0.5]); }
 return(res$where)

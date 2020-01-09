@@ -568,6 +568,7 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
 {# {{{
 
+ rr$revnr <- NULL
  rr$cens <- 0
  rr <- count.history(rr)
  ###
@@ -576,11 +577,8 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
  rr$revnr <- cumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
  dsort(rr) <- ~id+start
  rr <- dtransform(rr,cens=1,revnr==1 & death==0)
- ###
 
-###  xrc <- phreg(Surv(entry,time,status==1)~Count1+cluster(id),data=rr)
   xr <- phreg(Surv(entry,time,status==1)~Count1+death+cluster(id),data=rr,no.opt=TRUE)
- ###
   cr <- phreg(Surv(entry,time,cens)~cluster(id),data=rr)
   dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
 
@@ -1613,164 +1611,6 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   return(tall)
   }# }}}
 
-##' Simulation of recurrent events data based on cumulative hazards III
-##'
-##' Simulation of recurrent events data based on cumulative hazards 
-##' based on double Cox (among survivors) 
-##'
-##' \deqn{ N_1(t) | N_2(t-), \Lambda_2(t) \sim \lambda_1(t) RR_1 \exp( \beta_1 ( N_2(t-) - RR1* \Lambda_2(t)) ) }  
-##' \deqn{ N_2(t) | N_1(t-), \Lambda_1(t) \sim \lambda_2(t) RR_2 \exp( \beta_1 ( N_2(t-) - RR"* \Lambda_2(t)) ) }  
-##' where RR1 and RR2 are relative risk terms sampled from the given list of RR1 and 
-##' RR2 (with replacement), and \eqn{ \Lambda_1} and \eqn{ \Lambda_2} the cumulatives 
-##' such that  \eqn{ E(N_1(t) | \Lambda_1,X, D>t} = RR1 * \Lambda_1(t)}, here the 
-##' cumulative hazard can be subject specific with different risk experience, 
-##' based on when the subject has been under risk   
-##'  
-##' Must give cumulative hazards of the two recurrent events (and possible also death).  
-##' Random effects possible as for simRecurrentII 
-##'
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of recurrent events 
-##' @param cumhaz2  cumulative hazard of recurrent events  of type 2
-##' @param death.cumhaz cumulative hazard of death 
-##' @param gap.time if true simulates gap-times with specified cumulative hazard
-##' @param max.recurrent limits number recurrent events to 100
-##' @param dhaz rate for death hazard if it is extended to time-range of first event 
-##' @param haz2 rate of second cause  if it is extended to time-range of first event 
-##' @param dependence 0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death  
-##' @param var.z variance of random effects 
-##' @param cor.mat correlation matrix for var.z variance of random effects 
-##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to lower level funtions
-##' @author Thomas Scheike
-##' @export
-simRecurrentIIIC <- function(n,cumhaz,cumhaz2,beta1,beta2,death.cumhaz=NULL,
-	     RR1=NULL,RR2=NULL,RRD=NULL,gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
-		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
-{# {{{
-
-  fdeath <- dtime <- NULL # to avoid R-check 
-
-  if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
-     } else if (dependence==1) {
-	      z <- rgamma(n,1/var.z[1])*var.z[1]
-	      z1 <- z; z2 <- z; zd <- z
-	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
-      } else if (dependence==2) {
-              stdevs <- var.z^.5
-              b <- stdevs %*% t(stdevs)  
-              covv  <- b * cor.mat  
-	      z <- matrix(rnorm(3*n),n,3)
-	      z <- exp(z%*% chol(covv))
-	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
-      } else if (dependence==3) {
-	      z <- matrix(rgamma(3*n,1),n,3)
-              z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3])
-              z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
-              zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
-	      z <- cbind(z1,z2,zd)
-      } else stop("dependence 0-3"); # }}}
-
- if (!is.null(RR1)) RR1  <-  sample(RR1,n,replace=TRUE) else RR1 <- rep(1,n)
- if (!is.null(RR2)) RR2  <-  sample(RR2,n,replace=TRUE) else RR2 <- rep(1,n)
- if (!is.null(RRD)) RRD  <-  sample(RRD,n,replace=TRUE) else RRD <- rep(1,n)
-
-  cumhaz <- rbind(c(0,0),cumhaz)
-
-  ## range max of cumhaz and cumhaz2 
-  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
-  cumhaz <- out$cumA
-  cumhaz2 <- out$cumB
-  ## extend cumulative for death to full range  of cause 1
-  if (!is.null(death.cumhaz)) {
-     out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-     cumhazd <- out$cumB
-  }
-
-  ll <- nrow(cumhaz)
-  max.time <- tail(cumhaz[,1],1)
-
-### recurrent first time
-  tall1 <- timereg::pc.hazard(cumhaz,RR1*z1)
-  tall2 <- timereg::pc.hazard(cumhaz2,RR2*z2)
-  tall <- tall1 
-  tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
-  tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
-  tall$id <- 1:n
-  tall$rr2 <- tall2$rr
-### death time simulated
-  if (!is.null(death.cumhaz)) {# {{{
-	  timed   <- timereg::pc.hazard(cumhazd,RRD*zd)
-	  tall$dtime <- timed$time
-	  tall$fdeath <- timed$status
-	  if (!is.null(cens)) { 
-             ctime <- rexp(n)/cens
-	     tall$fdeath[tall$dtime>ctime] <- 0; 
-	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
-	  }
-  } else { 
-	  tall$dtime <- max.time; 
-	  tall$fdeath <- 0; 
-	  cumhazd <- NULL 
-	  if (!is.null(cens)) { 
-             ctime <- rexp(n)/cens
-	     tall$fdeath[tall$dtime>ctime] <- 0; 
-	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
-	  }
-  }# }}}
-
-### fixing the first time to event
-  tall$death <- 0
-  tall <- dtransform(tall,death=fdeath,time>dtime)
-  tall <- dtransform(tall,status=0,time>dtime)
-  tall <- dtransform(tall,time=dtime,time>dtime)
-  tall <- count.history(tall,lag=FALSE)
-  ddrop(tall) <- ~lbnr__id
-  dtable(tall,~"Count*")
-  tt <- tall
-  ### setting aside memory 
-  tt1 <- tt2 <- tt
-###  gemsim <- as.data.frame(matrix(0,max.recurrent*n,ncol(tall)))
-###  names(gemsim) <- names(tall)
-###  gemsim[1:n,] <- tall; nrr <- n
-  i <- 1; 
-  while (any(tt$time<tt$dtime) & i < max.recurrent) {
-	  i <- i+1
-	  still <- subset(tt,time<dtime)
-	  nn <- nrow(still)
-###	  betat <- ifelse(still$time<700,beta1,beta2)
-###	  print(cbind(still$time,betat))
-###	  rr1 <- RR1[still$id]*exp(beta1*(still$Count1-))*z2[still$id]
-###	  rr2 <- RR2[still$id]*exp(beta2*(still$Count2-))*z1[still$id]
-###	  print(dtable(still,~"Count*"))
-          tt1 <- timereg::pc.hazard(cumhaz,rr2,entry=still$time)
-          tt2 <- timereg::pc.hazard(cumhaz2,rr1,entry=still$time)
-	  tt <- tt1
-          tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
-          tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
-	  tt$rr2 <- tt2$rr
-           ###
-	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
-	  tt <- dtransform(tt,death=fdeath,time>dtime)
-	  tt <- dtransform(tt,status=0,time>dtime)
-	  tt <- dtransform(tt,time=dtime,time>dtime)
-	  tt$Count1 <- still$Count1+(tt$status==1)
-	  tt$Count2 <- still$Count2+(tt$status==2)
-	  nt <- nrow(tt)
-	  tall <- rbind(tall,tt[1:nn,],row.names=NULL)
-  }
-  dsort(tall) <- ~id+entry+time
-  tall$start <- tall$entry
-  tall$stop  <- tall$time
-
-  attr(tall,"death.cumhaz") <- cumhazd
-  attr(tall,"cumhaz") <- cumhaz
-  attr(tall,"cumhaz2") <- cumhaz2
-  attr(tall,"z") <- z
-
-  return(tall)
-  }# }}}
-
 ##' @export
 showfitsim <- function(causes=2,rr,dr,base1,base4,which=1:3) 
 {# {{{
@@ -2182,7 +2022,7 @@ extendCums <- function(cumA,cumB,both=TRUE,hazb=NULL,haza=NULL)
 ##' event types and their dependence can be specified but the two recurrent events need
 ##' to share random effect. 
 ##' 
-##' random effect to death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
+##' Random effect to death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
 ##' \deqn{Z.death=Zd1+Zd2}  gamma distributions 
 ##' \deqn{Zdj}  gamma distribution  with mean parameters (sharej), vargamD,  share2=1-share1
 ##' \deqn{Z12}  gamma distribution with mean 1 and variance vargam12
@@ -2499,7 +2339,7 @@ return(data)
 ##' with(pp, matlines(times,se.upper,type="s"))
 ##' }
 ##' @export
-##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata 
+##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata
 prob.exceed.recurrent <- function(data,type,status="status",death="death",
  start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=FALSE,
  strata=NULL,all.cifs=FALSE)
@@ -2901,11 +2741,11 @@ plot.BiRecurrent <- function(x,stratas=NULL,add=FALSE,...)
 
    for (s in stratas)  {
    if (add==FALSE)
-    with(oos, matplot(time[strata==s],pe1e2[strata==s,],type="s",...))
+    with(x, matplot(time[strata==s],pe1e2[strata==s,],type="s",...))
     else 
-    with(oos, matlines(time[strata==s],pe1e2[strata==s,],type="s",...))
-   nc <- ncol(oo$pe1e2)
-   legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
+    with(x, matlines(time[strata==s],pe1e2[strata==s,],type="s",...))
+   nc <- ncol(x$pe1e2)
+   legend("topleft",colnames(x$pe1e2),lty=1:nc,col=1:nc)
    }
 }# }}}
 
