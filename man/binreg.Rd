@@ -16,7 +16,7 @@ binreg(formula, data, cause = 1, time = NULL, beta = NULL,
 
 \item{cause}{cause of interest}
 
-\item{time}{}
+\item{time}{time of interest}
 
 \item{beta}{starting values}
 
@@ -55,7 +55,7 @@ data(bmt)
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
-predict(out,data.frame(tcell=0,platelet=1),se=TRUE)
+predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
 outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 summary(outs)

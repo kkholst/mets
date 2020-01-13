@@ -10,7 +10,7 @@
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
 ##' @param cause cause of interest
-##' @param time 
+##' @param time  time of interest 
 ##' @param beta starting values 
 ##' @param offset offsets for partial likelihood 
 ##' @param weights for score equations 
