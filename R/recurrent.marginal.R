@@ -568,6 +568,9 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
 {# {{{
 
+ # to ovoid R check warning 
+ death <- revnr <- NULL
+
  rr$revnr <- NULL
  rr$cens <- 0
  rr <- count.history(rr)
@@ -2735,6 +2738,7 @@ pstrata2[1] <- 0
 ##' @export
 plot.BiRecurrent <- function(x,stratas=NULL,add=FALSE,...)
 {# {{{
+
    strat <- x$strata
    ## all strata
    if (is.null(stratas)) stratas <- 0:(x$nstrata-1) 
