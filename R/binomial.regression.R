@@ -29,7 +29,7 @@
 ##' # logistic regresion with IPCW binomial regression 
 ##' out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 ##' summary(out)
-##' predict(out,data.frame(tcell=0,platelet=1),se=TRUE)
+##' predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 ##'
 ##' outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 ##' summary(outs)
@@ -173,7 +173,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  }
 
 	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-	  val <- c(val,list(time=time,formula=formula,cens.weights=cens.weights))
+	  val <- c(val,list(time=time,formula=formula,cens.weights=cens.weights,model.frame=m))
 
  if (se) {## {{{ censoring adjustment of variance 
 	ord <- resC$cox.prep$ord+1
@@ -253,8 +253,14 @@ vcov.binreg <- function(object,...) {# {{{
 ##' @export
 predict.binreg <- function(object,newdata,se=TRUE,...)
 {# {{{
-  formX <- update.formula(object$formula,1~.)
-  Z <- as.matrix(model.matrix(formX,newdata))
+
+  xlev <- lapply(object$model.frame,levels)
+  ff <- unlist(lapply(object$model.frame,is.factor))
+  upf <- update(object$formula,~.)
+  tt <- terms(upf)
+  tt <- delete.response(tt)
+  Z <- model.matrix(tt,data=newdata,xlev=xlev)
+  Z <- as.matrix(Z)
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
