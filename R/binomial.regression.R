@@ -252,7 +252,8 @@ vcov.binreg <- function(x,...) {# {{{
 ##' @export
 predict.binreg <- function(x,newdata,se=TRUE,...)
 {# {{{
-  Z <- as.matrix(model.matrix(x$formula,newdata))
+  formX <- update.formula(x$formula,1~.)
+  Z <- as.matrix(model.matrix(formX,newdata))
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% x$coef)
   p <- expit(lp)

@@ -23,7 +23,8 @@
 \usage{
 \method{predict}{phreg}(object, newdata, times = NULL,
   individual.time = FALSE, tminus = FALSE, se = TRUE,
-  robust = FALSE, conf.type = "log", conf.int = 0.95, ...)
+  robust = FALSE, conf.type = "log", conf.int = 0.95, km = FALSE,
+  ...)
 }
 \arguments{
 \item{object}{phreg object}
