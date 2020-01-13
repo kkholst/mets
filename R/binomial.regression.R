@@ -29,11 +29,10 @@
 ##' # logistic regresion with IPCW binomial regression 
 ##' out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 ##' summary(out)
-##' predict(out,data.frame(tcell=c(0,0,1,1),platelet=c(0,1,0,1)),se=TRUE)
+##' predict(out,data.frame(tcell=0,platelet=1),se=TRUE)
 ##'
 ##' outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 ##' summary(outs)
-##' predict(out,data.frame(tcell=c(0,0,1,1),platelet=c(0,1,0,1)),se=TRUE)
 ##' 
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -264,7 +263,7 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
   if (se) {
   preds <- c()
   for (i in 1:length(lp)) {
-     if (is.null(x$var)) covv <- vcov(x)  else covv <- x$var
+     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
      Dp <- Z[i,]*exp(-lp[i])*p[i]^2
      se <- (Dp %*% covv %*% Dp)^.5
      cmat <- data.frame(pred=p[i],se=se,lower=p[i]-1.96*se,upper=p[i]+1.96*se)
