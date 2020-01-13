@@ -1445,7 +1445,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi
 ##' @export
 predict.phreg <- function(object,newdata,
- times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,...) 
+ times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...) 
 {# {{{ default is all time-points from the object
 
    ### take baseline and strata from object# {{{
@@ -1493,7 +1493,9 @@ predict.phreg <- function(object,newdata,
 
     for (j in unique(strataNew)) {
         where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
-	hazt <- c(0,chaz[strata==j])[where]
+	hazt <- c(0,chaz[strata==j])
+	if (km) { hazt <- c(1,exp(cumsum(log(1-diff(hazt)))));  hazt[is.na(hazt)] <- 0 }
+	hazt <- hazt[where]
 	if (se) se.hazt <- c(0,se.chaz[strata==j])[where]
 	Xs <- X[strataNew==j,,drop=FALSE]
 ###	offs <- object$offsets[object$strata==j]
@@ -1515,8 +1517,13 @@ predict.phreg <- function(object,newdata,
 		} else cov1 <- 0 
 	}# }}}
 	if (is.null(object$propodds)) {
-	   if (!individual.time) surv[strataNew==j,]  <- exp(- RR%o%hazt)
-           else surv[strataNew==j,]  <- exp(-RR*hazt[strataNew==j])
+		if (!km) {
+			   if (!individual.time) surv[strataNew==j,]  <- exp(- RR%o%hazt)
+			   else surv[strataNew==j,]  <- exp(-RR*hazt[strataNew==j])
+		} else {
+                    if (!individual.time) surv[strataNew==j,]  <- NULL 
+			   else surv[strataNew==j,]  <- hazt[strataNew==j]^RR
+		}
 	} else {
 	  if (!individual.time) surv[strataNew==j,]  <- 1/(1+RR%o%hazt)
           else surv[strataNew==j,]  <- 1/(1+RR*hazt[strataNew==j])
