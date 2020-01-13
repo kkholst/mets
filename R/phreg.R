@@ -1441,6 +1441,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @param robust to get robust se's. 
 ##' @param conf.type transformation for suvival estimates, default is log
 ##' @param conf.int significance level
+##' @param km to use Kaplan-Meier for baseline 
 ##' @param ... Additional arguments to plot functions
 ##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi
 ##' @export

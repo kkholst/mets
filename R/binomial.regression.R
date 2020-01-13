@@ -27,11 +27,13 @@
 ##'
 ##' data(bmt)
 ##' # logistic regresion with IPCW binomial regression 
-##' out <- binreg(Event(time,cause)~tcell+platelet,bmt)
+##' out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 ##' summary(out)
+##' predict(out,data.frame(tcell=c(0,0,1,1),platelet=c(0,1,0,1)),se=TRUE)
 ##'
-##' outs <- binreg(Event(time,cause)~tcell+platelet,bmt,cens.model=~strata(tcell,platelet))
+##' outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 ##' summary(outs)
+##' predict(out,data.frame(tcell=c(0,0,1,1),platelet=c(0,1,0,1)),se=TRUE)
 ##' 
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -234,28 +236,28 @@ print.binreg  <- function(x,...) {# {{{
 }# }}}
 
 ##' @export
-summary.binreg <- function(x,or=TRUE,...) {# {{{
+summary.binreg <- function(object,or=TRUE,...) {# {{{
 if (or)  {
 cat("OR estimates \n"); 
-estimate(coef=x$coef,vcov=x$var,f=function(p) exp(p))
+estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p))
 } else  {
 	cat("log-OR estimates \n"); 
-estimate(coef=x$coef,vcov=x$var)
+estimate(coef=object$coef,vcov=object$var)
 }
 }# }}}
 
 ##' @export
-vcov.binreg <- function(x,...) {# {{{
-	return(x$var)
+vcov.binreg <- function(object,...) {# {{{
+	return(object$var)
 }# }}}
 
 ##' @export
-predict.binreg <- function(x,newdata,se=TRUE,...)
+predict.binreg <- function(object,newdata,se=TRUE,...)
 {# {{{
-  formX <- update.formula(x$formula,1~.)
+  formX <- update.formula(object$formula,1~.)
   Z <- as.matrix(model.matrix(formX,newdata))
   expit  <- function(z) 1/(1+exp(-z)) ## expit
-  lp <- c(Z %*% x$coef)
+  lp <- c(Z %*% object$coef)
   p <- expit(lp)
   preds <- p
 

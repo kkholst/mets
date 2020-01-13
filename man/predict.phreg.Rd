@@ -45,6 +45,8 @@
 
 \item{conf.int}{significance level}
 
+\item{km}{to use Kaplan-Meier for baseline}
+
 \item{...}{Additional arguments to plot functions}
 }
 \description{
