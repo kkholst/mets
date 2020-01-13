@@ -12,6 +12,7 @@
   - Simulation for illness-death model: simMultistate 
   - Haplotype modelling for discrete time-to-pregnancy models:  haplo.surv.discrete
   - Interval censoring for discrete time logit-survival model: interval.logitsurv.discrete
+  - Binomial Regression for competing risks data with censoring and one time point only: binreg 
 
 * Version 1.2.5    <2018-11-18 Sun>
   - Updated predict function for phreg 
