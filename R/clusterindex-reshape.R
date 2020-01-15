@@ -19,7 +19,7 @@
 ##' @param mat to return matrix of indeces
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
-##' @aliases countID pairRisk
+##' @aliases countID pairRisk mystrata
 ##' @export
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
@@ -136,6 +136,27 @@ pairRisk <- function(start,stop,status,expo,clust)
     out <- out[order(out[, 5]), ]
     return(out)
 }# }}}
+
+##' @export
+mystrata <- function(ll,sort=TRUE) {# {{{
+	if (!is.factor(ll[[1]])) ll[[1]] <- factor(ll[[1]])
+	id <- as.numeric(ll[[1]]) 
+        ss <- id
+	for (j in seq(2,length(ll))) {
+	     if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
+             mm <- 1/nlevels(ll[[j]])
+	     ## two decimals for each level
+	     dec <- as.numeric(ll[[j]])/(nlevels(ll[[j]]))-mm/2
+	     ss <- ss+dec/100^{j-2}
+	}
+	uss <- unique(ss)
+	nindex <- length(uss)
+        sindex <- fast.approx(uss,ss)
+	dd <- data.frame(id=id,sindex=sindex)
+        attr(dd,"nlevel") <- nindex
+	return(dd)
+} # }}}
+
 
 ##' Finds all pairs within a cluster (family)
 ##' 
