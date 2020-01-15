@@ -1441,7 +1441,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @param robust to get robust se's. 
 ##' @param conf.type transformation for suvival estimates, default is log
 ##' @param conf.int significance level
-##' @param km to use Kaplan-Meier for baseline 
+##' @param km to use Kaplan-Meier for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))} where s is strata.
 ##' @param ... Additional arguments to plot functions
 ##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi
 ##' @export
@@ -1494,25 +1494,26 @@ predict.phreg <- function(object,newdata,
 
     for (j in unique(strataNew)) {
         where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
-	hazt <- c(0,chaz[strata==j])
+	hhazt <- hazt <- c(0,chaz[strata==j])
 	if (km) { hazt <- c(1,exp(cumsum(log(1-diff(hazt)))));  hazt[is.na(hazt)] <- 0 }
 	hazt <- hazt[where]
+	hhazt <- hhazt[where]
 	if (se) se.hazt <- c(0,se.chaz[strata==j])[where]
 	Xs <- X[strataNew==j,,drop=FALSE]
 ###	offs <- object$offsets[object$strata==j]
         if (object$p==0) RR <- rep(1,nrow(Xs)) else RR <- c(exp( Xs %*% coef(object)))
-	if (se)  { # {{{
+	if (se)  { # {{{ based on Hazard's 
 		if (object$p>0) {
 			Ps <- Pt[strata==j,,drop=FALSE]
 			Ps <- rbind(0,Ps)[where,,drop=FALSE]
                         ##  print(Xs); print(varbeta); print(dim(Ps)); print((Xs %*% varbeta))
 			Xbeta <- Xs %*% varbeta
 			seXbeta <- rowSums(Xbeta*Xs)^.5
-			cov2 <- cov1 <- Xbeta %*% t(Ps*hazt)
+			cov2 <- cov1 <- Xbeta %*% t(Ps*hhazt)
 		        if (robust)	{
 			   covvs <- covv[strata==j,,drop=FALSE]
 			   covvs <- rbind(0,covvs)[where,,drop=FALSE]
-                           covv1 <- Xs %*% t((covvs*hazt))
+                           covv1 <- Xs %*% t((covvs*hhazt))
 			   cov1 <- cov1-covv1
 			}
 		} else cov1 <- 0 
@@ -1532,8 +1533,8 @@ predict.phreg <- function(object,newdata,
 	if (se) {# {{{
 	    if (object$p>0)  {
 	       if (!individual.time) se.cumhaz[strataNew==j,]  <- 
-		     ((RR %o% se.hazt)^2+(c(RR*seXbeta) %o% hazt)^2-2*RR^2*cov1)^.5
-	        else se.cumhaz[strataNew==j,]  <- RR* (se.hazt^2+(c(seXbeta)*hazt)^2-2*diag(cov1))^.5
+		     ((RR %o% se.hazt)^2+(c(RR*seXbeta) %o% hhazt)^2-2*RR^2*cov1)^.5
+	        else se.cumhaz[strataNew==j,]  <- RR* (se.hazt^2+(c(seXbeta)*hhazt)^2-2*diag(cov1))^.5
 	    } else {
 	       if (!individual.time) se.cumhaz[strataNew==j,]  <- RR %o% (se.hazt)
 	        else se.cumhaz[strataNew==j,]  <- RR* se.hazt[strataNew==j]  

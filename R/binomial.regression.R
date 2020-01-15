@@ -107,11 +107,16 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   data$exit <- exit
   data$statusC <- statusC 
 
+  cens.strata <- cens.nstrata <- NULL 
+
   if (is.null(cens.weights))  {
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
-      resC <- phreg(formC,data)
+	      resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      ## strata from original data 
+      cens.strata <- resC$strata[resC$ord]
+      cens.nstrata <- resC$nstrata
   }
   expit  <- function(z) 1/(1+exp(-z)) ## expit
 
@@ -173,7 +178,10 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  }
 
 	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-	  val <- c(val,list(time=time,formula=formula,cens.weights=cens.weights,model.frame=m))
+	  val <- c(val,list(time=time,formula=formula,
+	    exit=exit,
+	    cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata,
+			    model.frame=m))
 
  if (se) {## {{{ censoring adjustment of variance 
 	ord <- resC$cox.prep$ord+1

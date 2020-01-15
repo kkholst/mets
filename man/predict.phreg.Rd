@@ -45,7 +45,7 @@
 
 \item{conf.int}{significance level}
 
-\item{km}{to use Kaplan-Meier for baseline}
+\item{km}{to use Kaplan-Meier for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))} where s is strata.}
 
 \item{...}{Additional arguments to plot functions}
 }
