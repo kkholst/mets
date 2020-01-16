@@ -139,24 +139,42 @@ pairRisk <- function(start,stop,status,expo,clust)
 
 ##' @export
 mystrata <- function(ll,sort=TRUE) {# {{{
-	if (!is.factor(ll[[1]])) ll[[1]] <- factor(ll[[1]])
-	id <- as.numeric(ll[[1]]) 
-        ss <- id
-	for (j in seq(2,length(ll))) {
-	     if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
-             mm <- 1/nlevels(ll[[j]])
-	     ## two decimals for each level
-	     dec <- as.numeric(ll[[j]])/(nlevels(ll[[j]]))-mm/2
-	     ss <- ss+dec/100^{j-2}
+	for (j in seq(1,length(ll))) 
+	if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
+
+	nll <- length(ll[[1]])
+        ss <- rep(0,nll)
+        nl <- unlist(lapply(ll,nlevels))
+        poss <- exp(revcumsum(log(unlist(nl)))) 
+	for (j in seq(1,length(ll))) {
+	     ss <- ss+as.numeric(ll[[j]])*poss[j]
 	}
 	uss <- unique(ss)
 	nindex <- length(uss)
         sindex <- fast.approx(uss,ss)
-	dd <- data.frame(id=id,sindex=sindex)
-        attr(dd,"nlevel") <- nindex
-	return(dd)
+        attr(sindex,"nlevel") <- nindex
+	return(sindex)
 } # }}}
 
+###mystrata <- function(ll,sort=TRUE) {# {{{
+###	if (!is.factor(ll[[1]])) ll[[1]] <- factor(ll[[1]])
+###	id <- as.numeric(ll[[1]]) 
+###        ss <- id
+###	for (j in seq(2,length(ll))) {
+###	     if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
+###             mm <- 1/nlevels(ll[[j]])
+###	     ## two decimals for each level
+###	     dec <- as.numeric(ll[[j]])/(nlevels(ll[[j]]))-mm/2
+###	     ss <- ss+dec/100^{j-2}
+###	}
+###	uss <- unique(ss)
+###	nindex <- length(uss)
+###        sindex <- fast.approx(uss,ss)
+###	dd <- data.frame(id=id,sindex=sindex)
+###        attr(dd,"nlevel") <- nindex
+###	return(dd)
+###} # }}}
+###
 
 ##' Finds all pairs within a cluster (family)
 ##' 
