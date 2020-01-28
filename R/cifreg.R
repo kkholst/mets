@@ -225,10 +225,11 @@ S2oo <- S2oo[jumps,,drop=FALSE]
 S0 <- c(S0oo+S0no*Gjumps)
 E <-   (S1oo+S1no*Gjumps)/S0
 weightsJ <- xx2$weights[jumps]
+caseweightsJ <- xx2$caseweights[jumps]
 strataJ <- xx2$strata[jumps]
 rr2now <- rr2now[jumps]
 U <- (Xj-E)
-ploglik <- (log(rr2now)-log(S0))*weightsJ; 
+ploglik <- (log(rr2now)-log(S0))*weightsJ*caseweightsJ; 
 
 if (!is.null(propodds)) {
    pow <- c(.Call("cumsumstrataPOR",weightsJ,S0,strataJ,nstrata,propodds,rr2now,PACKAGE="mets")$pow); 
@@ -237,7 +238,7 @@ if (!is.null(propodds)) {
    DUadj  <- .Call("vecMatMat",Dwbeta,U,PACKAGE="mets")$vXZ 
 }
 
-Ut <- weightsJ*U
+Ut <- caseweightsJ*weightsJ*U
 ## E^2, as n x (pxp)
 Et2 <-  .Call("vecMatMat",E,E,PACKAGE="mets")$vXZ
 S2S0 <- (S2oo+S2no*Gjumps)/S0
@@ -257,15 +258,15 @@ if (!is.null(propodds)) {
 }
 
 U  <- apply(Ut,2,sum)
-DUt <- weightsJ*DUt
+DUt <- caseweightsJ*weightsJ*DUt
 DU <- -matrix(apply(DUt,2,sum),p,p)
 
 ploglik <- sum(ploglik)
 
 out <- list(ploglik=ploglik,gradient=U,hessian=-DU,cox.prep=xx2,
-	    hessiantime=DUt,weightsJ=weightsJ,
+	    hessiantime=DUt,weightsJ=weightsJ,caseweightsJ=caseweightsJ,
 	    jumptimes=jumptimes,strata=strataJ,nstrata=nstrata,
-	    time=jumptimes,S0=S0/weightsJ,S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
+	    time=jumptimes,S0=S0/(caseweightsJ*weightsJ),S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
 
 if (all) return(out) else with(out,structure(-ploglik, gradient=-gradient, hessian=-hessian))
 }# }}}

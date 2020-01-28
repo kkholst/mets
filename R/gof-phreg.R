@@ -214,7 +214,8 @@ return(out)
 ##' This will show if the residuals are consistent with the model evaulated in the z covariate. 
 ##' M is here chosen based on a grid (z_1, ..., z_m) and the different columns are \eqn{I(Z_i \leq z_l)}.
 ##' for \eqn{l=1,...,m}. 
-##' The process in z is resampled to find extreme values. 
+##' The process in z is resampled to find extreme values.  The time-points of evuluation is by default
+##' 50 points, chosen as 2%,4%,..., percentiles of the covariates.
 ##'
 ##' The p-value is valid but depends on the chosen grid. When the number of break points are high
 ##' this will give the orginal test of Lin, Wei and Ying for linearity, that is also computed in 
@@ -290,52 +291,54 @@ class(out) <- c("gof.phreg")
 return(out)
 }# }}}
 
-gofZ.phregGam  <- function(formula,data,vars,offset=NULL,weights=NULL,breaks=40,equi=TRUE,
-			n.sim=1000,silent=1,...)
-{# {{{
+###gofZ.phregGam  <- function(formula,data,vars,offset=NULL,weights=NULL,breaks=40,equi=TRUE,
+###			n.sim=1000,silent=1,...)
+###{# {{{
+###
+### res <- matrix(0,length(vars),2)
+### colnames(res) <- c("Sup_z |U(tau,z)|","pval")
+### rownames(res) <- vars
+###
+### i <- 1
+###for (vv in vars) {
+### modelmatrix <- cumContr(data[,vv],breaks=breaks,equi=equi)
+###
+###cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
+###offsets <- cox1$X %*% cox1$coe
+###if (!is.null(offset)) offsets <- offsets*offset
+###
+###if (!is.null(cox1$strata)) 
+###     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
+###else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
+###nnames <- colnames(modelmatrix)
+###
+###Ut <- apply(coxM$U,2,cumsum)
+###jumptimes <- coxM$jumptimes
+###U <- coxM$U
+###Ubeta <- cox1$U
+###ii <- -solve(cox1$hessian)
+###EE <- .Call("vecMatMat",coxM$E,cox1$E,PACKAGE="mets")$vXZ; 
+###Pt <- cox1$ZX - EE
+###Pt <- apply(Pt,2,cumsum)
+###betaiid <- t(ii %*% t(Ubeta))
+###obs <- apply(abs(Ut),2,max)
+###simcox <-  .Call("ModelMatrixTestCox",U,Pt,betaiid,n.sim,obs,PACKAGE="mets")
+###
+### ## pvals efter z i model.matrix sup_z | M(z,tau) | 
+### Utlast <- max(abs(tail(Ut,1)))
+### maxlast <- apply(abs(simcox$last),1,max)
+### pval.last <- mean(maxlast>=Utlast)
+### res[i,] <- c(Utlast,pval.last)
+### i <- i+1
+###}
+###
+###out <- list(res=res, type="modelmatrix")
+###class(out) <- "gof.phreg"
+###
+###return(out)
+###}# }}}
+###
 
- res <- matrix(0,length(vars),2)
- colnames(res) <- c("Sup_z |U(tau,z)|","pval")
- rownames(res) <- vars
-
- i <- 1
-for (vv in vars) {
- modelmatrix <- cumContr(data[,vv],breaks=breaks,equi=equi)
-
-cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
-offsets <- cox1$X %*% cox1$coe
-if (!is.null(offset)) offsets <- offsets*offset
-
-if (!is.null(cox1$strata)) 
-     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
-else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
-nnames <- colnames(modelmatrix)
-
-Ut <- apply(coxM$U,2,cumsum)
-jumptimes <- coxM$jumptimes
-U <- coxM$U
-Ubeta <- cox1$U
-ii <- -solve(cox1$hessian)
-EE <- .Call("vecMatMat",coxM$E,cox1$E,PACKAGE="mets")$vXZ; 
-Pt <- cox1$ZX - EE
-Pt <- apply(Pt,2,cumsum)
-betaiid <- t(ii %*% t(Ubeta))
-obs <- apply(abs(Ut),2,max)
-simcox <-  .Call("ModelMatrixTestCox",U,Pt,betaiid,n.sim,obs,PACKAGE="mets")
-
- ## pvals efter z i model.matrix sup_z | M(z,tau) | 
- Utlast <- max(abs(tail(Ut,1)))
- maxlast <- apply(abs(simcox$last),1,max)
- pval.last <- mean(maxlast>=Utlast)
- res[i,] <- c(Utlast,pval.last)
- i <- i+1
-}
-
-out <- list(res=res, type="modelmatrix")
-class(out) <- "gof.phreg"
-
-return(out)
-}# }}}
 
 ##' @export
 cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks=TRUE,...)

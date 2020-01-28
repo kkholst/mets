@@ -40,7 +40,8 @@ and resamples its asymptotic distribution.
 This will show if the residuals are consistent with the model evaulated in the z covariate. 
 M is here chosen based on a grid (z_1, ..., z_m) and the different columns are \eqn{I(Z_i \leq z_l)}.
 for \eqn{l=1,...,m}. 
-The process in z is resampled to find extreme values.
+The process in z is resampled to find extreme values.  The time-points of evuluation is by default
+50 points, chosen as 2%,4%,..., percentiles of the covariates.
 
 The p-value is valid but depends on the chosen grid. When the number of break points are high
 this will give the orginal test of Lin, Wei and Ying for linearity, that is also computed in 

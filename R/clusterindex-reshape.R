@@ -145,7 +145,7 @@ mystrata <- function(ll,sort=TRUE) {# {{{
 	nll <- length(ll[[1]])
         ss <- rep(0,nll)
         nl <- unlist(lapply(ll,nlevels))
-        poss <- exp(revcumsum(log(unlist(nl)))) 
+        poss <- exp(revcumsum(log(nl))) 
 	for (j in seq(1,length(ll))) {
 	     ss <- ss+as.numeric(ll[[j]])*poss[j]
 	}
@@ -153,6 +153,7 @@ mystrata <- function(ll,sort=TRUE) {# {{{
 	nindex <- length(uss)
         sindex <- fast.approx(uss,ss)
         attr(sindex,"nlevel") <- nindex
+        attr(sindex,"levels") <- nl 
 	return(sindex)
 } # }}}
 

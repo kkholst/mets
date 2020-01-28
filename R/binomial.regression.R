@@ -117,7 +117,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       ## strata from original data 
       cens.strata <- resC$strata[resC$ord]
       cens.nstrata <- resC$nstrata
-  }
+  } else formC <- NULL
   expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   if (is.null(beta)) beta <- rep(0,ncol(X))
@@ -178,10 +178,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  }
 
 	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-	  val <- c(val,list(time=time,formula=formula,
-	    exit=exit,
-	    cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata,
-			    model.frame=m))
+	  val <- c(val,list(time=time,formula=formula,formC=formC,
+	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, model.frame=m))
 
  if (se) {## {{{ censoring adjustment of variance 
 	ord <- resC$cox.prep$ord+1
@@ -199,24 +197,26 @@ hessian <- matrix(D2log,length(pp),length(pp))
        S0i2 <- S0i <- rep(0,length(xx$strata))
        S0i[xx$jumps+1]  <- 1/resC$S0
        S0i2[xx$jumps+1] <- 1/resC$S0^2
-       U <- E <- matrix(0,nrow(xx$X),ncol(X))
-###       Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
+       U <- matrix(0,nrow(xx$X),ncol(X))
+       ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
 	
        ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
        ## to make \int h(s)/Ys  dM_i^C(s) 
-       h  <-  apply(X*Y*(exit<=time),2,revcumsumstrata,xx$strata,xx$nstrata)
+       h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
        h2  <- .Call("vecMatMat",h,h)$vXZ
        U[xx$jumps+1,] <- h[xx$jumps+1]/resC$S0
-       hdLam0 <- apply(h*S0i^2,2,cumsumstrata,xx$strata,xx$nstrata)
        ### Cens-Martingale as a function of time and for all subjects to handle strata 
-       MGt <- (U[,drop=FALSE]-hdLam0)*c(xx$weights)
-       ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s)
-       ### estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-       h2dLam0 <- apply(h2*S0i2,2,sum)
-       varadjC <- matrix(h2dLam0,length(val$coef),length(val$coef))
+       ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
+       IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+       MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
+       ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
+       Ih2dLam0 <- apply(h2*S0i2,2,sum)
+       varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
+       id <- xx$id
        MGCiid <- apply(MGt,2,sumstrata,id,max(id)+1)
        val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
  
+       val$MGtid <- id
        val$nc.iid <- val$iid 
        beta.iid <- val$iid+(MGCiid %*% val$ihessian)
        val$iid  <- beta.iid

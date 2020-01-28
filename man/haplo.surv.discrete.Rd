@@ -5,7 +5,6 @@
 \alias{simTTP}
 \alias{predictSurvd}
 \alias{plotSurvd}
-\alias{mystrata}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
