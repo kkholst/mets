@@ -3,6 +3,21 @@
 ##' CIF logistic for propodds=1 default
 ##' CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
+##' For FG model: 
+##' \deqn{
+##' \int (X - E ) Y_1(t) w(t) dM_1
+##' }
+##' is computed and summed over clusters  and returned multiplied with inverse 
+##' of second derivative as iid.naive
+##'
+##' The iid decomposition of the beta's, however, also have a censoring term that is also
+##' is computed and added to UUiid (still scaled with inverse second derivative)
+##' \deqn{
+##' \int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c 
+##' }
+##' and returned as iid 
+##'
+##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data frame
 ##' @param cause of interest 
@@ -407,13 +422,14 @@ if ((length(other)>=1) & (length(whereC)>0)) {
  colnames(se.cumhaz) <- c("time","se.cumhaz")
 
 
-out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,UUiid=UUiid,Uiid=Uiid,
+out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,iid.naive=UUiid,
+	    iid=Uiid,
 	    ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	    ploglik=opt$ploglik,gradient=opt$gradient,
 	    cumhaz=cumhaz, se.cumhaz=se.cumhaz,
 	    strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
 	    strata.level=strata.level,propodds=propodds,
-	    S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,
+	    S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,Ut=opt$U,
             jumps=jumps,II=iH,exit=exit,p=p,opt=opt,n=nrow(X),nevent=length(jumps)
 	    )
 
