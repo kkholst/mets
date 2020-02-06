@@ -679,7 +679,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##'  d <- simnordic.random(4000,delayed=TRUE,
 ##'        cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
-##'  add1<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+##'  add1<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
 ##' 
 ##'  ### making group indidcator 
@@ -805,12 +805,10 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##' Estimating heritability for cause specific hazards based on twin data
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  library("timereg")
-##'  library("survival")
 ##'  d <- simnordic.random(5000,delayed=TRUE,
 ##'        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
-##'  addm<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+##'  addm<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
 ##' 
 ##'  ### making group indidcator 
@@ -927,13 +925,13 @@ print.summary.cor <- function(x,digits=3,...)
 ##' multcif$cause[multcif$cause==0] <- 2
 ##' 
 ##' times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
-##' add<-comp.risk(Event(time,cause)~const(X)+cluster(id),data=multcif,
+##' add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,
 ##'                n.sim=0,times=times,cause=1)
 ##' ###
 ##' out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
 ##' summary(out1)
 ##' 
-##' pad <- predict(add,X=1,Z=0,se=0,uniform=0)
+##' pad <- predict(add,X=1,se=0,uniform=0)
 ##' summary(out1,marg.cif=pad)
 ##' @method summary cor
 ##' @export

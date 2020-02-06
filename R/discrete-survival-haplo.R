@@ -83,7 +83,7 @@
 ##'          Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
-##' 
+##'  summary(out)
 ##' @aliases simTTP  predictSurvd plotSurvd 
 ##' @export
 haplo.surv.discrete <- function (X=NULL,y="y",time.name="time",Haplos=NULL,id="id",desnames=NULL,designfunc=NULL,
@@ -134,7 +134,7 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
 ###   lll <- lapply(Xhap[,c("id",nmm)],as.numeric)
 ###   stratidhap <-    as.numeric(survival::strata(lll))
    ms <- mystrata(Xhap[,c("id",nmm)])
-   stratidhap <- ms$sindex
+	   stratidhap <- ms
 ###nidhap <- length(unique(stratidhap))
    nidhap <- attr(ms,"nlevel")
    nid <- length(unique(Haplos$id))

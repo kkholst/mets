@@ -118,12 +118,10 @@ with the (k) underlying \eqn{\theta} parameters
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
- library("timereg")
- library("survival")
  d <- simnordic.random(5000,delayed=TRUE,
        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
  times <- seq(50,90,by=10)
- addm<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+ addm<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
  times=times,cause=1,max.clust=NULL)
 
  ### making group indidcator 
