@@ -2345,7 +2345,7 @@ return(data)
 ##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata
 prob.exceed.recurrent <- function(data,type,status="status",death="death",
  start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=FALSE,
- strata=NULL,all.cifs=FALSE)
+ strata=NULL,all.cifs=FALSE,...)
 {# {{{
 ### setting up data 
 stat <-     data[,status]

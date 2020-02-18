@@ -1,5 +1,8 @@
 #-*- mode: org -*-
 
+* Version 1.2.7    <2020-02-18 Tue>
+  - Maintenance release
+
 * Version 1.2.6    <2019-08-02 Fri>
   - Cumulative incidence regression cifreg function
     - Fine-Gray model with cloglog link of (1-F_1(t,x))

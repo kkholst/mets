@@ -16,7 +16,7 @@
 ##' @importFrom survival Surv is.Surv concordance
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline
-##'     title matlines
+##'     title matlines legend
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @keywords package
 ##' @examples

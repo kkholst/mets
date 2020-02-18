@@ -1158,7 +1158,7 @@ return(res)
 ##' bplot(out1,se=TRUE)
 ##' bplot(out2,se=TRUE)
 ##' @export
-km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE)
+km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 {# {{{
  coxo <- phreg(formula,data=data)
  coxo <- robust.phreg(coxo)

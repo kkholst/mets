@@ -10,7 +10,7 @@ ipw2(data, times = NULL, entrytime = NULL, time = "time",
   cens.formula = NULL, cens.code = 0, pair.cweight = "pcw",
   pair.tweight = "ptw", pair.weight = "weights", cname = "cweights",
   tname = "tweights", weight.name = "indi.weights",
-  prec.factor = 100)
+  prec.factor = 100, ...)
 }
 \arguments{
 \item{data}{data frame}
