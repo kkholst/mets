@@ -368,6 +368,10 @@ binomial.twostage <- function(margbin,data=sys.parent(),
 
   ### setting design for random variables, in particular with pairs are given
   ddd <- randomDes(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,pairs.rvs,var.link,clusterindex)
+
+###  ddd <- randomDes2DIM(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,pairs.rvs,var.link,clusterindex)
+###  print(ddd)
+
   random.design=ddd$random.design;clusterindex=ddd$clusterindex;
   antpairs=ddd$antpairs; pairs.rvs=ddd$pairs.rvs;
   theta=ddd$theta;ptheta=ddd$ptheta;theta.des=ddd$theta.des
@@ -389,15 +393,13 @@ if (pair.structure==1) {
 
     theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta); 
 
-
-
     loglike <- function(par) 
     { ## {{{
 		
       if (pair.structure==0 | dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par[seq(1,ptheta)]),nrow=ptheta,ncol=1);
       if (pair.structure==1 & dep.model==3) Xtheta <- matrix(0,antpers,1); ## not needed 
       if (pair.structure==1 & dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par[seq(1,ptheta)]),nrow=ptheta,ncol=1);
-      DXtheta <- array(0,c(1,1,1));
+      DXtheta <- matrix(0,1,1);
 
       if (twostage==0) epar <- par[seq(1,ptheta)] else epar <- par
       if (twostage==0) { ### update, marginal.p og score for logistic model
