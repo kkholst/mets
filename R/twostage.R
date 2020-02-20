@@ -243,7 +243,7 @@
 ##' or time of control proband.
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' and ascertained sampling
-##' @aliases survival.twostage survival.twostage.fullse twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes
+##' @aliases survival.twostage survival.twostage.fullse twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv
 ##' @export survival.twostage
 survival.twostage <- function(margsurv,data=sys.parent(),
     score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
