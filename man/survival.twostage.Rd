@@ -8,6 +8,7 @@
 \alias{twostage.coxph}
 \alias{twostage.phreg}
 \alias{randomDes}
+\alias{readmargsurv}
 \title{Twostage survival model for multivariate survival data}
 \usage{
 survival.twostage(

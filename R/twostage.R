@@ -243,7 +243,7 @@
 ##' or time of control proband.
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' and ascertained sampling
-##' @aliases survival.twostage survival.twostage.fullse twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes
+##' @aliases survival.twostage survival.twostage.fullse twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv
 ##' @export survival.twostage
 survival.twostage <- function(margsurv,data=sys.parent(),
     score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
@@ -299,16 +299,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   }
   if (length(se.clusters)!=length(clusters)) stop("Length of seclusters and clusters must be same\n"); 
 
-###  if ((!is.null(max.clust))) if (max.clust< antiid) {
-###        coarse.clust <- TRUE
-###	qq <- unique(quantile(se.clusters, probs = seq(0, 1, by = 1/max.clust)))
-###	qqc <- cut(se.clusters, breaks = qq, include.lowest = TRUE)    
-###	se.clusters <- as.integer(qqc)-1
-###	max.clusters <- length(unique(se.clusters))
-###	maxclust <- max.clust    
-###	antiid <- max.clusters
-###  }                                                        
-###  if (maxclust==1) stop("No clusters, maxclust size=1\n"); 
   ## }}} 
 
   ### setting design for random variables, in particular with pairs are given
@@ -421,15 +411,15 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
 ####  organize subject specific random variables and design
 ####  already done in basic pairwise setup 
-	mtheta.des <- theta.des[,,ids,drop=FALSE]
+	mtheta.des <- theta.des[ids,drop=FALSE]
 	### array randomdes to jump times (subjects)
-	mrv.des <- random.design[,,ids,drop=FALSE]
+	mrv.des <- random.design[ids,drop=FALSE]
 	nrv.des <- pairs.rvs[ids]
       } ## }}} 
 
  }  else {
-	 mrv.des <- array(0,c(1,1,1)); mtheta.des <- array(0,c(1,1,1)); margthetades <- array(0,c(1,1,1)); 
-	 xjump <- array(0,c(1,1,1)); dBaalen <- matrix(0,1,1); nrv.des <- 3
+	 mrv.des <- mtheta.des <- margthetades <- matrix(0,1,1); 
+	 xjump <- dBaalen <- matrix(0,1,1); nrv.des <- 3
  } ## }}} 
 
   loglike <- function(par) 
@@ -868,15 +858,14 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   #likepairs=likepairs,##  if (dep.model==3 & pair.structure==1) attr(ud, "likepairs") <- c(out$likepairs)
   if (dep.model==3 & pair.structure==0) attr(ud, "pardes") <-    theta.des
   if (dep.model==3 & pair.structure==0) attr(ud, "theta.des") <- theta.des
-  if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    theta.des[,,1]
-  if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[,,1]
-  if (dep.model==3 & pair.structure==0) attr(ud, "rv1") <- random.design[1,,drop=FALSE]
-  if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <- random.design[,,1]
+###  if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    matrix(theta.des[1,],
+  if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[1,]
+  if (dep.model==3 & pair.structure==0) attr(ud, "rv1") <- random.design[1,]
+  if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <- matrix(random.design[1,],nrow=2)
   return(ud);
   ## }}}
 
 } ## }}}
-
 
 ##' @export
 randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,pairs.rvs,var.link,clusterindex)
@@ -887,7 +876,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
      dep.model <- 3
      dim.rv <- ncol(random.design); 
      if (is.null(theta.des)) theta.des<-diag(dim.rv);
- } else { random.design <- matrix(0,1,1);  dim.rv <- 1; 
+  } else { random.design <- matrix(0,1,1);  dim.rv <- 1; 
            additive.gamma.sum <- matrix(1,1,1); 
    }
 
@@ -963,6 +952,96 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 	 pairs.rvs=pairs.rvs,theta=theta,ptheta=ptheta,theta.des=theta.des)) 
 
 }# }}}
+
+#####' @export
+###randomDes2DIM <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,pairs.rvs,var.link,clusterindex)
+###{# {{{
+###   additive.gamma.sum <- ags
+###
+### if (!is.null(random.design)) { ### different parameters for Additive random effects # {{{
+###     dep.model <- 3
+###     dim.rv <- ncol(random.design); 
+###     if (is.null(theta.des)) theta.des<-diag(dim.rv);
+###  } else { 
+###      random.design <- matrix(0,1,1);  dim.rv <- 1; 
+###      additive.gamma.sum <- matrix(1,1,1); 
+###   }
+###
+###  if (is.null(theta.des)) { 
+###      ptheta<-1; 
+###      theta.des<-matrix(1,antpers,ptheta); ###  else theta.des<-as.matrix(theta.des); 
+###  }
+###
+###  ### figure out dimensions of parameters
+###  if (!is.null(pairs.rvs)) { 
+### if (is.null(ptheta)) ptheta<- 1  else if (length(dim(theta.des))==2) ptheta<-ncol(theta.des)
+######  if (nrow(theta.des)!=antpers & dep.model!=3 ) stop("Theta design does not have correct dim");
+###
+###  if (length(dim(theta.des))!=3) theta.des <- as.matrix(theta.des)
+###
+###  if (is.null(theta)==TRUE) {
+###         if (var.link==1) theta<- rep(-0.7,ptheta);  
+###         if (var.link==0) theta<- rep(exp(-0.7),ptheta);   
+###  }       
+###
+###  if (length(theta)!=ptheta) {
+######	 warning("dimensions of theta.des and theta do not match\n"); 
+###         theta<-rep(theta[1],ptheta); 
+###  }
+###  theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta); 
+###  antpairs <- 1; ### to define 
+###
+###  if (is.null(additive.gamma.sum)) additive.gamma.sum <- matrix(1,dim.rv,ptheta)
+###  if (!is.null(pairs)) { pair.structure <- 1;} else  pair.structure <- 0;  
+###
+###  if (pair.structure==1 & dep.model==3) { ## {{{ 
+###### something with dimensions of rv.des 
+###       antpairs <- nrow(pairs); 
+###       if ( ((nrow(theta.des))!=nrow(pairs))  & (nrow(dim(random.design))==3) )
+###       {
+###          Ptheta.des <- matrix(0,antpairs,nrow(theta.des)*ncol(theta.des))
+###          for (i in 1:antpairs) Ptheta.des[i,] <- c(theta.des)
+###       theta.des <- Ptheta.des
+###       }
+###       if ( (length(dim(theta.des))==3)  & (length(dim(random.design))!=3) )
+###       {
+###           rv.des <- array(0,antpairs,2*ncol(random.design))
+###           for (i in 1:antpairs) {
+###		   rv.des[i,] <- c(rbind( random.design[pairs[i,1],], random.design[pairs[i,2],]))
+###	   }
+###       random.design <- rv.des
+###       }
+###       if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))!=3) )
+###       {
+###          Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
+###          rv.des <- array(0,c(2,ncol(random.design),antpairs))
+###          for (i in 1:antpairs) {
+###		   rv.des[i,] <- c(rbind( random.design[pairs[i,1],], random.design[pairs[i,2],]))
+###                   Ptheta.des[i,] <- c(theta.des)
+###	   }
+###       theta.des <- Ptheta.des
+###       random.design <- rv.des
+###       }
+###       if (max(pairs)>antpers) stop("Indices of pairs should refer to given data \n"); 
+###       if (is.null(pairs.rvs)) pairs.rvs <- rep(dim(random.design)[2],antpairs)
+###       clusterindex <- pairs-1; 
+###  } ## }}} 
+###
+###  if (pair.structure==1 & dep.model!=3) {
+###       clusterindex <- pairs-1; 
+###       antpairs <- nrow(pairs); 
+###       pairs.rvs <- 1
+###  }# }}}
+###  if (is.null(pairs.rvs)) pairs.rvs <- 1
+###
+###  return(list(random.design=random.design,clusterindex=clusterindex,
+###	 antpairs=antpairs,pair.structure=pair.structure,
+###	 dep.model=dep.model,dim.rv=dim.rv,
+###	 additive.gamma.sum=additive.gamma.sum,
+###	 pairs.rvs=pairs.rvs,theta=theta,ptheta=ptheta,theta.des=theta.des)) 
+###
+###}# }}}
+###
 
 readmargsurv <- function(margsurv,data,clusters)
 {# {{{
