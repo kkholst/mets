@@ -7,8 +7,15 @@
 \alias{mystrata}
 \title{Finds subjects related to same cluster}
 \usage{
-cluster.index(clusters, index.type = FALSE, num = NULL, Rindex = 0,
-  mat = NULL, return.all = FALSE, code.na = NA)
+cluster.index(
+  clusters,
+  index.type = FALSE,
+  num = NULL,
+  Rindex = 0,
+  mat = NULL,
+  return.all = FALSE,
+  code.na = NA
+)
 }
 \arguments{
 \item{clusters}{list of indeces}

@@ -4,8 +4,13 @@
 \alias{familyclusterWithProbands.index}
 \title{Finds all pairs within a cluster (famly)  with the proband (case/control)}
 \usage{
-familyclusterWithProbands.index(clusters, probands, index.type = FALSE,
-  num = NULL, Rindex = 1)
+familyclusterWithProbands.index(
+  clusters,
+  probands,
+  index.type = FALSE,
+  num = NULL,
+  Rindex = 1
+)
 }
 \arguments{
 \item{clusters}{list of indeces giving the clusters (families)}

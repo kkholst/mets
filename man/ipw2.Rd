@@ -4,13 +4,28 @@
 \alias{ipw2}
 \title{Inverse Probability of Censoring Weights}
 \usage{
-ipw2(data, times = NULL, entrytime = NULL, time = "time",
-  cause = "cause", same.cens = FALSE, cluster = NULL,
-  pairs = FALSE, strata = NULL, obs.only = TRUE,
-  cens.formula = NULL, cens.code = 0, pair.cweight = "pcw",
-  pair.tweight = "ptw", pair.weight = "weights", cname = "cweights",
-  tname = "tweights", weight.name = "indi.weights",
-  prec.factor = 100, ...)
+ipw2(
+  data,
+  times = NULL,
+  entrytime = NULL,
+  time = "time",
+  cause = "cause",
+  same.cens = FALSE,
+  cluster = NULL,
+  pairs = FALSE,
+  strata = NULL,
+  obs.only = TRUE,
+  cens.formula = NULL,
+  cens.code = 0,
+  pair.cweight = "pcw",
+  pair.tweight = "ptw",
+  pair.weight = "weights",
+  cname = "cweights",
+  tname = "tweights",
+  weight.name = "indi.weights",
+  prec.factor = 100,
+  ...
+)
 }
 \arguments{
 \item{data}{data frame}
@@ -60,6 +75,7 @@ Weights and adds them to a data.frame
 }
 \examples{
 library("timereg")
+set.seed(1)
 d <- simnordic.random(3000,delayed=TRUE,ptrunc=0.7,
       cordz=0.5,cormz=2,lam0=0.3,country=FALSE)
 d$strata <- as.numeric(d$country)+(d$zyg=="MZ")*4

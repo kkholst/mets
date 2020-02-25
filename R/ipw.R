@@ -183,6 +183,7 @@ ipw <- function(formula,data,cluster,
 ##' @author Thomas Scheike 
 ##' @examples
 ##' library("timereg")
+##' set.seed(1)
 ##' d <- simnordic.random(3000,delayed=TRUE,ptrunc=0.7,
 ##'       cordz=0.5,cormz=2,lam0=0.3,country=FALSE)
 ##' d$strata <- as.numeric(d$country)+(d$zyg=="MZ")*4

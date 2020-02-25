@@ -5,8 +5,18 @@
 \alias{dtab}
 \title{tables for data frames}
 \usage{
-dtable(data, y = NULL, x = NULL, ..., level = -1, response = NULL,
-  flat = TRUE, total = FALSE, prop = FALSE, summary = NULL)
+dtable(
+  data,
+  y = NULL,
+  x = NULL,
+  ...,
+  level = -1,
+  response = NULL,
+  flat = TRUE,
+  total = FALSE,
+  prop = FALSE,
+  summary = NULL
+)
 }
 \arguments{
 \item{data}{if x is formula or names for data frame then data frame is needed.}

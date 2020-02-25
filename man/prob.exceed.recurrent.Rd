@@ -8,10 +8,21 @@
 \alias{prob.exceedBiRecurrentStrata}
 \title{Estimation of probability of more that k events for recurrent events process}
 \usage{
-prob.exceed.recurrent(data, type, status = "status", death = "death",
-  start = "start", stop = "stop", id = "id", times = NULL,
-  exceed = NULL, cifmets = FALSE, strata = NULL, all.cifs = FALSE,
-  ...)
+prob.exceed.recurrent(
+  data,
+  type,
+  status = "status",
+  death = "death",
+  start = "start",
+  stop = "stop",
+  id = "id",
+  times = NULL,
+  exceed = NULL,
+  cifmets = FALSE,
+  strata = NULL,
+  all.cifs = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{data-frame}

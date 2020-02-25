@@ -26,7 +26,7 @@ Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}
 }
 \details{
 Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
-Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.
+Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.  
 
 Can also get influence functions (possibly robust) via iid() function, response should be a factor.
 }

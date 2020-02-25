@@ -5,8 +5,18 @@
 \alias{cumContr}
 \title{GOF for Cox covariates in  PH regression}
 \usage{
-gofZ.phreg(formula, data, vars = NULL, offset = NULL, weights = NULL,
-  breaks = 50, equi = FALSE, n.sim = 1000, silent = 1, ...)
+gofZ.phreg(
+  formula,
+  data,
+  vars = NULL,
+  offset = NULL,
+  weights = NULL,
+  breaks = 50,
+  equi = FALSE,
+  n.sim = 1000,
+  silent = 1,
+  ...
+)
 }
 \arguments{
 \item{formula}{formula for cox regression}

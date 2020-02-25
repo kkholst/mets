@@ -37,5 +37,4 @@ ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 SystemRequirements: C++11
 Encoding: UTF-8
-Roxygen: list(wrap = FALSE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
