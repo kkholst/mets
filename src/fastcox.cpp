@@ -413,7 +413,6 @@ colvec  cumsumstrataPO(colvec w,colvec S0,IntegerVector strata,int nstrata,doubl
 } 
 
 RcppExport SEXP cumsumstrataPOR(SEXP iw,SEXP iS0,SEXP istrata,SEXP instrata,SEXP ipropodds,SEXP iexb) {
-
 	colvec w = Rcpp::as<colvec>(iw);
 	colvec S0 = Rcpp::as<colvec>(iS0);
 	colvec exb = Rcpp::as<colvec>(iexb);
@@ -527,6 +526,107 @@ RcppExport SEXP revcumsumstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	rres["res"]=res; 
 	return(rres);
 } 
+
+/*{{{   Double-Fine-Gray recursive utility functions  */
+
+RcppExport SEXP cumsumstrataDFGR(SEXP iw,SEXP iS0,SEXP icause,SEXP istrata,SEXP instrata,SEXP iexb) {
+	colvec w = Rcpp::as<colvec>(iw);
+	mat S0 = Rcpp::as<mat>(iS0);
+	mat exb = Rcpp::as<mat>(iexb);
+	IntegerVector strata(istrata); 
+	IntegerVector cause(icause); 
+	int nstrata = Rcpp::as<int>(instrata);
+
+        unsigned n = S0.n_rows;
+	colvec tmpsum1(nstrata); tmpsum1.zeros(); 
+	colvec tmpsum2(nstrata); tmpsum2.zeros(); 
+	mat res = S0; 
+	colvec pow1(n); 
+	colvec pow2(n); 
+
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(i); 
+		if ((ss<nstrata) & (ss>=0))  {
+			double F1=(1-exp(-exb(i,0)*tmpsum1(ss))); // F_1
+			double F2=(1-exp(-exb(i,1)*tmpsum2(ss))); // F_2 
+			pow1(i)=(1-F1-F2)/(1-F1); 
+			pow2(i)=(1-F1-F2)/(1-F2); 
+			if (cause(i)==1) tmpsum1(ss) += pow1(i)*w(i)/S0(i,0); 
+			if (cause(i)==2) tmpsum2(ss) += pow2(i)*w(i)/S0(i,1); 
+			res(i,0) = tmpsum1(ss);
+			res(i,1) = tmpsum2(ss);
+		}
+	}  
+
+	List rres; 
+	rres["base"]=res; 
+	rres["pow1"]=pow1; 
+	rres["pow2"]=pow2; 
+	return(rres);
+}
+	
+RcppExport SEXP DLambetaDFGR(SEXP iweights,SEXP iS0,SEXP icause,SEXP iE,SEXP iXi,SEXP istrata,SEXP instrata,SEXP iexb) {
+//	colvec w = Rcpp::as<colvec>(iw);
+	colvec weights = Rcpp::as<colvec>(iweights);
+	mat S0 = Rcpp::as<mat>(iS0);
+	mat exb = Rcpp::as<mat>(iexb);
+	mat E = Rcpp::as<mat>(iE);
+	mat Xi = Rcpp::as<mat>(iXi);
+	IntegerVector strata(istrata); 
+	IntegerVector cause(icause); 
+	int nstrata = Rcpp::as<int>(instrata);
+
+        unsigned n = S0.n_rows;
+	unsigned p = E.n_cols/2;
+
+	colvec tmpsum1(nstrata); tmpsum1.zeros(); 
+	colvec tmpsum2(nstrata); tmpsum2.zeros(); 
+	colvec pow1(n); colvec pow2(n); 
+	mat dLam1(n,p); dLam1.zeros(); 
+	mat dLam12(n,p); dLam12.zeros(); 
+	mat dLam2(n,p); dLam2.zeros(); 
+	mat dLam21(n,p); dLam21.zeros(); 
+	mat dLam1tminus(nstrata,p); dLam1tminus.zeros(); 
+	mat dLam12tminus(nstrata,p); dLam12tminus.zeros(); 
+	mat dLam2tminus(nstrata,p); dLam2tminus.zeros(); 
+	mat dLam21tminus(nstrata,p); dLam21tminus.zeros(); 
+
+       for (unsigned i=0; i<n; i++) {
+		int ss=strata(i); 
+		double F1=(1-exp(-exb(i,0)*tmpsum1(ss))); // F_1
+		double F2=(1-exp(-exb(i,1)*tmpsum2(ss))); // F_2 
+		pow1(i)=(1-F1-F2)/(1-F1); 
+		pow2(i)=(1-F1-F2)/(1-F2); 
+
+        	if (cause(i)==1)  {
+		        dLam1.row(i)=dLam1tminus.row(ss)+weights(i)*
+			( -(dLam1tminus.row(ss)*exb(i)+Xi.row(i)*exb(i,0))/S0(i)-E.row(i)*pow1(i)/S0(i));
+		        dLam12.row(i)=dLam12tminus.row(ss)+weights(i)*
+			( -((1-F2)/(1-F1))*(dLam12tminus.row(ss)*exb(i)+Xi.row(i)*exb(i,0))/S0(i)-E.row(i)*pow1(i)/S0(i));
+			tmpsum1(ss) += pow1(i)*weights(i)/S0(i,0); 
+		        dLam1tminus.row(ss) = dLam1.row(i); 
+		        dLam12tminus.row(ss) = dLam12.row(i); 
+		}
+
+		if (cause(i)==2) {
+		        dLam2.row(i) = dLam2tminus.row(ss)+weights(i)*
+			( -(dLam2tminus.row(ss)*exb(i)+Xi.row(i)*(pow2(i)-1))/S0(i)-E.row(i)*pow2(i)/S0(i));
+                        dLam21.row(i) = dLam21tminus.row(ss)+weights(i)*
+			( -((1-F1)/(1-F2))*(dLam21tminus.row(ss)*exb(i)+Xi.row(i)*(pow2(i)-1))/S0(i)-E.row(i)*pow2(i)/S0(i));
+			tmpsum2(ss) += pow2(i)*weights(i)/S0(i,1); 
+		        dLam2tminus.row(ss) = dLam2.row(i); 
+		        dLam21tminus.row(ss) = dLam21.row(i); 
+		}
+	}  
+
+	List rres; 
+	rres["DLam1"]=dLam1; 
+	rres["DLam12"]=dLam12; 
+	rres["DLam2"]=dLam2; 
+	rres["DLam21"]=dLam21; 
+	return(rres);
+}
+/*}}}*/
 
 RcppExport SEXP wherestrataR(SEXP ir,SEXP ia,SEXP istrata, SEXP instrata) {
 	colvec a = Rcpp::as<colvec>(ia);
@@ -1265,7 +1365,7 @@ RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP,
 		SEXP offsetsSEXP,
 		SEXP ZXSEXP,
 		SEXP propoddsSEXP) {
-	BEGIN_RCPP
+	BEGIN_RCPP/*{{{*/
 		colvec beta = Rcpp::as<colvec>(betaSEXP);
 	mat X = Rcpp::as<mat>(XSEXP);
 	mat XX = Rcpp::as<mat>(XXSEXP);
@@ -1358,7 +1458,7 @@ RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP,
 				Rcpp::Named("DLam")=DLam 
 				));
 	END_RCPP
-}
+} /*}}}*/
 
 
 RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,

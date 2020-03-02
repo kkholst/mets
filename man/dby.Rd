@@ -8,23 +8,10 @@
 \alias{dbyr}
 \title{Calculate summary statistics grouped by}
 \usage{
-dby(
-  data,
-  INPUT,
-  ...,
-  ID = NULL,
-  ORDER = NULL,
-  SUBSET = NULL,
-  SORT = 0,
-  COMBINE = !REDUCE,
-  NOCHECK = FALSE,
-  ARGS = NULL,
-  NAMES,
-  COLUMN = FALSE,
-  REDUCE = FALSE,
-  REGEX = mets.options()$regex,
-  ALL = TRUE
-)
+dby(data, INPUT, ..., ID = NULL, ORDER = NULL, SUBSET = NULL,
+  SORT = 0, COMBINE = !REDUCE, NOCHECK = FALSE, ARGS = NULL, NAMES,
+  COLUMN = FALSE, REDUCE = FALSE, REGEX = mets.options()$regex,
+  ALL = TRUE)
 }
 \arguments{
 \item{data}{Data.frame}

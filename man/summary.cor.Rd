@@ -4,7 +4,8 @@
 \alias{summary.cor}
 \title{Summary for dependence models for competing risks}
 \usage{
-\method{summary}{cor}(object, marg.cif = NULL, marg.cif2 = NULL, digits = 3, ...)
+\method{summary}{cor}(object, marg.cif = NULL, marg.cif2 = NULL,
+  digits = 3, ...)
 }
 \arguments{
 \item{object}{object from cor.cif rr.cif or or.cif for dependence between competing risks data for two causes.}

@@ -4,14 +4,8 @@
 \alias{km}
 \title{Kaplan-Meier with robust standard errors}
 \usage{
-km(
-  formula,
-  data = data,
-  conf.type = "log",
-  conf.int = 0.95,
-  robust = TRUE,
-  ...
-)
+km(formula, data = data, conf.type = "log", conf.int = 0.95,
+  robust = TRUE, ...)
 }
 \arguments{
 \item{formula}{formula with 'Surv' outcome (see \code{coxph})}
