@@ -565,6 +565,46 @@ RcppExport SEXP cumsumstrataDFGR(SEXP iw,SEXP iS0,SEXP icause,SEXP istrata,SEXP 
 	return(rres);
 }
 	
+RcppExport SEXP cumsumstrataDFGRestrictR(SEXP iw,SEXP iS0,SEXP icause,SEXP istrata,SEXP instrata,SEXP iexb,SEXP iLam1inf) {
+	colvec w = Rcpp::as<colvec>(iw);
+	mat S0 = Rcpp::as<mat>(iS0);
+	mat exb = Rcpp::as<mat>(iexb);
+	IntegerVector strata(istrata); 
+	IntegerVector cause(icause); 
+	int nstrata = Rcpp::as<int>(instrata);
+	colvec Lam1inf = Rcpp::as<colvec>(iLam1inf);
+
+        unsigned n = S0.n_rows;
+	colvec tmpsum1(nstrata); tmpsum1.zeros(); 
+	colvec tmpsum2(nstrata); tmpsum2.zeros(); 
+	mat res = S0; 
+	colvec pow1(n); 
+	colvec pow2(n); 
+
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(i); 
+		if ((ss<nstrata) & (ss>=0))  {
+			double F1=(1-exp(-exb(i,0)*tmpsum1(ss))); // F_1
+			double F2=(1-exp(-exb(i,1)*tmpsum2(ss)))*exp(-exb(i,0)*Lam1inf(ss)); // F_2 
+			pow1(i)=(1-F1-F2)/(1-F1); 
+			pow2(i)=(1-F1-F2)/(1-F2); 
+			if (cause(i)==1) tmpsum1(ss) += pow1(i)*w(i)/S0(i,0); 
+			if (cause(i)==2) tmpsum2(ss) += pow2(i)*w(i)/S0(i,1); 
+			res(i,0) = tmpsum1(ss);
+			res(i,1) = tmpsum2(ss);
+		}
+	}  
+
+	for (int i=0;i<nstrata; i++) Lam1inf(i)=tmpsum1(i); 
+
+	List rres; 
+	rres["base"]=res; 
+	rres["pow1"]=pow1; 
+	rres["pow2"]=pow2; 
+	rres["Lam1inf"]=Lam1inf; 
+	return(rres);
+}
+	
 RcppExport SEXP DLambetaDFGR(SEXP iweights,SEXP iS0,SEXP icause,SEXP iE,SEXP iXi,SEXP istrata,SEXP instrata,SEXP iexb) {
 //	colvec w = Rcpp::as<colvec>(iw);
 	colvec weights = Rcpp::as<colvec>(iweights);
