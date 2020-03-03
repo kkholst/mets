@@ -584,10 +584,10 @@ RcppExport SEXP cumsumstrataDFGRestrictR(SEXP iw,SEXP iS0,SEXP icause,SEXP istra
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(i); 
 		if ((ss<nstrata) & (ss>=0))  {
-			double F1=(1-exp(-exb(i,0)*tmpsum1(ss))); // F_1
+			double F1=(1-exp(-exb(i,0)*tmpsum1(ss)));                            // F_1
 			double F2=(1-exp(-exb(i,1)*tmpsum2(ss)))*exp(-exb(i,0)*Lam1inf(ss)); // F_2 
 			pow1(i)=(1-F1-F2)/(1-F1); 
-			pow2(i)=(1-F1-F2)/(1-F2); 
+			pow2(i)=(1-F1-F2)/(exp(-exb(i,1)*tmpsum2(ss))*exp(-exb(i,0)*Lam1inf(ss)));                       ; 
 			if (cause(i)==1) tmpsum1(ss) += pow1(i)*w(i)/S0(i,0); 
 			if (cause(i)==2) tmpsum2(ss) += pow2(i)*w(i)/S0(i,1); 
 			res(i,0) = tmpsum1(ss);
