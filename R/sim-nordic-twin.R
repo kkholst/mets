@@ -134,7 +134,7 @@ if (same.cens==TRUE) {
 data<-data.frame(time=mt*time,cause=cause,xl=rep(xl,each=2),
 		 country=rep(country,each=2),id=id,cens=cens,stime=mt*stime,type=rep(types,each=2),
 		 f1=rep(F11x,each=2),p11=rep(p11,each=2),p12=rep(p12,each=2),p21=rep(p21,each=2),
-		 p22=rep(p22,each=2),entry=mt*etime,truncated=(time<etime))
+		 p22=rep(p22,each=2),entry=mt*etime,truncated=(time<etime), stringsAsFactors=TRUE)
 return(data)
 } ## }}}
 
@@ -351,7 +351,7 @@ if (same.cens==TRUE) etime <- rep(rbinom(n,1,ptrunc)*runif(n,min=truncS[1],max=t
 
 data<-data.frame(time=time,cause=cause,x=X,
 	 country=country,id=id,cens=cens,
-	 stime=stime, entry=etime,truncated=(time<etime))
+	 stime=stime, entry=etime,truncated=(time<etime),stringsAsFactors=TRUE)
 return(data)
 } ## }}}
 
