@@ -860,7 +860,7 @@ for (j=0;j<antclust;j++) {
         int lnrv= nrvs(j)-1; // number of random effects for this cluster 	
 //	Rprintf(" %d \n",lnrv); 
 	mat rv=rvdesC.slice(j); 
-	rv.print("rv"); 
+//	rv.print("rv"); 
         vec rv1= trans(rv.submat(span(0),span(0,lnrv)));
         vec rv2= trans(rv.submat(span(1),span(0,lnrv)));
 
@@ -1356,4 +1356,10 @@ return(res);
   return R_NilValue; // -Wall
 
 } // }}}
+
+
+
+
+
+
 

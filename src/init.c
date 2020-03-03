@@ -66,7 +66,10 @@ extern SEXP revcumsumidstratasumR(SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumCovR(SEXP,SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP cumsumstrataR(SEXP,SEXP, SEXP);
 extern SEXP cumsumstrataPOR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP cumsumstrataDFGR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP cumsumstrataDFGRestrictR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP DLambetaR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP DLambetaDFGR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP riskstrataR(SEXP,SEXP,SEXP); 
 extern SEXP meanriskR(SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP wherestrataR(SEXP,SEXP,SEXP,SEXP);
@@ -80,6 +83,7 @@ extern SEXP covrfstrataR(             SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP covrfstrataCovR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP sumstrataR(SEXP,SEXP, SEXP);
 extern SEXP XBmindex(SEXP,SEXP, SEXP);
+extern SEXP RVpairs2DIMRV(SEXP, SEXP);
 //extern SEXP backfitEaEt(SEXP,SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP,SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -129,7 +133,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"revcumsumstratasumR",               (DL_FUNC) &revcumsumstratasumR,                3},
     {"cumsumstratasumR",                  (DL_FUNC) &cumsumstratasumR,                   3},
     {"cumsumstrataPOR",                   (DL_FUNC) &cumsumstrataPOR,                    6},
+    {"cumsumstrataDFGR",                  (DL_FUNC) &cumsumstrataDFGR,                   6},
+    {"cumsumstrataDFGRestrictR",          (DL_FUNC) &cumsumstrataDFGRestrictR,           7},
     {"DLambetaR",                         (DL_FUNC) &DLambetaR,                          8},
+    {"DLambetaDFGR",                      (DL_FUNC) &DLambetaDFGR,                       8},
     {"cumsumidstratasumR",                (DL_FUNC) &cumsumidstratasumR,                 5},
     {"cumsumASR",                         (DL_FUNC) &cumsumidstratasumR,                 3},
     {"tailstrataR",                       (DL_FUNC) &tailstrataR,                        3},
@@ -154,8 +161,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"Uhat",                              (DL_FUNC) &Uhat,                               5},
     {"uniprobit",                         (DL_FUNC) &uniprobit,                          8},
     {"vecMatMat",                         (DL_FUNC) &vecMatMat,                          2},
-    {"OutCov",                            (DL_FUNC) &OutCov,                          2},
+    {"OutCov",                            (DL_FUNC) &OutCov,                             2},
     {"XBmindex",                          (DL_FUNC) &XBmindex,                           3},
+    {"RVpairs2DIMRV",                     (DL_FUNC) &RVpairs2DIMRV,                      2},
     {NULL, NULL, 0}
 };
 

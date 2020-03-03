@@ -6,29 +6,12 @@
 \alias{biprobit.time}
 \title{Bivariate Probit model}
 \usage{
-biprobit(
-  x,
-  data,
-  id,
-  rho = ~1,
-  num = NULL,
-  strata = NULL,
-  eqmarg = TRUE,
-  indep = FALSE,
-  weights = NULL,
-  biweight,
-  samecens = TRUE,
-  randomeffect = FALSE,
-  vcov = "robust",
-  pairs.only = FALSE,
-  allmarg = samecens & !is.null(weights),
-  control = list(trace = 0),
-  messages = 1,
-  constrain = NULL,
-  table = pairs.only,
-  p = NULL,
-  ...
-)
+biprobit(x, data, id, rho = ~1, num = NULL, strata = NULL,
+  eqmarg = TRUE, indep = FALSE, weights = NULL, biweight,
+  samecens = TRUE, randomeffect = FALSE, vcov = "robust",
+  pairs.only = FALSE, allmarg = samecens & !is.null(weights),
+  control = list(trace = 0), messages = 1, constrain = NULL,
+  table = pairs.only, p = NULL, ...)
 }
 \arguments{
 \item{x}{formula (or vector)}

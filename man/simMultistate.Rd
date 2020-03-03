@@ -5,24 +5,10 @@
 \alias{extendCums}
 \title{Simulation of illness-death model}
 \usage{
-simMultistate(
-  n,
-  cumhaz,
-  cumhaz2,
-  death.cumhaz,
-  death.cumhaz2,
-  rr = NULL,
-  rr2 = NULL,
-  rd = NULL,
-  rd2 = NULL,
-  gap.time = FALSE,
-  max.recurrent = 100,
-  dependence = 0,
-  var.z = 0.22,
-  cor.mat = NULL,
-  cens = NULL,
-  ...
-)
+simMultistate(n, cumhaz, cumhaz2, death.cumhaz, death.cumhaz2, rr = NULL,
+  rr2 = NULL, rd = NULL, rd2 = NULL, gap.time = FALSE,
+  max.recurrent = 100, dependence = 0, var.z = 0.22,
+  cor.mat = NULL, cens = NULL, ...)
 }
 \arguments{
 \item{n}{number of id's}
@@ -62,7 +48,7 @@ Simulation of illness-death model
 }
 \details{
 simMultistate with same death intensity from states 1 and 2 
-simMultistateII with different death intensities from states 1 and 2 
+simMultistateII with different death intensities from states 1 and 2
 
 Must give cumulative hazards on some time-range
 }

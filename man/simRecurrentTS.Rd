@@ -4,20 +4,9 @@
 \alias{simRecurrentTS}
 \title{Simulation of recurrent events data based on cumulative hazards: Two-stage model}
 \usage{
-simRecurrentTS(
-  n,
-  cumhaz,
-  cumhaz2,
-  death.cumhaz = NULL,
-  nu = rep(1, 3),
-  share1 = 0.3,
-  vargamD = 2,
-  vargam12 = 0.5,
-  gap.time = FALSE,
-  max.recurrent = 100,
-  cens = NULL,
-  ...
-)
+simRecurrentTS(n, cumhaz, cumhaz2, death.cumhaz = NULL, nu = rep(1, 3),
+  share1 = 0.3, vargamD = 2, vargam12 = 0.5, gap.time = FALSE,
+  max.recurrent = 100, cens = NULL, ...)
 }
 \arguments{
 \item{n}{number of id's}
@@ -50,11 +39,11 @@ Simulation of recurrent events data based on cumulative hazards
 \details{
 Model is constructed such that marginals are on specified form  by linear approximations
 of cumulative hazards that are on a specific form to make them equivalent to marginals
-after integrating out. 
+after integrating out.
 
 Must give hazard of death and two recurrent events.  Possible with two
 event types and their dependence can be specified but the two recurrent events need
-to share random effect. 
+to share random effect.
 
 Random effect to death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
 \deqn{Z.death=Zd1+Zd2}  gamma distributions 

@@ -22,7 +22,7 @@ phregR(formula, data, offset = NULL, weights = NULL, ...)
 Fast Cox PH regression with R implementation to play and adjust in R function: FastCoxPLstrataR
 }
 \details{
-Robust variance is default variance with the summary. 
+Robust variance is default variance with the summary.
 
 influence functions (iid) will follow numerical order of given cluster variable
 so ordering after $id will give iid in order of data-set.

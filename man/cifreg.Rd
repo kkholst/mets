@@ -4,17 +4,8 @@
 \alias{cifreg}
 \title{CIF regression}
 \usage{
-cifreg(
-  formula,
-  data = data,
-  cause = 1,
-  cens.code = 0,
-  weights = NULL,
-  offset = NULL,
-  Gc = NULL,
-  propodds = 1,
-  ...
-)
+cifreg(formula, data = data, cause = 1, cens.code = 0,
+  weights = NULL, offset = NULL, Gc = NULL, propodds = 1, ...)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}

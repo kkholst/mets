@@ -4,14 +4,8 @@
 \alias{fast.approx}
 \title{Fast approximation}
 \usage{
-fast.approx(
-  time,
-  new.time,
-  equal = FALSE,
-  type = c("nearest", "right", "left"),
-  sorted = FALSE,
-  ...
-)
+fast.approx(time, new.time, equal = FALSE, type = c("nearest", "right",
+  "left"), sorted = FALSE, ...)
 }
 \arguments{
 \item{time}{Original ordered time points}
