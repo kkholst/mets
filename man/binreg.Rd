@@ -4,10 +4,23 @@
 \alias{binreg}
 \title{Binomial Regression for censored competing risks data}
 \usage{
-binreg(formula, data, cause = 1, time = NULL, beta = NULL,
-  offset = NULL, weights = NULL, cens.weights = NULL,
-  cens.model = ~+1, se = TRUE, kaplan.meier = TRUE, cens.code = 0,
-  no.opt = FALSE, method = "nr", ...)
+binreg(
+  formula,
+  data,
+  cause = 1,
+  time = NULL,
+  beta = NULL,
+  offset = NULL,
+  weights = NULL,
+  cens.weights = NULL,
+  cens.model = ~+1,
+  se = TRUE,
+  kaplan.meier = TRUE,
+  cens.code = 0,
+  no.opt = FALSE,
+  method = "nr",
+  ...
+)
 }
 \arguments{
 \item{formula}{formula with outcome (see \code{coxph})}
@@ -47,7 +60,13 @@ Simple version of comp.risk function of timereg for just one time-point thus fit
 \details{
 Based on binomial regresion IPCW response estimating equation: 
 \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
-for IPCW adjusted responses.
+for IPCW adjusted responses. 
+
+var in output is variance based on specific formula for variance with IPCW adjustment, 
+\deqn{ \sum (X_i ( \Delta I(T \leq t, \epsilon=1 )/\hat G_c(T_i-) - expit( X^T \hat \beta))^2 + \int h^2(s) / y.(s)^2  d N.^C(s)}
+where \deqn{ h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t)} (this is the bread of the sandwhich estimator),
+robvar is variance based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and
+naive.var is variance under known censoring model.
 }
 \examples{
 
@@ -59,6 +78,47 @@ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
 outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 summary(outs)
+
+
+##########################################
+### risk-ratio of different causes #######
+##########################################
+data(bmt)
+bmt$id <- 1:nrow(bmt)
+bmt$status <- bmt$cause
+bmt$strata <- 1
+bmtdob <- bmt
+bmtdob$strata <-2
+bmtdob <- dtransform(bmtdob,status=1,cause==2)
+bmtdob <- dtransform(bmtdob,status=2,cause==1)
+###
+bmtdob <- rbind(bmt,bmtdob)
+dtable(bmtdob,cause+status~strata)
+
+cif1 <- cif(Event(time,cause)~+1,bmt,cause=1)
+cif2 <- cif(Event(time,cause)~+1,bmt,cause=2)
+bplot(cif1)
+bplot(cif2,add=TRUE,col=2)
+
+cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=50)
+cifs2 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
+summary(cifs1,or=FALSE)
+summary(cifs2,or=FALSE)
+
+cifdob <- binreg(Event(time,status)~-1+factor(strata)+
+	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
+	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
+summary(cifdob,or=FALSE)
+
+riskratio <- function(p) {
+  expit  <- function(z) 1/(1+exp(-z)) ## expit
+  Z <- rbind(c(1,0,1,1,0,0,0,0), c(0,1,1,1,0,1,1,0))
+  lp <- c(Z \%*\% p)
+  p <- expit(lp)
+  return(p[1]/p[2])
+}
+
+estimate(coef=cifdob$coef,vcov=cifdob$var,f=riskratio)
 
 }
 \author{

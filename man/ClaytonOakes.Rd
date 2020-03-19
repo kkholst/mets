@@ -4,9 +4,18 @@
 \alias{ClaytonOakes}
 \title{Clayton-Oakes model with piece-wise constant hazards}
 \usage{
-ClaytonOakes(formula, data = parent.frame(), cluster, var.formula = ~1,
-  cuts = NULL, type = "piecewise", start, control = list(),
-  var.invlink = exp, ...)
+ClaytonOakes(
+  formula,
+  data = parent.frame(),
+  cluster,
+  var.formula = ~1,
+  cuts = NULL,
+  type = "piecewise",
+  start,
+  control = list(),
+  var.invlink = exp,
+  ...
+)
 }
 \arguments{
 \item{formula}{formula specifying the marginal proportional (piecewise constant) hazard structure with the right-hand-side being a survival object (Surv) specifying the entry time (optional), the follow-up time, and event/censoring status at follow-up. The clustering can be specified using the special function \code{cluster} (see example below).}

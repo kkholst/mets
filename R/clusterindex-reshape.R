@@ -91,7 +91,7 @@ return(out)
 }# }}}
 
 ##' @export
-pairRisk <- function(start,stop,status,expo,clust)
+pairRisk <- function(start,stop,status,expo,clust,nsize=10,doublerisk=1)
 {# {{{
     n <- length(start)
     id <- 1:n
@@ -111,12 +111,13 @@ pairRisk <- function(start,stop,status,expo,clust)
     clust <- clust[ot]
     clust.seq <- clust.seq[ot]
     id <- id[ot]
-    cbind(id,sig,start,stop,expo,sstatus)
-    cc <- c(mets::revcumsumstrata(sig * expo * 10 + sig * (expo == 0), clust.seq - 1, nclust))
+    cc <- c(mets::revcumsumstrata(sig * expo * nsize + sig * (expo == 0), clust.seq - 1, nclust))
     ### both under risk when cc>10
-    pair.risk <- which(cc > 10)
+    if (doublerisk)
+    pair.risk <- which(cc > nsize)
+    else pair.risk <- which(cc>=1)
     clustpl <- clust[pair.risk]
-    weightpl <- cc[pair.risk] - 10
+    weightpl <- cc[pair.risk] - nsize
     caseweightpl <- rep(-1, length(weightpl))
     casepl <- expo[pair.risk]
     caseweightpl[casepl == 1] <- weightpl[casepl == 1]

@@ -4,10 +4,21 @@
 \alias{ipw}
 \title{Inverse Probability of Censoring Weights}
 \usage{
-ipw(formula, data, cluster, same.cens = FALSE, obs.only = TRUE,
-  weight.name = "w", trunc.prob = FALSE, weight.name2 = "wt",
-  indi.weight = "pr", cens.model = "aalen", pairs = FALSE,
-  theta.formula = ~1, ...)
+ipw(
+  formula,
+  data,
+  cluster,
+  same.cens = FALSE,
+  obs.only = TRUE,
+  weight.name = "w",
+  trunc.prob = FALSE,
+  weight.name2 = "wt",
+  indi.weight = "pr",
+  cens.model = "aalen",
+  pairs = FALSE,
+  theta.formula = ~1,
+  ...
+)
 }
 \arguments{
 \item{formula}{Formula specifying the censoring model}

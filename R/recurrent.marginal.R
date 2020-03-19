@@ -2242,6 +2242,7 @@ zs <- cbind(z1,z2,zd)
 ##' rr <-  count.history(rr)
 ##' dtable(rr,~"Count*"+status,level=1)
 ##'
+##' @aliases count.historyVar 
 ##' @export
 count.history <- function(data,status="status",id="id",types=1:2,names.count="Count",lag=TRUE)
 {# {{{
@@ -2269,6 +2270,33 @@ data[,paste(names.count,i,sep="")] <-
 
 return(data)
 }# }}}
+
+##' @export
+count.historyVar <- function(data,var="status",id="id",names.count="Count",lag=TRUE)
+{# {{{
+vvar <- data[,var]
+
+clusters <- data[,id]
+if (is.numeric(clusters)) {
+      clusters <- fast.approx(unique(clusters), clusters) - 1
+      max.clust <- max(clusters)
+}
+else {
+     max.clust <- length(unique(clusters))
+     clusters <- as.integer(factor(clusters, labels = seq(max.clust))) - 1
+}
+
+data[,"lbnr__id"] <- cumsumstrata(rep(1,nrow(data)),clusters,max.clust+1) 
+if (lag==TRUE)
+data[,paste(names.count,i,sep="")] <- 
+   cumsumidstratasum(vvar,rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
+   else 
+data[,paste(names.count,i,sep="")] <- 
+   cumsumidstratasum(vvar,rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
+
+return(data)
+}# }}}
+
 
 
 ##' Estimation of probability of more that k events for recurrent events process

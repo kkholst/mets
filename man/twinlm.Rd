@@ -5,11 +5,27 @@
 \alias{twinlm.strata}
 \title{Classic twin model for quantitative traits}
 \usage{
-twinlm(formula, data, id, zyg, DZ, group = NULL, group.equal = FALSE,
-  strata = NULL, weights = NULL, type = c("ace"),
-  twinnum = "twinnum", binary = FALSE, ordinal = 0, keep = weights,
-  estimator = NULL, constrain = TRUE, control = list(),
-  messages = 1, ...)
+twinlm(
+  formula,
+  data,
+  id,
+  zyg,
+  DZ,
+  group = NULL,
+  group.equal = FALSE,
+  strata = NULL,
+  weights = NULL,
+  type = c("ace"),
+  twinnum = "twinnum",
+  binary = FALSE,
+  ordinal = 0,
+  keep = weights,
+  estimator = NULL,
+  constrain = TRUE,
+  control = list(),
+  messages = 1,
+  ...
+)
 }
 \arguments{
 \item{formula}{Formula specifying effects of covariates on the response}
