@@ -607,7 +607,7 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
   ## stay with N(D_i) when t is large so no -1 when death
   signm <- xx$sign
   signm[xx$X[,2]==1 & xx$sign==-1] <- 0
-###
+  ###
   Nt <- revcumsumstrata(xx$X[,1]*xx$sign,xx$strata,xx$nstrata)
   Nt <- Nt/St
   ## counting N(D) forward in time skal ikke checke ud når man dør N_(D_i) er i spil efter D_i
@@ -619,24 +619,6 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
 
   cumhaz <- cbind(timeJ,avNtD)
 
-  ## correction for censoring terms
-###  x <- cr
-###  xx <- x$cox.prep
-###  E <- S0i2 <- S0i <- rep(0,length(xx$strata))
-###  S0i[xx$jumps+1] <-  1/x$S0
-###  S0i2[xx$jumps+1] <- x$E
-###     E[xx$jumps+1] <- 1/x$S0^2
-###  ### 
-###  cumS0i2 <- c(cumsumstrata(xx$X[,1]*risk*S0i2,xx$strata,xx$nstrata))
-###   cor1 <- (cumsum(E - cumsum(E*risk*cumS0i2))
-###  corMC <- (-cor1)/nid
-###  xrc <- phreg(Surv(entry,time,status==1)~Count1+cluster(id),data=rr,no.opt=TRUE)
-###  corMC <- cumsum(c(xrc$E))
-###  corMC <- Cpred(cbind(xrc$jumptimes,corMC),timeJ)[,2]
-###
-###  cumhaz.eff <- cbind(timeJ,avNtD+corMC)
-
-###  return(list(cumhaz=cumhaz,cumhaz.eff=cumhaz.eff))
   return(list(cumhaz=cumhaz))
 }# }}}
 

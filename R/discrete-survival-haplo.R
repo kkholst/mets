@@ -83,7 +83,7 @@
 ##'          Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
-##'  summary(out)
+##' summary(out)
 ##' @aliases simTTP  predictSurvd plotSurvd 
 ##' @export
 haplo.surv.discrete <- function (X=NULL,y="y",time.name="time",Haplos=NULL,id="id",desnames=NULL,designfunc=NULL,

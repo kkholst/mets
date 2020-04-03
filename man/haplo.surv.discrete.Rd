@@ -137,7 +137,7 @@ out <- haplo.surv.discrete(X=X,y="y",time.name="time",
          Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
 names(out$coef) <- c(desnames,types)
 out$coef
- summary(out)
+summary(out)
 }
 \author{
 Thomas Scheike
