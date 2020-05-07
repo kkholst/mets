@@ -42,9 +42,9 @@
 
 \item{times}{Time where to predict variable, default is all time-points from the object sorted}
 
-\item{individual.time}{when TRUE then newdata and times have same length and makes only predictions for these individual times.}
+\item{individual.time}{to use one (individual) time per subject, and then newdata and times have same length and makes only predictions for these individual times.}
 
-\item{tminus}{to make predictions in T- that is just before, useful for IPCW techniques}
+\item{tminus}{to make predictions in T- that is strictly before given times, useful for IPCW techniques}
 
 \item{se}{with standard errors and upper and lower confidence intervals.}
 
@@ -54,7 +54,7 @@
 
 \item{conf.int}{significance level}
 
-\item{km}{to use Kaplan-Meier for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))} where s is strata.}
+\item{km}{to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.}
 
 \item{...}{Additional arguments to plot functions}
 }

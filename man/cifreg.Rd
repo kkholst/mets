@@ -2,6 +2,8 @@
 % Please edit documentation in R/cifreg.R
 \name{cifreg}
 \alias{cifreg}
+\alias{revcumsum2strata}
+\alias{vecAllStrata}
 \title{CIF regression}
 \usage{
 cifreg(
@@ -9,6 +11,7 @@ cifreg(
   data = data,
   cause = 1,
   cens.code = 0,
+  cens.model = ~1,
   weights = NULL,
   offset = NULL,
   Gc = NULL,
@@ -24,6 +27,8 @@ cifreg(
 \item{cause}{of interest}
 
 \item{cens.code}{code of censoring}
+
+\item{cens.model}{for stratified Cox model without covariates}
 
 \item{weights}{weights for Cox score equations}
 
@@ -45,7 +50,9 @@ For FG model:
 \int (X - E ) Y_1(t) w(t) dM_1
 }
 is computed and summed over clusters  and returned multiplied with inverse 
-of second derivative as iid.naive
+of second derivative as iid.naive. Where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
+\deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}
+
 
 The iid decomposition of the beta's, however, also have a censoring term that is also
 is computed and added to UUiid (still scaled with inverse second derivative)
@@ -62,18 +69,20 @@ bmt$id <- 1:nrow(bmt)
 
 ## logistic link  OR interpretation
 ll=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
-bplot(ll)
+plot(ll)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pll <- predict(ll,nd)
 plot(pll)
 
 ## Fine-Gray model
 llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
-bplot(ll)
+plot(llfg)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pll <- predict(ll,nd)
 plot(pll)
 
+sllfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+plot(sllfg)
 }
 \author{
 Thomas Scheike

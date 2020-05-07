@@ -39,7 +39,7 @@ binreg(
 
 \item{cens.weights}{censoring weights}
 
-\item{cens.model}{stratified cox model}
+\item{cens.model}{only stratified cox model without covariates}
 
 \item{se}{to compute se's  based on IPCW}
 
@@ -66,7 +66,9 @@ var in output is variance based on specific formula for variance with IPCW adjus
 \deqn{ \sum (X_i ( \Delta I(T \leq t, \epsilon=1 )/\hat G_c(T_i-) - expit( X^T \hat \beta))^2 + \int h^2(s) / y.(s)^2  d N.^C(s)}
 where \deqn{ h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t)} (this is the bread of the sandwhich estimator),
 robvar is variance based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and
-naive.var is variance under known censoring model.
+naive.var is variance under known censoring model. 
+
+Censoring model may depend on strata.
 }
 \examples{
 

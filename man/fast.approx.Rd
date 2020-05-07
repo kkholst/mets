@@ -2,6 +2,7 @@
 % Please edit documentation in R/fastapprox.R
 \name{fast.approx}
 \alias{fast.approx}
+\alias{indexstrata}
 \title{Fast approximation}
 \usage{
 fast.approx(

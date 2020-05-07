@@ -2270,10 +2270,10 @@ else {
 
 data[,"lbnr__id"] <- cumsumstrata(rep(1,nrow(data)),clusters,max.clust+1) 
 if (lag==TRUE)
-data[,paste(names.count,i,sep="")] <- 
+data[,names.count] <- 
    cumsumidstratasum(vvar,rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
    else 
-data[,paste(names.count,i,sep="")] <- 
+data[,names.count] <- 
    cumsumidstratasum(vvar,rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
 
 return(data)

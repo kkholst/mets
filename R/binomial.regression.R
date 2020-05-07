@@ -13,6 +13,8 @@
 ##' robvar is variance based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and
 ##' naive.var is variance under known censoring model. 
 ##'
+##' Censoring model may depend on strata. 
+##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
 ##' @param cause cause of interest
@@ -21,7 +23,7 @@
 ##' @param offset offsets for partial likelihood 
 ##' @param weights for score equations 
 ##' @param cens.weights censoring weights 
-##' @param cens.model stratified cox model 
+##' @param cens.model only stratified cox model without covariates
 ##' @param se to compute se's  based on IPCW 
 ##' @param kaplan.meier uses Kaplan-Meier for baseline than standard Cox 
 ##' @param cens.code gives censoring code
@@ -83,8 +85,8 @@
 ##'
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
-		   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-		   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",...)
+	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",...)
 {# {{{
 
   cl <- match.call()# {{{
@@ -158,7 +160,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   if (is.null(cens.weights))  {
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
-	      resC <- phreg(formC,data)
+      resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 

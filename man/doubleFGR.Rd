@@ -2,10 +2,6 @@
 % Please edit documentation in R/doubleFGR.r
 \name{doubleFGR}
 \alias{doubleFGR}
-\alias{phreg}
-\alias{phreg.par}
-\alias{robust.phreg}
-\alias{readPhreg}
 \alias{bplotdFG}
 \alias{predictdFG}
 \title{Double CIF Fine-Gray model with two causes}

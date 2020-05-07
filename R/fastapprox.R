@@ -17,6 +17,7 @@
 ##' t <- 0:6
 ##' n <- c(-1,0,0.1,0.9,1,1.1,1.2,6,6.5)
 ##' fast.approx(t,n,type="left")
+##' @aliases  indexstrata
 ##' @export
 fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE,...) {
     if (!sorted) {
@@ -47,3 +48,23 @@ fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left
     }
     return(res)
 }
+
+
+##' @export
+indexstrata <- function (jump.times,jump.strata,eval.times,eval.strata,nstrata,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE)
+{   # {{{
+	stopifnot(is.numeric(jump.times))
+	stopifnot(is.numeric(eval.times))
+	if (any(eval.strata<0) | any(eval.strata>nstrata-1)) stop("eval.strata index not ok\n"); 
+	if (any(jump.strata<0) | any(jump.strata>nstrata-1)) stop("jump.strata index not ok\n"); 
+	N <- length(jump.times)
+	index <- rep(0,length(eval.times))
+
+	for (i in unique(eval.strata)) {
+		wherej <- which(eval.strata==i)
+		whereJ <- which(jump.strata==i)
+		iindex <- fast.approx(jump.times[whereJ],eval.times[wherej],equal=equal,type=type,sorted=sorted) 
+		index[wherej] <- whereJ[iindex]
+	}
+	return(index)
+}# }}}

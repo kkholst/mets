@@ -1,5 +1,4 @@
 
-###{{{ doubleFGR 
 
 ##' Double CIF Fine-Gray model with two causes
 ##'
@@ -30,7 +29,6 @@
 ##' @param X2 specifies the regression design for second CIF model 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg 
 ##' @examples
 ##' res <- 0 
 ##' data(bmt)
@@ -161,11 +159,6 @@ doubleFGR <- function(formula,data,offset=NULL,weights=NULL,X2=NULL,...) {# {{{
   res
 }# }}}
 
-coef.doubleFG <- function(x,...) x$coef
-vcov.doubleFG <- function(x,...) x$var
-summary.doubleFG <- function(x,...) estimate(x)
-print.doubleFG <- function(x,...) estimate(x)
-
 doubleFG01R <- function(X,X2, entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
              strata.name=NULL,cumhaz=TRUE,
              beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
@@ -279,8 +272,6 @@ doubleFG01R <- function(X,X2, entry,exit,status,id=NULL,strata=NULL,offset=NULL,
 ###	 cumhaz <- cbind(jumptimes,cumsumstrata(1/val$S0,strata,nstrata))
 	 cumhaz <- cbind(jumptimes,val$base12$base)
 
-
-       
 ###	 if ((no.opt==FALSE & p!=0)) { 
 ###	     DLambeta.t <- apply(val$E/c(val$S0),2,cumsumstrata,strata,nstrata)
 ###	     varbetat <-   rowSums((DLambeta.t %*% II)*DLambeta.t)
@@ -322,8 +313,7 @@ doubleFG01R <- function(X,X2, entry,exit,status,id=NULL,strata=NULL,offset=NULL,
   res
 }# }}}
 
-
-## standard Cox  in R version 
+## double FG in in R version 
 doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, nstrata, weights, offsets, ZX, caseweights,restrict) 
 {# {{{
 	p=length(beta)
@@ -427,10 +417,8 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	hess2 <- matrix(0,p1+p2,p1+p2)
 	pd2 <- p1
 	p <- length(beta)
-	if (p1>0)
-	hess2[1:p1,1:p1] <- hess12
-	if (p2>0)
-	hess2[(p1+1):p,(p1+1):p] <- hess22
+	if (p1>0) hess2[1:p1,1:p1] <- hess12
+	if (p2>0) hess2[(p1+1):p,(p1+1):p] <- hess22
 
 	out=list(jumps=Jumps, ploglik=sum(val2),U=grad2,base12=base12,
 		 gradient=matrix(gradient,1,p), hessian=hess2,  
@@ -439,6 +427,19 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 		 )
 	return(out)
 }# }}}
+
+
+##' @export
+coef.doubleFG <- function(object,...) object$coef
+
+##' @export
+vcov.doubleFG <- function(object,...) object$var
+
+##' @export
+summary.doubleFG <- function(object,...) estimate(object)
+
+##' @export
+print.doubleFG <- function(x,...) estimate(x)
 
 ##' @export
 bplotdFG <- function(x,cause=1,...)  {# {{{
@@ -486,6 +487,7 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 	}
 
 	x$cumhaz <- x$cumhaz[,c(1,cause+1)]
+	
 ###	if (p>0) { 
 ###           ## sets coefficients to 0 for other cause 
 ###	   print("====================")
@@ -493,15 +495,17 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ###	   print(x$p)
 ###	   print(head(x$model.frame))
 ###	   print(head(x$X))
+###	   print(x$cumhaz)
 ###	}
 	class(x) <- c("phreg","cifreg")
 	pll <- predict(x,se=se,times=times,...)
 
 	if (x$restrict>0 & cause==2) {
 		x$cumhaz <- cumhaz[,1:2]
-                if (is.null(X2call)) x$coef <- coef[cc1] 
-		else { x$coef <- coef;  x$coef[cc2] <- 0; }
-		times <- max(pll$times)
+                if (is.null(X2call)) x$coef <- coef[cc1] else { x$coef <- coef;  x$coef[cc2] <- 0; }
+		times <- max(cumhaz[,1])
+		mm <- "individual.time" %in% names(list(...))
+		if (mm) times <- rep(times,nrow(x$model.frame))
 		p1ll <- predict(x,se=se,times=times,...)
 		cif1 <- c(1-p1ll$cif)
 		pll$cif <- pll$cif*cif1
@@ -509,5 +513,4 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 	return(pll)
 }# }}}
 
-## }}}
 
