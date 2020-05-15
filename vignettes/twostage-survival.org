@@ -231,7 +231,13 @@ modelling, so here it is better to use the twostageMLE.
 Loading required package: timereg
 Loading required package: survival
 Loading required package: lava
-mets version 1.2.4
+mets version 1.2.8
+
+Attaching package: ‘mets’
+
+The following object is masked _by_ ‘.GlobalEnv’:
+
+    object.defined
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
@@ -248,11 +254,11 @@ Variance of Gamma distributed random effects
 With log-link 
 $estimates
               log-Coef.       SE          z     P-val Kendall tau         SE
-dependence1 -0.04849523 0.330665 -0.1466597 0.8834006   0.3226451 0.07226526
+dependence1 -0.04849523 0.328524 -0.1476155 0.8826462   0.3226451 0.07179736
 
 $vargam
             Estimate Std.Err   2.5% 97.5%  P-value
-dependence1   0.9527   0.315 0.3352  1.57 0.002493
+dependence1   0.9527   0.313 0.3392 1.566 0.002335
 
 $type
 [1] "clayton.oakes"
@@ -263,7 +269,7 @@ Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
                 Coef.        SE        z       P-val Kendall tau         SE
-dependence1 0.9526619 0.3150119 3.024209 0.002492843   0.3226451 0.07226526
+dependence1 0.9526619 0.3129723 3.043917 0.002335193   0.3226451 0.07179736
 
 $type
 [1] "clayton.oakes"
@@ -290,12 +296,12 @@ Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 With log-link 
 $estimates
-              log-Coef.        SE         z     P-val Kendall tau         SE
-dependence1 -0.05683996 0.3322322 -0.171085 0.8641569   0.3208241 0.07239207
+              log-Coef.        SE          z     P-val Kendall tau         SE
+dependence1 -0.05683996 0.3279956 -0.1732949 0.8624196   0.3208241 0.07146893
 
 $vargam
             Estimate Std.Err   2.5% 97.5%  P-value
-dependence1   0.9447  0.3139 0.3296  1.56 0.002613
+dependence1   0.9447  0.3099 0.3374 1.552 0.002297
 
 $type
 [1] "clayton.oakes"
@@ -355,8 +361,8 @@ And fit the related model.
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-              Coef.         SE        z P-val Kendall tau         SE
-dependence1 2.01888 0.08970192 22.50654     0   0.5023489 0.01110764
+               Coef.         SE        z P-val Kendall tau         SE
+dependence1 1.952342 0.08644756 22.58411     0   0.4939709 0.01106812
 
 $type
 NULL
@@ -380,34 +386,28 @@ test can be constructed.
 
 #+RESULTS[<2018-09-11 09:09:50> 7d2ab8fcfa35afc8358eb1426f471ba00efa1d47]:
 #+begin_example
-Data-set  1 out of  4 
-  Number of joint events: 518 of  2000
+ Data-set  1 out of  4 
+  Number of joint events: 530 of  2000
 
 Data-set  2 out of  4 
-  Number of joint events: 274 of  1232
+  Number of joint events: 220 of  1182
 
 Data-set  3 out of  4 
-  Number of joint events: 247 of  1203
+  Number of joint events: 286 of  1246
 
 Data-set  4 out of  4 
-  Number of joint events: 594 of  953
+  Number of joint events: 640 of  958
 [1] 1
 Dependence parameter for Clayton-Oakes model 
-Score of log-likelihood for parameter estimates (too large?)
-             0 - 0.5     0.5 - 2
-0 - 0.5 0.0019673733 0.001451886
-0.5 - 2 0.0007297083 0.003142920
-
-
 log-coefficient for dependence parameter (SE) 
          0 - 0.5        0.5 - 2      
-0 - 0.5  0.687 (0.069)  0.677 (0.093)
-0.5 - 2  0.733 (0.100)  0.718 (0.060)
+0 - 0.5  0.731 (0.067)  0.775 (0.096)
+0.5 - 2  0.78  (0.091)  0.569 (0.062)
 
 Kendall's tau (SE) 
          0 - 0.5        0.5 - 2      
-0 - 0.5  0.498 (0.017)  0.496 (0.023)
-0.5 - 2  0.51  (0.025)  0.506 (0.015)
+0 - 0.5  0.509 (0.017)  0.52  (0.024)
+0.5 - 2  0.522 (0.023)  0.469 (0.015)
 #+end_example
 
 
@@ -416,17 +416,16 @@ Kendall's tau (SE)
 To illustrate how the multivariate models can be used, we first set 
 up some twin data with ACE structure. That is two shared random effects,
 one being the genes $\sigma_g^2$ and one the environmental effect
-$\sigma_e^2$. Monozygotic twins share all genes whereas the dizygotic 
+\( \sigma_e^2 \). Monozygotic twins share all genes whereas the dizygotic 
 twins only share half the genes. This can be expressed via 5 random effect for
 each twin pair (for example). We start by setting this up. 
 
 
  The pardes matrix tells how the the parameters of the 5 random effects are 
  related, and the matrix her first has one random effect with parameter
- $\theta_1$ (here the $\sigma_g^2$), then the next 3 random effects have
- parameters $0.5 \theta_1$ (here $0.5 \sigma_g^2$), and the last 
-random effect that is given by its own parameter $\theta_2$ (here 
-$\sigma_e^2$).
+ $\theta_1$ (here the \( \sigma_g^2 \) ), then the next 3 random effects have
+ parameters $0.5 \theta_1$ (here \( 0.5 \sigma_g^2 \) ), and the last 
+random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ ).
 
 #+BEGIN_SRC R :results output :exports both :session *R* :cache no 
  data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
@@ -492,24 +491,24 @@ $\sigma_e^2$).
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-                Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.2111163 0.2219525 9.962113 0.000000e+00   0.5250665 0.02503201
-dependence2 0.7431872 0.1706430 4.355217 1.329349e-05   0.2709211 0.04535315
+               Coef.        SE       z        P-val Kendall tau         SE
+dependence1 1.725681 0.1874589 9.20565 0.000000e+00   0.4631854 0.02701001
+dependence2 1.058834 0.1503106 7.04431 1.863842e-12   0.3461561 0.03212977
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%   P-value
-dependence1   0.7484 0.05898 0.6328 0.8640 6.669e-37
-dependence2   0.2516 0.05898 0.1360 0.3672 1.995e-05
+dependence1   0.6197 0.05395 0.5140 0.7255 1.534e-30
+dependence2   0.3803 0.05395 0.2745 0.4860 1.813e-12
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    2.954  0.1426 2.675 3.234 2.514e-95
+p1    2.785  0.1427 2.505 3.064 7.523e-85
 
 attr(,"class")
 [1] "summary.mets.twostage"
@@ -530,10 +529,10 @@ kendall.ClaytonOakes.twin.ace(ts$theta[1],ts$theta[2],K=10000)
 
 #+RESULTS:
 : $mz.kendall
-: [1] 0.5984888
+: [1] 0.5882809
 : 
 : $dz.kendall
-: [1] 0.3257834
+: [1] 0.3489393
 
 
 ** Family data 
@@ -617,23 +616,23 @@ Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
                Coef.         SE        z P-val Kendall tau         SE
-dependence1 2.185967 0.19164670 11.40623     0   0.5222132 0.02187458
-dependence2 0.947110 0.07648339 12.38321     0   0.3213691 0.01761183
+dependence1 2.185967 0.18986603 11.51321     0   0.5222132 0.02167133
+dependence2 0.947110 0.07929081 11.94476     0   0.3213691 0.01825829
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%    P-value
-dependence1   0.6977 0.02997 0.6390 0.7564 7.182e-120
-dependence2   0.3023 0.02997 0.2436 0.3610  6.359e-24
+dependence1   0.6977 0.03044 0.6381 0.7574 2.659e-116
+dependence2   0.3023 0.03044 0.2426 0.3619  3.010e-23
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.133  0.1737 2.793 3.474 1.074e-72
+p1    3.133  0.1713 2.797 3.469 1.057e-74
 
 attr(,"class")
 [1] "summary.mets.twostage"
@@ -694,23 +693,23 @@ Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
                Coef.         SE        z P-val Kendall tau         SE
-dependence1 2.185967 0.18986604 11.51321     0   0.5222132 0.02167133
-dependence2 0.947110 0.07929082 11.94476     0   0.3213691 0.01825829
+dependence1 2.185967 0.19164671 11.40623     0   0.5222132 0.02187458
+dependence2 0.947110 0.07648339 12.38321     0   0.3213691 0.01761183
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%    P-value
-dependence1   0.6977 0.03044 0.6381 0.7574 2.659e-116
-dependence2   0.3023 0.03044 0.2426 0.3619  3.010e-23
+dependence1   0.6977 0.02997 0.6390 0.7564 7.182e-120
+dependence2   0.3023 0.02997 0.2436 0.3610  6.359e-24
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.133  0.1713 2.797 3.469 1.057e-74
+p1    3.133  0.1737 2.793 3.474 1.074e-72
 
 attr(,"class")
 [1] "summary.mets.twostage"
@@ -734,24 +733,24 @@ summary(tsd)
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%   P-value
-dependence1    0.655 0.05345 0.5502 0.7598 1.606e-34
-dependence2    0.345 0.05345 0.2402 0.4498 1.089e-10
+dependence1   0.6574 0.05665 0.5463 0.7684 3.922e-31
+dependence2   0.3426 0.05665 0.2316 0.4537 1.465e-09
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.055  0.3253 2.418 3.693 5.923e-21
+p1    2.752  0.3205 2.124  3.38 8.971e-18
 
 attr(,"class")
 [1] "summary.mets.twostage"
@@ -784,10 +783,10 @@ head(outid$des.rv)
      [,1] [,2]
 [1,]    1    2
 [2,]    3    4
-[3,]    3    5
-[4,]    4    6
-[5,]    7    8
-[6,]    9   10
+[3,]    5    6
+[4,]    7    8
+[5,]    7    9
+[6,]    7   10
       [,1] [,2]
  [1,] 0.25    0
  [2,] 0.25    0
@@ -800,7 +799,7 @@ head(outid$des.rv)
  [9,] 0.00    1
      m1 m2 m3 m4 f1 f2 f3 f4 env
 [1,]  1  1  1  1  0  0  0  0   1
-[2,]  0  0  0  0  1  1  1  1   1
+[2,]  1  1  0  0  1  1  0  0   1
 [3,]  1  1  1  1  0  0  0  0   1
 [4,]  0  0  0  0  1  1  1  1   1
 [5,]  1  1  0  0  1  1  0  0   1
@@ -824,33 +823,33 @@ coef(tsd)
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%   P-value
-dependence1    0.655 0.05345 0.5502 0.7598 1.606e-34
-dependence2    0.345 0.05345 0.2402 0.4498 1.089e-10
+dependence1   0.6574 0.05665 0.5463 0.7684 3.922e-31
+dependence2   0.3426 0.05665 0.2316 0.4537 1.465e-09
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.055  0.3253 2.418 3.693 5.923e-21
+p1    2.752  0.3205 2.124  3.38 8.971e-18
 
 attr(,"class")
 [1] "summary.mets.twostage"
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 #+end_example
 
 
@@ -910,17 +909,17 @@ head(rvs)
      [,1] [,2]
 [1,]    1    2
 [2,]    3    4
-[3,]    3    5
-[4,]    4    6
-[5,]    7    8
-[6,]    9   10
+[3,]    5    6
+[4,]    7    8
+[5,]    7    9
+[6,]    7   10
      [,1]     [,2]    
-[1,] "mother" "father"
+[1,] "mother" "child" 
 [2,] "mother" "father"
-[3,] "mother" "child" 
-[4,] "father" "child" 
-[5,] "child"  "child" 
-[6,] "child"  "child"
+[3,] "child"  "child" 
+[4,] "mother" "father"
+[5,] "mother" "child" 
+[6,] "mother" "child"
      [,1] [,2] [,3] [,4]
 [1,]    1    1    0    1
 [2,]    1    0    1    1
@@ -930,14 +929,14 @@ head(rvs)
 [3,]  0.5    0
 [4,]  0.0    1
      [,1] [,2] [,3] [,4]
-[1,]    1    0    1    0
-[2,]    0    1    1    0
+[1,]    1    1    0    1
+[2,]    1    0    1    1
      [,1] [,2]
-[1,]    1    0
-[2,]    1    0
-[3,]    0    1
-[4,]    0    0
-[1] 3 3 4 4 4 4
+[1,]  0.5    0
+[2,]  0.5    0
+[3,]  0.5    0
+[4,]  0.0    1
+[1] 4 3 4 3 4 4
 #+end_example
 
 
@@ -959,36 +958,36 @@ tsdid$theta
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%   P-value
-dependence1    0.655 0.05345 0.5502 0.7598 1.606e-34
-dependence2    0.345 0.05345 0.2402 0.4498 1.089e-10
+dependence1   0.6574 0.05665 0.5463 0.7684 3.922e-31
+dependence2   0.3426 0.05665 0.2316 0.4537 1.465e-09
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.055  0.3253 2.418 3.693 5.923e-21
+p1    2.752  0.3205 2.124  3.38 8.971e-18
 
 attr(,"class")
 [1] "summary.mets.twostage"
-                [,1]
-dependence1 2.001187
-dependence2 1.054030
-                [,1]
-dependence1 2.001187
-dependence2 1.054030
-                [,1]
-dependence1 2.001187
-dependence2 1.054030
+                 [,1]
+dependence1 1.8089591
+dependence2 0.9428434
+                 [,1]
+dependence1 1.8089591
+dependence2 0.9428434
+                 [,1]
+dependence1 1.8089591
+dependence2 0.9428434
 #+end_example
 
 Finally the same model structure can be setup based on a Kinship coefficient. 
@@ -1012,7 +1011,7 @@ out$theta.des[,,9]
 
 #+RESULTS:
 #+begin_example
- [1] 0.0 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+ [1] 0.5 0.0 0.5 0.0 0.5 0.5 0.5 0.5 0.5 0.5
 [1] "random.design" "theta.des"     "ant.rvs"
      [,1] [,2] [,3] [,4]
 [1,]    1    1    0    1
@@ -1040,30 +1039,30 @@ coef(tsdid3)
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 $estimates
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 
 $type
 [1] "clayton.oakes"
 
 $h
             Estimate Std.Err   2.5%  97.5%   P-value
-dependence1    0.655 0.05345 0.5502 0.7598 1.606e-34
-dependence2    0.345 0.05345 0.2402 0.4498 1.089e-10
+dependence1   0.6574 0.05665 0.5463 0.7684 3.922e-31
+dependence2   0.3426 0.05665 0.2316 0.4537 1.465e-09
 
 $vare
 NULL
 
 $vartot
    Estimate Std.Err  2.5% 97.5%   P-value
-p1    3.055  0.3253 2.418 3.693 5.923e-21
+p1    2.752  0.3205 2.124  3.38 8.971e-18
 
 attr(,"class")
 [1] "summary.mets.twostage"
-               Coef.        SE        z        P-val Kendall tau         SE
-dependence1 2.001187 0.3400847 5.884378 3.995533e-09   0.5001483 0.04248537
-dependence2 1.054030 0.1277271 8.252205 2.220446e-16   0.3451275 0.02738838
+                Coef.        SE        z        P-val Kendall tau         SE
+dependence1 1.8089591 0.3343461 5.410439 6.287048e-08   0.4749222 0.04609073
+dependence2 0.9428434 0.1178705 7.998975 1.332268e-15   0.3203852 0.02722080
 #+end_example
 
 
@@ -1143,11 +1142,11 @@ Dependence parameter for Odds-Ratio (Plackett) model
 With log-link 
 $estimates
             log-Coef.        SE        z        P-val Spearman Corr.         SE
-dependence1   1.14188 0.2784057 4.101497 4.104867e-05      0.3648217 0.08158643
+dependence1   1.14188 0.2754994 4.144764 3.401635e-05      0.3648217 0.08073474
 
 $or
             Estimate Std.Err  2.5% 97.5%   P-value
-dependence1    3.133  0.8721 1.423 4.842 0.0003283
+dependence1    3.133   0.863 1.441 4.824 0.0002837
 
 $type
 [1] "plackett"
@@ -1174,12 +1173,12 @@ Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
 With log-link 
 $estimates
-              log-Coef.        SE         z     P-val Kendall tau         SE
-dependence1 -0.05683996 0.3322322 -0.171085 0.8641569   0.3208241 0.07239207
+              log-Coef.        SE          z     P-val Kendall tau         SE
+dependence1 -0.05683996 0.3279956 -0.1732949 0.8624196   0.3208241 0.07146893
 
 $vargam
             Estimate Std.Err   2.5% 97.5%  P-value
-dependence1   0.9447  0.3139 0.3296  1.56 0.002613
+dependence1   0.9447  0.3099 0.3374 1.552 0.002297
 
 $type
 [1] "clayton.oakes"
@@ -1205,16 +1204,16 @@ Dependence parameter for Odds-Ratio (Plackett) model
 With log-link 
 $estimates
                log-Coef.        SE        z       P-val Spearman Corr.
-factor(adult)1  1.098333 0.3436264 3.196298 0.001392032      0.3519988
-factor(adult)2  1.231962 0.4938132 2.494794 0.012603018      0.3909505
-                      SE
-factor(adult)1 0.1016635
-factor(adult)2 0.1417283
+factor(adult)1  1.098333 0.3356654 3.272106 0.001067497      0.3519988
+factor(adult)2  1.231962 0.4708683 2.616363 0.008887198      0.3909505
+                       SE
+factor(adult)1 0.09930816
+factor(adult)2 0.13514292
 
 $or
-               Estimate Std.Err   2.5% 97.5%  P-value
-factor(adult)1    2.999   1.031 0.9792 5.019 0.003613
-factor(adult)2    3.428   1.693 0.1102 6.746 0.042861
+               Estimate Std.Err   2.5% 97.5% P-value
+factor(adult)1    2.999   1.007 1.0260 4.972 0.00289
+factor(adult)2    3.428   1.614 0.2643 6.592 0.03369
 
 $type
 [1] "plackett"
@@ -1236,28 +1235,34 @@ attr(,"class")
 
 #+RESULTS[<2018-09-11 09:10:44> 317374c26093d716d9ba134f652d6b5470e9dbe9]:
 #+begin_example
-Data-set  1 out of  4 
-  Number of joint events: 529 of  2000
+ Data-set  1 out of  4 
+  Number of joint events: 515 of  2000
 
 Data-set  2 out of  4 
-  Number of joint events: 248 of  1212
+  Number of joint events: 285 of  1251
 
 Data-set  3 out of  4 
-  Number of joint events: 254 of  1219
+  Number of joint events: 234 of  1196
 
 Data-set  4 out of  4 
-  Number of joint events: 633 of  960
+  Number of joint events: 612 of  962
 [1] 1
 Dependence parameter for Plackett model 
+Score of log-likelihood for parameter estimates (too large?)
+              0 - 0.5       0.5 - 2
+0 - 0.5 -0.0007667180 -0.0005894796
+0.5 - 2 -0.0006789868  0.0021445103
+
+
 log-coefficient for dependence parameter (SE) 
          0 - 0.5        0.5 - 2      
-0 - 0.5  1.761 (0.083)  1.628 (0.128)
-0.5 - 2  1.74  (0.128)  2.017 (0.092)
+0 - 0.5  1.737 (0.085)  1.734 (0.125)
+0.5 - 2  1.88  (0.136)  2.155 (0.092)
 
 Spearman Correlation (SE) 
          0 - 0.5        0.5 - 2      
-0 - 0.5  0.532 (0.020)  0.499 (0.033)
-0.5 - 2  0.527 (0.032)  0.593 (0.021)
+0 - 0.5  0.527 (0.021)  0.526 (0.031)
+0.5 - 2  0.561 (0.032)  0.623 (0.020)
 #+end_example
 
 
