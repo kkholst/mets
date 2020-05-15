@@ -62,6 +62,7 @@ extern SEXP ModelMatrixTestCox(SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP revcumsumR(SEXP);
 extern SEXP revcumsumstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsum2strataR(SEXP,SEXP, SEXP,SEXP,SEXP);
+extern SEXP cumsum2strataR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP vecAllStrataR(SEXP,SEXP, SEXP);
 extern SEXP tailstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumstratasumR(SEXP,SEXP, SEXP);
@@ -135,6 +136,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"revcumsumR",                        (DL_FUNC) &revcumsumR,                         1},
     {"revcumsumstrataR",                  (DL_FUNC) &revcumsumstrataR,                   3},
     {"revcumsum2strataR",                 (DL_FUNC) &revcumsum2strataR,                  5},
+    {"cumsum2strataR",                    (DL_FUNC) &cumsum2strataR,                     6},
     {"vecAllStrataR",                     (DL_FUNC) &vecAllStrataR,                      3},
     {"riskstrataR",                       (DL_FUNC) &riskstrataR,                        3},
     {"revcumsumstratasumR",               (DL_FUNC) &revcumsumstratasumR,                3},

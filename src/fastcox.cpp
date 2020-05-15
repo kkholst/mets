@@ -551,9 +551,44 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 	List rres; 
 	rres["res"]=res; 
 	rres["mres"]=Ss; 
-	rres["strata"]=strata; 
+//	rres["strata"]=strata; rres["strata2"]=strata2; 
+//	rres["nstrata"]=nstrata; rres["nstrata2"]=nstrata2; 
+
 	return(rres);
 }
+
+RcppExport SEXP cumsum2strataR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {
+	colvec a = Rcpp::as<colvec>(ia);
+	colvec Gc = Rcpp::as<colvec>(iGc);
+	IntegerVector strata(istrata); 
+        IntegerVector strata2(istrata2); 
+	unsigned nstrata = Rcpp::as<int>(instrata);
+	unsigned nstrata2 = Rcpp::as<int>(instrata2);
+
+	unsigned n = a.n_rows;
+
+        // Gc(t) starts being 1 for all 
+	colvec Gcv(nstrata2); for (unsigned i=0; i<nstrata2; i++) Gcv(i)=1; 
+	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
+
+	mat dS0last(nstrata,nstrata2); dS0last.zeros(); 
+
+	colvec res = a; 
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1); int ss2=strata2(n-i-1); 
+		Gcv(ss2)=Gc(i); 
+		// update all strata for different s2-strata
+		// if either Gc_ss2(t) or S_0^ss(t) changes
+		tmpsum(ss,ss2)+=Gcv(ss2)*a(i)-dS0last(ss,ss2); 
+		res(i)=tmpsum(ss,ss2);
+		dS0last(ss,ss2)=Gcv(ss2)*a(i); 
+	}  
+
+	List rres; 
+	rres["res"]=res; 
+	return(rres);
+}
+
 
 RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	colvec a = Rcpp::as<colvec>(ia);

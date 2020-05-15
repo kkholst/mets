@@ -294,9 +294,9 @@ print.binreg  <- function(x,...) {# {{{
 summary.binreg <- function(object,or=TRUE,...) {# {{{
 if (or)  {
 cat("OR estimates \n"); 
-estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p))
+estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p),null=1)$coefmat
 } else  {
-	cat("log-OR estimates \n"); 
+cat("log-OR estimates \n"); 
 estimate(coef=object$coef,vcov=object$var)
 }
 }# }}}

@@ -71,9 +71,10 @@ variable with mean 1 and variance $\theta$.
 We then model the variance within clusters by a cluster specific 
 regression design  such that 
 \[
-  \theta = z_j^T \alpha
+  \theta = h(z_j^T \alpha)
 \] 
-where $z$ is the regression design (specified by theta.des  in the software). 
+where $z$ is the regression design (specified by theta.des  in the software), 
+and $h$ is link function, that is either $exp$ or the identity. 
 
 This model  can be fitted using a pairwise likelihood or the pseudo-likelihood
 using either
@@ -197,10 +198,14 @@ with an overall random effect that is Gamma distrubuted with variance
 \( \theta \). We can fit the model by a pseudo-MLE (twostageMLE)
 and a pairwise composite likelihood approach (twostage). 
 
-The pseudo-liklihood and the composite pairwise likelhood gives
-quite similar results in this case. In addition the 
-log-parametrization is illustrated with the var.link=1 option. 
+The pseudo-liklihood and the composite pairwise likelhood should give 
+the same for this model since we have paired data. 
+In addition the log-parametrization is illustrated with the 
+var.link=1 option. 
 In addition it is specified that we want a "clayton.oakes" model. 
+We note that the standard errors differs because the twostage does not
+include the variance due to the baseline parameters for this type of
+modelling, so here it is better to use the twostageMLE. 
 
 #+BEGIN_SRC R :results output :exports both :session *R* :cache no 
  library(mets)

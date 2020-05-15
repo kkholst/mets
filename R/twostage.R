@@ -2,15 +2,14 @@
 ##'
 ##' @description 
 ##' Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data 
-##' using marginals that are on Cox form. The dependence can be 
-##' modelled via 
+##' using marginals that are on Cox form. The dependence can be modelled via 
 ##' \enumerate{
 ##' \item  Regression design on dependence parameter. 
 ##' \item  Random effects, additive gamma model. 
 ##' }
 ##'
 ##' If clusters contain more than two subjects, we use a composite likelihood
-##' based on the pairwise bivariate models, for MLE see twostageMLE. 
+##' based on the pairwise bivariate models, for full MLE see twostageMLE. 
 ##'
 ##' The two-stage model is constructed such that 
 ##' given the gamma distributed random effects it is assumed that the survival functions 
@@ -20,14 +19,16 @@
 ##' }
 ##'
 ##' One possibility is to model the variance within clusters via a regression design, and
-##' then one can specify a regression structure for the indenpendent gamma distributed 
+##' then one can specify a regression structure for the independent gamma distributed 
 ##' random effect for each cluster, such that the variance is given by 
 ##' \deqn{
-##'  \theta = z_j^T \alpha
+##'  \theta = h( z_j^T \alpha)
 ##' }
-##' where \eqn{z} is specified by theta.des 
+##' where \eqn{z} is specified by theta.des, and a possible link function var.link=1 will
+##' will use the exponential link \eqn{h(x)=exp(x)}, and var.link=0 the identity link \eqn{h(x)=x}.
 ##' The reported standard errors are based on the estimated information from the 
-##' likelihood assuming that the marginals are known. 
+##' likelihood assuming that the marginals are known (unlike the twostageMLE and for the
+##' additive gamma model below). 
 ##'
 ##' Can also fit a structured additive gamma random effects model, such
 ##' as the ACE, ADE model for survival data.  In this case the 
@@ -211,7 +212,7 @@
 ##' @param theta Starting values for variance components
 ##' @param theta.des design for dependence parameters, when pairs are given this is could be a
 ##' (pairs) x (numer of parameters)  x (max number random effects) matrix
-##' @param var.link Link function for variance 
+##' @param var.link Link function for variance:  exp-link.
 ##' @param iid Calculate i.i.d. decomposition
 ##' @param step Step size
 ##' @param model model
@@ -858,10 +859,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   #likepairs=likepairs,##  if (dep.model==3 & pair.structure==1) attr(ud, "likepairs") <- c(out$likepairs)
   if (dep.model==3 & pair.structure==0) attr(ud, "pardes") <-    theta.des
   if (dep.model==3 & pair.structure==0) attr(ud, "theta.des") <- theta.des
-###  if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    matrix(theta.des[1,],
-  if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[1,]
+
+  if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    theta.des[,,1]
+  if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[,,1]
   if (dep.model==3 & pair.structure==0) attr(ud, "rv1") <- random.design[1,]
-  if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <- matrix(random.design[1,],nrow=2)
+  if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <- random.design[,,1]
   return(ud);
   ## }}}
 

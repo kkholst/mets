@@ -640,7 +640,6 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 
 ###}}} 
 
-
 ###{{{ simcox
 
 ##' @export
@@ -664,10 +663,15 @@ simCox <- function(n=1000, seed=1, beta=c(1,1), entry=TRUE) {
 
 ##' @export
 vcov.phreg  <- function(object,...) {    
+ if ((length(class(object))==1) & class(object)[1]=="phreg") {
   res <- crossprod(ii <- iid(object,...))
   attributes(res)$ncluster <- attributes(ii)$ncluster
   attributes(res)$invhess <- attributes(ii)$invhess
   colnames(res) <- rownames(res) <- names(coef(object))
+} else if ((length(class(object))==2) & class(object)[2]=="cif.reg") {
+  res <- object$var
+  colnames(res) <- rownames(res) <- names(coef(object))
+}
   res
 }
 
@@ -968,6 +972,8 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
 
 ###}}} print.summary
 
+## {{{ Utility functions, cumsumstrata ....
+
 ##' @export
 tailstrata <- function(strata,nstrata)
 {# {{{
@@ -1016,6 +1022,18 @@ return(res)
 }# }}}
 
 ##' @export
+cumsum2strata <- function(x,y,strata,nstrata,strata2,nstrata2)
+{# {{{
+if (any(strata<0) | any(strata>nstrata-1))    stop("strata index not ok\n"); 
+if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n"); 
+if (length(x)!=length(strata))  stop("length of x and strata must be same\n"); 
+if (length(x)!=length(strata2)) stop("length of x and strata2 must be same\n"); 
+res <- .Call("cumsum2strataR",as.double(x),as.double(y),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
+return(res)
+}# }}}
+
+
+##' @export
 vecAllStrata <- function(x,strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
@@ -1036,7 +1054,6 @@ return(res)
 ###res <- .Call("WeightedCumsumstrataR",x,strata,nstrata,strata2,nstrata2,weights,PACKAGE="mets")$res
 ###return(res)
 ###}# }}}
-
 
 ##' @export
 revcumsum <- function(x)
@@ -1160,6 +1177,9 @@ if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
 res <- .Call("covrfstrataCovR",x,y,x1,y1,id,nid,strata,nstrata)
 return(res)
 }# }}}
+
+
+## }}}
 
 
 ##' Kaplan-Meier with robust standard errors 
@@ -1762,7 +1782,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param robust to use robust standard errors if possible
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion 
+##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -1906,6 +1926,14 @@ ul <- cbind(x,band[,2])
 	 polygon(tt,yy,lty=0,col=col.trans,...)
       }
 }# }}}
+
+##' @export
+plotConfRegionSE <- function(x,est,se,...)
+{# {{{
+ul <- est+1.96*se; nl <- est-1.96*se
+plotConfRegion(x,cbind(nl,ul),...)
+}# }}}
+
 
 ##' @export
 bplot <- function(x,...) basehazplot.phreg(x,...)

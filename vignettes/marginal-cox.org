@@ -52,8 +52,7 @@ in each cluster and a variance parameter at \( 2 \)
 Loading required package: timereg
 Loading required package: survival
 Loading required package: lava
-lava version 1.6.3
-mets version 1.2.5
+mets version 1.2.8
 
 Attaching package: ‘mets’
 
@@ -92,16 +91,19 @@ First, recall that the baseline for strata $g$ is asymptotically equivalent to
 \begin{align}
 \hat A_g(t) - A_g(t)  & = \sum_k \sum_i \int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k 
 \end{align}
-with $P^g(t)$ a derivative wrt to $\beta$, and 
+with $P^g(t) = \int_0^t E_g(s) d \hat \Lambda_g(s)$ the derivative of $\int_0^t 1/S_{0,g}(s) dN_{\cdot g}$
+wrt to $\beta$, and 
 \begin{align}
-\hat \beta  - \beta  & = \sum_k ( \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g ) = \sum_k \beta_{k} 
+\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g ) =  I(\tau)^{-1} \sum_k \beta_{k} 
 \end{align}
 with 
 \begin{align}
- M_{ki}^g(t) &  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t),
+ M_{ki}^g(t) &  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t), \\
  \beta_{k} & =  \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g 
 \end{align}
-the basic 0-mean processes, that are martingales in the iid setting. 
+the basic 0-mean processes, that are martingales in the iid setting,
+and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
+with respect to $\beta$ evaluated at time $t$. 
        
 The variance of the baseline of strata g  is estimated by 
 \begin{align}
@@ -157,9 +159,6 @@ We now look at the plot  with robust standard errors
 
 #+BEGIN_marginfigure
 #+ATTR_LATEX: :width \textwidth :float nil :center t
-#+RESULTS: robcox1
-[[file:robcox1.jpg]]
-
 #+LATEX: \captionof{figure}{Baseline with robust standard errors.}
 label:fig:robcox1
 #+END_marginfigure
@@ -169,6 +168,8 @@ label:fig:robcox1
   bplot(rob,se=TRUE,robust=TRUE,col=3)
 #+END_SRC
 
+#+RESULTS: robcox1
+[[file:robcox1.jpg]]
 
 We can also make survival prediction with robust standard errors using the phreg.
 
@@ -178,13 +179,13 @@ We can also make survival prediction with robust standard errors using the phreg
   plot(pp,se=TRUE,whichx=1:10)
 #+END_SRC
 
+#+RESULTS: robcox2
+[[file:robcox2.jpg]]
+
 
 #+BEGIN_marginfigure
 # +CAPTION: Survival predictions with robust standard errors for Cox model label:fig:robcox2
 #+ATTR_LATEX: :width \textwidth :float nil :center t
-#+RESULTS: robcox2
-[[file:robcox2.jpg]]
-
 #+LATEX: \captionof{figure}{Survival predictions with robust standard errors for Cox model}
 label:fig:robcox2
 #+END_marginfigure
@@ -197,7 +198,7 @@ tt <- twostageMLE(out,data=data)
 summary(tt)
 #+END_SRC
 
-#+RESULTS[<2018-09-10 14:18:33> cdb331054808b11985b02b84f953da8bfc6afbd9]:
+#+RESULTS:
 #+begin_example
 Dependence parameter for Clayton-Oakes model
 Variance of Gamma distributed random effects 
@@ -222,11 +223,12 @@ U(t,\hat \beta) & = \sum_k \sum_i \int_0^t (Z_{ki} - \hat E_g ) d \hat M_{ki}^g
 \end{align}
 where $g$ is strata $g(k,i)$. The observed score has the iid decomposition 
 \begin{align}
-\hat U(t) = \sum_k \sum_i  \int_0^t (Z_{ki} - E_g) dM_{ki}^g  - \sum_k  I(t) \beta_k 
+\hat U(t) = \sum_k \sum_i  \int_0^t (Z_{ki} - E_g) dM_{ki}^g  - 
+	I(t)  \sum_k \beta_k 
 \end{align}
 where $\beta_k$ is the iid decomposition of the score process for the true $\beta$
 \begin{align}
-\beta_k  & =  \sum_i \int_0^\tau (Z_{ki} - E_g ) d  M_{ki}^g 
+\beta_k  & =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_g ) d  M_{ki}^g 
 \end{align}
 and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
 with respect to $\beta$ evaluated at time $t$. 
@@ -241,7 +243,7 @@ gout <- gof(out)
 gout
 #+END_SRC
 
-#+RESULTS[<2018-09-10 14:32:08> 8bde76b6fea8c56142541f6eeb247699c5236c44]:
+#+RESULTS:
 : Cumulative score process test for Proportionality:
 :   Sup|U(t)|  pval
 : x  30.24353 0.401
@@ -252,9 +254,6 @@ the model.
 
 #+BEGIN_marginfigure
 #+ATTR_LATEX: :width \textwidth :float nil :center t
-#+RESULTS: robgofcox1
-[[file:robgofcox1.jpg]]
-
 #+LATEX: \captionof{figure}{Goodness of fit for clustered Cox model.}
 label:fig:robcgofox1
 #+END_marginfigure
@@ -263,6 +262,9 @@ label:fig:robcgofox1
 #+BEGIN_SRC R :exports both :results output graphics :file robgofcox1.jpg :ravel fig=TRUE,include=FALSE 
   plot(gout)
 #+END_SRC
+
+#+RESULTS: robgofcox1
+[[file:robgofcox1.jpg]]
 
 
 **  Cluster stratified Cox models
@@ -289,24 +291,13 @@ partial likelihood for clusters.
  summary(out)
 #+END_SRC
 
-#+RESULTS[<2018-09-11 09:16:22> ca332c824091210c9d8c97177e43d7db5326a8ae]:
+#+RESULTS:
 : 
 :     n events
 :  5000   4854
 : 
+:  5000 clusters
+: 
 :   Estimate     S.E.  dU^-1/2 P-value
 : x 0.406307 0.032925 0.039226       0
-
-The cumulative score processes can still be used to validate the model 
-
-#+BEGIN_SRC R :results output :exports both :session *R* :cache no 
-gg <- gof (out) 
-summary(gg)
-#+END_SRC
-
-#+RESULTS[<2018-09-11 09:16:22> 6815b9399a490044f01367d6c2ebbab00700d2fb]:
-: Cumulative score process test for Proportionality:
-:   Sup|U(t)|  pval
-: x  27.55616 0.195
-
 

@@ -47,8 +47,7 @@ data(melanoma)
 Loading required package: timereg
 Loading required package: survival
 Loading required package: lava
-lava version 1.6.3
-mets version 1.2.5
+mets version 1.2.8
 
 Attaching package: ‘mets’
 
