@@ -56,7 +56,7 @@ extern SEXP MatxCube(SEXP, SEXP, SEXP);
 extern SEXP Matdoubleindex(SEXP, SEXP, SEXP,SEXP,SEXP,SEXP);
 extern SEXP CubeMat(SEXP, SEXP);
 extern SEXP PropTestCox(SEXP, SEXP,SEXP,SEXP);
-extern SEXP PropTestCoxClust(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP);
+extern SEXP PropTestCoxClust(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP,SEXP);
 extern SEXP ModelMatrixTestCox(SEXP,SEXP,SEXP,SEXP,SEXP);
 //extern SEXP simBandCumHazCox(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP revcumsumR(SEXP);
@@ -130,7 +130,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mets_RcppExport_registerCCallable",(DL_FUNC) &_mets_RcppExport_registerCCallable, 0},
     {"pBhat",                             (DL_FUNC) &pBhat,                              6},
     {"PropTestCox",                       (DL_FUNC) &PropTestCox,                        4},
-    {"PropTestCoxClust",                  (DL_FUNC) &PropTestCoxClust,                  13},
+    {"PropTestCoxClust",                  (DL_FUNC) &PropTestCoxClust,                  14},
     {"ModelMatrixTestCox",                (DL_FUNC) &ModelMatrixTestCox,                 5},
     {"pmvn0",                             (DL_FUNC) &pmvn0,                              5},
     {"revcumsumR",                        (DL_FUNC) &revcumsumR,                         1},
@@ -147,7 +147,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"DLambetaR",                         (DL_FUNC) &DLambetaR,                          8},
     {"DLambetaDFGR",                      (DL_FUNC) &DLambetaDFGR,                       8},
     {"cumsumidstratasumR",                (DL_FUNC) &cumsumidstratasumR,                 5},
-    {"cumsumASR",                         (DL_FUNC) &cumsumidstratasumR,                 3},
+    {"cumsumASR",                         (DL_FUNC) &cumsumASR,                 3},
     {"tailstrataR",                       (DL_FUNC) &tailstrataR,                        3},
     {"cumsumidstratasumCovR",             (DL_FUNC) &cumsumidstratasumCovR,              6},
     {"revcumsumidstratasumR",             (DL_FUNC) &revcumsumidstratasumR,              5},

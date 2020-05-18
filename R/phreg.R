@@ -132,6 +132,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   trunc <- (!is.null(entry))
   if (!trunc) entry <- rep(0,length(exit))
+  call.id <- id
 
   if (!is.null(id)) {
 	  ids <- unique(id)
@@ -229,7 +230,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
                 X=X,
 		offsets=offset,
 		weights=weights,
-                id=id.orig, 
+                id=id.orig, call.id=call.id,
 		opt=opt, 
 		cumhaz=cumhaz, se.cumhaz=se.cumhaz,
 		lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
@@ -794,7 +795,7 @@ if (is.null(x$propodds)) { # {{{ cox model
 	  Z <- xx$X
 ###	  EdLam0 <- apply(S0i,2,cumsumstrata,xx$strata,xx$nstrata)
 	  if (is.null(coef(x))) 
-	  rr <- c(xx$sign*exp(xx$offset))
+		  rr <- c(xx$sign*exp(xx$offset))
           else 
 	  rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset))
 	  ### dMartingale  as a function of time and for all subjects to handle strata 

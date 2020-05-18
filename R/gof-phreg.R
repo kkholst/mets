@@ -11,21 +11,29 @@
 ##' @export
 ##' @aliases gof.phreg 
 ##' @examples
-##' data(TRACE)
+##' library(mets)
+##' data(sTRACE)
 ##' 
-##' m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=TRACE) 
+##' m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=sTRACE) 
 ##' gg <- gof(m1)
+##' gg
 ##' par(mfrow=c(1,3))
 ##' plot(gg)
 ##' 
-##' m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes,data=TRACE) 
+##' m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes,data=sTRACE) 
 ##' ## to get Martingale ~ dN based simulations
 ##' gg <- gof(m1)
+##' gg
 ##' 
 ##' ## to get Martingale robust simulations, specify cluster in  call 
-##' m1 <- phreg(Surv(time,status==9)~chf+diabetes+cluster(id),data=TRACE) 
+##' sTRACE$id <- 1:500
+##' m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes+cluster(id),data=sTRACE) 
 ##' gg <- gof(m1)
+##' gg
 ##' 
+##' m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes+cluster(id),data=sTRACE) 
+##' gg <- gof(m1)
+##' gg
 ##' @export
 gof.phreg  <- function(object,n.sim=1000,silent=1,robust=NULL,...)
 {# {{{
@@ -47,39 +55,42 @@ hatti <- matrix(0,nd,nrow(ii))
 obs <- apply(abs(Ut),2,max)
 
 if (is.null(robust)) 
-     if (!is.null(object$id)) robust <- TRUE else robust <- FALSE
+   if (!is.null(object$call.id)) robust <- TRUE else robust <- FALSE
 
 ### cluster call or robust \hat M_i(t) based  
-if (robust) {
-        xx <- object$cox.prep
-        S0i <- rep(0,length(xx$strata))
-        S0i[xx$jumps+ 1] <- 1/object$S0
-        Z <- xx$X
-        ZdN <- U <- E <- matrix(0, nrow(xx$X), object$p)
-        E[xx$jumps + 1, ] <- object$E
-        U[xx$jumps + 1, ] <- object$U
-        cumhaz <- c(cumsumstrata(S0i, xx$strata, xx$nstrata))
-        EdLam0 <- apply(E * S0i, 2, cumsumstrata, xx$strata, xx$nstrata)
-        rr <- c(xx$sign * exp(Z %*% coef(object) + xx$offset))
-        MGt <- U[, drop = FALSE] - (Z * cumhaz - EdLam0) * rr * c(xx$weights)
-        ### also weights 
-        w <- c(xx$weights)
-        nn <- nrow(Z)
+if (robust) {# {{{
+   xx <- object$cox.prep
+###   S0i <- rep(0,length(xx$strata))
+###   S0i[xx$jumps+ 1] <- 1/object$S0
+   Z <- xx$X
+###   ZdN <- U <- E <- matrix(0, nrow(xx$X), object$p)
+###   E[xx$jumps + 1, ] <- object$E
+###   U[xx$jumps + 1, ] <- object$U
+###   cumhaz <- c(cumsumstrata(S0i, xx$strata, xx$nstrata))
+###   EdLam0 <- apply(E * S0i, 2, cumsumstrata, xx$strata, xx$nstrata)
+   rrw <- c(xx$sign * exp(Z %*% coef(object) + xx$offset)*xx$weights)
+   UdN <- xx$weights[xx$jumps+1]*object$U 
+###   MGt <- U[, drop = FALSE] - (Z * cumhaz - EdLam0) * rr * c(xx$weights)
+   ### also weights 
+   nn <- nrow(Z)
 
-	tt <- system.time(simcox1<- .Call("PropTestCoxClust",MGt,Pt,w*rr,Z,cumhaz,EdLam0,10,obs,nn,xx$id,xx$strata,xx$nstrata,xx$jumps))
+   tt <- system.time(simcox1<- .Call("PropTestCoxClust",UdN,Pt,rrw,xx$X,
+	     object$S0,object$E,
+             10,obs,nn,xx$id,xx$strata,xx$nstrata,object$strata.jumps,xx$jumps))
 
-	prt <- n.sim*tt[3]/(10*60)
-	if (prt>1 & silent==0) cat(paste("Predicted time minutes",signif(prt,2),"\n"))
+   prt <- n.sim*tt[3]/(10*60)
+   if (prt>1 & silent==0) cat(paste("Predicted time minutes",signif(prt,2),"\n"))
+   simcox <- .Call("PropTestCoxClust",UdN,Pt,rrw,xx$X,
+	     object$S0,object$E,
+	     n.sim,obs,nn,xx$id,xx$strata,xx$nstrata,object$strata.jumps,xx$jumps)
+} else {# }}}
+###  or dN_i based  # {{{
+   tt <- system.time(simcox1<-.Call("PropTestCox",U,Pt,10,obs,PACKAGE="mets"))
+   prt <- n.sim*tt[3]/(10*60)
+   if (prt>1 & silent==0) cat(paste("Predicted time minutes",signif(prt,2),"\n"))
+   simcox <-  .Call("PropTestCox",U,Pt,n.sim,obs,PACKAGE="mets")
+}# }}}
 
-	simcox <- .Call("PropTestCoxClust",MGt,Pt,w*rr,Z,cumhaz,EdLam0,n.sim,obs,nn,xx$id,rep(0,nn),1,xx$jumps)
-} else {
-### no  or dN_i based  
-	tt <- system.time(simcox1<-.Call("PropTestCox",U,Pt,10,obs,PACKAGE="mets"))
-	prt <- n.sim*tt[3]/(10*60)
-	if (prt>1 & silent==0) cat(paste("Predicted time minutes",signif(prt,2),"\n"))
-
-	simcox <-  .Call("PropTestCox",U,Pt,n.sim,obs,PACKAGE="mets")
-}
 sup <-  simcox$supUsim
 res <- cbind(obs,simcox$pval)
 colnames(res) <- c("Sup|U(t)|","pval")
@@ -91,7 +102,7 @@ prmatrix(round(res,digits=2))
 }
 
 out <- list(jumptimes=object$jumptimes,supUsim=sup,res=res,supU=obs,
-	    pvals=simcox$pval,score=Ut,simUt=simcox$simUt,type="prop",robust=robust)
+    pvals=simcox$pval,score=Ut,simUt=simcox$simUt,type="prop",robust=robust)
 class(out) <- "gof.phreg"
 return(out)
 }# }}}
