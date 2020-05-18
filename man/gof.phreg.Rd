@@ -22,23 +22,29 @@ Cumulative score process residuals for Cox PH regression
 p-values based on Lin, Wei, Ying resampling.
 }
 \examples{
-data(TRACE)
+library(mets)
+data(sTRACE)
 
-m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=TRACE) 
+m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=sTRACE) 
 gg <- gof(m1)
 gg
 par(mfrow=c(1,3))
 plot(gg)
 
-m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes,data=TRACE) 
+m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes,data=sTRACE) 
 ## to get Martingale ~ dN based simulations
-gg <- gof(m1)
-
-## to get Martingale robust simulations, specify cluster in  call 
-m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes+cluster(id),data=TRACE) 
 gg <- gof(m1)
 gg
 
+## to get Martingale robust simulations, specify cluster in  call 
+sTRACE$id <- 1:500
+m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes+cluster(id),data=sTRACE) 
+gg <- gof(m1)
+gg
+
+m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes+cluster(id),data=sTRACE) 
+gg <- gof(m1)
+gg
 }
 \author{
 Thomas Scheike and Klaus K. Holst
