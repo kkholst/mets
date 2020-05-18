@@ -1,28 +1,30 @@
 language: r
-sudo: required
+
+r:
+  - release
 
 r_build_args: --no-manual --no-resave-data
 r_check_args: --run-donttest --no-build-vignettes --no-manual
 
-before_install:
- - tlmgr install fancyvrb units nag capt-of zlmtt environ
-
 warnings_are_errors: true
 
 r_binary_packages:
- - numDeriv
- - lava
- - testthat
- - frailtypack
  - covr
-
-#r_github_packages:
-# - jimhester/covr
-# - mangothecat/visualTest
+ - pkgdown
 
 after_success:
-  - Rscript -e 'library("covr");codecov(type="all")'
+  - Rscript -e 'covr::codecov(type="all")'
+  - Rscript -e 'pkgdown::build_site()'
 
 notifications:
   slack:
     secure: HRk03TRiq5TIEopYoFkw3eaaJT2jGxKsOLhclRnxhoTqnvmDiYdqPEweKOap0s86o4ZfYI5vTfPdeBWWHqBFpdgmM+R94DHr10eSiDL1bSNjgadw99aWetD4zif5vVstM5zb9r6/1tFgEkLfPhuBy9D3NkVx7fttpoYafjt0TC0tzhwyVBdWsbb7pxBlcdixITvCXFN4v95hvvAeX9hvoMP2iyMVjiRN4Wxd4JUP9xfUUcW+zcAC7bRK2bDWFPU4yro+8CSiXnRhBO5cHGLb5MhdIC6uVQP+q7C+X8VxASfKBT3JvWyr793RkuTRGbQrrDXkUCjW3PDMba2KnBZUaBmwf0OWYNUNBYiOidrgQcYGRLr6a4qwJB5lOsVHeT+0zN5zJILFyvqxiVMGCNy1EGxhP+dLKE5IWJxTAur8oX0U5dS3aTWv+DFqP+OtAmK+zIZwxM580argu5VVPEpVqbel0R2XI3D5prPkMkHglWXGg6hy6OCmTHJ4UABY5SWaTcUcqknVRppa/QNjdKGdIIqBH1lbrJb8fbDb3QnnZbRvkKOI/0RyMpPypfx/MCTXBu4ZMTA+foZW57hoMMyMu6JCUjghaBB2lPlN/Kp3ecwXuDSdtga1gfBx1suMrAYeJsSAjLKuL4K2CCT9xpes1O0epc5Jd10P1B4yYkezXeo=
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: docs
+  on:
+    branch: master
