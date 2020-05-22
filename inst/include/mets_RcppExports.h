@@ -25,17 +25,17 @@ namespace mets {
         }
     }
 
-    inline arma::mat _loglikMVN(arma::mat Yl, SEXP yu, SEXP status, arma::mat Mu, SEXP dmu, arma::mat S, SEXP ds, SEXP z, SEXP su, SEXP dsu, SEXP threshold, SEXP dthreshold, bool Score) {
-        typedef SEXP(*Ptr__loglikMVN)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+    inline arma::mat _loglikMVN(arma::mat Yl, SEXP yu, SEXP status, arma::mat Mu, SEXP dmu, arma::mat S, SEXP ds, SEXP z, SEXP su, SEXP dsu, SEXP threshold, SEXP dthreshold, bool Score, double itol) {
+        typedef SEXP(*Ptr__loglikMVN)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__loglikMVN p__loglikMVN = NULL;
         if (p__loglikMVN == NULL) {
-            validateSignature("arma::mat(*_loglikMVN)(arma::mat,SEXP,SEXP,arma::mat,SEXP,arma::mat,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,bool)");
+            validateSignature("arma::mat(*_loglikMVN)(arma::mat,SEXP,SEXP,arma::mat,SEXP,arma::mat,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,bool,double)");
             p__loglikMVN = (Ptr__loglikMVN)R_GetCCallable("mets", "_mets__loglikMVN");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__loglikMVN(Shield<SEXP>(Rcpp::wrap(Yl)), Shield<SEXP>(Rcpp::wrap(yu)), Shield<SEXP>(Rcpp::wrap(status)), Shield<SEXP>(Rcpp::wrap(Mu)), Shield<SEXP>(Rcpp::wrap(dmu)), Shield<SEXP>(Rcpp::wrap(S)), Shield<SEXP>(Rcpp::wrap(ds)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(su)), Shield<SEXP>(Rcpp::wrap(dsu)), Shield<SEXP>(Rcpp::wrap(threshold)), Shield<SEXP>(Rcpp::wrap(dthreshold)), Shield<SEXP>(Rcpp::wrap(Score)));
+            rcpp_result_gen = p__loglikMVN(Shield<SEXP>(Rcpp::wrap(Yl)), Shield<SEXP>(Rcpp::wrap(yu)), Shield<SEXP>(Rcpp::wrap(status)), Shield<SEXP>(Rcpp::wrap(Mu)), Shield<SEXP>(Rcpp::wrap(dmu)), Shield<SEXP>(Rcpp::wrap(S)), Shield<SEXP>(Rcpp::wrap(ds)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(su)), Shield<SEXP>(Rcpp::wrap(dsu)), Shield<SEXP>(Rcpp::wrap(threshold)), Shield<SEXP>(Rcpp::wrap(dthreshold)), Shield<SEXP>(Rcpp::wrap(Score)), Shield<SEXP>(Rcpp::wrap(itol)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

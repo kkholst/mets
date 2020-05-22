@@ -22,7 +22,7 @@ extern SEXP FastApprox(SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCluster(SEXP);
 extern SEXP FastCoxPL(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCoxPLstrata(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP);
-extern SEXP FastCoxPLstrataPO(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP); 
+extern SEXP FastCoxPLstrataPO(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP FastCoxPLstrataAddGam(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,
 		SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP, SEXP, SEXP, SEXP );
@@ -34,7 +34,7 @@ extern SEXP FastPattern(SEXP, SEXP, SEXP);
 extern SEXP MatxCube(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _mets_loglikMVN(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _mets_loglikMVN(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _mets_RcppExport_registerCCallable();
 extern SEXP pBhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP pmvn0(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -75,7 +75,7 @@ extern SEXP cumsumstrataDFGR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP cumsumstrataDFGRestrictR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP DLambetaR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP DLambetaDFGR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-extern SEXP riskstrataR(SEXP,SEXP,SEXP); 
+extern SEXP riskstrataR(SEXP,SEXP,SEXP);
 extern SEXP meanriskR(SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP wherestrataR(SEXP,SEXP,SEXP,SEXP);
 extern SEXP maxminidR(SEXP,SEXP,SEXP);
@@ -126,7 +126,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"Matdoubleindex",                    (DL_FUNC) &Matdoubleindex,                     6},
     {"_mets_ApplyBy",                     (DL_FUNC) &_mets_ApplyBy,                      3},
     {"_mets_ApplyBy2",                    (DL_FUNC) &_mets_ApplyBy2,                     8},
-    {"_mets_loglikMVN",                   (DL_FUNC) &_mets_loglikMVN,                   13},
+    {"_mets_loglikMVN",                   (DL_FUNC) &_mets_loglikMVN,                   14},
     {"_mets_RcppExport_registerCCallable",(DL_FUNC) &_mets_RcppExport_registerCCallable, 0},
     {"pBhat",                             (DL_FUNC) &pBhat,                              6},
     {"PropTestCox",                       (DL_FUNC) &PropTestCox,                        4},
@@ -178,7 +178,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 
 void R_init_mets(DllInfo *dll)
-{ 
+{
     R_registerRoutines(dll,
                        NULL,	       /* slot for .C */
                        CallEntries,    /* slot for .Call */
