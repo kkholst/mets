@@ -16,15 +16,15 @@ int _mvt_inform;
 double _mvt_error[3];
 
 
-double mvtdst(int* n,         
+double mvtdst(int* n,
 	      int* nu,        // Degrees of freedom (0=MVN)
-	      double* lower,  // Lower integration bounds 
+	      double* lower,  // Lower integration bounds
 	      double* upper,  // Upper integration bounds
 	      int* infin,     // Infinity argument, ith element 0: ]-inf,up[i]], 1: [lo[i],inf[, 2: [lo[i],up[i]], 3: ]-inf,inf[
 	      double* correl, // Correlation coefficients (upper-tri)
 	      double* delta,  // non-central parameter
 	      int* maxpts,    // Max function evalutions (quasi-mc)
-	      double* abseps, // Tolerance absolute error 
+	      double* abseps, // Tolerance absolute error
 	      double* releps, // Tolerance relative error
 	      double* error,  // estimated abs. error. with 99% confidence interval
 	      double* value,  // result
@@ -41,7 +41,7 @@ double mvtdst(int* n,
       //    default: *value = 0;
     }
     //cerr << "infin=" << *infin << " value=" << *value << " upper=" << *upper << " lower=" << *lower << endl;
-    return(*value);    
+    return(*value);
   }
 
   //  cerr << "fortran to be called...\n";
@@ -62,29 +62,29 @@ double mvtdst(int* n,
   case 2:
   case 3:
     return -1.0;
-  };  
+  };
   return *value;
 }
 
 
-double dmvn(const vec &y, const mat &W, 
+double dmvn(const vec &y, const mat &W,
 	    bool log=true, double logdet=datum::inf) {
-  int n = W.n_rows;  
+  int n = W.n_rows;
   double res = -0.5*n*log2pi;
   if (logdet!=datum::inf) {
-    res += -0.5*(logdet + as_scalar(trans(y)*W*y));    
+    res += -0.5*(logdet + as_scalar(trans(y)*W*y));
   } else {
     double sign=0;
     mat iW = inv(W);
     log_det(logdet,sign,W);
-    res += -0.5*(logdet + as_scalar(trans(y)*iW*y));  
+    res += -0.5*(logdet + as_scalar(trans(y)*iW*y));
   }
   if (!log) res = exp(res);
-  return(res);  
+  return(res);
 }
-	    
 
-double cdfmvn(mat &upper, mat &cor) {  
+
+double cdfmvn(mat &upper, mat &cor) {
   double val=0;
   int n = cor.n_cols;
   rowvec _mvt_delta(n); _mvt_delta.fill(0);
@@ -93,7 +93,7 @@ double cdfmvn(mat &upper, mat &cor) {
   int j = 0;
   for (int r=0; r<n; r++) {
     for (int c=r+1; c<n; c++) {
-      Cor(j) = cor(r,c); 
+      Cor(j) = cor(r,c);
       j++;
     }
   }
@@ -101,48 +101,48 @@ double cdfmvn(mat &upper, mat &cor) {
   mvtdst(&n,
 	 &_mvt_df,
 	 &upper[0], // Lower, ignored
-	 &upper[0], 
+	 &upper[0],
 	 &infin[0], // Infinity argument (all 0 since CDF)
 	 &Cor[0],
 	 &_mvt_delta[0],
 	 &_mvt_maxpts,
 	 &_mvt_abseps, &_mvt_releps,
 	 &_mvt_error[0],
-	 &val, &_mvt_inform);  
+	 &val, &_mvt_inform);
   return(val);
 }
 
 
 
-RcppExport SEXP Dpmvn (SEXP lower, SEXP upper, SEXP mu, SEXP sigma, SEXP std) { 
+RcppExport SEXP Dpmvn (SEXP lower, SEXP upper, SEXP mu, SEXP sigma, SEXP std) {
 BEGIN_RCPP
   colvec y = Rcpp::as<colvec>(upper);
  NumericVector Lower(lower);
  bool Std = Rcpp::as<bool>(std);
- mat S = Rcpp::as<mat>(sigma);  
- colvec Mu = Rcpp::as<colvec>(mu);  
+ mat S = Rcpp::as<mat>(sigma);
+ colvec Mu = Rcpp::as<colvec>(mu);
  int n = S.n_cols;
  vec L(n);
- for (int j=0; j<n; j++) {    
+ for (int j=0; j<n; j++) {
    if (y(j)==datum::inf) L(j) = 1; // (lower,+Inf)
    if (Lower(j)==-datum::inf) L(j) = 0; // (-Inf,upper)
    // =2 (low,up)   For now we actually don't consider the interval-censored case
     // <0 (-Inf,Inf)
- }  
+ }
  mat LL = diagmat(L);
  mat iLambda;
  if (!Std) {
    iLambda = diagmat(1/sqrt(diagvec(S)));
-   S = iLambda*S*iLambda;    
+   S = iLambda*S*iLambda;
    y = iLambda*(y-Mu);
  }
- 
+
  List res;
- 
- vec D(n);  
+
+ vec D(n);
  mat H(n,n);
   if (n==1) {
-    List res;    
+    List res;
     D[0] = Rf_dnorm4(y[0],0.0,1.0,0);
     H[0] = -y[0]*D[0];
     if (!Std) {
@@ -151,23 +151,23 @@ BEGIN_RCPP
     }
     res["gradient"] = D;
     res["hessian"] = H;
-    return(res);    
+    return(res);
   }
-  
+
   for (int j=0; j<n; j++) {
-    mat Sj = S; Sj.shed_row(j); 
+    mat Sj = S; Sj.shed_row(j);
     mat Sj0 = Sj.col(j);
     Sj.shed_col(j);
     Sj -= Sj0*Sj0.t();
-    mat iL = diagmat(1/sqrt(diagvec(Sj)));    
+    mat iL = diagmat(1/sqrt(diagvec(Sj)));
     Sj = iL*Sj*iL;
-    vec muj = y;  
+    vec muj = y;
     muj.shed_row(j);
     muj = iL*(muj - Sj0*y[j]);
     D[j] = Rf_dnorm4(y[j],0.0,1.0,0)*
       cdfmvn(muj,Sj);
   }
-  
+
   if (n==2) {
     H(0,1) = H(1,0) = dmvn(y, S, false);
     H.diag() = -y%D - H(0,1)*S(0,1);
@@ -182,7 +182,7 @@ BEGIN_RCPP
 	unsigned pos = 0;
 	for (int k=0; k<n; k++) {
 	  if (k!=i && k!=j) {
-	    idx1(pos) = k; 
+	    idx1(pos) = k;
 	    pos++;
 	  }
 	}
@@ -191,35 +191,35 @@ BEGIN_RCPP
 	mat B = Snij*inv(S2);
 	mat Sij = S.submat(idx1,idx1) - B*trans(Snij);
 	vec muij = y.elem(idx1) - B*y.elem(idx2);
-	
-	mat iL = diagmat(1/sqrt(diagvec(Sij)));    
+
+	mat iL = diagmat(1/sqrt(diagvec(Sij)));
 	Sij = iL*Sij*iL;
 	muij = iL*muij;
 	Phis(i,j) = Phis(j,i) = cdfmvn(muij,Sij);
 	phis(i,j) = phis(j,i) = dmvn(y.elem(idx2),S2,false);
       }
     }
-    H = Phis%phis;    
+    H = Phis%phis;
     colvec ones(n); ones.fill(1);
     H.diag() = -y%D - (S%H)*ones;
   }
-  
-  //double val = cdfmvn(y,S);  
-  //return(Rcpp::wrap(val));  
+
+  //double val = cdfmvn(y,S);
+  //return(Rcpp::wrap(val));
   if (!Std) {
-    H = iLambda*H*iLambda;    
+    H = iLambda*H*iLambda;
     D = iLambda*D;
   }
   res["gradient"] = D;
   res["hessian"] = H;
-  
+
   return(res);
 END_RCPP
 }
 
 
 
-// RcppExport SEXP scoremvn2 (SEXP lower, SEXP upper, SEXP mu, SEXP sigma, SEXP std) { 
+// RcppExport SEXP scoremvn2 (SEXP lower, SEXP upper, SEXP mu, SEXP sigma, SEXP std) {
 // BEGIN_RCPP
   // int k = Yl.n_cols;
   // int n = Yl.n_rows;
@@ -228,32 +228,32 @@ END_RCPP
   // uvec Ord = find(Status>1);
   // uvec NonObs = find(Status>0);
   // int nObs = Obs.size();
-  // int nNonObs = NonObs.size(); 
+  // int nNonObs = NonObs.size();
   // int nOrd = Ord.size();
   // int nu = Su.n_cols;
-  // bool nonconstvar = (nu>0); 
+  // bool nonconstvar = (nu>0);
 
   // double sign, logdetS0;
   // mat Se,S0,iS0;
-    
+
   // vec loglik(n); loglik.fill(0);
   // //  return(loglik);
   // if (nObs>0) {
   //   mat Y0 = Yl.cols(Obs)-Mu.cols(Obs);
-  //   Se = S0 = S.submat(Obs,Obs); 
+  //   Se = S0 = S.submat(Obs,Obs);
   //   iS0 = inv(S0);
   //   log_det(logdetS0,sign,S0);
-  //   double normconst = -0.5*nObs*log2pi;  
+  //   double normconst = -0.5*nObs*log2pi;
 
   //   for (int i=0; i<n; i++) { // Iterate over subjects
-      
+
   //     if (nonconstvar) {
-  // 	mat Z0 = reshape(Z.row(i),k,nu);	
+  // 	mat Z0 = reshape(Z.row(i),k,nu);
   // 	S0 = Se+Z0.rows(Obs)*Su*trans(Z0.rows(Obs));
   // 	iS0 = inv(S0);
   // 	log_det(logdetS0,sign,S0);
   //     }
-      
+
   //     loglik(i) = -0.5*(logdetS0 + as_scalar(Y0.row(i)*iS0*trans(Y0.row(i))));
   //     loglik(i) += normconst;
   //   }
@@ -263,17 +263,19 @@ END_RCPP
 
 mat scoremvn(mat &Y,
 	     mat &Mu, mat &dMu,
-	     mat &S, mat &dS) {
+	     mat &S, mat &dS, double itol=0.0) {
 	     // mat &Z,  mat &Su, mat &dSu,
 	     // mat &Threshold, mat &dThreshold) {
 
   int n = Y.n_rows;
   //int k = Yl.n_cols;
   int p = dMu.n_cols;
-  mat iS = inv(S);
+  double logdet = 0;
+
+  mat iS = Inv(S, logdet, itol);
   mat z = (Y-Mu)*iS;
   mat U(n,p);
-  U.fill(0); 
+  U.fill(0);
   colvec A = -0.5*trans(dS)*vectorise(iS);
   //Rcpp::Rcout << "A" << std::endl;
   for (int i=0; i<n; i++) {
@@ -284,10 +286,10 @@ mat scoremvn(mat &Y,
 }
 
 vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
-	      mat &Mu, mat &S, 
+	      mat &Mu, mat &S,
 	      mat &Z,  mat &Su,
-	      mat &Threshold) {
-  
+	      mat &Threshold, double itol=0.0) {
+
   int k = Yl.n_cols;
   int n = Yl.n_rows;
   uvec Obs = find(Status==0);
@@ -295,32 +297,34 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
   uvec Ord = find(Status>1);
   uvec NonObs = find(Status>0);
   int nObs = Obs.size();
-  int nNonObs = NonObs.size(); 
+  int nNonObs = NonObs.size();
   int nOrd = Ord.size();
   int nu = Su.n_cols;
-  bool nonconstvar = (nu>0); 
+  bool nonconstvar = (nu>0);
 
-  double sign, logdetS0;
+  double logdetS0, logdetS, sign;
   mat Se,S0,iS0;
-    
+
   vec loglik(n); loglik.fill(0);
   //  return(loglik);
   if (nObs>0) {
     mat Y0 = Yl.cols(Obs)-Mu.cols(Obs);
-    Se = S0 = S.submat(Obs,Obs); 
-    iS0 = inv(S0);
-    log_det(logdetS0,sign,S0);
-    double normconst = -0.5*nObs*log2pi;  
+    Se = S0 = S.submat(Obs,Obs);
+    iS0 = Inv(S0, logdetS0, itol);
+    // iS0 = inv(S0);
+    // log_det(logdetS0, sign, S0);
+    double normconst = -0.5*nObs*log2pi;
 
     for (int i=0; i<n; i++) { // Iterate over subjects
-      
+
       if (nonconstvar) {
-	mat Z0 = reshape(Z.row(i),k,nu);	
+	mat Z0 = reshape(Z.row(i),k,nu);
 	S0 = Se+Z0.rows(Obs)*Su*trans(Z0.rows(Obs));
-	iS0 = inv(S0);
-	log_det(logdetS0,sign,S0);
+	iS0 = Inv(S0, logdetS0, itol);
+	// iS0 = inv(S0);
+	// log_det(logdetS0, sign, S0);
       }
-      
+
       loglik(i) = -0.5*(logdetS0 + as_scalar(Y0.row(i)*iS0*trans(Y0.row(i))));
       loglik(i) += normconst;
     }
@@ -335,16 +339,17 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 
     if ((nObs>0) & (!nonconstvar)) { // Calculate conditional on observed
       mat S01 = S.submat(NonObs,Obs);
-      mat iS1 = inv(S.submat(Obs,Obs));
-      MuNonObs = MuNonObs + 
-	trans(S01*iS1*trans(Yl.cols(Obs)-Mu.cols(Obs)));   
+      mat iS1 = Inv(S.submat(Obs,Obs),logdetS0, itol);
+      // mat iS1 = inv(S.submat(Obs,Obs));
+      MuNonObs = MuNonObs +
+	trans(S01*iS1*trans(Yl.cols(Obs)-Mu.cols(Obs)));
       //      MuNonObs.each_row() += Mu.(NonObs);
       SNonObs = SNonObs - S01*iS1*trans(S01);
 
     }
     vec il = 1/sqrt(diagvec(SNonObs));
     mat iL = diagmat(il);
-    
+
     Se = S0 = iL*SNonObs*iL; // Correlation matrix
     int ncor = nNonObs*(nNonObs-1)/2;
     rowvec Cor(ncor);
@@ -352,7 +357,7 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
       int j = 0;
       for (int r=0; r<nNonObs; r++) {
 	for (int c=r+1; c<nNonObs; c++) {
-	  Cor(j) = S0(r,c); 
+	  Cor(j) = S0(r,c);
 	  j++;
 	}
       }
@@ -361,33 +366,34 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
     uvec OrdNonObs;
 
     mat Thres;
-    if (nOrd>0) { 
+    if (nOrd>0) {
       OrdNonObs = find(Status.elem(NonObs)>1);
       Thres = Threshold.rows(Ord);
     }
-   
-    rowvec lower(nNonObs); 
+
+    rowvec lower(nNonObs);
     rowvec upper(nNonObs);
     Row<int> infin(nNonObs); // 0: right, 1: left, 2: interval
 
-    uvec currow(1); 
+    uvec currow(1);
     for (int i=0; i<n; i++) { // Iterate over subjects
 
       currow(0) = i;
       rowvec Mi = MuNonObs.row(i);
       lower = Yl.submat(currow,NonObs);
-      upper = Yu.submat(currow,NonObs);      
-	
+      upper = Yu.submat(currow,NonObs);
+
       if (nonconstvar) {
-	mat Z0 = reshape(Z.row(i),k,nu);	
+	mat Z0 = reshape(Z.row(i),k,nu);
 	mat SS = S+Z0*Su*trans(Z0);
 
 	if (nObs>0) {
 	  S0 = SS.submat(NonObs,NonObs);
 	  mat S01 = SS.submat(NonObs,Obs);
-	  mat iS1 = inv(SS.submat(Obs,Obs));	  
-	  Mi = Mi + 
-	    trans(S01*iS1*trans(Yl.submat(currow,Obs)-Mu.submat(currow,Obs)));   
+	  mat iS1 = Inv(SS.submat(Obs,Obs), logdetS0, itol);
+	  // mat iS1 = inv(SS.submat(Obs,Obs));
+	  Mi = Mi +
+	    trans(S01*iS1*trans(Yl.submat(currow,Obs)-Mu.submat(currow,Obs)));
 
 	  SNonObs = S0 - S01*iS1*trans(S01);
 	} else {
@@ -395,13 +401,13 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 	}
 
 	il = 1/sqrt(diagvec(SNonObs));
-	iL = diagmat(il);    
+	iL = diagmat(il);
 	Se = S0 = iL*SNonObs*iL; // Correlation matrix
 	if (ncor>0) {
 	  int j = 0;
 	  for (int r=0; r<nNonObs; r++) {
 	    for (int c=r+1; c<nNonObs; c++) {
-	      Cor(j) = S0(r,c); 
+	      Cor(j) = S0(r,c);
 	      j++;
 	    }
 	  }
@@ -410,17 +416,17 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 
       umat StatusNonObs = Status.elem(NonObs);
       infin.fill(2);
-      
+
       for (int j=0; j<nNonObs; j++) {
 	if (upper(j)==datum::inf && StatusNonObs(j)==1) infin(j) = 1;
 	if (lower(j)==-datum::inf && StatusNonObs(j)==1) infin(j) = 0;
       }
-      // uvec infplus = find(upper==datum::inf); 
+      // uvec infplus = find(upper==datum::inf);
       // uvec infminus = find(lower==-datum::inf);
       // if (infplus.size()>0) { infin.elem(infplus) -= 1; }
       // if (infminus.size()>0) { infin.elem(infminus) -= 2; }
-          
-      if (nOrd>0) {	
+
+      if (nOrd>0) {
 	for (int j=0; j<nOrd; j++) {
 	  int jj = OrdNonObs(j);
 	  int yval = (int) lower(jj);
@@ -436,12 +442,12 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 	      double val = Thres(j,yval-1);
 	      double val2 = Thres(j,yval);
 	      if (val>=val2) { // Also Y=k (last)
-		infin(jj) = 1; 
+		infin(jj) = 1;
 		lower(jj) = val;
-	      } else { //Y=k-i (in between)	      
+	      } else { //Y=k-i (in between)
 		lower(jj) = val;
 		upper(jj) = val2;
-	      } 
+	      }
 	    }
 	  }
 	}
@@ -452,11 +458,11 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 
       double val;
       val = mvtdst(&nNonObs, &_mvt_df,
-      		   &lower[0], &upper[0], 
+      		   &lower[0], &upper[0],
       		   &infin[0], &Cor[0],
       		   &_mvt_delta[0], &_mvt_maxpts,
       		   &_mvt_abseps, &_mvt_releps,
-      		   &_mvt_error[0], &val, &_mvt_inform);       
+      		   &_mvt_error[0], &val, &_mvt_inform);
 
       // if (isnan(val)) {
       // 	cerr << "***i=" << i << endl;
@@ -471,53 +477,47 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
       // 	cerr << "Cor=\n" << Cor;
       // cerr << "   val=" << val << endl;
       // // }
-      // cerr << "   1:loglik(i)=" << loglik(i) << endl;      
+      // cerr << "   1:loglik(i)=" << loglik(i) << endl;
       loglik(i) += log(val);
       // cerr << "   2:loglik(i)=" << loglik(i) << endl;
       // }
 
     }
   }
-  
+
   return(loglik);
 }
 
 
 
 
-// RcppExport SEXP loglikMVN(SEXP yl, SEXP yu, 
-// 			  SEXP status,
-// 			  SEXP mu, SEXP dmu,
-// 			  SEXP s, SEXP ds,
-// 			  SEXP z, SEXP su, SEXP dsu,
-// 			  SEXP threshold, SEXP dthreshold, SEXP score) {
-
 // [[Rcpp::export(name = ".loglikMVN")]]
-arma::mat loglikMVN(arma::mat Yl, SEXP yu, 
+arma::mat loglikMVN(arma::mat Yl, SEXP yu,
 		    SEXP status,
 		    arma::mat Mu, SEXP dmu,
 		    arma::mat S,  SEXP ds,
 		    SEXP z, SEXP su, SEXP dsu,
 		    SEXP threshold, SEXP dthreshold,
-		    bool Score) {  
+		    bool Score, double itol) {
   // mat Yl = Rcpp::as<mat>(yl);
-  // mat Mu = Rcpp::as<mat>(mu);  
+  // mat Mu = Rcpp::as<mat>(mu);
   // mat S = Rcpp::as<mat>(s);
-  // bool Score = Rcpp::as<bool>(score);  
+  // bool Score = Rcpp::as<bool>(score);
   if (Score) {
     mat dS = Rcpp::as<mat>(ds);
     mat dMu = Rcpp::as<mat>(dmu);
-    mat U = scoremvn(Yl, 
+    mat U = scoremvn(Yl,
 		     Mu, dMu,
-		     S, dS);
+		     S, dS,
+		     itol);
 		 // Z,  Su, dSu,
 		 // Threshold, dThreshold) {
     return(U);
   }
- 
+
   uvec Status = Rcpp::as<uvec>(status);
   mat Yu = Rcpp::as<mat>(yu);
-  
+
   if ((Mu.n_cols!=Yl.n_cols) || (Mu.n_rows!=Yl.n_rows))
     throw(Rcpp::exception("Dimension of 'mu' and 'yl' did not agree","mvn.cpp",1));
   if (Status.size()!=Yl.n_cols)
@@ -539,53 +539,55 @@ arma::mat loglikMVN(arma::mat Yl, SEXP yu,
     Su = Rcpp::as<mat>(su);
     if (Z.n_cols!=(Yl.n_cols/Su.n_cols))
       throw(Rcpp::exception("Dimension of 'z' and 'su' did not agree","mvn.cpp",1));
-    if (Z.n_rows!=n) 
-      throw(Rcpp::exception("Dimension of 'z' and 'yl' did not agree","mvn.cpp",1));	   
+    if (Z.n_rows!=n)
+      throw(Rcpp::exception("Dimension of 'z' and 'yl' did not agree","mvn.cpp",1));
   }
   mat Threshold;
   if (nOrd>0) {
-    Threshold = Rcpp::as<mat>(threshold);  
-    if (Threshold.n_rows!=Yl.n_cols) 
+    Threshold = Rcpp::as<mat>(threshold);
+    if (Threshold.n_rows!=Yl.n_cols)
       throw(Rcpp::exception("Dimension of 'threshold' and 'yl' did not agree","mvn.cpp",1));
   }
 
   vec loglik(n); loglik.fill(0);
   if (nCens>0) {
-    if ((Yl.n_cols!=Yu.n_cols) || (Yl.n_rows!=Yu.n_rows)) 
+    if ((Yl.n_cols!=Yu.n_cols) || (Yl.n_rows!=Yu.n_rows))
       throw(Rcpp::exception("Dimension of 'yl' and 'yu' did not agree","mvn.cpp",1));
 
     umat stat = (Yl.cols(Cens)==Yu.cols(Cens));
     uvec group(n);
-    umat pattern; 
-    fastpattern(stat,pattern,group);    
-    uvec NewStatus = Status;        
+    umat pattern;
+    fastpattern(stat,pattern,group);
+    uvec NewStatus = Status;
     unsigned K = pattern.n_rows;
     for (unsigned i=0; i<K; i++) { // Iterate over patterns
       uvec idx = find(group==i);
-      NewStatus.elem(Cens) = 1-pattern.row(i);      
+      NewStatus.elem(Cens) = 1-pattern.row(i);
       mat Ylsub = Yl.rows(idx);
       mat Yusub = Yu.rows(idx);
       mat Musub = Mu.rows(idx);
       if (!Rf_isNull(z)) Zsub = Z.rows(idx);
       // cerr << "i=" << i << endl;
-      // cerr << "idx =" << idx << endl; 
+      // cerr << "idx =" << idx << endl;
       // cerr << "Yl =" << Ylsub << endl;
       // cerr << "Yu =" << Yusub << endl;
       // cerr << "Musub =" << Musub << endl;
       // cerr << "Zsub =" << Zzub << endl;
       // cerr << "Status =" << NewStatus << endl;
-      
+
       vec ll = loglikmvn(Ylsub, Yusub, NewStatus,
-			 Musub, S, 
+			 Musub, S,
 			 Zsub,  Su,
-			 Threshold);      
+			 Threshold,
+			 itol);
       loglik.elem(idx) = ll;
-    }  
+    }
   } else {
     loglik = loglikmvn(Yl,Yu,Status,
-    		       Mu, S, 
+    		       Mu, S,
     		       Z,  Su,
-    		       Threshold);
+    		       Threshold,
+		       itol);
   }
 
   return (loglik);
@@ -606,18 +608,18 @@ void cov2cor0(const mat &x, rowvec &Cor, rowvec &sx, bool nrm=true) {
     for (unsigned c=r+1; c<p; c++) {
       if (nrm)
 	Cor(j) = x(r,c)*sx(r)*sx(c);
-      else 
+      else
 	Cor(j) = x(r,c);
       j++;
     }
-  }  
+  }
 }
 
-RcppExport SEXP pmvn0(SEXP lower, SEXP upper, 
-		      SEXP mu, SEXP sigma, SEXP cor) { 
-BEGIN_RCPP  
+RcppExport SEXP pmvn0(SEXP lower, SEXP upper,
+		      SEXP mu, SEXP sigma, SEXP cor) {
+BEGIN_RCPP
   mat Sigma = Rcpp::as<mat>(sigma);
-  bool asCor = Rcpp::as<bool>(cor); 
+  bool asCor = Rcpp::as<bool>(cor);
   mat Mu = Rcpp::as<mat>(mu);
   mat Lower = Rcpp::as<mat>(lower);
   mat Upper = Rcpp::as<mat>(upper);
@@ -641,9 +643,9 @@ BEGIN_RCPP
       cov2cor0(Sigma,Cor,L,true);
     } else {
       Cor = Sigma.row(0);
-    }    
+    }
   }
-   
+
   Row<int> infin(p); infin.fill(2); //
   for (unsigned j=0; j<(unsigned)p; j++) {
     if (Upper(0,j)==datum::inf) infin(j) = 1;
@@ -652,8 +654,8 @@ BEGIN_RCPP
 
   rowvec Lower0(p);
   rowvec Upper0(p);
-  rowvec Mu0 = Mu.row(0);  
-  vec res(n);  
+  rowvec Mu0 = Mu.row(0);
+  vec res(n);
   for  (unsigned i=0; i<n; i++) {
     double val;
     if (Mu.n_rows>1) Mu0 = Mu.row(i);
@@ -661,7 +663,7 @@ BEGIN_RCPP
       Lower0 = Lower.row(i)-Mu0;
       Upper0 = Upper.row(i)-Mu0;
       infin.fill(2); // (a,b)
-      for (unsigned j=0; j<(unsigned)p; j++) {		
+      for (unsigned j=0; j<(unsigned)p; j++) {
 	if (Upper0(0,j)==datum::inf) infin(j) = 1; // (a,Inf)
 	if (Lower0(0,j)==-datum::inf) {
 	  if (infin(j)==1) infin(j) = -1; // (-Inf,Inf)
@@ -672,7 +674,7 @@ BEGIN_RCPP
       Lower0 = Lower.row(0)-Mu0;
       Upper0 = Upper.row(0)-Mu0;
     }
-    // We use that Phi(a,b,S,mu) = Phi(L(a-mu),L(b-mu),R,0); R=LSL  
+    // We use that Phi(a,b,S,mu) = Phi(L(a-mu),L(b-mu),R,0); R=LSL
     if (nSigma) {
       if (asCor) {
 	Cor = Sigma.row(i);
@@ -693,11 +695,11 @@ BEGIN_RCPP
     // std::cerr << "mvtdelta" << _mvt_delta;
     // std::cerr << "mvt_df" << _mvt_df;
     mvtdst(&p, &_mvt_df,
-	   &Lower0[0], &Upper0[0], 
+	   &Lower0[0], &Upper0[0],
 	   &infin[0], &Cor[0],
 	   &_mvt_delta[0], &_mvt_maxpts,
 	   &_mvt_abseps, &_mvt_releps,
-	   &_mvt_error[0], &val, &_mvt_inform);      
+	   &_mvt_error[0], &val, &_mvt_inform);
     res(i) = val;
   }
   return(Rcpp::wrap(res));
@@ -705,7 +707,7 @@ END_RCPP
 }
 
 
-////////////////////////////////////////////////// 
+//////////////////////////////////////////////////
 // Bivariate case
 //////////////////////////////////////////////////
 
@@ -752,7 +754,7 @@ vecmat Dbvn(double y1, double y2, double R) {
   mat HP(2,2);
   HP(1,0) = HP(0,1) = dbvnorm(y1,y2,R);
   HP(0,0) = -y1*DP(0) - R*HP(1,0);
-  HP(1,1) = -y2*DP(1) - R*HP(1,0);  
+  HP(1,1) = -y2*DP(1) - R*HP(1,0);
   vecmat res;
   res.V = DP;
   res.M= HP;
@@ -776,7 +778,7 @@ double Sbvn(double &l1, double &l2, double &r) {
 }
 
 
-////////////////////////////////////////////////// 
+//////////////////////////////////////////////////
 // Density with varying correlation structure
 //////////////////////////////////////////////////
 
@@ -785,11 +787,11 @@ NumericVector dmvn(arma::mat u, arma::mat mu, arma::mat rho) {
   unsigned n = u.n_rows;
   unsigned p = u.n_cols;
   NumericVector res(n);
-  arma::mat R = arma::eye(p,p);  
+  arma::mat R = arma::eye(p,p);
   double logdetR = 0;
   arma::mat invR = R;
   arma::rowvec mu_i(p);
-  
+
   for (unsigned i=0; i<n; i++) {
     if (i % 10000 == 0) Rcpp::checkUserInterrupt();
     if (i<mu.n_rows) {
@@ -799,22 +801,22 @@ NumericVector dmvn(arma::mat u, arma::mat mu, arma::mat rho) {
     if (i<rho.n_rows) {
       unsigned pos=0;
       for (unsigned r=0; r<p; r++)
-	for (unsigned c=r+1; c<p; c++) {	
+	for (unsigned c=r+1; c<p; c++) {
 	  R(r,c) = rho(i,pos);
-	  R(c,r) = rho(i,pos);	
+	  R(c,r) = rho(i,pos);
 	  pos++;
 	}
       logdetR = log(fabs(arma::det(R)));
       invR = inv(R);
     }
-    
+
     res[i] = -0.5*(logdetR + p*log2pi +
 		   arma::as_scalar(ui*(invR)*ui.t()));
   }
   return res;
 }
 
-////////////////////////////////////////////////// 
+//////////////////////////////////////////////////
 // RNG with varying correlation structure
 //////////////////////////////////////////////////
 
@@ -828,13 +830,13 @@ arma::mat rmvn(unsigned n, arma::mat mu, arma::mat rho) {
   arma::rowvec mu_i(p);
   arma::rowvec U(p);
   for (unsigned i=0; i<n; i++) {
-    if (i % 10000 == 0) Rcpp::checkUserInterrupt();        
+    if (i % 10000 == 0) Rcpp::checkUserInterrupt();
     if (i<rho.n_rows) {
       unsigned pos=0;
       for (unsigned r=0; r<p; r++)
-	for (unsigned c=r+1; c<p; c++) {	
+	for (unsigned c=r+1; c<p; c++) {
 	  R(r,c) = rho(i,pos);
-	  R(c,r) = rho(i,pos);	
+	  R(c,r) = rho(i,pos);
 	  pos++;
 	}
       L = chol(R);
@@ -847,4 +849,3 @@ arma::mat rmvn(unsigned n, arma::mat mu, arma::mat rho) {
   }
   return res;
 }
-

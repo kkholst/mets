@@ -8,7 +8,7 @@ loglikMVN <- function(yl,yu,status,mu,S,thres) {
           mu=as.matrix(mu),dmu=NULL,s=as.matrix(S),ds=NULL,
           z=NULL,su=NULL,dsu=NULL,
           threshold=as.matrix(thres),dthreshold=NULL,
-          score=FALSE,
+          score=FALSE, itol=lava.options()$itol,
           PACKAGE="mets")
 }
 
@@ -23,6 +23,6 @@ scoreMVN <- function(y,mu,S,dmu,dS) {
           s=as.matrix(S),ds=as.matrix(dS),
           z=NULL,su=NULL,dsu=NULL,
           threshold=NULL,dthreshold=NULL,
-          score=TRUE,
+          score=TRUE, itol=lava.options()$itol,
           PACKAGE="mets")
 }

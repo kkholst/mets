@@ -3,12 +3,17 @@
 #include "tools.h"
 #include <vector>
 
+using namespace std;
+using namespace arma;
+using namespace Rcpp;
+
+
 SEXP FastLong2(SEXP idata, SEXP inclust,
 	       SEXP infixed, SEXP invarying) {
 BEGIN_RCPP
   unsigned nvarying = Rcpp::as<unsigned>(invarying); // Number of varying var
   unsigned nfixed = Rcpp::as<unsigned>(infixed); // Number of non-varying
-  unsigned nclust = Rcpp::as<unsigned>(inclust); // Number within cluster      
+  unsigned nclust = Rcpp::as<unsigned>(inclust); // Number within cluster
   Rcpp::DataFrame d = Rcpp::as<Rcpp::DataFrame>(idata); // Wide data
   //bool Missing = Rcpp::as<bool>(missing);
   unsigned n= d.nrows();
@@ -20,22 +25,22 @@ BEGIN_RCPP
   for (unsigned k=0; k<nvarying; k++)
     idx[k] = nfixed+k*nclust;
   Rcpp::List myList(K);
-     
+
   for (unsigned k=0; k<nfixed; k++) {
     if (Rf_isLogical(d[k])) {
       LogicalVector mm = Rcpp::as<LogicalVector>(d[k]);
       myList[k] = Rcpp::rep_each(mm,nclust);
     } else if (Rf_isInteger(d[k])) {
-      IntegerVector mm = Rcpp::as<IntegerVector>(d[k]);	  
+      IntegerVector mm = Rcpp::as<IntegerVector>(d[k]);
       myList[k] = Rcpp::rep_each(mm,nclust);
     } else if (Rf_isNumeric(d[k])) {
-      NumericVector mm = Rcpp::as<NumericVector>(d[k]);	  
+      NumericVector mm = Rcpp::as<NumericVector>(d[k]);
       myList[k] = Rcpp::rep_each(mm,nclust);
     } else if (Rf_isComplex(d[k])) {
-      ComplexVector mm = Rcpp::as<ComplexVector>(d[k]);	  
+      ComplexVector mm = Rcpp::as<ComplexVector>(d[k]);
       myList[k] = Rcpp::rep_each(mm,nclust);
     } else if (Rf_isString(d[k]) || Rf_isFactor(d[k])) {
-      CharacterVector mm = Rcpp::as<CharacterVector>(d[k]);	  
+      CharacterVector mm = Rcpp::as<CharacterVector>(d[k]);
       myList[k] = Rcpp::rep_each(mm,nclust);
     }
   }
@@ -68,35 +73,35 @@ BEGIN_RCPP
     if (type==1) {
       LogicalMatrix mm(nclust,n);
       for (unsigned i=0; i<nclust; i++)
-	mm(i,_) = Rcpp::as<LogicalVector>(d[idx[k]+i]);	    
+	mm(i,_) = Rcpp::as<LogicalVector>(d[idx[k]+i]);
       myList[nfixed+k] = Rcpp::LogicalVector(mm.begin(),mm.end());
     } else if (type==2) {
       IntegerMatrix mm(nclust,n);
       for (unsigned i=0; i<nclust; i++)
-	mm(i,_) = Rcpp::as<IntegerVector>(d[idx[k]+i]);	    
+	mm(i,_) = Rcpp::as<IntegerVector>(d[idx[k]+i]);
       myList[nfixed+k] = Rcpp::IntegerVector(mm.begin(),mm.end());
     } else if (type==3) {
       NumericMatrix mm(nclust,n);
       for (unsigned i=0; i<nclust; i++)
-	mm(i,_) = Rcpp::as<NumericVector>(d[idx[k]+i]);	    
-      //myList[nfixed+k] = Rcpp::NumericMatrix(M,1,mm.begin());      
+	mm(i,_) = Rcpp::as<NumericVector>(d[idx[k]+i]);
+      //myList[nfixed+k] = Rcpp::NumericMatrix(M,1,mm.begin());
       myList[nfixed+k] = Rcpp::NumericVector(mm.begin(),mm.end());
     } else if (type==4) {
       ComplexMatrix mm(nclust,n);
       for (unsigned i=0; i<nclust; i++)
-	mm(i,_) = Rcpp::as<ComplexVector>(d[idx[k]+i]);	    
+	mm(i,_) = Rcpp::as<ComplexVector>(d[idx[k]+i]);
       myList[nfixed+k] = Rcpp::ComplexVector(mm.begin(),mm.end());
     } else if (type==5) {
       CharacterMatrix mm(nclust,n);
       for (unsigned i=0; i<nclust; i++)
-	mm(i,_) = Rcpp::as<CharacterVector>(d[idx[k]+i]);	    
+	mm(i,_) = Rcpp::as<CharacterVector>(d[idx[k]+i]);
       myList[nfixed+k] = Rcpp::CharacterVector(mm.begin(),mm.end());
-    } 
+    }
   }
 
   //  IntegerVector Id = Rcpp::seq_len(n);
   IntegerVector Id = Rcpp::rep_each(Rcpp::seq_len(n),nclust);
-  IntegerVector Num = Rcpp::rep(Rcpp::seq_len(nclust),n);  
+  IntegerVector Num = Rcpp::rep(Rcpp::seq_len(nclust),n);
   myList[K-2] = Id;
   myList[K-1] = Num;
   myList.attr("names") = Rcpp::seq_len(K);
@@ -118,12 +123,12 @@ BEGIN_RCPP
       bool Missing = Rcpp::as<bool>(missing);
       unsigned M = nclust*d.n_rows;
       unsigned K = nvarying+nfixed+2;
-      mat dd(M,K); // Long data      
+      mat dd(M,K); // Long data
       uvec idx(nvarying);
       uvec mis(M); mis.fill(0); // NA_INTEGER
       for (unsigned k=0; k<nvarying; k++)
          idx[k] = nfixed+k*nclust;
-      rowvec xx(K); xx.fill(NA_REAL);      
+      rowvec xx(K); xx.fill(NA_REAL);
       unsigned count = 0;
       for (unsigned i=0; i<d.n_rows; i++) {
          rowvec xx0 = xx;
@@ -136,10 +141,10 @@ BEGIN_RCPP
             xx0.subvec(nfixed,K-3) = trans(d0.elem(idx0));
             xx0[K-2] = i+1; xx0[K-1] = j+1;
 	    bool allmiss = Missing;
-	    if (Missing) 
+	    if (Missing)
 	      for (unsigned k=nfixed*(i>0); k<nvarying+nfixed; k++) {
 		if (!R_IsNA(xx0[k])) {
-		  allmiss = false;		 
+		  allmiss = false;
 		}
 		if (!allmiss) break;
 	      }
@@ -165,18 +170,18 @@ void fastpattern(const umat &y, umat &pattern, uvec &group, unsigned categories 
   unsigned npattern = n;
   if (lognpattern<std::log((double)npattern)) {
     npattern = (unsigned) pow((double) categories,(double) k);
-  }   
-  umat mypattern(npattern,k); 
+  }
+  umat mypattern(npattern,k);
   mypattern.fill(1);
   unsigned K=0;
 
   for (unsigned i=0; i<n; i++) {
     urowvec ri = y.row(i);
     bool found = FALSE;
-    for (unsigned j=0; j<K; j++) {      
+    for (unsigned j=0; j<K; j++) {
       if (sum(ri!=mypattern.row(j))==0) {
 	found = true;
-	mygroup(i) = j;	
+	mygroup(i) = j;
 	break;
       }
 
@@ -186,7 +191,7 @@ void fastpattern(const umat &y, umat &pattern, uvec &group, unsigned categories 
       mypattern.row(K-1) = ri;
       mygroup(i) = K-1;
     }
-  } 
+  }
   pattern = mypattern.rows(0,K-1);
   group = mygroup;
 }
@@ -199,8 +204,8 @@ BEGIN_RCPP
   unsigned Cat = Rcpp::as<unsigned>(cat);
   umat stat;
   if (!Rf_isNull(y2)) {
-    mat Y2 = Rcpp::as<mat>(y2);   
-    if ((Y2.n_rows!=n) || (Y2.n_cols!=k)) 
+    mat Y2 = Rcpp::as<mat>(y2);
+    if ((Y2.n_rows!=n) || (Y2.n_cols!=k))
        throw(Rcpp::exception("Dimension did not agree","tools.cpp",1));
     stat = (Y1==Y2);
   } else {
@@ -208,22 +213,22 @@ BEGIN_RCPP
   }
   uvec group(n);
   //  unsigned npattern = (unsigned) pow(2,(double) k);
-  umat pattern; //(npattern,k);  
+  umat pattern; //(npattern,k);
   fastpattern(stat,pattern,group,Cat);
-  
+
   return(Rcpp::List::create(
 			    Rcpp::Named("pattern")=pattern,
 			    Rcpp::Named("group")=wrap(group)
 			    ));
 END_RCPP
-} 
+}
 
 
 RcppExport SEXP FastCluster(const SEXP x) {
 BEGIN_RCPP
   arma::Row<unsigned> xx = as<arma::Row<unsigned> >(x);
-  vector<unsigned> cpos, csize; 
-  unsigned val=0, prev=0, cursize=0;  
+  vector<unsigned> cpos, csize;
+  unsigned val=0, prev=0, cursize=0;
   for (unsigned i=0; i<xx.n_elem; i++) {
     if (xx[i]!=0) {
       if (prev==0) {
@@ -239,16 +244,16 @@ BEGIN_RCPP
     prev = xx[i];
   }
   if (prev!=0) csize.push_back(cursize);
-  
+
   return(Rcpp::List::create(
 			    Rcpp::Named("cluster")=conv_to< vector<unsigned> >::from(xx),
 			    Rcpp::Named("cluster.first")=cpos,
 			    Rcpp::Named("cluster.size")=csize
-			    ));  
+			    ));
   // return( wrap(list(xx,) );
 END_RCPP
 }
-		     
+
 RcppExport SEXP FastApprox(const SEXP time,
 			   const SEXP newtime,
 			   const SEXP equal,
@@ -263,23 +268,23 @@ BEGIN_RCPP
   // std::sort(Sorted.begin(), Sorted.end());
   // //    .sort();
   // IntegerVector Order = match(Sorted, Time);
-  // return(Rcpp::wrap(Time));  
+  // return(Rcpp::wrap(Time));
   bool Equal = Rcpp::as<bool>(equal);
   vector<int> idx(NewTime.size());
   vector<int> eq(NewTime.size());
 
   double vmax = Sorted[Sorted.size()-1];
-  NumericVector::iterator it;  
+  NumericVector::iterator it;
   double upper=0.0; int pos=0;
-  for (int i=0; i<NewTime.size(); i++) {    
+  for (int i=0; i<NewTime.size(); i++) {
     eq[i] = 0;
     if (NewTime[i]>vmax) {
       pos = Sorted.size()-1;
     } else {
       it = lower_bound(Sorted.begin(), Sorted.end(), NewTime[i]);
       upper = *it;
-      if (it == Sorted.begin()) { 
-	pos = 0; 
+      if (it == Sorted.begin()) {
+	pos = 0;
 	if (Equal && (NewTime[i]==upper)) { eq[i] = 1; }
       }
       // else if (int(it-Sorted.end())==0) {
@@ -297,9 +302,34 @@ BEGIN_RCPP
   if (Equal) {
     List ans;
     ans["idx"] = idx;
-    ans["eq"] = eq;    
-    return(ans);   
-  } 
+    ans["eq"] = eq;
+    return(ans);
+  }
   return(Rcpp::wrap(idx));
 END_RCPP
 }/*}}}*/
+
+
+
+mat Inv(const mat &X, double &logdet, double itol) {
+  if (itol>0.0) {
+    mat U,V;
+    vec s;
+    svd(U, s, V, X);
+    logdet = 0;
+    for (unsigned i=0; i<s.n_elem; i++) {
+      if (s[i]<itol) {
+	s[i]=0;
+      } else {
+	logdet += log(s[i]);
+	s[i]=1/s[i];
+      }
+    }
+    mat res = U*diagmat(s)*V.t();
+    return(res);
+  }
+  mat res = inv(X);
+  double sign;
+  log_det(logdet, sign, X);
+  return(X);
+}
