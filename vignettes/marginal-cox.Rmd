@@ -194,14 +194,14 @@ Computations are done using that
 \begin{align*}
 \int_0^t (Z_{ki} - E_{g}) dM_{ki}^g & = \int_0^t (Z_{ki} - E_{g}) dN_{ki}^g - \int_0^{t} (Z_{ki} - E_{g})  Y_{ki}(u) d\Lambda^g(u)  
 \end{align*}
-therefore and summing the compensator part with the $g_{ki}$ multipliers then gives
+therefore and summing the compensator part with the $g_{ki}$ multipliers then gives for each strata $g$
 \begin{align*}
-   &  \int_0^t \frac{S_{1s}^w(u)}{S_{0s}(u)} dN_{s.}(v) -  \int_0^t E_{s}(u) \frac{S_{0s}^w(u)}{S_{0s}(u)} dN_{s.}(v)
+   &  \int_0^t \frac{S_{1g}^w(u)}{S_{0g}(u)} dN_{g.}(v) -  \int_0^t E_{g}(u) \frac{S_{0g}^w(u)}{S_{0g}(u)} dN_{g.}(v)
 \end{align*}
 with  
 \begin{align*}
-S_{js}^w(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t) g_{ki}  \\
-S_{js}(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
+S_{jg}^w(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t) g_{ki}  \\
+S_{jg}(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
 \end{align*}
 
 
