@@ -1,0 +1,570 @@
+---
+title: "Recurrent events"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Recurrent events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Overview 
+========
+
+For recurrent events data it is often of interest to compute basis descriptive
+quantities as a first go at getting some basic understanding of the phenonmenon
+studied. We here demonstrate how one can compute 
+
+ * the marginal mean 
+ * the variance 
+ * the probability of exceeding k events
+
+In addition several tools can be used for simulating recurrent events and
+bivariate recurrent events data, in the case with a possible terminating event. 
+
+For bivariate recurrent events we also compute summary measures that describe their
+dependence such as 
+
+ * the covariance 
+ * directional dependence 
+ * the bivariate probability of exceeding $(k_1,k_2)$ events
+ 
+
+
+Simulation of recurrents events
+==============================
+
+
+We start by simulating some recurrent events data with two type of events with
+cumulative hazards 
+
+ * $\Lambda_1(t)$ (rate among survivors)
+ * $\Lambda_2(t)$ (rate among survivors)
+ * $\Lambda_D(t)$
+
+ where we consider types 1 and 2 and with a rate of the terminal event given by 
+ $\Lambda_D(t)$. We let the events be independent, but could also specify a random effects
+ structure to generate dependence. 
+
+ When simulating data we can impose various random-effects structures to generate dependence  
+ * We can draw normally distributed random effects $Z_1,Z_2,Z_d$ were the variance (var.z) 
+   and correlation can be specified (cor.mat) (dependence=2).  
+   Then the intensities are 
+   * $\exp(Z_1) \lambda_1(t)$
+   * $\exp(Z_2) \lambda_2(t)$
+   * $\exp(Z_3) \lambda_D(t)$
+ * We can one gamma distributed random effects $Z$.  Then the intensities are (dependence=1)
+   * $Z \lambda_1(t)$
+   * $Z \lambda_2(t)$
+   * $Z \lambda_D(t)$
+ * We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be speicifed via a matrix
+   cor.mat. Then we compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$  (dependence=3)
+   Then the intensities are
+   * $\tilde Z_1 \lambda_1(t)$
+   * $\tilde Z_2 \lambda_2(t)$
+   * $\tilde Z_3 \lambda_D(t)$
+ * The intensities can be independent (dependence=0)
+
+ We return to how to run the different set-ups later and start by simulating independent processes. 
+
+Utility functions 
+=================
+
+We here mention two utility functions 
+
+ * tie.breaker for breaking ties among jump-times which is expected in the functions below.
+ * count.history that counts the number of jumps previous for each subject that is $N_1(t-)$ and $N_2(t-)$. 
+ 
+
+Marginal Mean 
+=============
+
+ We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the timing of the terminal event. 
+
+ This is based on a  rate model  for 
+
+ * the type 1 events  $ \sim E(dN_1(t) | D > t)$
+ * the terminal event $ \sim E(dN_d(t) | D > t)$
+
+and is defined as $\mu_1(t)=E(N_1^*(t))$ 
+\begin{align}
+   \int_0^t S(u) d R_1(u)	
+\end{align}
+where $S(t)=P(D \geq t)$ and $dR_1(t) = E(dN_1^*(t) | D > t)$ 
+
+and can therefore be estimated by a 
+
+ * Kaplan-Meier estimator, $\hat S(u)$ 
+ * Nelson-Aalen estimator for $R_1(t)$
+
+\begin{align}
+  \hat R_1(t) & =   \sum_i \int_0^t  \frac{1}{Y_\bullet (s)}  dN_{1i}(s)
+\end{align}
+where $Y_{\bullet}(t)= \sum_i Y_i(t)$ such that the estimator is 
+\begin{align}
+  \hat \mu_1(t) & =    \int_0^t \hat S(u) d\hat R_1(u).
+\end{align}
+
+Cook & Lawless (1997), and developed further in Gosh & Lin (2000). 
+
+The variance can be estimated based on the asymptotic expansion 
+of $\hat \mu_1(t) - \mu_1(t)$
+\begin{align*}
+  & \sum_i \int_0^t \frac{S(s)}{\pi(s)} dM_{i1}  - \mu_1(t) \int_0^t  \frac{1}{\pi(s)} dM_i^d +  \int_0^t \frac{\mu_1(s) }{\pi(s)} dM_i^d,
+\end{align*}
+
+with mean-zero processes 
+
+ * $M_i^d(t) = N_i^D(t)- \int_0^t Y_i(s) d \Lambda^D(s)$, 
+ * $M_{i1}(t) = N_{i1}(t) - \int_0^t Y_{i}(s) dR_1(s)$. 
+
+as in Gosh & Lin (2000)
+
+
+Generating data
+==================
+
+We start by generating some data to illustrate the computation of the marginal mean 
+
+```{r}
+library(mets)
+set.seed(1000) # to control output in simulatins for p-values below.
+```
+
+
+```{r}
+data(base1cumhaz)
+data(base4cumhaz)
+data(drcumhaz)
+ddr <- drcumhaz
+base1 <- base1cumhaz
+base4 <- base4cumhaz
+rr <- simRecurrent(1000,base1,death.cumhaz=ddr)
+rr$x <- rnorm(nrow(rr)) 
+rr$strata <- floor((rr$id-0.01)/500)
+dlist(rr,.~id| id %in% c(1,7,9))
+```
+
+The status variable keeps track of the recurrent evnts and their type, and death the timing of 
+death.
+
+To compute the marginal mean we simly estimate the two rates functions of the 
+number of events of interest and death by using the phreg function 
+(to start without covariates). Then the estimates are combined with standard 
+error computation in the recurrentMarginal function
+
+```{r}
+#  to fit non-parametric models with just a baseline 
+xr <- phreg(Surv(entry,time,status)~cluster(id),data=rr)
+dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
+par(mfrow=c(1,3))
+bplot(dr,se=TRUE)
+title(main="death")
+bplot(xr,se=TRUE)
+# robust standard errors 
+rxr <-   robust.phreg(xr,fixbeta=1)
+bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
+
+# marginal mean of expected number of recurrent events 
+out <- recurrentMarginal(xr,dr)
+bplot(out,se=TRUE,ylab="marginal mean",col=2)
+```
+
+We can do the same with strata 
+
+```{r}
+xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
+dr <- phreg(Surv(entry,time,death)~strata(strata)+cluster(id),data=rr)
+par(mfrow=c(1,3))
+bplot(dr,se=TRUE)
+title(main="death")
+bplot(xr,se=TRUE)
+rxr <-   robust.phreg(xr,fixbeta=1)
+bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+
+out <- recurrentMarginal(xr,dr)
+bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
+```
+
+Furhter, if we adjust for covariates for the two rates we can still do
+predictions of marginal mean, what can be plotted is the baseline marginal mean, 
+that is for the covariates equal to 0 for both models. Predictions for specific 
+covariates can also be obtained with the recmarg (recurren marginal mean used 
+ solely for predictions without standard error computation). 
+
+```{r}
+# cox case
+xr <- phreg(Surv(entry,time,status)~x+cluster(id),data=rr)
+dr <- phreg(Surv(entry,time,death)~x+cluster(id),data=rr)
+par(mfrow=c(1,3))
+bplot(dr,se=TRUE)
+title(main="death")
+bplot(xr,se=TRUE)
+rxr <- robust.phreg(xr)
+bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+
+out <- recurrentMarginal(xr,dr)
+bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
+
+# predictions witout se's 
+outX <- recmarg(xr,dr,Xr=1,Xd=1)
+bplot(outX,add=TRUE,col=3)
+```
+
+Other marginal properties 
+=========================
+
+The mean is a useful summary measure but it is very easy and useful to look at other 
+simple summary measures such as the probability of exceeding $k$ events 
+
+ * $P(N_1^*(t) \ge k)$ 
+   * cumulative incidence of $T_{k} = \inf \{ t: N_1^*(t)=k \}$ with competing $D$. 
+
+that is thus equivalent to a certain cumulative incidence of $T_k$ occurring before $D$. We denote this
+cumulative incidence as $\hat F_k(t)$. 
+
+We note also that $N_1^*(t)^2$ can be written as
+\begin{align*}
+   \sum_{k=0}^K  \int_0^t I(D > s) I(N_1^*(s-)=k) f(k) dN_1^*(s)
+\end{align*}
+with $f(k)=(k+1)^2 - k^2$, such that its mean can be written as 
+\begin{align*}
+	\sum_{k=0}^K \int_0^t S(s) f(k) P(N_1^*(s-)= k  | D  \geq s) E( dN_1^*(s)  | N_1^*(s-)=k, D> s) 
+\end{align*}
+and estimated by
+\begin{align*}
+\tilde \mu_{1,2}(t) & = 
+	\sum_{k=0}^K \int_0^t \hat S(s) f(k) 
+	\frac{Y_{1\bullet}^k(s)}{Y_\bullet (s)} \frac{1}{Y_{1\bullet}^k(s)} d N_{1\bullet}^k(s)= \sum_{i=1}^n \int_0^t \hat S(s) f(N_{i1}(s-)) \frac{1}{Y_\bullet (s)} d N_{i1}(s),
+\end{align*}
+That is very similar to the "product-limit" estimator for $E( (N_1^*(t))^2 )$ 
+\begin{align}
+  \hat \mu_{1,2}(t) & =    \sum_{k=0}^K k^2 ( \hat F_{k}(t) - \hat F_{k+1}(t) ).
+\end{align}
+
+We use the esimator of the probabilty  of exceeding "k" events based on the fact that 
+$I(N_1^*(t) \geq k)$ is  equivalent to 
+\begin{align*}
+	\int_0^t I(D > s) I(N_1^*(s-)=k-1) dN_1^*(s),
+\end{align*}
+suggesting that its mean can be computed as
+\begin{align*}
+\int_0^t S(s) P(N_1^*(s-)= k-1  | D  \geq s) E( dN_1^*(s)  | N_1^*(s-)=k-1, D> s) 
+\end{align*}
+and estimated by 
+\begin{align*}
+\tilde F_k(t) = \int_0^t \hat S(s)  \frac{Y_{1\bullet}^{k-1}(s)}{Y_\bullet (s)} 
+          	\frac{1}{Y_{1\bullet}^{k-1}(s)} d N_{1\bullet}^{k-1}(s).
+\end{align*}
+
+
+To compute these estimators we need to set up the data by computing the 
+number of previous events of type "1" by the  count.history function
+
+
+```{r}
+###cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
+###rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=ddr)
+rr <-  count.history(rr)
+dtable(rr,~death+status)
+
+oo <- prob.exceedRecurrent(rr,1)
+bplot(oo)
+```
+
+We can also look at the mean and variance based on the estimators just described 
+
+```{r}
+par(mfrow=c(1,2))
+with(oo,plot(time,mu,col=2,type="l"))
+#
+with(oo,plot(time,varN,type="l"))
+```
+
+Multiple events 
+================
+
+We now generate recurrent events with two types of events. We start by
+generating data as before where all events are independent. 
+
+```{r}
+rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=ddr)
+rr <-  count.history(rr)
+dtable(rr,~death+status)
+```
+
+Based on this we can estimate also the joint distribution function, that is
+the probability that $(N_1(t) \geq k_1, N_2(t) \geq k_2)$
+
+```{r}
+# Bivariate probability of exceeding 
+oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5,10),exceed2=c(1,2,3))
+with(oo, matplot(time,pe1e2,type="s"))
+nc <- ncol(oo$pe1e2)
+legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
+```
+
+Dependence between events: Covariance 
+--------------------------------------
+
+The dependence can also be summarised in other ways. For example by computing the
+covariance and comparing it to the covariance under the assumption of 
+independence among survivors. 
+
+Covariance among two types of events 
+\begin{align}
+\rho(t) &  = \frac{ E(N_1^*(t) N_2^*(t) )  - \mu_1(t) \mu_2(t) }{ \mbox{sd}(N_1^*(t)) \mbox{sd}(N_2^*(t)) }
+\end{align}
+where  $E(N_1^*(t) N_2^*(t))$  can be computed as 
+\begin{align*}
+  E(N_1^*(t) N_2^*(t)) &   = E( \int_0^t N_1^*(s-) dN_2^*(s) ) + E( \int_0^t N_2^*(s-) dN_1^*(s) ) 
+\end{align*}
+
+Recall that we might have a terminal event present such that we only see 
+$N_1^*(t \wedge D)$  and $N_2^*(t \wedge D)$. 
+
+To compute the covariance we thus compute 
+\begin{align*}
+E(\int_0^t N_1^*(s-) dN_2^*(s) ) & = \sum_k E( \int_0^t k I(N_1^*(s-)=k) I(D \geq s)  dN_2^*(s) ) 
+\end{align*}
+\begin{align*}
+= \sum_k \int_0^t S(s) k P(N_1^*(s-)= k  | D  \geq s) E( dN_2^*(s)  | N_1^*(s-)=k, D \geq s) 
+\end{align*}
+estimated by 
+\begin{align*}
+  & \sum_k \int_0^t \hat S(s) k \frac{Y_1^k(s)}{Y_\bullet (s)} \frac{1}{Y_1^k(s)} d \tilde N_{2,k}(s),
+\end{align*}
+ * $Y_j^k(t) = \sum Y_i(t) I( N_{ji}^*(s-)=k)$ for $j=1,2$, 
+ * $\tilde N_{j,k}(t) = \sum_i \int_0^t I(N_{ij^o}(s-)=k) dN_{ij}(s)$ 
+ * $j^o$ gives the other type so that $1^o=2$ and $2^o=1$.
+
+We thus estimate  $ E(N_1^*(t) N_2^*(t))$  by 
+\begin{align*}
+  \sum_k \int_0^t \hat S(s) k \frac{Y_1^k(s)}{Y_\bullet (s)} \frac{1}{Y_1^k(s)} d \tilde N_{2,k}(s) +
+   \sum_k \int_0^t \hat S(s) k \frac{Y_2^k(s)}{Y_\bullet (s)} \frac{1}{Y_2^k(s)} d \tilde N_{1,k}(s).
+\end{align*}
+
+
+ * Without terminating event covariance is a useful nonparametric measure.
+ * With terminating event dependence can be generated  terminating event.
+ * In reality what is of interest would be independence among survivors 
+   that is if 
+   * $N_1$ is not predicitive for $N_2$
+   \begin{align}
+      E( dN_2^*(t)  | N_1^*(t-)=k, D \geq t) =  E( dN_2^*(t)  | D \geq t) 
+   \end{align}
+   * $N_2$ is  not predicitive for $N_1$
+   \begin{align}
+      E( dN_1^*(t)  | N_2^*(t-)=k, D \geq t) =  E( dN_1^*(t)  | D \geq t) 
+   \end{align}
+
+
+If the two processes are independent among survivors then 
+\begin{align}
+ E( dN_2^*(t)  | N_1^*(t-)=k, D \geq t) =  E( dN_2^*(t)  | D \geq t) 
+\end{align}
+so 
+\begin{align*}
+  E( \int_0^t N_1^*(s-) dN_2^*(s) )  & =  \int_0^t S(s) E(N_1^*(s-) | D  \geq s) E( dN_2^*(s)  | D \geq s) 
+\end{align*}
+and 
+\begin{align*}
+  \int_0^t \hat S(s) \{  \sum_k k \frac{Y_1^k(s)}{Y_\bullet (s)} \} \frac{1}{Y_\bullet (s)} dN_{2\bullet}(s),
+\end{align*}
+where $N_{j\bullet}(t) = \sum_i \int_0^t dN_{j,i}(s)$.
+
+Under the independence $E(N_1^*(t) N_2^*(t))$  is estimated 
+\begin{align*}
+  \int_0^t \hat S(s) \{  \sum_k k \frac{Y_1^k(s)}{Y_\bullet (s)} \} \frac{1}{Y_\bullet (s)} dN_{2\bullet}(s) 
+    + \int_0^t \hat S(s) \{  \sum_k k \frac{Y_2^k(s)}{Y_\bullet (s)} \} \frac{1}{Y_\bullet (s)} dN_{1\bullet}(s).
+\end{align*}
+
+
+Both estimators, $\hat E(N_1^*(t) N_2^*(t))$ and $\hat E_I(N_1^*(t) N_2^*(t))$,  as well as 
+$\hat E(N_1^*(t))$ and $\hat E(N_2^*(t))$, have asymptotic expansions that can be 
+written as a sum of iid processes, similarly to the arguments 
+of Ghosh & Lin 2000, $\sum_i \Psi_i(t)$.  
+We here, however, use a simple block bootstrap to get standard errors. 
+
+We can thus estimate the standard errors and of the estimators and their 
+difference  $\hat E(N_1^*(t) N_2^*(t))- \hat E_I(N_1^*(t) N_2^*(t))$. 
+
+Note that we have terms for  whether 
+ * $N_1$ is predicitive for $N_2$
+   * N1 -> N2 : $E( \int_0^t N_1^*(s-) dN_2^*(s) )$
+   * this is equivalent to a weighted log-rank test 
+ * $N_2$ is  predicitive for $N_1$
+   * N2 -> N1 : $E( \int_0^t N_2^*(s-) dN_1^*(s) )$
+   * this is equivalent to a weighted log-rank test 
+
+
+```{r}
+rr$strata <- 1
+dtable(rr,~death+status)
+
+covrp <- covarianceRecurrent(rr,1,2,status="status",death="death",
+                        start="entry",stop="time",id="id",names.count="Count")
+par(mfrow=c(1,3)) 
+plot(covrp)
+
+# with strata, each strata in matrix column, provides basis for fast Bootstrap
+covrpS <- covarianceRecurrentS(rr,1,2,status="status",death="death",
+        start="entry",stop="time",strata="strata",id="id",names.count="Count")
+```
+
+Bootstrap standard errors for terms
+------------------------------------
+
+First fitting the model again to get our estimates of interst, and then 
+computing them for some specific time-points  
+
+```{r}
+times <- seq(500,5000,500)
+
+coo1 <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+#
+mug <- Cpred(cbind(coo1$time,coo1$EN1N2),times)[,2]
+mui <- Cpred(cbind(coo1$time,coo1$EIN1N2),times)[,2]
+mu2.1 <- Cpred(cbind(coo1$time,coo1$mu2.1),times)[,2]
+mu2.i <- Cpred(cbind(coo1$time,coo1$mu2.i),times)[,2]
+mu1.2 <- Cpred(cbind(coo1$time,coo1$mu1.2),times)[,2]
+mu1.i <- Cpred(cbind(coo1$time,coo1$mu1.i),times)[,2]
+cbind(times,mu2.1,mu2.i)
+cbind(times,mu1.2,mu1.i)
+```
+
+To get the bootstrap standard errors there is a quick memory demanding function 
+(with S for speed and strata)  BootcovariancerecurrenceS
+and slow function that goes through the loops in R Bootcovariancerecurrence. 
+
+```{r}
+bt1 <- BootcovariancerecurrenceS(rr,1,2,status="status",start="entry",stop="time",K=100,times=times)
+#bt1 <- Bootcovariancerecurrence(rr,1,2,status="status",start="entry",stop="time",K=K,times=times)
+
+output <- list(bt1=bt1,mug=mug,mui=mui,
+               bse.mug=bt1$se.mug,bse.mui=bt1$se.mui,
+               dmugi=mug-mui,
+	bse.dmugi=apply(bt1$EN1N2-bt1$EIN1N2,1,sd),
+	mu2.1 = mu2.1 , mu2.i = mu2.i , dmu2.i=mu2.1-mu2.i,
+	mu1.2 = mu1.2 , mu1.i = mu1.i , dmu1.i=mu1.2-mu1.i,
+	bse.mu2.1=apply(bt1$mu2.i,1,sd), bse.mu2.1=apply(bt1$mu2.1,1,sd),
+	bse.dmu2.i=apply(bt1$mu2.1-bt1$mu2.i,1,sd),
+	bse.mu1.2=apply(bt1$mu1.2,1,sd), bse.mu1.i=apply(bt1$mu1.i,1,sd),
+	bse.dmu1.i=apply(bt1$mu1.2-bt1$mu1.i,1,sd)
+	)
+```
+
+We then look at the test for overall dependence  in the different time-points. 
+We here have no suggestion of dependence.
+
+```{r}
+tt  <- output$dmugi/output$bse.dmugi
+cbind(times,2*(1-pnorm(abs(tt))))
+```
+
+We can also take out the specific components for whether $N_1$ is predictive for 
+$N_2$ and vice versa.  We here have no suggestion of dependence.
+
+```{r}
+t21  <- output$dmu1.i/output$bse.dmu1.i 
+t12  <- output$dmu2.i/output$bse.dmu2.i 
+cbind(times,2*(1-pnorm(abs(t21))),2*(1-pnorm(abs(t12))))
+```
+
+We finally plot the boostrap samples 
+
+```{r}
+par(mfrow=c(1,2))
+matplot(bt1$time,bt1$EN1N2,type="l",lwd=0.3)
+matplot(bt1$time,bt1$EIN1N2,type="l",lwd=0.3)
+```
+
+Looking at other simulations with dependence 
+=============================================
+
+
+Using the normally distributed random effects we plot 4 different settings. We have variance $0.5$ for all
+random effects and change the correlation. We let the correlation between the random effect associated with
+$N_1$ and $N_2$ be denoted $\rho_{12}$ and the correlation between the random effects 
+associated between $N_j$ and $D$ the terminal event be denoted as $\rho_{j3}$, and organize all correlation
+in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
+
+ * Scenario I $\rho=(0,0.0,0.0)$ Independence among all efects.
+
+```{r}
+  data(base1cumhaz)
+  data(base4cumhaz)
+  data(drcumhaz)
+  dr <- drcumhaz
+  base1 <- base1cumhaz
+  base4 <- base4cumhaz
+
+  par(mfrow=c(1,3))
+  var.z <- c(0.5,0.5,0.5)
+  # death related to  both causes in same way 
+  cor.mat <- corM <- rbind(c(1.0, 0.0, 0.0), c(0.0, 1.0, 0.0), c(0.0, 0.0, 1.0))
+  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count.history(rr,types=1:2)
+  cor(attr(rr,"z"))
+  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+  plot(coo,main ="Scenario I")
+```
+ * Scenario II $\rho=(0,0.5,0.5)$ Independence among survivors but dependence on terminal event 
+
+```{r}
+  var.z <- c(0.5,0.5,0.5)
+  # death related to  both causes in same way 
+  cor.mat <- corM <- rbind(c(1.0, 0.0, 0.5), c(0.0, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count.history(rr,types=1:2)
+  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+  par(mfrow=c(1,3))
+  plot(coo,main ="Scenario II")
+```
+
+ * Scenario III $\rho=(0.5,0.5,0.5)$ Positive dependence among survivors and dependence on terminal event 
+
+```{r}
+  var.z <- c(0.5,0.5,0.5)
+  # positive dependence for N1 and N2 all related in same way
+  cor.mat <- corM <- rbind(c(1.0, 0.5, 0.5), c(0.5, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count.history(rr,types=1:2)
+  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+  par(mfrow=c(1,3))
+  plot(coo,main="Scenario III")
+```
+
+ * Scenario IV $\rho=(-0.4,0.5,0.5)$ Negative dependence among survivors and positive dependence on terminal event 
+
+```{r}
+  var.z <- c(0.5,0.5,0.5)
+  # negative dependence for N1 and N2 all related in same way
+  cor.mat <- corM <- rbind(c(1.0, -0.4, 0.5), c(-0.4, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count.history(rr,types=1:2)
+  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+  par(mfrow=c(1,3))
+  plot(coo,main="Scenario IV")
+```
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
