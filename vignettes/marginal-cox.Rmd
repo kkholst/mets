@@ -24,7 +24,8 @@ Overview
 
 A basic component for our modelling of multivariate survival data is that many models are 
 build around marginals that on Cox form. The marginal Cox model can be fitted efficiently
-in the mets package. 
+in the mets package, in particular the handling of strata and robust standard errors is 
+optimized. 
 
 The basic models assumes that each subject has a marginal on Cox-form
 \[ 
@@ -33,11 +34,11 @@ The basic models assumes that each subject has a marginal on Cox-form
 where \( g(k,i) \) gives the strata for the subject. 
 
 We here discuss and show how to get 
-  - robust standard errors of  
-    - the regression parameters
-    - the baseline 
+ * robust standard errors of  
+   * the regression parameters
+   * the baseline 
 and how to do goodness of fit test using 
-  - cumulative residuals score test 
+ * cumulative residuals score test 
 
 First we generate some data from the Clayton-Oakes model, with \( 5 \) members
 in each cluster and a variance parameter at \( 2 \) 
@@ -53,31 +54,30 @@ in each cluster and a variance parameter at \( 2 \)
  data <- simClaytonOakes(n,k,theta,0.3,3)
 ```
 
-
 The data is on has one subject per row.
 
-* =time= : time of event 
-* =status= : 1 for event and 0 for censoring 
-* =x= : x is a binary covariate 
-* =cluster= : cluster 
+* time : time of event 
+* status : 1 for event and 0 for censoring 
+* x : x is a binary covariate 
+* cluster : cluster 
 
 
 Now we fit the model and produce robust standard errors for both 
 regression parameters and baseline.
 
-First, recall that the baseline for strata $g$ is asymptotically equivalent to
+First, recall that the baseline for strata $g$ is asymptotically equivalent to 
 \begin{align}
-\hat A_g(t) - A_g(t)  & = \sum_k \sum_i \int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k 
+\hat A_g(t) - A_g(t)  & = \sum_{k \in g} \left( \sum_{i: ki \in g} \int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k \right) 
 \end{align}
 with $P^g(t) = \int_0^t E_g(s) d \hat \Lambda_g(s)$ the derivative of $\int_0^t 1/S_{0,g}(s) dN_{\cdot g}$
 wrt to $\beta$, and 
 \begin{align}
-\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g ) =  I(\tau)^{-1} \sum_k \beta_{k} 
+\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g ) =  I(\tau)^{-1} \sum_k \beta_{k} 
 \end{align}
 with 
 \begin{align}
  M_{ki}^g(t) &  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t), \\
- \beta_{k} & =  \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g 
+ \beta_{k} & =  \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g 
 \end{align}
 the basic 0-mean processes, that are martingales in the iid setting,
 and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
@@ -85,7 +85,7 @@ with respect to $\beta$ evaluated at time $t$.
        
 The variance of the baseline of strata g  is estimated by 
 \begin{align}
-\sum_{k} ( \sum_i \int_0^t \frac{1}{S_{0,g(k,i)}} d\hat M_{ki}^g - P^g(t) \beta_k )^2
+\sum_{k \in g} ( \sum_{i: ki \in g} \int_0^t \frac{1}{S_{0,g(k,i)}} d\hat M_{ki}^g - P^g(t) \beta_k )^2
 \end{align}
 that can be computed using the particular structure of 
 \begin{align}
@@ -170,6 +170,42 @@ the model.
   plot(gout)
 ```
 
+Computational aspects
+--------------------
+
+The score processes can be resampled as in Lin, Wei, Ying (1993) using the martingale structure, such that the observed
+score process is resampled by 
+\begin{align}
+  \sum_k \sum_i \int_0^t g_{ki} (Z_{ki} - E_g) dN_{ki}  - I(t)  I^{-1}(\tau) g_{ki} \int_0^{\tau} (Z_{ki} - E_g) dN_{ki} .
+\end{align}
+where $g_{ki}$ are i.i.d. standard normals. 
+
+
+Based on the zero mean processes we more generally with clusters can 
+resample the score process 
+For resampling of score process we need
+\begin{align}
+U(t,\beta) & = \sum_k \sum_i g_k \int_0^t (Z_{ki} - E_g ) dM_{ki}^g 
+\end{align}
+where $g$ is strata. We write $g_k$ as $g_{ki}$ and thus repeating $g_k$ within each cluster.
+
+
+Computations are done using that 
+\begin{align*}
+\int_0^t (Z_{ki} - E_{g}) dM_{ki}^g & = \int_0^t (Z_{ki} - E_{g}) dN_{ki}^g - \int_0^{t} (Z_{ki} - E_{g})  Y_{ki}(u) d\Lambda^g(u)  
+\end{align*}
+therefore and summing the compensator part with the $g_{ki}$ multipliers then gives
+\begin{align*}
+   &  \int_0^t \frac{S_{1s}^w(u)}{S_{0s}(u)} dN_{s.}(v) -  \int_0^t E_{s}(u) \frac{S_{0s}^w(u)}{S_{0s}(u)} dN_{s.}(v)
+\end{align*}
+with  
+\begin{align*}
+S_{js}^w(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t) g_{ki}  \\
+S_{js}(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
+\end{align*}
+
+
+
 Cluster stratified Cox models
 ==============================
 
@@ -183,9 +219,9 @@ the gof-test.
 
 The model can be thought of as 
 \[ 
-\lambda_k(t) \exp( X_{ki}^T \beta)
+\lambda_{g(k,i)} (t) \exp( X_{ki}^T \beta)
 \] 
-where \( \lambda_k(t) \) is some cluster specific baseline. 
+where \( \lambda_g(t) \) is some cluster specific baseline. 
 
 The regression coefficient \( \beta \) can be estimated by using the 
 partial likelihood for clusters. 
