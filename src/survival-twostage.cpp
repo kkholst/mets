@@ -2656,10 +2656,7 @@ mat rvdes=mat(rvdesvec.begin(),arrayDims2[0],arrayDims2[1]*arrayDD[2],false);
   mat thetiid(antiid,pt); 
   colvec loglikeiid(antclust); 
   colvec trunclikeiid(antclust); 
-  if (iid==1) { thetiid.fill(0); 
-	        loglikeiid.fill(0); 
-	        trunclikeiid.fill(0); 
-  }
+  if (iid==1) { thetiid.fill(0); loglikeiid.fill(0); trunclikeiid.fill(0); }
   colvec p11tvec(antclust); 
   colvec Utheta(pt); 
   colvec vthetascore(pt); 

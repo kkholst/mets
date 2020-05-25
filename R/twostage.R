@@ -870,6 +870,93 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 } ## }}}
 
 ##' @export
+randomDesNew <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,pairs.rvs,var.link,clusterindex)
+{# {{{
+   additive.gamma.sum <- ags
+
+   if (!is.null(random.design)) { ### different parameters for Additive random effects # {{{
+     dep.model <- 3
+     dim.rv <- ncol(random.design); 
+     if (is.null(theta.des)) theta.des<-diag(dim.rv);
+  } else { 
+      random.design <- matrix(0,1,1);  dim.rv <- 1; 
+      additive.gamma.sum <- matrix(1,1,1); 
+  }
+
+  if (is.null(theta.des)) ptheta<-1; 
+  if (is.null(theta.des)) theta.des<-matrix(1,antpers,ptheta); ###  else theta.des<-as.matrix(theta.des); 
+
+
+  if (length(dim(theta.des))==3) ptheta<-dim(theta.des)[2] else if (length(dim(theta.des))==2) ptheta<-ncol(theta.des)
+
+  if (length(dim(theta.des))!=3) theta.des <- as.matrix(theta.des)
+
+  if (is.null(theta)==TRUE) {
+         if (var.link==1) theta<- rep(-0.7,ptheta);  
+         if (var.link==0) theta<- rep(exp(-0.7),ptheta);   
+  }       
+
+  if (length(theta)!=ptheta) {
+         theta<-rep(theta[1],ptheta); 
+  }
+  theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta); 
+  antpairs <- 1; ### to define 
+
+  if (is.null(additive.gamma.sum)) additive.gamma.sum <- matrix(1,dim.rv,ptheta)
+  if (!is.null(pairs)) { pair.structure <- 1;} else  pair.structure <- 0;  
+
+  if (pair.structure==1 & dep.model==3) { ## {{{ 
+### something with dimensions of rv.des 
+       antpairs <- nrow(pairs); 
+       if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))==3) )
+       {
+          Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
+          for (i in 1:antpairs) Ptheta.des[,,i] <- theta.des
+       theta.des <- Ptheta.des
+       }
+       if ( (length(dim(theta.des))==3)  & (length(dim(random.design))!=3) )
+       {
+           rv.des <- array(0,c(2,ncol(random.design),antpairs))
+           for (i in 1:antpairs) {
+		   rv.des[1,,i] <- random.design[pairs[i,1],]
+		   rv.des[2,,i] <- random.design[pairs[i,2],]
+	   }
+       random.design <- rv.des
+       }
+       if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))!=3) )
+       {
+          Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
+          rv.des <- array(0,c(2,ncol(random.design),antpairs))
+          for (i in 1:antpairs) {
+		   rv.des[1,,i] <- random.design[pairs[i,1],]
+		   rv.des[2,,i] <- random.design[pairs[i,2],]
+                   Ptheta.des[,,i] <- theta.des
+	   }
+       theta.des <- Ptheta.des
+       random.design <- rv.des
+       }
+       if (max(pairs)>antpers) stop("Indices of pairs should refer to given data \n"); 
+       if (is.null(pairs.rvs)) pairs.rvs <- rep(dim(random.design)[2],antpairs)
+       clusterindex <- pairs-1; 
+  } ## }}} 
+
+  if (pair.structure==1 & dep.model!=3) {
+       clusterindex <- pairs-1; 
+       antpairs <- nrow(pairs); 
+       pairs.rvs <- 1
+  }# }}}
+  if (is.null(pairs.rvs)) pairs.rvs <- 1
+
+  return(list(random.design=random.design,clusterindex=clusterindex,
+	 antpairs=antpairs,pair.structure=pair.structure,
+	 dep.model=dep.model,dim.rv=dim.rv,
+	 additive.gamma.sum=additive.gamma.sum,
+	 pairs.rvs=pairs.rvs,theta=theta,ptheta=ptheta,theta.des=theta.des)) 
+
+}# }}}
+
+
+##' @export
 randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,pairs.rvs,var.link,clusterindex)
 {# {{{
    additive.gamma.sum <- ags
@@ -2202,12 +2289,10 @@ if (all) return(val);
 with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
 }# }}}
 
-
   opt <- NULL
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
           opt <- lava::NR(theta,obj,...)
-###          opt <- lava::NR(theta,obj)
           opt$estimate <- opt$par
       } else {
           opt <- nlm(obj,theta,...)
@@ -2250,15 +2335,10 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
    } 
    Gt <- c(RR *Ft * xx$sign * weightsid)
    Ft  <- c( Ft * H * weightsid )
-###  oi <- order(id)
-###print(round(cbind(id,Ft,thetav,H,R[id],Hs[id],statusxx,Ni.tau[id],xx$X)[oi,],4))
-###print(round(cbind(id,Ft,xx$X,Ft*xx$X)[oi,],4))
 
-###   pit <- revcumsumstrata(Ft* RR* theta.des,xx$strata,xx$nstrata)
   Gbase <- apply(Gt* theta.des,2,revcumsumstrata,xx$strata,xx$nstrata)
   Fbeta <-  t(theta.des) %*% ( xx$X * Ft )
 
-###  print(c(Gbase)); print(Fbeta)
 
   ### beta part 
   if (fixbeta==0) {

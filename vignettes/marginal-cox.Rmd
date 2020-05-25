@@ -1,0 +1,204 @@
+---
+title: "Marginal modelling of clustered survival data"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Marginal modelling of clustered survival data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Overview 
+========
+
+A basic component for our modelling of multivariate survival data is that many models are 
+build around marginals that on Cox form. The marginal Cox model can be fitted efficiently
+in the mets package. 
+
+The basic models assumes that each subject has a marginal on Cox-form
+\[ 
+\lambda_{g(k,i)}(t) \exp( X_{ki}^T \beta).
+\] 
+where \( g(k,i) \) gives the strata for the subject. 
+
+We here discuss and show how to get 
+  - robust standard errors of  
+    - the regression parameters
+    - the baseline 
+and how to do goodness of fit test using 
+  - cumulative residuals score test 
+
+First we generate some data from the Clayton-Oakes model, with \( 5 \) members
+in each cluster and a variance parameter at \( 2 \) 
+
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(1000) # to control output in simulatins for p-values below.
+ n <- 1000
+ k <- 5
+ theta <- 2
+ data <- simClaytonOakes(n,k,theta,0.3,3)
+```
+
+
+The data is on has one subject per row.
+
+* =time= : time of event 
+* =status= : 1 for event and 0 for censoring 
+* =x= : x is a binary covariate 
+* =cluster= : cluster 
+
+
+Now we fit the model and produce robust standard errors for both 
+regression parameters and baseline.
+
+First, recall that the baseline for strata $g$ is asymptotically equivalent to
+\begin{align}
+\hat A_g(t) - A_g(t)  & = \sum_k \sum_i \int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k 
+\end{align}
+with $P^g(t) = \int_0^t E_g(s) d \hat \Lambda_g(s)$ the derivative of $\int_0^t 1/S_{0,g}(s) dN_{\cdot g}$
+wrt to $\beta$, and 
+\begin{align}
+\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g ) =  I(\tau)^{-1} \sum_k \beta_{k} 
+\end{align}
+with 
+\begin{align}
+ M_{ki}^g(t) &  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t), \\
+ \beta_{k} & =  \sum_i \int_0^\tau (Z_{ik} - E_{g}) dM_{ik}^g 
+\end{align}
+the basic 0-mean processes, that are martingales in the iid setting,
+and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
+with respect to $\beta$ evaluated at time $t$. 
+       
+The variance of the baseline of strata g  is estimated by 
+\begin{align}
+\sum_{k} ( \sum_i \int_0^t \frac{1}{S_{0,g(k,i)}} d\hat M_{ki}^g - P^g(t) \beta_k )^2
+\end{align}
+that can be computed using the particular structure of 
+\begin{align}
+d \hat M_{ik}^g(t) & =  dN_{ik}(t) -  \frac{1}{S_{0,g(i,k)}} \exp(Z_{ik} \beta) dN_{g.}(t) 
+\end{align}
+
+This robust variance of the baseline and the iid decomposition for $\beta$ is
+computed in mets as: 
+```{r}
+   out <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
+   summary(out)
+   # robust standard errors attached to output
+   rob <- robust.phreg(out)
+```
+
+We can get the iid decomposition of the $\hat \beta - \beta$ by 
+
+```{r}
+   # making iid decomposition of regression parameters
+   betaiid <- iid(out)
+   head(betaiid)
+   # robust standard errors
+   crossprod(betaiid)^.5
+   # same as 
+```
+
+We now look at the plot  with robust standard errors 
+
+
+```{r}
+  bplot(rob,se=TRUE,robust=TRUE,col=3)
+```
+
+We can also make survival prediction with robust standard errors using the phreg.
+
+```{r}
+  pp <-  predict(out,data[1:20,],se=TRUE,robust=TRUE)
+  plot(pp,se=TRUE,whichx=1:10)
+```
+
+
+Finally, just to check that we can recover the model we also estimate the dependence parameter 
+
+```{r}
+tt <- twostageMLE(out,data=data)
+summary(tt)
+```
+
+Goodness of fit 
+===============
+
+The observed score process is given by 
+\begin{align}
+U(t,\hat \beta) & = \sum_k \sum_i \int_0^t (Z_{ki} - \hat E_g ) d \hat M_{ki}^g 
+\end{align}
+where $g$ is strata $g(k,i)$. The observed score has the iid decomposition 
+\begin{align}
+\hat U(t) = \sum_k \sum_i  \int_0^t (Z_{ki} - E_g) dM_{ki}^g  - 
+	I(t)  \sum_k \beta_k 
+\end{align}
+where $\beta_k$ is the iid decomposition of the score process for the true $\beta$
+\begin{align}
+\beta_k  & =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_g ) d  M_{ki}^g 
+\end{align}
+and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
+with respect to $\beta$ evaluated at time $t$. 
+
+This observed score can be resampled given it is on iid form in terms of 
+clusters. 
+
+Now using the cumulative score process for checking proportional 
+hazards 
+```{r}
+gout <- gof(out)
+gout
+```
+
+The p-value reflects wheter the observed score process is consistent with
+the model. 
+
+```{r}
+  plot(gout)
+```
+
+Cluster stratified Cox models
+==============================
+
+For  clustered data it is possible to estimate the regression coefficient
+within clusters by using Cox's partial likelihood stratified on clusters.
+
+Note, here that the data is generated with a different subject specific structure, 
+so we will not recover the \( \beta \) at 0.3 and the model will not be
+a proportional Cox model, we we would also expect to reject "proportionality" with
+the gof-test. 
+
+The model can be thought of as 
+\[ 
+\lambda_k(t) \exp( X_{ki}^T \beta)
+\] 
+where \( \lambda_k(t) \) is some cluster specific baseline. 
+
+The regression coefficient \( \beta \) can be estimated by using the 
+partial likelihood for clusters. 
+
+```{r}
+ out <- phreg(Surv(time,status)~x+strata(cluster),data=data)
+ summary(out)
+```
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```

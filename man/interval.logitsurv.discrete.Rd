@@ -63,7 +63,7 @@ When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an o
 
 Likelihood is maximized:
 \deqn{
- \prod  P(T_i >t_{il} | x) - P(T_I> t_{ir}| x) 
+ \prod  P(T_i >t_{il} | x) - P(T_i> t_{ir}| x) 
 }
 }
 \examples{

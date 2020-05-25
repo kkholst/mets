@@ -19,6 +19,7 @@
 \alias{robust.basehaz.phreg}
 \alias{matdoubleindex}
 \alias{mdi}
+\alias{cumsum2strata}
 \title{Predictions from proportional hazards model}
 \usage{
 \method{predict}{phreg}(

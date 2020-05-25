@@ -915,7 +915,7 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
 
 ##' @export
 summary.phreg <- function(object,type=c("robust","martingale"),...) {
-  cc <- ncluster <- V <- NULL
+  expC <- cc <- ncluster <- V <- NULL
 
   if (!is.null(object$propodds)) { 
        cat("Proportional odds model, log-OR regression \n"); 
@@ -935,6 +935,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
     if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
     rownames(cc) <- names(coef(object))
+    expC <- lava::estimate(object,f=function(p) exp(p),null=1)$coefmat
   } 
   Strata <- levels(object$strata)
   if (!is.null(Strata)) {
@@ -942,7 +943,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
   } else {
     n <- length(object$time)    
   }  
-  res <- list(coef=cc,n=n,nevent=object$nevent,strata=Strata,ncluster=ncluster,var=V)
+  res <- list(coef=cc,n=n,nevent=object$nevent,strata=Strata,ncluster=ncluster,var=V,exp.coef=expC)
   class(res) <- "summary.phreg"
   res
 }
@@ -965,8 +966,11 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
   print(nn,quote=FALSE)  
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
   if (!is.null(x$coef)) {
-    cat("\n")
+    cat("log-coeffients:\n")
     printCoefmat(x$coef,...)
+    cat("\n")
+    cat("exp(coeffients):\n")
+    printCoefmat(x$exp.coef,...)
   }
   cat("\n")
 }
@@ -1489,7 +1493,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @param conf.int significance level
 ##' @param km to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.
 ##' @param ... Additional arguments to plot functions
-##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi
+##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi cumsum2strata 
 ##' @export
 predict.phreg <- function(object,newdata,
  times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...) 
