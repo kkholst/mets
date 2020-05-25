@@ -33,12 +33,15 @@ The basic models assumes that each subject has a marginal on Cox-form
 \] 
 where \( g(k,i) \) gives the strata for the subject. 
 
-We here discuss and show how to get 
- * robust standard errors of  
-   * the regression parameters
-   * the baseline 
+We here discuss and show how to get robust standard errors of  
+
+* the regression parameters
+
+* the baseline 
+
 and how to do goodness of fit test using 
- * cumulative residuals score test 
+
+* cumulative residuals score test 
 
 First we generate some data from the Clayton-Oakes model, with \( 5 \) members
 in each cluster and a variance parameter at \( 2 \) 
@@ -72,12 +75,12 @@ First, recall that the baseline for strata $g$ is asymptotically equivalent to
 with $P^g(t) = \int_0^t E_g(s) d \hat \Lambda_g(s)$ the derivative of $\int_0^t 1/S_{0,g}(s) dN_{\cdot g}$
 wrt to $\beta$, and 
 \begin{align}
-\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g ) =  I(\tau)^{-1} \sum_k \beta_{k} 
+\hat \beta  - \beta  & = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g ) =  \sum_k \beta_{k} 
 \end{align}
 with 
 \begin{align}
  M_{ki}^g(t) &  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t), \\
- \beta_{k} & =  \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g 
+ \beta_{k} & =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g 
 \end{align}
 the basic 0-mean processes, that are martingales in the iid setting,
 and $I(t)$ is the derivative of the total score, $\hat U(t,\beta))$, 
@@ -182,7 +185,7 @@ where $g_{ki}$ are i.i.d. standard normals.
 
 
 Based on the zero mean processes we more generally with clusters can 
-resample the score process 
+resample the score process.
 For resampling of score process we need
 \begin{align}
 U(t,\beta) & = \sum_k \sum_i g_k \int_0^t (Z_{ki} - E_g ) dM_{ki}^g 
