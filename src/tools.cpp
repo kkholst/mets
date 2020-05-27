@@ -331,5 +331,5 @@ mat Inv(const mat &X, double &logdet, double itol) {
   mat res = inv(X);
   double sign;
   log_det(logdet, sign, X);
-  return(X);
+  return(res);
 }
