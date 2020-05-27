@@ -35,7 +35,7 @@ survival.twostage(
   numDeriv = 0,
   random.design = NULL,
   pairs = NULL,
-  pairs.rvs = NULL,
+  dim.theta = NULL,
   numDeriv.method = "simple",
   additive.gamma.sum = NULL,
   var.par = 1,
@@ -95,9 +95,6 @@ a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below}
 \item{pairs}{matrix with rows of indeces (two-columns) for the pairs considered in the pairwise
 composite score, useful for case-control sampling when marginal is known.}
 
-\item{pairs.rvs}{for additive gamma model and random.design and theta.des are given as arrays,
-this specifice number of random effects for each pair.}
-
 \item{numDeriv.method}{uses simple to speed up things and second derivative not so important.}
 
 \item{additive.gamma.sum}{for two.stage=0, this is specification of the lamtot in the models via
@@ -120,6 +117,9 @@ or time of control proband.}
 
 \item{shut.up}{to make the program more silent in the context of iterative procedures for case-control
 and ascertained sampling}
+
+\item{pairs.rvs}{for additive gamma model and random.design and theta.des are given as arrays,
+this specifice number of random effects for each pair.}
 }
 \description{
 Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data 

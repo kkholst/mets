@@ -77,14 +77,14 @@
 ##' @examples
 ##' library("timereg")
 ##' data("twinstut",package="mets")
-##' twinstut0 <- subset(twinstut, tvparnr<2300000)
+##' twinstut0 <- subset(twinstut, tvparnr<11000)
 ##' twinstut <- twinstut0
 ##' twinstut$binstut <- (twinstut$stutter=="yes")*1
 ##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 ##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 ##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 ##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-##' 	                 score.method="fisher.scoring")
+##' 	                 method="nr")
 ##' summary(bin)
 ##' 
 ##' twinstut$cage <- scale(twinstut$age)
@@ -144,7 +144,7 @@
 ##' margbin <- glm(ybin~x,data=data,family=binomial())
 ##' 
 ##' bintwin <- binomial.twostage(margbin,data=data,
-##'      clusters=data$cluster,detail=1,var.par=1,
+##'      clusters=data$cluster,var.par=1,
 ##'      theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 ##' summary(bintwin)
 ##' concordanceTwinACE(bintwin)
@@ -155,7 +155,7 @@
 ##' @export
 ##' @param margbin Marginal binomial model 
 ##' @param data data frame
-##' @param score.method Scoring method default is "fisher.scoring" among "fisher.scoring","nlminb","optimize","nlm"
+##' @param method Scoring method default is fisher.scoring: "nr"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -180,18 +180,17 @@
 ##' @param numDeriv uses Fisher scoring aprox of second derivative if 0, otherwise numerical derivatives 
 ##' @param random.design random effect design for additive gamma model, when pairs are given this is a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below
 ##' @param pairs matrix with rows of indeces (two-columns) for the pairs considered in the pairwise composite score, useful for case-control sampling when marginal is known.
-##' @param pairs.rvs for additive gamma model and random.design and theta.des are given as arrays, this specifice number of random effects for each pair. 
 ##' @param additive.gamma.sum this is specification of the lamtot in the models via a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number of theta parameters), when null then sums all parameters. Default is a matrix of 1's 
 ##' @param pair.ascertained if pairs are sampled only when there are events in the pair i.e. Y1+Y2>=1. 
 ##' @param case.control if data is case control data for pair call, and here 2nd column of pairs are probands (cases or controls)
 ##' @param twostage default twostage=1, to fit MLE use twostage=0
 ##' @param beta is starting value for beta for MLE version
 binomial.twostage <- function(margbin,data=sys.parent(),
-     score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,silent=1,weights=NULL,
+     method="nr",Nit=60,detail=0,clusters=NULL,silent=1,weights=NULL,
      control=list(),theta=NULL,theta.des=NULL,var.link=0,var.par=1,var.func=NULL,
      iid=1,step=1.0,notaylor=1,model="plackett",marginal.p=NULL,beta.iid=NULL,Dbeta.iid=NULL,
      strata=NULL,max.clust=NULL,se.clusters=NULL,numDeriv=0,
-     random.design=NULL,pairs=NULL,pairs.rvs=NULL,additive.gamma.sum=NULL,
+     random.design=NULL,pairs=NULL,dim.theta=NULL,additive.gamma.sum=NULL,
      pair.ascertained=0,case.control=0,
      twostage=1,beta=NULL) 
 { ## {{{
@@ -209,6 +208,7 @@ binomial.twostage <- function(margbin,data=sys.parent(),
 ###     cause <- margbin$y
 ###     print(all.vars(margbin$formula)[1])
         cause <- data[,all.vars(margbin$formula)[1]]
+
 	if (!is.numeric(cause)) stop(paste("response in data",margbin$formula)[1],"not numeric\n"); 
 	if (is.null(beta.iid))   beta.iid <- iid(margbin,id=clusters)
 	if (is.null(Dbeta.iid)) Dbeta.iid <- model.matrix(margbin$formula,data=data) * ps
@@ -271,114 +271,14 @@ binomial.twostage <- function(margbin,data=sys.parent(),
     ## }}}
   dimbeta <- length(beta); 
 
-###
-###   if (!is.null(random.design)) { ### different parameters for Additive random effects # {{{
-###     dep.model <- 3
-######     if (is.null(random.design)) random.design <- matrix(1,antpers,1); 
-###     dim.rv <- ncol(random.design); 
-###     if (is.null(theta.des)) theta.des<-diag(dim.rv);
-######     ptheta <- dimpar <- ncol(theta.des); 
-### 
-######   if (dim(theta.des)[2]!=ncol(random.design)) 
-######   stop("nrow(theta.des)!= ncol(random.design),\nspecifies restrictions on paramters, if theta.des not given =diag (free)\n"); 
-### } else { random.design <- matrix(0,1,1);  dim.rv <- 1; }
-###
-###    if (is.null(theta.des)==TRUE) ptheta<-1; 
-###    if (is.null(theta.des)==TRUE) theta.des<-matrix(1,antpers,ptheta) ###    else theta.des<-as.matrix(theta.des); 
-######    ptheta<-ncol(theta.des); 
-######    if (nrow(theta.des)!=antpers) stop("Theta design does not have correct dim");
-###
-###  if (!is.null(pairs)) { pair.structure <- 1; } else  pair.structure <- 0;  
-###  if (length(dim(theta.des))==3) ptheta<-dim(theta.des)[2] else if (length(dim(theta.des))==2) ptheta<-ncol(theta.des)
-###  if  (nrow(theta.des)!=antpers & dep.model!=3 & pair.structure==0 ) stop("Theta design does not have correct dim");
-###  if  (nrow(theta.des)!=nn      & dep.model!=3 & pair.structure==1 ) stop("Theta design does not have correct dim");
-###
-###   if (length(dim(theta.des))!=3) theta.des <- as.matrix(theta.des)
-######   theta.des <- as.matrix(theta.des)
-###
-###    dimbeta <- length(beta); 
-###    if (is.null(theta)==TRUE) {
-###        if (var.link==1) theta<- rep(-0.7,ptheta);  
-###        if (var.link==0) theta<- rep(exp(-0.7),ptheta);   
-###    }       
-###    if (length(theta)!=ptheta) theta<-rep(theta[1],ptheta); 
-###    theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta); 
-###
-###    if (maxclust==1) stop("No clusters, maxclust size=1\n"); 
-###
-###    antpairs <- 1; ### to define 
-###    if (is.null(additive.gamma.sum)) additive.gamma.sum <- matrix(1,dim.rv,ptheta)
-###
-###
-###  if (pair.structure==1 & dep.model==3) { ## {{{ 
-###### something with dimensions of rv.des 
-###### theta.des
-###       antpairs <- nrow(pairs); 
-###       if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))==3) )
-###       {
-###          Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
-###          for (i in 1:antpairs) Ptheta.des[,,i] <- theta.des
-###       theta.des <- Ptheta.des
-###       }
-###       if ( (length(dim(theta.des))==3)  & (length(dim(random.design))!=3) )
-###       {
-###           rv.des <- array(0,c(2,ncol(random.design),antpairs))
-###           for (i in 1:antpairs) {
-###		   rv.des[1,,i] <- random.design[pairs[i,1],]
-###		   rv.des[2,,i] <- random.design[pairs[i,2],]
-###	   }
-###       random.design <- rv.des
-###       }
-###       if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))!=3) )
-###       {
-###          Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
-###          rv.des <- array(0,c(2,ncol(random.design),antpairs))
-###          for (i in 1:antpairs) {
-###		   rv.des[1,,i] <- random.design[pairs[i,1],]
-###		   rv.des[2,,i] <- random.design[pairs[i,2],]
-###                   Ptheta.des[,,i] <- theta.des
-###	   }
-###       theta.des <- Ptheta.des
-###       random.design <- rv.des
-###       }
-###
-###       if (max(pairs)>antpers) stop("Indices of pairs should refer to given data \n"); 
-###       if (is.null(pairs.rvs)) pairs.rvs <- rep(dim(random.design)[2],antpairs)
-######       if (max(pairs.rvs)> dim(random.design)[3] | max(pairs.rvs)>ncol(theta.des[1,,])) 
-######	       stop("random variables for each cluster higher than  possible, pair.rvs not consistent with random.design or theta.des\n"); 
-###       clusterindex <- pairs-1; 
-###  } ## }}} 
-###
-###    if (pair.structure==1 & dep.model!=3) {
-###        clusterindex <- pairs-1; 
-###        antpairs <- nrow(pairs); 
-###        pairs.rvs <- 1
-###     }
-###
-###    if (pair.structure==1) {
-###	    if (length(case.control)!=antpairs)         case.control <- rep(case.control[1],antpairs)
-###	    if (length(pair.ascertained)!=antpairs) pair.ascertained <- rep(pair.ascertained[1],antpairs)
-###	    if (any(case.control+pair.ascertained==2))  stop("Each pair is either case.control pair or pair.ascertained \n"); 
-###    }
-###
-###    if (is.null(Dbeta.iid)) Dbeta.iid <- matrix(0,length(cause),1); 
-###    ptrunc <- rep(1,antpers); 
-#### }}}
-###
-
   ### setting design for random variables, in particular with pairs are given
-  ddd <- randomDes(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,pairs.rvs,var.link,clusterindex)
-
-###  ddd <- randomDes2DIM(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,pairs.rvs,var.link,clusterindex)
-###  print(ddd)
+  ddd <- randomDes(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,var.link,clusterindex,dim.theta)
 
   random.design=ddd$random.design;clusterindex=ddd$clusterindex;
-  antpairs=ddd$antpairs; pairs.rvs=ddd$pairs.rvs;
+  antpairs=ddd$antpairs;  
   theta=ddd$theta;ptheta=ddd$ptheta;theta.des=ddd$theta.des
   pair.structure=ddd$pair.structure; dep.model=ddd$dep.model
   dim.rv <- ddd$dim.rv; additive.gamma.sum=ddd$additive.gamma.sum
-
-###  print(dep.model); print(theta); print(head(theta.des)); 
 
   if (dep.model==3) model <- "clayton.oakes"
 
@@ -399,22 +299,14 @@ if (pair.structure==1) {
       if (pair.structure==0 | dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par[seq(1,ptheta)]),nrow=ptheta,ncol=1);
       if (pair.structure==1 & dep.model==3) Xtheta <- matrix(0,antpers,1); ## not needed 
       if (pair.structure==1 & dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par[seq(1,ptheta)]),nrow=ptheta,ncol=1);
-      DXtheta <- matrix(0,1,1);
 
       if (twostage==0) epar <- par[seq(1,ptheta)] else epar <- par
       if (twostage==0) { ### update, marginal.p og score for logistic model
-###	     print(c(ptheta+1,ptheta+dimbeta))
 	    beta <- par[seq(ptheta+1,ptheta+dimbeta)]
 	    lp <- c(Xbeta %*%  beta)
-###	    print(summary(ps))
             psu <- exp(lp)/(1+exp(lp)) 
-###	    print(summary(psu))
             dpsu <- psu/(1+exp(lp)) 
-	    ### update predictions and DbetaP
-###	    print(beta); print(dim(Xbeta)); print(length(dpsu)); 
 	    Dbeta.iid <- Xbeta * dpsu
-###	    print(Dbeta.iid)
-###	    print(apply(Dbeta.iid,2,sum))
 	    ps <- psu
       } 
 
@@ -431,22 +323,18 @@ if (pair.structure==1) {
 
       if (pair.structure==0) 
             outl<-.Call("twostageloglikebin", ## {{{
-            icause=cause,ipmargsurv=ps, 
-            itheta=c(partheta),iXtheta=Xtheta,iDXtheta=DXtheta,idimDX=dim(DXtheta),ithetades=theta.des,
-            icluster=clusters,iclustsize=clustsize,iclusterindex=clusterindex,
-            ivarlink=var.link,iiid=iid,iweights=weights,isilent=silent,idepmodel=dep.model,
-            itrunkp=ptrunc,istrata=strata,iseclusters=se.clusters,iantiid=antiid, 
-            irvdes=random.design,iags=additive.gamma.sum,ibetaiid=Dbeta.iid,pa=pair.ascertained,twostage=twostage,
-            PACKAGE="mets")
+            icause=cause,ipmargsurv=ps, itheta=c(partheta), ithetades=theta.des, icluster=clusters,
+	    iclustsize=clustsize,iclusterindex=clusterindex, ivarlink=var.link,iiid=iid,iweights=weights,
+	    isilent=silent,idepmodel=dep.model, itrunkp=ptrunc,istrata=strata,iseclusters=se.clusters,
+	    iantiid=antiid, irvdes=random.design,iags=additive.gamma.sum,ibetaiid=Dbeta.iid,pa=pair.ascertained,
+	    twostage=twostage, PACKAGE="mets")
             ## }}}
       else outl<-.Call("twostageloglikebinpairs", ## {{{
-            icause=cause,ipmargsurv=ps, 
-            itheta=c(partheta),iXtheta=Xtheta,iDXtheta=DXtheta,idimDX=dim(DXtheta),ithetades=theta.des,
-            icluster=clusters,iclustsize=clustsize,iclusterindex=clusterindex,
-            ivarlink=var.link,iiid=iid,iweights=weights,isilent=silent,idepmodel=dep.model,
+            icause=cause,ipmargsurv=ps, itheta=c(partheta), ithetades=theta.des,
+            icluster=clusters,iclustsize=clustsize,iclusterindex=clusterindex, ivarlink=var.link,
+	    iiid=iid,iweights=weights,isilent=silent,idepmodel=dep.model,
             itrunkp=ptrunc,istrata=strata,iseclusters=se.clusters,iantiid=antiid, 
-            irvdes=random.design,
-            idimthetades=dim(theta.des),idimrvdes=dim(random.design),irvs=pairs.rvs,
+            irvdes=random.design, 
             iags=additive.gamma.sum,ibetaiid=Dbeta.iid,pa=pair.ascertained,twostage=twostage,
 	    icasecontrol=case.control,
             PACKAGE="mets")
@@ -487,26 +375,29 @@ if (pair.structure==1) {
 	       if (twostage==1) outl$DbetaDtheta <-  t(mm) %*% outl$DbetaDtheta
 	       outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
                if (iid==1) outl$theta.iid <- t(t(mm) %*% t(outl$theta.iid))
-
-        ###       print(crossprod(outl$theta.iid)); print(outl$Dscore)
-	###       print(c(outl$score))
-	###       print(apply(outl$theta.iid,2,sum))
 	    }# }}}
 
             attr(outl,"grad") <- attr(outl,"gradient") <-outl$score 
 	    attr(outl,"hessian") <- outl$Dscore
+###	    outl$hessian <- outl$Dscore
+###	    outl$gradient <- outl$score
+	    
             if (oout==0) ret <- c(-1*outl$loglike) else if (oout==1) ret <- sum(outl$score^2) else if (oout==3) ret <- outl$score else ret <- outl
-            return(ret)
+	    return(ret)
         } ## }}}
 
-    if (score.method=="optimize" && ptheta!=1) {cat("optimize only works for d==1, score.mehod set to nlminb \n"); score.method <- "nlminb";}
+    if (method=="optimize" && ptheta!=1) {
+	    cat("optimize only works for d==1, score.mehod set to nlminb \n"); 
+	    method <- "nlminb";
+    }
 
     theta.iid <- NULL
     logl <- NULL
     p <- theta
     if (twostage==0) p <- c(p,beta); 
     theta <- p
-    if (score.method=="fisher.scoring") { ## {{{
+
+    if (method=="nr") { ## {{{
         oout <- 2;  ### output control for obj
 
         if (Nit>0) 
@@ -572,7 +463,7 @@ if (pair.structure==1) {
         }## }}}
         if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- diag(nrow(hess))
         ## }}}
-    } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
+    } else if (method=="nlminb") { ## {{{ nlminb optimizer
         oout <- 0; 
         tryCatch(opt <- nlminb(theta,loglike,control=control),error=function(x) NA)
         if (detail==1) print(opt); 
@@ -592,7 +483,7 @@ if (pair.structure==1) {
         }
         hessi <- lava::Inverse(hess); 
         ## }}}
-    } else if (score.method=="optimize" && ptheta==1) { ## {{{  optimizer
+    } else if (method=="optimize" && ptheta==1) { ## {{{  optimizer
         oout <- 0; 
         if (var.link==1) {mino <- -20; maxo <- 10;} else {mino <- 0.001; maxo <- 100;}
         tryCatch(opt <- optimize(loglike,c(mino,maxo)));
@@ -614,7 +505,7 @@ if (pair.structure==1) {
         }
         hessi <- lava::Inverse(hess); 
         ## }}}
-    } else if (score.method=="nlm") { ## {{{ nlm optimizer
+    } else if (method=="nlm") { ## {{{ nlm optimizer
         iid <- 0; oout <- 0; 
         tryCatch(opt <- nlm(loglike,theta,hessian=TRUE,print.level=detail),error=function(x) NA)
         iid <- 1; 
@@ -631,8 +522,7 @@ if (pair.structure==1) {
         hess1 <- -1* out$Dscore
         if (iid==1) theta.iid <- out$theta.iid
         ## }}}
-    }  else stop("score.methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
-
+    }  else stop("methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
 
     ## {{{ handling output
     iid.tot <- NULL
@@ -661,9 +551,9 @@ if (pair.structure==1) {
    if (length(thetanames)==nrow(theta)) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
 
     ud <- list(theta=theta,score=score,hess=hess,hessi=hessi,var.theta=var.theta,model=model,robvar.theta=robvar.theta,
-               theta.iid=theta.iid,thetanames=thetanames,
-	       loglike=-logl,score1=score1,Dscore=out$Dscore,
-	       margsurv=ps,iid.tot=iid.tot,var.tot=var.tot,beta=beta); 
+    theta.iid=theta.iid,thetanames=thetanames,
+    loglike=-logl,score1=score1,Dscore=out$Dscore,
+    margsurv=ps,iid.tot=iid.tot,var.tot=var.tot,beta=beta); 
     class(ud)<-"mets.twostage" 
     attr(ud, "binomial") <- TRUE
     attr(ud, "ptheta") <- ptheta
@@ -682,18 +572,23 @@ if (pair.structure==1) {
     attr(ud,"pair.ascertained")<- pair.ascertained 
     ### to be consistent with structure for survival twostage model 
     attr(ud, "additive-gamma") <- (dep.model==3)*1
-    if (dep.model==3 & pair.structure==1) attr(ud, "likepairs") <- c(out$likepairs)
-    if (dep.model==3 & pair.structure==0) attr(ud, "pardes") <- theta.des
-    if (dep.model==3 & pair.structure==0) attr(ud, "theta.des") <- theta.des
-    if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    theta.des[,,1]
-    if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[,,1]
-    if (dep.model==3 & pair.structure==0) attr(ud, "rv1") <-    random.design[1,,drop=FALSE]
-    if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <-    random.design[,,1]
+    attr(ud, "likepairs") <- c(out$likepairs)
+    if (dep.model==3 & pair.structure==0) {
+       attr(ud, "pardes") <- theta.des
+       attr(ud, "theta.des") <- theta.des
+       attr(ud, "rv1") <-    random.design[1,]
+    }
+    if (dep.model==3 & pair.structure==1) {
+       nrv <- clusterindex[1,6]
+       attr(ud, "theta.des") <- matrix(theta.des[1,1:(nrv*ptheta)],nrv,ptheta)
+       attr(ud, "pardes") <-    matrix(theta.des[1,1:(nrv*ptheta)],nrv,ptheta)
+       attr(ud, "rv1") <-    random.design[1,]
+       attr(ud, "nrv") <- clusterindex[1,6]
+    }
  
     attr(ud, "response") <- "binomial"
     return(ud);
     ## }}}
-
 } ## }}}
 
 ##' @export
@@ -906,7 +801,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 ##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 ##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-##' 	                 score.method="fisher.scoring")
+##' 	                 method="fisher.scoring")
 ##' summary(bin)
 ##' lava::estimate(coef=bin$theta,vcov=bin$var.theta,f=function(p) exp(p))
 ##' 
@@ -1027,7 +922,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##' @param data data frame
 ##' @param response name of response variable in data frame
 ##' @param id name of cluster variable in data frame
-##' @param score.method Scoring method
+##' @param method Scoring method
 ##' @param Nit Number of iterations
 ##' @param detail Detail for more output for iterations 
 ##' @param silent Debug information
@@ -1045,18 +940,19 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##' @param strata strata for fitting 
 ##' @param max.clust max clusters used for i.i.d. decompostion
 ##' @param se.clusters clusters for iid decomposition for roubst standard errors
-easy.binomial.twostage <- function(margbin=NULL,data=sys.parent(),score.method="fisher.scoring",
+easy.binomial.twostage <- function(margbin=NULL,data=sys.parent(),method="nr",
                                    response="response",id="id",
                                    Nit=60,detail=0, silent=1,weights=NULL,control=list(),
                                    theta=NULL,theta.formula=NULL,desnames=NULL,deshelp=0,var.link=1,iid=1,
                                    step=1.0,model="plackett",marginal.p=NULL,
 				   strata=NULL,max.clust=NULL,se.clusters=NULL)
 { ## {{{
-    if (class(margbin)[1]=="glm") ps <- predict(margbin,type="response") 
-    else if (class(margbin)=="formula") {
-        margbin <- glm(margbin,data=data,family=binomial())
-        ps <- predict(margbin,type="response")
-    }  else if (is.null(marginal.p)) stop("without marginal model, marginal p's must be given\n"); 
+   if (class(margbin)[1]=="glm") ps <- predict(margbin,type="response") 
+   else if (class(margbin)=="formula") {
+       margbin <- glm(margbin,data=data,family=binomial())
+       ps <- predict(margbin,type="response")
+   }  else if (is.null(marginal.p)) 
+	   stop("without marginal model, marginal p's must be given\n"); 
 
     if (!is.null(marginal.p)) ps <- marginal.p
 
@@ -1113,7 +1009,7 @@ easy.binomial.twostage <- function(margbin=NULL,data=sys.parent(),score.method="
     out <- binomial.twostage(data.fam[,response],data=data.fam,
                              clusters=data.fam$subfam,
                              theta.des=data.fam[,desnames],
-                             detail=detail, score.method=score.method, Nit=Nit,step=step,
+                             detail=detail, method=method, Nit=Nit,step=step,
                              iid=iid,theta=theta,var.link=var.link,model=model, 
                              max.clust=max.clust,
                              marginal.p=data.fam[,"ps"],se.clusters=data.fam[,id])
@@ -1361,7 +1257,7 @@ return(ud)
 
 ### pairwise POR model based on case-control data
 ##' @export
-CCbinomial.twostage <- function(margbin=NULL,data=sys.parent(),score.method="nlminb",
+CCbinomial.twostage <- function(margbin=NULL,data=sys.parent(),method="nlminb",
     response="response",id="id",num="num",case.num=0,
     Nit=60,detail=0, silent=1,weights=NULL, control=list(),
     theta=NULL,theta.formula=NULL,desnames=NULL,
@@ -1428,7 +1324,7 @@ CCbinomial.twostage <- function(margbin=NULL,data=sys.parent(),score.method="nlm
     out <- binomial.twostage(data.fam[,response],data=data.fam,
                              clusters=data.fam$subfam,
                              theta.des=data.fam[,desnames],
-                             detail=detail, score.method=score.method, Nit=Nit,step=step,
+                             detail=detail, method=method, Nit=Nit,step=step,
                              iid=iid,theta=theta, var.link=var.link,model=model, 
                              max.clust=max.clust,
                              marginal.p=data.fam[,"ps"], se.clusters=data.fam[,id])
