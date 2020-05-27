@@ -10,7 +10,7 @@ Useful in particular for family design data.}
 easy.binomial.twostage(
   margbin = NULL,
   data = sys.parent(),
-  score.method = "fisher.scoring",
+  method = "nr",
   response = "response",
   id = "id",
   Nit = 60,
@@ -37,7 +37,7 @@ easy.binomial.twostage(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method}
+\item{method}{Scoring method}
 
 \item{response}{name of response variable in data frame}
 
@@ -98,7 +98,7 @@ theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-	                 score.method="fisher.scoring")
+	                 method="fisher.scoring")
 summary(bin)
 lava::estimate(coef=bin$theta,vcov=bin$var.theta,f=function(p) exp(p))
 

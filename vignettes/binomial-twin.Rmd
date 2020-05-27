@@ -1,0 +1,471 @@
+---
+title: "Analysis of bivariate binomial data: Twin analysis"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Analysis of bivariate binomial data: Twin analysis} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Overview 
+==========
+
+When looking at bivariate binomial data with the aim of learning about the 
+dependence that is present, possibly after correcting for some covariates many
+models are available. 
+
+   *  Random-effects models logistic regression covered elsewhere (glmer in lme4).
+
+in the mets package you can fit the 
+
+   *  Pairwise odds ratio model
+
+   *  Bivariate Probit model 
+      + With random effects
+      + Special functionality for polygenic random effects modelling 
+        such as ACE, ADE ,AE and so forth.
+
+   *  Additive gamma random effects model 
+      + Special functionality for polygenic random effects modelling 
+        such as ACE, ADE ,AE and so forth.
+
+
+Typically it can be hard or impossible 
+to specify random effects models with special 
+structure among the parameters of the random effects. This is possible in
+our models. 
+
+To be concrete about the model structure assume that we have paired binomial 
+data \( Y_1, Y_2, X_1, X_2 \) where the responses are \( Y_1, Y_2 \) and we
+have covariates \( X_1, X_2 \).
+
+We start by giving a brief description of these different models.  First we
+for bivariate data one can specify the marginal probability using logistic 
+regression models 
+\[
+logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2.
+\]
+These model can be estimated under working independence 
+\cite{zeger-liang-86}.  
+
+
+A typical twin analysis will typically consist of  looking at both 
+
+   *  Pairwise odds ratio model
+
+   *  Bivariate Probit model 
+  
+The additive gamma can be used for the same as the bivariate probit model but 
+is more restrictive in terms of dependence structure, but is nevertheless 
+still valuable to have also as a check of results of the bivariate probit
+model. 
+
+
+Biprobit with random effects
+=============================
+
+For these model we assume that given random effects $Z$ and a covariate vector 
+\( V_{12} \)
+we have independent logistic regression models 
+\[
+probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
+\]
+where \( Z \) is a bivariate normal distribution with some covariance 
+\( \Sigma \). The general covariance structure 
+\( \Sigma \) makes the model very flexible. 
+
+We note that 
+
+ - Paramters \( \beta \) are subject specific
+ - The \( \Sigma \) will reflect dependence
+
+
+The more standard link function \( logit \) rather than the \( probit \) link
+is often used and implemented in for example 
+\cite{mm}.  The advantage is that one now gets an odds-ratio interpretation 
+of the subject specific effects, but one then needs  numerical integration to
+fit the model. 
+
+Pairwise odds ratio model 
+------------------------
+
+
+Now the pairwise odds ratio model the specifies that given \( X_1, X_2 \)
+the marginal models are 
+\[
+logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
+\]
+
+The primary object of interest are the odds ratio between \(Y_{1}\) and \(Y_{2}\)
+\[
+\gamma_{12} = \frac{ P(  Y_{ki} =1 , Y_{kj} =1) P(  Y_{ki} =0 , Y_{kj} =0) }{ 
+  P(  Y_{ki} =1 , Y_{kj} =0) P(  Y_{ki} =0 , Y_{kj} =1) }
+\]
+given \(X_{ki}\), \(X_{kj}\), and \(Z_{kji}\). 
+
+We model the odds ratio with the regression 
+\[
+\gamma_{12} = \exp( Z_{12}^T \lambda)
+\]
+Where \( Z_{12} \) are some covarites that may influence the odds-ratio 
+between between \(Y_{1}\) and \(Y_{2}\) and contains the marginal covariates,
+\cite{carey-1993,dale1986global,palmgren1989,molenberghs1994marginal}. 
+This odds-ratio is given covariates as well as marginal covariates. 
+The odds-ratio and marginals specify the joint bivariate distribution via
+the so-called Placckett-distribution. 
+
+One way of fitting this model is the ALR algoritm, the alternating 
+logistic regression ahd this has been described in several papers
+\cite{kuk2004permutation,kuk2007hybrid,qaqish2012orthogonalized}.
+We here simply estimate the parameters in a two stage-procedure
+
+ * Estimating the marginal parameters via GEE
+ * Using marginal estimates, estimate dependence parameters
+
+This gives efficient estimates of the dependence parameters because of
+orthogonality, but some efficiency may be gained for the marginal parameters 
+by using the full likelihood or iterative fitting such as for the ALR. 
+
+
+The pairwise odds-ratio model is very useful, but one do not have a random 
+effects model. 
+
+
+Additive gamma model 
+----------------------
+
+Again we operate under  marginal logistic regression models are 
+\[
+logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
+\]
+
+First with just one random effect \( Z \) we assume that  conditional
+on \( Z \) the responses are independent  and follow the model 
+\[
+logit(P(Y_i=1|X_i,Z)) = exp( -Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )  
+\]
+where \( \Psi \) is the laplace transform of \( Z \) where we assume that
+\( Z \) is gamma distributed with variance \( \lambda_{\bullet}^{-1} \) and mean 1. 
+In general \( \Psi(\lambda_1,\lambda_2) \) is the laplace transform of  a Gamma distributed random 
+effect with \( Z \) with mean \( \lambda_1/\lambda_2 \) and variance \( \lambda_1/\lambda_2^2  \).
+
+We fit this model by 
+
+ * Estimating the marginal parameters via GEE
+ * Using marginal estimates, estimate dependence parameters
+
+To deal with multiple random effects we consider random effects 
+\( Z_i  i=1,...,d \)   such that  \( Z_i \) is gamma distributed with 
+mean \( \lambda_j/\lambda_{\bullet} \) and variance \( 
+\lambda_j/\lambda_{\bullet}^2 \), where we define the scalar \( \lambda_{\bullet} \) below. 
+
+Now given a cluster-specific design vector \( V_{12} \) we assume that 
+\[
+V_{12}^T Z
+\]
+is gamma distributed with mean 1 and variance \( \lambda_{\bullet}^{-1} \) 
+such that critically the random effect variance is the same for all clusters.
+That is 
+\[
+ \lambda_{\bullet} = V_{12}^T (\lambda_1,...,\lambda_d)^T 
+\]
+We return to some specific models below, and show how to fit the ACE and AE 
+model using this set-up. 
+
+One last option in the model-specification is to specify how the 
+parameters \( \lambda_1,...,\lambda_d \) are related. We thus can specify a 
+matrix \( M \) of dimension \( p \times d \) such that 
+\[
+ (\lambda_1,...,\lambda_d)^T  = M \theta
+\]
+where \( \theta \) is d-dimensional.  If \( M \) is diagonal we have no 
+restrictions on parameters. 
+
+This parametrization is obtained with the var.par=0 option that thus estimates
+\( \theta \).
+
+The DEFAULT parametrization instead estimates the variances of the random effecs (var.par=1)
+via the parameters \( \nu \) 
+\[
+ M \nu = ( \lambda_1/\lambda_{\bullet}^2, ...,\lambda_d/\lambda_{\bullet}^2)^T
+\]
+
+
+The basic modelling assumption is now that given random effects 
+\(Z=(Z_1,...,Z_d)\) we have independent probabilites 
+\[
+logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )   i=1,2
+\]
+
+We fit this model by 
+
+ - Estimating the marginal parameters via GEE
+ - Using marginal estimates, estimate dependence parameters
+
+Even though the model not formaly in this formulation allows negative 
+correlation in practice the paramters can be negative and this reflects
+negative correlation. An advanatage is that no numerical integration is 
+needed. 
+
+
+The twin-stutter data
+------------------------
+
+We consider the twin-stutter where for pairs of twins that are 
+either dizygotic or monozygotic we have recorded whether the twins
+are stuttering \cite{twinstut-ref}
+
+We here consider MZ and same sex DZ twins. 
+
+Looking at the data 
+
+```{r}
+library(mets)
+data(twinstut)
+twinstut$binstut <- 1*(twinstut$stutter=="yes")
+twinsall <- twinstut
+twinstut <- subset(twinstut,zyg%in%c("mz","dz"))
+head(twinstut)
+```
+
+
+Pairwise odds ratio model 
+-------------------------
+
+We start by fitting an overall dependence OR for both MZ and DZ even though 
+the dependence is expected to be different across zygosity.
+
+The first step is to fit the marginal model adjusting for marginal covariates. 
+We here note that there is a rather strong gender effect in the risk of
+stuttering. 
+
+```{r}
+margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
+summary(margbin)
+```
+
+Now estimating the OR parameter. We see a strong dependence with an OR
+at around 8 that is clearly significant. 
+
+```{r}
+bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+                       clusters=twinstut$tvparnr,detail=0)
+summary(bina)
+```
+
+Now, and more interestingly, we consider an OR that depends on zygosity and
+note that MZ have a much larger OR than DZ twins. This type of trait is 
+somewhat complicated to interpret, but clearly, one option is that 
+that there is a genetic effect, alternatively there might be
+a stronger environmental effect for MZ twins. 
+
+
+```{r}
+# design for OR dependence 
+theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
+bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
+                          clusters=twinstut$tvparnr,theta.des=theta.des)
+summary(bin)
+```
+
+
+We now consider further regression modelling of the OR structure by
+considering possible interactions between sex and zygozsity.
+We see that MZ has a much higher dependence and that males have
+a much lower dependence. We tested for interaction in this model and 
+these were not significant. 
+     
+```{r}
+twinstut$cage <- scale(twinstut$age)
+theta.des <- model.matrix( ~-1+factor(zyg)+factor(sex),data=twinstut)
+bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+                          clusters=twinstut$tvparnr,theta.des=theta.des)
+summary(bina)
+```
+
+Alternative syntax 
+---------------------
+
+We now demonstrate how the models can fitted jointly and with anohter
+syntax, that ofcourse just fits the marginal model and subsequently fits
+the pairwise OR model. 
+
+First noticing as before that MZ twins have a much higher dependence. 
+     
+```{r}
+ # refers to zygosity of first subject in eash pair : zyg1
+ # could also use zyg2 (since zyg2=zyg1 within twinpair's)
+ out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
+                response="binstut",id="tvparnr",var.link=1,
+                theta.formula=~-1+factor(zyg1))
+summary(out)
+```
+
+
+Now considering all data and estimating separate effects for the OR
+for opposite sex DZ twins and same sex twins. 
+We here find that os twins are not markedly different from the same sex DZ 
+twins. 
+     
+```{r}
+ # refers to zygosity of first subject in eash pair : zyg1
+ # could also use zyg2 (since zyg2=zyg1 within twinpair's))
+ 
+ desfs<-function(x,num1="zyg1",num2="zyg2")
+         c(x[num1]=="dz",x[num1]=="mz",x[num1]=="os")*1
+     
+ margbinall <- glm(binstut~factor(sex)+age,data=twinsall,family=binomial())
+ out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
+       data=twinsall,response="binstut",id="tvparnr",var.link=1,
+       theta.formula=desfs,desnames=c("dz","mz","os"))
+ summary(out3)
+```
+
+Bivariate Probit model 
+------------------------
+
+```{r}
+library(mets)
+data(twinstut)
+twinstut <- subset(twinstut,zyg%in%c("mz","dz"))
+twinstut$binstut <- 1*(twinstut$stutter=="yes")
+head(twinstut)
+```
+
+First testing for same dependence in MZ and DZ  that we recommend doing by 
+comparing the correlations of MZ and DZ twins. Apart from regression 
+correction in the mean this is an un-structured model, and the useful
+concordance and casewise concordance estimates can be reported from this
+analysis. 
+
+```{r}
+b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="un")
+summary(b1)
+```
+
+
+Polygenic modelling 
+-------------------
+
+   We now turn attention to specific polygenic modelling where special random 
+   effects are used to specify ACE, AE, ADE models and so forth. This is very
+   easy with the bptwin function. The key parts of the output are the sizes of 
+   the genetic component A and the environmental component, and we can compare 
+   with the results of the unstructed model above. Also formally we can test 
+   if this submodel is acceptable by a likelihood ratio test. 
+
+
+```{r}
+b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ace")
+summary(b1)
+```
+
+
+```{r}
+b0 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ae")
+summary(b0)
+```
+
+Additive gamma random effects 
+-----------------------------
+
+Fitting first a model with different size random effects for MZ and DZ. We 
+note that as before in the OR and biprobit model the dependence is much
+stronger for MZ twins. We also test if these are the same by parametrizing the
+OR model with an intercept. This clearly shows a significant difference. 
+
+
+```{r}
+theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
+margbin <- glm(binstut~sex,data=twinstut,family=binomial())
+bintwin <- binomial.twostage(margbin,data=twinstut,model="gamma",
+     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
+     theta.des=theta.des)
+summary(bintwin)
+
+# test for same dependence in MZ and DZ 
+theta.des <- model.matrix( ~factor(zyg),data=twinstut)
+margbin <- glm(binstut~sex,data=twinstut,family=binomial())
+bintwin <- binomial.twostage(margbin,data=twinstut,model="gamma",
+     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
+     theta.des=theta.des)
+summary(bintwin)
+```
+
+Polygenic modelling 
+-----------------------
+
+   First setting up the random effects design for the random effects and 
+   the the relationship between variance parameters.
+   We see that the genetic random effect has size one for MZ and 0.5 for DZ subjects, 
+   that have shared and non-shared genetic components with variance 0.5 such that the total 
+   genetic variance is the same for all subjects. The shared environmental effect is the samme for 
+all. Thus two parameters with these bands. 
+
+```{r}
+out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")
+head(cbind(out$des.rv,twinstut$tvparnr),10)
+out$pardes
+```
+
+
+Now, fitting the ACE model, we see that the variance of the genetic, 
+component, is 1.5 and the environmental variance is -0.5. Thus suggesting that 
+the ACE model does not fit the data.  When the random design is given we 
+automatically use the gamma fralty model. 
+
+```{r}
+margbin <- glm(binstut~sex,data=twinstut,family=binomial())
+bintwin1 <- binomial.twostage(margbin,data=twinstut,
+     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
+     random.design=out$des.rv,theta.des=out$pardes)
+summary(bintwin1)
+```
+
+
+For this model we estimate the concordance and casewise concordance as well 
+as the marginal rates of stuttering for females. 
+
+```{r}
+concordanceTwinACE(bintwin1,type="ace")
+```
+
+
+The E component was not consistent with the fit of the data and we
+now consider instead the AE model. 
+
+
+```{r}
+out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ae")
+
+bintwin <- binomial.twostage(margbin,data=twinstut,
+     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
+     random.design=out$des.rv,theta.des=out$pardes)
+summary(bintwin)
+```
+
+Again, the concordance can be computed: 
+
+```{r}
+concordanceTwinACE(bintwin,type="ae")
+```
+
+
+SessionInfo
+============
+
+```{r}
+sessionInfo()
+```

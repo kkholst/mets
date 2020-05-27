@@ -11,7 +11,7 @@ based on all pairwise bivariate models.}
 binomial.twostage(
   margbin,
   data = sys.parent(),
-  score.method = "fisher.scoring",
+  method = "nr",
   Nit = 60,
   detail = 0,
   clusters = NULL,
@@ -36,7 +36,7 @@ binomial.twostage(
   numDeriv = 0,
   random.design = NULL,
   pairs = NULL,
-  pairs.rvs = NULL,
+  dim.theta = NULL,
   additive.gamma.sum = NULL,
   pair.ascertained = 0,
   case.control = 0,
@@ -49,7 +49,7 @@ binomial.twostage(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method default is "fisher.scoring" among "fisher.scoring","nlminb","optimize","nlm"}
+\item{method}{Scoring method default is fisher.scoring: "nr"}
 
 \item{Nit}{Number of iterations}
 
@@ -98,8 +98,6 @@ binomial.twostage(
 \item{random.design}{random effect design for additive gamma model, when pairs are given this is a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below}
 
 \item{pairs}{matrix with rows of indeces (two-columns) for the pairs considered in the pairwise composite score, useful for case-control sampling when marginal is known.}
-
-\item{pairs.rvs}{for additive gamma model and random.design and theta.des are given as arrays, this specifice number of random effects for each pair.}
 
 \item{additive.gamma.sum}{this is specification of the lamtot in the models via a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number of theta parameters), when null then sums all parameters. Default is a matrix of 1's}
 
@@ -183,14 +181,14 @@ here using theta.des to specify these low-dimension association. Default is a di
 \examples{
 library("timereg")
 data("twinstut",package="mets")
-twinstut0 <- subset(twinstut, tvparnr<2300000)
+twinstut0 <- subset(twinstut, tvparnr<11000)
 twinstut <- twinstut0
 twinstut$binstut <- (twinstut$stutter=="yes")*1
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-	                 score.method="fisher.scoring")
+	                 method="nr")
 summary(bin)
 
 twinstut$cage <- scale(twinstut$age)
@@ -250,7 +248,7 @@ head(out$des.rv)
 margbin <- glm(ybin~x,data=data,family=binomial())
 
 bintwin <- binomial.twostage(margbin,data=data,
-     clusters=data$cluster,detail=1,var.par=1,
+     clusters=data$cluster,var.par=1,
      theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 summary(bintwin)
 concordanceTwinACE(bintwin)
