@@ -213,7 +213,7 @@
 ##' @param theta.des design for dependence parameters, when pairs are given this is could be a
 ##' (pairs) x (numer of parameters)  x (max number random effects) matrix
 ##' @param var.link Link function for variance:  exp-link.
-##' @param iid Calculate i.i.d. decomposition
+##' @param baseline.iid to adjust for baseline estimation, using phreg function on same data.
 ##' @param step Step size
 ##' @param model model
 ##' @param marginal.trunc marginal left truncation probabilities
@@ -249,13 +249,14 @@
 survival.twostage <- function(margsurv,data=sys.parent(),
     score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
     silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
-    var.link=1,iid=1,step=0.5,model="clayton.oakes",
+    var.link=1,baseline.iid=1,step=0.5,model="clayton.oakes",
     marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
     se.clusters=NULL,numDeriv=0, random.design=NULL, pairs=NULL,dim.theta=NULL,
     numDeriv.method="simple",additive.gamma.sum=NULL,var.par=1,cr.models=NULL,
     case.control=0,ascertained=0,shut.up=0)
 {## {{{
 ## {{{ seting up design and variables
+iid <- 1
 two.stage <- 1; rate.sim <- 1; sym=1; var.func <- NULL
 if (model=="clayton.oakes" || model=="gamma") dep.model <- 1
 else if (model=="plackett" || model=="or") dep.model <- 2
@@ -625,7 +626,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		    rownames(theta.iid) <- unique(cluster.call) 
 		### lets iid for theta be just score to start, correction for marginal for phreg call
 
-                if (class(margsurv)=="phreg") {  ## {{{
+                if (class(margsurv)=="phreg" & baseline.iid==1) {  ## {{{ adjust for baseline when phreg is used 
 
                   if (is.null(margsurv$opt) | is.null(margsurv$coef)) fixbeta<- 1 else fixbeta <- 0
 		  xx <- margsurv$cox.prep
@@ -3939,7 +3940,6 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
       rv1      <- attr(object,"rv1"); 
       if (is.matrix(rv1)) rv1 <- rv1[1,]
       theta.des <- attr(object,"pardes"); 
-      print(theta.des)
       ags <- attr(object,"additive.gamma.sum"); 
       ptheta <- attr(object,"ptheta")
       npar <- nrow(object$theta)
@@ -4200,8 +4200,10 @@ alpha2kendall <- function(theta,link=0) {  ## {{{
 ##' @export piecewise.twostage
 piecewise.twostage <- function(cut1,cut2,data=sys.parent(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
             score.method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
-            control=list(),theta=NULL,theta.des=NULL,var.link=1,iid=1,step=0.5,model="plackett",data.return=0)
+            control=list(),theta=NULL,theta.des=NULL,var.link=1,
+	    step=0.5,model="plackett",data.return=0)
 { ## {{{
+iid <- 1
 ud <- list()
 if (missing(cut2)) cut2 <- cut1; 
 nc1 <- length(cut1); nc2 <- length(cut2)
@@ -4246,7 +4248,7 @@ for (i2 in 2:nc2)
 k <-(i1-2)*(nc2-1)+(i2-1)
 if (silent<=0) cat(paste("Data-set ",k,"out of ",(nc1-1)*(nc2-1)),"\n");
 datalr <- surv.boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
-			status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent) 
+status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent) 
 if (silent<=-1) print("back in piecewise.twostage"); 
 if (silent<=-1) print(summary(datalr)); 
 if (silent<=-1) print(head(datalr)); 
@@ -4263,8 +4265,9 @@ else f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1
 marg1 <- aalen(f,data=datalr,n.sim=0,robust=0)
 
 fitlr<-  survival.twostage(marg1,data=datalr,clusters=datalr$tsid,model=model,score.method=score.method,
-             Nit=Nit,detail=detail,silent=silent,weights=weights,
-             control=control,theta=theta,theta.des=theta.des,var.link=var.link,iid=iid,step=step)
+Nit=Nit,detail=detail,silent=silent,weights=weights,
+baseline.iid=0,control=control,theta=theta,theta.des=theta.des,
+var.link=var.link, step=step)
 ####
 coef <- coef(fitlr)
 theta.mat[i1-1,i2-1] <- fitlr$theta
