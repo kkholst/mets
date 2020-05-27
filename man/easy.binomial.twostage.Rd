@@ -98,7 +98,7 @@ theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-	                 method="fisher.scoring")
+	                 method="nr")
 summary(bin)
 lava::estimate(coef=bin$theta,vcov=bin$var.theta,f=function(p) exp(p))
 

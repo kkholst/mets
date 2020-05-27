@@ -124,7 +124,7 @@
 ##' ### without covariates but with stratafied 
 ##' marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
 ##' fitpa <- survival.twostage(marg,data=diabetes,theta=1.0,
-##'                 clusters=diabetes$id,score.method="optimize")
+##'                 clusters=diabetes$id,model="clayton.oakes")
 ##' summary(fitpa)
 ##' 
 ##' fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
@@ -162,8 +162,7 @@
 ##'                data=ud,n.sim=0,robust=0)
 ##' tdes <- model.matrix(~-1+factor(strata),data=ud)
 ##' fitp2 <- survival.twostage(marg2,data=ud,se.clusters=ud$cluster,clusters=ud$idstrata,
-##'                 score.method="fisher.scoring",model="clayton.oakes",
-##'                 theta.des=tdes,step=0.5)
+##'                 model="clayton.oakes",theta.des=tdes,step=0.5)
 ##' summary(fitp2)
 ##' 
 ##' ### now fitting the model with symmetry, i.e. strata 2 and 3 same effect
@@ -171,14 +170,12 @@
 ##' ud$stratas[ud$strata=="0.5-2,0-0.5"] <- "0-0.5,0.5-2"
 ##' tdes2 <- model.matrix(~-1+factor(stratas),data=ud)
 ##' fitp3 <- survival.twostage(marg2,data=ud,clusters=ud$idstrata,se.cluster=ud$cluster,
-##'                 score.method="fisher.scoring",model="clayton.oakes",
-##'                 theta.des=tdes2,step=0.5)
+##'                 model="clayton.oakes",theta.des=tdes2,step=0.5)
 ##' summary(fitp3)
 ##' 
 ##' ### same model using strata option, a bit slower 
 ##' fitp4 <- survival.twostage(marg2,data=ud,clusters=ud$cluster,se.cluster=ud$cluster,
-##'                 score.method="fisher.scoring",model="clayton.oakes",
-##'                 theta.des=tdes2,step=0.5,strata=ud$strata)
+##'                 model="clayton.oakes",theta.des=tdes2,step=0.5,strata=ud$strata)
 ##' summary(fitp4)
 ##' }
 ##' 
@@ -202,7 +199,7 @@
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model 
 ##' @param data data frame
-##' @param score.method Scoring method "fisher.scoring", "nlminb", "optimize", "nlm"
+##' @param score.method Scoring method "nr", "nlminb", "optimize", "nlm"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -210,8 +207,8 @@
 ##' @param weights Weights
 ##' @param control Optimization arguments
 ##' @param theta Starting values for variance components
-##' @param theta.des design for dependence parameters, when pairs are given this is could be a
-##' (pairs) x (numer of parameters)  x (max number random effects) matrix
+##' @param theta.des design for dependence parameters, when pairs are given the indeces of the 
+##' theta-design for this pair, is given in pairs as column 5 
 ##' @param var.link Link function for variance:  exp-link.
 ##' @param baseline.iid to adjust for baseline estimation, using phreg function on same data.
 ##' @param step Step size
@@ -222,12 +219,11 @@
 ##' @param strata strata for fitting, see example
 ##' @param se.clusters for clusters for se calculation with iid
 ##' @param numDeriv to get numDeriv version of second derivative, otherwise uses sum of squared score 
-##' @param random.design random effect design for additive gamma model, when pairs are given this is
-##' a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below
+##' @param random.design random effect design for additive gamma model, when pairs are given the 
+##' indeces of the pairs random.design rows are given as columns 3:4 
 ##' @param pairs matrix with rows of indeces (two-columns) for the pairs considered in the pairwise
 ##' composite score, useful for case-control sampling when marginal is known.
-##' @param pairs.rvs for additive gamma model and random.design and theta.des are given as arrays,
-##' this specifice number of random effects for each pair. 
+##' @param dim.theta dimension of the theta parameter for pairs situation.
 ##' @param numDeriv.method uses simple to speed up things and second derivative not so important.
 ##' @param additive.gamma.sum for two.stage=0, this is specification of the lamtot in the models via
 ##' a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number
@@ -244,10 +240,10 @@
 ##' or time of control proband.
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' and ascertained sampling
-##' @aliases survival.twostage survival.twostage.fullse twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv
+##' @aliases survival.twostage twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv
 ##' @export survival.twostage
 survival.twostage <- function(margsurv,data=sys.parent(),
-    score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
+    score.method="nr",Nit=60,detail=0,clusters=NULL,
     silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,step=0.5,model="clayton.oakes",
     marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -576,7 +572,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   logl <- NULL
   p <- theta
 
-    if (score.method=="fisher.scoring") { ## {{{
+    if (score.method=="nr") { ## {{{
         oout <- 2;  ### output control for obj
         if (Nit>0) 
             for (i in 1:Nit)
@@ -786,7 +782,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     hess1 <- out$Dscore
     if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
   ## }}}
-  }  else stop("score.methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
+  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n"); 
 
 ## {{{ handling output
   loglikeiid <- NULL
@@ -925,7 +921,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 
 
 ###survival.twostage <- function(margsurv,data=sys.parent(),
-###    score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
+###    score.method="nr",Nit=60,detail=0,clusters=NULL,
 ###    silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
 ###    var.link=1,iid=1,step=0.5,model="clayton.oakes",
 ###    marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -1257,7 +1253,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 ###  logl <- NULL
 ###  p <- theta
 ###
-###    if (score.method=="fisher.scoring") { ## {{{
+###    if (score.method=="nr") { ## {{{
 ###        oout <- 2;  ### output control for obj
 ###        if (Nit>0) 
 ###            for (i in 1:Nit)
@@ -1476,7 +1472,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 ###    hess1 <- out$Dscore
 ###    if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
 ###  ## }}}
-###  }  else stop("score.methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
+###  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n"); 
 ###
 ##### {{{ handling output
 ###  loglikeiid <- NULL
@@ -1659,7 +1655,7 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 
 } ## }}}
 
-###survival.twostageG <- function(margsurv,data=sys.parent(),score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
+###survival.twostageG <- function(margsurv,data=sys.parent(),score.method="nr",Nit=60,detail=0,clusters=NULL,
 ###             silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
 ###             var.link=1,iid=1,step=0.5,notaylor=0,model="clayton.oakes",
 ###             marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -2275,7 +2271,7 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ###  logl <- NULL
 ###  p <- theta
 ###
-###    if (score.method=="fisher.scoring") { ## {{{
+###    if (score.method=="nr") { ## {{{
 ###        oout <- 2;  ### output control for obj
 ###        if (Nit>0) 
 ###            for (i in 1:Nit)
@@ -2473,7 +2469,7 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ###    hess1 <- out$Dscore
 ###    if (iid==1) { theta.iid <- out$theta.iid; score.iid <- out$theta.iid }
 ###  ## }}}
-###  }  else stop("score.methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
+###  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n"); 
 ###
 ##### {{{ handling output
 ###  loglikeiid <- NULL
@@ -2834,7 +2830,7 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
 ##'
 ##' For all models the 
 ##' standard errors do not reflect this uncertainty of the baseline estimates, and might therefore be a bit to small.
-##' To remedy this one can do bootstrapping or use survival.twostage.fullse function when possible.
+##' To remedy this one can do bootstrapping.
 ##'
 ##' If clusters contain more than two times, we use a composite likelihood
 ##' based on the pairwise bivariate models. Can also fit a additive gamma random
@@ -2902,7 +2898,7 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model 
 ##' @param data data frame
-##' @param score.method Scoring method "fisher.scoring", "nlminb", "optimize", "nlm"
+##' @param score.method Scoring method "nr", "nlminb", "optimize", "nlm"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -2946,7 +2942,7 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' and ascertained sampling
 ##' @export
-survival.iterative <- function(margsurv,data=sys.parent(),score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
+survival.iterative <- function(margsurv,data=sys.parent(),score.method="nr",Nit=60,detail=0,clusters=NULL,
              silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
              var.link=1,iid=1,step=0.5,model="clayton.oakes",
              marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -3687,7 +3683,7 @@ if (!is.null(margsurv))  {
   logl <- NULL
   p <- theta
 
-    if (score.method=="fisher.scoring") { ## {{{
+    if (score.method=="nr") { ## {{{
         oout <- 2;  ### output control for obj
         if (Nit>0) 
             for (i in 1:Nit)
@@ -3831,7 +3827,7 @@ if (!is.null(margsurv))  {
     hess1 <- out$Dscore
     if (iid==1) theta.iid <- out$theta.iid
   ## }}}
-  }  else stop("score.methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
+  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n"); 
 
 ## {{{ handling output
   loglikeiid <- NULL
@@ -4437,9 +4433,9 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' marg <- coxph(Surv(time,status)~factor(num),data=dfam)
 ##' out3 <- easy.survival.twostage(marg,data=dfam,time="time",status="status",id="id",
 ##'              deshelp=0,
-##'              score.method="fisher.scoring",theta.formula=desfs,
+##'              score.method="nr",theta.formula=desfs,
 ##'              model="plackett",
-##'              desnames=c("parent-parent","parent-child","child-cild"),iid=1)
+##'              desnames=c("parent-parent","parent-child","child-cild"))
 ##' summary(out3)
 ##' 
 ##' @keywords survival twostage 
@@ -4461,7 +4457,6 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' @param desnames names for dependence parameters
 ##' @param deshelp if 1 then prints out some data sets that are used, on on which the design function operates
 ##' @param var.link Link function for variance (exp link)
-##' @param iid Calculate i.i.d. decomposition
 ##' @param step Step size for newton-raphson
 ##' @param model plackett or clayton-oakes model
 ##' @param marginal.surv vector of marginal survival probabilities 
@@ -4469,7 +4464,7 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' @param se.clusters clusters for iid decomposition for roubst standard errors
 easy.survival.twostage <- function(margsurv=NULL,data=sys.parent(),score.method="nlminb",
 status="status",time="time",entry=NULL,id="id", Nit=60,detail=0, silent=1,weights=NULL, control=list(),
-theta=NULL,theta.formula=NULL,desnames=NULL,deshelp=0,var.link=1,iid=1,
+theta=NULL,theta.formula=NULL,desnames=NULL,deshelp=0,var.link=1,
 step=0.5,model="plackett",marginal.surv=NULL,strata=NULL,se.clusters=NULL)
 { ## {{{
 ### marginal trunction probabilty, to be computed from model 
@@ -4550,12 +4545,10 @@ if (class(margsurv)[1]=="coxph")
                     clusters=data.fam$subfam,
 		    theta.des=as.matrix(data.fam[,desnames]),
                     detail=detail, score.method=score.method, Nit=Nit,step=step,
-                    iid=iid,theta=theta, var.link=var.link,model=model, 
+                    theta=theta, var.link=var.link,model=model, 
                     marginal.survival=data.fam[,"ps"],
                     marginal.status=data.fam[,status],
-		    marginal.trunc=ptrunc,
-		    se.clusters=data.fam[,id])
-
+		    marginal.trunc=ptrunc,baseline.iid=0,se.clusters=data.fam[,id]) 
    return(out)
 } ## }}}
 
@@ -4585,112 +4578,108 @@ object.defined <- function(object)
    exists(as.character(substitute(object)))
 }
 
-##' @export survival.twostage.fullse
-survival.twostage.fullse <- function(margsurv,data=sys.parent(),
-   score.method="fisher.scoring",Nit=60,detail=0,clusters=NULL,
-   silent=1,weights=NULL, control=list(),theta=NULL,
-   theta.des=NULL,var.link=1,iid=1,
-   step=0.5,model="clayton.oakes",
-   marginal.trunc=NULL, marginal.survival=NULL,
-   marginal.status=NULL,strata=NULL,
-   se.clusters=NULL,numDeriv=0,
-   random.design=NULL,fdetail=1,...)
-{ ## {{{ 
-  if (is.null(margsurv$gamma.iid)) stop("Call marginal model with resample.iid=1, only Cox model via cox.aalen \n"); 
-  beta.iid <- margsurv$gamma.iid
-  base.iid <- margsurv$B.iid
-
-  ### takes cluster grouping of marginal models for se
-  se.clusters <- attr(margsurv,"cluster")
-
-  udtwo <- survival.twostage(margsurv,data=data,
-  score.method=score.method,Nit=Nit,detail=detail,
-  clusters=clusters,
-  silent=silent,weights=weights,control=control,
-  theta=theta,theta.des=theta.des,
-  var.link=var.link,iid=iid,step=step,
-  model=model,marginal.trunc=marginal.trunc,
-  marginal.survival=marginal.survival,
-  marginal.status=marginal.status,strata=strata,
-  se.clusters=se.clusters,numDeriv=numDeriv,random.design=random.design,...)
-  par <- margsurv$gamma
-  theta <- udtwo$theta
+###survival.twostage.fullse <- function(margsurv,data=sys.parent(),
+###   score.method="nr",Nit=60,detail=0,clusters=NULL,
+###   silent=1,weights=NULL, control=list(),theta=NULL,
+###   theta.des=NULL,var.link=1,baseline.iid=1,
+###   step=0.5,model="clayton.oakes",
+###   marginal.trunc=NULL, marginal.survival=NULL,
+###   marginal.status=NULL,strata=NULL,
+###   se.clusters=NULL,numDeriv=0,
+###   random.design=NULL,fdetail=1,...)
+###{ ## {{{ 
+###  if (is.null(margsurv$gamma.iid)) stop("Call marginal model with resample.iid=1, only Cox model via cox.aalen \n"); 
+###  beta.iid <- margsurv$gamma.iid
+###  base.iid <- margsurv$B.iid
 ###
- 
- if (object.defined(margsurv$time.sim.resolution))
- {
- parbase <- Cpred(margsurv$cum,margsurv$time.sim.resolution) 
- margsurv$cum <- parbase
- parbase <- parbase[,2]
- } else parbase <- margsurv$cum[,2]
-
-twobeta  <- function(par,beta=1)
-{ ## {{{ 
-   if (beta==1) margsurv$gamma <- par else margsurv$cum[,2] <- par
-
-   udl <- survival.twostage(margsurv,data=data,
-                    score.method=score.method,Nit=0,detail=detail,clusters=clusters,
-		    silent=silent,weights=weights, control=control,theta=theta,theta.des=theta.des,
-		    var.link=var.link,iid=0,
-                    step=step,model=model,
-		    marginal.trunc=marginal.trunc,marginal.survival=marginal.survival,
-		    marginal.status=marginal.status,strata=strata,
-		    se.clusters=se.clusters,numDeriv=0,random.design=random.design,...)
-###  udl <- two.stage(margsurv,data=data,Nit=1,clusters=clusters,theta=theta) ###  udl$theta.score
-  udl$score
-} ## }}} 
-
-if (fdetail==1) cat("Ready for numDeriv wrt beta and baseline\n")
-DUbeta <-  numDeriv::jacobian(twobeta,par,beta=1) #,method="complex")
-DUbase <-  numDeriv::jacobian(twobeta,parbase,beta=0) #,method="complex")
-if (fdetail==1) cat("Finished numDeriv wrt beta and baseline\n")
-
-biid <- c()
-for (i in 1:length(base.iid)) biid <- cbind(biid,base.iid[[i]])
-					 
-IDUbeta <-  udtwo$hessi %*% DUbeta
-IDUbase <-  udtwo$hessi %*% DUbase
-betaiid <-t( IDUbeta %*% t(beta.iid))
-baseiid <- t( IDUbase %*% biid)
+###  ### takes cluster grouping of marginal models for se
+###  se.clusters <- attr(margsurv,"cluster")
 ###
-iidfull <- udtwo$theta.iid
-iidfull <- iidfull+betaiid+baseiid
-var2 <- t(iidfull) %*% iidfull
-se <- cbind(diag(var2)^.5); colnames(se) <- "se"
-
-se.naive=coef(udtwo)[,2,drop=FALSE]; 
-colnames(se.naive) <- "se.naive"
+###  udtwo <- survival.twostage(margsurv,data=data,
+###  score.method=score.method,Nit=Nit,detail=detail,
+###  clusters=clusters,
+###  silent=silent,weights=weights,control=control,
+###  theta=theta,theta.des=theta.des,
+###  var.link=var.link,baseline.iid=baseline.iid,step=step,
+###  model=model,marginal.trunc=marginal.trunc,
+###  marginal.survival=marginal.survival,
+###  marginal.status=marginal.status,strata=strata,
+###  se.clusters=se.clusters,numDeriv=numDeriv,random.design=random.design,...)
+###  par <- margsurv$gamma
+###  theta <- udtwo$theta
+######
+###baseline. 
+### if (object.defined(margsurv$time.sim.resolution))
+### {
+### parbase <- Cpred(margsurv$cum,margsurv$time.sim.resolution) 
+### margsurv$cum <- parbase
+### parbase <- parbase[,2]
+### } else parbase <- margsurv$cum[,2]
 ###
-res <- list(theta.iid=udtwo$theta.iid, iid=iidfull,coef=udtwo$theta,var=var2,se=se, se.naive=se.naive)
-attr(res,"DUbeta") <- DUbeta; 
-attr(res,"DUbase") <- DUbase; 
-attr(res,"DUthetainv") <- udtwo$hessi
-
-class(res) <- "survival.twostage.fullse"
-return(res)
-} ## }}} 
-
-##' @export
-summary.survival.twostage.fullse <- function(object,digits=3,...)
-{ ## {{{ 
-	tval <- object$coef/object$se
-	pval <- 2*(1-pnorm(abs(tval)))
-       	res <- cbind(object$coef,object$se,object$se.naive,pval)
-	colnames(res) <- c("coef","se","se.naive","pval")
-return(res)
-} ## }}} 
-
-##' @export
-coef.survival.twostage.fullse <- function(object,digits=3,...)
-{ ## {{{ 
-summary.survival.twostage.fullse(object)
-} ## }}} 
-
-##' @export
-print.survival.twostage.fullse  <-  function(x,...)
-{  ## {{{ 
-summary.survival.twostage.fullse(x)
-} ## }}} 
+###twobeta  <- function(par,beta=1)
+###{ ## {{{ 
+###   if (beta==1) margsurv$gamma <- par else margsurv$cum[,2] <- par
+###
+###   udl <- survival.twostage(margsurv,data=data,
+###                    score.method=score.method,Nit=0,detail=detail,clusters=clusters,
+###		    silent=silent,weights=weights, control=control,theta=theta,theta.des=theta.des,
+###		    var.link=var.link,iid=0,
+###                    step=step,model=model,
+###		    marginal.trunc=marginal.trunc,marginal.survival=marginal.survival,
+###		    marginal.status=marginal.status,strata=strata,
+###		    se.clusters=se.clusters,numDeriv=0,random.design=random.design,...)
+######  udl <- two.stage(margsurv,data=data,Nit=1,clusters=clusters,theta=theta) ###  udl$theta.score
+###  udl$score
+###} ## }}} 
+###
+###if (fdetail==1) cat("Ready for numDeriv wrt beta and baseline\n")
+###DUbeta <-  numDeriv::jacobian(twobeta,par,beta=1) #,method="complex")
+###DUbase <-  numDeriv::jacobian(twobeta,parbase,beta=0) #,method="complex")
+###if (fdetail==1) cat("Finished numDeriv wrt beta and baseline\n")
+###
+###biid <- c()
+###for (i in 1:length(base.iid)) biid <- cbind(biid,base.iid[[i]])
+###					 
+###IDUbeta <-  udtwo$hessi %*% DUbeta
+###IDUbase <-  udtwo$hessi %*% DUbase
+###betaiid <-t( IDUbeta %*% t(beta.iid))
+###baseiid <- t( IDUbase %*% biid)
+######
+###iidfull <- udtwo$theta.iid
+###iidfull <- iidfull+betaiid+baseiid
+###var2 <- t(iidfull) %*% iidfull
+###se <- cbind(diag(var2)^.5); colnames(se) <- "se"
+###
+###se.naive=coef(udtwo)[,2,drop=FALSE]; 
+###colnames(se.naive) <- "se.naive"
+######
+###res <- list(theta.iid=udtwo$theta.iid, iid=iidfull,coef=udtwo$theta,var=var2,se=se, se.naive=se.naive)
+###attr(res,"DUbeta") <- DUbeta; 
+###attr(res,"DUbase") <- DUbase; 
+###attr(res,"DUthetainv") <- udtwo$hessi
+###
+###class(res) <- "survival.twostage.fullse"
+###return(res)
+###} ## }}} 
+###
+###summary.survival.twostage.fullse <- function(object,digits=3,...)
+###{ ## {{{ 
+###	tval <- object$coef/object$se
+###	pval <- 2*(1-pnorm(abs(tval)))
+###       	res <- cbind(object$coef,object$se,object$se.naive,pval)
+###	colnames(res) <- c("coef","se","se.naive","pval")
+###return(res)
+###} ## }}} 
+###
+###coef.survival.twostage.fullse <- function(object,digits=3,...)
+###{ ## {{{ 
+###summary.survival.twostage.fullse(object)
+###} ## }}} 
+###
+###print.survival.twostage.fullse  <-  function(x,...)
+###{  ## {{{ 
+###summary.survival.twostage.fullse(x)
+###} ## }}} 
 
 ##' @export
 twin.polygen.design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { ## {{{
