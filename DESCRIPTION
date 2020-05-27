@@ -31,8 +31,8 @@ Suggests:
     prodlim,
     testthat (>= 0.11),
     ucminf,
-    R.rsp (>= 0.40)
-VignetteBuilder: R.rsp
+    knitr
+VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 SystemRequirements: C++11

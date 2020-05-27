@@ -3,7 +3,8 @@
 
 * Version 1.2.8      <2020->
   - Double Fine-Gray model for two causes.
-
+  - Likelihood evaluation of mvn uses Moore-Penrose pseudo-inverese (threshold set via lava.options(itol=...)
+  - Vignette updates
 
 * Version 1.2.7.1    <2020-03-03 Tue>
   - Maintenance release
@@ -11,33 +12,33 @@
 * Version 1.2.6    <2019-08-02 Fri>
   - Cumulative incidence regression cifreg function
     - Fine-Gray model with cloglog link of (1-F_1(t,x))
-    - Logit link 
-  - Prototype of wildbootstrap for Cox regression with 
+    - Logit link
+  - Prototype of wildbootstrap for Cox regression with
     - confidence bands for baseline
-    - with confidenence bands cumulative incidence for two cox's 
+    - with confidenence bands cumulative incidence for two cox's
   - Piecewise constant hazard: rpch, ppch
   - Test-version of multinomial regression model (via phreg): mlogit
-  - Simulation for illness-death model: simMultistate 
+  - Simulation for illness-death model: simMultistate
   - Haplotype modelling for discrete time-to-pregnancy models:  haplo.surv.discrete
   - Interval censoring for discrete time logit-survival model: interval.logitsurv.discrete
-  - Binomial Regression for competing risks data with censoring and one time point only: binreg 
+  - Binomial Regression for competing risks data with censoring and one time point only: binreg
 
 * Version 1.2.5    <2018-11-18 Sun>
-  - Updated predict function for phreg 
-    - with plotting functionality 
-    - with robust standard errors 
-  - New vignettes started 
+  - Updated predict function for phreg
+    - with plotting functionality
+    - with robust standard errors
+  - New vignettes started
     - phreg robust se's for marginal Cox model
-    - twostage survival  model 
-    - multivariate competing risks 
-    - recurrent events 
-  - logitSurv for fitting semiparametric proportional odds model 
-    - gof 
-    - robust standard errors for clustered case 
+    - twostage survival  model
+    - multivariate competing risks
+    - recurrent events
+  - logitSurv for fitting semiparametric proportional odds model
+    - gof
+    - robust standard errors for clustered case
   - twostageMLE for fast twostage fitting for clustered survival data
-    with robust standard errors. 
+    with robust standard errors.
   - standard errors for twostage models now also with uncertainty from Cox baseline
-  - cumulative score process test gof now also for marginal Cox models 
+  - cumulative score process test gof now also for marginal Cox models
 
 * Version 1.2.4    <2018-05-18 Wed>
   - functions km (Kaplan-Meier) and cif (cumulative incidence
@@ -55,22 +56,22 @@
 
 * Version 1.2.3    <2018-02-02 Mon>
   - twinlm now supports ordinal outcomes
-  - optimized strata calculations in phreg  
-  - optimized robust standard errors in phreg  
-  - weights and offsets in phreg 
+  - optimized strata calculations in phreg
+  - optimized robust standard errors in phreg
+  - weights and offsets in phreg
   - weights argument added to lifetable
-  - gof of phreg with fast cumulative residuals (Lin, Wei, Ying) 
-  - graphical gof of phreg 
+  - gof of phreg with fast cumulative residuals (Lin, Wei, Ying)
+  - graphical gof of phreg
   - recurrent events function for marginal mean with standard errors
-  - simulating recurrent events with possibly two recurrent events  and death 
-  - covariance calculation for recurrent events data and related bootstrap 
+  - simulating recurrent events with possibly two recurrent events  and death
+  - covariance calculation for recurrent events data and related bootstrap
 
 * Version 1.2.2    <2017-03-18 Sat>
   - Vignettes updated
   - Compatibility with lava version 1.5
 
 * Version 1.2.1    <2017-02-25 Sat>
-  - New documentation/vignettes 
+  - New documentation/vignettes
   - Additional examples and unit tests
   - lifecourse plot function: lifecourse
   - block sampling function: dsample
@@ -78,17 +79,17 @@
 * Version 1.2.0    <2017-02-03 Fri>
   - Namespace cleaning (twostage)...
   - Dependency on R>=3.3 radix algorithm
-  - Case-Control sampling for twostage model. 
+  - Case-Control sampling for twostage model.
   - Two-stage additive gamma survival model. Additive random effects for two-stage survival
     model via pairwise composite likelihood. Simulation of family ace survival model. Function
     for computing Kendall's tau for pairs with additive gamma random effects model via simulations.
   - Two-stage additive gamma binomial model. Additive random effects for binomial model
-    via pairwise composite likelihood. Simulation of family ace model. 
+    via pairwise composite likelihood. Simulation of family ace model.
     Function for computing pairwise concordance for for pairs with additive gamma random effects model.
   - Updated divide.conquer
   - Extra unit tests
   - force.same.cens argument with IPWC methods
-  - New utility functions for data.frames 
+  - New utility functions for data.frames
     Data processing
     - dsort
     - dreshape
@@ -103,12 +104,12 @@
     - dmean, dsd, dsum, dquantile, dcor
     - dtable, dcount
     Data summaries
-    - dhead, dtail, 
-    - dsummary, 
+    - dhead, dtail,
+    - dsummary,
     - dprint, dlist, dlevels, dunique
 
 * Version 1.1.1    <2015-05-27 Wed>
-  - Support for left-truncation 
+  - Support for left-truncation
 
 * Version 1.1.0    <2015-02-16 Mon>
   - fast.approx with 'type' argument
@@ -137,14 +138,14 @@
   - divide.conquer function, folds function
 
 * Version 0.2.8    <2014-05-07 Wed>
-  - Normal orthant probabilities via 'pmvn' (vectorized)   
+  - Normal orthant probabilities via 'pmvn' (vectorized)
   - Parametric proportional hazards models via 'phreg.par'
   - twinlm.time function for censored twin data. Wraps the 'ipw'
     function that now also supports parametric survival models via
     phreg.par. 'grouptable' for tabulating twin-data.
   - Relative recurrence risk ratios now reported with bptwin/twinlm.
   - Grandom.cif more stable
-    
+
 * Version 0.2.7    <2014-02-18 Tue>
   - Adapted to changes in 'timereg::comp.risk'
   - cluster.index with 'mat' argument for stacking rows of a matrix
@@ -164,7 +165,7 @@
     based on standard (symmetric) Wald confidence limits. (use the 'transform'
     argument of the summary method to apply logit-transform)
   - Improved output in twinlm
-    
+
 * Version 0.2.4    <2013-07-10 Wed>
   - fast.reshape :labelnum option for both wide and long format (see
     example)
@@ -174,7 +175,7 @@
   - fast.reshape bug-fix (column names)
 
 * Version 0.2.2    <2013-05-21 Tue>
-  - Updated twinlm. bptwin: OS analysis 
+  - Updated twinlm. bptwin: OS analysis
      - Better starting values for twinlm
   - Fixed claytonaokes.cpp
   - New fast cox ph regression: phreg
@@ -206,4 +207,3 @@
     Clayton-Oakes model with piecewise constant marginal hazards, and
     the bivariate probit random effects model (Liability model) for
     twin-data.
-
