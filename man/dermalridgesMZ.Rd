@@ -4,10 +4,8 @@
 \name{dermalridgesMZ}
 \alias{dermalridgesMZ}
 \title{Dermal ridges data (monozygotic twins)}
-\format{
-Data on dermal ridge counts (left and right hand) in 18
-monozygotic twin pairs.
-}
+\format{Data on dermal ridge counts (left and right hand) in 18
+monozygotic twin pairs.}
 \source{
 Sarah B. Holt (1952). Genetics of dermal ridges: bilateral
 asymmetry in finger ridge-counts.  Annals of Eugenics 17 (1),
