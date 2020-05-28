@@ -34,7 +34,8 @@ Suggests:
     knitr,
     bookdown,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    cowplot
 VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
