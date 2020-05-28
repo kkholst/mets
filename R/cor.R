@@ -192,7 +192,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	  score.method <- "nlminb"
 	  dpar.func <- par.func
   }
-###  if (score.method=="fisher.scoring") 
+###  if (score.method=="nr) 
 ###  cat("Score.method set to nlminb for flexible modelling \n"); 
   } ## }}}
 
@@ -255,7 +255,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 
   p <- theta
   iid <- 0;  ###no-iid representation for iterations
-  if (score.method=="fisher.scoring") { ## {{{
+  if (score.method=="nr") { ## {{{
     oout <- 2;  ### output control for obj
     if (Nit>0) 
     for (i in 1:Nit)
@@ -330,7 +330,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
     out <- obj(opt$estimate)
     score1 <- out$score
   ## }}}
-  }  else stop("score.methods = nlm nlminb fisher.scoring\n"); 
+  }  else stop("score.methods = nlm nlminb nr\n"); 
 
   theta.iid <- out$theta.iid %*% hessi
   if (is.null(par.func)) var.theta  <- t(theta.iid) %*% theta.iid else var.theta <- hessi
@@ -458,7 +458,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' @param par.func parfunc
 ##' @param dpar.func dparfunc
 ##' @param dimpar dimpar
-##' @param score.method "nlminb", can also use "fisher-scoring".
+##' @param score.method "nlminb", can also use "nr".
 ##' @param same.cens if true then censoring within clusters are assumed to be the same variable, default is independent censoring.
 ##' @param censoring.weights these probabilities are used for the bivariate censoring dist.
 ##' @param silent 1 to suppress output about convergence related issues.
@@ -532,7 +532,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' or1 <- or.cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
 ##'               same.cens=TRUE,theta=c(0.6,1.1,0.1,0.1),
 ##'               par.func=parfunc,dpar.func=dparfunc,dimpar=4,
-##'               score.method="fisher.scoring",detail=1)
+##'               score.method="nr",detail=1)
 ##' summary(or1)
 ##' 
 ##'  cor1 <- cor.cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
@@ -567,7 +567,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' or1g <- or.cif(cifmod,data=prt,cause1=1,cause2=1,
 ##'                theta.des=theta.des, same.cens=TRUE,
 ##'                par.func=gparfunc,dpar.func=dgparfunc,
-##'                dimpar=6,score.method="fisher.scoring",detail=1)
+##'                dimpar=6,score.method="nr",detail=1)
 ##' summary(or1g)
 ##' names(or1g)
 ##' head(or1g$theta.iid)
@@ -655,7 +655,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' @param step specifies the step size for the Newton-Raphson algorith.m
 ##' @param same.cens if true then censoring within clusters are assumed to be the same variable, default is independent censoring.
 ##' @param var.link if var.link=1 then var is on log-scale.
-##' @param score.method default uses "nlminb" optimzer, alternatively, use the "fisher-scoring" algorithm.
+##' @param score.method default uses "nlminb" optimzer, alternatively, use the "nr" algorithm.
 ##' @param entry entry-age in case of delayed entry. Then two causes must be given.
 ##' @param trunkp gives probability of survival for delayed entry, and related to entry-ages given above.
 ##' @param ... extra arguments.
@@ -709,7 +709,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 random.cif<-function(cif,data,cause=NULL,cif2=NULL,
                      cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
                      clusters=NULL,theta=NULL,theta.des=NULL,sym=1,
-                     step=1,same.cens=FALSE,var.link=0,score.method="fisher.scoring",
+                     step=1,same.cens=FALSE,var.link=0,score.method="nr",
                      entry=NULL,trunkp=1,...)
 { ## {{{
   fit <- dep.cif(cif,data=data,cause=cause,model="RANCIF",cif2=cif2,sym=sym,
@@ -780,7 +780,7 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##' @param censoring.weights Censoring probabilities
 ##' @param silent debug information 
 ##' @param var.link if var.link=1 then var is on log-scale.
-##' @param score.method default uses "nlminb" optimzer, alternatively, use the "fisher-scoring" algorithm.
+##' @param score.method default uses "nlminb" optimzer, alternatively, use the "nr" algorithm.
 ##' @param entry entry-age in case of delayed entry. Then two causes must be given.
 ##' @param estimator estimator
 ##' @param trunkp gives probability of survival for delayed entry, and related to entry-ages given above.
@@ -852,7 +852,7 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 Grandom.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
 clusters=NULL, theta=NULL,theta.des=NULL, weights=NULL, step=1,sym=0,
-same.cens=FALSE,censoring.weights=NULL,silent=1,var.link=0,score.method="fisher.scoring",
+same.cens=FALSE,censoring.weights=NULL,silent=1,var.link=0,score.method="nr",
 entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,random.design=NULL,...)
 { ## {{{
 fit <- dep.cif(cif,data=data,cause=cause,model="ARANCIF",cif2=cif2,times=times,

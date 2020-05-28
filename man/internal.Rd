@@ -50,7 +50,6 @@
 \alias{simCompete.simple}
 \alias{simCompete.twin.ace}
 \alias{twin.polygen.design}
-\alias{twostage.fullse}
 \alias{procform}
 \alias{procform3}
 \alias{procformdata}

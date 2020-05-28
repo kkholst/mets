@@ -4,11 +4,9 @@
 \name{dermalridges}
 \alias{dermalridges}
 \title{Dermal ridges data (families)}
-\format{
-Data on 50 families with ridge counts in left and right
+\format{Data on 50 families with ridge counts in left and right
 hand for moter, father and each child. Family id in 'family' and
-gender and child number in 'sex' and 'child'.
-}
+gender and child number in 'sex' and 'child'.}
 \source{
 Sarah B. Holt (1952). Genetics of dermal ridges: bilateral
 asymmetry in finger ridge-counts.  Annals of Eugenics 17 (1),

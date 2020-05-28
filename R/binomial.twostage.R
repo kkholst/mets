@@ -155,7 +155,7 @@
 ##' @export
 ##' @param margbin Marginal binomial model 
 ##' @param data data frame
-##' @param method Scoring method default is fisher.scoring: "nr"
+##' @param method Scoring method default is  "nr"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -163,7 +163,8 @@
 ##' @param weights Weights for log-likelihood, can be used for each type of outcome in 2x2 tables. 
 ##' @param control Optimization arguments
 ##' @param theta Starting values for variance components
-##' @param theta.des design for dependence parameters, when pairs are given this is could be a (pairs) x (numer of parameters)  x (max number random effects) matrix
+##' @param theta.des design for dependence parameters, when pairs are given the indeces of the 
+##' theta-design for this pair, is given in pairs as column 5 
 ##' @param var.link Link function for variance 
 ##' @param var.par parametrization 
 ##' @param var.func when alternative parametrizations are used this function can specify how the paramters are related to the \eqn{\lambda_j}'s.
@@ -178,8 +179,10 @@
 ##' @param max.clust max clusters
 ##' @param se.clusters clusters for iid decomposition for roubst standard errors
 ##' @param numDeriv uses Fisher scoring aprox of second derivative if 0, otherwise numerical derivatives 
-##' @param random.design random effect design for additive gamma model, when pairs are given this is a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below
+##' @param random.design random effect design for additive gamma model, when pairs are given the 
+##' indeces of the pairs random.design rows are given as columns 3:4 
 ##' @param pairs matrix with rows of indeces (two-columns) for the pairs considered in the pairwise composite score, useful for case-control sampling when marginal is known.
+##' @param dim.theta dimension of theta when pairs and pairs specific design is given. That is when pairs has 6 columns. 
 ##' @param additive.gamma.sum this is specification of the lamtot in the models via a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number of theta parameters), when null then sums all parameters. Default is a matrix of 1's 
 ##' @param pair.ascertained if pairs are sampled only when there are events in the pair i.e. Y1+Y2>=1. 
 ##' @param case.control if data is case control data for pair call, and here 2nd column of pairs are probands (cases or controls)
@@ -450,7 +453,7 @@ if (pair.structure==1) {
                   cat("finished numDeriv for second derivative \n"); 
 	          cat("Numerical derivative second derivative \n"); 
 	          print(hess)
-	          cat("average second moment, for fisher-scoring\n"); 
+	          cat("average second moment, for -scoring\n"); 
 	          print(out$Dscore)
 	    }
         }
@@ -522,7 +525,7 @@ if (pair.structure==1) {
         hess1 <- -1* out$Dscore
         if (iid==1) theta.iid <- out$theta.iid
         ## }}}
-    }  else stop("methods = optimize(dim=1) nlm nlminb fisher.scoring\n"); 
+    }  else stop("methods = optimize(dim=1) nlm nlminb nr\n"); 
 
     ## {{{ handling output
     iid.tot <- NULL
@@ -801,7 +804,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 ##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
 ##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-##' 	                 method="fisher.scoring")
+##' 	                 method="nr")
 ##' summary(bin)
 ##' lava::estimate(coef=bin$theta,vcov=bin$var.theta,f=function(p) exp(p))
 ##' 

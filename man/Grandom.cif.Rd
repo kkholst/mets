@@ -26,7 +26,7 @@ Grandom.cif(
   censoring.weights = NULL,
   silent = 1,
   var.link = 0,
-  score.method = "fisher.scoring",
+  score.method = "nr",
   entry = NULL,
   estimator = 1,
   trunkp = 1,
@@ -81,7 +81,7 @@ times, the value cens.code is the censoring value.}
 
 \item{var.link}{if var.link=1 then var is on log-scale.}
 
-\item{score.method}{default uses "nlminb" optimzer, alternatively, use the "fisher-scoring" algorithm.}
+\item{score.method}{default uses "nlminb" optimzer, alternatively, use the "nr" algorithm.}
 
 \item{entry}{entry-age in case of delayed entry. Then two causes must be given.}
 

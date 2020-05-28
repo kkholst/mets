@@ -7,7 +7,7 @@
 survival.iterative(
   margsurv,
   data = sys.parent(),
-  score.method = "fisher.scoring",
+  score.method = "nr",
   Nit = 60,
   detail = 0,
   clusters = NULL,
@@ -44,7 +44,7 @@ survival.iterative(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method "fisher.scoring", "nlminb", "optimize", "nlm"}
+\item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
 
 \item{Nit}{Number of iterations}
 
@@ -130,7 +130,7 @@ for this model.
 
 For all models the 
 standard errors do not reflect this uncertainty of the baseline estimates, and might therefore be a bit to small.
-To remedy this one can do bootstrapping or use survival.twostage.fullse function when possible.
+To remedy this one can do bootstrapping.
 
 If clusters contain more than two times, we use a composite likelihood
 based on the pairwise bivariate models. Can also fit a additive gamma random

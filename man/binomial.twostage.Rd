@@ -49,7 +49,7 @@ binomial.twostage(
 
 \item{data}{data frame}
 
-\item{method}{Scoring method default is fisher.scoring: "nr"}
+\item{method}{Scoring method default is  "nr"}
 
 \item{Nit}{Number of iterations}
 
@@ -65,7 +65,8 @@ binomial.twostage(
 
 \item{theta}{Starting values for variance components}
 
-\item{theta.des}{design for dependence parameters, when pairs are given this is could be a (pairs) x (numer of parameters)  x (max number random effects) matrix}
+\item{theta.des}{design for dependence parameters, when pairs are given the indeces of the 
+theta-design for this pair, is given in pairs as column 5}
 
 \item{var.link}{Link function for variance}
 
@@ -95,9 +96,12 @@ binomial.twostage(
 
 \item{numDeriv}{uses Fisher scoring aprox of second derivative if 0, otherwise numerical derivatives}
 
-\item{random.design}{random effect design for additive gamma model, when pairs are given this is a (pairs) x (2) x (max number random effects) matrix, see pairs.rvs below}
+\item{random.design}{random effect design for additive gamma model, when pairs are given the 
+indeces of the pairs random.design rows are given as columns 3:4}
 
 \item{pairs}{matrix with rows of indeces (two-columns) for the pairs considered in the pairwise composite score, useful for case-control sampling when marginal is known.}
+
+\item{dim.theta}{dimension of theta when pairs and pairs specific design is given. That is when pairs has 6 columns.}
 
 \item{additive.gamma.sum}{this is specification of the lamtot in the models via a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number of theta parameters), when null then sums all parameters. Default is a matrix of 1's}
 

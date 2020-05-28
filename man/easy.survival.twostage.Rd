@@ -22,7 +22,6 @@ easy.survival.twostage(
   desnames = NULL,
   deshelp = 0,
   var.link = 1,
-  iid = 1,
   step = 0.5,
   model = "plackett",
   marginal.surv = NULL,
@@ -64,8 +63,6 @@ easy.survival.twostage(
 \item{deshelp}{if 1 then prints out some data sets that are used, on on which the design function operates}
 
 \item{var.link}{Link function for variance (exp link)}
-
-\item{iid}{Calculate i.i.d. decomposition}
 
 \item{step}{Step size for newton-raphson}
 
@@ -117,9 +114,9 @@ c(pp,pc,cc)
 marg <- coxph(Surv(time,status)~factor(num),data=dfam)
 out3 <- easy.survival.twostage(marg,data=dfam,time="time",status="status",id="id",
              deshelp=0,
-             score.method="fisher.scoring",theta.formula=desfs,
+             score.method="nr",theta.formula=desfs,
              model="plackett",
-             desnames=c("parent-parent","parent-child","child-cild"),iid=1)
+             desnames=c("parent-parent","parent-child","child-cild"))
 summary(out3)
 
 }
