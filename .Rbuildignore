@@ -4,6 +4,7 @@
 ^\.travis\.yml$
 ^\.git$
 ^.gitignore$
+^README\.org$
 ^README\.Rmd$
 ^examples$
 ^TODO$
