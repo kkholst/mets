@@ -31,7 +31,9 @@ Suggests:
     prodlim,
     testthat (>= 0.11),
     ucminf,
-    knitr
+    knitr,
+    bookdown,
+    ggplot2
 VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
