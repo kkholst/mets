@@ -99,13 +99,112 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-Implementation of various statistical models for multivariate
-    event history data &lt;<a href="https://doi.org/10.1007/s10985-013-9244-x">doi:10.1007/s10985-013-9244-x</a>&gt;. Including multivariate
-    cumulative incidence models &lt;<a href="https://doi.org/10.1002/sim.6016">doi:10.1002/sim.6016</a>&gt;, and  bivariate random
-    effects probit models (Liability models) &lt;<a href="https://doi.org/10.1016/j.csda.2015.01.014">doi:10.1016/j.csda.2015.01.014</a>&gt;.
-    Also contains two-stage binomial modelling that can do pairwise odds-ratio
-    dependence modelling based marginal logistic regression models. This is an
-    alternative to the alternating logistic regression approach (ALR).
+
+<hr>
+<div id="yaml-header-created-by-ox-ravel" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#yaml-header-created-by-ox-ravel" class="anchor"></a>YAML header created by ox-ravel</h1></div>
+<div id="title-multivariate-event-times-mets" class="section level2">
+<h2 class="hasAnchor">
+<a href="#title-multivariate-event-times-mets" class="anchor"></a>title: Multivariate Event Times (=mets=)</h2>
+<!-- badges: start -->
+
+</div>
+</div>
+<div id="multivariate-event-times-mets" class="section level1">
+<h1 class="hasAnchor">
+<a href="#multivariate-event-times-mets" class="anchor"></a>Multivariate Event Times (<code>mets</code>)</h1>
+<p>Implementation of various statistical models for multivariate event history data &lt;10.1007/s10985-013-9244-x&gt;. Including multivariate cumulative incidence models &lt;10.1002/sim.6016&gt;, and bivariate random effects probit models (Liability models) &lt;10.1016/j.csda.2015.01.014&gt;. Also contains two-stage binomial modelling that can do pairwise odds-ratio dependence modelling based marginal logistic regression models. This is an alternative to the alternating logistic regression approach (ALR).</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"mets"</span>)</pre></div>
+<p>The development version may be installed directly from github (requires <a href="http://cran.r-project.org/bin/windows/Rtools/">Rtools</a> on windows and <a href="http://cran.r-project.org/bin/macosx/tools/">development tools</a> (+Xcode) for Mac OS X):</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/mets"</span>, <span class="kw">dependencies</span><span class="kw">=</span><span class="st">"Suggests"</span>)</pre></div>
+<p>or to get development version</p>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_github</span>(<span class="st">"kkholst/mets"</span>,<span class="kw">ref</span><span class="kw">=</span><span class="st">"develop"</span>)</pre></div>
+</div>
+<div id="citation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#citation" class="anchor"></a>Citation</h2>
+<p>To cite the <code>mets</code> package please use one of the following references</p>
+<blockquote>
+<p>Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013). Estimating heritability for cause specific mortality based on twin studies. Lifetime Data Analysis. <a href="http://dx.doi.org/10.1007/s10985-013-9244-x" class="uri">http://dx.doi.org/10.1007/s10985-013-9244-x</a></p>
+</blockquote>
+<blockquote>
+<p>Klaus K. Holst and Thomas H. Scheike Jacob B. Hjelmborg (2015). The Liability Threshold Model for Censored Twin Data. Computational Statistics and Data Analysis. <a href="http://dx.doi.org/10.1016/j.csda.2015.01.014" class="uri">http://dx.doi.org/10.1016/j.csda.2015.01.014</a></p>
+</blockquote>
+<p>BibTeX:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="op">@</span>Article{,</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">  title={Estimating heritability <span class="cf">for</span> cause specific mortality based on twin studies},</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  author={Scheike, Thomas H. and Holst, Klaus K. and Hjelmborg, Jacob B.},</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">  year={<span class="dv">2013</span>},</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">  issn={<span class="dv">1380-7870</span>},</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">  journal={Lifetime Data Analysis},</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">  doi={<span class="fl">10.1007</span><span class="op">/</span>s10985<span class="dv">-013-9244</span><span class="op">-</span>x},</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">  url={http<span class="op">:</span><span class="er">//</span>dx.doi.org<span class="op">/</span><span class="fl">10.1007</span><span class="op">/</span>s10985<span class="dv">-013-9244</span><span class="op">-</span>x},</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">  publisher={Springer US},</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">  keywords={Cause specific hazards; Competing risks; Delayed entry;</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">        Left truncation; Heritability; Survival analysis},</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">  pages={<span class="dv">1-24</span>},</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">  language={English}</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="op">@</span>Article{,</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">  title={The Liability Threshold Model <span class="cf">for</span> Censored Twin Data},</a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">  author={Holst, Klaus K. and Scheike, Thomas H. and Hjelmborg, Jacob B.},</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">  year={<span class="dv">2015</span>},</a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">  doi={<span class="fl">10.1016</span><span class="op">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</a>
+<a class="sourceLine" id="cb4-21" data-line-number="21">  url={http<span class="op">:</span><span class="er">//</span>dx.doi.org<span class="op">/</span><span class="fl">10.1016</span><span class="op">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">  journal={Computational Statistics and Data Analysis}</a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">}</a></code></pre></div>
+</div>
+<div id="examples" class="section level2">
+<h2 class="hasAnchor">
+<a href="#examples" class="anchor"></a>Examples</h2>
+<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"mets"</span>)
+<span class="co">#&gt; Loading required package: timereg</span>
+<span class="co">#&gt; Loading required package: survival</span>
+<span class="co">#&gt; Loading required package: lava</span>
+<span class="co">#&gt; mets version 1.2.8</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">prt</span>) <span class="co">## Prostate data example (sim)</span>
+
+<span class="co">## Bivariate competing risk, concordance estimates</span>
+<span class="no">p33</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bicomprisk.html">bicomprisk</a></span>(<span class="fu">Event</span>(<span class="no">time</span>,<span class="no">status</span>)~<span class="fu">strata</span>(<span class="no">zyg</span>)+<span class="fu">id</span>(<span class="no">id</span>),
+                  <span class="kw">data</span><span class="kw">=</span><span class="no">prt</span>, <span class="kw">cause</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">2</span>), <span class="kw">return.data</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">prodlim</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="co">#&gt; Strata 'DZ'</span>
+<span class="co">#&gt; Strata 'MZ'</span>
+
+<span class="no">p33dz</span> <span class="kw">&lt;-</span> <span class="no">p33</span>$<span class="no">model</span>$<span class="st">"DZ"</span>$<span class="no">comp.risk</span>
+<span class="no">p33mz</span> <span class="kw">&lt;-</span> <span class="no">p33</span>$<span class="no">model</span>$<span class="st">"MZ"</span>$<span class="no">comp.risk</span>
+
+<span class="co">## Probability weights based on Aalen's additive model</span>
+<span class="no">prtw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/ipw.html">ipw</a></span>(<span class="fu">Surv</span>(<span class="no">time</span>,<span class="no">status</span><span class="kw">==</span><span class="fl">0</span>)~<span class="no">country</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">prt</span>,
+            <span class="kw">cluster</span><span class="kw">=</span><span class="st">"id"</span>,<span class="kw">weight.name</span><span class="kw">=</span><span class="st">"w"</span>)
+
+<span class="co">## Marginal model (wrongly ignoring censorings)</span>
+<span class="no">bpmz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/biprobit.html">biprobit</a></span>(<span class="no">cancer</span>~<span class="fl">1</span> + <span class="fu">cluster</span>(<span class="no">id</span>),
+                 <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">prt</span>,<span class="no">zyg</span><span class="kw">==</span><span class="st">"MZ"</span>), <span class="kw">eqmarg</span><span class="kw">=</span><span class="fl">TRUE</span>)
+
+<span class="co">## Extended liability model</span>
+<span class="no">bpmzIPW</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/biprobit.html">biprobit</a></span>(<span class="no">cancer</span>~<span class="fl">1</span> + <span class="fu">cluster</span>(<span class="no">id</span>),
+                    <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">prtw</span>,<span class="no">zyg</span><span class="kw">==</span><span class="st">"MZ"</span>),
+                    <span class="kw">weight</span><span class="kw">=</span><span class="st">"w"</span>)
+<span class="no">smz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bpmzIPW</span>)
+
+<span class="co">## Concordance</span>
+<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">p33mz</span>,<span class="kw">ylim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.1</span>),<span class="kw">axes</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">automar</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">atrisk</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">background</span><span class="kw">=</span><span class="fl">TRUE</span>,<span class="kw">background.fg</span><span class="kw">=</span><span class="st">"white"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span>(<span class="fl">2</span>); <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span>(<span class="fl">1</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="no">smz</span>$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"darkblue"</span>)
+<span class="co">## Wrong estimates:</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bpmz</span>)$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"lightgray"</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)</pre></div>
+<p><img src="reference/figures/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="50%"></p>
+<p><img src="inst/misc/mets1.png" alt="img"></p>
+</div>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -139,7 +238,16 @@ Implementation of various statistical models for multivariate
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/kkholst/mets"><img src="https://travis-ci.org/kkholst/mets.svg?branch=master" alt="travis"></a></li>
+<li><a href="https://codecov.io/github/kkholst/mets?branch=master"><img src="https://codecov.io/github/kkholst/mets/coverage.svg?branch=master" alt="coverage"></a></li>
+<li><a href="https://CRAN.R-project.org/package=mets"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
+<li><a href="http://cranlogs.r-pkg.org/downloads/total/last-month/mets"><img src="http://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 
