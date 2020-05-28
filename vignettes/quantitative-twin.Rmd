@@ -1,11 +1,22 @@
 ---
 # YAML header created by ox-ravel
-title: Twin analysis
+title: Twin models
 author: Klaus Holst & Thomas Scheike
 output:
-    bookdown::html_document2:
-      base_format: rmarkdown::html_vignette
+  bookdown::html_document2:
+    toc: yes
+    toc_float: true
+    number_sections: true
+    fig_width: 7
+    fig_caption: true
+    theme: spacelab
+    highlight: pygments
+vignette: >
+  %\VignetteIndexEntry{Twin models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
 This document provides a brief tutorial to analyzing twin data using
 the **`mets`** package:
 

@@ -33,6 +33,7 @@ Suggests:
     ucminf,
     knitr,
     bookdown,
+    rmarkdown,
     ggplot2
 VignetteBuilder: knitr
 ByteCompile: yes
