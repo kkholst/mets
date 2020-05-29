@@ -8,16 +8,41 @@ using marginals that are on logistic form.
 If clusters contain more than two times, the algoritm uses a compososite likelihood
 based on all pairwise bivariate models.}
 \usage{
-binomial.twostage(margbin, data = sys.parent(), method = "nr",
-  Nit = 60, detail = 0, clusters = NULL, silent = 1,
-  weights = NULL, control = list(), theta = NULL, theta.des = NULL,
-  var.link = 0, var.par = 1, var.func = NULL, iid = 1, step = 1,
-  notaylor = 1, model = "plackett", marginal.p = NULL,
-  beta.iid = NULL, Dbeta.iid = NULL, strata = NULL,
-  max.clust = NULL, se.clusters = NULL, numDeriv = 0,
-  random.design = NULL, pairs = NULL, dim.theta = NULL,
-  additive.gamma.sum = NULL, pair.ascertained = 0, case.control = 0,
-  twostage = 1, beta = NULL)
+binomial.twostage(
+  margbin,
+  data = sys.parent(),
+  method = "nr",
+  Nit = 60,
+  detail = 0,
+  clusters = NULL,
+  silent = 1,
+  weights = NULL,
+  control = list(),
+  theta = NULL,
+  theta.des = NULL,
+  var.link = 0,
+  var.par = 1,
+  var.func = NULL,
+  iid = 1,
+  step = 1,
+  notaylor = 1,
+  model = "plackett",
+  marginal.p = NULL,
+  beta.iid = NULL,
+  Dbeta.iid = NULL,
+  strata = NULL,
+  max.clust = NULL,
+  se.clusters = NULL,
+  numDeriv = 0,
+  random.design = NULL,
+  pairs = NULL,
+  dim.theta = NULL,
+  additive.gamma.sum = NULL,
+  pair.ascertained = 0,
+  case.control = 0,
+  twostage = 1,
+  beta = NULL
+)
 }
 \arguments{
 \item{margbin}{Marginal binomial model}
@@ -101,7 +126,7 @@ standard errors
 are adjusted for the uncertainty in the marginal models via an iid deomposition using the iid() function of
 lava. For the clayton oakes model that is not speicifed via the random effects these can be 
 fixed subsequently using the iid influence functions for the marginal model, but typically this does not
-change much.
+change much. 
 
 For the Clayton-Oakes version of the model, given the gamma distributed random effects it is 
 assumed that the probabilities are indpendent, and that the marginal survival functions are on logistic form 
@@ -114,7 +139,7 @@ logit(P(Y=1|X,Z)) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,P(Y=1|x)) )
 }
 
 Can also fit a structured additive gamma random effects model, such
-the ACE, ADE model for survival data:
+the ACE, ADE model for survival data: 
 
 Now random.design specificies the random effects for each subject within a cluster. This is
 a matrix of 1's and 0's with dimension n x d.  With d random effects. 
@@ -136,7 +161,7 @@ The DEFAULT parametrization uses the variances of the random effecs (var.par=1)
 }
 
 For alternative parametrizations (var.par=0) one can specify how the parameters relate 
-to \eqn{\lambda_j} with the function
+to \eqn{\lambda_j} with the function 
 
 Based on these parameters the relative contribution (the heritability, h) is 
 equivalent to  the expected values of the random effects  \eqn{\lambda_j/v_1^T \lambda}

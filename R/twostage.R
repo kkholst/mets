@@ -3774,69 +3774,6 @@ return(res)
 } ## }}}
 
 ##' @export
-make.pairwise.design  <- function(pairs,kinship,type="ace")
-{ ## {{{ 
-### makes pairwise random effects design for shared and non-shared random effects
-### kinship gives shared genes for each pair
-
-	uk <- unique(kinship)
-
-
-if (type=="ace" | type=="ade") {
-theta.des  <- matrix(0,4,2)
-random.des <- matrix(0,2,4)
-rvs <- c()
-}
-if (type=="ae") {
-theta.des  <- array(0,c(3,1,nrow(pairs)))
-random.des <- array(0,c(2,3,nrow(pairs)))
-rvs <- c()
-}
-if (type=="simple") {
-theta.des  <- array(1,c(1,1,nrow(pairs)))
-random.des <- array(1,c(2,1,nrow(pairs)))
-rvs <- rep(1,nrow(pairs))
-}
-
-
-for (i in 1:nrow(pairs))
-{ 
-	if (type=="ace" | type=="ade") {
-         ### only 3 random variables for ace 
-         ### (gene: shared, non-shared, environment
-         ### kinship gives amount of genes shared 
-	if (type=="ace") 
-	 theta.des[,,i] <- rbind(c(kinship[i],0),
-				 c(1-kinship[i],0),
-				 c(1-kinship[i],0),
-				 c(0,1))
-	if (type=="ade") 
-	theta.des[,,i] <- rbind(c((kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5,0),
-				c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5,0),
-				c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5,0),
-				c(0,1))
-       	 random.des[,,i] <- rbind(c(1,1,0,1),c(1,0,1,1))
-	 rvs <- c(rvs,4)
-	} 
-        if (type=="ae" | type=="ad") {
-         ### only 2 random variables for ace 
-         ### (gene, shared, not-shared  
-         ### kinship gives amount of genes shared 
-	if (type=="ae") 
-	 theta.des[,,i] <- matrix(c(kinship[i],1-kinship[i],1-kinship[i]),nrow=3,ncol=1)
-        if (type=="ad") 
-	theta.des[,,i] <- matrix(c((kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),
-				 c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),
-				 c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),3,1)
-       	 random.des[,,i] <- rbind(c(1,1,0),c(1,0,1))
-	 rvs <- c(rvs,3)
-	}
-} 
-
-return(list(random.design=random.des,theta.des=theta.des,ant.rvs=rvs))
-} ## }}} 
-
-##' @export
 ace.family.design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) { 
 ## {{{
   ### standard family case 
@@ -3926,7 +3863,7 @@ make.pairwise.design  <- function(pairs,kinship,type="ace")
 ### makes pairwise random effects design for shared and non-shared random effects
 ### kinship gives shared genes for each pair
 
-uk <- unique(kinship)
+uk <- sort(unique(kinship))
 iuk <- fast.approx(uk,kinship)
 
 if (type=="ace")  {
@@ -3934,20 +3871,7 @@ if (type=="ace")  {
    i <- 0
    for (uuk in uk)  {
      i <- i+1
-     theta.des[i,] <- c(c(uuk,0), c(1-uuk,0), c(1-uuk,0), c(0,1))
-   }
-   random.des <- rbind(c(1,1,0,1),c(1,0,1,1))
-   rvs <- rep(4,length(kinship))
-   new.pairs <- cbind(pairs,1,2,iuk,4)
-}
-
-if (type=="ade") {
-   theta.des <-  matrix(0,length(uk),8)
-   i <- 0
-   for (uuk in uk)  {
-      i <- i+1
-      theta.des[i,] <- c(c((uuk==1)+(uuk!=1)*uuk*0.5,0), c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),
-			c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),c(0,1))
+     theta.des[i,] <-c( rbind(c(uuk,0), c(1-uuk,0), c(1-uuk,0), c(0,1)))
    }
    random.des <- rbind(c(1,1,0,1),c(1,0,1,1))
    rvs <- rep(4,length(kinship))
@@ -3955,27 +3879,43 @@ if (type=="ade") {
 }
 
 if (type=="ae") {
- theta.des[i,] <- matrix(c(kinship[i],1-kinship[i],1-kinship[i]),nrow=3,ncol=1)
-   	 random.des[,,i] <- rbind(c(1,1,0),c(1,0,1))
-   rvs <- rep(3,length(kinship))
-   new.pairs <- cbind(pairs,1,2,iuk,4)
+  i <- 0
+  theta.des <-  matrix(0,length(uk),3)
+  for (uuk in uk)  {
+    i <- i+1
+    theta.des[i,] <- rbind(c(uuk), c(1-uuk), c(1-uuk))
+  }
+  random.des <- rbind(c(1,1,0),c(1,0,1))
+  rvs <- rep(3,length(kinship))
+  new.pairs <- cbind(pairs,1,2,iuk,3)
+}
 
+if (type=="ade") {
+   stop(" not specified yet \n")
+   theta.des <-  matrix(0,length(uk),8)
+   i <- 0
+   for (uuk in uk)  {
+      i <- i+1
+      theta.des[i,] <- rbind(c((uuk==1)+(uuk!=1)*uuk*0.5,0), c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),
+			c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),c(0,1))
+   }
+   random.des <- rbind(c(1,1,0,1),c(1,0,1,1))
+   rvs <- rep(4,length(kinship))
+   new.pairs <- cbind(pairs,1,2,iuk,4)
 }
 
 if (type=="ad") {
-   theta.des[,,i] <- matrix(c((kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),
-				 c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),
-				 c(1-(kinship[i]==1)+(kinship[i]!=1)*kinship[i]*0.5),3,1)
-   	 random.des <- rbind(c(1,1,0),c(1,0,1))
-   new.pairs <- cbind(pairs,1,2,iuk,3)
+   stop(" not specified yet \n")
+   i <- 0
+   for (uuk in uk)  {
+   i <- i+1
+   theta.des[i,] <- rbind(c((uuk==1)+(uuk!=1)*uuk*0.5,0), c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),
+			c(1-(uuk==1)+(uuk!=1)*uuk*0.5,0),c(0,1))
+   random.des <- rbind(c(1,1,0),c(1,0,1))
+   new.pairs <- cbind(pairs,1,2,iuk,2)
+   }
 }
 	
-if (type=="simple") {
-   theta.des  <- 
-   random.des <- 
-   new.pairs <- cbind(pairs,1,2,iuk,3)
-}
-
 return(list(new.pairs=new.pairs,theta.des=theta.des,random.design=random.des))
 } ## }}} 
 

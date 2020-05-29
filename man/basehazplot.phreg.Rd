@@ -8,10 +8,24 @@
 \alias{plotConfRegionSE}
 \title{Plotting the baslines of stratified Cox}
 \usage{
-basehazplot.phreg(x, se = FALSE, time = NULL, add = FALSE,
-  ylim = NULL, xlim = NULL, lty = NULL, col = NULL,
-  legend = TRUE, ylab = NULL, xlab = NULL, polygon = TRUE,
-  level = 0.95, stratas = NULL, robust = FALSE, ...)
+basehazplot.phreg(
+  x,
+  se = FALSE,
+  time = NULL,
+  add = FALSE,
+  ylim = NULL,
+  xlim = NULL,
+  lty = NULL,
+  col = NULL,
+  legend = TRUE,
+  ylab = NULL,
+  xlab = NULL,
+  polygon = TRUE,
+  level = 0.95,
+  stratas = NULL,
+  robust = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{phreg object}

@@ -4,11 +4,29 @@
 \alias{bicomprisk}
 \title{Estimation of concordance in bivariate competing risks data}
 \usage{
-bicomprisk(formula, data, cause = c(1, 1), cens = 0, causes, indiv,
-  strata = NULL, id, num, max.clust = 1000, marg = NULL,
-  se.clusters = NULL, wname = NULL, prodlim = FALSE,
-  messages = TRUE, model, return.data = 0, uniform = 0,
-  conservative = 1, resample.iid = 1, ...)
+bicomprisk(
+  formula,
+  data,
+  cause = c(1, 1),
+  cens = 0,
+  causes,
+  indiv,
+  strata = NULL,
+  id,
+  num,
+  max.clust = 1000,
+  marg = NULL,
+  se.clusters = NULL,
+  wname = NULL,
+  prodlim = FALSE,
+  messages = TRUE,
+  model,
+  return.data = 0,
+  uniform = 0,
+  conservative = 1,
+  resample.iid = 1,
+  ...
+)
 }
 \arguments{
 \item{formula}{Formula with left-hand-side being a \code{Event} object (see example below) and the left-hand-side specying the covariate structure}
@@ -59,22 +77,22 @@ Estimation of concordance in bivariate competing risks data
 \examples{
 library("timereg")
 
-## Simulated data example 
+## Simulated data example
 prt <- simnordic.random(2000,delayed=TRUE,ptrunc=0.7,
 	      cordz=0.5,cormz=2,lam0=0.3)
 ## Bivariate competing risk, concordance estimates
 p11 <- bicomprisk(Event(time,cause)~strata(zyg)+id(id),data=prt,cause=c(1,1))
- 
+
 p11mz <- p11$model$"MZ"
 p11dz <- p11$model$"DZ"
 par(mfrow=c(1,2))
 ## Concordance
-plot(p11mz,ylim=c(0,0.1)); 
-plot(p11dz,ylim=c(0,0.1)); 
+plot(p11mz,ylim=c(0,0.1));
+plot(p11dz,ylim=c(0,0.1));
 
-## entry time, truncation weighting 
-### other weighting procedure 
-prtl <-  prt[!prt$truncated,] 
+## entry time, truncation weighting
+### other weighting procedure
+prtl <-  prt[!prt$truncated,]
 prt2 <- ipw2(prtl,cluster="id",same.cens=TRUE,
      time="time",cause="cause",entrytime="entry",
      pairs=TRUE,strata="zyg",obs.only=TRUE)
@@ -87,7 +105,7 @@ ipwc <- comp.risk(Event(timel,event)~-1+factor(zyg1),
   data=prt22,cause=1,n.sim=0,model="rcif2",times=50:90,
   weights=prt22$weights1,cens.weights=rep(1,nrow(prt22)))
 
-p11wmz <- ipwc$cum[,2] 
+p11wmz <- ipwc$cum[,2]
 p11wdz <- ipwc$cum[,3]
 lines(ipwc$cum[,1],p11wmz,col=3)
 lines(ipwc$cum[,1],p11wdz,col=3)
@@ -95,7 +113,7 @@ lines(ipwc$cum[,1],p11wdz,col=3)
 }
 \references{
 Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B.
-Estimating twin concordance for bivariate competing risks twin data 
+Estimating twin concordance for bivariate competing risks twin data
 Statistics in Medicine, Wiley Online Library, 2014 , 33 , 1193-204
 }
 \author{

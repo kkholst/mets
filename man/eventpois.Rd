@@ -5,8 +5,17 @@
 \alias{pcif}
 \title{Extract survival estimates from lifetable analysis}
 \usage{
-eventpois(object, ..., timevar, time, int.len, confint = FALSE,
-  level = 0.95, individual = FALSE, length.out = 25)
+eventpois(
+  object,
+  ...,
+  timevar,
+  time,
+  int.len,
+  confint = FALSE,
+  level = 0.95,
+  individual = FALSE,
+  length.out = 25
+)
 }
 \arguments{
 \item{object}{glm object (poisson regression)}

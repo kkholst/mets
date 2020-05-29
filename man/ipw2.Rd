@@ -4,13 +4,28 @@
 \alias{ipw2}
 \title{Inverse Probability of Censoring Weights}
 \usage{
-ipw2(data, times = NULL, entrytime = NULL, time = "time",
-  cause = "cause", same.cens = FALSE, cluster = NULL,
-  pairs = FALSE, strata = NULL, obs.only = TRUE,
-  cens.formula = NULL, cens.code = 0, pair.cweight = "pcw",
-  pair.tweight = "ptw", pair.weight = "weights", cname = "cweights",
-  tname = "tweights", weight.name = "indi.weights",
-  prec.factor = 100, ...)
+ipw2(
+  data,
+  times = NULL,
+  entrytime = NULL,
+  time = "time",
+  cause = "cause",
+  same.cens = FALSE,
+  cluster = NULL,
+  pairs = FALSE,
+  strata = NULL,
+  obs.only = TRUE,
+  cens.formula = NULL,
+  cens.code = 0,
+  pair.cweight = "pcw",
+  pair.tweight = "ptw",
+  pair.weight = "weights",
+  cname = "cweights",
+  tname = "tweights",
+  weight.name = "indi.weights",
+  prec.factor = 100,
+  ...
+)
 }
 \arguments{
 \item{data}{data frame}

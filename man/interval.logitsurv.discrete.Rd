@@ -12,9 +12,19 @@
 ## out <- simHaplo(1,100,tcoef,hapfreqs)
 Discrete time to event interval censored data}
 \usage{
-interval.logitsurv.discrete(formula, data, beta = NULL, no.opt = FALSE,
-  method = "NR", stderr = TRUE, weights = NULL, offsets = NULL,
-  exp.link = 1, increment = 1, ...)
+interval.logitsurv.discrete(
+  formula,
+  data,
+  beta = NULL,
+  no.opt = FALSE,
+  method = "NR",
+  stderr = TRUE,
+  weights = NULL,
+  offsets = NULL,
+  exp.link = 1,
+  increment = 1,
+  ...
+)
 }
 \arguments{
 \item{formula}{formula}
@@ -58,6 +68,7 @@ Likelihood is maximized:
 }
 \examples{
 data(ttpd) 
+dtable(ttpd,~entry+time2)
 out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
 

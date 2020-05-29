@@ -7,12 +7,29 @@
 \alias{plotSurvd}
 \title{Discrete time to event haplo type analysis}
 \usage{
-haplo.surv.discrete(X = NULL, y = "y", time.name = "time",
-  Haplos = NULL, id = "id", desnames = NULL, designfunc = NULL,
-  beta = NULL, no.opt = FALSE, method = "NR", stderr = TRUE,
-  designMatrix = NULL, response = NULL, idhap = NULL,
-  design.only = FALSE, covnames = NULL, fam = binomial,
-  weights = NULL, offsets = NULL, idhapweights = NULL, ...)
+haplo.surv.discrete(
+  X = NULL,
+  y = "y",
+  time.name = "time",
+  Haplos = NULL,
+  id = "id",
+  desnames = NULL,
+  designfunc = NULL,
+  beta = NULL,
+  no.opt = FALSE,
+  method = "NR",
+  stderr = TRUE,
+  designMatrix = NULL,
+  response = NULL,
+  idhap = NULL,
+  design.only = FALSE,
+  covnames = NULL,
+  fam = binomial,
+  weights = NULL,
+  offsets = NULL,
+  idhapweights = NULL,
+  ...
+)
 }
 \arguments{
 \item{X}{design matrix data-frame (sorted after id and time variable) with id time response  and desnames}
@@ -63,7 +80,7 @@ Can be used for logistic regression when time variable is "1" for all id.
 \details{
 Cycle-specific logistic regression of haplo-type effects with known 
 haplo-type probabilities. Given observed genotype G and unobserved haplotypes H
-we here mix out over the possible haplotypes using that P(H|G) is provided.
+we here mix out over the possible haplotypes using that P(H|G) is provided. 
 
 \deqn{
 S(t|x,G)) = E( S(t|x,H) | G)  = \sum_{h \in G} P(h|G) S(t|z,h) 
@@ -77,7 +94,7 @@ logit(P(T=t| T \geq t, x,h)) = \alpha_t + x(h) \beta
 }
 where x(h) is a regression design of x and haplotypes \eqn{h=(h_1,h_2)}
 
-Likelihood is maximized and standard errors assumes that P(H|G) is known.
+Likelihood is maximized and standard errors assumes that P(H|G) is known. 
 
 The design over the possible haplotypes is constructed by merging X with Haplos and  
 can be viewed by design.only=TRUE

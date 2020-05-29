@@ -5,8 +5,15 @@
 \alias{concordance.cor}
 \title{Concordance Computes concordance and casewise concordance}
 \usage{
-concordanceCor(object, cif1, cif2 = NULL, messages = TRUE,
-  model = NULL, coefs = NULL, ...)
+concordanceCor(
+  object,
+  cif1,
+  cif2 = NULL,
+  messages = TRUE,
+  model = NULL,
+  coefs = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{Output from the cor.cif, rr.cif or or.cif function}

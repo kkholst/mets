@@ -6,12 +6,32 @@
 \alias{rr.cif}
 \title{Cross-odds-ratio, OR or RR risk regression for competing risks}
 \usage{
-cor.cif(cif, data, cause = NULL, times = NULL, cause1 = 1,
-  cause2 = 1, cens.code = NULL, cens.model = "KM", Nit = 40,
-  detail = 0, clusters = NULL, theta = NULL, theta.des = NULL,
-  step = 1, sym = 0, weights = NULL, par.func = NULL,
-  dpar.func = NULL, dimpar = NULL, score.method = "nlminb",
-  same.cens = FALSE, censoring.weights = NULL, silent = 1, ...)
+cor.cif(
+  cif,
+  data,
+  cause = NULL,
+  times = NULL,
+  cause1 = 1,
+  cause2 = 1,
+  cens.code = NULL,
+  cens.model = "KM",
+  Nit = 40,
+  detail = 0,
+  clusters = NULL,
+  theta = NULL,
+  theta.des = NULL,
+  step = 1,
+  sym = 0,
+  weights = NULL,
+  par.func = NULL,
+  dpar.func = NULL,
+  dimpar = NULL,
+  score.method = "nlminb",
+  same.cens = FALSE,
+  censoring.weights = NULL,
+  silent = 1,
+  ...
+)
 }
 \arguments{
 \item{cif}{a model object from the comp.risk function with the 
@@ -130,7 +150,7 @@ that \eqn{T_1} and \eqn{T_2} can be interchanged and leads to
 the same cross-odd-ratio (i.e.
 \eqn{COR(i|k) = COR(k|i))}, 
 as would be expected for twins 
-or without symmetry as might be the case with mothers and daughters (sym=0).
+or without symmetry as might be the case with mothers and daughters (sym=0). 
 
 \eqn{h()} may be specified as an R-function of the parameters, 
 see example below, but the default is that it is simply \eqn{\theta^T z}.
