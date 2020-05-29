@@ -1,7 +1,7 @@
 #+TITLE: Multivariate Event Times (=mets=)
 #+STARTUP: showall
 #+OPTIONS: ^:{}
-#+OPTIONS: title:t author:nil
+#+OPTIONS: title:nil author:nil
 #+PROPERTY: header-args :exports both :eval yes :results output
 #+PROPERTY: header-args:R :session *R*
 #+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/",
-  out.width = "50%"
+  out.width = "60%"
 )
 ```
 #+END_export
@@ -97,6 +97,7 @@ BibTeX:
 
 ** Examples
 
+#+NAME: ex1
 #+BEGIN_SRC R :exports both
   library("mets")
 
@@ -132,8 +133,6 @@ BibTeX:
   abline(h=summary(bpmz)$prob["Concordance",],lwd=c(2,1,1),col="lightgray", lty=2)
 #+END_SRC
 
-
-[[file:inst/misc/mets1.png]]
 
 
 * COMMENT Local Variables                                           :ARCHIVE:

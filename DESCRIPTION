@@ -3,7 +3,10 @@ Type: Package
 Title: Analysis of Multivariate Event Times
 Version: 1.2.8
 Date: 2020-04-03
-Author: Klaus K. Holst and Thomas Scheike
+Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
+             person("Thomas Scheike", role=c("aut", "cre")))
+Author: Klaus K. Holst [aut, cre],
+	Thomas Scheike [aut, cre],
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Implementation of various statistical models for multivariate
     event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
