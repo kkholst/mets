@@ -137,7 +137,7 @@
 <li>Cluster stratified Cox</li>
 </ul>
 <p>Typically it can be hard or impossible to specify random effects models with special structure among the parameters of the random effects. This is possible for our specification of the random effects models.</p>
-<p>To be concrete about the model structure assume that we have paired binomial data <span class="math inline">\(T_1, \delta_1, T_2, \delta_2, X_1, X_2\)</span> where the censored survival responses are <span class="math inline">\(T_1, \delta_1, T_2, \delta_2\)</span> and we have covariates <span class="math inline">\(X_1, X_2\)</span>.</p>
+<p>To be concrete about the model structure assume that we have paired survival data <span class="math inline">\((T_1, \delta_1, T_2, \delta_2, X_1, X_2)\)</span> where the censored survival responses are <span class="math inline">\((T_1, \delta_1, T_2, \delta_2)\)</span> and the covariates are <span class="math inline">\((X_1, X_2)\)</span>.</p>
 <p>The basic models assumes that each subject has a marginal on Cox-form <span class="math display">\[ 
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
 \]</span> where <span class="math inline">\(s(k,i)\)</span> is a strata variable.</p>
@@ -150,9 +150,10 @@
 <li><p>Univariate models with a single random effect for each cluster and with a regression design on the variance.</p></li>
 <li><p>Multivariate models with multiple random effects for each cluster.</p></li>
 </ul>
-<p>The univariate models are then given a given cluster random effects <span class="math inline">\(Z_k\)</span> with parameter <span class="math inline">\(\theta\)</span> the joint survival function is given by the Clayton copula and on the form <span class="math display">\[ \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta, S_1(t,X_{k1}) ) 
+<p>The univariate models are then given a given cluster random effects <span class="math inline">\(Z_k\)</span> with parameter <span class="math inline">\(\theta\)</span> the joint survival function is given by the Clayton copula and on the form <span class="math display">\[ 
+  \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta, S_1(t,X_{k1}) ) 
 \]</span> where <span class="math inline">\(\psi\)</span> is the Laplace transform of a gamma distributed random variable with mean 1 and variance <span class="math inline">\(\theta\)</span>.</p>
-<p>We then model the variance within clusters by a cluster specific regression design such that <span class="math display">\[
+<p>We then model the variance within clusters by a cluster specific regression design such that <span class="math display">\[ 
   \theta = h(z_j^T \alpha)
 \]</span> where <span class="math inline">\(z\)</span> is the regression design (specified by theta.des in the software), and <span class="math inline">\(h\)</span> is link function, that is either <span class="math inline">\(exp\)</span> or the identity.</p>
 <p>This model can be fitted using a pairwise likelihood or the pseudo-likelihood using either</p>
@@ -160,28 +161,27 @@
 <li><p>twostage</p></li>
 <li><p>twostageMLE</p></li>
 </ul>
-<p>To make the twostage approach possible we need a model with specific structure for the marginals. Therefore given the random effect of the clusters the survival distributions within a cluster are independent and on the form <span class="math display">\[
+<p>To make the twostage approach possible we need a model with specific structure for the marginals. Therefore given the random effect of the clusters the survival distributions within a cluster are independent and on the form <span class="math display">\[ 
  P(T_j &gt; t| X_j,Z) = exp( -Z \cdot \Psi^{-1}(\nu^{-1},S(t|X_j)) )  
 \]</span> with <span class="math inline">\(\Psi\)</span> the laplace of the gamma distribution with mean 1 and variance <span class="math inline">\(1/\nu\)</span>.</p>
 </div>
 <div id="additive-gamma-frailties" class="section level1">
 <h1 class="hasAnchor">
 <a href="#additive-gamma-frailties" class="anchor"></a>Additive Gamma frailties</h1>
-<p>For the multivariate models we are given a multivarite random effect each cluster <span class="math inline">\(Z=(Z_1,...,Z_d)\)</span> with d random effects. The total random effect for each subject <span class="math inline">\(j\)</span> in a cluster is then specified using a regression design on these random effects, with a regression vector <span class="math inline">\(V_j\)</span> such that the total random effect is <span class="math inline">\(V_j^T (Z_1,...,Z_d)\)</span>. The elements of <span class="math inline">\(V_J\)</span> are 1/0. The random effects <span class="math inline">\((Z_1,...,Z_d)\)</span> has associated parameters <span class="math inline">\((\lambda_1,...,\lambda_d)\)</span><br>
-and <span class="math inline">\(Z_j\)</span> is Gamma distributed with</p>
+<p>For the multivariate models we are given a multivarite random effect each cluster <span class="math inline">\(Z=(Z_1,...,Z_d)\)</span> with d random effects. The total random effect for each subject <span class="math inline">\(j\)</span> in a cluster is then specified using a regression design on these random effects, with a regression vector <span class="math inline">\(V_j\)</span> such that the total random effect is <span class="math inline">\(V_j^T (Z_1,...,Z_d)\)</span>. The elements of <span class="math inline">\(V_J\)</span> are 1/0. The random effects <span class="math inline">\((Z_1,...,Z_d)\)</span> has associated parameters <span class="math inline">\((\lambda_1,...,\lambda_d)\)</span> and <span class="math inline">\(Z_j\)</span> is Gamma distributed with</p>
 <ul>
 <li><p>mean <span class="math inline">\(\lambda_j/V_1^T \lambda\)</span></p></li>
 <li><p>variance <span class="math inline">\(\lambda_j/(V_1^T \lambda)^2\)</span></p></li>
 </ul>
-<p>The key assumption to make the two-stage fitting possible is that <span class="math display">\[
+<p>The key assumption to make the two-stage fitting possible is that <span class="math display">\[\begin{align*}
    \nu =V_j^T \lambda
-\]</span> is constant within clusters. The consequence of this is that the total random effect for each subject within a cluster, <span class="math inline">\(V_j^T (Z_1,...,Z_d)\)</span> , is gamma distributed with variance <span class="math inline">\(1/\nu\)</span>.</p>
-<p>The DEFAULT parametrization (var.par=1) uses the variances of the random effecs <span class="math display">\[
+\end{align*}\]</span> is constant within clusters. The consequence of this is that the total random effect for each subject within a cluster, <span class="math inline">\(V_j^T (Z_1,...,Z_d)\)</span>, is gamma distributed with variance <span class="math inline">\(1/\nu\)</span>.</p>
+<p>The DEFAULT parametrization (var.par=1) uses the variances of the random effecs <span class="math display">\[\begin{align*}
  \theta_j  = \lambda_j/\nu^2
-\]</span> For alternative parametrizations one can specify that the parameters are <span class="math inline">\(\theta_j=\lambda_j\)</span> with the argument var.par=0.</p>
-<p>Finally the parameters <span class="math inline">\((\theta_1,...,\theta_d)\)</span> are related to the parameters of the model by a regression construction <span class="math inline">\(M\)</span> (d x k), that links the <span class="math inline">\(d\)</span> <span class="math inline">\(\theta\)</span> parameters with the <span class="math inline">\(k\)</span> underlying <span class="math inline">\(\alpha\)</span> parameters <span class="math display">\[
- \theta = M  \alpha. 
-\]</span> The default is a diagonal matrix for <span class="math inline">\(M\)</span>. This can be used to make structural assumptions about the variances of the random-effects as is needed for the ACE model for example. In the software <span class="math inline">\(M\)</span> is called theta.des</p>
+\end{align*}\]</span> For alternative parametrizations one can specify that the parameters are <span class="math inline">\(\theta_j=\lambda_j\)</span> with the argument var.par=0.</p>
+<p>Finally the parameters <span class="math inline">\((\theta_1,...,\theta_d)\)</span> are related to the parameters of the model by a regression construction <span class="math inline">\(M\)</span> (d x k), that links the <span class="math inline">\(d\)</span> <span class="math inline">\(\theta\)</span> parameters with the <span class="math inline">\(k\)</span> underlying <span class="math inline">\(\alpha\)</span> parameters <span class="math display">\[\begin{align*}
+ \theta &amp; = M  \alpha. 
+\end{align*}\]</span> The default is a diagonal matrix for <span class="math inline">\(M\)</span>. This can be used to make structural assumptions about the variances of the random-effects as is needed for the ACE model for example. In the software $ M $ is called theta.des</p>
 <p>Assume that the marginal survival distribution for subject <span class="math inline">\(i\)</span> within cluster <span class="math inline">\(k\)</span> is given by <span class="math inline">\(S_{X_{k,i}}(t)\)</span> given covariates <span class="math inline">\(X_{k,i}\)</span>.</p>
 <p>Now given the random effects of the cluster <span class="math inline">\(Z_k\)</span> and the covariates<span class="math inline">\(X_{k,i}\)</span> <span class="math inline">\(i=1,\dots,n_k\)</span> we assume that subjects within the cluster are independent with survival distributions <span class="math display">\[\begin{align*}
   \exp(-  ( V_{k,i} Z_k)  \Psi^{-1} (\nu,S_{X_{k,i}}(t)) ).
@@ -305,7 +305,7 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.         SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.013022 0.08961056 22.46412     0   0.5016225 0.01112874</span>
+<span class="co">#&gt; dependence1 1.816083 0.08357021 21.73123     0   0.4759024 0.01147746</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; NULL</span>
@@ -317,31 +317,31 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <div class="sourceCode" id="cb4"><html><body><pre class="r"> <span class="no">udp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">piecewise.twostage</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span>),<span class="kw">data</span><span class="kw">=</span><span class="no">d</span>,<span class="kw">score.method</span><span class="kw">=</span><span class="st">"optimize"</span>,
  <span class="kw">id</span><span class="kw">=</span><span class="st">"cluster"</span>,<span class="kw">timevar</span><span class="kw">=</span><span class="st">"time"</span>,<span class="kw">status</span><span class="kw">=</span><span class="st">"status"</span>,<span class="kw">model</span><span class="kw">=</span><span class="st">"clayton.oakes"</span>,<span class="kw">silent</span><span class="kw">=</span><span class="fl">0</span>)
 <span class="co">#&gt; Data-set  1 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 554 of  2000</span>
+<span class="co">#&gt;   Number of joint events: 536 of  2000</span>
 <span class="co">#&gt; Data-set  2 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 268 of  1202</span>
+<span class="co">#&gt;   Number of joint events: 235 of  1195</span>
 <span class="co">#&gt; Data-set  3 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 240 of  1169</span>
+<span class="co">#&gt;   Number of joint events: 265 of  1220</span>
 <span class="co">#&gt; Data-set  4 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 588 of  925</span>
+<span class="co">#&gt;   Number of joint events: 585 of  951</span>
  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">udp</span>)
 <span class="co">#&gt; [1] 1</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model </span>
 <span class="co">#&gt; Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="co">#&gt;               0 - 0.5      0.5 - 2</span>
-<span class="co">#&gt; 0 - 0.5  0.0024060588 -0.002031226</span>
-<span class="co">#&gt; 0.5 - 2 -0.0009937454  0.003245181</span>
+<span class="co">#&gt;              0 - 0.5      0.5 - 2</span>
+<span class="co">#&gt; 0 - 0.5 0.0022255265 -0.001723804</span>
+<span class="co">#&gt; 0.5 - 2 0.0009300021 -0.001024467</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; log-coefficient for dependence parameter (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.675 (0.067)  0.598 (0.093)</span>
-<span class="co">#&gt; 0.5 - 2  0.806 (0.091)  0.717 (0.060)</span>
+<span class="co">#&gt; 0 - 0.5  0.677 (0.068)  0.588 (0.094)</span>
+<span class="co">#&gt; 0.5 - 2  0.722 (0.094)  0.509 (0.067)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Kendall's tau (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.496 (0.017)  0.476 (0.023)</span>
-<span class="co">#&gt; 0.5 - 2  0.528 (0.023)  0.506 (0.015)</span></pre></body></html></div>
+<span class="co">#&gt; 0 - 0.5  0.496 (0.017)  0.474 (0.024)</span>
+<span class="co">#&gt; 0.5 - 2  0.507 (0.023)  0.454 (0.016)</span></pre></body></html></div>
 </div>
 <div id="multivariate-gamma-twostage-models" class="section level1">
 <h1 class="hasAnchor">
@@ -380,24 +380,24 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE         z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.191941 0.2078486 10.545855 0.000000e+00   0.5228940 0.02365630</span>
-<span class="co">#&gt; dependence2 1.087937 0.1671462  6.508898 7.570411e-11   0.3523185 0.03505819</span>
+<span class="co">#&gt;                 Coef.        SE        z        P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 2.2728616 0.2197852 10.34129 0.000000e+00   0.5319296 0.02407635</span>
+<span class="co">#&gt; dependence2 0.7678367 0.1710207  4.48973 7.131347e-06   0.2774140 0.04464756</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.6683 0.05116 0.5680 0.7686 5.413e-39</span>
-<span class="co">#&gt; dependence2   0.3317 0.05116 0.2314 0.4320 8.978e-11</span>
+<span class="co">#&gt; dependence1   0.7475 0.05696 0.6358 0.8591 2.427e-39</span>
+<span class="co">#&gt; dependence2   0.2525 0.05696 0.1409 0.3642 9.278e-06</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%    P-value</span>
-<span class="co">#&gt; p1     3.28  0.1478 2.99  3.57 3.903e-109</span>
+<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    3.041  0.1467 2.753 3.328 2.154e-95</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
@@ -405,10 +405,10 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <p>We do this based on simulations. The Kendall’s tau of the MZ is around 0.60, and for DZ around 0.33. Both are quite high and this is due to a large shared environmental effect and large genetic effect.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">kendall.ClaytonOakes.twin.ace</a></span>(<span class="no">ts</span>$<span class="no">theta</span>[<span class="fl">1</span>],<span class="no">ts</span>$<span class="no">theta</span>[<span class="fl">2</span>],<span class="kw">K</span><span class="kw">=</span><span class="fl">10000</span>)
 <span class="co">#&gt; $mz.kendall</span>
-<span class="co">#&gt; [1] 0.6262875</span>
+<span class="co">#&gt; [1] 0.6174822</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $dz.kendall</span>
-<span class="co">#&gt; [1] 0.3536382</span></pre></body></html></div>
+<span class="co">#&gt; [1] 0.3036264</span></pre></body></html></div>
 </div>
 <div id="family-data" class="section level1">
 <h1 class="hasAnchor">
