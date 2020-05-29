@@ -1,7 +1,3 @@
----
-# YAML header created by ox-ravel
-title: Multivariate Event Times (=mets=)
----
 <!-- badges: start -->
   [![travis](https://travis-ci.org/kkholst/mets.svg?branch=master)](https://travis-ci.org/kkholst/mets)
   [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg?branch=master)](https://codecov.io/github/kkholst/mets?branch=master)
@@ -130,6 +126,4 @@ abline(h=smz$prob["Concordance",],lwd=c(2,1,1),col="darkblue")
 abline(h=summary(bpmz)$prob["Concordance",],lwd=c(2,1,1),col="lightgray", lty=2)
 ```
 
-<img src="man/figures/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="50%" />
-
-![img](inst/misc/mets1.png)
+<img src="man/figures/ex1-1.png" title="plot of chunk ex1" alt="plot of chunk ex1" width="60%" />

@@ -8,7 +8,6 @@
 #+PROPERTY: header-args:R+ :colnames yes :rownames no :hlines yes  :width 550 :height 450
 
 #+BEGIN_EXPORT yaml
-title: My Vignette
 output:
     bookdown::html_document2:
       base_format: rmarkdown::html_vignette
