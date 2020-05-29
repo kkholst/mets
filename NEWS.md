@@ -1,15 +1,12 @@
-#-*- mode: org -*-
-#
-
-* Version 1.2.8      <2020->
+# mets 1.2.8
   - Double Fine-Gray model for two causes.
   - Likelihood evaluation of mvn uses Moore-Penrose pseudo-inverese (threshold set via lava.options(itol=...)
   - Vignette updates
 
-* Version 1.2.7.1    <2020-03-03 Tue>
+# mets 1.2.7.1
   - Maintenance release
 
-* Version 1.2.6    <2019-08-02 Fri>
+# mets 1.2.6
   - Cumulative incidence regression cifreg function
     - Fine-Gray model with cloglog link of (1-F_1(t,x))
     - Logit link
@@ -23,7 +20,7 @@
   - Interval censoring for discrete time logit-survival model: interval.logitsurv.discrete
   - Binomial Regression for competing risks data with censoring and one time point only: binreg
 
-* Version 1.2.5    <2018-11-18 Sun>
+# mets 1.2.5
   - Updated predict function for phreg
     - with plotting functionality
     - with robust standard errors
@@ -40,7 +37,7 @@
   - standard errors for twostage models now also with uncertainty from Cox baseline
   - cumulative score process test gof now also for marginal Cox models
 
-* Version 1.2.4    <2018-05-18 Wed>
+# mets 1.2.4
   - functions km (Kaplan-Meier) and cif (cumulative incidence
     probability) with robust standard errors.
   - computation of probability of exceeding "k" events for recurrents
@@ -51,10 +48,10 @@
   - rmvn, dmvn: RNG and density for multivariate normal distribution
     with varying correlation coefficients.
 
-* Version 1.2.3.1 <2018-04-18 Wed>
+# mets 1.2.3.1
   - starting values updated for twinlm method
 
-* Version 1.2.3    <2018-02-02 Mon>
+# mets 1.2.3
   - twinlm now supports ordinal outcomes
   - optimized strata calculations in phreg
   - optimized robust standard errors in phreg
@@ -66,17 +63,17 @@
   - simulating recurrent events with possibly two recurrent events  and death
   - covariance calculation for recurrent events data and related bootstrap
 
-* Version 1.2.2    <2017-03-18 Sat>
+# mets 1.2.2
   - Vignettes updated
   - Compatibility with lava version 1.5
 
-* Version 1.2.1    <2017-02-25 Sat>
+# mets 1.2.1
   - New documentation/vignettes
   - Additional examples and unit tests
   - lifecourse plot function: lifecourse
   - block sampling function: dsample
 
-* Version 1.2.0    <2017-02-03 Fri>
+# mets 1.2.0
   - Namespace cleaning (twostage)...
   - Dependency on R>=3.3 radix algorithm
   - Case-Control sampling for twostage model.
@@ -108,16 +105,16 @@
     - dsummary,
     - dprint, dlist, dlevels, dunique
 
-* Version 1.1.1    <2015-05-27 Wed>
+# mets 1.1.1
   - Support for left-truncation
 
-* Version 1.1.0    <2015-02-16 Mon>
+# mets 1.1.0
   - fast.approx with 'type' argument
   - scoreMV
   - lifetable updated and new survpois function (piecewise constant
     hazard)
 
-* Version 1.0.0    <2014-11-18 Tue>
+# mets 1.0
   - New functions biprobit.time, binomial.twostage.time.
     Automatically samples time points (approximately equidistant) up to
     last double jump time. Intial support for left truncation.
@@ -137,7 +134,7 @@
   - demos added to the mets package
   - divide.conquer function, folds function
 
-* Version 0.2.8    <2014-05-07 Wed>
+# mets 0.2.8
   - Normal orthant probabilities via 'pmvn' (vectorized)
   - Parametric proportional hazards models via 'phreg.par'
   - twinlm.time function for censored twin data. Wraps the 'ipw'
@@ -146,7 +143,7 @@
   - Relative recurrence risk ratios now reported with bptwin/twinlm.
   - Grandom.cif more stable
 
-* Version 0.2.7    <2014-02-18 Tue>
+# mets 0.2.7
   - Adapted to changes in 'timereg::comp.risk'
   - cluster.index with 'mat' argument for stacking rows of a matrix
     according to cluster-variable
@@ -154,11 +151,11 @@
   - fast.reshape more robust. Now also supports 'varying arguments of
     the type 'varying=-c(...)' choosing everything except '...'.
 
-* Version 0.2.6    <2013-12-07 Sat>
+# mets 0.2.6
   - C++ source code cleanup
   - Optimization of fast.reshape
 
-* Version 0.2.5    <2013-11-01 Fri>
+# mets 0.2.5
   - New datasets: dermalridges, dermalridgesMZ
   - Grouped analysis updated in twinlm (e.g. sex limitation model)
   - Confidence limits for genetic and environmental effects are now
@@ -166,15 +163,15 @@
     argument of the summary method to apply logit-transform)
   - Improved output in twinlm
 
-* Version 0.2.4    <2013-07-10 Wed>
+# mets 0.2.4
   - fast.reshape :labelnum option for both wide and long format (see
     example)
   - Compilation flags removed from Makevars files
 
-* Version 0.2.3    <2013-05-22 Wed>
+# mets 0.2.3
   - fast.reshape bug-fix (column names)
 
-* Version 0.2.2    <2013-05-21 Tue>
+# mets 0.2.2
   - Updated twinlm. bptwin: OS analysis
      - Better starting values for twinlm
   - Fixed claytonaokes.cpp
@@ -182,27 +179,27 @@
   - Updated two-stage estimator
   - Improved fast.reshape
 
-* Version 0.2.0    <2013-03-27 Wed>
+# mets 0.2.1
   - fast.reshape
   - easy.binomial.twostage
 
-* Version 0.1.4    <2012-09-07 Fri>
+# mets 0.1.4
   - Fixed cor.cpp
   - New datasets: twinstut, twinbmi, prtsim
 
-* Version 0.1.3    <2012-07-05 Thu>
+# mets 0.1.3
   - twinlm moved to mets package, and wraps the bptwin function
 
-* Version 0.1.2    <2012-05-14 Mon>
+# mets 0.1.2
   - code clean-up and minor bug-fixes
 
-* Version 0.1.1    <2012-05-06 Sun>
+# mets 0.1.1
   - Random effects CIF models moved from MultiComp to mets
   - new data sets: np, multcif
   - Documentation via roxygen2
   - bug fixes
 
-* Version 0.1.0    <2012-04-25 Wed>
+# mets 0.1.0
   - Initialization of the new package 'mets' with implementation of the
     Clayton-Oakes model with piecewise constant marginal hazards, and
     the bivariate probit random effects model (Liability model) for
