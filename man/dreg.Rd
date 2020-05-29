@@ -4,24 +4,11 @@
 \alias{dreg}
 \title{Regression for data frames with dutility call}
 \usage{
-dreg(
-  data,
-  y,
-  x = NULL,
-  z = NULL,
-  x.oneatatime = TRUE,
-  x.base.names = NULL,
-  z.arg = c("clever", "base", "group", "condition"),
-  fun. = lm,
-  summary. = summary,
-  regex = FALSE,
-  convert = NULL,
-  doSummary = TRUE,
-  special = NULL,
-  equal = TRUE,
-  test = 1,
-  ...
-)
+dreg(data, y, x = NULL, z = NULL, x.oneatatime = TRUE,
+  x.base.names = NULL, z.arg = c("clever", "base", "group",
+  "condition"), fun. = lm, summary. = summary, regex = FALSE,
+  convert = NULL, doSummary = TRUE, special = NULL, equal = TRUE,
+  test = 1, ...)
 }
 \arguments{
 \item{data}{data frame}

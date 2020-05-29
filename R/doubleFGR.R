@@ -1,5 +1,4 @@
 
-
 ##' Double CIF Fine-Gray model with two causes
 ##'
 ##' Estimation based on derived hazards and recursive esitmating euqations.
@@ -428,7 +427,6 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	return(out)
 }# }}}
 
-
 ##' @export
 coef.doubleFG <- function(object,...) object$coef
 
@@ -513,4 +511,329 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 	return(pll)
 }# }}}
 
+##' Augmentation for Fine-Gray model with two causes
+##'
+##' @examples
+##' rho1 <- 0.1; rho2 <- 0.9
+##' n <- 400
+##' beta=c(0.3,-0.3,0.1,0.1)
+##' dats <- simul.mod(n,rho1,rho2,beta)
+##' dsort(dats) <- ~time
+##' fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
+##' 
+##' fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+##' cr <- phreg(Surv(time,status==0)~+1,data=dats)
+##' dtable(dats,~status)
+##' dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
+##' fgaug <- augmentationFG(dats,fg,dfg,cr)
+##' 
+augmentationFG <- function(dats,fg,dfg,cr,cens.model=FALSE) 
+{# {{{
+
+if (!is.null(dfg)) {
+
+timec <- cr$cumhaz[,1]
+times1 <- fgcm$cumhaz[,1]
+###
+dup <- duplicated(timec)
+censrows <- which(dats$status==0 )[!dup]
+ll <- length(censrows)
+censrows <- censrows[-ll]
+Gtc <- exp(-cr$cumhaz[,2])[!dup]
+Gtc <- Gtc[-ll]
+###
+timec <- timec[!dup]
+timec <- timec[-ll]
+
+### take E from fgcm to get correct E
+pcif1 <- predictdFG(dfg,newdata=dats,cause=1,times=c(0,times1),se=FALSE)
+pcif2 <- predictdFG(dfg,newdata=dats,cause=2,times=c(0,times1),se=FALSE)
+###
+pGct1  <-  predict(cr,newdata=dats,times=c(times1),se=FALSE)$surv
+cum1 <- pcif1$cumhaz
+dcum <- t(apply(pcif1$cumhaz,1,diff))
+nc <- ncol(dcum)
+###
+###########################################################
+### H(t) = \int_t^infty e(t) G_c(t) d \Lambda_1(t,X)    ###
+### H(t) = \int_t^infty  G_c(t) d \Lambda_1(t,X)        ###
+### using correct Es, or simple E
+### evaluated first at times1 and then at timec 
+###########################################################
+whereH <- sindex.prodlim(c(0,times1),timec)
+
+intAug <- function(dcum,pGct1,E,whereH) {# {{{
+	HGt<-    t(apply(dcum*pGct1,1,cumsum))
+	He1Gt <- t(apply(dcum*pGct1*E[,1],1,cumsum))
+	He2Gt <- t(apply(dcum*pGct1*E[,2],1,cumsum))
+	nc <- ncol(HGt)
+        ###### \int_s^infty      G_c(t)  d \Lambda_1(t,X)
+        ###### \int_s^infty E(t) G_c(t)  d \Lambda_1(t,X)
+	dHGt <-         HGt[,nc] - HGt
+	dHe1Gt <-     He1Gt[,nc] - He1Gt
+	dHe2Gt <-     He2Gt[,nc] - He2Gt
+	### do not start at 0 but  and evaluated at timec
+	dHGt <-       cbind(dHGt[,1],dHGt)[,whereH]     
+	dHe1Gt <-   cbind(dHe1Gt[,1],dHe1Gt)[,whereH]
+	dHe2Gt <-   cbind(dHe2Gt[,1],dHe2Gt)[,whereH] 
+
+return(list(dHGt=dHGt,dHe1Gt=dHe1Gt,dHe2Gt=dHe2Gt))
+}# }}}
+
+whereH <- sindex.prodlim(c(0,times1),timec)
+Hfg   <- intAug(dcum,pGct1,fg$E,whereH)
+###HfgEs <- intAug(dcum,pGct1,fgcm$E,whereH)
+###Hfgcm <- intAug(dcum,pGcst1,fgcm$E,whereH)
+
+F1t <- pcif1$cif; F2t <- pcif2$cif; GTt <- 1-F1t-F2t
+F1t <- F1t[,whereH]; F2t <- F2t[,whereH]; GTt <- GTt[,whereH]; 
+
+### now evaluate censoring distribution in timesc
+###pGcXt1 <-  predict(ccr,newdata=dats,times=timec,tmius=TRUE,se=FALSE)$surv
+###pGcst1 <-  predict(csr,newdata=dats,times=timec,timus=TRUE,se=FALSE)$surv
+pGct1  <-  predict(cr,newdata=dats,times=timec,timus=TRUE,se=FALSE)$surv
+###matplot(timec,t(pGct1),type="s")
+###matplot(timec,t(pGcst1),type="s")
+###matplot(timec,t(pGcXt1),type="s")
+
+Xalls <- as.matrix(fg$model.frame[,-1])
+###RRall <- c(exp( Xalls %*% ccr$coef) )
+RR1   <- rep(1,nrow(Xalls))
+
+intdMc<-function(dHGt,dHe1,dHe2,Gtt,RRall,Xalls,timec,GTt,F1t,F2t,censrows)
+{# {{{
+aug <- matrix(0,length(censrows),ncol(Xalls))
+ww <- 1
+for (ww in seq_along(timec)) {
+i <- censrows[ww]
+xi <- Xalls[i,]; GTtx <- GTt[i,ww]; F2tx <-  F2t[i,ww]; 
+Gct <- Gtt[i,ww]; 
+dHe <-    c(dHe1[i,ww],dHe2[i,ww]) 
+aug1 <-  (F2tx/GTtx)*(xi*dHGt[i,ww]-dHe)*(1/Gct)
+#### compensator part 
+F2dGt <- F2t[-(1:(i-1)),ww]/GTt[-(1:(i-1)),ww]
+Xs <- Xalls[-(1:(i-1)),,drop=FALSE]
+RR <- RRall[-(1:(i-1))]; 
+Gctt  <- Gtt[-(1:(i-1)),ww]
+avau21  <-  apply(F2dGt*dHGt[-(1:(i-1)),ww]*Xs*RR/Gctt,2,sum)/sum(RR)
+HtXsGt <- RR*(F2dGt/Gctt)*cbind(dHe1[-(1:(i-1)),ww],dHe2[-(1:(i-1)),ww]) 
+avau22 <- apply(HtXsGt,2,sum)/sum(RR)
+avau1 <- (avau21-avau22)
+aug[ww,] <- aug1-avau1
+}
+augt <- aug
+aug <- apply(augt,2,sum,na.rm=TRUE)
+return(list(augt=augt,aug=aug))
+}# }}}
+
+aug <- intdMc(Hfg$dHGt,Hfg$dHe1Gt,Hfg$dHe2Gt,pGct1,RR1,Xalls,timec,GTt,F1t,F2t,censrows)
+###augX <- intdMc(HfgEs$dHGt,HfgEs$dHe1Gt,HfgEs$dHe2Gt,pGct1,RR1,Xalls,timec,GTt,F1t,F2t,censrows)
+###augXX <- intdMc(Hfgcm$dHGt,Hfgcm$dHe1Gt,Hfgcm$dHe2Gt,pGcXt1,RRall,Xalls,timec,GTt,F1t,F2t,censrows)
+
+###    ##################
+###    F1tx <-  F1t[i,ww]
+###    S0t <- (F1tx/GTtx)*RRdfg[i]/Gctt
+###    S1t <- xi*(F1tx/GTtx)*RRdfg[i]/Gctt
+###    F1dGt <- RRdfg[-(1:(i-1))]*F1t[-(1:(i-1)),ww]/GTt[-(1:(i-1)),ww]
+###    S1av <- apply(F1dGt*Xs/Gctt,2,mean)
+###    S0 <- c(S0,S0t-mean(F1dGt)/Gctt)
+###    S1 <- rbind(S1,S1t-S1av)
+
+### agumentation using Gc for augmentation term, using E
+fgas <- cifreg(Event(time,status)~Z1+Z2,
+  data=dats,cause=1,propodds=NULL,beta=fg$coef,augmentation=aug$aug)
+
+
+} else {
+   fgas <- fgasX <- fgascm <-  data.frame(coef=rep(NA,2))
+   aug <- augX  <-  augXX <- data.frame(aug=rep(NA,2))
+   S0aug <- 0; S1aug <- 0
+}
+
+res=list( fgas=fgas$coef)
+###	  fgdrE=fgdrE$coef, ## augX=augX,
+###	  fgascm=fgascm$coef, 
+###	  aug=aug$aug)
+###	  ,augXX=augXX$aug)#,S0=S0t,S1=S1t)
+
+return(res)
+
+}# }}}
+
+augmentationFG <- function(dats,fg,fgcm,dfg,cr,csr,ccr,cens.model=FALSE) 
+{# {{{
+
+if (!is.null(fgcm)) {
+
+timec <- cr$cumhaz[,1]
+times1 <- fgcm$cumhaz[,1]
+###
+dup <- duplicated(timec)
+censrows <- which(dats$status==0 )[!dup]
+ll <- length(censrows)
+censrows <- censrows[-ll]
+Gtc <- exp(-cr$cumhaz[,2])[!dup]
+Gtc <- Gtc[-ll]
+###
+timec <- timec[!dup]
+timec <- timec[-ll]
+
+### take E from fgcm to get correct E
+pcif1 <- predictdFG(dfg,newdata=dats,cause=1,times=c(0,times1),se=FALSE)
+pcif2 <- predictdFG(dfg,newdata=dats,cause=2,times=c(0,times1),se=FALSE)
+###
+pGcXt1 <-  predict(ccr,newdata=dats,times=c(times1),se=FALSE)$surv
+pGcst1 <-  predict(csr,newdata=dats,times=c(times1),se=FALSE)$surv
+pGct1  <-  predict(cr,newdata=dats,times=c(times1),se=FALSE)$surv
+###
+cum1 <- pcif1$cumhaz
+dcum <- t(apply(pcif1$cumhaz,1,diff))
+nc <- ncol(dcum)
+S0t <- c(0,fg$S0)
+###
+###########################################################
+### H(t) = \int_t^infty e(t) G_c(t) d \Lambda_1(t,X)    ###
+### H(t) = \int_t^infty  G_c(t) d \Lambda_1(t,X)        ###
+### HS(t) = \int_t^infty (1/S0) G_c(t) d \Lambda_1(t,X) ###
+### using simple E                                      ###
+### evaluated first at times1 and then at timec         ###
+###########################################################
+whereH <- sindex.prodlim(c(0,times1),timec)
+
+intAug <- function(dcum,pGct1,E,whereH) {# {{{
+	HGt<-    t(apply(dcum*pGct1,1,cumsum))
+	HSGt<-   t(apply(dcum*c(pGct1/S0t),1,cumsum))
+	He1Gt <- t(apply(dcum*pGct1*E[,1],1,cumsum))
+	He2Gt <- t(apply(dcum*pGct1*E[,2],1,cumsum))
+	nc <- ncol(HGt)
+        ###### \int_s^infty      G_c(t)  d \Lambda_1(t,X)
+        ###### \int_s^infty E(t) G_c(t)  d \Lambda_1(t,X)
+	dHGt <-         HGt[,nc] - HGt
+	dHSGt <-       HSGt[,nc] - HSGt
+	dHe1Gt <-     He1Gt[,nc] - He1Gt
+	dHe2Gt <-     He2Gt[,nc] - He2Gt
+	### do not start at 0 but  and evaluated at timec
+	dHGt <-         cbind(dHGt[,1],dHGt)[,whereH]     
+	dHe1Gt <-   cbind(dHe1Gt[,1],dHe1Gt)[,whereH]
+	dHe2Gt <-   cbind(dHe2Gt[,1],dHe2Gt)[,whereH] 
+	dHSGt <-      cbind(dHSGt[,1],dHSGt)[,whereH] 
+	HSGt <-                cbind(0,HSGt)[,whereH]
+return(list(dHGt=dHGt,dHe1Gt=dHe1Gt,dHe2Gt=dHe2Gt,dHSGt=dHSGt,HSGt=HSGt))
+}# }}}
+
+whereH <- sindex.prodlim(c(0,times1),timec)
+Hfg   <- intAug(dcum,pGct1,fg$E,whereH)
+HfgEs <- intAug(dcum,pGct1,fgcm$E,whereH)
+Hfgcm <- intAug(dcum,pGcst1,fgcm$E,whereH)
+
+F1t <- pcif1$cif; F2t <- pcif2$cif; GTt <- 1-F1t-F2t
+F1t <- F1t[,whereH]; F2t <- F2t[,whereH]; GTt <- GTt[,whereH]; 
+
+### now evaluate censoring distribution in timesc
+pGcXt1 <-  predict(ccr,newdata=dats,times=timec,tmius=TRUE,se=FALSE)$surv
+pGcst1 <-  predict(csr,newdata=dats,times=timec,timus=TRUE,se=FALSE)$surv
+pGct1  <-  predict(cr,newdata=dats,times=timec,timus=TRUE,se=FALSE)$surv
+###matplot(timec,t(pGct1),type="s")
+###matplot(timec,t(pGcst1),type="s")
+###matplot(timec,t(pGcXt1),type="s")
+
+betadfg <- dfg$coef[1:2]
+Xalls <- as.matrix(fgcm$model.frame[,-1])
+RRall <- c(exp( Xalls %*% ccr$coef) )
+RRdfg <- c(exp( Xalls %*% betadfg) )
+RR1   <- rep(1,nrow(Xalls))
+
+intdMc<-function(dHGt,dHe1,dHe2,Gtt,RRall,Xalls,timec,GTt,F1t,F2t,censrows)
+{# {{{
+aug <- matrix(0,length(censrows),ncol(Xalls))
+ww <- 1
+for (ww in seq_along(timec)) {
+i <- censrows[ww]
+xi <- Xalls[i,]; GTtx <- GTt[i,ww]; F2tx <-  F2t[i,ww]; 
+Gct <- Gtt[i,ww]; 
+dHe <-    c(dHe1[i,ww],dHe2[i,ww]) 
+aug1 <-  (F2tx/GTtx)*(xi*dHGt[i,ww]-dHe)*(1/Gct)
+#### compensator part 
+F2dGt <- F2t[-(1:(i-1)),ww]/GTt[-(1:(i-1)),ww]
+Xs <- Xalls[-(1:(i-1)),,drop=FALSE]
+RR <- RRall[-(1:(i-1))]; 
+Gctt  <- Gtt[-(1:(i-1)),ww]
+avau21  <-  apply(F2dGt*dHGt[-(1:(i-1)),ww]*Xs*RR/Gctt,2,sum)/sum(RR)
+HtXsGt <- RR*(F2dGt/Gctt)*cbind(dHe1[-(1:(i-1)),ww],dHe2[-(1:(i-1)),ww]) 
+avau22 <- apply(HtXsGt,2,sum)/sum(RR)
+avau1 <- (avau21-avau22)
+aug[ww,] <- aug1-avau1
+}
+augt <- aug
+aug <- apply(augt,2,sum,na.rm=TRUE)
+return(list(augt=augt,aug=aug))
+}# }}}
+
+aug <- intdMc(Hfg$dHGt,Hfg$dHe1Gt,Hfg$dHe2Gt,pGct1,RR1,Xalls,timec,GTt,F1t,F2t,censrows)
+###augX <- intdMc(HfgEs$dHGt,HfgEs$dHe1Gt,HfgEs$dHe2Gt,pGct1,RR1,Xalls,timec,GTt,F1t,F2t,censrows)
+augXX <- intdMc(Hfgcm$dHGt,Hfgcm$dHe1Gt,Hfgcm$dHe2Gt,pGcXt1,RRall,Xalls,timec,GTt,F1t,F2t,censrows)
+
+###    ##################
+###    F1tx <-  F1t[i,ww]
+###    S0t <- (F1tx/GTtx)*RRdfg[i]/Gctt
+###    S1t <- xi*(F1tx/GTtx)*RRdfg[i]/Gctt
+###    F1dGt <- RRdfg[-(1:(i-1))]*F1t[-(1:(i-1)),ww]/GTt[-(1:(i-1)),ww]
+###    S1av <- apply(F1dGt*Xs/Gctt,2,mean)
+###    S0 <- c(S0,S0t-mean(F1dGt)/Gctt)
+###    S1 <- rbind(S1,S1t-S1av)
+
+### agumentation using Gc for augmentation term, using E
+fgas <- cifreg(Event(time,status)~platelet+age,
+  data=dats,cause=1,propodds=NULL,beta=fg$coef,augmentation=aug$aug)
+
+###### agumentation using augmentation for S0, S1 to get correct E
+###S0t <- Cpred(cbind(timec,S0),times1)[,-1]
+###S1t <- Cpred(cbind(timec,S1),times1)[,-1]
+###fgdrE <- cifreg(Event(time,status)~platelet+age,
+###     data=dats,cause=1,propodds=NULL,beta=fg$coef,
+###     Saug=list(S0aug=S0t,S1aug=S1t))
+fgdrE <- fgas
+
+### agumentation using GcX for augmentation term
+fgascm <- cifreg(Event(time,status)~platelet+age,
+       data=dats,cause=1,propodds=NULL,beta=fg$coef,
+       augmentation=augXX$aug,cens.model=~strata(platelet))
+
+} else {
+   fgas <- fgasX <- fgascm <-  data.frame(coef=rep(NA,2))
+   aug <- augX  <-  augXX <- data.frame(aug=rep(NA,2))
+   S0aug <- 0; S1aug <- 0
+}
+
+res=list( fgas=fgas$coef,
+	  fgdrE=fgdrE$coef, ## augX=augX,
+	  fgascm=fgascm$coef, 
+	  aug=aug$aug,augXX=augXX$aug)#,S0=S0t,S1=S1t)
+
+return(res)
+
+}# }}}
+
+simul.mod <- function(n,rho1,rho2,beta,rc=0.1,depcens=0) {# {{{
+p=length(beta)/2
+tt <- seq(0,6,by=0.1)
+Lam1 <- rho1*(1-exp(-tt))
+Lam2 <- rho2*(1-exp(-tt))
+
+Z=cbind(2*rbinom(n,1,1/2)-1,10*(rexp(n)-1))
+colnames(Z) <- paste("Z",1:2,sep="")
+cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
+cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
+###
+data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
+
+if (depcens==0) censor=pmin(rexp(n,rc),5+runif(n)) else censor=pmin(rexp(n,exp(rc*Z[,1])),3+3*runif(n))
+
+status=data$status*(data$time<=censor)
+time=pmin(data$time,censor)
+time[status==3] <- runif(sum(status==3))*10
+data <- data.frame(time=time,status=status)
+return(cbind(data,Z))
+
+}# }}}
 

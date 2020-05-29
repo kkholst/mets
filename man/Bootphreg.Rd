@@ -5,15 +5,8 @@
 \alias{pred.cif.boot}
 \title{Wild bootstrap for Cox PH regression}
 \usage{
-Bootphreg(
-  formula,
-  data,
-  offset = NULL,
-  weights = NULL,
-  B = 1000,
-  type = c("exp", "poisson", "normal"),
-  ...
-)
+Bootphreg(formula, data, offset = NULL, weights = NULL, B = 1000,
+  type = c("exp", "poisson", "normal"), ...)
 }
 \arguments{
 \item{formula}{formula with 'Surv' outcome (see \code{coxph})}

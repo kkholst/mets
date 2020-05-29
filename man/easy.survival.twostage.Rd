@@ -4,30 +4,13 @@
 \alias{easy.survival.twostage}
 \title{Wrapper for easy fitting of Clayton-Oakes or bivariate Plackett models for bivariate survival data}
 \usage{
-easy.survival.twostage(
-  margsurv = NULL,
-  data = sys.parent(),
-  score.method = "nlminb",
-  status = "status",
-  time = "time",
-  entry = NULL,
-  id = "id",
-  Nit = 60,
-  detail = 0,
-  silent = 1,
-  weights = NULL,
-  control = list(),
-  theta = NULL,
-  theta.formula = NULL,
-  desnames = NULL,
-  deshelp = 0,
-  var.link = 1,
-  step = 0.5,
-  model = "plackett",
-  marginal.surv = NULL,
-  strata = NULL,
-  se.clusters = NULL
-)
+easy.survival.twostage(margsurv = NULL, data = sys.parent(),
+  score.method = "nlminb", status = "status", time = "time",
+  entry = NULL, id = "id", Nit = 60, detail = 0, silent = 1,
+  weights = NULL, control = list(), theta = NULL,
+  theta.formula = NULL, desnames = NULL, deshelp = 0, var.link = 1,
+  step = 0.5, model = "plackett", marginal.surv = NULL,
+  strata = NULL, se.clusters = NULL)
 }
 \arguments{
 \item{margsurv}{model}
