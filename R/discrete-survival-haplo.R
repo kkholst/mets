@@ -560,6 +560,7 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(ttpd) 
+##' dtable(ttpd,~entry+time2)
 ##' out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' 
@@ -646,16 +647,15 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   ## setting up designs for t_l and t_r
   tR <- tL <- matrix(0,n,mutimes)
 
-  ## design for [t_l,t_r], for t_l=0,t_r=inf, row is  0
+  ## design for ]t_l,t_r], for t_l=0 row is  0
   if (increment==0) {
 	  tL <- matdoubleindex(tL,1:n,entrytime,rep(1,n))
 	  tR <- matdoubleindex(tL,1:n,time2,rep(1,n))
   } else {
-	  ### to appear 
-	  for (i in 1:mutimes) {
-		  tL[,i] <- (i <= entrytime) 
-		  tR[,i] <- (i <= time2) 
-	  }
+     for (i in 1:mutimes) {
+        tL[,i] <- (i <= entrytime) 
+        tR[,i] <- (i <= time2) 
+     }
   }
 
   ## computing X^2 
@@ -666,7 +666,6 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   }
   tL2  <- .Call("vecMatMat",tL,tL)$vXZ
   tR2  <- .Call("vecMatMat",tR,tR)$vXZ
-
 
   ## weights/offets will follow id 
   if (is.null(weights))  weights <- rep(1,n); #  else wiid <- weights
@@ -947,4 +946,5 @@ if (missing(Z)) Z <- NULL
 
 return(preds)
 } ## }}} 
+
 

@@ -16,17 +16,8 @@
 \alias{dnumeric<-}
 \title{relev levels for data frames}
 \usage{
-drelevel(
-  data,
-  y = NULL,
-  x = NULL,
-  ref = NULL,
-  newlevels = NULL,
-  regex = mets.options()$regex,
-  sep = NULL,
-  overwrite = FALSE,
-  ...
-)
+drelevel(data, y = NULL, x = NULL, ref = NULL, newlevels = NULL,
+  regex = mets.options()$regex, sep = NULL, overwrite = FALSE, ...)
 }
 \arguments{
 \item{data}{if x is formula or names for data frame then data frame is needed.}

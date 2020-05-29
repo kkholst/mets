@@ -4,16 +4,8 @@
 \alias{gofM.phreg}
 \title{GOF for Cox covariates in  PH regression}
 \usage{
-gofM.phreg(
-  formula,
-  data,
-  offset = NULL,
-  weights = NULL,
-  modelmatrix = NULL,
-  n.sim = 1000,
-  silent = 1,
-  ...
-)
+gofM.phreg(formula, data, offset = NULL, weights = NULL,
+  modelmatrix = NULL, n.sim = 1000, silent = 1, ...)
 }
 \arguments{
 \item{formula}{formula for cox regression}
@@ -41,7 +33,7 @@ That is, computes
 \deqn{
  U(t) = \int_0^t M^t d \hat M 
 }
-and resamples its asymptotic distribution. 
+and resamples its asymptotic distribution.
 
 This will show if the residuals are consistent with the model. Typically,
 M will be a design matrix for the continous covariates that gives for example
