@@ -1,8 +1,12 @@
+README.Rmd
+README.html
+docs
 *.gcno
 TAGS
 inst/doc
 inst/misc/workshop*.org
 inst/misc/mena.org
+vignettes/*.html
 vignette/*.css
 vignette/*.html
 vignette/*.tex

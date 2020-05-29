@@ -42,24 +42,27 @@ extern SEXP Dpmvn(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP survivalRV(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP RsurvivalRVCmarg(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP survivalRV2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP survivalloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP twostageloglikebin(SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
+extern SEXP survivalloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP,
+				   SEXP, SEXP, SEXP, SEXP, SEXP,
+				   SEXP, SEXP, SEXP, SEXP, SEXP,
+				   SEXP, SEXP, SEXP, SEXP);
+extern SEXP twostageloglikebin(SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
 		SEXP);
-extern SEXP twostageloglikebinpairs(SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
+extern SEXP twostageloglikebinpairs(SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP);
-extern SEXP twostageloglikeRV(SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
+extern SEXP twostageloglikeRV(SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP, SEXP, SEXP);
-extern SEXP twostageloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
-		SEXP, SEXP, SEXP, SEXP, SEXP, 
+extern SEXP twostageloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
+		SEXP, SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP, SEXP, SEXP);
 extern SEXP Uhat(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP uniprobit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -177,7 +180,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"RsurvivalRVCmarg",                  (DL_FUNC) &RsurvivalRVCmarg,                   7},
     {"survivalRV",                        (DL_FUNC) &survivalRV,                        10},
     {"survivalRV2",                       (DL_FUNC) &survivalRV2,                       10},
-    {"survivalloglikeRVpairs",            (DL_FUNC) &survivalloglikeRVpairs,            25},
+    {"survivalloglikeRVpairs",            (DL_FUNC) &survivalloglikeRVpairs,            19},
     {"twostageloglikebin",                (DL_FUNC) &twostageloglikebin,                21},
     {"twostageloglikebinpairs",           (DL_FUNC) &twostageloglikebinpairs,           22},
     {"twostageloglikeRV",                 (DL_FUNC) &twostageloglikeRV,                 19},
