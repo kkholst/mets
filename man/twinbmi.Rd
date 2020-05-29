@@ -4,13 +4,15 @@
 \name{twinbmi}
 \alias{twinbmi}
 \title{BMI data set}
-\format{Self-reported BMI-values on 11,411 subjects
+\format{
+Self-reported BMI-values on 11,411 subjects
 
 tvparnr: twin id
 bmi: BMI (m/kg^2)
 age: Age
 gender: (male/female)
-zyg: zygosity, MZ:=mz, DZ(same sex):=dz, DZ(opposite sex):=os}
+zyg: zygosity, MZ:=mz, DZ(same sex):=dz, DZ(opposite sex):=os
+}
 \description{
 BMI data set
 }
