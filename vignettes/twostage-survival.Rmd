@@ -45,15 +45,15 @@ Typically it can be hard or impossible to specify random effects models with spe
 structure among the parameters of the random effects. This is possible for 
 our specification of the random effects models.
 
-To be concrete about the model structure assume that we have paired binomial 
-data \( T_1, \delta_1, T_2, \delta_2,  X_1, X_2 \) where the censored 
-survival responses are \( T_1, \delta_1, T_2, \delta_2 \) and we
-have covariates \( X_1, X_2 \).
+To be concrete about the model structure assume that we have paired survival 
+data $(T_1, \delta_1, T_2, \delta_2,  X_1, X_2)$ where the censored 
+survival responses are $(T_1, \delta_1, T_2, \delta_2)$ and the 
+covariates are  $(X_1, X_2)$.
 
 The basic models assumes that each subject has a marginal on Cox-form
-\[ 
+$$ 
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
-\] 
+$$ 
 where $s(k,i)$ is a strata variable. 
 
 
@@ -73,16 +73,17 @@ The univariate models are
 then given a given cluster random effects $Z_k$ with
 parameter $\theta$ the joint survival function is given by the Clayton copula 
 and on the form
-\[ \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta, S_1(t,X_{k1}) ) 
-\]
-where \(  \psi \) is the Laplace transform of a gamma distributed random
+$$ 
+  \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta, S_1(t,X_{k1}) ) 
+$$
+where $\psi$ is the Laplace transform of a gamma distributed random
 variable with mean 1 and variance $\theta$.
 
 We then model the variance within clusters by a cluster specific 
 regression design  such that 
-\[
+$$ 
   \theta = h(z_j^T \alpha)
-\] 
+$$
 where $z$ is the regression design (specified by theta.des  in the software), 
 and $h$ is link function, that is either $exp$ or the identity. 
 
@@ -97,9 +98,9 @@ using either
  marginals.  Therefore given the 
 random effect of the clusters the survival distributions within a cluster 
 are independent and on the form 
-\[
+$$ 
  P(T_j > t| X_j,Z) = exp( -Z \cdot \Psi^{-1}(\nu^{-1},S(t|X_j)) )  
-\] 
+$$
 with $\Psi$ the laplace of the gamma distribution with mean 1 and variance $1/\nu$.
 
 
@@ -107,43 +108,42 @@ Additive Gamma frailties
 ========================
 
 For the multivariate models we are given a multivarite random effect each cluster
-\(Z=(Z_1,...,Z_d) \) with d random effects. 
+$Z=(Z_1,...,Z_d)$ with d random effects. 
 The total random effect for each subject $j$ in  a cluster is then specified using a 
 regression design on these random effects, with a regression vector
-\( V_j \) such that the total random effect is 
-  \( V_j^T (Z_1,...,Z_d) \).  The elements of $V_J$ are 1/0. 
+$V_j$ such that the total random effect is 
+  $V_j^T (Z_1,...,Z_d)$.  The elements of $V_J$ are 1/0. 
 The 
-random effects \( (Z_1,...,Z_d) \) has associated parameters \( (\lambda_1,...,\lambda_d) \)  
-and  \( Z_j \) is Gamma distributed with 
+random effects $(Z_1,...,Z_d)$ has associated parameters $(\lambda_1,...,\lambda_d)$ 
+and  $Z_j$ is Gamma distributed with 
 
-  * mean \( \lambda_j/V_1^T \lambda \)
+  * mean $\lambda_j/V_1^T \lambda$
 
-  * variance \( \lambda_j/(V_1^T \lambda)^2 \) 
+  * variance $\lambda_j/(V_1^T \lambda)^2$
 	       
 The key assumption to make the two-stage fitting possible is that
-\[
+\begin{align*}
    \nu =V_j^T \lambda
-\]
+\end{align*}
 is constant within clusters.  The consequence of this is that 
 the total random effect for each subject within a cluster, 
-\( V_j^T (Z_1,...,Z_d) \) , is gamma distributed with variance $1/\nu$. 
+$V_j^T (Z_1,...,Z_d)$, is gamma distributed with variance $1/\nu$. 
 
 The DEFAULT parametrization (var.par=1) uses the variances of the random effecs 
-\[
+\begin{align*}
  \theta_j  = \lambda_j/\nu^2
-\] 
+\end{align*}
  For alternative parametrizations one can specify that the parameters are  $\theta_j=\lambda_j$ with the argument var.par=0.
 
- Finally the parameters \( (\theta_1,...,\theta_d) \) are related to the parameters 
- of the model by a regression construction \( M \) (d x k), that links the \( d  \)
- \( \theta \)  parameters
- with the \( k \) underlying \( \alpha  \) parameters 
- \[
- \theta = M  \alpha. 
-\] 
+ Finally the parameters $(\theta_1,...,\theta_d)$ are related to the parameters 
+ of the model by a regression construction $M$ (d x k), that links the $d$
+ $\theta$  parameters with the $k$ underlying $\alpha$ parameters 
+\begin{align*}
+ \theta & = M  \alpha. 
+\end{align*}
  The default is a diagonal matrix for $M$. 
  This can be used to make structural assumptions about the variances of the random-effects 
- as is needed for the ACE model for example. In the software \( M \) is called theta.des
+ as is needed for the ACE model for example. In the software $ M $ is called theta.des
 
 
 Assume that the marginal survival distribution for subject $i$ within cluster $k$ is given
@@ -193,7 +193,7 @@ Univariate gamma (clayton-oakes) model twostage models
 
 We start by fitting simple Clayton-Oakes models for the data, that is
 with an overall random effect that is Gamma distrubuted with variance
-\( \theta \). We can fit the model by a pseudo-MLE (twostageMLE)
+$\theta$. We can fit the model by a pseudo-MLE (twostageMLE)
 and a pairwise composite likelihood approach (twostage). 
 
 The pseudo-liklihood and the composite pairwise likelhood should give 
@@ -267,7 +267,7 @@ In the survival setting we let the CHR
 The model lets the CHR by constant in different part of the plane. This can be thought of also 
 as having a separate
 Clayton-Oakes model for each of the regions specified in the plane here by
-the cut-points \( c(0,0.5,2) \) thus defining 9 regions. 
+the cut-points $c(0,0.5,2)$ thus defining 9 regions. 
 
 This provides a constructive goodness of fit test for the whether the Clayton-Oakes model
 is valid. Indeed if valid the parameter should be the same in all regions. 
@@ -284,7 +284,7 @@ And fit the related model.
 ```
 
  Now we cut the region at the cut-points 
-\( c(0,0.5,2) \) thus defining 9 regions and fit a separate model for each region.  
+$c(0,0.5,2)$ thus defining 9 regions and fit a separate model for each region.  
 We see that the parameter is indeed rather constant over the 9 regions. A formal 
 test can be constructed. 
 
@@ -300,15 +300,15 @@ Multivariate gamma twostage models
 To illustrate how the multivariate models can be used, we first set 
 up some twin data with ACE structure. That is two shared random effects,
 one being the genes $\sigma_g^2$ and one the environmental effect
-\( \sigma_e^2 \). Monozygotic twins share all genes whereas the dizygotic 
+$\sigma_e^2$. Monozygotic twins share all genes whereas the dizygotic 
 twins only share half the genes. This can be expressed via 5 random effect for
 each twin pair (for example). We start by setting this up. 
 
 
  The pardes matrix tells how the the parameters of the 5 random effects are 
  related, and the matrix her first has one random effect with parameter
- $\theta_1$ (here the \( \sigma_g^2 \) ), then the next 3 random effects have
- parameters $0.5 \theta_1$ (here \( 0.5 \sigma_g^2 \) ), and the last 
+ $\theta_1$ (here the $\sigma_g^2$ ), then the next 3 random effects have
+ parameters $0.5 \theta_1$ (here $0.5 \sigma_g^2$ ), and the last 
 random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ ).
 
 ```{r}
@@ -550,15 +550,15 @@ random.des[1,]
 random.des[2,]
 matrix(theta.des[1,],4,2)
 ```
-thus sharing only the third random effect with variance \( \sigma_e^2 \) and having 
-two non-shared random effects with variances \( \sigma_g^2 \), and finally  a last 
-4th random effect with variance \( 0 \) that thus could have been omitted.
+thus sharing only the third random effect with variance $\sigma_e^2$ and having 
+two non-shared random effects with variances $\sigma_g^2$, and finally  a last 
+4th random effect with variance $0$ that thus could have been omitted.
 
 
 now considering the parent and their child, they are 
-thus sharing the first random effect with variance \( 0.5 \sigma_g^2 \) then there are 
-two non-shared random effects with variances \( 0.5 \sigma_g^2 \), and finally a shared 
-environment with variance \( \sigma_e^2 \). 
+thus sharing the first random effect with variance $0.5 \sigma_g^2$ then there are 
+two non-shared random effects with variances $0.5 \sigma_g^2$, and finally a shared 
+environment with variance $\sigma_e^2$. 
 
 ```{r}
 head(dataid)

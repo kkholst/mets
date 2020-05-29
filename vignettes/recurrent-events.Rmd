@@ -94,8 +94,8 @@ Marginal Mean
 
  This is based on a  rate model  for 
 
- * the type 1 events  $ \sim E(dN_1(t) | D > t)$
- * the terminal event $ \sim E(dN_d(t) | D > t)$
+ * the type 1 events  $\sim E(dN_1(t) | D > t)$
+ * the terminal event $\sim E(dN_d(t) | D > t)$
 
 and is defined as $\mu_1(t)=E(N_1^*(t))$ 
 \begin{align}

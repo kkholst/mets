@@ -28,10 +28,10 @@ in the mets package, in particular the handling of strata and robust standard er
 optimized. 
 
 The basic models assumes that each subject has a marginal on Cox-form
-\[ 
+$$ 
 \lambda_{g(k,i)}(t) \exp( X_{ki}^T \beta).
-\] 
-where \( g(k,i) \) gives the strata for the subject. 
+$$ 
+where $g(k,i)$ gives the strata for the subject. 
 
 We here discuss and show how to get robust standard errors of  
 
@@ -43,8 +43,8 @@ and how to do goodness of fit test using
 
 * cumulative residuals score test 
 
-First we generate some data from the Clayton-Oakes model, with \( 5 \) members
-in each cluster and a variance parameter at \( 2 \) 
+First we generate some data from the Clayton-Oakes model, with $5$ members
+in each cluster and a variance parameter at $2$  
 
 
 ```{r}
@@ -216,7 +216,7 @@ For  clustered data it is possible to estimate the regression coefficient
 within clusters by using Cox's partial likelihood stratified on clusters.
 
 Note, here that the data is generated with a different subject specific structure, 
-so we will not recover the \( \beta \) at 0.3 and the model will not be
+so we will not recover the $\beta$ at 0.3 and the model will not be
 a proportional Cox model, we we would also expect to reject "proportionality" with
 the gof-test. 
 
@@ -224,9 +224,9 @@ The model can be thought of as
 \[ 
 \lambda_{g(k,i)} (t) \exp( X_{ki}^T \beta)
 \] 
-where \( \lambda_g(t) \) is some cluster specific baseline. 
+where $\lambda_g(t)$ is some cluster specific baseline. 
 
-The regression coefficient \( \beta \) can be estimated by using the 
+The regression coefficient $\beta$ can be estimated by using the 
 partial likelihood for clusters. 
 
 ```{r}
