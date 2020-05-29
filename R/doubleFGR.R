@@ -547,15 +547,15 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ##' rho1 <- 0.1; rho2 <- 0.9
 ##' n <- 400
 ##' beta=c(0.3,-0.3,0.1,0.1)
-##' dats <- simul.mod(n,rho1,rho2,beta)
-##' dsort(dats) <- ~time
-##' fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
+##' ##dats <- simul.mod(n,rho1,rho2,beta)
+##' ## dsort(dats) <- ~time
+##' ## fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
 ##' 
-##' fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
-##' cr <- phreg(Surv(time,status==0)~+1,data=dats)
-##' dtable(dats,~status)
-##' dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
-##' fgaug <- augmentationFG(dats,fg,dfg,cr)
+##' ## fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+##' ## cr <- phreg(Surv(time,status==0)~+1,data=dats)
+##' ## dtable(dats,~status)
+##' ## dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
+##' ## fgaug <- augmentationFG(dats,fg,dfg,cr)
 ##' 
 augmentationFG <- function(dats,fg,dfg,cr,cens.model=FALSE) 
 {# {{{
@@ -690,7 +690,7 @@ return(res)
 
 }# }}}
 
-augmentationFG <- function(dats,fg,fgcm,dfg,cr,csr,ccr,cens.model=FALSE) 
+augmentationFG2 <- function(dats,fg,fgcm,dfg,cr,csr,ccr,cens.model=FALSE) 
 {# {{{
 
 if (!is.null(fgcm)) {
