@@ -71,6 +71,9 @@
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
+    <li>
+      <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -97,7 +100,7 @@
       <h1 data-toc-skip>Analysis of multivariate binomial data: family analysis</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-05-28</h4>
+            <h4 class="date">2020-05-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/binomial-family.Rmd"><code>vignettes/binomial-family.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-family.Rmd</code></div>
@@ -495,24 +498,24 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                theta         se</span>
-<span class="co">#&gt; dependence1 1.052991 0.14631249</span>
-<span class="co">#&gt; dependence2 1.818539 0.05342819</span>
+<span class="co">#&gt;                 theta         se</span>
+<span class="co">#&gt; dependence1 1.7459236 0.22513905</span>
+<span class="co">#&gt; dependence2 0.9537453 0.06535114</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.2895 0.03967 0.2118 0.3673 2.902e-13</span>
-<span class="co">#&gt; dependence2   0.5000 0.00000 0.5000 0.5000 0.000e+00</span>
+<span class="co">#&gt; dependence1   0.6467 0.03955 0.5692 0.7242 4.229e-60</span>
+<span class="co">#&gt; dependence2   0.3533 0.03955 0.2758 0.4308 4.167e-19</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.872  0.1641 2.55 3.193 1.573e-68</span>
+<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1      2.7  0.2014 2.305 3.094 5.754e-41</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
@@ -633,7 +636,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 
 
       <footer><div class="copyright">
-  <p>Developed by Klaus K. Holst.</p>
+  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">

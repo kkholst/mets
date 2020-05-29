@@ -77,6 +77,9 @@
     <li>
       <a href="articles/recurrent-events.html">Recurrent events</a>
     </li>
+    <li>
+      <a href="articles/twostage-survival.html">Analysis of multivariate survival data</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -100,20 +103,10 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<hr>
-<div id="yaml-header-created-by-ox-ravel" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#yaml-header-created-by-ox-ravel" class="anchor"></a>YAML header created by ox-ravel</h1></div>
-<div id="title-multivariate-event-times-mets" class="section level2">
-<h2 class="hasAnchor">
-<a href="#title-multivariate-event-times-mets" class="anchor"></a>title: Multivariate Event Times (=mets=)</h2>
-<!-- badges: start -->
 
-</div>
-</div>
 <div id="multivariate-event-times-mets" class="section level1">
-<h1 class="hasAnchor">
-<a href="#multivariate-event-times-mets" class="anchor"></a>Multivariate Event Times (<code>mets</code>)</h1>
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#multivariate-event-times-mets" class="anchor"></a>Multivariate Event Times (<code>mets</code>)</h1></div>
 <p>Implementation of various statistical models for multivariate event history data &lt;10.1007/s10985-013-9244-x&gt;. Including multivariate cumulative incidence models &lt;10.1002/sim.6016&gt;, and bivariate random effects probit models (Liability models) &lt;10.1016/j.csda.2015.01.014&gt;. Also contains two-stage binomial modelling that can do pairwise odds-ratio dependence modelling based marginal logistic regression models. This is an alternative to the alternating logistic regression approach (ALR).</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -200,8 +193,7 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="no">smz</span>$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"darkblue"</span>)
 <span class="co">## Wrong estimates:</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bpmz</span>)$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"lightgray"</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)</pre></div>
-<p><img src="reference/figures/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="50%"></p>
-<p><img src="inst/misc/mets1.png" alt="img"></p>
+<p><img src="reference/figures/ex1-1.png" title="plot of chunk ex1" alt="plot of chunk ex1" width="60%"></p>
 </div>
 </div>
 
@@ -234,7 +226,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Klaus K. Holst <br><small class="roles"> Maintainer </small>  </li>
+<li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Thomas Scheike <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 
@@ -252,7 +245,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Klaus K. Holst.</p>
+  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">

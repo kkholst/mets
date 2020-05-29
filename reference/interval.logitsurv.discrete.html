@@ -125,6 +125,9 @@ $$" />
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
+    <li>
+      <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -240,7 +243,17 @@ $$</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ttpd</span>)
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='no'>entry</span>,<span class='no'>time2</span>)~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>X3</span>+<span class='no'>X4</span>,<span class='no'>ttpd</span>)
+<span class='fu'>dtable</span>(<span class='no'>ttpd</span>,~<span class='no'>entry</span>+<span class='no'>time2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
+#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+#&gt;       time2   1   2   3   4   5   6 Inf
+#&gt; entry                                  
+#&gt; 0           316   0   0   0   0   0   0
+#&gt; 1             0 133   0   0   0   0   0
+#&gt; 2             0   0 150   0   0   0   0
+#&gt; 3             0   0   0  23   0   0   0
+#&gt; 4             0   0   0   0  90   0   0
+#&gt; 5             0   0   0   0   0  68   0
+#&gt; 6             0   0   0   0   0   0 220</div><div class='input'><span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='no'>entry</span>,<span class='no'>time2</span>)~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>X3</span>+<span class='no'>X4</span>,<span class='no'>ttpd</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt;       Estimate Std.Err     2.5%   97.5%   P-value
 #&gt; time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43
 #&gt; time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45
@@ -299,7 +312,7 @@ $$</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Klaus K. Holst.</p>
+  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">

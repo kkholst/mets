@@ -112,6 +112,9 @@
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
+    <li>
+      <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -260,13 +263,13 @@
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Scheike, T. H.; Holst, K. K. &amp; Hjelmborg, J. B.
-Estimating twin concordance for bivariate competing risks twin data 
+Estimating twin concordance for bivariate competing risks twin data
 Statistics in Medicine, Wiley Online Library, 2014 , 33 , 1193-204</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>"timereg"</span>)
 
-<span class='co'>## Simulated data example </span>
+<span class='co'>## Simulated data example</span>
 <span class='no'>prt</span> <span class='kw'>&lt;-</span> <span class='fu'>simnordic.random</span>(<span class='fl'>2000</span>,<span class='kw'>delayed</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>ptrunc</span><span class='kw'>=</span><span class='fl'>0.7</span>,
               <span class='kw'>cordz</span><span class='kw'>=</span><span class='fl'>0.5</span>,<span class='kw'>cormz</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>lam0</span><span class='kw'>=</span><span class='fl'>0.3</span>)
 <span class='co'>## Bivariate competing risk, concordance estimates</span>
@@ -277,8 +280,8 @@ Statistics in Medicine, Wiley Online Library, 2014 , 33 , 1193-204</p>
 <span class='co'>## Concordance</span>
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>p11mz</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.1</span>));
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>p11dz</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.1</span>));</div><div class='input'>
-<span class='co'>## entry time, truncation weighting </span>
-<span class='co'>### other weighting procedure </span>
+<span class='co'>## entry time, truncation weighting</span>
+<span class='co'>### other weighting procedure</span>
 <span class='no'>prtl</span> <span class='kw'>&lt;-</span>  <span class='no'>prt</span>[!<span class='no'>prt</span>$<span class='no'>truncated</span>,]
 <span class='no'>prt2</span> <span class='kw'>&lt;-</span> <span class='fu'>ipw2</span>(<span class='no'>prtl</span>,<span class='kw'>cluster</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>same.cens</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
      <span class='kw'>time</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='st'>"cause"</span>,<span class='kw'>entrytime</span><span class='kw'>=</span><span class='st'>"entry"</span>,
@@ -307,7 +310,7 @@ Statistics in Medicine, Wiley Online Library, 2014 , 33 , 1193-204</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Klaus K. Holst.</p>
+  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">
