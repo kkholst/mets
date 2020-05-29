@@ -1654,7 +1654,6 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 
 } ## }}}
 
-
 ##' @title Twostage survival model fitted by pseudo MLE 
 ##'
 ##' @description 
