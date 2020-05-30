@@ -673,21 +673,16 @@ aug <- intdMc(Hfg$dHGt,Hfg$dHe1Gt,Hfg$dHe2Gt,pGct1,RR1,Xalls,timec,GTt,F1t,F2t,c
 fgas <- cifreg(Event(time,status)~Z1+Z2,
   data=dats,cause=1,propodds=NULL,beta=fg$coef,augmentation=aug$aug)
 
-
 } else {
    fgas <- fgasX <- fgascm <-  data.frame(coef=rep(NA,2))
    aug <- augX  <-  augXX <- data.frame(aug=rep(NA,2))
    S0aug <- 0; S1aug <- 0
 }
 
-res=list( fgas=fgas$coef)
-###	  fgdrE=fgdrE$coef, ## augX=augX,
-###	  fgascm=fgascm$coef, 
-###	  aug=aug$aug)
-###	  ,augXX=augXX$aug)#,S0=S0t,S1=S1t)
+res= fgas
+###	  fgdrE=fgdrE$coef, ## augX=augX, fgascm=fgascm$coef, 
 
 return(res)
-
 }# }}}
 
 augmentationFG2 <- function(dats,fg,fgcm,dfg,cr,csr,ccr,cens.model=FALSE) 
@@ -844,13 +839,13 @@ return(res)
 
 }# }}}
 
-simul.mod <- function(n,rho1,rho2,beta,rc=0.1,depcens=0) {# {{{
+simul.mod <- function(n,rho1,rho2,beta,rc=0.5,depcens=0) {# {{{
 p=length(beta)/2
 tt <- seq(0,6,by=0.1)
 Lam1 <- rho1*(1-exp(-tt))
 Lam2 <- rho2*(1-exp(-tt))
 
-Z=cbind(2*rbinom(n,1,1/2)-1,10*(rexp(n)-1))
+Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
 colnames(Z) <- paste("Z",1:2,sep="")
 cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
 cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
@@ -866,4 +861,24 @@ data <- data.frame(time=time,status=status)
 return(cbind(data,Z))
 
 }# }}}
+
+### library(mets)
+### rho1 <- 0.1; rho2 <- 0.9
+### set.seed(100)
+### n <- 4000
+### beta=c(0.0,-0.0,0.3,-0.3)
+### dats <- simul.mod(n,rho1,rho2,beta,depcens=1)
+### dsort(dats) <- ~time
+### ###
+### fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
+### summary(fgcm)
+### ### 
+### ### biased due to censoring dependence 
+### fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+### summary(fg)
+### cr <- phreg(Surv(time,status==0)~+1,data=dats)
+### dtable(dats,~status)
+### dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
+### fgaug <- augmentationFG(dats,fg,dfg,cr)
+### summary(fgaug)
 

@@ -935,7 +935,8 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
     if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
     rownames(cc) <- names(coef(object))
-    expC <- lava::estimate(object,f=function(p) exp(p),null=1)$coefmat
+    expC <- lava::estimate(coef=coef(object),vcov=vcov(object),f=function(p) exp(p),null=1)$coefmat
+
   } 
   Strata <- levels(object$strata)
   if (!is.null(Strata)) {

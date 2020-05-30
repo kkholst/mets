@@ -48,8 +48,8 @@ structure among the parameters of the random effects. This is possible in
 our models. 
 
 To be concrete about the model structure assume that we have paired binomial 
-data \( Y_1, Y_2, X_1, X_2 \) where the responses are \( Y_1, Y_2 \) and we
-have covariates \( X_1, X_2 \).
+data $(Y_1, Y_2, X_1, X_)2$ where the responses are $Y_1, Y_2$ and we
+have covariates $X_1, X_2$.
 
 We start by giving a brief description of these different models.  First we
 for bivariate data one can specify the marginal probability using logistic 
@@ -77,22 +77,21 @@ Biprobit with random effects
 =============================
 
 For these model we assume that given random effects $Z$ and a covariate vector 
-\( V_{12} \)
-we have independent logistic regression models 
+$V_{12}$ we have independent logistic regression models 
 \[
 probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
 \]
-where \( Z \) is a bivariate normal distribution with some covariance 
-\( \Sigma \). The general covariance structure 
-\( \Sigma \) makes the model very flexible. 
+where  Z$  is a bivariate normal distribution with some covariance 
+$\Sigma$. The general covariance structure 
+$\Sigma$ makes the model very flexible. 
 
 We note that 
 
- - Paramters \( \beta \) are subject specific
- - The \( \Sigma \) will reflect dependence
+ - Paramters $\beta$  are subject specific
+ - The $\Sigma$ will reflect dependence
 
 
-The more standard link function \( logit \) rather than the \( probit \) link
+The more standard link function $logit$ rather than the $probit$ link
 is often used and implemented in for example 
 \cite{mm}.  The advantage is that one now gets an odds-ratio interpretation 
 of the subject specific effects, but one then needs  numerical integration to
@@ -102,25 +101,25 @@ Pairwise odds ratio model
 ------------------------
 
 
-Now the pairwise odds ratio model the specifies that given \( X_1, X_2 \)
+Now the pairwise odds ratio model the specifies that given $ X_1, X_2 $
 the marginal models are 
 \[
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
 \]
 
-The primary object of interest are the odds ratio between \(Y_{1}\) and \(Y_{2}\)
+The primary object of interest are the odds ratio between $Y_{1}$ and $Y_{2}$
 \[
 \gamma_{12} = \frac{ P(  Y_{ki} =1 , Y_{kj} =1) P(  Y_{ki} =0 , Y_{kj} =0) }{ 
   P(  Y_{ki} =1 , Y_{kj} =0) P(  Y_{ki} =0 , Y_{kj} =1) }
 \]
-given \(X_{ki}\), \(X_{kj}\), and \(Z_{kji}\). 
+given $X_{ki}$, $X_{kj}$, and $Z_{kji}$. 
 
 We model the odds ratio with the regression 
 \[
 \gamma_{12} = \exp( Z_{12}^T \lambda)
 \]
-Where \( Z_{12} \) are some covarites that may influence the odds-ratio 
-between between \(Y_{1}\) and \(Y_{2}\) and contains the marginal covariates,
+Where $Z_{12}$ are some covarites that may influence the odds-ratio 
+between between $Y_{1}$ and $Y_{2}$ and contains the marginal covariates,
 \cite{carey-1993,dale1986global,palmgren1989,molenberghs1994marginal}. 
 This odds-ratio is given covariates as well as marginal covariates. 
 The odds-ratio and marginals specify the joint bivariate distribution via
@@ -151,15 +150,15 @@ Again we operate under  marginal logistic regression models are
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
 \]
 
-First with just one random effect \( Z \) we assume that  conditional
-on \( Z \) the responses are independent  and follow the model 
+First with just one random effect $Z$ we assume that  conditional
+on $Z$ the responses are independent  and follow the model 
 \[
 logit(P(Y_i=1|X_i,Z)) = exp( -Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )  
 \]
-where \( \Psi \) is the laplace transform of \( Z \) where we assume that
-\( Z \) is gamma distributed with variance \( \lambda_{\bullet}^{-1} \) and mean 1. 
-In general \( \Psi(\lambda_1,\lambda_2) \) is the laplace transform of  a Gamma distributed random 
-effect with \( Z \) with mean \( \lambda_1/\lambda_2 \) and variance \( \lambda_1/\lambda_2^2  \).
+where $\Psi$ is the laplace transform of $Z$ where we assume that
+$Z$ is gamma distributed with variance $\lambda_{\bullet}^{-1}$ and mean 1. 
+In general $\Psi(\lambda_1,\lambda_2)$ is the laplace transform of a Gamma distributed random 
+effect with $Z$ with mean $\lambda_1/\lambda_2$ and variance $\lambda_1/\lambda_2^2$.
 
 We fit this model by 
 
@@ -167,15 +166,15 @@ We fit this model by
  * Using marginal estimates, estimate dependence parameters
 
 To deal with multiple random effects we consider random effects 
-\( Z_i  i=1,...,d \)   such that  \( Z_i \) is gamma distributed with 
-mean \( \lambda_j/\lambda_{\bullet} \) and variance \( 
-\lambda_j/\lambda_{\bullet}^2 \), where we define the scalar \( \lambda_{\bullet} \) below. 
+$Z_i  i=1,...,d$   such that  $Z_i$ is gamma distributed with 
+ * mean: $\lambda_j/\lambda_{\bullet}$ 
+ * variance: $\lambda_j/\lambda_{\bullet}^2$, where we define the scalar $\lambda_{\bullet}$ below. 
 
-Now given a cluster-specific design vector \( V_{12} \) we assume that 
+Now given a cluster-specific design vector $V_{12}$ we assume that 
 \[
 V_{12}^T Z
 \]
-is gamma distributed with mean 1 and variance \( \lambda_{\bullet}^{-1} \) 
+is gamma distributed with mean 1 and variance $\lambda_{\bullet}^{-1}$ 
 such that critically the random effect variance is the same for all clusters.
 That is 
 \[
@@ -185,26 +184,26 @@ We return to some specific models below, and show how to fit the ACE and AE
 model using this set-up. 
 
 One last option in the model-specification is to specify how the 
-parameters \( \lambda_1,...,\lambda_d \) are related. We thus can specify a 
-matrix \( M \) of dimension \( p \times d \) such that 
+parameters $\lambda_1,...,\lambda_d$ are related. We thus can specify a 
+matrix $M$ of dimension $p \times d$ such that 
 \[
  (\lambda_1,...,\lambda_d)^T  = M \theta
 \]
-where \( \theta \) is d-dimensional.  If \( M \) is diagonal we have no 
+where $\theta$ is d-dimensional.  If $M$ is diagonal we have no 
 restrictions on parameters. 
 
 This parametrization is obtained with the var.par=0 option that thus estimates
-\( \theta \).
+$\theta$.
 
 The DEFAULT parametrization instead estimates the variances of the random effecs (var.par=1)
-via the parameters \( \nu \) 
+via the parameters $\nu$ 
 \[
  M \nu = ( \lambda_1/\lambda_{\bullet}^2, ...,\lambda_d/\lambda_{\bullet}^2)^T
 \]
 
 
 The basic modelling assumption is now that given random effects 
-\(Z=(Z_1,...,Z_d)\) we have independent probabilites 
+$Z=(Z_1,...,Z_d)$ we have independent probabilites 
 \[
 logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )   i=1,2
 \]

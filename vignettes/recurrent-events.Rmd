@@ -22,7 +22,7 @@ library(mets)
 Overview 
 ========
 
-For recurrent events data it is often of interest to compute basis descriptive
+For recurrent events data it is often of interest to compute basic descriptive
 quantities as a first go at getting some basic understanding of the phenonmenon
 studied. We here demonstrate how one can compute 
 
@@ -58,23 +58,27 @@ cumulative hazards
  structure to generate dependence. 
 
  When simulating data we can impose various random-effects structures to generate dependence  
- * We can draw normally distributed random effects $Z_1,Z_2,Z_d$ were the variance (var.z) 
-   and correlation can be specified (cor.mat) (dependence=2).  
-   Then the intensities are 
-   * $\exp(Z_1) \lambda_1(t)$
-   * $\exp(Z_2) \lambda_2(t)$
-   * $\exp(Z_3) \lambda_D(t)$
- * We can one gamma distributed random effects $Z$.  Then the intensities are (dependence=1)
-   * $Z \lambda_1(t)$
-   * $Z \lambda_2(t)$
-   * $Z \lambda_D(t)$
- * We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be speicifed via a matrix
-   cor.mat. Then we compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$  (dependence=3)
+
+* Dependence=0: The intensities can be independent.
+
+* Dependence=1:  We can one gamma distributed random effects $Z$.  Then the intensities are 
+    + $Z \lambda_1(t)$
+    + $Z \lambda_2(t)$
+    + $Z \lambda_D(t)$
+
+* Dependence=2: We can draw normally distributed random effects $Z_1,Z_2,Z_d$ were the variance (var.z) 
+  and correlation can be specified (cor.mat).  Then the intensities are 
+    + $\exp(Z_1) \lambda_1(t)$
+    + $\exp(Z_2) \lambda_2(t)$
+    + $\exp(Z_3) \lambda_D(t)$
+
+* Dependence=3: We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be speicifed via a matrix
+   cor.mat. We compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$.  
    Then the intensities are
-   * $\tilde Z_1 \lambda_1(t)$
-   * $\tilde Z_2 \lambda_2(t)$
-   * $\tilde Z_3 \lambda_D(t)$
- * The intensities can be independent (dependence=0)
+    + $\tilde Z_1 \lambda_1(t)$
+    + $\tilde Z_2 \lambda_2(t)$
+    + $\tilde Z_3 \lambda_D(t)$
+
 
  We return to how to run the different set-ups later and start by simulating independent processes. 
 
