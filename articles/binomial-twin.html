@@ -103,7 +103,7 @@
       <h1 data-toc-skip>Analysis of bivariate binomial data: Twin analysis</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-05-29</h4>
+            <h4 class="date">2020-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/binomial-twin.Rmd"><code>vignettes/binomial-twin.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-twin.Rmd</code></div>
@@ -135,7 +135,7 @@
 </li>
 </ul>
 <p>Typically it can be hard or impossible to specify random effects models with special structure among the parameters of the random effects. This is possible in our models.</p>
-<p>To be concrete about the model structure assume that we have paired binomial data <span class="math inline">\(Y_1, Y_2, X_1, X_2\)</span> where the responses are <span class="math inline">\(Y_1, Y_2\)</span> and we have covariates <span class="math inline">\(X_1, X_2\)</span>.</p>
+<p>To be concrete about the model structure assume that we have paired binomial data <span class="math inline">\((Y_1, Y_2, X_1, X_)2\)</span> where the responses are <span class="math inline">\(Y_1, Y_2\)</span> and we have covariates <span class="math inline">\(X_1, X_2\)</span>.</p>
 <p>We start by giving a brief description of these different models. First we for bivariate data one can specify the marginal probability using logistic regression models <span class="math display">\[
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2.
 \]</span> These model can be estimated under working independence .</p>
@@ -151,7 +151,7 @@ logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2.
 <a href="#biprobit-with-random-effects" class="anchor"></a>Biprobit with random effects</h1>
 <p>For these model we assume that given random effects <span class="math inline">\(Z\)</span> and a covariate vector <span class="math inline">\(V_{12}\)</span> we have independent logistic regression models <span class="math display">\[
 probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
-\]</span> where <span class="math inline">\(Z\)</span> is a bivariate normal distribution with some covariance <span class="math inline">\(\Sigma\)</span>. The general covariance structure <span class="math inline">\(\Sigma\)</span> makes the model very flexible.</p>
+\]</span> where Z$ is a bivariate normal distribution with some covariance <span class="math inline">\(\Sigma\)</span>. The general covariance structure <span class="math inline">\(\Sigma\)</span> makes the model very flexible.</p>
 <p>We note that</p>
 <ul>
 <li>Paramters <span class="math inline">\(\beta\)</span> are subject specific</li>
@@ -161,7 +161,7 @@ probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
 <div id="pairwise-odds-ratio-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pairwise-odds-ratio-model" class="anchor"></a>Pairwise odds ratio model</h2>
-<p>Now the pairwise odds ratio model the specifies that given <span class="math inline">\(X_1, X_2\)</span> the marginal models are <span class="math display">\[
+<p>Now the pairwise odds ratio model the specifies that given $ X_1, X_2 $ the marginal models are <span class="math display">\[
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
 \]</span></p>
 <p>The primary object of interest are the odds ratio between <span class="math inline">\(Y_{1}\)</span> and <span class="math inline">\(Y_{2}\)</span> <span class="math display">\[
@@ -193,7 +193,7 @@ logit(P(Y_i=1|X_i,Z)) = exp( -Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bull
 <li>Estimating the marginal parameters via GEE</li>
 <li>Using marginal estimates, estimate dependence parameters</li>
 </ul>
-<p>To deal with multiple random effects we consider random effects <span class="math inline">\(Z_i i=1,...,d\)</span> such that <span class="math inline">\(Z_i\)</span> is gamma distributed with mean <span class="math inline">\(\lambda_j/\lambda_{\bullet}\)</span> and variance <span class="math inline">\(\lambda_j/\lambda_{\bullet}^2\)</span>, where we define the scalar <span class="math inline">\(\lambda_{\bullet}\)</span> below.</p>
+<p>To deal with multiple random effects we consider random effects <span class="math inline">\(Z_i i=1,...,d\)</span> such that <span class="math inline">\(Z_i\)</span> is gamma distributed with * mean: <span class="math inline">\(\lambda_j/\lambda_{\bullet}\)</span> * variance: <span class="math inline">\(\lambda_j/\lambda_{\bullet}^2\)</span>, where we define the scalar <span class="math inline">\(\lambda_{\bullet}\)</span> below.</p>
 <p>Now given a cluster-specific design vector <span class="math inline">\(V_{12}\)</span> we assume that <span class="math display">\[
 V_{12}^T Z
 \]</span> is gamma distributed with mean 1 and variance <span class="math inline">\(\lambda_{\bullet}^{-1}\)</span> such that critically the random effect variance is the same for all clusters. That is <span class="math display">\[
@@ -727,7 +727,7 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     ucminf_1.1-4       </span>
 <span class="co">#&gt; [19] numDeriv_2016.8-1.1 pkgdown_1.5.1       crayon_1.3.4       </span>
 <span class="co">#&gt; [22] Matrix_1.2-18       fs_1.4.1            memoise_1.1.0      </span>
-<span class="co">#&gt; [25] evaluate_0.14       rmarkdown_2.1       stringi_1.4.6      </span>
+<span class="co">#&gt; [25] evaluate_0.14       rmarkdown_2.2       stringi_1.4.6      </span>
 <span class="co">#&gt; [28] compiler_4.0.0      desc_1.2.0          backports_1.1.7    </span>
 <span class="co">#&gt; [31] mvtnorm_1.1-0</span></pre></body></html></div>
 </div>

@@ -103,7 +103,7 @@
       <h1 data-toc-skip>Recurrent events</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-05-29</h4>
+            <h4 class="date">2020-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/recurrent-events.Rmd"><code>vignettes/recurrent-events.Rmd</code></a></small>
       <div class="hidden name"><code>recurrent-events.Rmd</code></div>
@@ -115,7 +115,7 @@
 <div id="overview" class="section level1">
 <h1 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h1>
-<p>For recurrent events data it is often of interest to compute basis descriptive quantities as a first go at getting some basic understanding of the phenonmenon studied. We here demonstrate how one can compute</p>
+<p>For recurrent events data it is often of interest to compute basic descriptive quantities as a first go at getting some basic understanding of the phenonmenon studied. We here demonstrate how one can compute</p>
 <ul>
 <li>the marginal mean</li>
 <li>the variance</li>
@@ -141,9 +141,32 @@
 <li><span class="math inline">\(\Lambda_D(t)\)</span></li>
 </ul>
 <p>where we consider types 1 and 2 and with a rate of the terminal event given by <span class="math inline">\(\Lambda_D(t)\)</span>. We let the events be independent, but could also specify a random effects structure to generate dependence.</p>
-<p>When simulating data we can impose various random-effects structures to generate dependence<br>
-* We can draw normally distributed random effects <span class="math inline">\(Z_1,Z_2,Z_d\)</span> were the variance (var.z) and correlation can be specified (cor.mat) (dependence=2).<br>
-Then the intensities are * <span class="math inline">\(\exp(Z_1) \lambda_1(t)\)</span> * <span class="math inline">\(\exp(Z_2) \lambda_2(t)\)</span> * <span class="math inline">\(\exp(Z_3) \lambda_D(t)\)</span> * We can one gamma distributed random effects <span class="math inline">\(Z\)</span>. Then the intensities are (dependence=1) * <span class="math inline">\(Z \lambda_1(t)\)</span> * <span class="math inline">\(Z \lambda_2(t)\)</span> * <span class="math inline">\(Z \lambda_D(t)\)</span> * We can draw gamma distributed random effects <span class="math inline">\(Z_1,Z_2,Z_d\)</span> were the sum-structure can be speicifed via a matrix cor.mat. Then we compute <span class="math inline">\(\tilde Z_j = \sum_k Z_k^{cor.mat(j,k)}\)</span> for <span class="math inline">\(j=1,2,3\)</span> (dependence=3) Then the intensities are * <span class="math inline">\(\tilde Z_1 \lambda_1(t)\)</span> * <span class="math inline">\(\tilde Z_2 \lambda_2(t)\)</span> * <span class="math inline">\(\tilde Z_3 \lambda_D(t)\)</span> * The intensities can be independent (dependence=0)</p>
+<p>When simulating data we can impose various random-effects structures to generate dependence</p>
+<ul>
+<li><p>Dependence=0: The intensities can be independent.</p></li>
+<li>Dependence=1: We can one gamma distributed random effects <span class="math inline">\(Z\)</span>. Then the intensities are
+<ul>
+<li><span class="math inline">\(Z \lambda_1(t)\)</span></li>
+<li><span class="math inline">\(Z \lambda_2(t)\)</span></li>
+<li><span class="math inline">\(Z \lambda_D(t)\)</span></li>
+</ul>
+</li>
+<li>Dependence=2: We can draw normally distributed random effects <span class="math inline">\(Z_1,Z_2,Z_d\)</span> were the variance (var.z) and correlation can be specified (cor.mat). Then the intensities are
+<ul>
+<li><span class="math inline">\(\exp(Z_1) \lambda_1(t)\)</span></li>
+<li><span class="math inline">\(\exp(Z_2) \lambda_2(t)\)</span></li>
+<li><span class="math inline">\(\exp(Z_3) \lambda_D(t)\)</span></li>
+</ul>
+</li>
+<li>Dependence=3: We can draw gamma distributed random effects <span class="math inline">\(Z_1,Z_2,Z_d\)</span> were the sum-structure can be speicifed via a matrix cor.mat. We compute <span class="math inline">\(\tilde Z_j = \sum_k Z_k^{cor.mat(j,k)}\)</span> for <span class="math inline">\(j=1,2,3\)</span>.<br>
+Then the intensities are
+<ul>
+<li><span class="math inline">\(\tilde Z_1 \lambda_1(t)\)</span></li>
+<li><span class="math inline">\(\tilde Z_2 \lambda_2(t)\)</span></li>
+<li><span class="math inline">\(\tilde Z_3 \lambda_D(t)\)</span></li>
+</ul>
+</li>
+</ul>
 <p>We return to how to run the different set-ups later and start by simulating independent processes.</p>
 </div>
 <div id="utility-functions" class="section level1">
@@ -633,7 +656,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     numDeriv_2016.8-1.1</span>
 <span class="co">#&gt; [19] pkgdown_1.5.1       crayon_1.3.4        Matrix_1.2-18      </span>
 <span class="co">#&gt; [22] fs_1.4.1            memoise_1.1.0       evaluate_0.14      </span>
-<span class="co">#&gt; [25] rmarkdown_2.1       stringi_1.4.6       compiler_4.0.0     </span>
+<span class="co">#&gt; [25] rmarkdown_2.2       stringi_1.4.6       compiler_4.0.0     </span>
 <span class="co">#&gt; [28] desc_1.2.0          backports_1.1.7     mvtnorm_1.1-0</span></pre></body></html></div>
 </div>
   </div>
