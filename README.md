@@ -8,7 +8,7 @@
 
 
 
-# Multivariate Event Times (`mets`)
+# Multivariate Event Times (`mets`) <img src=man/figures/ex1-1.png align="right" height="150">
 
 Implementation of various statistical models for multivariate
 event history data <10.1007/s10985-013-9244-x>. Including multivariate
