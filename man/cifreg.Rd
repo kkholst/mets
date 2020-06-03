@@ -59,7 +59,11 @@ is computed and added to UUiid (still scaled with inverse second derivative)
 \deqn{
 \int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c 
 }
-and returned as iid
+and returned as iid 
+
+For logistic link standard errors are slightly to small since uncertainty from recursive baseline is not considered, so for smaller
+data-sets it is recommended to use the prop.odds.subdist of timereg that is also more efficient due to use of different weights for 
+the estimating equations. Alternatively, one can also bootstrap the standard errors.
 }
 \examples{
 ## data with no ties
