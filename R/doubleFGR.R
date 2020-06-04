@@ -545,19 +545,21 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ##'
 ##' @examples
 ##' rho1 <- 0.1; rho2 <- 0.9
-##' n <- 400
+##' n <- 200
 ##' beta=c(0.3,-0.3,0.1,0.1)
-##' ##dats <- simul.mod(n,rho1,rho2,beta)
-##' ## dsort(dats) <- ~time
-##' ## fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
+##' dats <- simul.cifs(n,rho1,rho2,beta)
+##' dsort(dats) <- ~time
+##' fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
 ##' 
-##' ## fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
-##' ## cr <- phreg(Surv(time,status==0)~+1,data=dats)
-##' ## dtable(dats,~status)
-##' ## dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
-##' ## fgaug <- augmentationFG(dats,fg,dfg,cr)
+##' fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+##' cr <- phreg(Surv(time,status==0)~+1,data=dats)
+##' dtable(dats,~status)
+##' dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
+##' fgaug <- augmentationFG(dats,fg,fgcm,dfg,cr)
 ##' 
-augmentationFG <- function(dats,fg,dfg,cr,cens.model=FALSE) 
+##' @aliases simul.cifs 
+##' @export
+augmentationFG <- function(dats,fg,fgcm,dfg,cr,cens.model=FALSE) 
 {# {{{
 
 if (!is.null(dfg)) {
@@ -839,7 +841,8 @@ return(res)
 
 }# }}}
 
-simul.mod <- function(n,rho1,rho2,beta,rc=0.5,depcens=0) {# {{{
+##' @export
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0) {# {{{
 p=length(beta)/2
 tt <- seq(0,6,by=0.1)
 Lam1 <- rho1*(1-exp(-tt))
@@ -861,24 +864,4 @@ data <- data.frame(time=time,status=status)
 return(cbind(data,Z))
 
 }# }}}
-
-### library(mets)
-### rho1 <- 0.1; rho2 <- 0.9
-### set.seed(100)
-### n <- 4000
-### beta=c(0.0,-0.0,0.3,-0.3)
-### dats <- simul.mod(n,rho1,rho2,beta,depcens=1)
-### dsort(dats) <- ~time
-### ###
-### fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
-### summary(fgcm)
-### ### 
-### ### biased due to censoring dependence 
-### fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
-### summary(fg)
-### cr <- phreg(Surv(time,status==0)~+1,data=dats)
-### dtable(dats,~status)
-### dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
-### fgaug <- augmentationFG(dats,fg,dfg,cr)
-### summary(fgaug)
 
