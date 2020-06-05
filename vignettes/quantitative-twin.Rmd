@@ -37,7 +37,7 @@ library("mets")
 \newcommand{\unitfrac}[2]{#1/#2}
 \newcommand{\n}{}
 \)
-
+'
 The development version may be installed from *github*:
 
 ```{r  install, eval=FALSE }
