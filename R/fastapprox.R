@@ -51,7 +51,8 @@ fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left
 
 
 ##' @export
-indexstrata <- function (jump.times,jump.strata,eval.times,eval.strata,nstrata,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE)
+indexstrata <- function(jump.times,jump.strata,eval.times,eval.strata,nstrata,equal=FALSE,
+			type=c("nearest","right","left"),sorted=FALSE,start.time=NULL)
 {   # {{{
 	stopifnot(is.numeric(jump.times))
 	stopifnot(is.numeric(eval.times))
@@ -61,10 +62,11 @@ indexstrata <- function (jump.times,jump.strata,eval.times,eval.strata,nstrata,e
 	index <- rep(0,length(eval.times))
 
 	for (i in unique(eval.strata)) {
-		wherej <- which(eval.strata==i)
-		whereJ <- which(jump.strata==i)
-		iindex <- fast.approx(jump.times[whereJ],eval.times[wherej],equal=equal,type=type,sorted=sorted) 
-		index[wherej] <- whereJ[iindex]
+	   wherej <- which(eval.strata==i)
+	   whereJ <- which(jump.strata==i)
+	   if (!is.null(start.time)) iindex <- fast.approx(c(start.time,jump.times[whereJ]),eval.times[wherej],equal=equal,type=type,sorted=sorted) 
+	   else iindex <- fast.approx(jump.times[whereJ],eval.times[wherej],equal=equal,type=type,sorted=sorted) 
+	   index[wherej] <- whereJ[iindex]
 	}
 	return(index)
 }# }}}

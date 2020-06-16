@@ -29,6 +29,7 @@
 ##' @param cens.code gives censoring code
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
+##' @param augmentation to augment binomial regression 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -86,7 +87,7 @@
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
 {# {{{
 
   cl <- match.call()# {{{
@@ -176,6 +177,8 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
 
+  if (is.null(augmentation))  augmentation=rep(0,p)
+
 obj <- function(pp,all=FALSE)
 { # {{{
 
@@ -189,7 +192,7 @@ Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 ###
-gradient <- apply(Dlogl,2,sum)
+gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
   if (all) {

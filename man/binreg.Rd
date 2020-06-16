@@ -19,6 +19,7 @@ binreg(
   cens.code = 0,
   no.opt = FALSE,
   method = "nr",
+  augmentation = NULL,
   ...
 )
 }
@@ -50,6 +51,8 @@ binreg(
 \item{no.opt}{to not optimize}
 
 \item{method}{for optimization}
+
+\item{augmentation}{to augment binomial regression}
 
 \item{...}{Additional arguments to lower level funtions}
 }
