@@ -1017,15 +1017,17 @@ return(res)
 }# }}}
 
 ##' @export
-revcumsum2strata <- function(x,strata,nstrata,strata2,nstrata2)
+revcumsum2strata <- function(x,strata,nstrata,strata2,nstrata2,lag=FALSE)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
 if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n"); 
 if (length(x)!=length(strata))  stop("length of x and strata must be same\n"); 
 if (length(x)!=length(strata2)) stop("length of x and strata2 must be same\n"); 
-res <- .Call("revcumsum2strataR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
+if (!lag) res <- .Call("revcumsum2strataR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
+else res <- .Call("revcumsum2stratalagR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
 return(res)
 }# }}}
+
 
 ##' @export
 cumsum2strata <- function(x,y,strata,nstrata,strata2,nstrata2)

@@ -558,6 +558,37 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 	return(rres);
 }
 
+RcppExport SEXP revcumsum2stratalagR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {
+	colvec a = Rcpp::as<colvec>(ia);
+//	mat Gtc = Rcpp::as<mat>(iGtc);
+	IntegerVector strata(istrata); 
+        IntegerVector strata2(istrata2); 
+	int nstrata = Rcpp::as<int>(instrata);
+	int nstrata2 = Rcpp::as<int>(instrata2);
+
+	unsigned n = a.n_rows;
+
+//	mat Ss(n,nstrata2); 
+	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
+	colvec res = a; 
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1); int ss2=strata2(n-i-1); 
+		if (ss2==0) tmpsum(ss,ss2) += a(n-i-1); 
+//		for (int k=0;k<nstrata2;k++) Ss(n-i-1,k)=tmpsum(ss,k); 
+		res(n-i-1)=tmpsum(ss,ss2);
+		// update later for type2 things 
+		if (ss2>0) tmpsum(ss,ss2) += a(n-i-1); 
+	}  
+
+	List rres; 
+	rres["res"]=res; 
+//	rres["mres"]=Ss; 
+//	rres["strata"]=strata; rres["strata2"]=strata2; 
+//	rres["nstrata"]=nstrata; rres["nstrata2"]=nstrata2; 
+
+	return(rres);
+}
+
 
 RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {
 	colvec a = Rcpp::as<colvec>(ia);
@@ -585,7 +616,6 @@ RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istr
 
 	List rres; 
 	rres["res"]=res; 
-
 	return(rres);
 }
 
@@ -627,7 +657,9 @@ RcppExport SEXP cumsum2strataR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP
 //		dS0last(ss,ss2)=Gcv(ss2)*a(i); 
 //	}  
 
-	List rres; rres["cifs"]=res; rres["lag-cifs"]=lagres; 
+	List rres; 
+	rres["cifs"]=res; 
+	rres["lag-cifs"]=lagres; 
 	return(rres);
 }
 
@@ -2194,148 +2226,148 @@ RcppExport SEXP DLambetaDFGR(SEXP iweights,SEXP iS0,SEXP icause,SEXP iE,SEXP iXi
 //}
 
 
-RcppExport SEXP FastFGPrepStrata(SEXP EntrySEXP,
-		SEXP ExitSEXP,
-		SEXP StatusSEXP,
-		SEXP XSEXP,
-		SEXP IdSEXP,
-		SEXP TruncationSEXP,
-		SEXP strataSEXP,
-		SEXP weightsSEXP,
-		SEXP offsetsSEXP, 
-		SEXP ZSEXP,
-		SEXP caseweightsSEXP
-		) {/*{{{*/
-	BEGIN_RCPP
-	arma::vec Entry = Rcpp::as<arma::vec>(EntrySEXP);
-	arma::vec  Exit  = Rcpp::as<arma::vec>(ExitSEXP);
-	arma::Col<int> Status= Rcpp::as<arma::Col<int> >(StatusSEXP);
-	arma::mat  X     = Rcpp::as<arma::mat>(XSEXP);
-	arma::mat  Z     = Rcpp::as<arma::mat>(ZSEXP);
-	arma::Col<int> strata= Rcpp::as<arma::Col<int> >(strataSEXP);
-	arma::Col<int> Id= Rcpp::as<arma::Col<int> >(IdSEXP);
-
-	colvec weights = Rcpp::as<colvec>(weightsSEXP);
-	colvec offsets = Rcpp::as<colvec>(offsetsSEXP);
-	colvec caseweights = Rcpp::as<arma::vec>(caseweightsSEXP);
-	//bool haveId = Rcpp::as<bool>(haveIdSEXP);
-	bool Truncation = Rcpp::as<bool>(TruncationSEXP);
-	// vec Exit = Rcpp::as<vec>(exit);  
-	// ivec Status = Rcpp::as<ivec>(status);
-	// mat X = Rcpp::as<mat>(x);
-	// bool haveId = (Rf_isNull)(id);
-	// bool Truncation = !((Rf_isNull)(entry));
-	// bool Truncation = Entry.n_elem>0;
-	// bool haveId = Id.n_elem>0;
-
-	//  unsigned p = X.n_cols;
-	unsigned n = Exit.n_elem;
-	if (Truncation) n *= 2;
-
-	//Rcout << "n=" << X.n_rows << ", p=" << X.n_cols << std::endl;
-
-	mat XX(n, X.n_cols*X.n_cols); // Calculate XX' at each time-point
-	for (unsigned i=0; i<X.n_rows; i++) {
-		rowvec Xi = X.row(i);
-		//    XX.row(i) = reshape(Xi.t()*Xi,1,XX.n_cols);
-		XX.row(i) = vectorise(Xi.t()*Xi,1);
-		if (Truncation) XX.row(i+n/2) = XX.row(i);
-	}
-
-	unsigned nZ = Z.n_rows;
-	if (Truncation) nZ = 2*Z.n_rows;
-//	mat ZX(nZ , Z.n_cols * X.n_cols);
-	if (Z.n_rows==X.n_rows) 
-		for (unsigned i=0; i<X.n_rows; i++) {
-			rowvec Xi = X.row(i);
-			rowvec Zi = Z.row(i);
-//			ZX.row(i) = vectorise((Xi.t()*Zi),1); // to get back to right form with reshape
-//			if (Truncation) ZX.row(i+n/2) = ZX.row(i);
-		}
-
-
-	arma::Col<int> Sign;
-	Sign.reshape(n,1); Sign.fill(1);
-	if (Truncation) {
-		// vec Entry = Rcpp::as<vec>(entry);  
-		Exit.insert_rows(0,Entry);
-		X.insert_rows(0,X);
-		Z.insert_rows(0,Z);
-		Status.insert_rows(0,Status);
-		Id.insert_rows(0,Id);
-		strata.insert_rows(0,strata);
-		weights.insert_rows(0,weights);
-		caseweights.insert_rows(0,caseweights);
-		offsets.insert_rows(0,offsets);
-		for (unsigned i=0; i<(n/2); i++) Sign(i) = -1;
-		Status = Status%(1+Sign);
-	}
-	//Rcout << "Status=" << Status << std::endl;
-
-	// also sorting after id to use multiple phregs together
-	// ts 20/3-2018
-	arma::uvec idx00 = sort_index(Id,"ascend"); 
-	arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend"); 
-	idx0 = idx00.elem(idx0);
-	arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
-	idx = idx0.elem(idx);
-
-	//  arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend"); 
-	//  arma::uvec idx0 = sort_index(Status,"descend"); 
-	//  arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
-	//  idx = idx0.elem(idx);
-	//  arma::uvec idx00 = stable_sort_index(Id.elem(idx),"ascend"); 
-	//  idx = idx00.elem(idx);
-
-
-	//Rcout << "idx=" << idx << std::endl;
-	if (Truncation) {
-		Sign = Sign.elem(idx);  
-	}
-	if (X.n_rows>0) {
-		XX = XX.rows(idx);
-		X = X.rows(idx);  
-	}
-	if (Z.n_rows==X.n_rows) {
-		Z = Z.rows(idx);  
-	}
-//	if ((ZX.n_rows==XX.n_rows) & (XX.n_rows>0)) {
-//		ZX = ZX.rows(idx);  
+//RcppExport SEXP FastFGPrepStrata(SEXP EntrySEXP,
+//		SEXP ExitSEXP,
+//		SEXP StatusSEXP,
+//		SEXP XSEXP,
+//		SEXP IdSEXP,
+//		SEXP TruncationSEXP,
+//		SEXP strataSEXP,
+//		SEXP weightsSEXP,
+//		SEXP offsetsSEXP, 
+//		SEXP ZSEXP,
+//		SEXP caseweightsSEXP
+//		) {/*{{{*/
+//	BEGIN_RCPP
+//	arma::vec Entry = Rcpp::as<arma::vec>(EntrySEXP);
+//	arma::vec  Exit  = Rcpp::as<arma::vec>(ExitSEXP);
+//	arma::Col<int> Status= Rcpp::as<arma::Col<int> >(StatusSEXP);
+//	arma::mat  X     = Rcpp::as<arma::mat>(XSEXP);
+//	arma::mat  Z     = Rcpp::as<arma::mat>(ZSEXP);
+//	arma::Col<int> strata= Rcpp::as<arma::Col<int> >(strataSEXP);
+//	arma::Col<int> Id= Rcpp::as<arma::Col<int> >(IdSEXP);
+//
+//	colvec weights = Rcpp::as<colvec>(weightsSEXP);
+//	colvec offsets = Rcpp::as<colvec>(offsetsSEXP);
+//	colvec caseweights = Rcpp::as<arma::vec>(caseweightsSEXP);
+//	//bool haveId = Rcpp::as<bool>(haveIdSEXP);
+//	bool Truncation = Rcpp::as<bool>(TruncationSEXP);
+//	// vec Exit = Rcpp::as<vec>(exit);  
+//	// ivec Status = Rcpp::as<ivec>(status);
+//	// mat X = Rcpp::as<mat>(x);
+//	// bool haveId = (Rf_isNull)(id);
+//	// bool Truncation = !((Rf_isNull)(entry));
+//	// bool Truncation = Entry.n_elem>0;
+//	// bool haveId = Id.n_elem>0;
+//
+//	//  unsigned p = X.n_cols;
+//	unsigned n = Exit.n_elem;
+//	if (Truncation) n *= 2;
+//
+//	//Rcout << "n=" << X.n_rows << ", p=" << X.n_cols << std::endl;
+//
+//	mat XX(n, X.n_cols*X.n_cols); // Calculate XX' at each time-point
+//	for (unsigned i=0; i<X.n_rows; i++) {
+//		rowvec Xi = X.row(i);
+//		//    XX.row(i) = reshape(Xi.t()*Xi,1,XX.n_cols);
+//		XX.row(i) = vectorise(Xi.t()*Xi,1);
+//		if (Truncation) XX.row(i+n/2) = XX.row(i);
 //	}
-	Exit = Exit.elem(idx); 
-	weights = weights.elem(idx); 
-	caseweights = caseweights.elem(idx); 
-	offsets = offsets.elem(idx); 
-	Status = Status.elem(idx);
-        Id = Id.elem(idx); 
-	strata = strata.elem(idx); 
-	arma::uvec jumps = find(Status>0);
-	//Rprintf("jumps");
-	//  arma::Col<unsigned> newId;
-	// if (haveId) {
-	//   // uvec Id = Rcpp::as<uvec>(id);
-	//   if (Truncation) {
-	//     Id.insert_rows(0,Id);
-	//   }
-	//   newId = Id.elem(idx);
-	// }
-
-	return(Rcpp::wrap(Rcpp::List::create(Rcpp::Named("XX")=XX,
-					Rcpp::Named("X")=X,
-					Rcpp::Named("jumps")=jumps,
-					Rcpp::Named("status")=Status,
-					Rcpp::Named("sign")=Sign,
-					Rcpp::Named("ord")=idx,
-					Rcpp::Named("time")=Exit,
-					Rcpp::Named("id")=Id,				       
-					Rcpp::Named("weights")=weights,
-					Rcpp::Named("caseweights")=caseweights,
-					Rcpp::Named("offset")=offsets,				       
-					Rcpp::Named("strata")=strata,				       
-//					Rcpp::Named("ZX")=ZX,				       
-					Rcpp::Named("Z")=Z				       
-					)));
-	END_RCPP
-}/*}}}*/
+//
+//	unsigned nZ = Z.n_rows;
+//	if (Truncation) nZ = 2*Z.n_rows;
+////	mat ZX(nZ , Z.n_cols * X.n_cols);
+//	if (Z.n_rows==X.n_rows) 
+//		for (unsigned i=0; i<X.n_rows; i++) {
+//			rowvec Xi = X.row(i);
+//			rowvec Zi = Z.row(i);
+////			ZX.row(i) = vectorise((Xi.t()*Zi),1); // to get back to right form with reshape
+////			if (Truncation) ZX.row(i+n/2) = ZX.row(i);
+//		}
+//
+//
+//	arma::Col<int> Sign;
+//	Sign.reshape(n,1); Sign.fill(1);
+//	if (Truncation) {
+//		// vec Entry = Rcpp::as<vec>(entry);  
+//		Exit.insert_rows(0,Entry);
+//		X.insert_rows(0,X);
+//		Z.insert_rows(0,Z);
+//		Status.insert_rows(0,Status);
+//		Id.insert_rows(0,Id);
+//		strata.insert_rows(0,strata);
+//		weights.insert_rows(0,weights);
+//		caseweights.insert_rows(0,caseweights);
+//		offsets.insert_rows(0,offsets);
+//		for (unsigned i=0; i<(n/2); i++) Sign(i) = -1;
+//		Status = Status%(1+Sign);
+//	}
+//	//Rcout << "Status=" << Status << std::endl;
+//
+//	// also sorting after id to use multiple phregs together
+//	// ts 20/3-2018
+//	arma::uvec idx00 = sort_index(Id,"ascend"); 
+//	arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend"); 
+//	idx0 = idx00.elem(idx0);
+//	arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
+//	idx = idx0.elem(idx);
+//
+//	//  arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend"); 
+//	//  arma::uvec idx0 = sort_index(Status,"descend"); 
+//	//  arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
+//	//  idx = idx0.elem(idx);
+//	//  arma::uvec idx00 = stable_sort_index(Id.elem(idx),"ascend"); 
+//	//  idx = idx00.elem(idx);
+//
+//
+//	//Rcout << "idx=" << idx << std::endl;
+//	if (Truncation) {
+//		Sign = Sign.elem(idx);  
+//	}
+//	if (X.n_rows>0) {
+//		XX = XX.rows(idx);
+//		X = X.rows(idx);  
+//	}
+//	if (Z.n_rows==X.n_rows) {
+//		Z = Z.rows(idx);  
+//	}
+////	if ((ZX.n_rows==XX.n_rows) & (XX.n_rows>0)) {
+////		ZX = ZX.rows(idx);  
+////	}
+//	Exit = Exit.elem(idx); 
+//	weights = weights.elem(idx); 
+//	caseweights = caseweights.elem(idx); 
+//	offsets = offsets.elem(idx); 
+//	Status = Status.elem(idx);
+//        Id = Id.elem(idx); 
+//	strata = strata.elem(idx); 
+//	arma::uvec jumps = find(Status>0);
+//	//Rprintf("jumps");
+//	//  arma::Col<unsigned> newId;
+//	// if (haveId) {
+//	//   // uvec Id = Rcpp::as<uvec>(id);
+//	//   if (Truncation) {
+//	//     Id.insert_rows(0,Id);
+//	//   }
+//	//   newId = Id.elem(idx);
+//	// }
+//
+//	return(Rcpp::wrap(Rcpp::List::create(Rcpp::Named("XX")=XX,
+//					Rcpp::Named("X")=X,
+//					Rcpp::Named("jumps")=jumps,
+//					Rcpp::Named("status")=Status,
+//					Rcpp::Named("sign")=Sign,
+//					Rcpp::Named("ord")=idx,
+//					Rcpp::Named("time")=Exit,
+//					Rcpp::Named("id")=Id,				       
+//					Rcpp::Named("weights")=weights,
+//					Rcpp::Named("caseweights")=caseweights,
+//					Rcpp::Named("offset")=offsets,				       
+//					Rcpp::Named("strata")=strata,				       
+////					Rcpp::Named("ZX")=ZX,				       
+//					Rcpp::Named("Z")=Z				       
+//					)));
+//	END_RCPP
+//}/*}}}*/
 
 
