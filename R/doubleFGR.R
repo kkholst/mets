@@ -1,4 +1,3 @@
-
 ##' Double CIF Fine-Gray model with two causes
 ##'
 ##' Estimation based on derived hazards and recursive esitmating euqations.
@@ -557,6 +556,8 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ##' dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
 ##' fgaug <- augmentationFG(dats,fg,fgcm,dfg,cr)
 ##' 
+##' fgaug2 <- augmentationFG(dats,fgaug,fgcm,dfg,cr)
+##' 
 ##' @aliases simul.cifs 
 ##' @export
 augmentationFG <- function(dats,fg,fgcm,dfg,cr,cens.model=FALSE) 
@@ -681,6 +682,7 @@ fgas <- cifreg(Event(time,status)~Z1+Z2,
    S0aug <- 0; S1aug <- 0
 }
 
+fgas$aug <- aug$aug
 res= fgas
 ###	  fgdrE=fgdrE$coef, ## augX=augX, fgascm=fgascm$coef, 
 
@@ -855,7 +857,7 @@ cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
 ###
 data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
-if (depcens==0) censor=pmin(rexp(n,rc),5+runif(n)) else censor=pmin(rexp(n,exp(rc*Z[,1])),3+3*runif(n))
+if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/exp(rc*Z[,1])),6)
 
 status=data$status*(data$time<=censor)
 time=pmin(data$time,censor)
@@ -864,4 +866,30 @@ data <- data.frame(time=time,status=status)
 return(cbind(data,Z))
 
 }# }}}
+
+simul.mod <- function(n,rho1,rho2,beta,rc=0.5,k=1,depcens=0) {# {{{
+p=length(beta)/2
+tt <- seq(0,6,by=0.1)
+Lam1 <- rho1*(1-exp(-tt))
+Lam2 <- rho2*(1-exp(-tt))
+
+Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
+colnames(Z) <- paste("Z",1:2,sep="")
+cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
+cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
+###
+data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
+
+censhaz  <-  cbind(tt,k*tt)
+if (depcens==1) {
+datc <- rchaz(censhaz,exp(Z[,1]*rc))
+} else datc <- rchaz(censhaz,n=n)
+
+data$time <- pmin(data$time,datc$time)
+data$status <- ifelse(data$time<datc$time,data$status,0)
+dsort(data) <- ~time
+
+return(data)
+}# }}}
+
 
