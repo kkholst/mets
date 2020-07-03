@@ -2,6 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{predict.phreg}
 \alias{predict.phreg}
+\alias{headstrata}
 \alias{tailstrata}
 \alias{revcumsumstrata}
 \alias{revcumsumstratasum}
@@ -20,6 +21,8 @@
 \alias{matdoubleindex}
 \alias{mdi}
 \alias{cumsum2strata}
+\alias{revcumsum2strata}
+\alias{revcumsum2stratafdN}
 \title{Predictions from proportional hazards model}
 \usage{
 \method{predict}{phreg}(

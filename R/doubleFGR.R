@@ -844,13 +844,14 @@ return(res)
 }# }}}
 
 ##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0) {# {{{
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,bin=0) {# {{{
 p=length(beta)/2
 tt <- seq(0,6,by=0.1)
 Lam1 <- rho1*(1-exp(-tt))
 Lam2 <- rho2*(1-exp(-tt))
 
-Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
+if (bin==0) Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
+else Z=cbind(rbinom(n,1,1/2),rbinom(n,1,1/2))
 colnames(Z) <- paste("Z",1:2,sep="")
 cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
 cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")

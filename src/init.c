@@ -79,15 +79,17 @@ extern SEXP ModelMatrixTestCox(SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP revcumsumR(SEXP);
 extern SEXP revcumsumstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsum2strataR(SEXP,SEXP, SEXP,SEXP,SEXP);
-extern SEXP cumsum2strataR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-extern SEXP revcumsum2stratalagR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP cumsum2strataR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP revcumsum2stratafdNR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP S0_FG_GcR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP vecAllStrataR(SEXP,SEXP, SEXP);
 extern SEXP tailstrataR(SEXP,SEXP, SEXP);
+extern SEXP headstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumstratasumR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumR(SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumCovR(SEXP,SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP cumsumstrataR(SEXP,SEXP, SEXP);
+extern SEXP diffstrataR(SEXP,SEXP, SEXP);
 //extern SEXP RevCumsumstrataTwoR(SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP cumsumstrataPOR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP cumsumstrataDFGR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
@@ -155,8 +157,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"revcumsumR",                        (DL_FUNC) &revcumsumR,                         1},
     {"revcumsumstrataR",                  (DL_FUNC) &revcumsumstrataR,                   3},
     {"revcumsum2strataR",                 (DL_FUNC) &revcumsum2strataR,                  5},
-    {"revcumsum2stratalagR",              (DL_FUNC) &revcumsum2stratalagR,               5},
-    {"cumsum2strataR",                    (DL_FUNC) &cumsum2strataR,                     6},
+    {"revcumsum2stratafdNR",              (DL_FUNC) &revcumsum2stratafdNR,               7},
+    {"cumsum2strataR",                    (DL_FUNC) &cumsum2strataR,                     7},
     {"S0_FG_GcR",                         (DL_FUNC) &S0_FG_GcR,                          6},
     {"vecAllStrataR",                     (DL_FUNC) &vecAllStrataR,                      3},
     {"riskstrataR",                       (DL_FUNC) &riskstrataR,                        3},
@@ -170,6 +172,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"cumsumidstratasumR",                (DL_FUNC) &cumsumidstratasumR,                 5},
     {"cumsumASR",                         (DL_FUNC) &cumsumASR,                 3},
     {"tailstrataR",                       (DL_FUNC) &tailstrataR,                        3},
+    {"headstrataR",                       (DL_FUNC) &headstrataR,                        3},
     {"cumsumidstratasumCovR",             (DL_FUNC) &cumsumidstratasumCovR,              6},
     {"revcumsumidstratasumR",             (DL_FUNC) &revcumsumidstratasumR,              5},
     {"revcumsumidstratasumCovR",          (DL_FUNC) &revcumsumidstratasumCovR,           6},
@@ -178,6 +181,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"covrfstrataCovR",                   (DL_FUNC) &covrfstrataCovR,                    8},
 //    {"RevCumsumstrataTwoR",             (DL_FUNC) &RevCumsumstrataTwoR,              5},
     {"cumsumstrataR",                     (DL_FUNC) &cumsumstrataR,                      3},
+    {"diffstrataR",                       (DL_FUNC) &diffstrataR,                        3},
     {"sumstrataR",                        (DL_FUNC) &sumstrataR,                         3},
     {"Dpmvn",                             (DL_FUNC) &Dpmvn,                              5},
 //    {"simBandCumHazCox",                  (DL_FUNC) &simBandCumHazCox,                 5},

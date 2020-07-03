@@ -354,7 +354,27 @@ RcppExport SEXP cumsumstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	return(rres);
 } 
 
-RcppExport SEXP tailstrataR(SEXP in, SEXP istrata, SEXP instrata) {
+
+RcppExport SEXP diffstrataR(SEXP ia,SEXP istrata, SEXP instrata) {
+	colvec a = Rcpp::as<colvec>(ia);
+	IntegerVector intstrata(istrata); 
+	int nstrata = Rcpp::as<int>(instrata);
+	unsigned n = a.n_rows;
+
+	colvec tmpsum(nstrata); tmpsum.zeros(); 
+	colvec res = a; 
+	for (unsigned i=0; i<n; i++) {
+		int ss=intstrata(i); 
+			res(i) = a(i)-tmpsum(ss);
+			tmpsum(ss) = a(i); 
+	}  
+	List rres; 
+	rres["res"]=res; 
+	return(rres);
+}
+
+
+RcppExport SEXP tailstrataR(SEXP in, SEXP istrata, SEXP instrata) {/*{{{*/
 	IntegerVector intstrata(istrata); 
 	int nstrata = Rcpp::as<int>(instrata);
 	int n = Rcpp::as<int>(in);
@@ -375,7 +395,30 @@ RcppExport SEXP tailstrataR(SEXP in, SEXP istrata, SEXP instrata) {
 	rres["found"]=foundss; 
 	rres["where"]=wheress; 
 	return(rres);
-}
+}/*}}}*/
+
+RcppExport SEXP headstrataR(SEXP in, SEXP istrata, SEXP instrata) {/*{{{*/
+	IntegerVector intstrata(istrata); 
+	int nstrata = Rcpp::as<int>(instrata);
+	int n = Rcpp::as<int>(in);
+	int nfound=0; 
+
+	colvec tmpsum(nstrata); tmpsum.zeros(); 
+	colvec foundss(nstrata); foundss.zeros(); 
+	colvec wheress(nstrata); foundss.zeros(); 
+
+	for (signed i=0; i<n; i++) {
+		int ss=intstrata(i); 
+		if (foundss(ss) < 0.5 )  { foundss(ss)=1; nfound=+1; wheress(ss)=i+1; }
+		if (nfound==nstrata) break; 
+	}  
+
+	List rres; 
+	rres["nfound"]=nfound; 
+	rres["found"]=foundss; 
+	rres["where"]=wheress; 
+	return(rres);
+}/*}}}*/
 
 colvec  cumsumstrata(colvec a,IntegerVector strata,int nstrata) {
 	unsigned n = a.n_rows;
@@ -542,8 +585,10 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 	mat Ss(n,nstrata2); 
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
 	colvec res = a; 
+	colvec lagres = a; 
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1); int ss2=strata2(n-i-1); 
+		lagres(n-i-1)=tmpsum(ss,ss2); 
 		tmpsum(ss,ss2) += a(n-i-1); 
 		for (int k=0;k<nstrata2;k++) Ss(n-i-1,k)=tmpsum(ss,k); 
 		res(n-i-1)=tmpsum(ss,ss2);
@@ -551,6 +596,7 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 
 	List rres; 
 	rres["res"]=res; 
+	rres["lagres"]=lagres; 
 	rres["mres"]=Ss; 
 //	rres["strata"]=strata; rres["strata2"]=strata2; 
 //	rres["nstrata"]=nstrata; rres["nstrata2"]=nstrata2; 
@@ -558,34 +604,36 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 	return(rres);
 }
 
-RcppExport SEXP revcumsum2stratalagR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {
+RcppExport SEXP revcumsum2stratafdNR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP istarta) {
 	colvec a = Rcpp::as<colvec>(ia);
+	colvec dN = Rcpp::as<colvec>(idN);
 //	mat Gtc = Rcpp::as<mat>(iGtc);
 	IntegerVector strata(istrata); 
         IntegerVector strata2(istrata2); 
 	int nstrata = Rcpp::as<int>(instrata);
 	int nstrata2 = Rcpp::as<int>(instrata2);
+	colvec starta = Rcpp::as<colvec>(istarta);
 
 	unsigned n = a.n_rows;
+	vec at(nstrata); at.zeros(); 
+	for (unsigned i=0; i<nstrata; i++) at(i)=starta(i); 
 
-//	mat Ss(n,nstrata2); 
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
 	colvec res = a; 
+	colvec lagres = a; 
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1); int ss2=strata2(n-i-1); 
-		if (ss2==0) tmpsum(ss,ss2) += a(n-i-1); 
-//		for (int k=0;k<nstrata2;k++) Ss(n-i-1,k)=tmpsum(ss,k); 
+		at(ss)=a(n-i-1); 
+		lagres(n-i-1)=tmpsum(ss,ss2);
+	        for (unsigned k=0;k<nstrata; k++) tmpsum(k,ss2)+=at(k)*dN(n-i-1); 
+//		printf(" %lf %lf \n",at(ss),dN(n-i-1)); 
+//		tmpsum.print("tmpsum"); 
 		res(n-i-1)=tmpsum(ss,ss2);
-		// update later for type2 things 
-		if (ss2>0) tmpsum(ss,ss2) += a(n-i-1); 
 	}  
 
 	List rres; 
 	rres["res"]=res; 
-//	rres["mres"]=Ss; 
-//	rres["strata"]=strata; rres["strata2"]=strata2; 
-//	rres["nstrata"]=nstrata; rres["nstrata2"]=nstrata2; 
-
+	rres["lagres"]=lagres; 
 	return(rres);
 }
 
@@ -619,9 +667,10 @@ RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istr
 	return(rres);
 }
 
-RcppExport SEXP cumsum2strataR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {
+RcppExport SEXP cumsum2strataR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP istarta) {
 	colvec a = Rcpp::as<colvec>(ia);
-	colvec Gc = Rcpp::as<colvec>(iGc);
+	colvec dN = Rcpp::as<colvec>(idN);
+	colvec starta = Rcpp::as<colvec>(istarta);
 	IntegerVector strata(istrata); 
         IntegerVector strata2(istrata2); 
 	unsigned nstrata = Rcpp::as<int>(instrata);
@@ -629,15 +678,17 @@ RcppExport SEXP cumsum2strataR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP
 
 	unsigned n = a.n_rows;
 
+	vec at(nstrata); for (unsigned i=0; i<nstrata; i++) at(i)=starta(i); 
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
 	colvec res = a; colvec lagres = a; 
 
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(i); 
-		int cause=strata2(i); 
-		lagres(i)=tmpsum(ss,cause);
-		tmpsum(ss,cause)+=a(i); 
-		res(i)=tmpsum(ss,cause);
+		int ss2=strata2(i); 
+		at(ss)=a(i); 
+		lagres(i)=tmpsum(ss,ss2);
+	        for (unsigned k=0;k<nstrata; k++) tmpsum(k,ss2)+=at(k)*dN(i); 
+		res(i)=tmpsum(ss,ss2);
 	}  
 
 //        // Gc(t) starts being 1 for all 
@@ -658,8 +709,8 @@ RcppExport SEXP cumsum2strataR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP
 //	}  
 
 	List rres; 
-	rres["cifs"]=res; 
-	rres["lag-cifs"]=lagres; 
+	rres["res"]=res; 
+	rres["lagres"]=lagres; 
 	return(rres);
 }
 
@@ -1358,7 +1409,7 @@ RcppExport SEXP FastCoxPL(SEXP betaSEXP,
 	END_RCPP
 }
 
-RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,
+RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 		SEXP XSEXP,
 		SEXP XXSEXP,
 		SEXP SignSEXP,
@@ -1449,7 +1500,7 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,
 				//			    Rcpp::Named("caseweights")=caseweightsJ
 				));
 	END_RCPP
-}
+}/*}}}*/
 
 RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP,
 		SEXP XSEXP,
@@ -1571,7 +1622,7 @@ RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 		SEXP itheta, SEXP idimthetades,SEXP ithetades, 
 		SEXP iags, SEXP ivarlink, SEXP idimjumprv,SEXP ijumprv,
 		SEXP iJumpsCauses
-		) {
+		) {/*{{{*/
 	BEGIN_RCPP
 		colvec beta = Rcpp::as<colvec>(betaSEXP);
 	mat X = Rcpp::as<mat>(XSEXP);
@@ -1698,10 +1749,10 @@ RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 				Rcpp::Named("weights")=weightsJ
 				));
 	END_RCPP
-}
+}/*}}}*/
 
 
-RcppExport SEXP Matdoubleindex(SEXP im,SEXP irow,SEXP icols,SEXP ilength,SEXP iassign,SEXP ixvec ) {
+RcppExport SEXP Matdoubleindex(SEXP im,SEXP irow,SEXP icols,SEXP ilength,SEXP iassign,SEXP ixvec ) {/*{{{*/
 	mat m = Rcpp::as<mat>(im);
 	IntegerVector rows(irow); 
 	IntegerVector cols(icols); 
@@ -1724,9 +1775,9 @@ RcppExport SEXP Matdoubleindex(SEXP im,SEXP irow,SEXP icols,SEXP ilength,SEXP ia
 	rres["mat"]=m; 
 	}
 	return(rres);
-} 
+} /*}}}*/
 
-mat CubeVecC(mat XX, vec beta,int dim1) {
+mat CubeVecC(mat XX, vec beta,int dim1) {/*{{{*/
 	unsigned p = beta.n_rows;
 	unsigned n = XX.n_rows;
 
@@ -1735,10 +1786,10 @@ mat CubeVecC(mat XX, vec beta,int dim1) {
 		XXbeta.row(j)=(reshape(XX.row(j),dim1,p)*beta).t();
 	}
 	return(XXbeta); 
-}
+}/*}}}*/
 
 RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP)
-{
+{/*{{{*/
 	BEGIN_RCPP
 //		colvec beta = Rcpp::as<colvec>(betaSEXP);
 	mat XX = Rcpp::as<mat>(XXSEXP);
@@ -1756,10 +1807,10 @@ RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP)
 
 	return(Rcpp::List::create(Rcpp::Named("XXbeta")=XXbeta,Rcpp::Named("iXX")=iXXbeta));
 	END_RCPP
-}
+}/*}}}*/
 
 RcppExport SEXP CubeMat(SEXP XXSEXP,SEXP XSEXP)
-{
+{/*{{{*/
 	BEGIN_RCPP 
 		mat XX = Rcpp::as<mat>(XXSEXP);
 	mat X  = Rcpp::as<mat>(XSEXP);
@@ -1773,10 +1824,10 @@ RcppExport SEXP CubeMat(SEXP XXSEXP,SEXP XSEXP)
 
 	return(Rcpp::List::create(Rcpp::Named("XXX")=XXX));
 	END_RCPP
-}
+}/*}}}*/
 
 mat  vecmatmat(mat a,mat b) 
-{
+{/*{{{*/
 	unsigned n = b.n_rows;
 	unsigned p1 = a.n_cols;
 	unsigned p2 = b.n_cols;
@@ -1790,17 +1841,17 @@ mat  vecmatmat(mat a,mat b)
 		//     tt.print("tt"); 
 	}  
 	return(res);
-} 
+} /*}}}*/
 
 RcppExport SEXP  vecMatMat(SEXP iX,SEXP iZ) { // 
-	BEGIN_RCPP
+	BEGIN_RCPP/*{{{*/
 
 		mat X = Rcpp::as<mat>(iX);
 	mat Z = Rcpp::as<mat>(iZ);
 	mat res=vecmatmat(X,Z); 
 	return(Rcpp::List::create(Rcpp::Named("vXZ")=res)); 
 	END_RCPP
-} 
+} /*}}}*/
 
 RcppExport SEXP OutCov(SEXP XSEXP, SEXP ZSEXP)
 {/*{{{*/

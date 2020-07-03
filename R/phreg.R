@@ -990,6 +990,15 @@ return(res$where)
 }# }}}
 
 ##' @export
+headstrata <- function(strata,nstrata)
+{# {{{
+if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
+res <- .Call("headstrataR",length(strata),strata,nstrata,PACKAGE="mets")
+if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res$found>0.5]); }
+return(res$where)
+}# }}}
+
+##' @export
 sumstrata <- function(x,strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
@@ -1008,6 +1017,16 @@ return(res)
 }# }}}
 
 ##' @export
+diffstrata <- function(x,strata,nstrata)
+{# {{{
+if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
+if (length(x)!=length(strata)) stop("length of x and strata must be same\n"); 
+res <- .Call("diffstrataR",x,strata,nstrata,PACKAGE="mets")$res
+return(res)
+}# }}}
+
+
+##' @export
 revcumsumstrata <- function(x,strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
@@ -1023,20 +1042,31 @@ if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
 if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n"); 
 if (length(x)!=length(strata))  stop("length of x and strata must be same\n"); 
 if (length(x)!=length(strata2)) stop("length of x and strata2 must be same\n"); 
-if (!lag) res <- .Call("revcumsum2strataR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
-else res <- .Call("revcumsum2stratalagR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
+res <- .Call("revcumsum2strataR",as.double(x),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
 return(res)
 }# }}}
 
-
 ##' @export
-cumsum2strata <- function(x,y,strata,nstrata,strata2,nstrata2)
+revcumsum2stratafdN <- function(x,y,strata,nstrata,strata2,nstrata2,startx)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1))    stop("strata index not ok\n"); 
 if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n"); 
 if (length(x)!=length(strata))  stop("length of x and strata must be same\n"); 
 if (length(x)!=length(strata2)) stop("length of x and strata2 must be same\n"); 
-res <- .Call("cumsum2strataR",as.double(x),as.double(y),strata,nstrata,strata2,nstrata2,PACKAGE="mets")
+if (length(x)!=length(y)) stop("length of x and y must be same\n"); 
+res <- .Call("revcumsum2stratafdNR",as.double(x),as.double(y),strata,nstrata,strata2,nstrata2,as.double(startx),PACKAGE="mets")
+return(res)
+}# }}}
+
+
+##' @export
+cumsum2strata <- function(x,y,strata,nstrata,strata2,nstrata2,startx)
+{# {{{
+if (any(strata<0) | any(strata>nstrata-1))    stop("strata index not ok\n"); 
+if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n"); 
+if (length(x)!=length(strata))  stop("length of x and strata must be same\n"); 
+if (length(x)!=length(strata2)) stop("length of x and strata2 must be same\n"); 
+res <- .Call("cumsum2strataR",as.double(x),as.double(y),strata,nstrata,strata2,nstrata2,as.double(startx),PACKAGE="mets")
 return(res)
 }# }}}
 
@@ -1201,7 +1231,6 @@ return(res)
 ##' @param robust for robust standard errors based on martingales 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
-##' @aliases km 
 ##' @examples
 ##' data(TRACE)
 ##' TRACE$cluster <- sample(1:100,1878,replace=TRUE)
@@ -1273,7 +1302,6 @@ km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 ##' @param cens.code censoring code "0" is default
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
-##' @aliases cif  
 ##' @examples
 ##' data(TRACE)
 ##' TRACE$cluster <- sample(1:100,1878,replace=TRUE)
@@ -1496,7 +1524,7 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 ##' @param conf.int significance level
 ##' @param km to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.
 ##' @param ... Additional arguments to plot functions
-##' @aliases tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi cumsum2strata 
+##' @aliases headstrata tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi cumsum2strata revcumsum2strata revcumsum2stratafdN
 ##' @export
 predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...) 
 {# {{{ default is all time-points from the object
@@ -1521,6 +1549,7 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
 	  Pt <- IsdM$Ht[object$jumps,,drop=FALSE]
    }
    } # }}}
+
    
 ### setting up newdata with factors and strata 
 desX <- readPhreg(object,newdata) 
@@ -1545,9 +1574,6 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
         where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
 	plhazt <- hazt <- c(0,chaz[strata==j])
 	if (km) { plhazt <- c(1,exp(cumsum(log(1-diff(hazt)))));  plhazt[is.na(hazt)] <- 0 }
-###	hazt <- hazt[where]
-###	plhazt <- plhazt[where]
-###	if (se) se.hazt <- c(0,se.chaz[strata==j])[where]
 	if (se) se.hazt <- c(0,se.chaz[strata==j])
 	Xs <- X[strataNew==j,,drop=FALSE]
 ###	offs <- object$offsets[object$strata==j]
@@ -1789,7 +1815,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param robust to use robust standard errors if possible
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE
+##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -1989,6 +2015,39 @@ lines.phreg <- function(x,...,add=TRUE) plot(x,...,add=add)
 plot.phreg  <- function(x,...) {
 bplot(x,...)
 }
+
+##' @export
+plotstrata <- function(x,y,strata,add=FALSE,where="topright",legend=TRUE,...) 
+{ # {{{
+  ## all strata
+  stratas <- sort(unique(strata))
+  cols <- 1:length(stratas)
+  ltys <- 1:length(stratas)
+  xlim <- range(x)
+  ylim <- range(y)
+
+  cumhaz <- cbind(x,y)
+
+  k <- first <- 0
+  for (i in stratas) {
+    k <- 1+k
+    cumhazs <- cumhaz[strata==i,,drop=FALSE]
+    if (!is.null(cumhazs)) {
+       if (nrow(cumhazs)>1) {
+           if (add | first==1) 
+           lines(cumhazs,type="s",lty=ltys[k],col=cols[k])   
+	 else { first <- 1
+         plot(cumhazs,type="s",lty=ltys[k],col=cols[k],ylim=ylim,xlim=xlim,...)
+         } 
+    } 
+  }
+  }
+
+  if (legend & (!add)) 
+  graphics::legend(where,legend=paste(stratas),col=cols,lty=ltys)
+
+}  # }}}
+
 
 ########' @export
 ###plot.phreg  <- function(x,surv=TRUE,X=NULL,time=NULL,add=FALSE,...) {# {{{
