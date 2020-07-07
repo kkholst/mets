@@ -6,11 +6,7 @@
 \alias{dInterval}
 \alias{simlogitSurvd}
 \alias{predictlogitSurvd}
-\title{## uses HaploSurvival package of github install via devtools
-## devtools::install_github("scheike/HaploSurvival")
-## this is only used for simulations 
-## out <- simHaplo(1,100,tcoef,hapfreqs)
-Discrete time to event interval censored data}
+\title{Discrete time to event interval censored data}
 \usage{
 interval.logitsurv.discrete(
   formula,

@@ -444,11 +444,10 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 
 } ## }}} 
 
-
-##' ## uses HaploSurvival package of github install via devtools
-##' ## devtools::install_github("scheike/HaploSurvival")
-##' ## this is only used for simulations 
-##' ## out <- simHaplo(1,100,tcoef,hapfreqs)
+## uses HaploSurvival package of github install via devtools
+## devtools::install_github("scheike/HaploSurvival")
+## this is only used for simulations 
+## out <- simHaplo(1,100,tcoef,hapfreqs)
 
 ###simHaplo <- function(i,n,tcoef,hapfreqs)
 ###{ ## {{{  
