@@ -2,8 +2,8 @@
 % Please edit documentation in R/cifreg.R
 \name{cifreg}
 \alias{cifreg}
-\alias{revcumsum2strata}
 \alias{vecAllStrata}
+\alias{diffstrata}
 \title{CIF regression}
 \usage{
 cifreg(
@@ -30,9 +30,9 @@ cifreg(
 
 \item{cens.model}{for stratified Cox model without covariates}
 
-\item{weights}{weights for Cox score equations}
+\item{weights}{weights for FG score equations}
 
-\item{offset}{offsets for cox model}
+\item{offset}{offsets for FG  model}
 
 \item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
 
@@ -79,14 +79,14 @@ pll <- predict(ll,nd)
 plot(pll)
 
 ## Fine-Gray model
-llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
-plot(llfg)
+fg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
+plot(fg)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
-pll <- predict(ll,nd)
-plot(pll)
+pfg <- predict(fg,nd)
+plot(pfg)
 
-sllfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
-plot(sllfg)
+sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+plot(sfg)
 }
 \author{
 Thomas Scheike

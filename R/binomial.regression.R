@@ -89,7 +89,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
 {# {{{
-
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -267,8 +266,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
        MGCiid <- apply(MGt,2,sumstrata,id,max(id)+1)
        val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
  
+       val$MGciid <- MGCiid
        val$MGtid <- id
-       val$nc.iid <- val$iid 
+       val$iid.naive <- val$iid 
        beta.iid <- val$iid+(MGCiid %*% val$ihessian)
        val$iid  <- beta.iid
        val$naive.var <- val$var
@@ -276,7 +276,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
        robvar <- crossprod(beta.iid)
        val$robvar <- robvar
        val$se.robust <- diag(robvar)^.5
-       val$se <- diag(val$var)^.5
+       val$se.coef <- diag(val$var)^.5
   } ## }}}
 
   class(val) <- "binreg"
@@ -368,4 +368,272 @@ return(preds)
 ###return(preds)
 ###} # }}}
 ###
+
+
+##' Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) 
+##'
+##' Computes  the augmentation term for each individual as well as the sum
+##' \deqn{
+##' A = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
+##' }
+##' with 
+##' \deqn{
+##' H(u,X) = F_1^*(t,s) - F_1^*(u,s)
+##' }
+##' using a KM for \deqn{G_c(t)} and a working model for cumulative baseline
+##' related to \deqn{F_1^*(t,s)} and \deqn{s} is strata, \deqn{S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)}. 
+##'
+##' Standard errors computed under assumption of correct \deqn{G_c(s)} model.
+##' 
+##' Augmentation term only computed for standard FG model, since strata is used to 
+##' specify working models for CIF's. 
+##'
+##' @param formula formula with 'Event', strata model for CIF given by strata, and strataC specifies censoring strata
+##' @param data data frame
+##' @param offset offsets for cox model
+##' @param data data frame
+##' @param cause of interest 
+##' @param cens.code code of censoring 
+##' @param km to use Kaplan-Meier
+##' @param time of interest 
+##' @param weights weights for estimating equations
+##' @param offset offsets for logistic regression
+##' @param ... Additional arguments to binreg function.
+##' @author Thomas Scheike
+##' @examples
+##' data(bmt)
+##' dcut(bmt,breaks=2) <- ~age 
+##' out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+##'			  strata(platelet,agecat.2),data=bmt,cause=1,time=40)
+##' summary(out1)
+##'
+##' out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+##'     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
+##' summary(out2)
+##' @export
+BinAugmentCifstrata <- function(formula,data=data,cause=1,cens.code=0,km=TRUE,time=NULL,weights=NULL,offset=NULL,...)
+{# {{{
+  cl <- match.call()
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset","strataC")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+  if (class(Y)!="Event") stop("Expected a 'Event'-object")
+  if (ncol(Y)==2) {
+    exit <- Y[,1]
+    entry <- NULL ## rep(0,nrow(Y))
+    status <- Y[,2]
+  } else {
+    entry <- Y[,1]
+    exit <- Y[,2]
+    status <- Y[,3]
+  }
+  id <- strata <- NULL
+  if (!is.null(attributes(Terms)$specials$cluster)) {
+    ts <- survival::untangle.specials(Terms, "cluster")
+    Terms  <- Terms[-ts$terms]
+    id <- m[[ts$vars]]
+  }
+  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+    ts <- survival::untangle.specials(Terms, "strata")
+    Terms  <- Terms[-ts$terms]
+    strata <- m[[ts$vars]]
+    strata.name <- ts$vars
+  }  else strata.name <- NULL
+  if (!is.null(stratapos <- attributes(Terms)$specials$strataC)) {
+    ts <- survival::untangle.specials(Terms, "strataC")
+    Terms  <- Terms[-ts$terms]
+    strataC <- as.numeric(m[[ts$vars]])-1
+    strataC.name <- ts$vars
+  }  else { strataC <- NULL; strataC.name <- NULL}
+
+  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+    ts <- survival::untangle.specials(Terms, "offset")
+    Terms  <- Terms[-ts$terms]
+    offset <- m[[ts$vars]]
+  }  
+  X <- model.matrix(Terms, m)
+  if (!is.null(intpos  <- attributes(Terms)$intercept))
+###    X <- X[,-intpos,drop=FALSE]
+  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+  id.orig <- id; 
+  if (!is.null(id)) {
+	  ids <- sort(unique(id))
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+   } else id <- as.integer(seq_along(exit))-1; 
+
+
+ p <- ncol(X)
+ beta <- NULL
+  if (is.null(beta)) beta <- rep(0,p)
+  if (p==0) X <- cbind(rep(0,length(exit)))
+
+  if (is.null(strata)) { strata <- rep(0,length(exit)); nstrata <- 1; strata.level <- NULL; } else {
+	  strata.level <- levels(strata)
+	  ustrata <- sort(unique(strata))
+	  nstrata <- length(ustrata)
+	  strata.values <- ustrata
+      if (is.numeric(strata)) strata <-  fast.approx(ustrata,strata)-1 else  {
+      strata <- as.integer(factor(strata,labels=seq(nstrata)))-1
+    }
+  }
+
+if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.level <- NULL; } else {
+	  strataC.level <- levels(strataC)
+	  ustrataC <- sort(unique(strataC))
+	  nstrataC <- length(ustrataC)
+	  strataC.values <- ustrataC
+      if (is.numeric(strataC)) strataC <-  fast.approx(ustrataC,strataC)-1 else  {
+      strataC <- as.integer(factor(strataC,labels=seq(nstrataC)))-1
+    }
+  }
+
+  cens.strata <- strataC
+  cens.nstrata <- nstrataC 
+
+  if (is.null(offset)) offset <- rep(0,length(exit)) 
+  if (is.null(weights)) weights <- rep(1,length(exit)) 
+  strata.call <- strata
+  Z <- NULL
+  Zcall <- matrix(1,1,1) ## to not use for ZX products when Z is not given 
+  if (!is.null(Z)) Zcall <- Z
+
+  ## possible casewights to use for bootstrapping and other things
+  case.weights <- NULL 
+  if (is.null(case.weights)) case.weights <- rep(1,length(exit)) 
+
+  trunc <- (!is.null(entry))
+  if (!trunc) entry <- rep(0,length(exit))
+  call.id <- id
+
+  if (!is.null(id)) {
+	  ids <- unique(id)
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+   } else id <- as.integer(seq_along(entry))-1; 
+   ## orginal id coding into integers 
+   id.orig <- id+1; 
+
+  if (is.null(time)) stop("Must give time for logistic modelling \n"); 
+
+  statusC <- (status==cens.code) 
+  statusE <- (status==cause) & (exit<= time) 
+  if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
+
+  Zcall <- cbind(status,strata)
+  dd <- .Call("FastCoxPrepStrata",entry,exit,statusC,X,id, 
+	     trunc,strataC,weights,offset,Zcall,case.weights,PACKAGE="mets")
+
+  jumps <- dd$jumps+1
+  xxstrataC <- c(dd$strata)
+  xxstatus  <- dd$Z[,1]
+  xxstrata  <- dd$Z[,2]
+  jumpsD <- which(xxstatus!=cens.code)
+  jumps1 <- which(xxstatus==cause)
+  rr <- c(dd$sign*exp(dd$offset))
+  S0 = c(revcumsumstrata(rr,strata,nstrata))
+  ## S0 after strataC
+  S00C = c(revcumsumstrata(rr,xxstrataC,nstrataC))
+
+  S0C <- rep(0,length(dd$strata))
+
+  ## censoring MG, strataC
+  stratJumps <- dd$strata[jumps]
+  S00i <- rep(0,length(dd$strata))
+  S00i[jumps] <-  1/S00C[jumps]
+
+  ## cif calculation, uses strata {{{
+  S0Di <- S02i <- S01i <- rep(0,length(dd$strata))
+  S01i[jumps1] <-  1/S0[jumps1]
+  S0Di[jumpsD] <-  1/S0[jumpsD]
+
+  ## strata-Cif G_T(t)
+  if (!km) { 
+     cumhazD <- cumsumstratasum(S0Di,xxstrata,nstrata)
+     Stm <- exp(-cumhazD$lagsum)
+     St <- exp(-cumhazD$sum)
+  } else { 
+     StA <- cumsumstratasum(log(1-S0Di),xxstrata,nstrata)
+     Stm <- exp(StA$lagsum)
+     St <- exp(StA$sum)
+  }
+
+  ## G_c(t-) 
+  if (!km) { 
+    cumhazD <- c(cumsumstratasum(S00i,xxstrataC,nstrataC)$lagsum)
+    Gc      <- exp(-cumhazD)
+  } else Gc <- c(exp(cumsumstratasum(log(1-S00i),xxstrataC,nstrataC)$lagsum))
+
+# }}}
+  
+ btime <- c(1*(dd$time<=time))
+ cif1 <- cumsumstrata(Stm*S01i*btime,xxstrata,nstrata)
+ ### final F_1^s(time) 
+ cif1time <- cif1[tailstrata(xxstrata,nstrata)]
+ ciftt <- cif1time[xxstrata+1]
+ ft <-  (ciftt-cif1)/(Gc*St)
+ ft[ft==Inf] <- 0
+ ft[is.na(ft)] <- 0
+
+ Z <- dd$X
+ U1 <- matrix(0,nrow(Z),1)
+ U1[jumps,] <- ft[jumps]*btime[jumps]
+ E1dLam0 <- cumsum2strata(ft,S00i*btime,xxstrata,nstrata,xxstrataC,nstrataC,cif1time)$res
+
+ ### Martingale  as a function of time and for all subjects to handle strata 
+ MGt <- Z*c(U1-E1dLam0)*rr*c(dd$weights)
+ MGiid <- apply(MGt,2,sumstrata,dd$id,max(id)+1)
+ augment <- apply(MGt,2,sum)
+
+ ## drop strata's from formula and run with augmention term
+ # {{{
+ no.offset2 <- function(x, preserve = NULL) {
+  tt <- terms(x)
+  attr(tt, "offset") <- if (length(preserve)) attr(tt, "offset")[preserve]
+  eval(body(terms.formula)[[2]]) # extract fixFormulaObject
+  f <- fixFormulaObject(tt)
+  environment(f) <- environment(x)
+  f
+ }
+
+ formulans <- as.formula(gsub("strata\\(", "offset(", deparse(formula)))
+ formulans <- no.offset2(formulans)
+ formulans <- as.formula(gsub("strataC\\(", "offset(", deparse(formulans)))
+ formulans <- no.offset2(formulans)
+# }}}
+
+ ## mangler lige cens vægte 
+ if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
+ data$strataCC <- strataC
+
+ bra <- binreg(formulans,data=data,cause=cause,augmentation=augment,time=time,
+	       cens.model=cens.model,...)
+
+ ## adjust SE and var based on augmentation term
+ ## only report SE based on iid 
+ bra$var.orig <- bra$var
+ bra$augment <- augment
+ ## bra$iid <- bra$iid.naive - MGiid %*%  bra$ihessian
+ bra$iid <- bra$iid + MGiid %*%  bra$ihessian
+ bra$var <- crossprod(bra$iid)
+ bra$se.coef <-  diag(bra$var)^.5
+ bra$robvar <- bra$var
+ bra$se.robust <-bra$se.coef
+ bra$MGciid <- MGiid
+
+ allAugment <- list(MGiid=MGiid,augment=augment,id=id,id.orig=id.orig,
+	       cif=cif1,St=St,Gc=Gc,strata=xxstrata,strataC=xxstrataC,time=dd$time)
+ bra$allAugment <- allAugment
+
+ return(bra)
+}# }}})
 

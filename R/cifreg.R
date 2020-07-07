@@ -28,8 +28,8 @@
 ##' @param cause of interest 
 ##' @param cens.code code of censoring 
 ##' @param cens.model for stratified Cox model without covariates 
-##' @param offset offsets for cox model
-##' @param weights weights for Cox score equations
+##' @param offset offsets for FG  model
+##' @param weights weights for FG score equations
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-) 
 ##' @param propodds 1 is logistic model, NULL is fine-gray model 
 ##' @param ... Additional arguments to lower level funtions
@@ -48,15 +48,15 @@
 ##' plot(pll)
 ##' 
 ##' ## Fine-Gray model
-##' llfg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
-##' plot(llfg)
+##' fg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' plot(fg)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
-##' pll <- predict(ll,nd)
-##' plot(pll)
+##' pfg <- predict(fg,nd)
+##' plot(pfg)
 ##' 
-##' sllfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
-##' plot(sllfg)
-##' @aliases revcumsum2strata vecAllStrata
+##' sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' plot(sfg)
+##' @aliases vecAllStrata diffstrata
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
 			weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
@@ -218,7 +218,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	### back to km product-limit form
         Gts <- apply(rbind(0,Gts),2,diff)
 	### back to km 
-	GtsAll <- Gts <- apply(Gts,2,function(x) exp(cumsum(log(1-x))))
+	GtsAl<- Gts <- apply(Gts,2,function(x) exp(cumsum(log(1-x))))
 	Gts <- rbind(1,Gts)[whereaJ,]
 	Gts[is.na(Gts)] <- 0
 	Gjumps <- Gts
@@ -572,7 +572,6 @@ out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,iid.naive=UUiid,
 return(out)
 }# }}}
 
-##' @export
 S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n"); 
