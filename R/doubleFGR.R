@@ -550,14 +550,13 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ##' dats <- simul.cifs(n,rho1,rho2,beta)
 ##' dsort(dats) <- ~time
 ##' 
-##' fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
-##' fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
-##' cr <- phreg(Surv(time,status==0)~+1,data=dats)
-##' dtable(dats,~status)
-##' dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
-##' fgaug <- augmentationFG(dats,fg,dfg,cr)
-##' 
-##' fgaug2 <- augmentationFG(dats,fgaug,dfg,cr)
+##' # fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+##' # fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
+##' # cr <- phreg(Surv(time,status==0)~+1,data=dats)
+##' # dtable(dats,~status)
+##' # dfg <- doubleFGR(Event(time,status)~Z1+Z2,data=dats,restrict=3)
+##' # fgaug <- augmentationFG(dats,fg,dfg,cr)
+##' # fgaug2 <- augmentationFG(dats,fgaug,dfg,cr)
 ##' 
 ##' @aliases simul.cifs    
 augmentationFG <- function(dats,fg,dfg,cr,cens.model=FALSE,status="status") 
@@ -676,15 +675,18 @@ return(res)
 
 ##' @export
 simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=
-		       c("cloglog","logistic")) {# {{{
+		       c("cloglog","logistic"),rate=1) {# {{{
 p=length(beta)/2
 tt <- seq(0,6,by=0.1)
-Lam1 <- rho1*(1-exp(-tt))
-Lam2 <- rho2*(1-exp(-tt))
+if (length(rate)==1) rate <- rep(rate,2)
+Lam1 <- rho1*(1-exp(-tt/rate[1]))
+Lam2 <- rho2*(1-exp(-tt/rate[2]))
 
-if (bin==0) Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
-else Z=cbind(2*rbinom(n,1,1/2)-1,rbinom(n,1,1/2))
+if (length(bin)==1) bin <- rep(bin,2)
+
+Z=cbind((bin[1]==1)*(2*rbinom(n,1,1/2)-1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n,1,1/2))+(bin[2]==0)*rnorm(n))
 colnames(Z) <- paste("Z",1:2,sep="")
+
 cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type=type[1])
 cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type=type[1])
 ###
