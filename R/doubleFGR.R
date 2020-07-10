@@ -550,6 +550,7 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 ##' dats <- simul.cifs(n,rho1,rho2,beta)
 ##' dsort(dats) <- ~time
 ##' 
+##' # not run development version 
 ##' # fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
 ##' # fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cens.model=~strata(Z1))
 ##' # cr <- phreg(Surv(time,status==0)~+1,data=dats)
