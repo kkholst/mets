@@ -1,6 +1,6 @@
 ##' Double CIF Fine-Gray model with two causes
 ##'
-##' Estimation based on derived hazards and recursive esitmating euqations.
+##' Estimation based on derived hazards and recursive estimating equations.
 ##' fits two parametrizations
 ##' 1)
 ##'  \deqn{
@@ -878,19 +878,15 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
  ## drop strata's from formula and run wiht augmention term
  # {{{
- no.strata2 <- function(x, preserve = NULL) {
-  tt <- terms(x)
-  attr(tt, "offset") <- if (length(preserve)) attr(tt, "offset")[preserve]
-  eval(body(terms.formula)[[2]]) # extract fixFormulaObject
-  f <- fixFormulaObject(tt)
-  environment(f) <- environment(x)
-  f
+ drop.strata <- function(x) {
+   mm <- unlist(Specials(x,"strata"))
+   for (i in mm) x <- update(x, paste(".~.-strata(",i,")"))
+   mm <- unlist(Specials(x,"strataC"))
+   for (i in mm) x <- update(x, paste(".~.-strataC(",i,")"))
+   return(x)
  }
 
- formulans <- as.formula(gsub("strata\\(", "offset(", deparse(formula)))
- formulans <- no.strata2(formulans)
- formulans <- as.formula(gsub("strataC\\(", "offset(", deparse(formulans)))
- formulans <- no.strata2(formulans)
+ formulans <- drop.strata(formula)
 # }}}
 
   if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
