@@ -596,7 +596,7 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
  ## drop strata's from formula and run with augmention term
  # {{{
- no.offset2 <- function(x, preserve = NULL) {
+ no.strata2 <- function(x, preserve = NULL) {
   tt <- terms(x)
   attr(tt, "offset") <- if (length(preserve)) attr(tt, "offset")[preserve]
   eval(body(terms.formula)[[2]]) # extract fixFormulaObject
@@ -606,9 +606,9 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  }
 
  formulans <- as.formula(gsub("strata\\(", "offset(", deparse(formula)))
- formulans <- no.offset2(formulans)
+ formulans <- no.strata2(formulans)
  formulans <- as.formula(gsub("strataC\\(", "offset(", deparse(formulans)))
- formulans <- no.offset2(formulans)
+ formulans <- no.strata2(formulans)
 # }}}
 
  ## mangler lige cens vægte 
