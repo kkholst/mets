@@ -22,7 +22,7 @@ doubleFGR(formula, data, offset = NULL, weights = NULL, X2 = NULL, ...)
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Estimation based on derived hazards and recursive esitmating euqations.
+Estimation based on derived hazards and recursive estimating equations.
 fits two parametrizations
 1)
  \deqn{
