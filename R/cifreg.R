@@ -876,13 +876,9 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  # {{{
  drop.strata <- function(x) {
    mm <- unlist(Specials(x,"strata"))
- print(mm)
-   for (i in mm) x <- update(x, paste(".~.-strata(",i,")"))
- print(x)
+   for (i in mm) x <- update(x,as.formula(paste(".~.-strata(",i,")")))
    mm <- unlist(Specials(x,"strataC"))
- print(mm)
-   for (i in mm) x <- update(x, paste(".~.-strataC(",i,")"))
- print(x)
+   for (i in mm) x <- update(x,as.formula(paste(".~.-strataC(",i,")")))
    return(x)
  }
 
