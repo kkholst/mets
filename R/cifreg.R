@@ -926,7 +926,7 @@ colnames(Z) <- paste("Z",1:2,sep="")
 cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type=type[1])
 cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type=type[1])
 ###
-data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
+data <- timereg::sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
 if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(rcZ*Z[,1]))),6)
 
