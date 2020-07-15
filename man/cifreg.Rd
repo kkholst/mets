@@ -73,6 +73,7 @@ bmt$id <- 1:nrow(bmt)
 
 ## logistic link  OR interpretation
 ll=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
+summary(ll)
 plot(ll)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pll <- predict(ll,nd)
@@ -80,12 +81,14 @@ plot(pll)
 
 ## Fine-Gray model
 fg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
+summary(fg)
 plot(fg)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pfg <- predict(fg,nd)
 plot(pfg)
 
 sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+summary(sfg)
 plot(sfg)
 }
 \author{

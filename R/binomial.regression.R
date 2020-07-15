@@ -42,8 +42,7 @@
 ##'
 ##' outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 ##' summary(outs)
-##' 
-##' 
+##'
 ##' ##########################################
 ##' ### risk-ratio of different causes #######
 ##' ##########################################
@@ -137,7 +136,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else id <- as.integer(seq_along(exit))-1; 
+   } else { nid <- nrow(X); id <- as.integer(seq_along(exit))-1; }
   ### id from call coded as numeric 1 -> 
   id.orig <- id; 
 
@@ -176,7 +175,8 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
 
-  if (is.null(augmentation))  augmentation=rep(0,p)
+ if (is.null(augmentation))  augmentation=rep(0,p)
+ nevent <- sum((status==cause)*(exit<=time))
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -230,7 +230,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
 	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
 	  val <- c(val,list(time=time,formula=formula,formC=formC,
-	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, model.frame=m))
+	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 
  if (se) {## {{{ censoring adjustment of variance 
 	ord <- resC$cox.prep$ord+1
@@ -294,14 +294,16 @@ print.binreg  <- function(x,...) {# {{{
 }# }}}
 
 ##' @export
-summary.binreg <- function(object,or=TRUE,...) {# {{{
-if (or)  {
-cat("OR estimates \n"); 
-estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p),null=1)$coefmat
-} else  {
-cat("log-OR estimates \n"); 
-estimate(coef=object$coef,vcov=object$var)
-}
+summary.binreg <- function(object,...) {# {{{
+
+cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
+
+expC <- estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p),null=1)$coefmat
+V=object$var
+
+res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
+class(res) <- "summary.phreg"
+return(res)
 }# }}}
 
 ##' @export
@@ -603,7 +605,6 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
    for (i in mm) x <- update(x, paste(".~.-strataC(",i,")"))
    return(x)
  }
-
  formulans <- drop.strata(formula)
  # }}}
 

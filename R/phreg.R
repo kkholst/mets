@@ -323,7 +323,8 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
   res <- c(phreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
-   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
+	cluster.pos=pos.cluster,n=length(exit)))
   class(res) <- "phreg"
   
   res
@@ -455,7 +456,8 @@ phregR <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
   res <- c(phreg01R(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
-   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,
+	n=length(exit)))
   class(res) <- "phreg"
   
   res
@@ -917,15 +919,11 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
 summary.phreg <- function(object,type=c("robust","martingale"),...) {
   expC <- cc <- ncluster <- V <- NULL
 
-  if (!is.null(object$propodds)) { 
-       cat("Proportional odds model, log-OR regression \n"); 
-  }
-
-  if (length(object$p)>0 & object$p>0 & !is.null(object$opt)) {
+   if (length(object$p)>0 & object$p>0 & !is.null(object$opt)) {
     I <- -solve(object$hessian)
     if ( (length(class(object))==2) && class(object)[2]=="cif.reg") {
 	    V <- object$var
-	    ncluster <- nrow(object$Uiid)
+	    ncluster <- object$ncluster ## nrow(object$Uiid)
     } else  { 
 	    V <- vcov(object,type=type[1])
             ncluster <- object$n
@@ -939,11 +937,12 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
   } 
   Strata <- levels(object$strata)
-  if (!is.null(Strata)) {
-    n <- unlist(lapply(object$time,length))
-  } else {
-    n <- length(object$time)    
-  }  
+###  if (!is.null(Strata)) {
+###    n <- unlist(lapply(Strata,length))
+###  } else {
+###    n <- length(Strata)    
+###  }  
+  n <- object$n
   res <- list(coef=cc,n=n,nevent=object$nevent,strata=Strata,ncluster=ncluster,var=V,exp.coef=expC)
   class(res) <- "summary.phreg"
   res
@@ -955,7 +954,11 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
 ##' @export
 print.summary.phreg  <- function(x,max.strata=5,...) {
-  cat("\n")
+
+  if (!is.null(x$propodds)) { 
+       cat("Proportional odds model, log-OR regression \n"); 
+  } else cat("\n")
+
   nn <- cbind(x$n, x$nevent)
   rownames(nn) <- levels(x$strata); colnames(nn) <- c("n","events")
   if (is.null(rownames(nn))) rownames(nn) <- rep("",NROW(nn))

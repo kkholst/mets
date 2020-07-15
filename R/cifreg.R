@@ -42,6 +42,7 @@
 ##' 
 ##' ## logistic link  OR interpretation
 ##' ll=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
+##' summary(ll)
 ##' plot(ll)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pll <- predict(ll,nd)
@@ -49,19 +50,20 @@
 ##' 
 ##' ## Fine-Gray model
 ##' fg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' summary(fg)
 ##' plot(fg)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pfg <- predict(fg,nd)
 ##' plot(pfg)
 ##' 
 ##' sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' summary(sfg)
 ##' plot(sfg)
 ##' @aliases vecAllStrata diffstrata
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
 			weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
 {# {{{
-
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -119,7 +121,8 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
  res <- c(cifreg01(data,X,exit,status,id,strata,offset,weights,strata.name,
 		   cens.model=cens.model,
 	   cause=cause,cens.code=cens.code,Gc=Gc,propodds=propodds,...),
-   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster)
+   list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
+	cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
    )
 
   class(res) <- c("phreg","cif.reg")
@@ -165,7 +168,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else id <- as.integer(seq_along(entry))-1; 
+   } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
    ## orginal id coding into integers 1:...
    id.orig <- id+1; 
 
@@ -558,7 +561,7 @@ if ((length(other)>=1) & (length(whereC)>0) & (nCstrata==1)) {
 
 
 out <- list(coef=beta.s,var=varm,se.coef=diag(varm)^.5,iid.naive=UUiid,
-	    iid=Uiid,
+	    iid=Uiid,ncluster=nid,
 	    ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	    ploglik=opt$ploglik,gradient=opt$gradient,
 	    cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
@@ -624,17 +627,20 @@ strataC <- survival:::strata
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' rho1 <- 0.2; rho2 <- 0.9
-##' n <- 200
+##' rho1 <- 0.2; rho2 <- 10
+##' n <- 400
 ##' beta=c(0.0,-0.1,-0.5,0.3)
-##' dats <- simul.cifs(n,rho1,rho2,beta)
+##' dats <- simul.cifs(n,rho1,rho2,beta,rc=0.2)
+##' dtable(dats,~status)
 ##' dsort(dats) <- ~time
 ##' fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+##' summary(fg)
 ##' 
 ##' fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
+##' summary(fgaugS)
 ##' fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
 ##' 
-##' @aliases strataC  simul.cifs
+##' @aliases strataC  simul.cifs setup.cif
 ##' @export
 FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,km=TRUE,case.weights=NULL,weights=NULL,offset=NULL,...)
 {# {{{
@@ -870,13 +876,20 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  # {{{
  drop.strata <- function(x) {
    mm <- unlist(Specials(x,"strata"))
+ print(mm)
    for (i in mm) x <- update(x, paste(".~.-strata(",i,")"))
+ print(x)
    mm <- unlist(Specials(x,"strataC"))
+ print(mm)
    for (i in mm) x <- update(x, paste(".~.-strataC(",i,")"))
+ print(x)
    return(x)
  }
 
+### formula=Event(time,status)~Z1+Z2+strata(Z1,Z2)+strataC(Z1)
+ print(formula)
  formulans <- drop.strata(formula)
+ print(formulans)
 # }}}
 
   if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
@@ -949,4 +962,15 @@ dsort(data) <- ~time
 return(data)
 }# }}}
 
+#' @export 
+setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
+{# {{{
+cif <- list()
+cif$cumhaz <- cumhazard
+cif$coef <- coef
+cif$model <- type
+class(cif) <- "defined"
+attr(cif,"znames") <- Znames
+return(cif)
+}# }}}
 
