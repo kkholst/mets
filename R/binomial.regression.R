@@ -65,13 +65,13 @@
 ##' 
 ##' cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=50)
 ##' cifs2 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
-##' summary(cifs1,or=FALSE)
-##' summary(cifs2,or=FALSE)
+##' summary(cifs1)
+##' summary(cifs2)
 ##' 
 ##' cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 ##' 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
 ##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
-##' summary(cifdob,or=FALSE)
+##' summary(cifdob)
 ##' 
 ##' riskratio <- function(p) {
 ##'   expit  <- function(z) 1/(1+exp(-z)) ## expit
