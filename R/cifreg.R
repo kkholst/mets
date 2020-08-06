@@ -540,6 +540,7 @@ strataC <- survival:::strata
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
+##' set.seed(100)
 ##' rho1 <- 0.2; rho2 <- 10
 ##' n <- 400
 ##' beta=c(0.0,-0.1,-0.5,0.3)
@@ -552,6 +553,7 @@ strataC <- survival:::strata
 ##' fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
 ##' summary(fgaugS)
 ##' fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
+##' summary(fgaugS2)
 ##' 
 ##' @aliases strataC  simul.cifs setup.cif drop.strata
 ##' @export
