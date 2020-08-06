@@ -163,7 +163,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       if (resC$p>0) kmt <- FALSE
       cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
-      cens.strata <- resC$strata[resC$ord]
+      cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
   } else formC <- NULL
   expit  <- function(z) 1/(1+exp(-z)) ## expit
@@ -597,17 +597,17 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  augment <- apply(MGt,2,sum)
 
  ## drop strata's from formula and run with augmention term
- # {{{
- drop.strata <- function(x) {
-   mm <- unlist(Specials(x,"strata"))
-   for (i in mm) x <- update(x, as.formula(paste(".~.-strata(",i,")")))
-   mm <- unlist(Specials(x,"strataC"))
-   for (i in mm) x <- update(x,as.formula(paste(".~.-strataC(",i,")")))
-   return(x)
- }
- formulans <- drop.strata(formula)
- # }}}
+### # {{{
+### drop.strata <- function(x) {
+###   mm <- unlist(Specials(x,"strata"))
+###   for (i in mm) x <- update(x, as.formula(paste(".~.-strata(",i,")")))
+###   mm <- unlist(Specials(x,"strataC"))
+###   for (i in mm) x <- update(x,as.formula(paste(".~.-strataC(",i,")")))
+###   return(x)
+### }
+### # }}}
 
+ formulans <- drop.strata(formula)
  ## mangler lige cens vægte 
  if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
  data$strataCC <- strataC

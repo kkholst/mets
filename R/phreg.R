@@ -955,6 +955,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 ##' @export
 print.summary.phreg  <- function(x,max.strata=5,...) {
 
+  if (length(class(x))==2 & class(x)[2]=="cifreg") cat("Competing risks regression \n"); 
   if (!is.null(x$propodds)) { 
        cat("Proportional odds model, log-OR regression \n"); 
   } else cat("\n")

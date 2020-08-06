@@ -691,23 +691,6 @@ RcppExport SEXP cumsum2strataR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP
 		res(i)=tmpsum(ss,ss2);
 	}  
 
-//        // Gc(t) starts being 1 for all 
-//	colvec Gcv(nstrata2); for (unsigned i=0; i<nstrata2; i++) Gcv(i)=1; 
-//	mat tmpsum(nstrata,nstrata2); tmpsum.zeros(); 
-//
-//	mat dS0last(nstrata,nstrata2); dS0last.zeros(); 
-//
-//	colvec res = a; 
-//	for (unsigned i=0; i<n; i++) {
-//		int ss=strata(n-i-1); int ss2=strata2(n-i-1); 
-//		Gcv(ss2)=Gc(i); 
-//		// update all strata for different s2-strata
-//		// if either Gc_ss2(t) or S_0^ss(t) changes
-//		tmpsum(ss,ss2)+=Gcv(ss2)*a(i)-dS0last(ss,ss2); 
-//		res(i)=tmpsum(ss,ss2);
-//		dS0last(ss,ss2)=Gcv(ss2)*a(i); 
-//	}  
-
 	List rres; 
 	rres["res"]=res; 
 	rres["lagres"]=lagres; 
@@ -735,49 +718,6 @@ RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {
 	rres["res"]=Ss; 
 	return(rres);
 }
-
-//RcppExport SEXP indexstrataR(SEXP ijump,SEXP istratajump,SEXP ieval,SEXP istrata,SEXP instrata,SEXP istrict) {
-//	colvec jump = Rcpp::as<colvec>(ijump);
-//	IntegerVector stratajump(istratajump); 
-//	colvec eval = Rcpp::as<colvec>(ieval);
-//	IntegerVector strata(istrata); 
-//	int strict = Rcpp::as<int>(istrict);
-//	int nstrata = Rcpp::as<int>(instrata);
-//	int Neval=eval.size(); 
-//	int Njump=jump.size(); 
-//        IntegerVector index=strata;
-//	IntegerVector i(nstrata); i=0*i; 
-//	IntegerVector pi(nstrata); pi=0*pi; 
-//        int t,po,ss;
-//
-//if (strict==0){
-//      for (t=0;t<Neval;t++){
-//	     ss=strata[t]; 
-//             while(i[ss]<Njump && ((jump[i[ss]]<eval[t] && stratajump[i[ss]]==strata[t]) || stratajump[i[ss]]!=strata[t])) 
-//	     { 
-//		     i[ss]=i[ss]+1;
-//		     // only advance previous when strata is correct 
-//		     if (!(stratajump[i[ss]]!=strata[t])) pi[ss]=i[ss]; 
-//	     }
-//	     index[t] = pi[ss];
-//      }
-//}
-//else{
-//     for (t=0;t<Neval;t++){
-//	     ss=strata[t]; 
-//             while(i[ss]<Njump && ((jump[i[ss]]<eval[t] && stratajump[i[ss]]==strata[t]) || stratajump[i[ss]]!=strata[t])) 
-//	     { 
-//		     i[ss]=i[ss]+1;
-//		     if (!(stratajump[i[ss]]!=strata[t])) pi[ss]=i[ss]; 
-////		     if ((jump[pi[ss]]<eval[t] && stratajump[pi[ss]]==strata[t])) pi[ss]=i[ss]; 
-//	     }
-//	     index[t] = pi[ss];
-//      }
-//}
-//	List rres; 
-//	rres["index"]=index; 
-//	return(rres);
-//}
 
 
 RcppExport SEXP wherestrataR(SEXP ir,SEXP ia,SEXP istrata, SEXP instrata) {
