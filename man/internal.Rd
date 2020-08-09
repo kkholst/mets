@@ -53,6 +53,7 @@
 \alias{procform}
 \alias{procform3}
 \alias{procformdata}
+\alias{drop.specials}
 \title{For internal use}
 \description{
 For internal use

@@ -4,7 +4,7 @@ Title: Analysis of Multivariate Event Times
 Version: 1.2.8
 Date: 2020-04-03
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
-             person("Thomas Scheike", role=c("aut", "cre")))
+             person("Thomas Scheike", role=c("aut")))
 Author: Klaus K. Holst [aut, cre],
 	Thomas Scheike [aut],
 Maintainer: Klaus K. Holst <klaus@holst.it>
@@ -44,4 +44,4 @@ ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 SystemRequirements: C++11
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

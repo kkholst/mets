@@ -1,8 +1,8 @@
-##' Analysis of Multivariate Events 
-##' 
+##' Analysis of Multivariate Events
+##'
 ##' Implementation of various statistical models for multivariate
 ##' event history data. Including multivariate cumulative incidence models,
-##' and bivariate random effects probit models (Liability models) 
+##' and bivariate random effects probit models (Liability models)
 ##'
 ##' @name mets-package
 ##' @docType package
@@ -20,9 +20,9 @@
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @keywords package
 ##' @examples
-##' 
+##'
 ##' ## To appear
-##' 
+##'
 NULL
 
 ##' np data set
@@ -107,7 +107,7 @@ NULL
 ##'
 ##' @format
 ##' Self-reported BMI-values on 11,411 subjects
-##' 
+##'
 ##' tvparnr: twin id
 ##' bmi: BMI (m/kg^2)
 ##' age: Age
@@ -127,7 +127,7 @@ NULL
 NULL
 
 ##' For internal use
-##' 
+##'
 ##' @title For internal use
 ##' @name npc
 ##' @rdname internal
@@ -138,7 +138,7 @@ NULL
 ##'  alpha2kendall alpha2spear coefmat piecewise.twostage surv.boxarea
 ##'  faster.reshape piecewise.data
 ##'  simBinPlack simBinFam simBinFam2 simSurvFam corsim.prostate.random
-##'  simnordic.random simCox sim 
+##'  simnordic.random simCox sim
 ##'  grouptable jumptimes folds
 ##'  ace.family.design ascertained.pairs CCbinomial.twostage
 ##'  coarse.clust concordanceTwinACE concordanceTwostage
@@ -150,11 +150,11 @@ NULL
 ##'  simbinClaytonOakes.pairs simbinClaytonOakes.twin.ace
 ##'  simClaytonOakes.family.ace simClaytonOakes.twin.ace simFrailty.simple
 ##'  simCompete.simple simCompete.twin.ace twin.polygen.design
-##'  procform procform3 procformdata
+##'  procform procform3 procformdata drop.specials
 NULL
 
 
-##' Rate for leaving HPN program for patients of Copenhagen 
+##' Rate for leaving HPN program for patients of Copenhagen
 ##'
 ##' @name drcumhaz
 ##' @docType data
@@ -162,7 +162,7 @@ NULL
 ##' @source Estimated data
 NULL
 
-##' rate of CRBSI for HPN patients of Copenhagen 
+##' rate of CRBSI for HPN patients of Copenhagen
 ##'
 ##' @name base1cumhaz
 ##' @docType data
@@ -170,7 +170,7 @@ NULL
 ##' @source Estimated data
 NULL
 
-##' rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen 
+##' rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen
 ##'
 ##' @name base4cumhaz
 ##' @docType data
@@ -178,7 +178,7 @@ NULL
 ##' @source Estimated data
 NULL
 
-##' rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen 
+##' rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen
 ##'
 ##' @name base44cumhaz
 ##' @docType data
@@ -189,15 +189,15 @@ NULL
 
 ##' hapfreqs data set
 ##'
-##' @name hapfreqs 
+##' @name hapfreqs
 ##' @docType data
 ##' @keywords data
 ##' @source Simulated data
 NULL
 
-##' haploX  covariates and response for haplo survival discrete survival 
+##' haploX  covariates and response for haplo survival discrete survival
 ##'
-##' @name haploX 
+##' @name haploX
 ##' @docType data
 ##' @keywords data
 ##' @source Simulated data
@@ -205,19 +205,16 @@ NULL
 
 ##' ghaplos  haplo-types for subjects of haploX data
 ##'
-##' @name ghaplos 
+##' @name ghaplos
 ##' @docType data
 ##' @keywords data
 ##' @source Simulated data
 NULL
 
-##' ttpd discrete survival data on interval form 
+##' ttpd discrete survival data on interval form
 ##'
 ##' @name ttpd
 ##' @docType data
 ##' @keywords data
 ##' @source Simulated data
 NULL
-
-
-

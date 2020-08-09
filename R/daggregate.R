@@ -67,7 +67,7 @@ by2mat <- function(x,nam,...) {
 ##' @param silent suppress messages
 ##' @param na.action How model.frame deals with 'NA's
 ##' @param convert if TRUE try to coerce result into matrix. Can also be a user-defined function
-##' @aliases daggr 
+##' @aliases daggr
 daggregate <- function(data,y=NULL,x=NULL,subset,...,fun="summary",regex=mets.options()$regex, missing=FALSE, remove.empty=FALSE, matrix=FALSE, silent=FALSE, na.action=na.pass, convert=NULL)
 {# {{{
     if (is.vector(data)) data <- data.frame(data)
@@ -79,6 +79,7 @@ daggregate <- function(data,y=NULL,x=NULL,subset,...,fun="summary",regex=mets.op
     }
     if (is.null(y)) y <- colnames(data)
     if (inherits(y,"formula")) {
+
         yx <- procformdata(y,sep="\\|",data=data,na.action=na.action,regex=regex,...)
         y <- yx$response
         x0 <- yx$predictor
@@ -179,7 +180,7 @@ dunique <- function(data,y=NULL,x=NULL,...) invisible(daggregate(data,y,x,fun=fu
 ##' @param data if x is formula or names for data frame then data frame is needed.
 ##' @param y name of variable, or fomula, or names of variables on data frame.
 ##' @param x possible group variable
-##' @param use how to handle missing values 
+##' @param use how to handle missing values
 ##' @param ... Optional additional arguments
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @examples
@@ -205,9 +206,9 @@ dscalar <- function(data,y=NULL,x=NULL,...,na.rm=TRUE,matrix=TRUE,fun=base::mean
     daggregate(data,y,x,matrix=matrix,...,
                fun=function(z,...) {
                    if (is.matrix(z)) {
-                       apply(z,2,function(x) 
+                       apply(z,2,function(x)
                            suppressWarnings(tryCatch(fun(x,na.rm=na.rm,...),error=function(e) return(NA))))
-                   } else {                           
+                   } else {
                        unlist(lapply(z,function(x) {
                            suppressWarnings(tryCatch(fun(x,na.rm=na.rm,...),error=function(e) return(NA)))
                        }))
@@ -230,11 +231,11 @@ Summary <- function(object,na.rm=TRUE,...) {
       }
     m <- match("NA's", names(xx), 0)
     if (inherits(x, "Date") || inherits(x, "POSIXct")) {
-        xx <- if (length(a <- attr(x, "NAs"))) 
+        xx <- if (length(a <- attr(x, "NAs")))
                  c(format(xx), `NA's` = as.character(a))
              else format(xx)
     }
-    else if (m && !is.character(x)) 
+    else if (m && !is.character(x))
         xx <- c(format(xx[-m]), `NA's` = as.character(xx[m]))
     xx
 }
@@ -258,22 +259,6 @@ deval <- function(data,y=NULL,x=NULL,...,matrix=FALSE,fun=Summary,simplify=FALSE
         for (i in seq_len(ncol(res))) {
             if (is.list(res[,i])) res[,i] <- unlist(res[,i])
         }
-    ##     Dim <- function(x) {
-    ##         val <- dim(x)
-    ##         if (is.null(val)) val <- c(1,length(x))
-    ##         val
-    ##     }
-    ##     dm <- Dim(res[[1]])
-    ##     dims <- unlist(lapply(res,function(x) identical(Dim(x),dm)))
-    ##     if (all(dims)) {
-    ##         Res <- res
-    ##         n <- length(res)
-    ##         res <- array(NA,dim=c(n,dm))
-    ##         for (i in seq(n)) {
-    ##             browser()
-    ##         }
-                
-    ##     }
         ## }
     }
     res
@@ -327,4 +312,3 @@ dquantile <- function(data,y=NULL,x=NULL,probs=seq(0,1,by=1/breaks),breaks=4,mat
     }
     return(a)
 }
-

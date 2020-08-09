@@ -16,5 +16,5 @@ drop.specials <- function(x, components, ...) {
         }
     }
     names(variables) <- components
-    structure(x, variables=variables)
+    return( structure(x, variables=variables) )
 }

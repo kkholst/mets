@@ -152,18 +152,23 @@ procform <- function(formula=NULL, sep="\\|", nsep=1, return.formula=FALSE, data
 
     if (return.formula) {
         if (foundsep && !is.null(filter)) {
-            filter <- lapply(filter, function(z) as.formula(paste0(c("~", paste0(z,collapse="+")))))
+            filter <- lapply(filter,
+                             function(z) as.formula(paste0(c("~", paste0(z,collapse="+")))))
         }
         if (length(pred)>0)
-            pred <- as.formula(paste0(c("~", paste0(pred,collapse="+"))))
+            pred <- as.formula(paste0("~", paste0(pred,collapse="+"), collapse=""))
         if (length(res)>0)
-            res <- as.formula(paste0(c("~", paste0(res,collapse="+"))))
+            res <- as.formula(paste0("~", paste0(res,collapse="+"), collapse=""))
         if (!is.null(specials)) {
             specials <- lapply(specials,function(x)
-                              as.formula(paste0(c("~", paste0(x,collapse="+")))))
+                              as.formula(paste0("~", paste0(x,collapse="+"), collapse="")))
         }
     }
-    res <- list(response=res, predictor=pred, filter=filter, filter.expression=filter.expression, specials=specials)
+    res <- list(response=res,
+                predictor=pred,
+                filter=filter,
+                filter.expression=filter.expression,
+                specials=specials)
     if (!return.list) return(unlist(unique(res)))
     return(res)
 }
@@ -179,8 +184,7 @@ procformdata <- function(formula,data,sep="\\|", na.action=na.pass, do.filter=TR
     if (!do.filter) {
         filter <- NULL
     }
-    ### print(filter); print(missing(filter)); print(is.null(filter)); print(filter[[1]])
-    ### when filter.expression is expression(1) then also no filter, ts 
+    ### when filter.expression is expression(1) then also no filter, ts
     if ((!missing(filter))) if (!is.null(filter)) if (as.character(filter)=="1") filter <- NULL
 
     if (length(res$response)>0) {
@@ -234,9 +238,9 @@ procform3 <- function(y,x=NULL,z=NULL,...) {# {{{
     yx <- procform(y,return.formula=FALSE,...)
     x0 <- yx$predictor
     y  <- yx$response
-    if (is.null(yx$predictor)) { x0 <- yx$response ; y <- NULL} 
+    if (is.null(yx$predictor)) { x0 <- yx$response ; y <- NULL}
 
-    if (is.null(y)) 
+    if (is.null(y))
     if (!is.null(x)) {
         x <- procform(x,return.formula=FALSE,...)
         y <- c(x$predictor,x$response)
@@ -245,41 +249,21 @@ procform3 <- function(y,x=NULL,z=NULL,...) {# {{{
 }# }}}
 
 
-## Specials <- function(f,spec,split2="+",...) {
-##   tt <- terms(f,spec)
-##   pos <- attributes(tt)$specials[[spec]]
-##   if (is.null(pos)) return(NULL)
-##   x <- rownames(attributes(tt)$factors)[pos]
-##   st <- gsub(" ","",x)
-##   res <- unlist(strsplit(st,"[()]"))[2]
-##   if (is.null(split2)) return(res)
-##   unlist(strsplit(res,"+",fixed=TRUE))
-## }
-
-## f <- Surv(lefttime,time,status)~x1+id(~1+z,cluster)
-## spec <- "id"
-## split1=","
-## split2="+"
-
-## myspecials <- c("id","strata","f")
-## f <- Event(leftime,time,cause) ~ id(~1+z+z2,cluster) + strata(~s1+s2) + f(a) + z*x
-## ff <- Specials(f,"id",split2=",")
-
 Specials <- function(f,spec,split1=",",split2=NULL,...) {# {{{
   tt <- terms(f,spec)
   pos <- attributes(tt)$specials[[spec]]
   if (is.null(pos)) return(NULL)
   x <- rownames(attributes(tt)$factors)[pos]
   st <- gsub(" ","",x) ## trim
-##  res <- unlist(strsplit(st,"[()]"))
   spec <- unlist(strsplit(st,"[()]"))[[1]]
   res <- substr(st,nchar(spec)+2,nchar(st)-1)
   if (!is.null(split1))
-    res <- unlist(strsplit(res,split1))
+      res <- unlist(strsplit(res,split1))
   res <- as.list(res)
   for (i in seq(length(res))) {
-    if (length(grep("~",res[[i]]))>0)
-      res[[i]] <- as.formula(res[[i]])
+      if (length(grep("~",res[[i]]))>0) {
+          res[[i]] <- as.formula(res[[i]])
+      }
   }
   return(res)
 }# }}}
@@ -291,4 +275,3 @@ decomp.specials <- function (x, pattern = "[()]", sep = ",", ...)
       st <- rev(unlist(strsplit(st, pattern, ...)))[1]
     unlist(strsplit(st, sep, ...))
   }
-
