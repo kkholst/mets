@@ -811,11 +811,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
                     cif1=cif1,cif2=cif2,St=St,Gc=Gc,strata=xxstrata,strataC=xxstrataC,time=dd$time)
 
     ## drop strata's from formula and run wiht augmention term
-    ## {{{
-    browser()
     formulans <- drop.strata(formula)
-### print(formula); print(formulans)
-    ## }}}
 
     if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
     data$strataCC <- cens.strata
