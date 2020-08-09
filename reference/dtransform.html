@@ -173,9 +173,7 @@
 
 <span class='no'>xx</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>mena</span>,<span class='kw'>ll</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='no'>agemena</span>)+<span class='no'>twinnum</span>,<span class='no'>agemena</span><span class='kw'>&lt;</span><span class='fl'>15</span>)
 <span class='no'>xx</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>xx</span>  ,<span class='kw'>ll</span><span class='kw'>=</span><span class='fl'>100</span>+<span class='no'>agemena</span>,<span class='kw'>ll2</span><span class='kw'>=</span><span class='fl'>1000</span>,<span class='no'>agemena</span><span class='kw'>&gt;</span><span class='fl'>15</span>)
-<span class='fu'>dsummary</span>(<span class='no'>xx</span>,<span class='no'>ll</span>+<span class='no'>ll2</span>~<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>agemena</span><span class='kw'>&gt;</span><span class='fl'>15</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(agemena &gt; 15): FALSE
+<span class='fu'>dsummary</span>(<span class='no'>xx</span>,<span class='no'>ll</span>+<span class='no'>ll2</span>~<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>agemena</span><span class='kw'>&gt;</span><span class='fl'>15</span>))</div><div class='output co'>#&gt; I(agemena &gt; 15): FALSE
 #&gt;        ll             ll2      
 #&gt;  Min.   :3.227   Min.   : NA   
 #&gt;  1st Qu.:3.557   1st Qu.: NA   

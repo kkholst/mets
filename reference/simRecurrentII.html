@@ -252,8 +252,7 @@ there is  more flexibility wrt random effects</p>
 <span class='co'>######################################################################</span>
 
 <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrentII</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='no'>base4</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
-<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             135 2931  454

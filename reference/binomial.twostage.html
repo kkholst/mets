@@ -536,18 +536,18 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; 
 #&gt; Coefficients:
 #&gt; (Intercept)            x  
-#&gt;      0.4822       0.3037  
+#&gt;      0.5097       0.2801  
 #&gt; 
 #&gt; Degrees of Freedom: 39999 Total (i.e. Null);  39998 Residual
-#&gt; Null Deviance:	    51660 
-#&gt; Residual Deviance: 51450 	AIC: 51460</div><div class='input'>
+#&gt; Null Deviance:	    51470 
+#&gt; Residual Deviance: 51290 	AIC: 51300</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>data</span>)</div><div class='output co'>#&gt;   ybin x   type cluster
-#&gt; 1    1 1 mother       1
-#&gt; 2    1 1 father       1
-#&gt; 3    1 1  child       1
+#&gt; 1    1 0 mother       1
+#&gt; 2    1 0 father       1
+#&gt; 3    0 0  child       1
 #&gt; 4    1 0  child       1
-#&gt; 5    1 1 mother       2
-#&gt; 6    0 1 father       2</div><div class='input'><span class='no'>data</span>$<span class='no'>number</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>)
+#&gt; 5    1 0 mother       2
+#&gt; 6    1 0 father       2</div><div class='input'><span class='no'>data</span>$<span class='no'>number</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>)
 <span class='no'>data</span>$<span class='no'>child</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>*(<span class='no'>data</span>$<span class='no'>number</span><span class='kw'>==</span><span class='fl'>3</span>)
 
 <span class='co'>### make ace random effects design</span>
@@ -574,24 +574,24 @@ here using theta.des to specify these low-dimension association. Default is a di
      <span class='kw'>random.design</span><span class='kw'>=</span><span class='no'>out</span>$<span class='no'>des.rv</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>out</span>$<span class='no'>pardes</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>bints</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
-#&gt;                 theta         se
-#&gt; dependence1 2.2305680 0.16788733
-#&gt; dependence2 0.9324298 0.05688313
+#&gt;                theta         se
+#&gt; dependence1 1.971865 0.15616292
+#&gt; dependence2 1.004228 0.05493265
 #&gt; 
 #&gt; $type
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; $h
 #&gt;             Estimate Std.Err   2.5%  97.5%    P-value
-#&gt; dependence1   0.7052 0.02375 0.6587 0.7518 9.503e-194
-#&gt; dependence2   0.2948 0.02375 0.2482 0.3413  2.241e-35
+#&gt; dependence1   0.6626 0.02509 0.6134 0.7117 1.183e-153
+#&gt; dependence2   0.3374 0.02509 0.2883 0.3866  3.173e-41
 #&gt; 
 #&gt; $vare
 #&gt; NULL
 #&gt; 
 #&gt; $vartot
 #&gt;    Estimate Std.Err  2.5% 97.5%   P-value
-#&gt; p1    3.163  0.1543 2.861 3.465 2.029e-93
+#&gt; p1    2.976  0.1442 2.693 3.259 1.408e-94
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
@@ -616,36 +616,36 @@ here using theta.des to specify these low-dimension association. Default is a di
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>bintwin</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                theta        se
-#&gt; dependence1 2.126704 0.2458449
-#&gt; dependence2 1.015574 0.1652025
+#&gt; dependence1 1.909134 0.2398489
+#&gt; dependence2 1.186302 0.1614038
 #&gt; 
 #&gt; $type
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; $h
 #&gt;             Estimate Std.Err   2.5%  97.5%   P-value
-#&gt; dependence1   0.6768  0.0579 0.5633 0.7903 1.439e-31
-#&gt; dependence2   0.3232  0.0579 0.2097 0.4367 2.375e-08
+#&gt; dependence1   0.6168  0.0586 0.5019 0.7316 6.611e-26
+#&gt; dependence2   0.3832  0.0586 0.2684 0.4981 6.144e-11
 #&gt; 
 #&gt; $vare
 #&gt; NULL
 #&gt; 
 #&gt; $vartot
 #&gt;    Estimate Std.Err  2.5% 97.5%   P-value
-#&gt; p1    3.142  0.1498 2.849 3.436 9.826e-98
+#&gt; p1    3.095  0.1485 2.804 3.387 1.753e-96
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'>concordanceTwinACE</span>(<span class='no'>bintwin</span>)</div><div class='output co'>#&gt; $MZ
 #&gt;                      Estimate  Std.Err   2.5%  97.5% P-value
-#&gt; concordance            0.5210 0.005506 0.5102 0.5318       0
-#&gt; casewise concordance   0.8336 0.004783 0.8242 0.8430       0
-#&gt; marginal               0.6250 0.005364 0.6145 0.6355       0
+#&gt; concordance            0.5222 0.005581 0.5112 0.5331       0
+#&gt; casewise concordance   0.8325 0.004802 0.8231 0.8419       0
+#&gt; marginal               0.6273 0.005397 0.6167 0.6378       0
 #&gt; 
 #&gt; $DZ
 #&gt;                      Estimate  Std.Err   2.5%  97.5% P-value
-#&gt; concordance            0.4726 0.006400 0.4601 0.4851       0
-#&gt; casewise concordance   0.7562 0.005942 0.7445 0.7678       0
-#&gt; marginal               0.6250 0.005364 0.6145 0.6355       0
+#&gt; concordance            0.4785 0.006360 0.4661 0.4910       0
+#&gt; casewise concordance   0.7629 0.005822 0.7515 0.7743       0
+#&gt; marginal               0.6273 0.005397 0.6167 0.6378       0
 #&gt; </div><div class='input'>
 
 </div></pre>

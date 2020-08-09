@@ -291,14 +291,14 @@
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>biprobit</span>(<span class='no'>y</span>~<span class='fl'>1</span>+<span class='no'>x</span>,<span class='kw'>rho</span><span class='kw'>=</span>~<span class='fl'>1</span>+<span class='no'>x</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>dd</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>a</span>, <span class='kw'>mean.contrast</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>.5</span>), <span class='kw'>cor.contrast</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>.5</span>))</div><div class='output co'>#&gt; 
 #&gt;                Estimate   Std.Err       Z   p-value    
-#&gt; (Intercept)   -0.053745  0.030991 -1.7342   0.08288 .  
-#&gt; x              1.046197  0.056202 18.6149 &lt; 2.2e-16 ***
-#&gt; r:(Intercept)  0.044438  0.060985  0.7287   0.46620    
-#&gt; r:x           -0.959039  0.136203 -7.0413 1.905e-12 ***
+#&gt; (Intercept)    0.044025  0.029354  1.4998   0.13367    
+#&gt; x              0.992611  0.053902 18.4153 &lt; 2.2e-16 ***
+#&gt; r:(Intercept) -0.107509  0.061582 -1.7458   0.08085 .  
+#&gt; r:x           -1.024791  0.133064 -7.7015 1.345e-14 ***
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #&gt; 
-#&gt; logLik: -1153.643  mean(score^2): 1.803e-06 
+#&gt; logLik: -1165.921  mean(score^2): 4.429e-06 
 #&gt;     n pairs 
 #&gt;  2000  1000 
 #&gt; 
@@ -307,13 +307,13 @@
 #&gt; 	Mean          [(Intercept)] + 0.5[x] 
 #&gt; 
 #&gt;                         Estimate 2.5%     97.5%   
-#&gt; Rel.Recur.Risk           0.89082  0.84714  0.93450
-#&gt; OR                       0.29566  0.17324  0.50459
-#&gt; Tetrachoric correlation -0.40956 -0.54952 -0.24724
+#&gt; Rel.Recur.Risk           0.87795  0.84138  0.91451
+#&gt; OR                       0.15740  0.08356  0.29648
+#&gt; Tetrachoric correlation -0.55106 -0.67031 -0.40408
 #&gt;                                                   
-#&gt; Concordance              0.41263  0.37104  0.45551
-#&gt; Casewise Concordance     0.60628  0.56185  0.64902
-#&gt; Marginal                 0.68059  0.65585  0.70436</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='kw'>by</span><span class='kw'>=</span><span class='fl'>.1</span>))), <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>p00</span>~<span class='no'>x</span>,<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>))</div><div class='img'><img src='biprobit-1.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; Concordance              0.43700  0.39341  0.48158
+#&gt; Casewise Concordance     0.61940  0.57550  0.66144
+#&gt; Marginal                 0.70552  0.68108  0.72882</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='kw'>by</span><span class='kw'>=</span><span class='fl'>.1</span>))), <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>p00</span>~<span class='no'>x</span>,<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>))</div><div class='img'><img src='biprobit-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='no'>pp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='kw'>by</span><span class='kw'>=</span><span class='fl'>.1</span>)),<span class='kw'>which</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>))
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp</span>[,<span class='fl'>1</span>]~<span class='no'>pp</span>$<span class='no'>x</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>, <span class='kw'>xlab</span><span class='kw'>=</span><span class='st'>"x"</span>, <span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"Concordance"</span>, <span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>xaxs</span><span class='kw'>=</span><span class='st'>"i"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/lava/man/confband.html'>confband</a></span>(<span class='no'>pp</span>$<span class='no'>x</span>,<span class='no'>pp</span>[,<span class='fl'>2</span>],<span class='no'>pp</span>[,<span class='fl'>3</span>],<span class='kw'>polygon</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>lty</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/lava/man/Col.html'>Col</a></span>(<span class='fl'>1</span>))</div><div class='img'><img src='biprobit-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='no'>pp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='kw'>by</span><span class='kw'>=</span><span class='fl'>.1</span>)),<span class='kw'>which</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>9</span>)) <span class='co'>## rho</span>

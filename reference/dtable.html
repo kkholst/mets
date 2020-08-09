@@ -212,19 +212,16 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sTRACE"</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"timereg"</span>)
 
-<span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+<span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>)</div><div class='output co'>#&gt; 
 #&gt; status
 #&gt;   0   7   9 
 #&gt; 236   5 259 
-#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>)</div><div class='output co'>#&gt; 
 #&gt;        vf   0   1
 #&gt; status           
 #&gt; 0         225  11
 #&gt; 7           5   0
-#&gt; 9         241  18</div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+#&gt; 9         241  18</div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; 
 #&gt; status
 #&gt;   0   7   9 
 #&gt; 236   5 259 
@@ -232,8 +229,7 @@
 #&gt; vf
 #&gt;   0   1 
 #&gt; 471  29 
-#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>,~<span class='no'>chf</span>+<span class='no'>diabetes</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; chf: 0
+#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>,~<span class='no'>chf</span>+<span class='no'>diabetes</span>)</div><div class='output co'>#&gt; chf: 0
 #&gt; diabetes: 0
 #&gt; 
 #&gt;        vf   0   1
@@ -332,7 +328,6 @@
 #&gt; 236   5 259 
 #&gt; </div><div class='input'>
 <span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='st'>"*f*"</span>+<span class='no'>status</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
 #&gt; chf
 #&gt;   0   1 
@@ -346,7 +341,6 @@
 #&gt;   0   7   9 
 #&gt; 236   5 259 
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='st'>"*f*"</span>+<span class='no'>status</span>+<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>wmi</span><span class='kw'>&gt;</span><span class='fl'>1.4</span>)<span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
 #&gt;    chf
 #&gt; vf    0   1
@@ -380,8 +374,6 @@
 #&gt;        FALSE  53   0 153
 #&gt;        TRUE   88   3  78
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='st'>"*f*"</span>+<span class='no'>status</span>~<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>wmi</span><span class='kw'>&gt;</span><span class='fl'>0.5</span>)<span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(wmi &gt; 0.5): FALSE
 #&gt; 
 #&gt; chf
@@ -410,9 +402,7 @@
 #&gt; status
 #&gt;   0   7   9 
 #&gt; 140   3 229 
-#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>~<span class='fu'>dcut</span>(<span class='no'>age</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; dcut(age): [28.1,60]
+#&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>~<span class='fu'>dcut</span>(<span class='no'>age</span>))</div><div class='output co'>#&gt; dcut(age): [28.1,60]
 #&gt; 
 #&gt; status
 #&gt;  0  7  9 
@@ -440,7 +430,6 @@
 #&gt;  20 105 
 #&gt; </div><div class='input'>
 <span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,~<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
 #&gt;           sex   0   1
 #&gt; status vf            
@@ -450,8 +439,6 @@
 #&gt;        1        0   0
 #&gt; 9      0       80 136
 #&gt;        1        6   9</div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~+<span class='fl'>1</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
 #&gt;    status
 #&gt; vf    0   7   9
@@ -468,8 +455,6 @@
 #&gt;   0 132   9
 #&gt;   1 222  12
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>.</span>~<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>,<span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; status: 0
 #&gt; vf: 0
 #&gt; sex: 0
@@ -971,8 +956,6 @@
 #&gt;              1.773 
 #&gt;                  1 
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;           sex   0   1
@@ -992,8 +975,6 @@
 #&gt;        1       0  0
 #&gt; 9      0      12 18
 #&gt;        1       1  0</div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>flat</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt; , , sex = 0
@@ -1030,8 +1011,6 @@
 #&gt;      9 18  0
 #&gt; </div><div class='input'>
 <span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt; status
@@ -1061,8 +1040,6 @@
 #&gt;  0  1 
 #&gt; 15 22 
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;    status
@@ -1099,8 +1076,6 @@
 #&gt;   1 22  0
 #&gt; </div><div class='input'>
 <span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>total</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;    status
@@ -1136,8 +1111,6 @@
 #&gt;   0 0.93333333 0.06666667 1.00000000
 #&gt;   1 1.00000000 0.00000000 1.00000000
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>total</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;      status
@@ -1179,8 +1152,6 @@
 #&gt;   1   0.6111111 0.0000000
 #&gt;   Sum 1.0000000 1.0000000
 #&gt; </div><div class='input'><span class='fu'>dtable</span>(<span class='no'>sTRACE</span>,<span class='no'>status</span>+<span class='no'>vf</span>+<span class='no'>sex</span>~<span class='no'>diabetes</span><span class='kw'>|</span><span class='no'>age</span><span class='kw'>&gt;</span><span class='fl'>60</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>summary</span><span class='kw'>=</span><span class='no'>summary</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;    status

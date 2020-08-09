@@ -244,8 +244,7 @@ $$Z12$$  gamma distribution with mean 1 and variance vargam12</p>
 <span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
 
 <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrentTS</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='no'>base4</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
-<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             158 2975  389

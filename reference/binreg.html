@@ -167,6 +167,7 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
   <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>no.opt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
+  <span class='kw'>augmentation</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -230,6 +231,10 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
       <td><p>for optimization</p></td>
     </tr>
     <tr>
+      <th>augmentation</th>
+      <td><p>to augment binomial regression</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments to lower level funtions</p></td>
     </tr>
@@ -252,17 +257,42 @@ naive.var is variance under known censoring model.</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
 <span class='co'># logistic regresion with IPCW binomial regression </span>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; OR estimates </div><div class='output co'>#&gt;                Estimate   Std.Err      2.5%     97.5%    P-value
-#&gt; [(Intercept)] 0.8368213 0.1064365 0.6282097 1.0454330 0.12524905
-#&gt; [tcell]       0.6526482 0.2271478 0.2074468 1.0978497 0.12621774
-#&gt; [platelet]    0.6427204 0.1557992 0.3373596 0.9480811 0.02183613</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>)),<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        pred         se     lower     upper
-#&gt; 1 0.3497382 0.04858124 0.2545190 0.4449574
-#&gt; 2 0.2598194 0.07038113 0.1218724 0.3977664</div><div class='input'>
-<span class='no'>outs</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>cens.model</span><span class='kw'>=</span>~<span class='fu'>strata</span>(<span class='no'>tcell</span>,<span class='no'>platelet</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>outs</span>)</div><div class='output co'>#&gt; OR estimates </div><div class='output co'>#&gt;                Estimate   Std.Err      2.5%    97.5%    P-value
-#&gt; [(Intercept)] 0.8346783 0.1063683 0.6262003 1.043156 0.12012753
-#&gt; [tcell]       0.6935985 0.2438233 0.2157136 1.171483 0.20887883
-#&gt; [platelet]    0.6481681 0.1558202 0.3427662 0.953570 0.02394969</div><div class='input'>
-
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408    160
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;              Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; (Intercept) -0.178145  0.127205 -0.427462  0.071173  0.1614
+#&gt; tcell       -0.426717  0.348029 -1.108841  0.255407  0.2202
+#&gt; platelet    -0.442046  0.242375 -0.917092  0.033001  0.0682
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;               Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]  0.83682 0.10645 0.62819 1.04546  0.1253
+#&gt; [tcell]        0.65265 0.22714 0.20746 1.09784  0.1262
+#&gt; [platelet]     0.64272 0.15578 0.33740 0.94804  0.0218
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>)),<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        pred         se     lower     upper
+#&gt; 1 0.3497382 0.04857251 0.2545361 0.4449403
+#&gt; 2 0.2598194 0.07038970 0.1218556 0.3977833</div><div class='input'>
+<span class='no'>outs</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>cens.model</span><span class='kw'>=</span>~<span class='fu'>strata</span>(<span class='no'>tcell</span>,<span class='no'>platelet</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>outs</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408    160
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;              Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; (Intercept) -0.180709  0.127413 -0.430434  0.069016  0.1561
+#&gt; tcell       -0.365862  0.350626 -1.053077  0.321353  0.2967
+#&gt; platelet    -0.433605  0.240229 -0.904446  0.037236  0.0711
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;               Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]  0.83468 0.10635 0.62624 1.04312  0.1201
+#&gt; [tcell]        0.69360 0.24319 0.21695 1.17025  0.2077
+#&gt; [platelet]     0.64817 0.15571 0.34298 0.95335  0.0238
+#&gt; </div><div class='input'>
 <span class='co'>##########################################</span>
 <span class='co'>### risk-ratio of different causes #######</span>
 <span class='co'>##########################################</span>
@@ -276,9 +306,7 @@ naive.var is variance under known censoring model.</p>
 <span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>bmtdob</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='no'>cause</span><span class='kw'>==</span><span class='fl'>1</span>)
 <span class='co'>###</span>
 <span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='no'>bmt</span>,<span class='no'>bmtdob</span>)
-<span class='fu'>dtable</span>(<span class='no'>bmtdob</span>,<span class='no'>cause</span>+<span class='no'>status</span>~<span class='no'>strata</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; strata: 1
+<span class='fu'>dtable</span>(<span class='no'>bmtdob</span>,<span class='no'>cause</span>+<span class='no'>status</span>~<span class='no'>strata</span>)</div><div class='output co'>#&gt; strata: 1
 #&gt; 
 #&gt;       status   0   1   2
 #&gt; cause                   
@@ -298,27 +326,73 @@ naive.var is variance under known censoring model.</p>
 <span class='fu'>bplot</span>(<span class='no'>cif1</span>)</div><div class='input'><span class='fu'>bplot</span>(<span class='no'>cif2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='img'><img src='binreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='no'>cifs1</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
 <span class='no'>cifs2</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs1</span>,<span class='kw'>or</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; log-OR estimates </div><div class='output co'>#&gt;             Estimate Std.Err    2.5%   97.5%   P-value
-#&gt; (Intercept)  -0.1954  0.1311 -0.4524 0.06160 1.362e-01
-#&gt; tcell        -0.6371  0.3590 -1.3407 0.06661 7.599e-02
-#&gt; platelet     -0.3523  0.2472 -0.8368 0.13231 1.542e-01
-#&gt; age           0.4198  0.1070  0.2101 0.62944 8.711e-05</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs2</span>,<span class='kw'>or</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; log-OR estimates </div><div class='output co'>#&gt;             Estimate Std.Err     2.5%   97.5%   P-value
-#&gt; (Intercept) -1.31834  0.1583 -1.62855 -1.0081 8.114e-17
-#&gt; tcell        0.74232  0.3593  0.03808  1.4466 3.884e-02
-#&gt; platelet    -0.03093  0.2795 -0.57869  0.5168 9.119e-01
-#&gt; age         -0.09327  0.1424 -0.37236  0.1858 5.125e-01</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs1</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408    160
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;              Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; (Intercept) -0.195401  0.131030 -0.452216  0.061413  0.1359
+#&gt; tcell       -0.637058  0.359000 -1.340685  0.066569  0.0760
+#&gt; platelet    -0.352264  0.247108 -0.836588  0.132059  0.1540
+#&gt; age          0.419772  0.106900  0.210253  0.629292  0.0001
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;               Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]  0.82250 0.10777 0.61127 1.03374  0.0996
+#&gt; [tcell]        0.52885 0.18986 0.15674 0.90096  0.0131
+#&gt; [platelet]     0.70309 0.17374 0.36257 1.04362  0.0875
+#&gt; [age]          1.52161 0.16266 1.20281 1.84042  0.0013
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs2</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408     85
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;              Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; (Intercept) -1.318339  0.158459 -1.628914 -1.007764  0.0000
+#&gt; tcell        0.742321  0.359124  0.038451  1.446191  0.0387
+#&gt; platelet    -0.030930  0.279381 -0.578507  0.516647  0.9118
+#&gt; age         -0.093271  0.142475 -0.372518  0.185976  0.5127
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;               Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]  0.26758 0.04240 0.18448 0.35068  0.0000
+#&gt; [tcell]        2.10081 0.75445 0.62211 3.57950  0.1445
+#&gt; [platelet]     0.96954 0.27087 0.43864 1.50044  0.9105
+#&gt; [age]          0.91095 0.12979 0.65657 1.16533  0.4926
+#&gt; </div><div class='input'>
 <span class='no'>cifdob</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+
          <span class='no'>tcell</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+<span class='no'>platelet</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+<span class='no'>age</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)
          +<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='no'>bmtdob</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>cens.model</span><span class='kw'>=</span>~<span class='fu'>strata</span>(<span class='no'>strata</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifdob</span>,<span class='kw'>or</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; log-OR estimates </div><div class='output co'>#&gt;                          Estimate Std.Err    2.5%    97.5%   P-value
-#&gt; factor(strata)1           -0.1954  0.1311 -0.4524  0.06160 1.362e-01
-#&gt; factor(strata)2           -1.3183  0.1583 -1.6285 -1.00813 8.114e-17
-#&gt; tcell                     -0.6371  0.3590 -1.3407  0.06661 7.599e-02
-#&gt; platelet                  -0.3523  0.2472 -0.8368  0.13231 1.542e-01
-#&gt; age                        0.4198  0.1070  0.2101  0.62944 8.711e-05
-#&gt; factor(strata)2:tcell      1.3794  0.6031  0.1973  2.56147 2.219e-02
-#&gt; factor(strata)2:platelet   0.3213  0.4321 -0.5255  1.16820 4.571e-01
-#&gt; factor(strata)2:age       -0.5130  0.2071 -0.9189 -0.10722 1.322e-02</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifdob</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  816    245
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;                           Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; factor(strata)1          -0.195401  0.131030 -0.452216  0.061413  0.1359
+#&gt; factor(strata)2          -1.318339  0.158459 -1.628914 -1.007764  0.0000
+#&gt; tcell                    -0.637058  0.359000 -1.340685  0.066569  0.0760
+#&gt; platelet                 -0.352264  0.247108 -0.836588  0.132059  0.1540
+#&gt; age                       0.419772  0.106900  0.210253  0.629292  0.0001
+#&gt; factor(strata)2:tcell     1.379379  0.602993  0.197534  2.561224  0.0222
+#&gt; factor(strata)2:platelet  0.321334  0.431926 -0.525225  1.167893  0.4569
+#&gt; factor(strata)2:age      -0.513043  0.207027 -0.918808 -0.107278  0.0132
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;                            Estimate  Std.Err     2.5%    97.5% P-value
+#&gt; [factor(strata)1]           0.82251  0.10777  0.61127  1.03374  0.0996
+#&gt; [factor(strata)2]           0.26758  0.04240  0.18448  0.35068  0.0000
+#&gt; [tcell]                     0.52885  0.18986  0.15674  0.90096  0.0131
+#&gt; [platelet]                  0.70309  0.17374  0.36257  1.04362  0.0875
+#&gt; [age]                       1.52161  0.16266  1.20281  1.84042  0.0013
+#&gt; [factor(strata)2:tcell]     3.97243  2.39535 -0.72237  8.66724  0.2146
+#&gt; [factor(strata)2:platelet]  1.37897  0.59561  0.21159  2.54634  0.5246
+#&gt; [factor(strata)2:age]       0.59867  0.12394  0.35575  0.84159  0.0012
+#&gt; </div><div class='input'>
 <span class='no'>riskratio</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>p</span>) {
   <span class='no'>expit</span>  <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fl'>1</span>/(<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(-<span class='no'>z</span>)) <span class='co'>## expit</span>
   <span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>))
@@ -328,7 +402,7 @@ naive.var is variance under known censoring model.</p>
 }
 
 <span class='fu'>estimate</span>(<span class='kw'>coef</span><span class='kw'>=</span><span class='no'>cifdob</span>$<span class='no'>coef</span>,<span class='kw'>vcov</span><span class='kw'>=</span><span class='no'>cifdob</span>$<span class='no'>var</span>,<span class='kw'>f</span><span class='kw'>=</span><span class='no'>riskratio</span>)</div><div class='output co'>#&gt;    Estimate Std.Err   2.5% 97.5% P-value
-#&gt; p1   0.6639  0.2762 0.1227 1.205 0.01621</div><div class='input'>
+#&gt; p1   0.6639  0.2764 0.1221 1.206 0.01631</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

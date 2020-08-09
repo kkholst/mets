@@ -246,9 +246,7 @@
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>N</span>),<span class='kw'>x</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>N</span>),<span class='kw'>id</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='no'>n</span>),<span class='no'>k</span>),<span class='kw'>num</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='no'>k</span>,<span class='no'>seq</span>)))
 <span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='no'>d</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>d</span>)),]
 
-<span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span>, <span class='no'>mean</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num        mean
+<span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span>, <span class='no'>mean</span>)</div><div class='output co'>#&gt;              y           x id num        mean
 #&gt; 3  -1.55336807 -2.03545050  1   3 -1.06455561
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.06455561
 #&gt; 2   0.15513661  0.03833857  1   2 -1.06455561
@@ -259,10 +257,7 @@
 #&gt; 7   0.36620380 -1.21157397  3   1 -0.03992063
 #&gt; 8  -0.20842081  1.16618593  3   2 -0.03992063
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.03992063
-#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>cumsum</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num     cumsum
+#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>cumsum</span>)</div><div class='output co'>#&gt;              y           x id num     cumsum
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.7954354
 #&gt; 2   0.15513661  0.03833857  1   2 -1.6402988
 #&gt; 3  -1.55336807 -2.03545050  1   3 -3.1936668
@@ -274,10 +269,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  0.1445201
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1596825
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203</div><div class='input'>
-<span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num        dlag
+<span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>)</div><div class='output co'>#&gt;              y           x id num        dlag
 #&gt; 1  -1.79543538  0.55634005  1   1          NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538
 #&gt; 3  -1.55336807 -2.03545050  1   3  0.15513661
@@ -288,10 +280,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  0.36620380
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291
-#&gt; 11 -0.24722026 -0.18616474  4   1          NA</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>, <span class='kw'>ARGS</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num       dlag1      dlag2
+#&gt; 11 -0.24722026 -0.18616474  4   1          NA</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>, <span class='kw'>ARGS</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>))</div><div class='output co'>#&gt;              y           x id num       dlag1      dlag2
 #&gt; 1  -1.79543538  0.55634005  1   1          NA         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538         NA
 #&gt; 3  -1.55336807 -2.03545050  1   3  0.15513661 -1.7954354
@@ -302,10 +291,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  0.36620380         NA
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081  0.3662038
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291 -0.2084208
-#&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>, <span class='kw'>ARGS</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>), <span class='kw'>NAMES</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l1"</span>,<span class='st'>"l2"</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num          l1         l2
+#&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span> ~ <span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='no'>dlag</span>, <span class='kw'>ARGS</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>), <span class='kw'>NAMES</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l1"</span>,<span class='st'>"l2"</span>))</div><div class='output co'>#&gt;              y           x id num          l1         l2
 #&gt; 1  -1.79543538  0.55634005  1   1          NA         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538         NA
 #&gt; 3  -1.55336807 -2.03545050  1   3  0.15513661 -1.7954354
@@ -317,10 +303,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081  0.3662038
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291 -0.2084208
 #&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'>
-<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>mean</span><span class='kw'>=</span><span class='no'>mean</span>, <span class='kw'>csum</span><span class='kw'>=</span><span class='no'>cumsum</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num        mean       csum n
+<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>mean</span><span class='kw'>=</span><span class='no'>mean</span>, <span class='kw'>csum</span><span class='kw'>=</span><span class='no'>cumsum</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt;              y           x id num        mean       csum n
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.06455561 -1.7954354 3
 #&gt; 2   0.15513661  0.03833857  1   2 -1.06455561 -1.6402988 3
 #&gt; 3  -1.55336807 -2.03545050  1   3 -1.06455561 -3.1936668 3
@@ -331,10 +314,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2 -0.03992063  0.1577830 4
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.03992063  0.1445201 4
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.03992063 -0.1596825 4
-#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026 -0.2472203 1</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>a</span><span class='kw'>=</span><span class='no'>cumsum</span>, <span class='kw'>b</span><span class='kw'>=</span><span class='no'>mean</span>, <span class='kw'>N</span><span class='kw'>=</span><span class='no'>length</span>, <span class='kw'>l1</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>,<span class='no'>x</span>)[-<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>x</span>)])</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num          a           b N         l1
+#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026 -0.2472203 1</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d2</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>a</span><span class='kw'>=</span><span class='no'>cumsum</span>, <span class='kw'>b</span><span class='kw'>=</span><span class='no'>mean</span>, <span class='kw'>N</span><span class='kw'>=</span><span class='no'>length</span>, <span class='kw'>l1</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>,<span class='no'>x</span>)[-<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>x</span>)])</div><div class='output co'>#&gt;              y           x id num          a           b N         l1
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.7954354 -1.06455561 3         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.6402988 -1.06455561 3 -1.7954354
 #&gt; 3  -1.55336807 -2.03545050  1   3 -3.1936668 -1.06455561 3 -1.5533681
@@ -346,10 +326,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  0.1445201 -0.03992063 4 -0.2084208
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1596825 -0.03992063 4 -0.3042026
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203 -0.24722026 1 -0.2472203</div><div class='input'>
-<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>nn</span><span class='kw'>=</span><span class='no'>seq_along</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num nn n
+<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>nn</span><span class='kw'>=</span><span class='no'>seq_along</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt;              y           x id num nn n
 #&gt; 1  -1.79543538  0.55634005  1   1  1 3
 #&gt; 2   0.15513661  0.03833857  1   2  2 3
 #&gt; 3  -1.55336807 -2.03545050  1   3  3 3
@@ -360,10 +337,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  2 4
 #&gt; 9  -0.01326291  0.46188895  3   3  3 4
 #&gt; 10 -0.30420261  0.19521967  3   4  4 4
-#&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>nn</span><span class='kw'>=</span><span class='no'>seq_along</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num nn n
+#&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span> + <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>nn</span><span class='kw'>=</span><span class='no'>seq_along</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='no'>length</span>)</div><div class='output co'>#&gt;              y           x id num nn n
 #&gt; 1  -1.79543538  0.55634005  1   1  1 3
 #&gt; 2   0.15513661  0.03833857  1   2  2 3
 #&gt; 3  -1.55336807 -2.03545050  1   3  3 3
@@ -377,20 +351,11 @@
 #&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'>
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='no'>d</span>[,<span class='fl'>1</span>:<span class='fl'>4</span>]
 <span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>0</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>z</span><span class='kw'>=</span><span class='no'>mean</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>dby</span>(<span class='no'>d</span>, <span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='no'>z</span>), <span class='kw'>z</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'>
 <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='no'>x</span>,<span class='fl'>1</span>,<span class='no'>min</span>)
-<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>, <span class='kw'>min</span><span class='kw'>=</span><span class='no'>f</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
-<span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>+<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num         z         _11         _12
+<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>, <span class='kw'>min</span><span class='kw'>=</span><span class='no'>f</span>)</div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
+<span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>+<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>num</span>), <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span>)</div><div class='output co'>#&gt;              y           x id num         z         _11         _12
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.79543538  0.55634005
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000  0.15513661  0.03833857
 #&gt; 3  -1.55336807 -2.03545050  1   3 0.8011568 -1.55336807 -2.03545050
@@ -403,14 +368,11 @@
 #&gt; 10 -0.30420261  0.19521967  3   4 1.0000000 -0.30420261  0.19521967
 #&gt; 11 -0.24722026 -0.18616474  4   1 0.8011568 -0.24722026 -0.18616474</div><div class='input'>
 <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) { <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>x</span>[,<span class='fl'>1</span>]),<span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>x</span>[,<span class='fl'>2</span>]))/<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>x</span>)}
-<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>, <span class='no'>f</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
+<span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span>, <span class='no'>f</span>)</div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
 <span class='co'>## column-wise</span>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>d</span>
-<span class='fu'>dby2</span>(<span class='no'>a</span>, <span class='no'>mean</span>, <span class='no'>median</span>, <span class='kw'>REGEX</span><span class='kw'>=</span><span class='fl'>TRUE</span>) <span class='kw'>&lt;-</span> <span class='st'>'^[y|x]'</span>~<span class='no'>id</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='no'>a</span></div><div class='output co'>#&gt;              y           x id num         z      mean.y     mean.x   median.y
+<span class='fu'>dby2</span>(<span class='no'>a</span>, <span class='no'>mean</span>, <span class='no'>median</span>, <span class='kw'>REGEX</span><span class='kw'>=</span><span class='fl'>TRUE</span>) <span class='kw'>&lt;-</span> <span class='st'>'^[y|x]'</span>~<span class='no'>id</span>
+<span class='no'>a</span></div><div class='output co'>#&gt;              y           x id num         z      mean.y     mean.x   median.y
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.06455561 -0.4802573 -1.5533681
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000 -1.06455561 -0.4802573 -1.5533681
 #&gt; 3  -1.55336807 -2.03545050  1   3 0.8011568 -1.06455561 -0.4802573 -1.5533681
@@ -435,8 +397,6 @@
 #&gt; 10  0.32855431
 #&gt; 11 -0.18616474</div><div class='input'><span class='co'>## wildcards </span>
 <span class='fu'>dby2</span>(<span class='no'>a</span>,<span class='st'>'y*'</span>+<span class='st'>'x*'</span>~<span class='no'>id</span>,<span class='no'>mean</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num         z   median.y    median.x      mean.y
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.5533681  0.03833857 -1.06455561
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000 -1.5533681  0.03833857 -1.06455561
@@ -464,8 +424,6 @@
 
 <span class='co'>## subset</span>
 <span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>0</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>z</span><span class='kw'>=</span><span class='fl'>NA</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='no'>d</span></div><div class='output co'>#&gt;              y           x id num  z
 #&gt; 1  -1.79543538  0.55634005  1   1  1
 #&gt; 2   0.15513661  0.03833857  1   2  1
@@ -478,8 +436,6 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  1
 #&gt; 10 -0.30420261  0.19521967  3   4  1
 #&gt; 11 -0.24722026 -0.18616474  4   1 NA</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>~<span class='no'>id</span><span class='kw'>|</span><span class='no'>x</span><span class='kw'>&gt;</span>-<span class='fl'>1</span>, <span class='kw'>v</span><span class='kw'>=</span><span class='no'>mean</span>,<span class='kw'>z</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num          v  z
 #&gt; 1  -1.79543538  0.55634005  1   1 -0.8201494  1
 #&gt; 2   0.15513661  0.03833857  1   2 -0.8201494  1
@@ -492,8 +448,6 @@
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.1752954  1
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1752954  1
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203  1</div><div class='input'><span class='fu'>dby</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span><span class='kw'>|</span><span class='no'>x</span><span class='kw'>&gt;</span>-<span class='fl'>1</span>, <span class='no'>mean</span>, <span class='no'>median</span>, <span class='kw'>COLUMN</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num  z     mean.y     mean.x   median.y
 #&gt; 1  -1.79543538  0.55634005  1   1  1 -0.8201494  0.2973393 -0.8201494
 #&gt; 2   0.15513661  0.03833857  1   2  1 -0.8201494  0.2973393 -0.8201494
@@ -519,15 +473,11 @@
 #&gt; 10  0.46188895
 #&gt; 11 -0.18616474</div><div class='input'>
 <span class='fu'>dby2</span>(<span class='no'>d</span>, <span class='no'>y</span>+<span class='no'>x</span>~<span class='no'>id</span><span class='kw'>|</span><span class='no'>x</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='no'>mean</span>, <span class='kw'>REDUCE</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;   id     mean.y    mean.x
 #&gt; 1  1 -0.8201494 0.2973393
 #&gt; 2  2 -0.8780987 1.0514008
 #&gt; 3  3 -0.1752954 0.6077648</div><div class='input'>
 <span class='fu'>dby</span>(<span class='no'>d</span>,<span class='no'>y</span>~<span class='no'>id</span><span class='kw'>|</span><span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>0</span>,<span class='no'>mean</span>,<span class='kw'>ALL</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;             y           x id num  z        mean
 #&gt; 3  -1.5533681 -2.03545050  1   3 NA -1.55336807
 #&gt; 4  -0.7160315 -0.06096876  2   1 NA  0.03436654
@@ -535,10 +485,8 @@
 #&gt; 7   0.3662038 -1.21157397  3   1 NA  0.36620380
 #&gt; 11 -0.2472203 -0.18616474  4   1 NA -0.24722026</div><div class='input'>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>iris</span>
-<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>dby</span>(<span class='no'>a</span>,<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='fu'>dby</span>(<span class='no'>a</span>,<span class='no'>Species</span><span class='kw'>==</span><span class='st'>"versicolor"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
+<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>dby</span>(<span class='no'>a</span>,<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>1</span>)
+<span class='fu'>dby</span>(<span class='no'>a</span>,<span class='no'>Species</span><span class='kw'>==</span><span class='st'>"versicolor"</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

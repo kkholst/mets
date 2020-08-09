@@ -224,8 +224,7 @@ where there is terminal event</p>
 <span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
 <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>cumhaz2</span><span class='kw'>=</span><span class='no'>base4</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'><span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>count.history</span>(<span class='no'>rr</span>)
 <span class='no'>rr</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             112 2785  373

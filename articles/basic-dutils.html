@@ -103,7 +103,7 @@
       <h1 data-toc-skip>dUtility data-frame manipulations</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-07-17</h4>
+            <h4 class="date">2020-08-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/basic-dutils.Rmd"><code>vignettes/basic-dutils.Rmd</code></a></small>
       <div class="hidden name"><code>basic-dutils.Rmd</code></div>
@@ -153,15 +153,10 @@
 <p>A useful feature is that y and x as well as the subset condition can be specified using regular-expressions or by wildcards (default). Here to illustrate this, we compute the means of certain variables.</p>
 <p>First just oveall</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>)))
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;         thick I(log(thick)) </span>
 <span class="co">#&gt;    291.985366      5.223341</span></pre></body></html></div>
 <p>now only when days&gt;500</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))<span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;         thick I(log(thick)) </span>
@@ -170,22 +165,11 @@
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;   sex    thick I(log(thick))</span>
 <span class="co">#&gt; 1   0 242.9580      5.060086</span>
 <span class="co">#&gt; 2   1 320.2429      5.353321</span></pre></body></html></div>
 <p>and finally after quartiles of days (via the dcut function)</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))~<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">days</span>)))
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;         I(dcut(days))    thick I(log(thick))</span>
 <span class="co">#&gt; 1       [10,1.52e+03] 482.1731      5.799525</span>
 <span class="co">#&gt; 2    (1.52e+03,2e+03] 208.5490      4.987652</span>
@@ -193,12 +177,6 @@
 <span class="co">#&gt; 4 (3.04e+03,5.56e+03] 250.1961      5.120129</span></pre></body></html></div>
 <p>or summary of all variables starting with “s” and that contains “a”</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="st">"s*"</span>+<span class="st">"*a*"</span>~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;   sex   status     days</span>
@@ -265,9 +243,6 @@
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dlist</a></span>(<span class="no">melanoma</span>, ~<span class="no">.</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;     no  status days ulc thick</span>
 <span class="co">#&gt; 1   789 3       10  1    676 </span>
 <span class="co">#&gt; 2    13 3       30  0     65 </span>
@@ -283,9 +258,6 @@
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] matrix array</span></pre></body></html></div>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dlist</a></span>(<span class="no">melanoma</span>, ~<span class="no">ulc</span>+<span class="no">days</span>+<span class="no">thick</span>+<span class="no">sex</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;     ulc days thick sex</span>
@@ -320,8 +292,6 @@
 <span class="co">#&gt;  Max.   :1.0000</span></pre></body></html></div>
 <p>or for specfic variables</p>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">status</span>+<span class="no">sex</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;      thick          status          sex        </span>
 <span class="co">#&gt;  Min.   :  10   Min.   :1.00   Min.   :0.0000  </span>
 <span class="co">#&gt;  1st Qu.:  97   1st Qu.:1.00   1st Qu.:0.0000  </span>
@@ -331,11 +301,6 @@
 <span class="co">#&gt;  Max.   :1742   Max.   :3.00   Max.   :1.0000</span></pre></body></html></div>
 <p>Summaries in different groups (sex)</p>
 <div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; sex: 0</span>
 <span class="co">#&gt;      thick             days          status     </span>
 <span class="co">#&gt;  Min.   :  10.0   Min.   :  99   Min.   :1.000  </span>
@@ -355,12 +320,6 @@
 <span class="co">#&gt;  Max.   :1466.0   Max.   :4492   Max.   :3.000</span></pre></body></html></div>
 <p>and only among those with thin-tumours or only females (sex==1)</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span><span class="kw">|</span><span class="no">thick</span><span class="kw">&lt;</span><span class="fl">97</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; sex: 0</span>
@@ -383,12 +342,6 @@
 <div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">status</span>~+<span class="fl">1</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;      thick            status     </span>
 <span class="co">#&gt;  Min.   :  16.0   Min.   :1.000  </span>
 <span class="co">#&gt;  1st Qu.: 105.0   1st Qu.:1.000  </span>
@@ -398,9 +351,6 @@
 <span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span></pre></body></html></div>
 <p>or</p>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">status</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;      thick            status     </span>
@@ -414,12 +364,6 @@
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">thick</span><span class="kw">&lt;</span><span class="fl">97</span> <span class="kw">&amp;</span> <span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; sex: 1</span>
 <span class="co">#&gt;      thick            days          status     </span>
 <span class="co">#&gt;  Min.   :16.00   Min.   :  30   Min.   :1.000  </span>
@@ -430,8 +374,6 @@
 <span class="co">#&gt;  Max.   :81.00   Max.   :4207   Max.   :3.000</span></pre></body></html></div>
 <p>Tables between variables</p>
 <div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;        sex  0  1</span>
 <span class="co">#&gt; status          </span>
@@ -440,8 +382,6 @@
 <span class="co">#&gt; 3           7  7</span></pre></body></html></div>
 <p>All bivariate tables</p>
 <div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;    status</span>
 <span class="co">#&gt; sex  1  2  3</span>
@@ -459,8 +399,6 @@
 <span class="co">#&gt;   1 47 43</span></pre></body></html></div>
 <p>All univariate tables</p>
 <div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; status</span>
 <span class="co">#&gt;   1   2   3 </span>
@@ -475,8 +413,6 @@
 <span class="co">#&gt; 115  90</span></pre></body></html></div>
 <p>and with new variables</p>
 <div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>+<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">days</span>)+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">300</span>),<span class="kw">level</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; status</span>
 <span class="co">#&gt;   1   2   3 </span>
@@ -542,11 +478,6 @@
 <div class="sourceCode" id="cb31"><html><body><pre class="r"> <span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtransform.html">dtransform</a></span>(<span class="no">melanoma</span>,<span class="kw">ll</span><span class="kw">=</span><span class="no">thick</span>*<span class="fl">1.05</span>^<span class="no">ulc</span>,<span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
  <span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtransform.html">dtransform</a></span>(<span class="no">melanoma</span>,<span class="kw">ll</span><span class="kw">=</span><span class="no">thick</span>,<span class="no">sex</span><span class="kw">!=</span><span class="fl">1</span>)
  <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">ll</span>~<span class="no">sex</span>+<span class="no">ulc</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
-
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;   sex ulc       ll</span>
 <span class="co">#&gt; 1   0   0 173.7342</span>
 <span class="co">#&gt; 2   1   0 197.3611</span>
@@ -566,8 +497,6 @@
 <span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
 <p>Checking group sizes</p>
 <div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat.0</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; thickcat.0</span>
 <span class="co">#&gt;     [0,200]   (200,500]   (500,800] (800,2e+03] </span>
@@ -638,8 +567,6 @@
 <span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
 <p>To relevel the factor</p>
 <div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; thickcat4</span>
 <span class="co">#&gt;        [10,97]       (97,194]      (194,356] (356,1.74e+03] </span>
@@ -699,8 +626,6 @@
 <span class="co">#&gt; [1] "(194,356]"      "[10,97]"        "(97,194]"       "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>+<span class="no">thickcat4.2</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                thickcat4.2 (194,356] [10,97] (97,194] (356,1.74e+03]</span>
 <span class="co">#&gt; thickcat4                                                           </span>
@@ -732,8 +657,6 @@
 <span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dfactor</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>, <span class="kw">labels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"malignant-melanoma"</span>,<span class="st">"censoring"</span>,<span class="st">"dead-other"</span>))
 <span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dfactor</a></span>(<span class="no">melanoma</span>,<span class="no">sexl</span>~<span class="no">sex</span>,<span class="kw">labels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"females"</span>,<span class="st">"males"</span>))
 <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">sexl</span>+<span class="no">status.f</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;         status.f malignant-melanoma censoring dead-other</span>
 <span class="co">#&gt; sexl                                                    </span>
@@ -749,8 +672,6 @@
 <span class="co">#&gt; Warning in structure(res, ngroupvar = 0, class = c("daggregate", class(res))): Calling 'structure(NULL, *)' is deprecated, as NULL cannot have attributes.</span>
 <span class="co">#&gt;   Consider 'structure(list(), *)' instead.</span>
 <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="st">'sex*'</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-<span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
@@ -799,7 +720,7 @@
 <span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
 <span class="co">#&gt;  [4] splines_4.0.0       MASS_7.3-51.5       lattice_0.20-41    </span>
 <span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.0         grid_4.0.0          xfun_0.15          </span>
+<span class="co">#&gt; [10] tools_4.0.0         grid_4.0.0          xfun_0.16          </span>
 <span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
 <span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     numDeriv_2016.8-1.1</span>
 <span class="co">#&gt; [19] pkgdown_1.5.1       crayon_1.3.4        Matrix_1.2-18      </span>

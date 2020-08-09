@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Proportional odds survival model — logitSurv • mets</title>
+<title>Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) — BinAugmentCifstrata • mets</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,17 @@
 
 
 
-<meta property="og:title" content="Proportional odds survival model — logitSurv" />
-<meta property="og:description" content="Semiparametric Proportional odds model, that has the advantage that 
+<meta property="og:title" content="Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) — BinAugmentCifstrata" />
+<meta property="og:description" content="Computes  the augmentation term for each individual as well as the sum
 $$
-logit(S(t|x)) = \log(\Lambda(t)) + x \beta
+A = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
 $$
-so covariate effects give OR of survival." />
+with 
+$$
+H(u,X) = F_1^*(t,s) - F_1^*(u,s)
+$$
+using a KM for $$G_c(t)$$ and a working model for cumulative baseline
+related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$$." />
 
 
 
@@ -145,76 +150,123 @@ so covariate effects give OR of survival." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Proportional odds survival model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kkholst/mets/blob/master/R/phreg.R'><code>R/phreg.R</code></a></small>
-    <div class="hidden name"><code>logitSurv.Rd</code></div>
+    <h1>Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kkholst/mets/blob/master/R/binomial.regression.R'><code>R/binomial.regression.R</code></a></small>
+    <div class="hidden name"><code>BinAugmentCifstrata.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Semiparametric Proportional odds model, that has the advantage that 
+    <p>Computes  the augmentation term for each individual as well as the sum
 $$
-logit(S(t|x)) = \log(\Lambda(t)) + x \beta
+A = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
 $$
-so covariate effects give OR of survival.</p>
+with 
+$$
+H(u,X) = F_1^*(t,s) - F_1^*(u,s)
+$$
+using a KM for $$G_c(t)$$ and a working model for cumulative baseline
+related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$$.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>logitSurv</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>BinAugmentCifstrata</span>(
+  <span class='no'>formula</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data</span>,
+  <span class='kw'>cause</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>km</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>formula with 'Surv' outcome (see <code>coxph</code>)</p></td>
+      <td><p>formula with 'Event', strata model for CIF given by strata, and strataC specifies censoring strata</p></td>
     </tr>
     <tr>
       <th>data</th>
       <td><p>data frame</p></td>
     </tr>
     <tr>
-      <th>offset</th>
-      <td><p>offsets for exp(x beta) terms</p></td>
+      <th>cause</th>
+      <td><p>of interest</p></td>
+    </tr>
+    <tr>
+      <th>cens.code</th>
+      <td><p>code of censoring</p></td>
+    </tr>
+    <tr>
+      <th>km</th>
+      <td><p>to use Kaplan-Meier</p></td>
+    </tr>
+    <tr>
+      <th>time</th>
+      <td><p>of interest</p></td>
     </tr>
     <tr>
       <th>weights</th>
-      <td><p>weights for score equations</p></td>
+      <td><p>weights for estimating equations</p></td>
+    </tr>
+    <tr>
+      <th>offset</th>
+      <td><p>offsets for logistic regression</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments to lower level funtions</p></td>
+      <td><p>Additional arguments to binreg function.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This is equivalent to using a hazards model 
-$$
-  Z \lambda(t) \exp(x \beta)
-$$
-where Z is gamma distributed with mean and variance 1.</p>
+    <p>Standard errors computed under assumption of correct $$G_c(s)$$ model.</p>
+<p>Augmentation term only computed for standard FG model, since strata is used to 
+specify working models for CIF's.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
-<span class='fu'>dcut</span>(<span class='no'>TRACE</span>) <span class='kw'>&lt;-</span> ~<span class='no'>.</span>
-<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>logitSurv</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>vf</span>+<span class='no'>chf</span>+<span class='fu'>strata</span>(<span class='no'>wmicat.4</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
+<span class='fu'>dcut</span>(<span class='no'>bmt</span>,<span class='kw'>breaks</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='kw'>&lt;-</span> ~<span class='no'>age</span>
+<span class='no'>out1</span><span class='kw'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>platelet</span>+<span class='no'>agecat.2</span>+
+                  <span class='fu'>strata</span>(<span class='no'>platelet</span>,<span class='no'>agecat.2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>40</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out1</span>)</div><div class='output co'>#&gt; 
-#&gt;     n events
-#&gt;  1878    958
+#&gt;    n events
+#&gt;  408    157
 #&gt; 
-#&gt;  1878 clusters
+#&gt;  408 clusters
 #&gt; log-coeffients:
-#&gt;     Estimate    S.E. dU^-1/2 P-value
-#&gt; vf   0.30049 0.22633 0.11154  0.1843
-#&gt; chf  1.26008 0.10095 0.07316  0.0000
+#&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
+#&gt; (Intercept)          -0.50060  0.17070 -0.83517 -0.16603  0.0034
+#&gt; platelet             -0.63520  0.23597 -1.09769 -0.17271  0.0071
+#&gt; agecat.2(0.203,1.94]  0.53808  0.21193  0.12271  0.95344  0.0111
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;       Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [vf]   1.35052 0.30566 0.75144 1.94959  0.2515
-#&gt; [chf]  3.52570 0.35593 2.82809 4.22330  0.0000
-#&gt; </div><div class='input'><span class='fu'>gof</span>(<span class='no'>out1</span>)</div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
-#&gt;     Sup|U(t)|  pval
-#&gt; vf   42.28659 0.000
-#&gt; chf  20.75308 0.184</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>out1</span>)</div><div class='img'><img src='logitSurv-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt;                        Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]           0.60617 0.10347 0.40336 0.80897  0.0001
+#&gt; [platelet]              0.52983 0.12502 0.28479 0.77487  0.0002
+#&gt; [agecat.2(0.203,1.94]]  1.71271 0.36297 1.00131 2.42411  0.0496
+#&gt; </div><div class='input'>
+<span class='no'>out2</span><span class='kw'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>platelet</span>+<span class='no'>agecat.2</span>+
+    <span class='fu'>strata</span>(<span class='no'>platelet</span>,<span class='no'>agecat.2</span>)+<span class='fu'>strataC</span>(<span class='no'>platelet</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>40</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out2</span>)</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408    157
+#&gt; 
+#&gt;  408 clusters
+#&gt; log-coeffients:
+#&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
+#&gt; (Intercept)          -0.50014  0.17121 -0.83570 -0.16457  0.0035
+#&gt; platelet             -0.63664  0.23730 -1.10173 -0.17155  0.0073
+#&gt; agecat.2(0.203,1.94]  0.53724  0.21225  0.12123  0.95325  0.0114
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;                        Estimate Std.Err    2.5%   97.5% P-value
+#&gt; [(Intercept)]           0.60645 0.10383 0.40295 0.80995  0.0002
+#&gt; [platelet]              0.52907 0.12555 0.28300 0.77513  0.0002
+#&gt; [agecat.2(0.203,1.94]]  1.71128 0.36323 0.99937 2.42319  0.0502
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -374,11 +374,11 @@ Estimating heritability for cause specific hazards based on twin data</p>
 #&gt; Cause 1 and cause 1
 #&gt; 
 #&gt; </div><div class='output co'>#&gt;                  Coef.        SE        z        P-val Cross odds ratio
-#&gt; factor(zyg)MZ 2.244996 0.3239719 6.929601 4.220402e-12         3.244996
-#&gt; factor(zyg)DZ 1.146670 0.2127733 5.389163 7.078663e-08         2.146670
+#&gt; factor(zyg)MZ 2.080559 0.3029729 6.867144 6.550094e-12         3.080559
+#&gt; factor(zyg)DZ 1.143917 0.2085530 5.485017 4.134293e-08         2.143917
 #&gt;                      SE
-#&gt; factor(zyg)MZ 0.3239719
-#&gt; factor(zyg)DZ 0.2127733</div><div class='input'>
+#&gt; factor(zyg)MZ 0.3029729
+#&gt; factor(zyg)DZ 0.2085530</div><div class='input'>
  <span class='co'>## this model can also be formulated as a random effects model </span>
  <span class='co'>## but with different parameters</span>
  <span class='no'>out2m</span><span class='kw'>&lt;-</span><span class='fu'>Grandom.cif</span>(<span class='no'>addm</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>cause1</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>cause2</span><span class='kw'>=</span><span class='fl'>1</span>,
@@ -389,22 +389,22 @@ Estimating heritability for cause specific hazards based on twin data</p>
 #&gt; Cause 1 and cause 1
 #&gt; 
 #&gt; 
-#&gt;      Coef.     SE    z    P-val
-#&gt; [1,] 0.445 0.0643 6.93 4.22e-12
-#&gt; [2,] 0.872 0.1620 5.39 7.08e-08</div><div class='output co'>#&gt; $estimate
-#&gt;      Coef.     SE    z    P-val
-#&gt; [1,] 0.445 0.0643 6.93 4.22e-12
-#&gt; [2,] 0.872 0.1620 5.39 7.08e-08
+#&gt;      Coef.    SE    z    P-val
+#&gt; [1,] 0.481 0.070 6.87 6.55e-12
+#&gt; [2,] 0.874 0.159 5.49 4.13e-08</div><div class='output co'>#&gt; $estimate
+#&gt;      Coef.    SE    z    P-val
+#&gt; [1,] 0.481 0.070 6.87 6.55e-12
+#&gt; [2,] 0.874 0.159 5.49 4.13e-08
 #&gt; 
 #&gt; $h
 #&gt;    Estimate Std.Err   2.5%  97.5%   P-value
-#&gt; p1   0.5108  0.1201 0.2754 0.7461 2.099e-05
+#&gt; p1   0.5498  0.1283 0.2984 0.8013 1.821e-05
 #&gt; p2   1.0000  0.0000 1.0000 1.0000 0.000e+00
 #&gt; </div><div class='input'> <span class='fl'>1</span>/<span class='no'>out2m</span>$<span class='no'>theta</span></div><div class='output co'>#&gt;          [,1]
-#&gt; [1,] 2.244996
-#&gt; [2,] 1.146670</div><div class='input'> <span class='no'>out1m</span>$<span class='no'>theta</span></div><div class='output co'>#&gt;          [,1]
-#&gt; [1,] 2.244996
-#&gt; [2,] 1.146670</div><div class='input'>
+#&gt; [1,] 2.080559
+#&gt; [2,] 1.143917</div><div class='input'> <span class='no'>out1m</span>$<span class='no'>theta</span></div><div class='output co'>#&gt;          [,1]
+#&gt; [1,] 2.080559
+#&gt; [2,] 1.143917</div><div class='input'>
  <span class='co'>####################################################################</span>
  <span class='co'>################### ACE modelling of twin data #####################</span>
  <span class='co'>####################################################################</span>
@@ -426,17 +426,17 @@ Estimating heritability for cause specific hazards based on twin data</p>
 #&gt; Cause 1 and cause 1
 #&gt; 
 #&gt; 
-#&gt;       Coef.     SE     z    P-val
-#&gt; [1,] 0.3490 0.0809 4.310 1.61e-05
-#&gt; [2,] 0.0979 0.1050 0.929 3.53e-01</div><div class='output co'>#&gt; $estimate
-#&gt;       Coef.     SE     z    P-val
-#&gt; [1,] 0.3490 0.0809 4.310 1.61e-05
-#&gt; [2,] 0.0979 0.1050 0.929 3.53e-01
+#&gt;      Coef.     SE    z    P-val
+#&gt; [1,] 0.349 0.0888 3.93 8.66e-05
+#&gt; [2,] 0.128 0.1180 1.08 2.78e-01</div><div class='output co'>#&gt; $estimate
+#&gt;      Coef.     SE    z    P-val
+#&gt; [1,] 0.349 0.0888 3.93 8.66e-05
+#&gt; [2,] 0.128 0.1180 1.08 2.78e-01
 #&gt; 
 #&gt; $h
-#&gt;    Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; p1   0.7808  0.2169  0.3556 1.2059 0.0003189
-#&gt; p2   0.2192  0.2169 -0.2059 0.6444 0.3122132
+#&gt;    Estimate Std.Err    2.5%  97.5%  P-value
+#&gt; p1    0.731  0.2241  0.2917 1.1702 0.001107
+#&gt; p2    0.269  0.2241 -0.1702 0.7083 0.229931
 #&gt; </div><div class='input'>
 
 </div></pre>

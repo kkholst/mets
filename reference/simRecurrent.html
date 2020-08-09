@@ -242,9 +242,7 @@ to have the same random effect,  simRecurrentII more flexible !</p>
  <span class='co'>### simulating simple model that mimicks data </span>
  <span class='co'>######################################################################</span>
  <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>5</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
- <span class='fu'>dlist</span>(<span class='no'>rr</span>,<span class='no'>.</span>~<span class='no'>id</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; id: 1
+ <span class='fu'>dlist</span>(<span class='no'>rr</span>,<span class='no'>.</span>~<span class='no'>id</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; id: 1
 #&gt;   entry     time status rr    dtime fdeath death start     stop
 #&gt; 1     0 94.74704      0  1 94.74704      1     1     0 94.74704
 #&gt; ------------------------------------------------------------ 
@@ -280,8 +278,7 @@ to have the same random effect,  simRecurrentII more flexible !</p>
 <span class='co'>### now with two event types and second type has same rate as death rate</span>
 <span class='co'>######################################################################</span>
 
- <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>,<span class='kw'>cumhaz2</span><span class='kw'>=</span><span class='no'>base4</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; 
+ <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>,<span class='kw'>cumhaz2</span><span class='kw'>=</span><span class='no'>base4</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             120 2887  413

@@ -183,8 +183,7 @@
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lava</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='no'>letters</span>)
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lava</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='no'>n</span>)
 
-<span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;     a        b       c       
+<span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span>)</div><div class='output co'>#&gt;     a        b       c       
 #&gt; 1   -1.84383 -0.4530 -0.7494 
 #&gt; 2    0.05678  0.3284 -0.2295 
 #&gt; 3    0.20924 -0.1455  1.1472 
@@ -198,7 +197,6 @@
 #&gt; 20  -0.98638 -1.690   0.42084
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
@@ -206,13 +204,10 @@
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='co'>## listing all : </span>
 <span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;             a         b          c
 #&gt; 8  -2.5005946 0.2945457 -0.6720881
 #&gt; 15 -0.2635549 0.6685403 -0.4457079
 #&gt; 18 -0.8449837 0.9860376 -2.1087776</div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span>~<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>d</span><span class='kw'>&gt;</span><span class='fl'>0</span>)<span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
@@ -225,8 +220,6 @@
 #&gt; 18 -0.845 0.986 -2.109
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,<span class='no'>.</span>~<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>d</span><span class='kw'>&gt;</span><span class='fl'>0</span>)<span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;    a       b      c       d       e       f        g      h       i     
 #&gt; 8  -2.5006 0.2945 -0.6721 -0.3044  0.2865 -1.21571 1.5568 0.04573 0.5221
@@ -249,35 +242,30 @@
 #&gt; 18 0.2771 0.4051 -0.9893 -0.8414 -0.5754
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='kw'>nlast</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='kw'>nfirst</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>nlast</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, -(<span class='fl'>5</span>:<span class='fl'>1</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='no'>d</span>,~<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span><span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>50</span>:<span class='fl'>55</span>,-(<span class='fl'>5</span>:<span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;     a       b      c      
 #&gt; 8   -2.5006 0.2945 -0.6721
 #&gt; 15  -0.2636 0.6685 -0.4457
@@ -289,8 +277,6 @@
 #&gt; 18  -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>dprint</span>(<span class='no'>d</span>,<span class='no'>a</span>+<span class='no'>b</span>+<span class='no'>c</span> ~ <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>d</span><span class='kw'>&gt;</span><span class='fl'>0</span>) <span class='kw'>|</span><span class='no'>a</span><span class='kw'>&lt;</span><span class='fl'>0</span> <span class='kw'>&amp;</span> <span class='no'>b</span><span class='kw'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>50</span>:<span class='fl'>55</span>,-(<span class='fl'>5</span>:<span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;     a       b      c      
 #&gt; 8   -2.5006 0.2945 -0.6721
