@@ -5,8 +5,7 @@ Version: 1.2.8
 Date: 2020-04-03
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Thomas Scheike", role=c("aut")))
-Author: Klaus K. Holst [aut, cre],
-	Thomas Scheike [aut],
+Author: Klaus K. Holst [aut, cre], Thomas Scheike [aut]
 Maintainer: Klaus K. Holst <klaus@holst.it>
 Description: Implementation of various statistical models for multivariate
     event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate

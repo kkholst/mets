@@ -27,7 +27,7 @@ install.packages("mets")
 ```
 
 The development version may be installed directly from github
-(requires [Rtools](http://cran.r-project.org/bin/windows/Rtools/) on windows and [development tools](http://cran.r-project.org/bin/macosx/tools/) (+Xcode) for Mac OS
+(requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on windows and [development tools](https://cran.r-project.org/bin/macosx/tools/) (+Xcode) for Mac OS
 X):
 
 

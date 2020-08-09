@@ -43,7 +43,7 @@ install.packages("mets")
 #+END_SRC
 
 The development version may be installed directly from github
-(requires [[http://cran.r-project.org/bin/windows/Rtools/][Rtools]] on windows and [[http://cran.r-project.org/bin/macosx/tools/][development tools]] (+Xcode) for Mac OS
+(requires [[https://cran.r-project.org/bin/windows/Rtools/][Rtools]] on windows and [[https://cran.r-project.org/bin/macosx/tools/][development tools]] (+Xcode) for Mac OS
 X):
 #+BEGIN_SRC R :exports both :ravel eval=FALSE
 remotes::install_github("kkholst/mets", dependencies="Suggests")
