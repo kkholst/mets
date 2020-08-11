@@ -1,0 +1,284 @@
+---
+title: "Cumulative Incidence Regression"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Cumulative Incidence Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Fine-Gray model
+================
+
+\cite{fine:gray:1999} considered 
+\begin{align*}
+  U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where } 
+	E_n(t,\beta)=\frac{\tilde S_1(t,\beta) }{\tilde S_0(t,\beta)},
+\end{align*}
+with \(w_i(t,X_i) = \frac{G_c(t,X_i)}{G_c(T_i \wedge t,X_i)} I( C_i > T_i \wedge t ) \) 
+,$\tilde S_k(t,\beta) = \sum_{j=1}^n X_j^k \exp(X_j^T\beta) Y_{1,j}(t)$
+for $k=0,1$, and with with $\tilde Y_{1,i}(t) = Y_{1,i}(t) w_i(t,X_i)$ for $i=1,...,n$.
+$w_i(t)$ needs to be replaced by an estimator of the 
+censoring distribution, and since it does not depend on $X$ the 
+$\hat w_i(t) = \frac{\hat G_c(t,X_i)}{\hat G_c(T_i \wedge t,X_i)} I(C_i > T_i \wedge t)$ 
+where $\hat G_c$ is the Kaplan-Meier estimator of the censoring distribution. 
+
+
+In this article we briefly introduce some functions for doing cumulative incidence regression, and
+how to augment the Fine-Gray estimator. 
+
+First we simulate some competing risks data using some utility functions.
+
+We simulate data with two causes based on the Fine-Gray model:
+\begin{align}
+F_1(t,X) &  = P(T\leq t, \epsilon=1|X)=( 1 - exp(-\Lambda_1(t) \exp(X^T \beta_1))) \\
+F_2(t,X) & = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \beta_2))) 
+              \cdot (1 - F_1(\infty,X))  
+\end{align}
+where the baselines are given as $\Lambda_j(t) = \rho_j (1- exp(-t/\nu_j))$ for $j=1,2$, and the 
+$X$ being two independent binomials. 
+Alternatively, one can also replace the FG-model with a logistic link
+$\mbox{expit}( \Lambda_j(t) + \exp(X^T \beta_j))$.
+
+
+The advantage of the model is that it is easy to fit and to get standard errors, and that it is
+quite flexible essentially being a Cox-model. On the downside 
+is that the coefficients are quite hard to interpret since they are the $cloglog$ 
+coefficients of $1-F_1(t,X)$. Specifically, 
+\begin{align}
+\log(-\log( \frac{1-F_1(t,X_1+1,X_2)}{1-F_1(t,X_1,X_2)})) & =  \beta_1,
+\end{align}
+so the effect is $\beta_1$ of $X_1$ is on $1-F_1(t,X)$ on the $cloglog$ scale.
+
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(1000) # to control output in simulatins for p-values below.
+
+ rho1 <- 0.2; rho2 <- 10
+ n <- 4000
+ beta=c(0.0,-0.1,-0.5,0.3)
+ ## beta1=c(0.0,-0.1); beta2=c(-0.5,0.3)
+ dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,rate=7)
+ dtable(dats,~status)
+ dsort(dats) <- ~time
+```
+
+We have a look at the non-parametric cumulative incidence curves
+
+```{r}
+ par(mfrow=c(1,2))
+ cifs1 <- cif(Event(time,status)~strata(Z1,Z2),dats,cause=1)
+ plot(cifs1)
+
+ cifs2 <- cif(Event(time,status)~strata(Z1,Z2),dats,cause=2)
+ plot(cifs2)
+```
+
+Now fitting the Fine-Gray model 
+
+```{r}
+ fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+ summary(fg)
+
+ dd <- expand.grid(Z1=c(-1,1),Z2=0:1)
+ pfg <- predict(fg,dd)
+ plot(pfg,ylim=c(0,0.2))
+```
+
+# Comparison 
+
+We compare with the cmprsk function but without running it to avoid dependencies: 
+
+
+```{r}
+### library(cmprsk)
+### mm <- model.matrix(~Z1+Z2,dats)[,-1]
+### cr <- with(dats,crr(time,status,mm))
+### cbind(cr$coef,diag(cr$var)^.5,fg$coef,fg$se.coef)
+#           [,1]       [,2]        [,3]       [,4]
+# Z1  0.06882201 0.08184642  0.06882199 0.08184642
+# Z2 -0.36807861 0.16606441 -0.36807951 0.16606444
+
+### fg0 <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,beta=cr$coef,no.opt=TRUE)
+### cbind(diag(cr$var)^.5,fg0$se.coef)
+#            [,1]       [,2]
+# [1,] 0.08184642 0.08184642
+# [2,] 0.16606441 0.16606441
+```
+
+Estimates are slightly different, but standard errors seems to agree. 
+
+We also remove all censorings from the data to compare the estimates with those 
+based on coxph, and observe that the estimates as well as the standard errors agree 
+
+```{r}
+datsnc <- dtransform(dats,status=2,status==0)
+dtable(datsnc,~status)
+datsnc$id <- 1:n
+datsnc$entry <- 0
+max <- max(dats$time)+1
+## for cause 2 add risk interaval 
+datsnc2 <- subset(datsnc,status==2)
+datsnc2 <- transform(datsnc2,entry=time)
+datsnc2 <- transform(datsnc2,time=max)
+datsncf <- rbind(datsnc,datsnc2)
+#
+cifnc <- cifreg(Event(time,status)~Z1+Z2,data=datsnc,cause=1,propodds=NULL)
+cc <- coxph(Surv(entry,time,status==1)~Z1+Z2+cluster(id),datsncf,robust=TRUE)
+cbind( cifnc$coef,cifnc$se.coef, cc$coef, diag(cc$var)^.5)
+```
+the cmprsk gives something slightly-slightly different
+
+```{r}
+### library(cmprsk)
+### mm <- model.matrix(~Z1+Z2,datsnc)[,-1]
+### cr <- with(datsnc,crr(time,status,mm))
+###cbind(cr$coef,diag(cr$var)^.5,cifnc$coef,cifnc$se.coef)
+#           [,1]       [,2]        [,3]       [,4]
+# Z1  0.06785579 0.08251841  0.06785579 0.08251841
+# Z2 -0.37911615 0.16716486 -0.37911703 0.16716489
+```
+
+
+# Strata dependent Censoring weights 
+
+We can improve efficiency and avoid bias  by allowing the censoring weights to depend on 
+the covariates 
+
+```{r}
+ fgcm <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,
+		cens.model=~strata(Z1,Z2))
+ summary(fgcm)
+ summary(fg)
+```
+
+We note that the standard errors are slightly smaller for the more efficient estimator.
+
+The influence functions of the FG-estimator is given by \cite{fine:gray:1999},  
+\begin{align*}
+\phi_i^{FG}  & = \int (X_i- e(t))  \tilde w_i(t) dM_{i1}(t,X_i)  + \int \frac{q(t)}{\pi(t)} dM_{ic}(t),  \\
+             & = \phi_i^{FG,1}  + \phi_i^{FG,2},
+\end{align*}
+where the first term is what would be achieved for a known censoring distribution, and the second term is
+due to the variability from the Kaplan-Meier estimator. 
+Where $M_{ic}(t) = N_{ic}(t) - \int_0^t Y_i(s) d\Lambda_c (s)$
+with $M_{ic}$ the standard censoring martingale. 
+
+The function $q(t)$ that reflects that the censoring only 
+affects the terms related to cause "2" jumps, can be written as (see Appendix B2)
+\begin{align*} 
+	q(t) & =   E( H(t,X) I(T  \leq t, \epsilon=2)/G_c(T)) = E( H(t,X) F_2(t,X) ), 
+\end{align*}
+with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s) d \Lambda_1(s,X)$ and since $\pi(t)=E(Y(t))=S(t) G_c(t)$.
+
+In the case where the censoring weights are stratified (based on $X$)
+we get the influence functions related to the censoring term with 
+\begin{align*} 
+	q(t,X) & =   E( H(t,X) I(T  \leq t, \epsilon=2)/G_c(T) | X) = H(t,X) F_2(t,X), 
+\end{align*}
+so that the influence function becomes 
+\begin{align*}
+\int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t,X)} dM_c(t,X).
+\end{align*}
+with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)$.
+
+
+Augmenting the FG-estimator 
+===========================
+
+Rather than using a larger censoring model we can also compute the augmentation term directly and
+then fit the FG-model based on this augmentation term and do a couple of iterations 
+
+```{r}
+  fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
+  summary(fgaugS)
+
+  fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
+  summary(fgaugS2)
+
+  fgaugS3 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS2$E)
+  summary(fgaugS3)
+```
+
+Again we note slightly smaller standard errors when augmenting the estimator. 
+
+
+The function $FG_AugmentCifstrata$ 
+compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
+\begin{align*}
+ U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
+	H(t,X_i,E,G_c,\Lambda_1)  dM_{ci}(t)
+\end{align*}
+using working models based on stratification to get $F_1^s$ and $F_2^s$ where the strata are given by
+$strata()$ in the call.  Then fits the FG model so solve the 
+\begin{align*}
+ U_n^{A}(\beta_p)  + U^{FG}_{n}(\beta) = 0. 
+\end{align*}
+
+Then we may iterate to get a solution to the augmented score equation
+\begin{align*}
+ U_n^{A}(\beta_\infty)  + U^{FG}_{n}(\beta_\infty) = 0 
+\end{align*}
+
+The censoring model here is one overall Kaplan-Meier. 
+
+The influence funtion for the augmented estimator is 
+\begin{align*}
+\int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t)} dM_c.
+\end{align*}
+and standard errors are based on this formula. 
+
+Logistic-link 
+================
+
+```{r}
+ rho1 <- 0.2; rho2 <- 10
+ n <- 4000
+ beta=c(0.0,-0.1,-0.5,0.3)
+ dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,rate=7,type="logistic")
+ dtable(dats,~status)
+ dsort(dats) <- ~time
+```
+
+The model where 
+\begin{align*}
+ \mbox{logit}(F_1(t,X)) & =  \alpha(t) + X^T \beta
+\end{align*}
+that then leads to OR interpretation of the $F_1$, can also be fitted easily, however, the standard errors
+are harder to compute and only approximative 
+(assuming that the baseline and censoring weights are known), but
+works rather well in simulations. In the ${{\bf timereg}}$-package the model can be 
+fitted using different estimators that are computed using the correct influence functions but this is 
+much slower.  
+
+
+Fitting the model and getting OR's 
+```{r}
+ or <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1)
+ summary(or)
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+
