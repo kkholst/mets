@@ -201,8 +201,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
 	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,
-         se=diag(robvar)^.5,se.robust=diag(robvar)^.5)
+	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
@@ -230,7 +229,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
 	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
 	  val <- c(val,list(time=time,formula=formula,formC=formC,
-	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
+	    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 	  
 
  if (se) {## {{{ censoring adjustment of variance 
