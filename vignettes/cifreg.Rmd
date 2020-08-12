@@ -260,10 +260,9 @@ The model where
 \end{align*}
 that then leads to OR interpretation of the $F_1$, can also be fitted easily, however, the standard errors
 are harder to compute and only approximative 
-(assuming that the baseline and censoring weights are known), but
-works rather well in simulations. In the ${{\bf timereg}}$-package the model can be 
-fitted using different estimators that are computed using the correct influence functions but this is 
-much slower.  
+(assuming that the censoring weights are known) but this gives typically only a small error. 
+In the ${{\bf timereg}}$-package the model can be 
+fitted using different estimators that are more efficient using different weights but this is much slower.  
 
 
 Fitting the model and getting OR's 

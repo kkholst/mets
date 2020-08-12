@@ -721,51 +721,44 @@ if (is.null(x$propodds)) {
   } else  { 
      MGt <- x$U; MG.base <- 1/x$S0; 
   }# }}}
-} else {
-  if (type=="robust") {	# {{{  prop-odds model logitSurv
-	  xx <- x$cox.prep
-	  ii <- invhess 
-	  S0i <- rep(0,length(xx$strata))
-	  S0i[xx$jumps+1] <- 1/x$S0
-	  Z <- xx$X
-	  U <- E <- matrix(0,nrow(xx$X),x$p)
-	  E[xx$jumps+1,] <- x$E
-	  U[xx$jumps+1,] <- x$U
-	  cumhazA <- cumsumstratasum(S0i,xx$strata,xx$nstrata,type="all")
-	  cumhaz <- c(cumhazA$sum)
-	  cumhazm <- cumhazA$lagsum
-          ###
-	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-	  rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset))
-	  rro <- c(exp(Z %*% coef(x) + xx$offset))
-          S0star <- revcumsumstrata(rr/(1+rro*cumhazm),xx$strata,xx$nstrata)
-          S0 <- revcumsumstrata(rr,xx$strata,xx$nstrata)
-          S1 <- apply(Z*rr,2,revcumsumstrata,xx$strata,xx$nstrata)
-	  Et <- S1/c(S0)
-          lt <- apply((Z-Et)*c(rr*rro/(1+rro*cumhazm)),2,revcumsumstrata,xx$strata,xx$nstrata)
-	  Estar <- S0star/S0
-	  EstardLam <- cumsumstrata(Estar*S0i,xx$strata,xx$nstrata)
-	  k <- exp(-EstardLam)
-	  basecor <- apply(lt*c(k*S0i),2,revcumsumstrata,xx$strata,xx$nstrata)
-	  basecor <- basecor/c(k*S0)
-	  www <- x$propoddsW*x$weightsJ
-	  U[xx$jumps+1,] <- U[xx$jumps+1,] - c(www)* basecor[xx$jumps+1,]
-	  baseDLam0 <- apply(basecor*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+} else { # {{{  prop-odds model logitSurv
+    xx <- x$cox.prep
+    ii <- invhess 
+    S0i <- rep(0,length(xx$strata))
+    S0i[xx$jumps+1] <- 1/x$S0
+    Z <- xx$X
+    U <- E <- matrix(0,nrow(xx$X),x$p)
+    E[xx$jumps+1,] <- x$E
+    U[xx$jumps+1,] <- x$U
+    cumhazA <- cumsumstratasum(S0i,xx$strata,xx$nstrata,type="all")
+    cumhaz <- c(cumhazA$sum)
+    cumhazm <- cumhazA$lagsum
+    ###
+    EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+    rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset))
+    rro <- c(exp(Z %*% coef(x) + xx$offset))
+    S0star <- revcumsumstrata(rr/(1+rro*cumhazm),xx$strata,xx$nstrata)
+    S0 <- revcumsumstrata(rr,xx$strata,xx$nstrata)
+    S1 <- apply(Z*rr,2,revcumsumstrata,xx$strata,xx$nstrata)
+    Et <- S1/c(S0)
+    lt <- apply((Z-Et)*c(rr*rro/(1+rro*cumhazm)),2,revcumsumstrata,xx$strata,xx$nstrata)
+    Estar <- S0star/S0
+    EstardLam <- cumsumstrata(Estar*S0i,xx$strata,xx$nstrata)
+    k <- exp(-EstardLam)
+    basecor <- apply(lt*c(k*S0i),2,revcumsumstrata,xx$strata,xx$nstrata)
+    basecor <- basecor/c(k*S0)
+    www <- x$propoddsW*x$weightsJ
+    U[xx$jumps+1,] <- U[xx$jumps+1,]-c(www)*basecor[xx$jumps+1,]
 
-	  ### Martingale  as a function of time and for all subjects to handle strata 
-	  MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0-baseDLam0)*rr*c(xx$weights)
-
-	  if (orig.order) {
-	     oo <- (1:nrow(xx$X))[xx$ord+1]
-	     oo <- order(oo)
-	     ### back to order of data-set
-	     MGt <- MGt[oo,,drop=FALSE]  
-	     id <- xx$id[oo]
-	  } else id <-  xx$id
-  } else  { 
-     MGt <- x$U; MG.base <- 1/x$S0; 
+    MGt <- U; 
+    if (type=="robust") {	
+       baseDLam0 <- apply(basecor*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+       ### Martingale  as a function of time and for all subjects to handle strata 
+       MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0-baseDLam0)*rr*c(xx$weights) ### -baseIII
+     }  else MGt <- MGt[xx$jumps+1,]
+     MG.base <- 1/x$S0; 
+     id <-  xx$id
   }# }}}
-}
 
   ncluster <- NULL
   if (type=="robust" & (!is.null(x$id) | any(x$entry>0))) {
@@ -773,7 +766,6 @@ if (is.null(x$propodds)) {
     ###  ii <- mets::cluster.index(id)
     UU <- apply(MGt,2,sumstrata,id,max(id)+1)
     ### names of clusters given in call 
-    if (!is.null(x$id)) rownames(UU) <- unique(x$id) 
     ncluster <- nrow(UU)
   } else {
      UU <- MGt
@@ -933,7 +925,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
     if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
     rownames(cc) <- names(coef(object))
-    expC <- lava::estimate(coef=coef(object),vcov=vcov(object),f=function(p) exp(p),null=1)$coefmat
+    expC <- lava::estimate(coef=coef(object),vcov=V,f=function(p) exp(p),null=1)$coefmat
 
   } 
   Strata <- levels(object$strata)
