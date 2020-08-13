@@ -181,7 +181,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 obj <- function(pp,all=FALSE)
 { # {{{
 
-lp <- c(X %*% pp)
+lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
 Y <- c((status==cause)*(exit<=time)/cens.weights)
@@ -234,50 +234,51 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  
 
  if (se) {## {{{ censoring adjustment of variance 
-       ### order of sorted times
-       ord <- resC$cox.prep$ord+1
-       X <-  X[ord,,drop=FALSE]
-       status <- status[ord]
-       exit <- exit[ord]
-       cens.weights <- cens.weights[ord]
-       lp <- c(X %*% val$coef)
-       p <- expit(lp)
-       Y <- c((status==cause)*(exit<=time)/cens.weights)
+    ### order of sorted times
+    ord <- resC$ord
+    X <-  X[ord,,drop=FALSE]
+    status <- status[ord]
+    exit <- exit[ord]
+    weights <- weights[ord]
+    offset <- offset[ord]
+    cens.weights <- cens.weights[ord]
+    lp <- c(X %*% val$coef+offset)
+    p <- expit(lp)
+    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
 
-       hessian <- val$hessian 
-       xx <- resC$cox.prep
-       S0i2 <- S0i <- rep(0,length(xx$strata))
-       S0i[xx$jumps+1]  <- 1/resC$S0
-       S0i2[xx$jumps+1] <- 1/resC$S0^2
-       ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
-       ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
-       ## to make \int h(s)/Ys  dM_i^C(s) 
-       h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-###    h2  <- .Call("vecMatMat",h,h)$vXZ
-       ### Cens-Martingale as a function of time and for all subjects to handle strata 
-       ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-       IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-       U <- matrix(0,nrow(xx$X),ncol(X))
-       U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
-       MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
+    xx <- resC$cox.prep
+    S0i2 <- S0i <- rep(0,length(xx$strata))
+    S0i[xx$jumps+1]  <- 1/resC$S0
+    S0i2[xx$jumps+1] <- 1/resC$S0^2
+    ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
+    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
+    ## to make \int h(s)/Ys  dM_i^C(s) 
+    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    h2  <- .Call("vecMatMat",h,h)$vXZ
+    ### Cens-Martingale as a function of time and for all subjects to handle strata 
+    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
+    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    U <- matrix(0,nrow(xx$X),ncol(X))
+    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
-       ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-###    Ih2dLam0 <- apply(h2*S0i2,2,sum)
-###    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
-###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
-       id <- xx$id
-       MGCiid <- apply(MGt,2,sumstrata,id,max(id)+1)
+    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
+    Ih2dLam0 <- apply(h2*S0i2,2,sum)
+    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
+    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
+    id <- xx$id
+    MGCiid <- apply(MGt,2,sumstrata,id,max(id)+1)
  
-       val$MGciid <- MGCiid
-       val$MGtid <- id
-       val$iid.naive <- val$iid 
-       val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-       val$naive.var <- val$var
-       robvar <- crossprod(val$iid)
-       val$var  <- robvar 
-       val$robvar <- robvar
-       val$se.robust <- diag(robvar)^.5
-       val$se.coef <- diag(val$var)^.5
+    val$MGciid <- MGCiid
+    val$MGtid <- id
+    val$iid.naive <- val$iid 
+    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+    val$naive.var <- val$var
+    robvar <- crossprod(val$iid)
+    val$var  <- val$naive.var - val$varadjC
+    val$robvar <- robvar
+    val$se.robust <- diag(robvar)^.5
+    val$se.coef <- diag(val$var)^.5
   } ## }}}
 
   class(val) <- "binreg"
