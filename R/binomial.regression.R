@@ -267,7 +267,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
     val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     id <- xx$id
-    MGCiid <- apply(MGt,2,sumstrata,id,max(id)+1)
+    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
  
     val$MGciid <- MGCiid
     val$MGtid <- id
