@@ -217,8 +217,8 @@ then fit the FG-model based on this augmentation term and do a couple of iterati
 Again we note slightly smaller standard errors when augmenting the estimator. 
 
 
-The function $FG_AugmentCifstrata$ 
-compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
+The function \verb+FG_AugmentCifstrata+ 
+	compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
 \begin{align*}
  U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
 	H(t,X_i,E,G_c,\Lambda_1)  dM_{ci}(t)
