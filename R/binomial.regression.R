@@ -7,11 +7,8 @@
 ##' \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
-##' var in output is variance based on specific formula for variance with IPCW adjustment, 
-##' \deqn{ \sum (X_i ( \Delta I(T \leq t, \epsilon=1 )/\hat G_c(T_i-) - expit( X^T \hat \beta))^2 + \int h^2(s) / y.(s)^2  d N.^C(s)}
-##' where \deqn{ h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t)} (this is the bread of the sandwhich estimator),
-##' robvar is variance based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and
-##' naive.var is variance under known censoring model. 
+##' variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
+##' under known censoring model. 
 ##'
 ##' Censoring model may depend on strata. 
 ##'
@@ -254,7 +251,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    h2  <- .Call("vecMatMat",h,h)$vXZ
+    ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -263,9 +260,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-    Ih2dLam0 <- apply(h2*S0i2,2,sum)
-    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
-    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
+###    Ih2dLam0 <- apply(h2*S0i2,2,sum)
+###    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
+###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
  
     val$MGciid <- MGCiid
@@ -274,8 +271,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
-    val$var  <- val$naive.var - val$varadjC
-    val$robvar <- robvar
+    val$var <-  val$robvar <- robvar
+### val$var  <- val$naive.var - val$varadjC
     val$se.robust <- diag(robvar)^.5
     val$se.coef <- diag(val$var)^.5
   } ## }}}
