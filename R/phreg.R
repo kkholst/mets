@@ -1421,6 +1421,12 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
 ##' @param weights weights for score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
+##' @references
+##'
+##' The proportional odds cumulative incidence model for competing risks,
+##' Eriksson, Frank and Li, Jianing and Scheike, Thomas and Zhang, Mei-Jie,
+##' Biometrics, 2015, 3, 687--695, 71,
+##'
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
