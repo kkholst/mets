@@ -39,6 +39,11 @@ summary(out1)
 gof(out1)
 plot(out1)
 }
+\references{
+The proportional odds cumulative incidence model for competing risks,
+Eriksson, Frank and Li, Jianing and Scheike, Thomas and Zhang, Mei-Jie,
+Biometrics, 2015, 3, 687--695, 71,
+}
 \author{
 Thomas Scheike
 }
