@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Twostage survival model for multivariate survival data — survival.twostage" />
-<meta property="og:description" content="Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data 
+<meta property="og:description" content="Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data
 using marginals that are on Cox form. The dependence can be modelled via
 Regression design on dependence parameter.
 Random effects, additive gamma model.
@@ -48,62 +48,62 @@ Random effects, additive gamma model.
 
 If clusters contain more than two subjects, we use a composite likelihood
 based on the pairwise bivariate models, for full MLE see twostageMLE.
-The two-stage model is constructed such that 
-given the gamma distributed random effects it is assumed that the survival functions 
+The two-stage model is constructed such that
+given the gamma distributed random effects it is assumed that the survival functions
 are indpendent, and that the marginal survival functions are on Cox form (or additive form)
 $$
 P(T &amp;gt; t| x) = S(t|x)= exp( -exp(x^T \beta) A_0(t) )
 $$
 One possibility is to model the variance within clusters via a regression design, and
-then one can specify a regression structure for the independent gamma distributed 
-random effect for each cluster, such that the variance is given by 
+then one can specify a regression structure for the independent gamma distributed
+random effect for each cluster, such that the variance is given by
 $$
  \theta = h( z_j^T \alpha)
 $$
 where \(z\) is specified by theta.des, and a possible link function var.link=1 will
 will use the exponential link \(h(x)=exp(x)\), and var.link=0 the identity link \(h(x)=x\).
-The reported standard errors are based on the estimated information from the 
+The reported standard errors are based on the estimated information from the
 likelihood assuming that the marginals are known (unlike the twostageMLE and for the
 additive gamma model below).
 Can also fit a structured additive gamma random effects model, such
-as the ACE, ADE model for survival data.  In this case the 
+as the ACE, ADE model for survival data.  In this case the
 random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects. 
-For a cluster with two subjects, we let the random.design rows be 
- \(v_1\) and \(v_2\). 
-Such that the random effects for subject 
+a matrix of 1's and 0's with dimension n x d.  With d random effects.
+For a cluster with two subjects, we let the random.design rows be
+ \(v_1\) and \(v_2\).
+Such that the random effects for subject
 1 is $$v_1^T (Z_1,...,Z_d)$$, for d random effects. Each random effect
-has an associated parameter \((\lambda_1,...,\lambda_d)\). 
-By construction subjects 1's random effect are Gamma distributed with 
+has an associated parameter \((\lambda_1,...,\lambda_d)\).
+By construction subjects 1's random effect are Gamma distributed with
 mean \(\lambda_j/v_1^T \lambda\)
-and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect 
+and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect
 \(v_1^T (Z_1,...,Z_d)\) has mean 1 and variance \(1/(v_1^T \lambda)\).
-It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed within clusters 
+It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed within clusters
 as it would be for the ACE model below.
-Based on these parameters the relative contribution (the heritability, h) is 
+Based on these parameters the relative contribution (the heritability, h) is
 equivalent to  the expected values of the random effects: \(\lambda_j/v_1^T \lambda\)
-The DEFAULT parametrization (var.par=1) uses the variances of the random effecs 
+The DEFAULT parametrization (var.par=1) uses the variances of the random effecs
 $$
 \theta_j  = \lambda_j/(v_1^T \lambda)^2
 $$
 For alternative parametrizations one can specify how the parameters relate to \(\lambda_j\)
 with the argument var.par=0.
-For both types of models the basic model assumptions are that 
-given the random effects of the clusters the survival distributions within a cluster 
-are independent and ' on the form 
+For both types of models the basic model assumptions are that
+given the random effects of the clusters the survival distributions within a cluster
+are independent and ' on the form
 $$
-P(T &amp;gt; t| x,z) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,S(t|x)) )  
+P(T &amp;gt; t| x,z) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,S(t|x)) )
 $$
 with the inverse laplace of the gamma distribution with mean 1 and variance 1/lamtot.
 The parameters \((\lambda_1,...,\lambda_d)\) are related to the parameters of the model
-by a regression construction \(pard\) (d x k), that links the \(d\) 
+by a regression construction \(pard\) (d x k), that links the \(d\)
 \(\lambda\) parameters
-with the (k) underlying \(\theta\) parameters 
+with the (k) underlying \(\theta\) parameters
 $$
-\lambda = theta.des  \theta 
+\lambda = theta.des  \theta
 $$
-here using theta.des to specify these low-dimension association. Default is a diagonal matrix. 
-This can be used to make structural assumptions about the variances of the random-effects 
+here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
+This can be used to make structural assumptions about the variances of the random-effects
 as is needed for the ACE model for example.
 The case.control option that can be used with the pair specification of the pairwise parts
 of the estimating equations. Here it is assumed that the second subject of each pair is the proband." />
@@ -216,7 +216,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
     </div>
 
     <div class="ref-description">
-    <p>Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data 
+    <p>Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data
 using marginals that are on Cox form. The dependence can be modelled via</p><ol>
 <li><p>Regression design on dependence parameter.</p></li>
 <li><p>Random effects, additive gamma model.</p></li>
@@ -224,62 +224,62 @@ using marginals that are on Cox form. The dependence can be modelled via</p><ol>
 
 <p>If clusters contain more than two subjects, we use a composite likelihood
 based on the pairwise bivariate models, for full MLE see twostageMLE.</p>
-<p>The two-stage model is constructed such that 
-given the gamma distributed random effects it is assumed that the survival functions 
+<p>The two-stage model is constructed such that
+given the gamma distributed random effects it is assumed that the survival functions
 are indpendent, and that the marginal survival functions are on Cox form (or additive form)
 $$
 P(T &gt; t| x) = S(t|x)= exp( -exp(x^T \beta) A_0(t) )
 $$</p>
 <p>One possibility is to model the variance within clusters via a regression design, and
-then one can specify a regression structure for the independent gamma distributed 
-random effect for each cluster, such that the variance is given by 
+then one can specify a regression structure for the independent gamma distributed
+random effect for each cluster, such that the variance is given by
 $$
  \theta = h( z_j^T \alpha)
 $$
 where \(z\) is specified by theta.des, and a possible link function var.link=1 will
 will use the exponential link \(h(x)=exp(x)\), and var.link=0 the identity link \(h(x)=x\).
-The reported standard errors are based on the estimated information from the 
+The reported standard errors are based on the estimated information from the
 likelihood assuming that the marginals are known (unlike the twostageMLE and for the
 additive gamma model below).</p>
 <p>Can also fit a structured additive gamma random effects model, such
-as the ACE, ADE model for survival data.  In this case the 
+as the ACE, ADE model for survival data.  In this case the
 random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects. 
-For a cluster with two subjects, we let the random.design rows be 
- \(v_1\) and \(v_2\). 
-Such that the random effects for subject 
+a matrix of 1's and 0's with dimension n x d.  With d random effects.
+For a cluster with two subjects, we let the random.design rows be
+ \(v_1\) and \(v_2\).
+Such that the random effects for subject
 1 is $$v_1^T (Z_1,...,Z_d)$$, for d random effects. Each random effect
-has an associated parameter \((\lambda_1,...,\lambda_d)\). 
-By construction subjects 1's random effect are Gamma distributed with 
+has an associated parameter \((\lambda_1,...,\lambda_d)\).
+By construction subjects 1's random effect are Gamma distributed with
 mean \(\lambda_j/v_1^T \lambda\)
-and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect 
+and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect
 \(v_1^T (Z_1,...,Z_d)\) has mean 1 and variance \(1/(v_1^T \lambda)\).
-It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed within clusters 
+It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed within clusters
 as it would be for the ACE model below.</p>
-<p>Based on these parameters the relative contribution (the heritability, h) is 
+<p>Based on these parameters the relative contribution (the heritability, h) is
 equivalent to  the expected values of the random effects: \(\lambda_j/v_1^T \lambda\)</p>
-<p>The DEFAULT parametrization (var.par=1) uses the variances of the random effecs 
+<p>The DEFAULT parametrization (var.par=1) uses the variances of the random effecs
 $$
 \theta_j  = \lambda_j/(v_1^T \lambda)^2
 $$
 For alternative parametrizations one can specify how the parameters relate to \(\lambda_j\)
 with the argument var.par=0.</p>
-<p>For both types of models the basic model assumptions are that 
-given the random effects of the clusters the survival distributions within a cluster 
-are independent and ' on the form 
+<p>For both types of models the basic model assumptions are that
+given the random effects of the clusters the survival distributions within a cluster
+are independent and ' on the form
 $$
-P(T &gt; t| x,z) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,S(t|x)) )  
+P(T &gt; t| x,z) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,S(t|x)) )
 $$
 with the inverse laplace of the gamma distribution with mean 1 and variance 1/lamtot.</p>
 <p>The parameters \((\lambda_1,...,\lambda_d)\) are related to the parameters of the model
-by a regression construction \(pard\) (d x k), that links the \(d\) 
+by a regression construction \(pard\) (d x k), that links the \(d\)
 \(\lambda\) parameters
-with the (k) underlying \(\theta\) parameters 
+with the (k) underlying \(\theta\) parameters
 $$
-\lambda = theta.des  \theta 
+\lambda = theta.des  \theta
 $$
-here using theta.des to specify these low-dimension association. Default is a diagonal matrix. 
-This can be used to make structural assumptions about the variances of the random-effects 
+here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
+This can be used to make structural assumptions about the variances of the random-effects
 as is needed for the ACE model for example.</p>
 <p>The case.control option that can be used with the pair specification of the pairwise parts
 of the estimating equations. Here it is assumed that the second subject of each pair is the proband.</p>
@@ -287,7 +287,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
 
     <pre class="usage"><span class='fu'>survival.twostage</span>(
   <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>sys.parent</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
   <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
   <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
   <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
@@ -364,7 +364,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
     </tr>
     <tr>
       <th>theta.des</th>
-      <td><p>design for dependence parameters, when pairs are given the indeces of the 
+      <td><p>design for dependence parameters, when pairs are given the indeces of the
 theta-design for this pair, is given in pairs as column 5</p></td>
     </tr>
     <tr>
@@ -409,7 +409,7 @@ theta-design for this pair, is given in pairs as column 5</p></td>
     </tr>
     <tr>
       <th>random.design</th>
-      <td><p>random effect design for additive gamma model, when pairs are given the 
+      <td><p>random effect design for additive gamma model, when pairs are given the
 indeces of the pairs random.design rows are given as columns 3:4</p></td>
     </tr>
     <tr>
@@ -462,7 +462,7 @@ and ascertained sampling</p></td>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Twostage estimation of additive gamma frailty models for survival data. 
+    <p>Twostage estimation of additive gamma frailty models for survival data.
 Scheike (2019), work in progress</p>
 <p>Shih and Louis (1995) Inference on the association parameter in copula models for bivariate
 survival data, Biometrics, (1995).</p>
@@ -480,7 +480,7 @@ Eriksson and Scheike (2015),</p>
 
 <span class='co'># Marginal Cox model  with treat as covariate</span>
 <span class='no'>margph</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>treat</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
-<span class='co'>### Clayton-Oakes, MLE </span>
+<span class='co'>### Clayton-Oakes, MLE</span>
 <span class='no'>fitco1</span><span class='kw'>&lt;-</span><span class='fu'>twostageMLE</span>(<span class='no'>margph</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco1</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
@@ -539,7 +539,7 @@ Eriksson and Scheike (2015),</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='co'>### without covariates but with stratafied </span>
+<span class='co'>### without covariates but with stratafied</span>
 <span class='no'>marg</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~+<span class='fu'>strata</span>(<span class='no'>treat</span>)+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
 <span class='no'>fitpa</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>,
                 <span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>)
@@ -602,13 +602,13 @@ Eriksson and Scheike (2015),</p>
  <span class='co'>## Reduce Ex.Timings</span>
 <span class='co'>### Same model using the strata option, a bit slower</span>
 <span class='co'>########################################################</span>
-<span class='co'>## makes the survival pieces for different areas in the plane </span>
+<span class='co'>## makes the survival pieces for different areas in the plane</span>
 <span class='co'>##ud1=surv.boxarea(c(0,0),c(0.5,0.5),data=d,id="cluster",timevar="time",status="status")</span>
 <span class='co'>##ud2=surv.boxarea(c(0,0.5),c(0.5,2),data=d,id="cluster",timevar="time",status="status")</span>
 <span class='co'>##ud3=surv.boxarea(c(0.5,0),c(2,0.5),data=d,id="cluster",timevar="time",status="status")</span>
 <span class='co'>##ud4=surv.boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")</span>
 
-<span class='co'>## everything done in one call </span>
+<span class='co'>## everything done in one call</span>
 <span class='no'>ud</span> <span class='kw'>&lt;-</span> <span class='fu'>piecewise.data</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>timevar</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"cluster"</span>)
 <span class='no'>ud</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>ud</span>$<span class='no'>strata</span>);
 <span class='no'>ud</span>$<span class='no'>intstrata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>ud</span>$<span class='no'>intstrata</span>)
@@ -677,7 +677,7 @@ Eriksson and Scheike (2015),</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='co'>### same model using strata option, a bit slower </span>
+<span class='co'>### same model using strata option, a bit slower</span>
 <span class='no'>fitp4</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,<span class='kw'>se.cluster</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,
                 <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>tdes2</span>,<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>0.5</span>,<span class='kw'>strata</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>strata</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitp4</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
@@ -705,7 +705,7 @@ Eriksson and Scheike (2015),</p>
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='co'>### structured random effects model additive gamma ACE </span>
+<span class='co'>### structured random effects model additive gamma ACE</span>
 <span class='co'>### simulate structured two-stage additive gamma ACE model</span>
 <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>simClaytonOakes.twin.ace</span>(<span class='fl'>4000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>3</span>)
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>twin.polygen.design</span>(<span class='no'>data</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"cluster"</span>)

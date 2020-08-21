@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data 
-using marginals that are on logistic form. 
+<title>Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data
+using marginals that are on logistic form.
 If clusters contain more than two times, the algoritm uses a compososite likelihood
 based on all pairwise bivariate models. — binomial.twostage • mets</title>
 
@@ -42,8 +42,8 @@ based on all pairwise bivariate models. — binomial.twostage • mets</title>
 
 
 
-<meta property="og:title" content="Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data 
-using marginals that are on logistic form. 
+<meta property="og:title" content="Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data
+using marginals that are on logistic form.
 If clusters contain more than two times, the algoritm uses a compososite likelihood
 based on all pairwise bivariate models. — binomial.twostage" />
 <meta property="og:description" content="The pairwise pairwise odds ratio model provides an alternative to the alternating logistic
@@ -151,8 +151,8 @@ regression (ALR)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data 
-using marginals that are on logistic form. 
+    <h1>Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data
+using marginals that are on logistic form.
 If clusters contain more than two times, the algoritm uses a compososite likelihood
 based on all pairwise bivariate models.</h1>
     <small class="dont-index">Source: <a href='https://github.com/kkholst/mets/blob/master/R/binomial.twostage.R'><code>R/binomial.twostage.R</code></a></small>
@@ -166,7 +166,7 @@ regression (ALR).</p>
 
     <pre class="usage"><span class='fu'>binomial.twostage</span>(
   <span class='no'>margbin</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>sys.parent</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
   <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
   <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
@@ -245,7 +245,7 @@ regression (ALR).</p>
     </tr>
     <tr>
       <th>theta.des</th>
-      <td><p>design for dependence parameters, when pairs are given the indeces of the 
+      <td><p>design for dependence parameters, when pairs are given the indeces of the
 theta-design for this pair, is given in pairs as column 5</p></td>
     </tr>
     <tr>
@@ -306,7 +306,7 @@ theta-design for this pair, is given in pairs as column 5</p></td>
     </tr>
     <tr>
       <th>random.design</th>
-      <td><p>random effect design for additive gamma model, when pairs are given the 
+      <td><p>random effect design for additive gamma model, when pairs are given the
 indeces of the pairs random.design rows are given as columns 3:4</p></td>
     </tr>
     <tr>
@@ -341,36 +341,36 @@ indeces of the pairs random.design rows are given as columns 3:4</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The reported standard errors are based on a cluster corrected score equations from the 
+    <p>The reported standard errors are based on a cluster corrected score equations from the
 pairwise likelihoods assuming that the marginals are known. This gives correct standard errors
 in the case of the Odds-Ratio model (Plackett distribution) for dependence, but incorrect standard
-errors for the Clayton-Oakes types model (that is also called "gamma"-frailty). For the additive gamma version of the 
+errors for the Clayton-Oakes types model (that is also called "gamma"-frailty). For the additive gamma version of the
 standard errors
 are adjusted for the uncertainty in the marginal models via an iid deomposition using the iid() function of
-lava. For the clayton oakes model that is not speicifed via the random effects these can be 
+lava. For the clayton oakes model that is not speicifed via the random effects these can be
 fixed subsequently using the iid influence functions for the marginal model, but typically this does not
 change much.</p>
-<p>For the Clayton-Oakes version of the model, given the gamma distributed random effects it is 
-assumed that the probabilities are indpendent, and that the marginal survival functions are on logistic form 
+<p>For the Clayton-Oakes version of the model, given the gamma distributed random effects it is
+assumed that the probabilities are indpendent, and that the marginal survival functions are on logistic form
 $$
 logit(P(Y=1|X)) = \alpha + x^T \beta
 $$
-therefore conditional on the random effect the probability of the event is 
+therefore conditional on the random effect the probability of the event is
 $$
-logit(P(Y=1|X,Z)) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,P(Y=1|x)) )  
+logit(P(Y=1|X,Z)) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,P(Y=1|x)) )
 $$</p>
 <p>Can also fit a structured additive gamma random effects model, such
 the ACE, ADE model for survival data:</p>
 <p>Now random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects. 
-For a cluster with two subjects, we let the random.design rows be 
- \(v_1\) and \(v_2\). 
-Such that the random effects for subject 
+a matrix of 1's and 0's with dimension n x d.  With d random effects.
+For a cluster with two subjects, we let the random.design rows be
+ \(v_1\) and \(v_2\).
+Such that the random effects for subject
 1 is $$v_1^T (Z_1,...,Z_d)$$, for d random effects. Each random effect
 has an associated parameter \((\lambda_1,...,\lambda_d)\). By construction
-subjects 1's random effect are Gamma distributed with 
+subjects 1's random effect are Gamma distributed with
 mean \(\lambda_j/v_1^T \lambda\)
-and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect 
+and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect
 \(v_1^T (Z_1,...,Z_d)\) has mean 1 and variance \(1/(v_1^T \lambda)\).
 It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed over all clusters
 as it would be for the ACE model below.</p>
@@ -378,22 +378,22 @@ as it would be for the ACE model below.</p>
 $$
 \theta_j  = \lambda_j/(v_1^T \lambda)^2
 $$</p>
-<p>For alternative parametrizations (var.par=0) one can specify how the parameters relate 
+<p>For alternative parametrizations (var.par=0) one can specify how the parameters relate
 to \(\lambda_j\) with the function</p>
-<p>Based on these parameters the relative contribution (the heritability, h) is 
+<p>Based on these parameters the relative contribution (the heritability, h) is
 equivalent to  the expected values of the random effects  \(\lambda_j/v_1^T \lambda\)</p>
-<p>Given the random effects the probabilities  are independent and on the form 
+<p>Given the random effects the probabilities  are independent and on the form
 $$
-logit(P(Y=1|X)) = exp( - Laplace^{-1}(lamtot,lamtot,P(Y=1|x)) )  
+logit(P(Y=1|X)) = exp( - Laplace^{-1}(lamtot,lamtot,P(Y=1|x)) )
 $$
 with the inverse laplace of the gamma distribution with mean 1 and variance lamtot.</p>
 <p>The parameters \((\lambda_1,...,\lambda_d)\)
 are related to the parameters of the model
-by a regression construction \(pard\) (d x k), that links the \(d\) 
+by a regression construction \(pard\) (d x k), that links the \(d\)
 \(\lambda\) parameters
-with the (k) underlying \(\theta\) parameters 
+with the (k) underlying \(\theta\) parameters
 $$
-\lambda = theta.des  \theta 
+\lambda = theta.des  \theta
 $$
 here using theta.des to specify these low-dimension association. Default is a diagonal matrix.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -529,7 +529,7 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='co'>### use of clayton oakes binomial additive gamma model </span>
+<span class='co'>### use of clayton oakes binomial additive gamma model</span>
 <span class='co'>###########################################################</span>
  <span class='co'>## Reduce Ex.Timings</span>
 <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>simbinClaytonOakes.family.ace</span>(<span class='fl'>10000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='kw'>beta</span><span class='kw'>=</span><span class='kw'>NULL</span>,<span class='kw'>alpha</span><span class='kw'>=</span><span class='kw'>NULL</span>)

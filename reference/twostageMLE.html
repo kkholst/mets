@@ -40,13 +40,13 @@
 
 
 <meta property="og:title" content="Twostage survival model fitted by pseudo MLE — twostageMLE" />
-<meta property="og:description" content="Fits Clayton-Oakes clustered  survival data 
-using marginals that are on Cox form in the likelihood for the dependence parameter 
+<meta property="og:description" content="Fits Clayton-Oakes clustered  survival data
+using marginals that are on Cox form in the likelihood for the dependence parameter
 as in Glidden (2000). The dependence can be modelled via  a
 Regression design on dependence parameter.
 
 
-We allow a regression structure for the indenpendent gamma distributed 
+We allow a regression structure for the indenpendent gamma distributed
 random effects  and their variances that may depend on cluster covariates. So
 $$
  \theta = h( z_j^T \alpha)
@@ -161,13 +161,13 @@ where \(z\) is specified by theta.des . The link function can be the exp when va
     </div>
 
     <div class="ref-description">
-    <p>Fits Clayton-Oakes clustered  survival data 
-using marginals that are on Cox form in the likelihood for the dependence parameter 
+    <p>Fits Clayton-Oakes clustered  survival data
+using marginals that are on Cox form in the likelihood for the dependence parameter
 as in Glidden (2000). The dependence can be modelled via  a</p><ol>
 <li><p>Regression design on dependence parameter.</p></li>
 </ol>
 
-<p>We allow a regression structure for the indenpendent gamma distributed 
+<p>We allow a regression structure for the indenpendent gamma distributed
 random effects  and their variances that may depend on cluster covariates. So
 $$
  \theta = h( z_j^T \alpha)
@@ -177,7 +177,7 @@ where \(z\) is specified by theta.des . The link function can be the exp when va
 
     <pre class="usage"><span class='fu'>twostageMLE</span>(
   <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>sys.parent</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
   <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>0</span>,
@@ -233,7 +233,7 @@ where \(z\) is specified by theta.des . The link function can be the exp when va
 
     <p>Measuring early or late dependence for bivariate twin data
 Scheike, Holst, Hjelmborg (2015), LIDA</p>
-<p>Twostage modelling of additive gamma frailty models for survival data. 
+<p>Twostage modelling of additive gamma frailty models for survival data.
 Scheike and Holst, working paper</p>
 <p>Shih and Louis (1995) Inference on the association parameter in copula models for bivariate
 survival data, Biometrics, (1995).</p>

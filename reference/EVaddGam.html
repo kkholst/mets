@@ -187,16 +187,16 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>lam0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0.3</span>)
 <span class='no'>pars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
-<span class='co'>## genetic random effects, cause1, cause2 and overall </span>
+<span class='co'>## genetic random effects, cause1, cause2 and overall</span>
 <span class='no'>parg</span> <span class='kw'>&lt;-</span> <span class='no'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>)]
-<span class='co'>## environmental random effects, cause1, cause2 and overall </span>
+<span class='co'>## environmental random effects, cause1, cause2 and overall</span>
 <span class='no'>parc</span> <span class='kw'>&lt;-</span> <span class='no'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>)]
 
 <span class='co'>## simulate competing risks with two causes with hazards 0.5 and 0.3</span>
-<span class='co'>## ace for each cause, and overall ace </span>
+<span class='co'>## ace for each cause, and overall ace</span>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>simCompete.twin.ace</span>(<span class='fl'>10000</span>,<span class='no'>parg</span>,<span class='no'>parc</span>,<span class='fl'>0</span>,<span class='fl'>2</span>,<span class='kw'>lam0</span><span class='kw'>=</span><span class='no'>lam0</span>,<span class='kw'>overall</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>all.sum</span><span class='kw'>=</span><span class='fl'>1</span>)
 
-<span class='co'>## setting up design for running the model </span>
+<span class='co'>## setting up design for running the model</span>
 <span class='no'>mm</span> <span class='kw'>&lt;-</span> <span class='fu'>familycluster.index</span>(<span class='no'>out</span>$<span class='no'>cluster</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mm</span>$<span class='no'>familypairindex</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='no'>pairs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='no'>mm</span>$<span class='no'>familypairindex</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>pairs</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>12</span>)</div><div class='output co'>#&gt;           [,1]  [,2]

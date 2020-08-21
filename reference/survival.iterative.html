@@ -40,67 +40,67 @@
 
 
 <meta property="og:title" content="Survival model for multivariate survival data — survival.iterative" />
-<meta property="og:description" content="Fits additive gamma frailty model 
+<meta property="og:description" content="Fits additive gamma frailty model
 with additive hazard condtional on the random effects
 $$
-\lambda_{ij} = (V_{ij}^T Z) (X_{ij}^T \alpha(t)) 
+\lambda_{ij} = (V_{ij}^T Z) (X_{ij}^T \alpha(t))
 $$
 The baseline \(\alpha(t)\) is profiled out using
 marginal modelling adjusted for the random effects structure as in Eriksson and Scheike (2015).
-One advantage of the standard frailty model is that one can deal with competing risks 
+One advantage of the standard frailty model is that one can deal with competing risks
 for this model.
-For all models the 
+For all models the
 standard errors do not reflect this uncertainty of the baseline estimates, and might therefore be a bit to small.
 To remedy this one can do bootstrapping.
 If clusters contain more than two times, we use a composite likelihood
 based on the pairwise bivariate models. Can also fit a additive gamma random
 effects model described in detail below.
-We allow a regression structure for the indenpendent gamma distributed 
+We allow a regression structure for the indenpendent gamma distributed
 random effects  and their variances that may depend on cluster covariates. So
 $$
  \theta = z_j^T \alpha
 $$
-where \(z\) is specified by theta.des 
-The reported standard errors are based on the estimated information from the 
+where \(z\) is specified by theta.des
+The reported standard errors are based on the estimated information from the
 likelihood assuming that the marginals are known.
 Can also fit a structured additive gamma random effects model, such
 as the ACE, ADE model for survival data.
 Now random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects. 
-For a cluster with two subjects, we let the random.design rows be 
- \(v_1\) and \(v_2\). 
-Such that the random effects for subject 
+a matrix of 1's and 0's with dimension n x d.  With d random effects.
+For a cluster with two subjects, we let the random.design rows be
+ \(v_1\) and \(v_2\).
+Such that the random effects for subject
 1 is $$v_1^T (Z_1,...,Z_d)$$, for d random effects. Each random effect
-has an associated parameter \((\lambda_1,...,\lambda_d)\). 
-By construction subjects 1's random effect are Gamma distributed with 
+has an associated parameter \((\lambda_1,...,\lambda_d)\).
+By construction subjects 1's random effect are Gamma distributed with
 mean \(\lambda_j/v_1^T \lambda\)
-and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect 
+and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect
 \(v_1^T (Z_1,...,Z_d)\) has mean 1 and variance \(1/(v_1^T \lambda)\).
 It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed over all clusters
 as it would be for the ACE model below.
 The lamtot parameter may be specified separately for some sets of the parameter
-is the additive.gamma.sum (ags) matrix is specified and then lamtot for the 
+is the additive.gamma.sum (ags) matrix is specified and then lamtot for the
 j'th random effect is \(ags_j^T \lambda\).
-Based on these parameters the relative contribution (the heritability, h) is 
+Based on these parameters the relative contribution (the heritability, h) is
 equivalent to  the expected values of the random effects  \(\lambda_j/v_1^T \lambda\)
-The DEFAULT parametrization uses the variances of the random effecs 
+The DEFAULT parametrization uses the variances of the random effecs
 $$
 \theta_j  = \lambda_j/(v_1^T \lambda)^2
 $$
 For alternative parametrizations one can specify how the parameters relate to \(\lambda_j\)
 with the function
 Given the random effects the survival distributions with a cluster are independent and
-on the form 
+on the form
 $$
 P(T &amp;gt; t| x,z) = exp( -Z  A(t) \exp( Z^t beta))
 $$
 The parameters \((\lambda_1,...,\lambda_d)\)
 are related to the parameters of the model
-by a regression construction \(pard\) (d x k), that links the \(d\) 
+by a regression construction \(pard\) (d x k), that links the \(d\)
 \(\lambda\) parameters
-with the (k) underlying \(\theta\) parameters 
+with the (k) underlying \(\theta\) parameters
 $$
-\lambda = theta.des  \theta 
+\lambda = theta.des  \theta
 $$
 here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
 The case.control option that can be used with the pair specification of the pairwise parts
@@ -215,67 +215,67 @@ proband." />
     </div>
 
     <div class="ref-description">
-    <p>Fits additive gamma frailty model 
+    <p>Fits additive gamma frailty model
 with additive hazard condtional on the random effects
 $$
-\lambda_{ij} = (V_{ij}^T Z) (X_{ij}^T \alpha(t)) 
+\lambda_{ij} = (V_{ij}^T Z) (X_{ij}^T \alpha(t))
 $$
 The baseline \(\alpha(t)\) is profiled out using
 marginal modelling adjusted for the random effects structure as in Eriksson and Scheike (2015).
-One advantage of the standard frailty model is that one can deal with competing risks 
+One advantage of the standard frailty model is that one can deal with competing risks
 for this model.</p>
-<p>For all models the 
+<p>For all models the
 standard errors do not reflect this uncertainty of the baseline estimates, and might therefore be a bit to small.
 To remedy this one can do bootstrapping.</p>
 <p>If clusters contain more than two times, we use a composite likelihood
 based on the pairwise bivariate models. Can also fit a additive gamma random
 effects model described in detail below.</p>
-<p>We allow a regression structure for the indenpendent gamma distributed 
+<p>We allow a regression structure for the indenpendent gamma distributed
 random effects  and their variances that may depend on cluster covariates. So
 $$
  \theta = z_j^T \alpha
 $$
-where \(z\) is specified by theta.des 
-The reported standard errors are based on the estimated information from the 
+where \(z\) is specified by theta.des
+The reported standard errors are based on the estimated information from the
 likelihood assuming that the marginals are known.</p>
 <p>Can also fit a structured additive gamma random effects model, such
 as the ACE, ADE model for survival data.</p>
 <p>Now random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects. 
-For a cluster with two subjects, we let the random.design rows be 
- \(v_1\) and \(v_2\). 
-Such that the random effects for subject 
+a matrix of 1's and 0's with dimension n x d.  With d random effects.
+For a cluster with two subjects, we let the random.design rows be
+ \(v_1\) and \(v_2\).
+Such that the random effects for subject
 1 is $$v_1^T (Z_1,...,Z_d)$$, for d random effects. Each random effect
-has an associated parameter \((\lambda_1,...,\lambda_d)\). 
-By construction subjects 1's random effect are Gamma distributed with 
+has an associated parameter \((\lambda_1,...,\lambda_d)\).
+By construction subjects 1's random effect are Gamma distributed with
 mean \(\lambda_j/v_1^T \lambda\)
-and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect 
+and variance \(\lambda_j/(v_1^T \lambda)^2\). Note that the random effect
 \(v_1^T (Z_1,...,Z_d)\) has mean 1 and variance \(1/(v_1^T \lambda)\).
 It is here asssumed that  \(lamtot=v_1^T \lambda\) is fixed over all clusters
 as it would be for the ACE model below.
 The lamtot parameter may be specified separately for some sets of the parameter
-is the additive.gamma.sum (ags) matrix is specified and then lamtot for the 
+is the additive.gamma.sum (ags) matrix is specified and then lamtot for the
 j'th random effect is \(ags_j^T \lambda\).</p>
-<p>Based on these parameters the relative contribution (the heritability, h) is 
+<p>Based on these parameters the relative contribution (the heritability, h) is
 equivalent to  the expected values of the random effects  \(\lambda_j/v_1^T \lambda\)</p>
-<p>The DEFAULT parametrization uses the variances of the random effecs 
+<p>The DEFAULT parametrization uses the variances of the random effecs
 $$
 \theta_j  = \lambda_j/(v_1^T \lambda)^2
 $$
 For alternative parametrizations one can specify how the parameters relate to \(\lambda_j\)
 with the function</p>
 <p>Given the random effects the survival distributions with a cluster are independent and
-on the form 
+on the form
 $$
 P(T &gt; t| x,z) = exp( -Z  A(t) \exp( Z^t beta))
 $$</p>
 <p>The parameters \((\lambda_1,...,\lambda_d)\)
 are related to the parameters of the model
-by a regression construction \(pard\) (d x k), that links the \(d\) 
+by a regression construction \(pard\) (d x k), that links the \(d\)
 \(\lambda\) parameters
-with the (k) underlying \(\theta\) parameters 
+with the (k) underlying \(\theta\) parameters
 $$
-\lambda = theta.des  \theta 
+\lambda = theta.des  \theta
 $$
 here using theta.des to specify these low-dimension association. Default is a diagonal matrix.</p>
 <p>The case.control option that can be used with the pair specification of the pairwise parts
@@ -285,7 +285,7 @@ proband.</p>
 
     <pre class="usage"><span class='fu'>survival.iterative</span>(
   <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>sys.parent</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
   <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
   <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
   <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,

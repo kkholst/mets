@@ -166,7 +166,7 @@ based on the pairwise bivariate models.</p>
 
     <pre class="usage"><span class='fu'>easy.binomial.twostage</span>(
   <span class='kw'>margbin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>sys.parent</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
   <span class='kw'>response</span> <span class='kw'>=</span> <span class='st'>"response"</span>,
   <span class='kw'>id</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
@@ -284,11 +284,11 @@ based on the pairwise bivariate models.</p>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The reported standard errors are based on the estimated information from the 
+    <p>The reported standard errors are based on the estimated information from the
 likelihood assuming that the marginals are known. This gives correct standard errors
 in the case of the plackett distribution (OR model for dependence), but incorrect for
-the clayton-oakes types model. The OR model is often known as the ALR model. 
-Our fitting procedures gives correct standard errors due to the ortogonality and is 
+the clayton-oakes types model. The OR model is often known as the ALR model.
+Our fitting procedures gives correct standard errors due to the ortogonality and is
 fast.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -435,7 +435,7 @@ fast.</p>
 #&gt; 5  2 28.03707 1 1   m
 #&gt; 6  2 25.00649 1 0   f</div><div class='input'>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
-<span class='co'>####  simple analyses of binomial family data </span>
+<span class='co'>####  simple analyses of binomial family data</span>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
 <span class='no'>desfs</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>,<span class='no'>num1</span><span class='kw'>=</span><span class='st'>"num1"</span>,<span class='no'>num2</span><span class='kw'>=</span><span class='st'>"num2"</span>)
 {
@@ -488,7 +488,7 @@ fast.</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
-<span class='co'>####  now allowing parent child POR to be different for mother and father </span>
+<span class='co'>####  now allowing parent child POR to be different for mother and father</span>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
 
 <span class='no'>desfsi</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>,<span class='no'>num1</span><span class='kw'>=</span><span class='st'>"num1"</span>,<span class='no'>num2</span><span class='kw'>=</span><span class='st'>"num2"</span>)
@@ -523,9 +523,9 @@ fast.</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='co'>##now looking to see if interactions with age or age influences marginal models </span>
+<span class='co'>##now looking to see if interactions with age or age influences marginal models</span>
 <span class='co'>##converting factors to numeric to make all involved covariates numeric</span>
-<span class='co'>##to use desfai2 rather then desfai that works on binfam </span>
+<span class='co'>##to use desfai2 rather then desfai that works on binfam</span>
 
 <span class='no'>nbinfam</span> <span class='kw'>&lt;-</span> <span class='no'>binfam</span>
 <span class='no'>nbinfam</span>$<span class='no'>num</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='no'>binfam</span>$<span class='no'>num</span>)
@@ -555,7 +555,7 @@ fast.</p>
     <span class='no'>mc</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='fl'>1</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>3</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>4</span>)*<span class='fl'>1</span>
     <span class='no'>fc</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='fl'>2</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>3</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>4</span>)*<span class='fl'>1</span>
     <span class='no'>cc</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='fl'>3</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>3</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='fl'>4</span>)*<span class='fl'>1</span>
-    <span class='no'>agecc</span> <span class='kw'>&lt;-</span> ((<span class='no'>x</span>[<span class='st'>"age1"</span>]+<span class='no'>x</span>[<span class='st'>"age2"</span>])/<span class='fl'>2</span>-<span class='fl'>12</span>)*<span class='no'>cc</span> <span class='co'>### av age for children </span>
+    <span class='no'>agecc</span> <span class='kw'>&lt;-</span> ((<span class='no'>x</span>[<span class='st'>"age1"</span>]+<span class='no'>x</span>[<span class='st'>"age2"</span>])/<span class='fl'>2</span>-<span class='fl'>12</span>)*<span class='no'>cc</span> <span class='co'>### av age for children</span>
     <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>pp</span>,<span class='no'>agepp</span>,<span class='no'>mc</span>,<span class='no'>fc</span>,<span class='no'>cc</span>,<span class='no'>agecc</span>)
 }
 
