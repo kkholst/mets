@@ -23,16 +23,16 @@ Computes the relative risk for additive gamma model at time 0
 \examples{
 lam0 <- c(0.5,0.3)
 pars <- c(1,1,1,1,0,1)
-## genetic random effects, cause1, cause2 and overall 
+## genetic random effects, cause1, cause2 and overall
 parg <- pars[c(1,3,5)]
-## environmental random effects, cause1, cause2 and overall 
+## environmental random effects, cause1, cause2 and overall
 parc <- pars[c(2,4,6)]
 
 ## simulate competing risks with two causes with hazards 0.5 and 0.3
-## ace for each cause, and overall ace 
+## ace for each cause, and overall ace
 out <- simCompete.twin.ace(10000,parg,parc,0,2,lam0=lam0,overall=1,all.sum=1)
 
-## setting up design for running the model 
+## setting up design for running the model
 mm <- familycluster.index(out$cluster)
 head(mm$familypairindex,n=10)
 pairs <- matrix(mm$familypairindex,ncol=2,byrow=TRUE)

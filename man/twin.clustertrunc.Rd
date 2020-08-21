@@ -6,7 +6,7 @@
 \usage{
 twin.clustertrunc(
   survformula,
-  data = sys.parent(),
+  data = parent.frame(),
   theta.des = NULL,
   clusters = NULL,
   var.link = 1,
