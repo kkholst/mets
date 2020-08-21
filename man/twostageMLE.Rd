@@ -6,7 +6,7 @@
 \usage{
 twostageMLE(
   margsurv,
-  data = sys.parent(),
+  data = parent.frame(),
   theta = NULL,
   theta.des = NULL,
   var.link = 0,
@@ -37,14 +37,14 @@ twostageMLE(
 \item{...}{arguments to be passed to  optimizer}
 }
 \description{
-Fits Clayton-Oakes clustered  survival data 
-using marginals that are on Cox form in the likelihood for the dependence parameter 
-as in Glidden (2000). The dependence can be modelled via  a 
+Fits Clayton-Oakes clustered  survival data
+using marginals that are on Cox form in the likelihood for the dependence parameter
+as in Glidden (2000). The dependence can be modelled via  a
 \enumerate{
-\item  Regression design on dependence parameter. 
+\item  Regression design on dependence parameter.
 }
 
-We allow a regression structure for the indenpendent gamma distributed 
+We allow a regression structure for the indenpendent gamma distributed
 random effects  and their variances that may depend on cluster covariates. So
 \deqn{
  \theta = h( z_j^T \alpha)
@@ -64,10 +64,10 @@ summary(oo)
 }
 \references{
 Measuring early or late dependence for bivariate twin data
-Scheike, Holst, Hjelmborg (2015), LIDA  
+Scheike, Holst, Hjelmborg (2015), LIDA
 
-Twostage modelling of additive gamma frailty models for survival data. 
-Scheike and Holst, working paper 
+Twostage modelling of additive gamma frailty models for survival data.
+Scheike and Holst, working paper
 
 Shih and Louis (1995) Inference on the association parameter in copula models for bivariate
 survival data, Biometrics, (1995).

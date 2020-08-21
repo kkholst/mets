@@ -1,13 +1,13 @@
-##' Estimation of twostage model with cluster truncation in bivariate situation 
+##' Estimation of twostage model with cluster truncation in bivariate situation
 ##'
-##' @title Estimation of twostage model with cluster truncation in bivariate situation 
+##' @title Estimation of twostage model with cluster truncation in bivariate situation
 ##' @param survformula Formula with survival model aalen or cox.aalen, some limitiation on model specification due to call of fast.reshape (so for example interactions and * and : do not work here, expand prior to call)
 ##' @param data Data frame
-##' @param theta.des design for dependence parameters in two-stage model 
+##' @param theta.des design for dependence parameters in two-stage model
 ##' @param clusters clustering variable for twins
 ##' @param var.link exp link for theta
-##' @param Nit number of iteration 
-##' @param final.fitting TRUE to do final estimation with SE and ... arguments for marginal models 
+##' @param Nit number of iteration
+##' @param final.fitting TRUE to do final estimation with SE and ... arguments for marginal models
 ##' @param ... Additional arguments to lower level functions
 ##' @author Thomas Scheike
 ##' @export
@@ -16,26 +16,26 @@
 ##' data(diabetes)
 ##' v <- diabetes$time*runif(nrow(diabetes))*rbinom(nrow(diabetes),1,0.5)
 ##' diabetes$v <- v
-##' 
+##'
 ##' aout <- twin.clustertrunc(Surv(v,time,status)~1+treat+adult,
 ##'			 data=diabetes,clusters="id")
 ##' aout$two        ## twostage output
 ##' par(mfrow=c(2,2))
 ##' plot(aout$marg) ## marginal model output
-##' 
+##'
 ##' out <- twin.clustertrunc(Surv(v,time,status)~1+prop(treat)+prop(adult),
 ##'			 data=diabetes,clusters="id")
 ##' out$two        ## twostage output
 ##' plot(out$marg) ## marginal model output
-twin.clustertrunc <- function(survformula,data=sys.parent(),theta.des=NULL,clusters=NULL,var.link=1,
+twin.clustertrunc <- function(survformula,data=parent.frame(),theta.des=NULL,clusters=NULL,var.link=1,
 		      Nit=10,final.fitting=FALSE,...)
-{ ## {{{ 
+{ ## {{{
 ## {{{  adding names of covariates from survival model to data frame if needed
-## adds names that are not in data (typically intercept from additive) or 
-### expansion of factors, 
-## also reducing only to needed covariates 
+## adds names that are not in data (typically intercept from additive) or
+### expansion of factors,
+## also reducing only to needed covariates
 
-survnames <-  all.vars(update(survformula, .~0)) 
+survnames <-  all.vars(update(survformula, .~0))
 if (length(survnames)!=3) stop("Must give entry, exit and status")
 entry <- survnames[1]
 exit <- survnames[2]
@@ -44,7 +44,7 @@ status <- survnames[3]
 tss <- terms(survformula)
 Znames <- attr(tss,"term.labels")
 ZnamesO <- Znames
-### checks if cluster is given in survformula then removes 
+### checks if cluster is given in survformula then removes
 clustervar <- grep("^cluster[(][A-z0-9._:]*",Znames,perl = TRUE)
 if (length(clustervar)>=1) Znames <- Znames[-clustervar]
 propvar <- grep("^prop[(][A-z0-9._:]*",Znames,perl = TRUE)
@@ -54,10 +54,10 @@ if (length(propvar)>=1) model <- "cox.aalen" else model <- "aalen"
 if (model=="cox.aalen") {
    Zn <- c()
    nn <- length(Znames)
-   ### droppe prop() for navne 
+   ### droppe prop() for navne
    for (i in 1:nn) Zn <- c(Zn,substr(Znames[i],6,nchar(Znames[i])-1))
    Znames <- Zn
-} 
+}
 
 clust.orig <- data[,clusters]
 d0 <- data[,c(entry,exit,status,clusters,Znames)]
@@ -66,7 +66,7 @@ data$dataid <- 1:nrow(data)
 
 d2 <- fast.reshape(data,id=clusters)
 d2 <- na.omit(d2)
-### only double entry people 
+### only double entry people
 data <- fast.reshape(d2,labelnum=TRUE)
 
 des <- aalen.des(survformula,data=data,model=model)
@@ -82,41 +82,41 @@ namesX <- des$covnamesX
 namesZ <- des$covnamesZ
 
 pweight <- rep(1,nrow(data))
-if (!is.null(clusters)) nclusters <- data[,clusters] else stop("must give clusters\n"); 
+if (!is.null(clusters)) nclusters <- data[,clusters] else stop("must give clusters\n");
 if (is.null(theta.des)) ptheta <- 0 else ptheta <- rep(0,ncol(theta.des))
 
 ###singletons might be dropped so same for theta.des
 theta.des <- theta.des[data$dataid,]
-## }}} 
- 
+## }}}
+
   assign("pweight",pweight,envir=environment(survformula))
 
 for (i in 1:Nit)
-{ ## {{{ 
+{ ## {{{
   if (model=="cox.aalen") { aout <- cox.aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0,beta=0);
                             beta <- c(aout$gamma,aout$cum[,-1])
   }  else  {
            aout <- aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0);
            beta <- aout$cum[,-1]
   }
-  if (i==1) { 
+  if (i==1) {
    if (model=="cox.aalen") pbeta <- 0*c(aout$gamma,aout$cum[,-1]) else pbeta <- 0*aout$cum[,-1]
-  } 
+  }
   if (i>=2) tout <- twostage(aout,data=data,clusters=nclusters,theta.des=theta.des,theta=ptheta,var.link=var.link)
   else tout <- twostage(aout,data=data,clusters=nclusters,theta.des=theta.des,var.link=var.link)
   if (!is.null(theta.des)) theta <- c(theta.des %*% tout$theta) else theta <- tout$theta
-###  if (attr(tout, "var.link") == 1) theta <- exp(tout$theta) 
+###  if (attr(tout, "var.link") == 1) theta <- exp(tout$theta)
   data$thetades  <- c(theta)
   data$delay <- tout$marginal.trunc
   data$surv <-  tout$marginal.surv
 
   dd <- fast.reshape(data,id=clusters)
 
-  v1 <- dd[,paste(entry,"1",sep="")]; 
+  v1 <- dd[,paste(entry,"1",sep="")];
   v2 <- dd[,paste(entry,"2",sep="")]
-  time1 <- dd[,paste(exit,"1",sep="")]; 
+  time1 <- dd[,paste(exit,"1",sep="")];
   time2 <- dd[,paste(exit,"2",sep="")]
-  status1 <- dd[,paste(status,"1",sep="")]; 
+  status1 <- dd[,paste(status,"1",sep="")];
   status2 <- dd[,paste(status,"2",sep="")]
   nn <- nrow(dd)
 
@@ -132,29 +132,29 @@ for (i in 1:Nit)
   pweight <- dd2$weight
   dtheta <- sum(abs(tout$theta-ptheta))
   dmarg <- sum(abs(beta-pbeta))
-  if ((dtheta+dmarg) < 0.001) break; 
+  if ((dtheta+dmarg) < 0.001) break;
   ptheta <- tout$theta
   if (model=="aalen") pbeta <- aout$cum[,-1] else  pbeta <- c(aout$gamma,aout$cum[,-1])
-} ## }}} 
+} ## }}}
 
-if (final.fitting==TRUE) {  ## {{{ 
-  if (model=="cox.aalen") aout <- cox.aalen(survformula,data=data,weights=1/pweight,n.sim=0,...) else 
+if (final.fitting==TRUE) {  ## {{{
+  if (model=="cox.aalen") aout <- cox.aalen(survformula,data=data,weights=1/pweight,n.sim=0,...) else
            aout <- aalen(survformula,data=data,weights=1/pweight,n.sim=0,...)
   tout <- twostage(aout,data=data,clusters=nclusters,theta.des=theta.des,var.link=var.link)
-} ## }}} 
+} ## }}}
 
 res <- list(marg=aout,two=tout,marg.weights=pweight,dtheta=dtheta,dmarg=dmarg,model=model)
 
 return(res)
-} ## }}} 
+} ## }}}
 
 ##' @export
 ###twin.dobdata <- function(survformula,data=data,clusters=NULL,
 ###                         entry="v",exit="time",status="status")
-###{ ## {{{ 
+###{ ## {{{
 ##### {{{  adding names of covariates from survival model to data frame if needed
 ##### adds names that are not in data (typically intercept from additive) model
-##### also reducing only to needed covariates 
+##### also reducing only to needed covariates
 ###
 ###d0 <- data[,c(entry,exit,status,clusters)]
 ###
