@@ -279,7 +279,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' betaiiid <- iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- iidBaseline(out1)
+##' Aiiid <- mets::iid.baseline.phreg(out1)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -1615,7 +1615,7 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
    if (se) {
    if (!robust) { 
 	   se.chaz <- object$se.cumhaz[,2] 
-	   varbeta <- object$II 
+	   varbeta <- object$ihessian  
 	   Pt <- apply(object$E/c(object$S0),2,cumsumstrata,strata,nstrata)
    } else {
           if (is.null(object$opt) | is.null(object$coef)) fixbeta<- 1 else fixbeta <- 0
