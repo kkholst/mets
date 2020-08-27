@@ -278,6 +278,9 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' ## making iid decomposition of regression parameters
 ##' betaiiid <- iid(out1)
 ##' 
+##' ## making iid decomposition of baseline at a specific time-point
+##' Aiiid <- iidBaseline(out1)
+##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   cl <- match.call()
@@ -693,8 +696,8 @@ coef.phreg  <- function(object,...) {
 
 ##' @export
 iid.phreg  <- function(x,type="robust",all=FALSE,...) {# {{{
-  invhess <- -solve(x$hessian)
-  orig.order <- FALSE
+ invhess <- -solve(x$hessian)
+ orig.order <- FALSE
 
 if (is.null(x$propodds)) {
   if (type=="robust") {	# {{{ cox model 
@@ -774,11 +777,85 @@ if (is.null(x$propodds)) {
   structure(UU%*%invhess,invhess=invhess,ncluster=ncluster)
 } # }}}
 
+##' @export
+iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
+{# {{{
+###  sum_i int_0^t f(s)/S_0(s) dM_{ki}(s) - P(t) \beta_k
+###  with possible strata and cluster "k", and i in clusters 
+  if (class(x)[1]!="phreg") stop("Must be phreg object\n"); 
+  if (is.null(time)) stop("Must give time for iid of baseline")
+
+  if (!is.null(x$propodds))  stop("Only for Cox model") 
+  ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
+  if (is.null(fixbeta)) 
+  if (is.null(x$opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+
+  xx <- x$cox.prep
+  btimexx <- c(1*(xx$time < time))
+
+  S0i2 <- S0i <- rep(0,length(xx$strata))
+  S0i[xx$jumps+1] <- 1/x$S0
+  S0i2[xx$jumps+1] <- 1/x$S0^2
+  Z <- xx$X
+  U <- E <- matrix(0,nrow(xx$X),x$p)
+  E[xx$jumps+1,] <- x$E
+  U[xx$jumps+1,] <- x$U
+  ###    
+  cumhaz <- c(cumsumstrata(S0i,xx$strata,xx$nstrata))
+  ### only up to time t
+  if (is.null(ft))  ft <- rep(1,length(xx$time))
+  cumS0i2 <- c(cumsumstrata(ft*S0i2*btimexx,xx$strata,xx$nstrata))
+  if (fixbeta==0) {
+	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+	  Ht <- apply(ft*E*S0i*btimexx,2,cumsumstrata,xx$strata,xx$nstrata)
+  } else Ht <- NULL
+  if (fixbeta==0) rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset)) else rr <- c(xx$sign*exp(xx$offset))
+  id <-   xx$id
+  mid <- max(id)+1
+  MGAiid <- ft*S0i*btimexx-cumS0i2*rr*c(xx$weights)
+
+  MGtiid <- NULL
+  if (fixbeta==0) {# {{{
+     invhess <- -solve(x$hessian)
+     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
+     MGt <- MGt %*% invhess
+     MGtiid <- apply(MGt,2,sumstrata,id,mid)
+     ## Ht efter strata
+     Htlast <- tailstrata(xx$strata,xx$nstrata)
+     HtS <- Ht[Htlast,,drop=FALSE]
+  }# }}}
+
+ ### \hat beta - \beta = \sum_i \beta_i  (iid) 
+ ### iid after baseline:
+ ### \hat A_s-A_s=\sum_{i clusters} \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \sum_i \beta_i
+ ### = \sum_{i clusters} ( \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \beta_i ) 
+
+ ### sum should be over id within different strata
+ newid <- mystrata2index(cbind(xx$strata,xx$id))
+ nnewid <- attr(newid,"nlevel")
+ idds <- cbind(newid,xx$strata,xx$id)
+ on <- order(newid)
+ idds <- idds[on,]
+ firstnewid <- (!duplicated(idds[,1]))
+ strata <- idds[firstnewid,2]
+ idstrata <- idds[firstnewid,3]
+
+ ## sum after id's with strata and order 
+ MGAiid <- sumstrata(MGAiid,newid-1,nnewid)
+
+ if (fixbeta==0) {
+     UU <-  apply(HtS[strata+1,,drop=FALSE]*MGtiid[idstrata+1,],1,sum)
+     MGAiid <- MGAiid - UU
+ }
+
+ return(list(time=time,base.iid=MGAiid,strata=strata,nstrata=xx$nstrata,idstrata=idstrata,
+	     nid=nnewid,beta.id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
+} # }}}
 
 ##' @export
 residuals.phreg  <- function(object,cumsum=FALSE,...) {# {{{
   orig.order <- FALSE
-x <- object
+  x <- object
 
 if (is.null(x$propodds)) { # {{{ cox model 
 	  xx <- x$cox.prep
@@ -870,7 +947,6 @@ if (is.null(x$propodds)) { # {{{ cox model
   
   return(out)
 } # }}}
-
 
 ##' @export
 robust.basehaz.phreg  <- function(x,type="robust",fixbeta=NULL,...) {# {{{

@@ -4,6 +4,8 @@
 \alias{cifreg}
 \alias{vecAllStrata}
 \alias{diffstrata}
+\alias{iid.baseline.cifreg}
+\alias{FGprediid}
 \title{CIF regression}
 \usage{
 cifreg(
@@ -90,6 +92,12 @@ plot(pfg)
 sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
 summary(sfg)
 plot(sfg)
+
+### predictions with CI based on iid decomposition of baseline and beta
+### fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
+### Biid= ii.baseline.cifreg(Biid,time=20)
+### FGprediid(Biid,bmt[1:5,])
+
 }
 \author{
 Thomas Scheike

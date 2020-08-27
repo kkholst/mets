@@ -5,6 +5,7 @@
 \alias{countID}
 \alias{pairRisk}
 \alias{mystrata}
+\alias{mstrata2index}
 \title{Finds subjects related to same cluster}
 \usage{
 cluster.index(

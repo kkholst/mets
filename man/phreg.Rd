@@ -48,6 +48,9 @@ bplot(rob1,se=TRUE,robust=TRUE)
 ## making iid decomposition of regression parameters
 betaiiid <- iid(out1)
 
+## making iid decomposition of baseline at a specific time-point
+Aiiid <- iidBaseline(out1)
+
 }
 \author{
 Klaus K. Holst, Thomas Scheike
