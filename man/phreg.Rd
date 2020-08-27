@@ -49,7 +49,7 @@ bplot(rob1,se=TRUE,robust=TRUE)
 betaiiid <- iid(out1)
 
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- iidBaseline(out1)
+Aiiid <- mets::iid.baseline.phreg(out1)
 
 }
 \author{

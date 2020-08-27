@@ -279,7 +279,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' betaiiid <- iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- mets::iid.baseline.phreg(out1)
+##' Aiiid <- mets:::iid.baseline.phreg(out1,time=30)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
