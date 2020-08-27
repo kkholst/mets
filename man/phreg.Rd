@@ -48,6 +48,9 @@ bplot(rob1,se=TRUE,robust=TRUE)
 ## making iid decomposition of regression parameters
 betaiiid <- iid(out1)
 
+## making iid decomposition of baseline at a specific time-point
+Aiiid <- mets:::iid.baseline.phreg(out1,time=30)
+
 }
 \author{
 Klaus K. Holst, Thomas Scheike

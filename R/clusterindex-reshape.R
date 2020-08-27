@@ -19,7 +19,7 @@
 ##' @param mat to return matrix of indeces
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
-##' @aliases countID pairRisk mystrata
+##' @aliases countID pairRisk mystrata mystrata2index
 ##' @export
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
@@ -146,7 +146,8 @@ mystrata <- function(ll,sort=TRUE) {# {{{
 	nll <- length(ll[[1]])
         ss <- rep(0,nll)
         nl <- unlist(lapply(ll,nlevels))
-        poss <- exp(revcumsum(log(nl))) 
+        poss <- c(exp(revcumsum(log(nl[-1]))))
+	poss <- c(poss,1)
 	for (j in seq(1,length(ll))) {
 	     ss <- ss+as.numeric(ll[[j]])*poss[j]
 	}
@@ -158,25 +159,22 @@ mystrata <- function(ll,sort=TRUE) {# {{{
 	return(sindex)
 } # }}}
 
-###mystrata <- function(ll,sort=TRUE) {# {{{
-###	if (!is.factor(ll[[1]])) ll[[1]] <- factor(ll[[1]])
-###	id <- as.numeric(ll[[1]]) 
-###        ss <- id
-###	for (j in seq(2,length(ll))) {
-###	     if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
-###             mm <- 1/nlevels(ll[[j]])
-###	     ## two decimals for each level
-###	     dec <- as.numeric(ll[[j]])/(nlevels(ll[[j]]))-mm/2
-###	     ss <- ss+dec/100^{j-2}
-###	}
-###	uss <- unique(ss)
-###	nindex <- length(uss)
-###        sindex <- fast.approx(uss,ss)
-###	dd <- data.frame(id=id,sindex=sindex)
-###        attr(dd,"nlevel") <- nindex
-###	return(dd)
-###} # }}}
-###
+##' @export
+mystrata2index <- function(ll,sort=TRUE) {# {{{
+	nll <- nrow(ll)
+        ss <- rep(0,nll)
+        nl <- apply(ll,2,max)
+        poss <- c(exp(revcumsum(log(nl[-1]))))
+	poss <- c(poss,1)
+	for (j in seq(1,ncol(ll))) { ss <- ss+ll[,j]*poss[j] }
+	uss <- unique(ss)
+	nindex <- length(uss)
+        sindex <- fast.approx(uss,ss)
+        attr(sindex,"nlevel") <- nindex
+        attr(sindex,"levels") <- nl 
+	return(sindex)
+} # }}}
+
 
 ##' Finds all pairs within a cluster (family)
 ##' 

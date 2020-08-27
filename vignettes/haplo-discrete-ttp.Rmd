@@ -1,0 +1,145 @@
+---
+title: "Haplotype Discrete Survival Models"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Discrete Survival Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+Haplotype Analysis for discrete TTP 
+===================================
+
+Cycle-specific logistic regression of haplo-type effects with
+known haplo-type probabilities. Given observed genotype G and
+unobserved haplotypes H we here mix out over the possible
+haplotypes using that $P(H|G)$ is given as input.
+
+\begin{align*}
+   S(t|x,G) & = E( S(t|x,H) | G)  = \sum_{h \in G} P(h|G) S(t|z,h)    
+\end{align*}
+so survival can be computed by mixing out over possible h given g.
+
+Survival is based on logistic regression for the discrete hazard
+function of the form
+\begin{align*}
+      \mbox{logit}(P(T=t| T >= t, x,h)) & = \alpha_t + x(h) beta         
+\end{align*}
+where x(h) is a regression design of x and haplotypes $h=(h_1,h_2)$
+
+For standard errors we assume that haplotype probabilities are known. 
+
+	
+We are particularly interested in the types haplotypes: 
+```{r}
+types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
+
+## some haplotypes frequencies for simulations 
+data(hapfreqs)
+print(hapfreqs)
+```
+
+Among the types of interest we look up the frequencies 
+and choose a baseline   
+
+```{r}
+www <-which(hapfreqs$haplotype %in% types)
+hapfreqs$freq[www]
+
+baseline=hapfreqs$haplotype[9]
+baseline
+```
+
+
+We have cycle specific data with $id$ and outcome $y$
+
+```{r}
+data(haploX)
+dlist(haploX,.~id|id %in% c(1,4,7))
+```
+and a list of possible haplo-types for each id and how likely they are  $p$ 
+(the sum of within each id is 1): 
+
+```{r}
+data(hHaplos) ## loads ghaplos 
+head(ghaplos)
+```
+
+The first id=1 has the haplotype fully observed, but id=2 has two possible haplotypes consistent with the
+observed genotype for this id, the probabiblities are 7\% and 93\%, respectively. 
+
+With the baseline given above we can specify a regression design that gives an effect if a "type" 
+is present (sm=0), or an additive effect of haplotypes (sm=1): 
+
+```{r}
+designftypes <- function(x,sm=0) {
+hap1=x[1]
+hap2=x[2]
+if (sm==0) y <- 1*( (hap1==types) | (hap2==types))
+if (sm==1) y <- 1*(hap1==types) + 1*(hap2==types)
+return(y)
+}
+
+```
+
+To fit the model we start by constructing a time-design (named X) 
+and  takes the haplotype distributions for each id 
+
+```{r}
+haploX$time <- haploX$times
+Xdes <- model.matrix(~factor(time),haploX)
+colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
+X <- dkeep(haploX,~id+y+time)
+X <- cbind(X,Xdes)
+Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
+desnames=paste("X",1:6,sep="")   # six X's related to 6 cycles 
+head(X)
+
+```
+
+Now we can fit the model with the design given by the designfunction
+```{r}
+out <- haplo.surv.discrete(X=X,y="y",time.name="time",
+      Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
+names(out$coef) <- c(desnames,types)
+out$coef
+summary(out)
+```
+
+Haplotypes "DCGCGCTCACG" "DTCCGCTGACG" gives increased hazard of pregnancy 
+
+The data was generated with these true coefficients 
+
+```{r}
+tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
+0.88830288,0.60756224,0.39802821,0.32706859)
+
+cbind(out$coef,tcoef)
+```
+
+The design fitted can be found in the output
+```{r}
+head(out$X,10)
+```
+
+
+SessionInfo
+============
+
+```{r}
+sessionInfo()
+```
+
