@@ -19,7 +19,7 @@
 ##' @param mat to return matrix of indeces
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
-##' @aliases countID pairRisk mystrata mstrata2index
+##' @aliases countID pairRisk mystrata mystrata2index
 ##' @export
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{

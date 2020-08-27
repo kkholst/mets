@@ -89,14 +89,14 @@ nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pfg <- predict(fg,nd)
 plot(pfg)
 
-sfg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+sfg <- cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
 summary(sfg)
 plot(sfg)
 
 ### predictions with CI based on iid decomposition of baseline and beta
-### fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
-### Biid= ii.baseline.cifreg(Biid,time=20)
-### FGprediid(Biid,bmt[1:5,])
+# fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
+# Biid <- iid.baseline.cifreg(Biid,time=20)
+# FGprediid(Biid,bmt[1:5,])
 
 }
 \author{
