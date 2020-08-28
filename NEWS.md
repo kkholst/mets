@@ -1,6 +1,9 @@
+# mets 1.2.8.1
+  - Maintenance release
+
 # mets 1.2.8
   - Augmentation of binomial regression model: BinAugmentCifstrata
-  - Augmentation of Fine-Gray model: FG_AugmentCifstrata 
+  - Augmentation of Fine-Gray model: FG_AugmentCifstrata
   - Double Fine-Gray model for two causes.
   - Likelihood evaluation of mvn uses Moore-Penrose pseudo-inverese (threshold set via lava.options(itol=...)
   - Vignette updates
