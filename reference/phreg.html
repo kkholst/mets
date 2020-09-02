@@ -73,7 +73,7 @@ Robust variance is default variance with the summary." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
       </span>
     </div>
 
@@ -106,6 +106,9 @@ Robust variance is default variance with the summary." />
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -217,7 +220,10 @@ so ordering after $id will give iid in order of data-set.</p>
 <span class='no'>rob1</span> <span class='kw'>&lt;-</span> <span class='fu'>robust.phreg</span>(<span class='no'>out1</span>)
 <span class='fu'>bplot</span>(<span class='no'>rob1</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='phreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## making iid decomposition of regression parameters</span>
-<span class='no'>betaiiid</span> <span class='kw'>&lt;-</span> <span class='fu'>iid</span>(<span class='no'>out1</span>)</div></pre>
+<span class='no'>betaiiid</span> <span class='kw'>&lt;-</span> <span class='fu'>iid</span>(<span class='no'>out1</span>)
+
+<span class='co'>## making iid decomposition of baseline at a specific time-point</span>
+<span class='no'>Aiiid</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>mets</span><span class='kw ns'>:::</span><span class='fu'>iid.baseline.phreg</span>(<span class='no'>out1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>30</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

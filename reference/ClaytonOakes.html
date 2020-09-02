@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
       </span>
     </div>
 
@@ -105,6 +105,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -218,15 +221,15 @@
 <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw pkg'>survival</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>lefttime</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>x</span>+<span class='fu'>cluster</span>(~<span class='fl'>1</span>,<span class='no'>cluster</span>),
                   <span class='kw'>cuts</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>)
 <span class='no'>e</span></div><div class='output co'>#&gt;                     Estimate     2.5%   97.5%
-#&gt; log-Var:(Intercept) -0.92225 -1.16925 -0.6753
-#&gt; x                    2.88803  2.58173  3.2307
-#&gt; (0,0.5]              1.07892  0.95530  1.2185
-#&gt; (0.5,1]              1.21697  1.06967  1.3846
+#&gt; log-Var:(Intercept) -0.92226 -1.16926 -0.6753
+#&gt; x                    2.88805  2.58174  3.2307
+#&gt; (0,0.5]              1.07891  0.95529  1.2185
+#&gt; (0.5,1]              1.21696  1.06966  1.3845
 #&gt; (1,2]                1.16268  1.01451  1.3325
 #&gt; 
 #&gt; Dependence parameters:
 #&gt;             Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%
-#&gt; (Intercept)  0.39762 0.31060 0.50903       0.16584 0.13442 0.2029</div><div class='input'>
+#&gt; (Intercept)  0.39762 0.31060 0.50902       0.16584 0.13442 0.2029</div><div class='input'>
 
 <span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'>simClaytonOakes</span>(<span class='fl'>500</span>,<span class='fl'>4</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='kw'>stoptime</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>left</span><span class='kw'>=</span><span class='fl'>0</span>)
 <span class='no'>d2</span>$<span class='no'>z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>d2</span>)); <span class='no'>d2</span>$<span class='no'>z</span>[<span class='no'>d2</span>$<span class='no'>cluster</span><span class='kw'>%in%</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>d2</span>$<span class='no'>cluster</span>,<span class='fl'>100</span>)] <span class='kw'>&lt;-</span> <span class='fl'>0</span>

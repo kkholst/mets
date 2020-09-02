@@ -73,7 +73,7 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
       </span>
     </div>
 
@@ -106,6 +106,9 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL" />
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -281,7 +284,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fg</span>)</div><div class='img'><img src='cifreg-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='no'>nd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>age</span><span class='kw'>=</span><span class='fl'>0</span>)
 <span class='no'>pfg</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>fg</span>,<span class='no'>nd</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pfg</span>)</div><div class='img'><img src='cifreg-4.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>sfg</span><span class='kw'>=</span><span class='fu'>cifreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='fu'>strata</span>(<span class='no'>tcell</span>)+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>propodds</span><span class='kw'>=</span><span class='kw'>NULL</span>)
+<span class='no'>sfg</span> <span class='kw'>&lt;-</span> <span class='fu'>cifreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='fu'>strata</span>(<span class='no'>tcell</span>)+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>propodds</span><span class='kw'>=</span><span class='kw'>NULL</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sfg</span>)</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    161
@@ -296,7 +299,13 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt;            Estimate Std.Err    2.5%   97.5% P-value
 #&gt; [platelet]  0.65416 0.11828 0.42233 0.88599  0.0035
 #&gt; [age]       1.40784 0.11240 1.18753 1.62815  0.0003
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>sfg</span>)</div><div class='img'><img src='cifreg-5.png' alt='' width='700' height='433' /></div></pre>
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>sfg</span>)</div><div class='img'><img src='cifreg-5.png' alt='' width='700' height='433' /></div><div class='input'>
+### predictions with CI based on iid decomposition of baseline and beta
+# fg &lt;- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
+# Biid &lt;- iid.baseline.cifreg(Biid,time=20)
+# FGprediid(Biid,bmt[1:5,])
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

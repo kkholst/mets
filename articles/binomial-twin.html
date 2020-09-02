@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
       </span>
     </div>
 
@@ -64,6 +64,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -106,7 +109,7 @@
       <h1 data-toc-skip>Analysis of bivariate binomial data: Twin analysis</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-08-26</h4>
+            <h4 class="date">2020-09-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/binomial-twin.Rmd"><code>vignettes/binomial-twin.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-twin.Rmd</code></div>
@@ -456,12 +459,15 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <p>We now turn attention to specific polygenic modelling where special random effects are used to specify ACE, AE, ADE models and so forth. This is very easy with the bptwin function. The key parts of the output are the sizes of the genetic component A and the environmental component, and we can compare with the results of the unstructed model above. Also formally we can test if this submodel is acceptable by a likelihood ratio test.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">b1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bptwin.html">bptwin</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">DZ</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ace"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">b1</span>)
+<span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span>
+
+<span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;              Estimate   Std.Err        Z   p-value    </span>
-<span class="co">#&gt; (Intercept)  -3.70371   0.24449 -15.1485 &lt; 2.2e-16 ***</span>
-<span class="co">#&gt; sexmale       0.83310   0.08255  10.0920 &lt; 2.2e-16 ***</span>
-<span class="co">#&gt; log(var(A))   1.18278   0.17179   6.8851 5.774e-12 ***</span>
-<span class="co">#&gt; log(var(C)) -29.99519        NA       NA        NA    </span>
+<span class="co">#&gt;              Estimate   Std.Err         Z   p-value    </span>
+<span class="co">#&gt; (Intercept)  -3.70371   0.24449  -15.1485 &lt; 2.2e-16 ***</span>
+<span class="co">#&gt; sexmale       0.83310   0.08255   10.0920 &lt; 2.2e-16 ***</span>
+<span class="co">#&gt; log(var(A))   1.18278   0.17179    6.8851 5.774e-12 ***</span>
+<span class="co">#&gt; log(var(C)) -31.88101   0.14929 -213.5454 &lt; 2.2e-16 ***</span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
@@ -470,7 +476,7 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                    Estimate 2.5%    97.5%  </span>
 <span class="co">#&gt; A                  0.76545  0.70500 0.82590</span>
-<span class="co">#&gt; C                  0.00000  0.00000 0.00000</span>
+<span class="co">#&gt; C                  0.00000      NaN     NaN</span>
 <span class="co">#&gt; E                  0.23455  0.17410 0.29500</span>
 <span class="co">#&gt; MZ Tetrachoric Cor 0.76545  0.69793 0.81948</span>
 <span class="co">#&gt; DZ Tetrachoric Cor 0.38272  0.35210 0.41253</span>
@@ -699,17 +705,17 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
-<span class="co">#&gt; R version 4.0.0 (2020-04-24)</span>
+<span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /home/travis/R-bin/lib/R/lib/libRblas.so</span>
-<span class="co">#&gt; LAPACK: /home/travis/R-bin/lib/R/lib/libRlapack.so</span>
+<span class="co">#&gt; BLAS:   /usr/lib/openblas-base/libblas.so.3</span>
+<span class="co">#&gt; LAPACK: /usr/lib/libopenblasp-r0.2.18.so</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; locale:</span>
 <span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
-<span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=C              </span>
+<span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
 <span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
 <span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
 <span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
@@ -719,19 +725,19 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] mets_1.2.8      lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
+<span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
-<span class="co">#&gt;  [4] splines_4.0.0       MASS_7.3-51.5       lattice_0.20-41    </span>
+<span class="co">#&gt;  [4] splines_4.0.2       MASS_7.3-51.6       lattice_0.20-41    </span>
 <span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.0         grid_4.0.0          xfun_0.16          </span>
+<span class="co">#&gt; [10] tools_4.0.2         grid_4.0.2          xfun_0.16          </span>
 <span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
 <span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     ucminf_1.1-4       </span>
 <span class="co">#&gt; [19] numDeriv_2016.8-1.1 pkgdown_1.5.1       crayon_1.3.4       </span>
-<span class="co">#&gt; [22] Matrix_1.2-18       fs_1.4.2            memoise_1.1.0      </span>
+<span class="co">#&gt; [22] Matrix_1.2-18       fs_1.5.0            memoise_1.1.0      </span>
 <span class="co">#&gt; [25] evaluate_0.14       rmarkdown_2.3       stringi_1.4.6      </span>
-<span class="co">#&gt; [28] compiler_4.0.0      desc_1.2.0          backports_1.1.9    </span>
+<span class="co">#&gt; [28] compiler_4.0.2      desc_1.2.0          backports_1.1.9    </span>
 <span class="co">#&gt; [31] mvtnorm_1.1-1</span></pre></body></html></div>
 </div>
   </div>
