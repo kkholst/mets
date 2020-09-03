@@ -188,14 +188,14 @@ with $M_{ic}$ the standard censoring martingale.
 The function $q(t)$ that reflects that the censoring only 
 affects the terms related to cause "2" jumps, can be written as (see Appendix B2)
 \begin{align*} 
-	q(t) & =   E( H(t,X) I(T  \leq t, \epsilon=2)/G_c(T)) = E( H(t,X) F_2(t,X) ), 
+	q(t) & =   E( H(t,X) I(T  \leq t, \epsilon=2) I(C > T)/G_c(T)) = E( H(t,X) F_2(t,X) ), 
 \end{align*}
 with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s) d \Lambda_1(s,X)$ and since $\pi(t)=E(Y(t))=S(t) G_c(t)$.
 
 In the case where the censoring weights are stratified (based on $X$)
 we get the influence functions related to the censoring term with 
 \begin{align*} 
-	q(t,X) & =   E( H(t,X) I(T  \leq t, \epsilon=2)/G_c(T) | X) = H(t,X) F_2(t,X), 
+	q(t,X) & =   E( H(t,X) I(T  \leq t, \epsilon=2) I(T < C)/G_c(T,X) | X) = H(t,X) F_2(t,X), 
 \end{align*}
 so that the influence function becomes 
 \begin{align*}
@@ -223,9 +223,8 @@ then fit the FG-model based on this augmentation term and do a couple of iterati
 
 Again we note slightly smaller standard errors when augmenting the estimator. 
 
-
 The function \verb+FG_AugmentCifstrata+ 
-	compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
+compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
 \begin{align*}
  U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
 	H(t,X_i,E,G_c,\Lambda_1)  dM_{ci}(t)
@@ -271,8 +270,8 @@ are harder to compute and only approximative
 In the ${{\bf timereg}}$-package the model can be 
 fitted using different estimators that are more efficient using different weights but this is much slower.  
 
-
 Fitting the model and getting OR's 
+
 ```{r}
  or <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1)
  summary(or)
