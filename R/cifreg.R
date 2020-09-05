@@ -1066,7 +1066,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     ## adjust SE and var based on augmentation term
     fga$var.orig <- fga$var
     fga$augment <- augment$augment
-    fga$iid <- fga$iid + MGiid %*% fga$ihessian
+    fga$iid <- fga$iid.naive + MGiid %*% fga$ihessian
     fga$var <- crossprod(fga$iid)
     fga$se.coef <-  diag(fga$var)^.5
     fga$MGciid <- MGiid
