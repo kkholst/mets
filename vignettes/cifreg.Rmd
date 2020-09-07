@@ -58,7 +58,7 @@ quite flexible essentially being a Cox-model. On the downside
 is that the coefficients are quite hard to interpret since they are the $cloglog$ 
 coefficients of $1-F_1(t,X)$. Specifically, 
 \begin{align}
-\log(-\log( \frac{1-F_1(t,X_1+1,X_2)}{1-F_1(t,X_1,X_2)})) & =  \beta_1,
+\log(-\log( 1-F_1(t,X_1+1,X_2))) - \log(-\log( 1-F_1(t,X_1,X_2))) & =  \beta_1,
 \end{align}
 so the effect is $\beta_1$ of $X_1$ is on $1-F_1(t,X)$ on the $cloglog$ scale.
 
