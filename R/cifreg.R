@@ -939,6 +939,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     statusE <- (status==cause)
     if (sum(statusE)==0) stop("No events of type 1 before time \n");
 
+
     ## sorting after time and statusC, but event times unique after order
     Zcall <- cbind(status,strata)
     dd <- .Call("FastCoxPrepStrata",entry,exit,statusC,X,id,
@@ -954,7 +955,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     jumpsD <- which(xxstatus!=cens.code)
     rr <- c(dd$sign*exp(dd$offset))
     ## S0 after strata
-    S0 = c(revcumsumstrata(rr,strata,nstrata))
+    S0 = c(revcumsumstrata(rr,xxstrata,nstrata))
     ## S0 after strataC
     S00C = c(revcumsumstrata(rr,xxstrataC,nstrataC))
 
@@ -1001,7 +1002,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     tailcstrata <- tailstrata(xxstrataC,nstrataC)
     Gcstart <- Gc[tailcstrata]
 
-    dstrata <- mystrata(data.frame(cbind(xxstrataC,xxstrata)))
+    dstrata <- mystrata2index(cbind(xxstrataC,xxstrata))
     ndstrata <- attr(dstrata,"nlevel")
     lastt <- tailstrata(dstrata-1,ndstrata)
 
@@ -1018,12 +1019,11 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     }
     ERLam1fg0  <- apply(Et,2,fff)
 
-    gt <-  RLam1fg*c(cif2/(Gc*St))
-    gt[gt==Inf] <- 0
-    gt[is.na(gt)] <- 0
-    ERLam1fg  <- ERLam1fg0*c(cif2/(Gc*St))
-    ERLam1fg[ERLam1fg==Inf] <- 0
-    ERLam1fg[is.na(ERLam1fg)] <- 0
+    cif2GS <-  c(cif2/(Gc*St))
+    cif2GS[St<0.00001] <- 0
+    cif2GS[Gc<0.00001] <- 0
+    gt <-  RLam1fg*cif2GS
+    ERLam1fg  <- ERLam1fg0*cif2GS
 
     sss <- headstrata(dstrata-1,ndstrata)
     gtstart <- gt[sss]
@@ -1060,16 +1060,21 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
     data$strataCC <- cens.strata
 
-    fga <- cifreg(formulans,data=data,cause=cause,
-                  propodds=NULL,augmentation=augment$augment,cens.model=cens.model,...)
+    fga <- tryCatch(cifreg(formulans,data=data,cause=cause,
+                  propodds=NULL,augmentation=augment$augment,cens.model=cens.model,...),error=function(x) NULL) 
 
-    ## adjust SE and var based on augmentation term
-    fga$var.orig <- fga$var
-    fga$augment <- augment$augment
-    fga$iid <- fga$iid.naive + MGiid %*% fga$ihessian
-    fga$var <- crossprod(fga$iid)
-    fga$se.coef <-  diag(fga$var)^.5
-    fga$MGciid <- MGiid
+    if (!is.null(fga)) {
+	    ## adjust SE and var based on augmentation term
+	    fga$var.orig <- fga$var
+	    fga$augment <- augment$augment
+	    fga$iid <- fga$iid.naive + MGiid %*% fga$ihessian
+	    fga$var <- crossprod(fga$iid)
+	    fga$se.coef <-  diag(fga$var)^.5
+	    fga$MGciid <- MGiid
+    } else  {
+	    fga$augment <- augment$augment
+	    fga$MGciid <- MGiid
+    }
 
     return(fga)
 }# }}})

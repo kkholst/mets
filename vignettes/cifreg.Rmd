@@ -237,7 +237,7 @@ $strata()$ in the call.  Then fits the FG model so solve the
 
 Then we may iterate to get a solution to the augmented score equation
 \begin{align*}
- U_n^{A}(\beta_\infty)  + U^{FG}_{n}(\beta_\infty) = 0 
+ U_n^{A}(\beta_\infty)  + U^{FG}_{n}(\beta_\infty) = 0.
 \end{align*}
 
 The censoring model here is one overall Kaplan-Meier. 
