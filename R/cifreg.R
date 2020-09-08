@@ -1064,20 +1064,21 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
                   propodds=NULL,augmentation=augment$augment,cens.model=cens.model,...),error=function(x) NULL) 
 
     if (!is.null(fga)) {
-	    ## adjust SE and var based on augmentation term
-	    fga$var.orig <- fga$var
-	    fga$augment <- augment$augment
-	    fga$iid <- fga$iid.naive + MGiid %*% fga$ihessian
-	    fga$var <- crossprod(fga$iid)
-	    fga$se.coef <-  diag(fga$var)^.5
-	    fga$MGciid <- MGiid
+    ## adjust SE and var based on augmentation term
+    fga$var.orig <- fga$var
+    fga$augment <- augment$augment
+    fga$iid <- fga$iid.naive + MGiid %*% fga$ihessian
+    fga$var <- crossprod(fga$iid)
+    fga$se.coef <-  diag(fga$var)^.5
+    fga$MGciid <- MGiid
     } else  {
-	    fga$augment <- augment$augment
-	    fga$MGciid <- MGiid
+    fga$augment <- augment$augment
+    fga$MGciid <- MGiid
     }
 
     return(fga)
 }# }}})
+
 
 
 ##' @export
