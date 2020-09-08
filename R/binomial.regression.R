@@ -540,7 +540,7 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
   jumpsD <- which(xxstatus!=cens.code)
   jumps1 <- which(xxstatus==cause)
   rr <- c(dd$sign*exp(dd$offset))
-  S0 = c(revcumsumstrata(rr,strata,nstrata))
+  S0 = c(revcumsumstrata(rr,xxstrata,nstrata))
   ## S0 after strataC
   S00C = c(revcumsumstrata(rr,xxstrataC,nstrataC))
 
@@ -581,8 +581,8 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  cif1time <- cif1[tailstrata(xxstrata,nstrata)]
  ciftt <- cif1time[xxstrata+1]
  ft <-  (ciftt-cif1)/(Gc*St)
- ft[ft==Inf] <- 0
- ft[is.na(ft)] <- 0
+ ft[Gc<0.00001] <- 0
+ ft[St<0.00001] <- 0
 
  Z <- dd$X
  U1 <- matrix(0,nrow(Z),1)
@@ -595,18 +595,8 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  augment <- apply(MGt,2,sum)
 
  ## drop strata's from formula and run with augmention term
-### # {{{
-### drop.strata <- function(x) {
-###   mm <- unlist(Specials(x,"strata"))
-###   for (i in mm) x <- update(x, as.formula(paste(".~.-strata(",i,")")))
-###   mm <- unlist(Specials(x,"strataC"))
-###   for (i in mm) x <- update(x,as.formula(paste(".~.-strataC(",i,")")))
-###   return(x)
-### }
-### # }}}
-
  formulans <- drop.strata(formula)
- ## mangler lige cens vægte 
+ ## censoring weights not used 
  if (nstrataC==1) cens.model <- ~+1 else cens.model <- ~strata(strataCC)
  data$strataCC <- strataC
 
