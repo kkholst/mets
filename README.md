@@ -1,5 +1,5 @@
 <!-- badges: start -->
-  [![travis](https://travis-ci.org/kkholst/mets.svg?branch=master)](https://travis-ci.org/kkholst/mets)
+  [![travis](https://travis-ci.com/kkholst/mets.svg?branch=master)](https://travis-ci.com/kkholst/mets)
   [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg?branch=master)](https://codecov.io/github/kkholst/mets?branch=master)
   [![cran](https://www.r-pkg.org/badges/version-last-release/mets)](https://CRAN.R-project.org/package=mets)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/mets)](https://cranlogs.r-pkg.org/downloads/total/last-month/mets)
