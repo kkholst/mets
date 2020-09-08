@@ -753,7 +753,6 @@ colnames(preds) <- c("pred",paste("se",conf.type[1],sep="-"),"lower","upper")
 return(preds)
 }# }}}
 
-
 ##' @export
 strataC <- survival:::strata
 
@@ -1078,7 +1077,6 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
 
     return(fga)
 }# }}})
-
 
 
 ##' @export
