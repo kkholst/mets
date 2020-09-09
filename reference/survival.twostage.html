@@ -289,37 +289,37 @@ of the estimating equations. Here it is assumed that the second subject of each 
     </div>
 
     <pre class="usage"><span class='fu'>survival.twostage</span>(
-  <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
-  <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
-  <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>baseline.iid</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"clayton.oakes"</span>,
-  <span class='kw'>marginal.trunc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>marginal.survival</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>marginal.status</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>se.clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>numDeriv</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>random.design</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pairs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dim.theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>numDeriv.method</span> <span class='kw'>=</span> <span class='st'>"simple"</span>,
-  <span class='kw'>additive.gamma.sum</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.par</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cr.models</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>case.control</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ascertained</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>shut.up</span> <span class='kw'>=</span> <span class='fl'>0</span>
+  <span class='kw'>margsurv</span>,
+  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
+  score.method = <span class='st'>"nr"</span>,
+  Nit = <span class='fl'>60</span>,
+  detail = <span class='fl'>0</span>,
+  clusters = <span class='kw'>NULL</span>,
+  silent = <span class='fl'>1</span>,
+  weights = <span class='kw'>NULL</span>,
+  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  theta = <span class='kw'>NULL</span>,
+  theta.des = <span class='kw'>NULL</span>,
+  var.link = <span class='fl'>1</span>,
+  baseline.iid = <span class='fl'>1</span>,
+  step = <span class='fl'>0.5</span>,
+  model = <span class='st'>"clayton.oakes"</span>,
+  marginal.trunc = <span class='kw'>NULL</span>,
+  marginal.survival = <span class='kw'>NULL</span>,
+  marginal.status = <span class='kw'>NULL</span>,
+  strata = <span class='kw'>NULL</span>,
+  se.clusters = <span class='kw'>NULL</span>,
+  numDeriv = <span class='fl'>0</span>,
+  random.design = <span class='kw'>NULL</span>,
+  pairs = <span class='kw'>NULL</span>,
+  dim.theta = <span class='kw'>NULL</span>,
+  numDeriv.method = <span class='st'>"simple"</span>,
+  additive.gamma.sum = <span class='kw'>NULL</span>,
+  var.par = <span class='fl'>1</span>,
+  cr.models = <span class='kw'>NULL</span>,
+  case.control = <span class='fl'>0</span>,
+  ascertained = <span class='fl'>0</span>,
+  shut.up = <span class='fl'>0</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -477,15 +477,19 @@ Scheike, Holst, Hjelmborg (2015), LIDA</p>
 Scheike, Holst, Hjelmborg (2014), LIDA</p>
 <p>Additive Gamma frailty models for competing risks data, Biometrics (2015)
 Eriksson and Scheike (2015),</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>diabetes</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>diabetes</span>)
 
 <span class='co'># Marginal Cox model  with treat as covariate</span>
-<span class='no'>margph</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>treat</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
+<span class='kw'>margph</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>treat</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>diabetes</span>)
 <span class='co'>### Clayton-Oakes, MLE</span>
-<span class='no'>fitco1</span><span class='kw'>&lt;-</span><span class='fu'>twostageMLE</span>(<span class='no'>margph</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco1</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>fitco1</span><span class='op'>&lt;-</span><span class='fu'><a href='twostageMLE.html'>twostageMLE</a></span>(<span class='kw'>margph</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>1.0</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitco1</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                 Coef.        SE       z       P-val Kendall tau         SE
 #&gt; dependence1 0.9526614 0.3543033 2.68883 0.007170289    0.322645 0.08127892
@@ -496,10 +500,11 @@ Eriksson and Scheike (2015),</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>### Plackett model</span>
-<span class='no'>mph</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>treat</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
-<span class='no'>fitp</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>mph</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>3.0</span>,<span class='kw'>Nit</span><span class='kw'>=</span><span class='fl'>40</span>,
-               <span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,<span class='kw'>var.link</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"plackett"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitp</span>)</div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
+<span class='kw'>mph</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>treat</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>diabetes</span>)
+<span class='kw'>fitp</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>mph</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>3.0</span>,Nit=<span class='fl'>40</span>,
+               clusters=<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>id</span>,var.link=<span class='fl'>1</span>,model=<span class='st'>"plackett"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitp</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;             log-Coef.        SE        z        P-val Spearman Corr.         SE
 #&gt; dependence1   1.14188 0.2754994 4.144764 3.401635e-05      0.3648217 0.08073474
@@ -514,9 +519,10 @@ Eriksson and Scheike (2015),</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>### Clayton-Oakes</span>
-<span class='no'>fitco2</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>mph</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>0.0</span>,<span class='kw'>detail</span><span class='kw'>=</span><span class='fl'>0</span>,
-                 <span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,<span class='kw'>var.link</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco2</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>fitco2</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>mph</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>0.0</span>,detail=<span class='fl'>0</span>,
+                 clusters=<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>id</span>,var.link=<span class='fl'>1</span>,model=<span class='st'>"clayton.oakes"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitco2</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;               log-Coef.       SE          z     P-val Kendall tau         SE
@@ -530,9 +536,10 @@ Eriksson and Scheike (2015),</p>
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='no'>fitco3</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>margph</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>,<span class='kw'>detail</span><span class='kw'>=</span><span class='fl'>0</span>,
-                 <span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,<span class='kw'>var.link</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco3</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='kw'>fitco3</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>margph</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>1.0</span>,detail=<span class='fl'>0</span>,
+                 clusters=<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>id</span>,var.link=<span class='fl'>0</span>,model=<span class='st'>"clayton.oakes"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitco3</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                 Coef.        SE        z       P-val Kendall tau         SE
 #&gt; dependence1 0.9526619 0.3129723 3.043917 0.002335193   0.3226451 0.07179736
@@ -543,10 +550,11 @@ Eriksson and Scheike (2015),</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>### without covariates but with stratafied</span>
-<span class='no'>marg</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~+<span class='fu'>strata</span>(<span class='no'>treat</span>)+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
-<span class='no'>fitpa</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>,
-                <span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitpa</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>marg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>treat</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>diabetes</span>)
+<span class='kw'>fitpa</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>marg</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>1.0</span>,
+                clusters=<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>id</span>,model=<span class='st'>"clayton.oakes"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitpa</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;               log-Coef.        SE          z     P-val Kendall tau         SE
@@ -561,9 +569,10 @@ Eriksson and Scheike (2015),</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='no'>fitcoa</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1.0</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>diabetes</span>$<span class='no'>id</span>,
-                 <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitcoa</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>fitcoa</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>marg</span>,data=<span class='kw'>diabetes</span>,theta=<span class='fl'>1.0</span>,clusters=<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>id</span>,
+                 model=<span class='st'>"clayton.oakes"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitcoa</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;               log-Coef.        SE          z     P-val Kendall tau         SE
@@ -581,10 +590,12 @@ Eriksson and Scheike (2015),</p>
 <span class='co'>### Piecewise constant cross hazards ratio modelling</span>
 <span class='co'>########################################################</span>
 
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='fu'>simClaytonOakes</span>(<span class='fl'>2000</span>,<span class='fl'>2</span>,<span class='fl'>0.5</span>,<span class='fl'>0</span>,<span class='kw'>stoptime</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>left</span><span class='kw'>=</span><span class='fl'>0</span>),!<span class='no'>truncated</span>)
-<span class='no'>udp</span> <span class='kw'>&lt;-</span> <span class='fu'>piecewise.twostage</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>score.method</span><span class='kw'>=</span><span class='st'>"optimize"</span>,
-                          <span class='kw'>id</span><span class='kw'>=</span><span class='st'>"cluster"</span>,<span class='kw'>timevar</span><span class='kw'>=</span><span class='st'>"time"</span>,
-                          <span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>,<span class='kw'>silent</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; Data-set  1 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 519 of  2000</span></div><div class='output co'>#&gt; Data-set  2 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 249 of  1223</span></div><div class='output co'>#&gt; Data-set  3 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 254 of  1226</span></div><div class='output co'>#&gt; Data-set  4 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 615 of  968</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>udp</span>)</div><div class='output co'>#&gt; [1] 1
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='fu'><a href='simClaytonOakes.html'>simClaytonOakes</a></span>(<span class='fl'>2000</span>,<span class='fl'>2</span>,<span class='fl'>0.5</span>,<span class='fl'>0</span>,stoptime=<span class='fl'>2</span>,left=<span class='fl'>0</span>),<span class='op'>!</span><span class='kw'>truncated</span>)
+<span class='kw'>udp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>piecewise.twostage</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>2</span>),data=<span class='kw'>d</span>,score.method=<span class='st'>"optimize"</span>,
+                          id=<span class='st'>"cluster"</span>,timevar=<span class='st'>"time"</span>,
+                          status=<span class='st'>"status"</span>,model=<span class='st'>"clayton.oakes"</span>,silent=<span class='fl'>0</span>)
+</div><div class='output co'>#&gt; Data-set  1 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 519 of  2000</span></div><div class='output co'>#&gt; Data-set  2 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 249 of  1223</span></div><div class='output co'>#&gt; Data-set  3 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 254 of  1226</span></div><div class='output co'>#&gt; Data-set  4 out of  4 </div><div class='output co'>#&gt; <span class='message'>  Number of joint events: 615 of  968</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>udp</span>)
+</div><div class='output co'>#&gt; [1] 1
 #&gt; Dependence parameter for Clayton-Oakes model 
 #&gt; Score of log-likelihood for parameter estimates (too large?)
 #&gt;              0 - 0.5     0.5 - 2
@@ -612,20 +623,21 @@ Eriksson and Scheike (2015),</p>
 <span class='co'>##ud4=surv.boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")</span>
 
 <span class='co'>## everything done in one call</span>
-<span class='no'>ud</span> <span class='kw'>&lt;-</span> <span class='fu'>piecewise.data</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>timevar</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"cluster"</span>)
-<span class='no'>ud</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>ud</span>$<span class='no'>strata</span>);
-<span class='no'>ud</span>$<span class='no'>intstrata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>ud</span>$<span class='no'>intstrata</span>)
+<span class='kw'>ud</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>piecewise.data</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>2</span>),data=<span class='kw'>d</span>,timevar=<span class='st'>"time"</span>,status=<span class='st'>"status"</span>,id=<span class='st'>"cluster"</span>)
+<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span>);
+<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>intstrata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>intstrata</span>)
 
 <span class='co'>## makes strata specific id variable to identify pairs within strata</span>
 <span class='co'>## se's computed based on the id variable across strata "cluster"</span>
-<span class='no'>ud</span>$<span class='no'>idstrata</span> <span class='kw'>&lt;-</span> <span class='no'>ud</span>$<span class='no'>id</span>+(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='no'>ud</span>$<span class='no'>strata</span>)-<span class='fl'>1</span>)*<span class='fl'>2000</span>
+<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>idstrata</span> <span class='op'>&lt;-</span> <span class='kw'>ud</span><span class='op'>$</span><span class='kw'>id</span><span class='op'>+</span>(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span>)<span class='op'>-</span><span class='fl'>1</span>)<span class='op'>*</span><span class='fl'>2000</span>
 
-<span class='no'>marg2</span> <span class='kw'>&lt;-</span> <span class='fu'>aalen</span>(<span class='fu'>Surv</span>(<span class='no'>boxtime</span>,<span class='no'>status</span>)~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>num</span>):<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>intstrata</span>),
-               <span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>,<span class='kw'>n.sim</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>0</span>)
-<span class='no'>tdes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>)
-<span class='no'>fitp2</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>,<span class='kw'>se.clusters</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>idstrata</span>,
-                <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>tdes</span>,<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitp2</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>marg2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/aalen.html'>aalen</a></span>(<span class='fu'>Surv</span>(<span class='kw'>boxtime</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>num</span>)<span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>intstrata</span>),
+               data=<span class='kw'>ud</span>,n.sim=<span class='fl'>0</span>,robust=<span class='fl'>0</span>)
+<span class='kw'>tdes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>),data=<span class='kw'>ud</span>)
+<span class='kw'>fitp2</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>marg2</span>,data=<span class='kw'>ud</span>,se.clusters=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>cluster</span>,clusters=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>idstrata</span>,
+                model=<span class='st'>"clayton.oakes"</span>,theta.des=<span class='kw'>tdes</span>,step=<span class='fl'>0.5</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitp2</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                           log-Coef.         SE         z        P-val
@@ -652,12 +664,13 @@ Eriksson and Scheike (2015),</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>### now fitting the model with symmetry, i.e. strata 2 and 3 same effect</span>
-<span class='no'>ud</span>$<span class='no'>stratas</span> <span class='kw'>&lt;-</span> <span class='no'>ud</span>$<span class='no'>strata</span>;
-<span class='no'>ud</span>$<span class='no'>stratas</span>[<span class='no'>ud</span>$<span class='no'>strata</span><span class='kw'>==</span><span class='st'>"0.5-2,0-0.5"</span>] <span class='kw'>&lt;-</span> <span class='st'>"0-0.5,0.5-2"</span>
-<span class='no'>tdes2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>stratas</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>)
-<span class='no'>fitp3</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>idstrata</span>,<span class='kw'>se.cluster</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,
-                <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>tdes2</span>,<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitp3</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>stratas</span> <span class='op'>&lt;-</span> <span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span>;
+<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>stratas</span>[<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span><span class='op'>==</span><span class='st'>"0.5-2,0-0.5"</span>] <span class='op'>&lt;-</span> <span class='st'>"0-0.5,0.5-2"</span>
+<span class='kw'>tdes2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>stratas</span>),data=<span class='kw'>ud</span>)
+<span class='kw'>fitp3</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>marg2</span>,data=<span class='kw'>ud</span>,clusters=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>idstrata</span>,se.cluster=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>cluster</span>,
+                model=<span class='st'>"clayton.oakes"</span>,theta.des=<span class='kw'>tdes2</span>,step=<span class='fl'>0.5</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitp3</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                            log-Coef.         SE         z        P-val
@@ -681,9 +694,10 @@ Eriksson and Scheike (2015),</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>### same model using strata option, a bit slower</span>
-<span class='no'>fitp4</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>marg2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>ud</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,<span class='kw'>se.cluster</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>cluster</span>,
-                <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"clayton.oakes"</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>tdes2</span>,<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>0.5</span>,<span class='kw'>strata</span><span class='kw'>=</span><span class='no'>ud</span>$<span class='no'>strata</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitp4</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>fitp4</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>marg2</span>,data=<span class='kw'>ud</span>,clusters=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>cluster</span>,se.cluster=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>cluster</span>,
+                model=<span class='st'>"clayton.oakes"</span>,theta.des=<span class='kw'>tdes2</span>,step=<span class='fl'>0.5</span>,strata=<span class='kw'>ud</span><span class='op'>$</span><span class='kw'>strata</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitp4</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                            log-Coef.         SE         z        P-val
@@ -710,26 +724,29 @@ Eriksson and Scheike (2015),</p>
  <span class='co'>## Reduce Ex.Timings</span>
 <span class='co'>### structured random effects model additive gamma ACE</span>
 <span class='co'>### simulate structured two-stage additive gamma ACE model</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>simClaytonOakes.twin.ace</span>(<span class='fl'>4000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>3</span>)
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>twin.polygen.design</span>(<span class='no'>data</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"cluster"</span>)
-<span class='no'>pardes</span> <span class='kw'>&lt;-</span> <span class='no'>out</span>$<span class='no'>pardes</span>
-<span class='no'>pardes</span></div><div class='output co'>#&gt;      [,1] [,2]
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simClaytonOakes.twin.ace</a></span>(<span class='fl'>4000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>3</span>)
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>twin.polygen.design</a></span>(<span class='kw'>data</span>,id=<span class='st'>"cluster"</span>)
+<span class='kw'>pardes</span> <span class='op'>&lt;-</span> <span class='kw'>out</span><span class='op'>$</span><span class='kw'>pardes</span>
+<span class='kw'>pardes</span>
+</div><div class='output co'>#&gt;      [,1] [,2]
 #&gt; [1,]  1.0    0
 #&gt; [2,]  0.5    0
 #&gt; [3,]  0.5    0
 #&gt; [4,]  0.5    0
-#&gt; [5,]  0.0    1</div><div class='input'><span class='no'>des.rv</span> <span class='kw'>&lt;-</span> <span class='no'>out</span>$<span class='no'>des.rv</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>des.rv</span>)</div><div class='output co'>#&gt;   MZ DZ DZns1 DZns2 env
+#&gt; [5,]  0.0    1</div><div class='input'><span class='kw'>des.rv</span> <span class='op'>&lt;-</span> <span class='kw'>out</span><span class='op'>$</span><span class='kw'>des.rv</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>des.rv</span>)
+</div><div class='output co'>#&gt;   MZ DZ DZns1 DZns2 env
 #&gt; 1  1  0     0     0   1
 #&gt; 2  1  0     0     0   1
 #&gt; 3  1  0     0     0   1
 #&gt; 4  1  0     0     0   1
 #&gt; 5  1  0     0     0   1
-#&gt; 6  1  0     0     0   1</div><div class='input'><span class='no'>aa</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>x</span>+<span class='fu'>cluster</span>(<span class='no'>cluster</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>data</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>0</span>)
-<span class='no'>ts</span> <span class='kw'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='no'>aa</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>data</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>data</span>$<span class='no'>cluster</span>,<span class='kw'>detail</span><span class='kw'>=</span><span class='fl'>0</span>,
-               <span class='kw'>theta</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>),<span class='kw'>var.link</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>0.5</span>,
-               <span class='kw'>random.design</span><span class='kw'>=</span><span class='no'>des.rv</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>pardes</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>ts</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+#&gt; 6  1  0     0     0   1</div><div class='input'><span class='kw'>aa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>cluster</span>),data=<span class='kw'>data</span>,robust=<span class='fl'>0</span>)
+<span class='kw'>ts</span> <span class='op'>&lt;-</span> <span class='fu'>survival.twostage</span>(<span class='kw'>aa</span>,data=<span class='kw'>data</span>,clusters=<span class='kw'>data</span><span class='op'>$</span><span class='kw'>cluster</span>,detail=<span class='fl'>0</span>,
+         theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>),var.link=<span class='fl'>0</span>,step=<span class='fl'>0.5</span>,
+         random.design=<span class='kw'>des.rv</span>,theta.des=<span class='kw'>pardes</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>ts</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                 Coef.        SE         z        P-val Kendall tau         SE
 #&gt; dependence1 2.0850765 0.1493742 13.958742 0.000000e+00   0.5104131 0.01790216
@@ -769,7 +786,7 @@ Eriksson and Scheike (2015),</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

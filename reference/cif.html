@@ -156,7 +156,7 @@
     <p>Cumulative incidence with robust standard errors</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cif</span>(<span class='no'>formula</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>cause</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>cif</span>(<span class='kw'>formula</span>, data = <span class='kw'>data</span>, cause = <span class='fl'>1</span>, cens.code = <span class='fl'>0</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,19 +183,23 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
-<span class='no'>TRACE</span>$<span class='no'>cluster</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fl'>100</span>,<span class='fl'>1878</span>,<span class='kw'>replace</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~+<span class='fl'>1</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>9</span>)
-<span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~+<span class='fl'>1</span>+<span class='fu'>cluster</span>(<span class='no'>cluster</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>9</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
+<span class='kw'>TRACE</span><span class='op'>$</span><span class='kw'>cluster</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span>,<span class='fl'>1878</span>,replace=<span class='fl'>TRUE</span>)
+<span class='kw'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,data=<span class='kw'>TRACE</span>,cause=<span class='fl'>9</span>)
+<span class='kw'>out2</span> <span class='op'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>cluster</span>),data=<span class='kw'>TRACE</span>,cause=<span class='fl'>9</span>)
 
-<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'>strata</span>(<span class='no'>vf</span>,<span class='no'>chf</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>9</span>)
-<span class='no'>out2</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'>strata</span>(<span class='no'>vf</span>,<span class='no'>chf</span>)+<span class='fu'>cluster</span>(<span class='no'>cluster</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>9</span>)
+<span class='kw'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>,<span class='kw'>chf</span>),data=<span class='kw'>TRACE</span>,cause=<span class='fl'>9</span>)
+<span class='kw'>out2</span> <span class='op'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>,<span class='kw'>chf</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>cluster</span>),data=<span class='kw'>TRACE</span>,cause=<span class='fl'>9</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='fu'>bplot</span>(<span class='no'>out1</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>bplot</span>(<span class='no'>out2</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='cif-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out1</span>,se=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out2</span>,se=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='cif-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -211,7 +215,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

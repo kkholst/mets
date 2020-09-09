@@ -169,8 +169,9 @@ asymmetry in finger ridge-counts.  Annals of Eugenics 17 (1),
 pp.211--231. DOI: 10.1111/j.1469-1809.1952.tb02513.x</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dermalridgesMZ</span>)
-<span class='fu'>fast.reshape</span>(<span class='no'>dermalridgesMZ</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>varying</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"left"</span>,<span class='st'>"right"</span>))</div><div class='output co'>#&gt;       sex left1 right1              group id left2 right2
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>dermalridgesMZ</span>)
+<span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span>(<span class='kw'>dermalridgesMZ</span>,id=<span class='st'>"id"</span>,varying=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"left"</span>,<span class='st'>"right"</span>))
+</div><div class='output co'>#&gt;       sex left1 right1              group id left2 right2
 #&gt; 1  female    95     83 psychotic&amp;neurotic  1    90     85
 #&gt; 3  female    93     90 psychotic&amp;neurotic  2    80     80
 #&gt; 5    male    99     94 psychotic&amp;neurotic  3    94     99
@@ -204,7 +205,7 @@ pp.211--231. DOI: 10.1111/j.1469-1809.1952.tb02513.x</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

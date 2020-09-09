@@ -156,7 +156,7 @@
     <p>Computes the relative risk for additive gamma model at time 0</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EVaddGam</span>(<span class='no'>theta</span>, <span class='no'>x1</span>, <span class='no'>x2</span>, <span class='no'>thetades</span>, <span class='no'>ags</span>)</pre>
+    <pre class="usage"><span class='fu'>EVaddGam</span>(<span class='kw'>theta</span>, <span class='kw'>x1</span>, <span class='kw'>x2</span>, <span class='kw'>thetades</span>, <span class='kw'>ags</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,23 +186,28 @@
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Eriksson and Scheike (2015), Additive Gamma frailty models for competing risks data, Biometrics (2015)</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>lam0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0.3</span>)
-<span class='no'>pars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
+    <pre class="examples"><div class='input'><span class='kw'>lam0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0.3</span>)
+<span class='kw'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
 <span class='co'>## genetic random effects, cause1, cause2 and overall</span>
-<span class='no'>parg</span> <span class='kw'>&lt;-</span> <span class='no'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>)]
+<span class='kw'>parg</span> <span class='op'>&lt;-</span> <span class='kw'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>)]
 <span class='co'>## environmental random effects, cause1, cause2 and overall</span>
-<span class='no'>parc</span> <span class='kw'>&lt;-</span> <span class='no'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>)]
+<span class='kw'>parc</span> <span class='op'>&lt;-</span> <span class='kw'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>)]
 
 <span class='co'>## simulate competing risks with two causes with hazards 0.5 and 0.3</span>
 <span class='co'>## ace for each cause, and overall ace</span>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>simCompete.twin.ace</span>(<span class='fl'>10000</span>,<span class='no'>parg</span>,<span class='no'>parc</span>,<span class='fl'>0</span>,<span class='fl'>2</span>,<span class='kw'>lam0</span><span class='kw'>=</span><span class='no'>lam0</span>,<span class='kw'>overall</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>all.sum</span><span class='kw'>=</span><span class='fl'>1</span>)
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simCompete.twin.ace</a></span>(<span class='fl'>10000</span>,<span class='kw'>parg</span>,<span class='kw'>parc</span>,<span class='fl'>0</span>,<span class='fl'>2</span>,lam0=<span class='kw'>lam0</span>,overall=<span class='fl'>1</span>,all.sum=<span class='fl'>1</span>)
 
 <span class='co'>## setting up design for running the model</span>
-<span class='no'>mm</span> <span class='kw'>&lt;-</span> <span class='fu'>familycluster.index</span>(<span class='no'>out</span>$<span class='no'>cluster</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mm</span>$<span class='no'>familypairindex</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='no'>pairs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='no'>mm</span>$<span class='no'>familypairindex</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>pairs</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>12</span>)</div><div class='output co'>#&gt;           [,1]  [,2]
+<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='familycluster.index.html'>familycluster.index</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>cluster</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span><span class='op'>$</span><span class='kw'>familypairindex</span>,n=<span class='fl'>10</span>)
+</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='kw'>pairs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='kw'>mm</span><span class='op'>$</span><span class='kw'>familypairindex</span>,ncol=<span class='fl'>2</span>,byrow=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='kw'>pairs</span>,n=<span class='fl'>12</span>)
+</div><div class='output co'>#&gt;           [,1]  [,2]
 #&gt;  [9989,] 19977 19978
 #&gt;  [9990,] 19979 19980
 #&gt;  [9991,] 19981 19982
@@ -215,7 +220,7 @@
 #&gt;  [9998,] 19995 19996
 #&gt;  [9999,] 19997 19998
 #&gt; [10000,] 19999 20000</div><div class='input'><span class='co'>#</span>
-<span class='no'>kinship</span> <span class='kw'>&lt;-</span> (<span class='no'>out</span>[<span class='no'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='kw'>==</span><span class='st'>"MZ"</span>)+ (<span class='no'>out</span>[<span class='no'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='kw'>==</span><span class='st'>"DZ"</span>)*<span class='fl'>0.5</span>
+<span class='kw'>kinship</span> <span class='op'>&lt;-</span> (<span class='kw'>out</span>[<span class='kw'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='op'>==</span><span class='st'>"MZ"</span>)<span class='op'>+</span> (<span class='kw'>out</span>[<span class='kw'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='op'>==</span><span class='st'>"DZ"</span>)<span class='op'>*</span><span class='fl'>0.5</span>
 
 <span class='co'># dout &lt;- make.pairwise.design.competing(pairs,kinship,</span>
 <span class='co'>#          type="ace",compete=length(lam0),overall=1)</span>
@@ -234,7 +239,8 @@
 
 <span class='co'># thetades &lt;- dout$theta.des[,,nrow(out)/2]</span>
 <span class='co'># x &lt;- dout$random.design[,,nrow(out)/2]</span>
-<span class='co'>##EVaddGam(rep(1,6),x[1,],x[4,],thetades,matrix(1,18,6))</span></div></pre>
+<span class='co'>##EVaddGam(rep(1,6),x[1,],x[4,],thetades,matrix(1,18,6))</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -250,7 +256,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

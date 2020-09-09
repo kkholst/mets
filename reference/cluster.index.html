@@ -157,13 +157,13 @@
     </div>
 
     <pre class="usage"><span class='fu'>cluster.index</span>(
-  <span class='no'>clusters</span>,
-  <span class='kw'>index.type</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>num</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Rindex</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>mat</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>return.all</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>code.na</span> <span class='kw'>=</span> <span class='fl'>NA</span>
+  <span class='kw'>clusters</span>,
+  index.type = <span class='fl'>FALSE</span>,
+  num = <span class='kw'>NULL</span>,
+  Rindex = <span class='fl'>0</span>,
+  mat = <span class='kw'>NULL</span>,
+  return.all = <span class='fl'>FALSE</span>,
+  code.na = <span class='fl'>NA</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -205,11 +205,15 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>familycluster.index familyclusterWithProbands.index</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus Holst, Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>i</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>3</span>)
-<span class='no'>d</span><span class='kw'>&lt;-</span> <span class='fu'>cluster.index</span>(<span class='no'>i</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>d</span>)</div><div class='output co'>#&gt; $clusters
+    <pre class="examples"><div class='input'><span class='kw'>i</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>3</span>)
+<span class='kw'>d</span><span class='op'>&lt;-</span> <span class='fu'>cluster.index</span>(<span class='kw'>i</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>d</span>)
+</div><div class='output co'>#&gt; $clusters
 #&gt; [1] 0 0 1 1 0 2
 #&gt; 
 #&gt; $maxclust
@@ -230,9 +234,10 @@
 #&gt; $firstclustid
 #&gt; [1] 0 2 5
 #&gt; </div><div class='input'>
-<span class='no'>type</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"m"</span>,<span class='st'>"f"</span>,<span class='st'>"m"</span>,<span class='st'>"c"</span>,<span class='st'>"c"</span>,<span class='st'>"c"</span>)
-<span class='no'>d</span><span class='kw'>&lt;-</span> <span class='fu'>cluster.index</span>(<span class='no'>i</span>,<span class='kw'>num</span><span class='kw'>=</span><span class='no'>type</span>,<span class='kw'>Rindex</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>d</span>)</div><div class='output co'>#&gt; $clusters
+<span class='kw'>type</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"m"</span>,<span class='st'>"f"</span>,<span class='st'>"m"</span>,<span class='st'>"c"</span>,<span class='st'>"c"</span>,<span class='st'>"c"</span>)
+<span class='kw'>d</span><span class='op'>&lt;-</span> <span class='fu'>cluster.index</span>(<span class='kw'>i</span>,num=<span class='kw'>type</span>,Rindex=<span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>d</span>)
+</div><div class='output co'>#&gt; $clusters
 #&gt; [1] 0 0 1 1 0 2
 #&gt; 
 #&gt; $maxclust
@@ -274,7 +279,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

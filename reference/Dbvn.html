@@ -156,12 +156,12 @@
     <p>Derivatives of the bivariate normal cumulative distribution function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Dbvn</span>(<span class='no'>p</span>,<span class='kw'>design</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>p</span>,<span class='no'>...</span>) {
-     <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>mu</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='no'>p</span>[<span class='fl'>1</span>],<span class='no'>p</span>[<span class='fl'>1</span>]),
-               <span class='kw'>dmu</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),
-               <span class='kw'>S</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>p</span>[<span class='fl'>2</span>],<span class='no'>p</span>[<span class='fl'>3</span>],<span class='no'>p</span>[<span class='fl'>3</span>],<span class='no'>p</span>[<span class='fl'>4</span>]),<span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>),
-               <span class='kw'>dS</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)))  )},
-     <span class='kw'>Y</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>))</pre>
+    <pre class="usage"><span class='fu'>Dbvn</span>(<span class='kw'>p</span>,design=<span class='fu'>function</span>(<span class='kw'>p</span>,<span class='kw'>...</span>) {
+     <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(mu=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>p</span>[<span class='fl'>1</span>],<span class='kw'>p</span>[<span class='fl'>1</span>]),
+               dmu=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),
+               S=<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>p</span>[<span class='fl'>2</span>],<span class='kw'>p</span>[<span class='fl'>3</span>],<span class='kw'>p</span>[<span class='fl'>3</span>],<span class='kw'>p</span>[<span class='fl'>4</span>]),ncol=<span class='fl'>2</span>),
+               dS=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)))  )},                 
+     Y=<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>0</span>,<span class='fl'>0</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,6 +181,9 @@ and derivative of variance with respect to the parameter p</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -197,7 +200,7 @@ and derivative of variance with respect to the parameter p</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

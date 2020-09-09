@@ -109,7 +109,7 @@
       <h1 data-toc-skip>Analysis of multivariate binomial data: family analysis</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-09-02</h4>
+            <h4 class="date">2020-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/binomial-family.Rmd"><code>vignettes/binomial-family.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-family.Rmd</code></div>
@@ -147,22 +147,25 @@
 <h1 class="hasAnchor">
 <a href="#simulated-family-data" class="anchor"></a>Simulated family data</h1>
 <p>We start by simulating family data with and additive gamma structure on ACE form. Here 10000 families consisting of two parents and two children. The response is ybin and there is one covariate x.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"> <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mets</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+ <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
  <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">100</span>)
- <span class="no">data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">simbinClaytonOakes.family.ace</a></span>(<span class="fl">10000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="kw">beta</span><span class="kw">=</span><span class="kw">NULL</span>,<span class="kw">alpha</span><span class="kw">=</span><span class="kw">NULL</span>)
- <span class="no">data</span>$<span class="no">number</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>)
- <span class="no">data</span>$<span class="no">child</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*(<span class="no">data</span>$<span class="no">number</span><span class="kw">==</span><span class="fl">3</span>)
- <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">data</span>)
+ <span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simbinClaytonOakes.family.ace</a></span>(<span class="fl">10000</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta=<span class="kw">NULL</span>,alpha=<span class="kw">NULL</span>)
+ <span class="kw">data</span><span class="op">$</span><span class="kw">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>)
+ <span class="kw">data</span><span class="op">$</span><span class="kw">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">data</span><span class="op">$</span><span class="kw">number</span><span class="op">==</span><span class="fl">3</span>)
+ <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">data</span>)
 <span class="co">#&gt;   ybin x   type cluster number child</span>
 <span class="co">#&gt; 1    0 0 mother       1      1     0</span>
 <span class="co">#&gt; 2    0 1 father       1      2     0</span>
 <span class="co">#&gt; 3    0 1  child       1      3     1</span>
 <span class="co">#&gt; 4    0 0  child       1      4     0</span>
 <span class="co">#&gt; 5    0 0 mother       2      1     0</span>
-<span class="co">#&gt; 6    0 1 father       2      2     0</span></pre></body></html></div>
+<span class="co">#&gt; 6    0 1 father       2      2     0</span>
+</pre></div>
 <p>We fit the marginal models, and here find a covariate effect at 0.3 for x. The marginals can be specified excatly as one wants.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"> <span class="no">aa</span> <span class="kw">&lt;-</span> <span class="no">margbin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">ybin</span>~<span class="no">x</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">data</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">aa</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit">
+ <span class="kw">aa</span> <span class="op">&lt;-</span> <span class="kw">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">ybin</span><span class="op">~</span><span class="kw">x</span>,data=<span class="kw">data</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">aa</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
 <span class="co">#&gt; glm(formula = ybin ~ x, family = binomial(), data = data)</span>
@@ -184,16 +187,18 @@
 <span class="co">#&gt; Residual deviance: 51405  on 39998  degrees of freedom</span>
 <span class="co">#&gt; AIC: 51409</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Number of Fisher Scoring iterations: 4</span></pre></body></html></div>
+<span class="co">#&gt; Number of Fisher Scoring iterations: 4</span>
+</pre></div>
 </div>
 <div id="additive-gamma-model" class="section level1">
 <h1 class="hasAnchor">
 <a href="#additive-gamma-model" class="anchor"></a>Additive gamma model</h1>
 <p>For the additive gamma of this type we set-up the random effects included in such a family to make the ACE valid using some special functions for this.</p>
 <p>The model is constructe with one enviromental effect shared by all in the family and 8 genetic random effects with size (1/4) genetic variance. Looking at the first family we see that the mother and father both share half the genes with the children and that the two children also share half their genes with this specification. Below we also show an alternative specification of this model using all pairs.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># make ace random effects design</span>
-<span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">ace.family.design</a></span>(<span class="no">data</span>,<span class="kw">member</span><span class="kw">=</span><span class="st">"type"</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"cluster"</span>)
-<span class="no">out</span>$<span class="no">pardes</span>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># make ace random effects design</span>
+<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span>(<span class="kw">data</span>,member=<span class="st">"type"</span>,id=<span class="st">"cluster"</span>)
+<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>
 <span class="co">#&gt;       [,1] [,2]</span>
 <span class="co">#&gt;  [1,] 0.25    0</span>
 <span class="co">#&gt;  [2,] 0.25    0</span>
@@ -204,18 +209,20 @@
 <span class="co">#&gt;  [7,] 0.25    0</span>
 <span class="co">#&gt;  [8,] 0.25    0</span>
 <span class="co">#&gt;  [9,] 0.00    1</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">out</span>$<span class="no">des.rv</span>,<span class="fl">4</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,<span class="fl">4</span>)
 <span class="co">#&gt;      m1 m2 m3 m4 f1 f2 f3 f4 env</span>
 <span class="co">#&gt; [1,]  1  1  1  1  0  0  0  0   1</span>
 <span class="co">#&gt; [2,]  0  0  0  0  1  1  1  1   1</span>
 <span class="co">#&gt; [3,]  1  1  0  0  1  1  0  0   1</span>
-<span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span></pre></body></html></div>
+<span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span>
+</pre></div>
 <p>We can now fit the model calling the two-stage function</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># fitting ace model for family structure</span>
-<span class="no">ts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">data</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">data</span>$<span class="no">cluster</span>,
-<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),
-<span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">des.rv</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">pardes</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">ts</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># fitting ace model for family structure</span>
+<span class="kw">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,
+theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),
+random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">ts</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -245,20 +252,22 @@
 <span class="co">#&gt; [1] 2 1</span>
 <span class="co"># total variance </span>
 <span class="fl">3</span>
-<span class="co">#&gt; [1] 3</span></pre></body></html></div>
+<span class="co">#&gt; [1] 3</span>
+</pre></div>
 </div>
 <div id="pairwise-fitting" class="section level1">
 <h1 class="hasAnchor">
 <a href="#pairwise-fitting" class="anchor"></a>Pairwise fitting</h1>
 <p>We now specify the same model via extracting all pairs.<br>
 The random effecs structure is typically simpler when just looking at pairs, but we start by specifying the random effects jointly for whole family. A special function writes up all combinations of pairs. There are 6 pairs within each family, and we keep track of who belongs to the different families. We first simply give the pairs and we then should get the same result as before.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">mm</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/familycluster.index.html">familycluster.index</a></span>(<span class="no">data</span>$<span class="no">cluster</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">mm</span>$<span class="no">familypairindex</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">20</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span>(<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">mm</span><span class="op">$</span><span class="kw">familypairindex</span>,n=<span class="fl">20</span>)
 <span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7</span>
-<span class="no">pairs</span> <span class="kw">&lt;-</span> <span class="no">mm</span>$<span class="no">pairs</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">pairs</span>)
+<span class="kw">pairs</span> <span class="op">&lt;-</span> <span class="kw">mm</span><span class="op">$</span><span class="kw">pairs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">pairs</span>)
 <span class="co">#&gt; [1] 60000     2</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pairs</span>,<span class="fl">12</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pairs</span>,<span class="fl">12</span>)
 <span class="co">#&gt;       [,1] [,2]</span>
 <span class="co">#&gt;  [1,]    1    2</span>
 <span class="co">#&gt;  [2,]    1    3</span>
@@ -271,11 +280,13 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt;  [9,]    5    8</span>
 <span class="co">#&gt; [10,]    6    7</span>
 <span class="co">#&gt; [11,]    6    8</span>
-<span class="co">#&gt; [12,]    7    8</span></pre></body></html></div>
+<span class="co">#&gt; [12,]    7    8</span>
+</pre></div>
 <p>Now with the pairs we fit the model</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">tsp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">data</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">data</span>$<span class="no">cluster</span>,<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>,
-        <span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">des.rv</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">pardes</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">pairs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">tsp</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),detail=<span class="fl">0</span>,
+        random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pairs</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsp</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -299,15 +310,17 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; p1    2.755  0.1345 2.491 3.018 2.918e-93</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>Here a random sample of pairs are given instead and we get other estimates.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">100</span>)
-<span class="no">ssid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">pairs</span>),<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">pairs</span>)/<span class="fl">2</span>))
-<span class="no">tsd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">aa</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">data</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">data</span>$<span class="no">cluster</span>,
-               <span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),<span class="kw">step</span><span class="kw">=</span><span class="fl">1.0</span>,
-               <span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">des.rv</span>,<span class="kw">iid</span><span class="kw">=</span><span class="fl">1</span>,<span class="kw">Nit</span><span class="kw">=</span><span class="fl">10</span>,
-               <span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">pardes</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">pairs</span>[<span class="no">ssid</span>,])
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">tsd</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">100</span>)
+<span class="kw">ssid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">pairs</span>),<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">pairs</span>)<span class="op">/</span><span class="fl">2</span>))
+<span class="kw">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,
+               theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),step=<span class="fl">1.0</span>,
+               random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,iid=<span class="fl">1</span>,Nit=<span class="fl">10</span>,
+               theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pairs</span>[<span class="kw">ssid</span>,])
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsd</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -331,10 +344,12 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; p1      2.7   0.202 2.304 3.096 9.551e-41</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>To specify such a model when only the pairs are availble we show how to specify the model. We here use the same marginal “aa” to make the results comparable. The marginal can also be fitted based on available data.</p>
 <p>We start by selecting the data related to the pairs, and sets up new id’s and to start we specify the model using the full design with 9 random effects. Below we show how one can use with only the random effects needed for each pair, which is typically simpler.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pairs</span>[<span class="no">ssid</span>,])
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    2    3</span>
@@ -342,11 +357,11 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [4,]    5    7</span>
 <span class="co">#&gt; [5,]    6    7</span>
 <span class="co">#&gt; [6,]    9   10</span>
-<span class="no">ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">pairs</span>[<span class="no">ssid</span>,])))
+<span class="kw">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])))
 
-<span class="no">pairsids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">pairs</span>[<span class="no">ssid</span>,])
-<span class="no">pair.new</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/mets/man/fast.approx.html">fast.approx</a></span>(<span class="no">ids</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">pairs</span>[<span class="no">ssid</span>,])),<span class="kw">ncol</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pair.new</span>)
+<span class="kw">pairsids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])
+<span class="kw">pair.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="../reference/fast.approx.html">fast.approx</a></span>(<span class="kw">ids</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])),ncol=<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.new</span>)
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    2    3</span>
@@ -355,9 +370,9 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [5,]    6    7</span>
 <span class="co">#&gt; [6,]    8    9</span>
 
-<span class="no">dataid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dsort.html">dsort</a></span>(<span class="no">data</span>[<span class="no">ids</span>,],<span class="st">"cluster"</span>)
-<span class="no">outid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">ace.family.design</a></span>(<span class="no">dataid</span>,<span class="kw">member</span><span class="kw">=</span><span class="st">"type"</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"cluster"</span>)
-<span class="no">outid</span>$<span class="no">pardes</span>
+<span class="kw">dataid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span>(<span class="kw">data</span>[<span class="kw">ids</span>,],<span class="st">"cluster"</span>)
+<span class="kw">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span>(<span class="kw">dataid</span>,member=<span class="st">"type"</span>,id=<span class="st">"cluster"</span>)
+<span class="kw">outid</span><span class="op">$</span><span class="kw">pardes</span>
 <span class="co">#&gt;       [,1] [,2]</span>
 <span class="co">#&gt;  [1,] 0.25    0</span>
 <span class="co">#&gt;  [2,] 0.25    0</span>
@@ -368,18 +383,20 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt;  [7,] 0.25    0</span>
 <span class="co">#&gt;  [8,] 0.25    0</span>
 <span class="co">#&gt;  [9,] 0.00    1</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">outid</span>$<span class="no">des.rv</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">outid</span><span class="op">$</span><span class="kw">des.rv</span>)
 <span class="co">#&gt;      m1 m2 m3 m4 f1 f2 f3 f4 env</span>
 <span class="co">#&gt; [1,]  1  1  1  1  0  0  0  0   1</span>
 <span class="co">#&gt; [2,]  0  0  0  0  1  1  1  1   1</span>
 <span class="co">#&gt; [3,]  1  1  0  0  1  1  0  0   1</span>
 <span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span>
 <span class="co">#&gt; [5,]  1  1  1  1  0  0  0  0   1</span>
-<span class="co">#&gt; [6,]  0  0  0  0  1  1  1  1   1</span></pre></body></html></div>
+<span class="co">#&gt; [6,]  0  0  0  0  1  1  1  1   1</span>
+</pre></div>
 <p>Now fitting the model with the data set up</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">tsdid</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">aa</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">dataid</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">dataid</span>$<span class="no">cluster</span>,
-         <span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),<span class="kw">random.design</span><span class="kw">=</span><span class="no">outid</span>$<span class="no">des.rv</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">outid</span>$<span class="no">pardes</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">pair.new</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">tsdid</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
+         theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),random.design=<span class="kw">outid</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">outid</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pair.new</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -403,10 +420,12 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; p1      2.7  0.2014 2.305 3.094 5.754e-41</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>We now specify the design specifically using the pairs. The random.design and design on the parameters are now given for each pair, as a 3 dimensional matrix. with a direct specification of random.design and the design on the parameters theta.design. In addition we need also to give the number of random effects for each pair. These basic things are constructed by certain functions for the ACE design.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">pair.types</span> <span class="kw">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="no">dataid</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="no">pair.new</span>)),<span class="st">"type"</span>],<span class="kw">byrow</span><span class="kw">=</span><span class="no">T</span>,<span class="kw">ncol</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pair.new</span>,<span class="fl">7</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw">pair.types</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">dataid</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw">pair.new</span>)),<span class="st">"type"</span>],byrow=<span class="kw">T</span>,ncol=<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.new</span>,<span class="fl">7</span>)
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    2    3</span>
@@ -415,7 +434,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [5,]    6    7</span>
 <span class="co">#&gt; [6,]    8    9</span>
 <span class="co">#&gt; [7,]    8   10</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pair.types</span>,<span class="fl">7</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.types</span>,<span class="fl">7</span>)
 <span class="co">#&gt;      [,1]     [,2]    </span>
 <span class="co">#&gt; [1,] "mother" "father"</span>
 <span class="co">#&gt; [2,] "father" "child" </span>
@@ -425,14 +444,15 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [6,] "mother" "father"</span>
 <span class="co">#&gt; [7,] "mother" "child"</span>
 <span class="co">###</span>
-<span class="no">theta.des</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0</span>))),
+<span class="kw">theta.des</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0</span>))),
         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>))))
-<span class="no">random.des</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
+<span class="kw">random.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( 
         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>),
         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>))
-<span class="no">mf</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*(<span class="no">pair.types</span>[,<span class="fl">1</span>]<span class="kw">==</span><span class="st">"mother"</span> <span class="kw">&amp;</span> <span class="no">pair.types</span>[,<span class="fl">2</span>]<span class="kw">==</span><span class="st">"father"</span>)
+<span class="kw">mf</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">pair.types</span>[,<span class="fl">1</span>]<span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="kw">pair.types</span>[,<span class="fl">2</span>]<span class="op">==</span><span class="st">"father"</span>)
 <span class="co">##          pair, rv related to pairs,  theta.des related to pair </span>
-<span class="no">pairs.new</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">pair.new</span>,(<span class="no">mf</span><span class="kw">==</span><span class="fl">1</span>)*<span class="fl">1</span>+(<span class="no">mf</span><span class="kw">==</span><span class="fl">0</span>)*<span class="fl">3</span>,(<span class="no">mf</span><span class="kw">==</span><span class="fl">1</span>)*<span class="fl">2</span>+(<span class="no">mf</span><span class="kw">==</span><span class="fl">0</span>)*<span class="fl">4</span>,(<span class="no">mf</span><span class="kw">==</span><span class="fl">1</span>)*<span class="fl">1</span>+(<span class="no">mf</span><span class="kw">==</span><span class="fl">0</span>)*<span class="fl">2</span>,(<span class="no">mf</span><span class="kw">==</span><span class="fl">1</span>)*<span class="fl">3</span>+(<span class="no">mf</span><span class="kw">==</span><span class="fl">0</span>)*<span class="fl">4</span>)</pre></body></html></div>
+<span class="kw">pairs.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">pair.new</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">1</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">3</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">2</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">4</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">1</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">2</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">3</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">4</span>)
+</pre></div>
 <p>pairs.new is matrix with</p>
 <ul>
 <li><p>columns 1:2 giving the indeces of the data points</p></li>
@@ -441,30 +461,33 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <li><p>columns 6 giving the number of random variables for this pair</p></li>
 </ul>
 <p>For pair 1 that is a mother/farther pair, we see that they share 1 environmental random effect of size 1. There are also two genetic effects that are unshared between the two. So a total of 3 random effects are needed here. The theta.des relates the 3 random effects to possible relationships in the parameters. Here the genetic effects are full and so is the environmental effect. In contrast we also consider a mother/child pair that share half the genes, now with random effects with (1/2) gene variance. We there need 4 random effects, 2 non-shared half-gene, 1 shared half-gene, and one shared full environmental effect.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># 3 rvs here </span>
-<span class="no">random.des</span>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="co"># 3 rvs here </span>
+<span class="kw">random.des</span>
 <span class="co">#&gt;      [,1] [,2] [,3] [,4]</span>
 <span class="co">#&gt; [1,]    1    0    1    0</span>
 <span class="co">#&gt; [2,]    0    1    1    0</span>
 <span class="co">#&gt; [3,]    1    1    0    1</span>
 <span class="co">#&gt; [4,]    1    0    1    1</span>
-<span class="no">theta.des</span>
+<span class="kw">theta.des</span>
 <span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]</span>
 <span class="co">#&gt; [1,]  1.0  1.0  0.0    0    0    0    1    0</span>
 <span class="co">#&gt; [2,]  0.5  0.5  0.5    0    0    0    0    1</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">pairs.new</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pairs.new</span>)
 <span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6]</span>
 <span class="co">#&gt; [1,]    1    2    1    2    1    3</span>
 <span class="co">#&gt; [2,]    2    3    3    4    2    4</span>
 <span class="co">#&gt; [3,]    2    4    3    4    2    4</span>
 <span class="co">#&gt; [4,]    5    7    3    4    2    4</span>
 <span class="co">#&gt; [5,]    6    7    3    4    2    4</span>
-<span class="co">#&gt; [6,]    8    9    1    2    1    3</span></pre></body></html></div>
+<span class="co">#&gt; [6,]    8    9    1    2    1    3</span>
+</pre></div>
 <p>Now fitting the model, and we see that it is a lot quicker due to the fewer random effects needed for pairs. We need to also specify the number of parameters in this case.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">tsdid2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">aa</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">dataid</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">dataid</span>$<span class="no">cluster</span>, <span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),
-           <span class="kw">random.design</span><span class="kw">=</span><span class="no">random.des</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">theta.des</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">pairs.new</span>,<span class="kw">dim.theta</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">tsdid2</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="kw">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>, theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),
+           random.design=<span class="kw">random.des</span>,theta.des=<span class="kw">theta.des</span>,pairs=<span class="kw">pairs.new</span>,dim.theta=<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid2</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -488,22 +511,26 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; p1      2.7  0.2014 2.305 3.094 5.754e-41</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>The same model can be specifed even simpler via the kinship coefficient. For this speicification there are 4 random effects for each pair, but some have variance 0. The mother-father pair, here shares a random effect with variance 0, and have two non-shared genetic effects with full variance, in addition to a fully shared environmental effect.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">kinship</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>()
-<span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">pair.new</span>))
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="kw">kinship</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>()
+<span class="co">for</span> (<span class="kw">i</span> <span class="co">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">pair.new</span>))
 {
-<span class="kw">if</span> (<span class="no">pair.types</span>[<span class="no">i</span>,<span class="fl">1</span>]<span class="kw">==</span><span class="st">"mother"</span> <span class="kw">&amp;</span> <span class="no">pair.types</span>[<span class="no">i</span>,<span class="fl">2</span>]<span class="kw">==</span><span class="st">"father"</span>) <span class="no">pk1</span> <span class="kw">&lt;-</span> <span class="fl">0</span> <span class="kw">else</span> <span class="no">pk1</span> <span class="kw">&lt;-</span> <span class="fl">0.5</span>
-<span class="no">kinship</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">kinship</span>,<span class="no">pk1</span>)
+<span class="co">if</span> (<span class="kw">pair.types</span>[<span class="kw">i</span>,<span class="fl">1</span>]<span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="kw">pair.types</span>[<span class="kw">i</span>,<span class="fl">2</span>]<span class="op">==</span><span class="st">"father"</span>) <span class="kw">pk1</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co">else</span> <span class="kw">pk1</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
+<span class="kw">kinship</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">kinship</span>,<span class="kw">pk1</span>)
 }
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">kinship</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">10</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">kinship</span>,n=<span class="fl">10</span>)
 <span class="co">#&gt;  [1] 0.0 0.5 0.5 0.5 0.5 0.0 0.5 0.5 0.5 0.5</span>
 
-<span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">make.pairwise.design</a></span>(<span class="no">pair.new</span>,<span class="no">kinship</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ace"</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">tsdid3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">aa</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">dataid</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">dataid</span>$<span class="no">cluster</span>,
-             <span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)/<span class="fl">9</span>,<span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">random.design</span>,
-             <span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">theta.des</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">out</span>$<span class="no">new.pairs</span>,<span class="kw">dim.theta</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">tsdid3</span>)
+<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">make.pairwise.design</a></span>(<span class="kw">pair.new</span>,<span class="kw">kinship</span>,type=<span class="st">"ace"</span>) 
+</pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="kw">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
+             theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">9</span>,random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">random.design</span>,
+             theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">theta.des</span>,pairs=<span class="kw">out</span><span class="op">$</span><span class="kw">new.pairs</span>,dim.theta=<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid3</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -527,7 +554,8 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; p1      2.7  0.2014 2.305 3.094 5.754e-41</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 </div>
 <div id="pairwise-odds-ratio-model" class="section level1">
 <h1 class="hasAnchor">
@@ -544,17 +572,18 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <li>We can also use the specify the design via the theta.des that is also a matrix of dimension pairs x design with the design for POR model.</li>
 </ol>
 <p>Starting by the second option. We need to start by specify the design of the odds-ratio of each pair. We set up the data and find all combinations within the pairs. Subsequently, we remove all the empty groups, by grouping together the factor levels 4:9, and then we construct the design.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">tdp</span> <span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>( <span class="no">dataid</span>[<span class="no">pair.new</span>[,<span class="fl">1</span>],],<span class="no">dataid</span>[<span class="no">pair.new</span>[,<span class="fl">2</span>],])
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">tdp</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">dataid</span>),<span class="st">"1"</span>,<span class="kw">sep</span><span class="kw">=</span><span class="st">""</span>),
-        <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">dataid</span>),<span class="st">"2"</span>,<span class="kw">sep</span><span class="kw">=</span><span class="st">""</span>))
-<span class="no">tdp</span> <span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">tdp</span>,<span class="kw">tt</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(<span class="no">type1</span>,<span class="no">type2</span>))
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevel</a></span>(<span class="no">tdp</span>)
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="kw">tdp</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>( <span class="kw">dataid</span>[<span class="kw">pair.new</span>[,<span class="fl">1</span>],],<span class="kw">dataid</span>[<span class="kw">pair.new</span>[,<span class="fl">2</span>],])
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">tdp</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">dataid</span>),<span class="st">"1"</span>,sep=<span class="st">""</span>),
+        <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">dataid</span>),<span class="st">"2"</span>,sep=<span class="st">""</span>))
+<span class="kw">tdp</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="kw">tdp</span>,tt=<span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(<span class="kw">type1</span>,<span class="kw">type2</span>))
+<span class="fu"><a href="../reference/drelevel.html">dlevel</a></span>(<span class="kw">tdp</span>)
 <span class="co">#&gt; tt #levels=:6 </span>
 <span class="co">#&gt; [1] "child.child"   "father.child"  "mother.child"  "child.father" </span>
 <span class="co">#&gt; [5] "father.father" "mother.father"</span>
 <span class="co">#&gt; -----------------------------------------</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">tdp</span>,<span class="kw">newlevels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">mother.father</span><span class="kw">=</span><span class="fl">4</span>:<span class="fl">9</span>)) <span class="kw">&lt;-</span>  <span class="no">obs.types</span>~<span class="no">tt</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">tdp</span>,~<span class="no">tt</span>+<span class="no">obs.types</span>)
+<span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">tdp</span>,newlevels=<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(mother.father=<span class="fl">4</span><span class="op">:</span><span class="fl">9</span>)) <span class="op">&lt;-</span>  <span class="kw">obs.types</span><span class="op">~</span><span class="kw">tt</span>
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">tdp</span>,<span class="op">~</span><span class="kw">tt</span><span class="op">+</span><span class="kw">obs.types</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;               obs.types mother.father child.child father.child mother.child</span>
 <span class="co">#&gt; tt                                                                         </span>
@@ -564,12 +593,14 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; child.father                        0           0            0            0</span>
 <span class="co">#&gt; father.father                       0           0            0            0</span>
 <span class="co">#&gt; mother.father                    4976           0            0            0</span>
-<span class="no">tdp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(~-<span class="fl">1</span>+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">obs.types</span>),<span class="no">tdp</span>)</pre></body></html></div>
+<span class="kw">tdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">obs.types</span>),<span class="kw">tdp</span>)
+</pre></div>
 <p>We then can fit the pairwise model using the pairs and the pair-design for descrbing the OR. The results are consistent with the the ACE model as the mother-father have a lower dependence as is due only the environmental effects. All other combinations should have the same dependence as also seem to be the case.</p>
 <p>To fit the OR model it is generally recommended to use the var.link to use the parmetrization with log-odd-ratio regression.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">porpair</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">aa</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">dataid</span>,<span class="kw">clusters</span><span class="kw">=</span><span class="no">dataid</span>$<span class="no">cluster</span>,
-           <span class="kw">theta.des</span><span class="kw">=</span><span class="no">tdp</span>,<span class="kw">pairs</span><span class="kw">=</span><span class="no">pair.new</span>,<span class="kw">model</span><span class="kw">=</span><span class="st">"or"</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">porpair</span>)
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="kw">porpair</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
+           theta.des=<span class="kw">tdp</span>,pairs=<span class="kw">pair.new</span>,model=<span class="st">"or"</span>,var.link=<span class="fl">1</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">porpair</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -590,12 +621,14 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [1] "or"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 <span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
@@ -619,16 +652,18 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
-<span class="co">#&gt;  [4] splines_4.0.2       MASS_7.3-51.6       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.2         grid_4.0.2          xfun_0.16          </span>
-<span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
-<span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     numDeriv_2016.8-1.1</span>
-<span class="co">#&gt; [19] pkgdown_1.5.1       crayon_1.3.4        Matrix_1.2-18      </span>
-<span class="co">#&gt; [22] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
-<span class="co">#&gt; [25] rmarkdown_2.3       stringi_1.4.6       compiler_4.0.2     </span>
-<span class="co">#&gt; [28] desc_1.2.0          backports_1.1.9     mvtnorm_1.1-1</span></pre></body></html></div>
+<span class="co">#&gt;  [1] Rcpp_1.0.5          cpp11_0.2.1         knitr_1.29         </span>
+<span class="co">#&gt;  [4] magrittr_1.5        splines_4.0.2       lattice_0.20-41    </span>
+<span class="co">#&gt;  [7] R6_2.4.1            ragg_0.3.1          rlang_0.4.7        </span>
+<span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
+<span class="co">#&gt; [13] xfun_0.17           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    rprojroot_1.3-2    </span>
+<span class="co">#&gt; [19] digest_0.6.25       numDeriv_2016.8-1.1 pkgdown_1.6.0      </span>
+<span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       fs_1.5.0           </span>
+<span class="co">#&gt; [25] memoise_1.1.0       evaluate_0.14       rmarkdown_2.3      </span>
+<span class="co">#&gt; [28] stringi_1.5.3       compiler_4.0.2      desc_1.2.0         </span>
+<span class="co">#&gt; [31] backports_1.1.9     mvtnorm_1.1-1</span>
+</pre></div>
 </div>
   </div>
 
@@ -647,7 +682,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

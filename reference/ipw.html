@@ -161,19 +161,19 @@ Weights (IPCW) and adds them to a data.frame</p>
     </div>
 
     <pre class="usage"><span class='fu'>ipw</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='no'>cluster</span>,
-  <span class='kw'>same.cens</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>obs.only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>weight.name</span> <span class='kw'>=</span> <span class='st'>"w"</span>,
-  <span class='kw'>trunc.prob</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>weight.name2</span> <span class='kw'>=</span> <span class='st'>"wt"</span>,
-  <span class='kw'>indi.weight</span> <span class='kw'>=</span> <span class='st'>"pr"</span>,
-  <span class='kw'>cens.model</span> <span class='kw'>=</span> <span class='st'>"aalen"</span>,
-  <span class='kw'>pairs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>theta.formula</span> <span class='kw'>=</span> ~<span class='fl'>1</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  <span class='kw'>cluster</span>,
+  same.cens = <span class='fl'>FALSE</span>,
+  obs.only = <span class='fl'>TRUE</span>,
+  weight.name = <span class='st'>"w"</span>,
+  trunc.prob = <span class='fl'>FALSE</span>,
+  weight.name2 = <span class='st'>"wt"</span>,
+  indi.weight = <span class='st'>"pr"</span>,
+  cens.model = <span class='st'>"aalen"</span>,
+  pairs = <span class='fl'>FALSE</span>,
+  theta.formula = <span class='op'>~</span><span class='fl'>1</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -233,22 +233,26 @@ Weights (IPCW) and adds them to a data.frame</p>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"prt"</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"mets"</span>)
-<span class='no'>prtw</span> <span class='kw'>&lt;-</span> <span class='fu'>ipw</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>0</span>)~<span class='no'>country</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>prt</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>prt</span>),<span class='fl'>5000</span>),],
-            <span class='kw'>cluster</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>weight.name</span><span class='kw'>=</span><span class='st'>"w"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='fl'>0</span>,<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"n"</span>,<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='no'>prtw</span>$<span class='no'>time</span>),<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),<span class='kw'>xlab</span><span class='kw'>=</span><span class='st'>"Age"</span>,<span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"Probability"</span>)
-<span class='no'>count</span> <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='kw'>for</span> (<span class='no'>l</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>prtw</span>$<span class='no'>country</span>)) {
-    <span class='no'>count</span> <span class='kw'>&lt;-</span> <span class='no'>count</span>+<span class='fl'>1</span>
-    <span class='no'>prtw</span> <span class='kw'>&lt;-</span> <span class='no'>prtw</span>[<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>prtw</span>$<span class='no'>time</span>),]
-    <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>prtw</span>,<span class='no'>country</span><span class='kw'>==</span><span class='no'>l</span>),
-         <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>time</span>,<span class='no'>w</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='no'>count</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>))
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"prt"</span>,package=<span class='st'>"mets"</span>)
+<span class='kw'>prtw</span> <span class='op'>&lt;-</span> <span class='fu'>ipw</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='kw'>country</span>, data=<span class='kw'>prt</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>prt</span>),<span class='fl'>5000</span>),],
+            cluster=<span class='st'>"id"</span>,weight.name=<span class='st'>"w"</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fl'>0</span>,type=<span class='st'>"n"</span>,xlim=<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='kw'>prtw</span><span class='op'>$</span><span class='kw'>time</span>),ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),xlab=<span class='st'>"Age"</span>,ylab=<span class='st'>"Probability"</span>)
+<span class='kw'>count</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='co'>for</span> (<span class='kw'>l</span> <span class='co'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='kw'>prtw</span><span class='op'>$</span><span class='kw'>country</span>)) {
+    <span class='kw'>count</span> <span class='op'>&lt;-</span> <span class='kw'>count</span><span class='op'>+</span><span class='fl'>1</span>
+    <span class='kw'>prtw</span> <span class='op'>&lt;-</span> <span class='kw'>prtw</span>[<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>prtw</span><span class='op'>$</span><span class='kw'>time</span>),]
+    <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>prtw</span>,<span class='kw'>country</span><span class='op'>==</span><span class='kw'>l</span>),
+         <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>time</span>,<span class='kw'>w</span>,col=<span class='kw'>count</span>,lwd=<span class='fl'>2</span>))
 }
-<span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topright"</span>,<span class='kw'>legend</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>prtw</span>$<span class='no'>country</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>4</span>,<span class='kw'>pch</span><span class='kw'>=</span>-<span class='fl'>1</span>,<span class='kw'>lty</span><span class='kw'>=</span><span class='fl'>1</span>)
-}</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topright"</span>,legend=<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='kw'>prtw</span><span class='op'>$</span><span class='kw'>country</span>),col=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>,pch=<span class='op'>-</span><span class='fl'>1</span>,lty=<span class='fl'>1</span>)
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -264,7 +268,7 @@ Weights (IPCW) and adds them to a data.frame</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

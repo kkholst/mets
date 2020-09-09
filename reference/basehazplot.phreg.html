@@ -157,22 +157,22 @@
     </div>
 
     <pre class="usage"><span class='fu'>basehazplot.phreg</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>lty</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>polygon</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>stratas</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>robust</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  se = <span class='fl'>FALSE</span>,
+  time = <span class='kw'>NULL</span>,
+  add = <span class='fl'>FALSE</span>,
+  ylim = <span class='kw'>NULL</span>,
+  xlim = <span class='kw'>NULL</span>,
+  lty = <span class='kw'>NULL</span>,
+  col = <span class='kw'>NULL</span>,
+  legend = <span class='fl'>TRUE</span>,
+  ylab = <span class='kw'>NULL</span>,
+  xlab = <span class='kw'>NULL</span>,
+  polygon = <span class='fl'>TRUE</span>,
+  level = <span class='fl'>0.95</span>,
+  stratas = <span class='kw'>NULL</span>,
+  robust = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -244,18 +244,23 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst, Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
-<span class='fu'>dcut</span>(<span class='no'>TRACE</span>) <span class='kw'>&lt;-</span> ~<span class='no'>.</span>
-<span class='no'>out1</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>vf</span>+<span class='no'>chf</span>+<span class='fu'>strata</span>(<span class='no'>wmicat.4</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
+<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>TRACE</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
+<span class='kw'>out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>wmicat.4</span>),data=<span class='kw'>TRACE</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
-<span class='fu'>bplot</span>(<span class='no'>out1</span>)
-<span class='fu'>bplot</span>(<span class='no'>out1</span>,<span class='kw'>stratas</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
-<span class='fu'>bplot</span>(<span class='no'>out1</span>,<span class='kw'>stratas</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>:<span class='fl'>3</span>,<span class='kw'>lty</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>bplot</span>(<span class='no'>out1</span>,<span class='kw'>stratas</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>lty</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>polygon</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='img'><img src='basehazplot.phreg-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>bplot</span>(<span class='no'>out1</span>,<span class='kw'>stratas</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='fl'>1</span>,<span class='fl'>3</span>),
-            <span class='kw'>lty</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>polygon</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='img'><img src='basehazplot.phreg-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+<span class='fu'>bplot</span>(<span class='kw'>out1</span>)
+<span class='fu'>bplot</span>(<span class='kw'>out1</span>,stratas=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>))
+<span class='fu'>bplot</span>(<span class='kw'>out1</span>,stratas=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>3</span>),col=<span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span>,lty=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,se=<span class='fl'>TRUE</span>)
+<span class='fu'>bplot</span>(<span class='kw'>out1</span>,stratas=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>),col=<span class='fl'>2</span>,lty=<span class='fl'>2</span>,se=<span class='fl'>TRUE</span>,polygon=<span class='fl'>FALSE</span>)
+</div><div class='img'><img src='basehazplot.phreg-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>bplot</span>(<span class='kw'>out1</span>,stratas=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>),col=<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>3</span>),<span class='fl'>1</span>,<span class='fl'>3</span>),
+            lty=<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fl'>1</span>,<span class='fl'>3</span>),se=<span class='fl'>TRUE</span>,polygon=<span class='fl'>FALSE</span>)
+</div><div class='img'><img src='basehazplot.phreg-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -271,7 +276,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

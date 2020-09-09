@@ -159,16 +159,16 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL</p>
     </div>
 
     <pre class="usage"><span class='fu'>cifreg</span>(
-  <span class='no'>formula</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data</span>,
-  <span class='kw'>cause</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>cens.model</span> <span class='kw'>=</span> ~<span class='fl'>1</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Gc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>propodds</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  data = <span class='kw'>data</span>,
+  cause = <span class='fl'>1</span>,
+  cens.code = <span class='fl'>0</span>,
+  cens.model = <span class='op'>~</span><span class='fl'>1</span>,
+  weights = <span class='kw'>NULL</span>,
+  offset = <span class='kw'>NULL</span>,
+  Gc = <span class='kw'>NULL</span>,
+  propodds = <span class='fl'>1</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -235,16 +235,20 @@ and returned as iid</p>
 <p>For logistic link standard errors are slightly to small since uncertainty from recursive baseline is not considered, so for smaller
 data-sets it is recommended to use the prop.odds.subdist of timereg that is also more efficient due to use of different weights for
 the estimating equations. Alternatively, one can also bootstrap the standard errors.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## data with no ties</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"timereg"</span>)
-<span class='no'>bmt</span>$<span class='no'>time</span> <span class='kw'>&lt;-</span> <span class='no'>bmt</span>$<span class='no'>time</span>+<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>bmt</span>))*<span class='fl'>0.01</span>
-<span class='no'>bmt</span>$<span class='no'>id</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>,package=<span class='st'>"timereg"</span>)
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>time</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>time</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>bmt</span>))<span class='op'>*</span><span class='fl'>0.01</span>
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>bmt</span>)
 
 <span class='co'>## logistic link  OR interpretation</span>
-<span class='no'>ll</span><span class='kw'>=</span><span class='fu'>cifreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>ll</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>ll</span><span class='op'>=</span><span class='fu'>cifreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>ll</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    161
 #&gt; 
@@ -260,12 +264,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt; [tcell]     0.49187 0.16330 0.17182 0.81193  0.0019
 #&gt; [platelet]  0.63428 0.14970 0.34087 0.92769  0.0146
 #&gt; [age]       1.47870 0.14496 1.19458 1.76282  0.0010
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>ll</span>)</div><div class='img'><img src='cifreg-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='no'>nd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>age</span><span class='kw'>=</span><span class='fl'>0</span>)
-<span class='no'>pll</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>ll</span>,<span class='no'>nd</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pll</span>)</div><div class='img'><img src='cifreg-2.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>ll</span>)
+</div><div class='img'><img src='cifreg-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>nd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(tcell=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>),platelet=<span class='fl'>0</span>,age=<span class='fl'>0</span>)
+<span class='kw'>pll</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>ll</span>,<span class='kw'>nd</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pll</span>)
+</div><div class='img'><img src='cifreg-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Fine-Gray model</span>
-<span class='no'>fg</span><span class='kw'>=</span><span class='fu'>cifreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>propodds</span><span class='kw'>=</span><span class='kw'>NULL</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fg</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>fg</span><span class='op'>=</span><span class='fu'>cifreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,propodds=<span class='kw'>NULL</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fg</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    161
 #&gt; 
@@ -281,11 +288,14 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt; [tcell]     0.55053 0.14889 0.25870 0.84235  0.0025
 #&gt; [platelet]  0.65329 0.11807 0.42189 0.88470  0.0033
 #&gt; [age]       1.41036 0.11318 1.18852 1.63220  0.0003
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fg</span>)</div><div class='img'><img src='cifreg-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='no'>nd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>age</span><span class='kw'>=</span><span class='fl'>0</span>)
-<span class='no'>pfg</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>fg</span>,<span class='no'>nd</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pfg</span>)</div><div class='img'><img src='cifreg-4.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>sfg</span> <span class='kw'>&lt;-</span> <span class='fu'>cifreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='fu'>strata</span>(<span class='no'>tcell</span>)+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>propodds</span><span class='kw'>=</span><span class='kw'>NULL</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sfg</span>)</div><div class='output co'>#&gt; 
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>fg</span>)
+</div><div class='img'><img src='cifreg-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>nd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(tcell=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>),platelet=<span class='fl'>0</span>,age=<span class='fl'>0</span>)
+<span class='kw'>pfg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>fg</span>,<span class='kw'>nd</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pfg</span>)
+</div><div class='img'><img src='cifreg-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>sfg</span> <span class='op'>&lt;-</span> <span class='fu'>cifreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>tcell</span>)<span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,propodds=<span class='kw'>NULL</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sfg</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    161
 #&gt; 
@@ -299,11 +309,12 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt;            Estimate Std.Err    2.5%   97.5% P-value
 #&gt; [platelet]  0.65416 0.11828 0.42233 0.88599  0.0035
 #&gt; [age]       1.40784 0.11240 1.18753 1.62815  0.0003
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>sfg</span>)</div><div class='img'><img src='cifreg-5.png' alt='' width='700' height='433' /></div><div class='input'>
-### predictions with CI based on iid decomposition of baseline and beta
-# fg &lt;- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
-# Biid &lt;- iid.baseline.cifreg(Biid,time=20)
-# FGprediid(Biid,bmt[1:5,])
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>sfg</span>)
+</div><div class='img'><img src='cifreg-5.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'>### predictions with CI based on iid decomposition of baseline and beta</span>
+<span class='co'># fg &lt;- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)</span>
+<span class='co'># Biid &lt;- iid.baseline.cifreg(Biid,time=20)</span>
+<span class='co'># FGprediid(Biid,bmt[1:5,])</span>
 
 </div></pre>
   </div>
@@ -321,7 +332,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

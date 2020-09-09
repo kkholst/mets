@@ -121,11 +121,17 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"mets"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"mets"</span>)
+</pre></div>
 <p>The development version may be installed directly from github (requires <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a> on windows and <a href="https://cran.r-project.org/bin/macosx/tools/">development tools</a> (+Xcode) for Mac OS X):</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/mets"</span>, <span class="kw">dependencies</span><span class="kw">=</span><span class="st">"Suggests"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/mets"</span>, dependencies=<span class="st">"Suggests"</span>)
+</pre></div>
 <p>or to get development version</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_github</span>(<span class="st">"kkholst/mets"</span>,<span class="kw">ref</span><span class="kw">=</span><span class="st">"develop"</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">devtools</span>::<span class="fu">install_github</span>(<span class="st">"kkholst/mets"</span>,ref=<span class="st">"develop"</span>)
+</pre></div>
 </div>
 <div id="citation" class="section level2">
 <h2 class="hasAnchor">
@@ -165,44 +171,46 @@
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h2>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"mets"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://kkholst.github.io/mets">"mets"</a></span>)
 <span class="co">#&gt; Loading required package: timereg</span>
 <span class="co">#&gt; Loading required package: survival</span>
 <span class="co">#&gt; Loading required package: lava</span>
 <span class="co">#&gt; mets version 1.2.8</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">prt</span>) <span class="co">## Prostate data example (sim)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">prt</span>) <span class="co">## Prostate data example (sim)</span>
 
 <span class="co">## Bivariate competing risk, concordance estimates</span>
-<span class="no">p33</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bicomprisk.html">bicomprisk</a></span>(<span class="fu">Event</span>(<span class="no">time</span>,<span class="no">status</span>)~<span class="fu">strata</span>(<span class="no">zyg</span>)+<span class="fu">id</span>(<span class="no">id</span>),
-                  <span class="kw">data</span><span class="kw">=</span><span class="no">prt</span>, <span class="kw">cause</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">2</span>), <span class="kw">return.data</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">prodlim</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="kw">p33</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bicomprisk.html">bicomprisk</a></span>(<span class="fu">Event</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="fu">strata</span>(<span class="kw">zyg</span>)<span class="op">+</span><span class="fu">id</span>(<span class="kw">id</span>),
+                  data=<span class="kw">prt</span>, cause=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">2</span>), return.data=<span class="fl">1</span>, prodlim=<span class="fl">TRUE</span>)
 <span class="co">#&gt; Strata 'DZ'</span>
 <span class="co">#&gt; Strata 'MZ'</span>
 
-<span class="no">p33dz</span> <span class="kw">&lt;-</span> <span class="no">p33</span>$<span class="no">model</span>$<span class="st">"DZ"</span>$<span class="no">comp.risk</span>
-<span class="no">p33mz</span> <span class="kw">&lt;-</span> <span class="no">p33</span>$<span class="no">model</span>$<span class="st">"MZ"</span>$<span class="no">comp.risk</span>
+<span class="kw">p33dz</span> <span class="op">&lt;-</span> <span class="kw">p33</span><span class="op">$</span><span class="kw">model</span><span class="op">$</span><span class="st">"DZ"</span><span class="op">$</span><span class="kw">comp.risk</span>
+<span class="kw">p33mz</span> <span class="op">&lt;-</span> <span class="kw">p33</span><span class="op">$</span><span class="kw">model</span><span class="op">$</span><span class="st">"MZ"</span><span class="op">$</span><span class="kw">comp.risk</span>
 
 <span class="co">## Probability weights based on Aalen's additive model</span>
-<span class="no">prtw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/ipw.html">ipw</a></span>(<span class="fu">Surv</span>(<span class="no">time</span>,<span class="no">status</span><span class="kw">==</span><span class="fl">0</span>)~<span class="no">country</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">prt</span>,
-            <span class="kw">cluster</span><span class="kw">=</span><span class="st">"id"</span>,<span class="kw">weight.name</span><span class="kw">=</span><span class="st">"w"</span>)
+<span class="kw">prtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipw.html">ipw</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span><span class="op">==</span><span class="fl">0</span>)<span class="op">~</span><span class="kw">country</span>, data=<span class="kw">prt</span>,
+            cluster=<span class="st">"id"</span>,weight.name=<span class="st">"w"</span>)
 
 <span class="co">## Marginal model (wrongly ignoring censorings)</span>
-<span class="no">bpmz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/biprobit.html">biprobit</a></span>(<span class="no">cancer</span>~<span class="fl">1</span> + <span class="fu">cluster</span>(<span class="no">id</span>),
-                 <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">prt</span>,<span class="no">zyg</span><span class="kw">==</span><span class="st">"MZ"</span>), <span class="kw">eqmarg</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="kw">bpmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span>(<span class="kw">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span>(<span class="kw">id</span>),
+                 data=<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">prt</span>,<span class="kw">zyg</span><span class="op">==</span><span class="st">"MZ"</span>), eqmarg=<span class="fl">TRUE</span>)
 
 <span class="co">## Extended liability model</span>
-<span class="no">bpmzIPW</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/biprobit.html">biprobit</a></span>(<span class="no">cancer</span>~<span class="fl">1</span> + <span class="fu">cluster</span>(<span class="no">id</span>),
-                    <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">prtw</span>,<span class="no">zyg</span><span class="kw">==</span><span class="st">"MZ"</span>),
-                    <span class="kw">weight</span><span class="kw">=</span><span class="st">"w"</span>)
-<span class="no">smz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bpmzIPW</span>)
+<span class="kw">bpmzIPW</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span>(<span class="kw">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span>(<span class="kw">id</span>),
+                    data=<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">prtw</span>,<span class="kw">zyg</span><span class="op">==</span><span class="st">"MZ"</span>),
+                    weight=<span class="st">"w"</span>)
+<span class="kw">smz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bpmzIPW</span>)
 
 <span class="co">## Concordance</span>
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">p33mz</span>,<span class="kw">ylim</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.1</span>),<span class="kw">axes</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">automar</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">atrisk</span><span class="kw">=</span><span class="fl">FALSE</span>,<span class="kw">background</span><span class="kw">=</span><span class="fl">TRUE</span>,<span class="kw">background.fg</span><span class="kw">=</span><span class="st">"white"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">p33mz</span>,ylim=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.1</span>),axes=<span class="fl">FALSE</span>,automar=<span class="fl">FALSE</span>,atrisk=<span class="fl">FALSE</span>,background=<span class="fl">TRUE</span>,background.fg=<span class="st">"white"</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span>(<span class="fl">2</span>); <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span>(<span class="fl">1</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="no">smz</span>$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"darkblue"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(h=<span class="kw">smz</span><span class="op">$</span><span class="kw">prob</span>[<span class="st">"Concordance"</span>,],lwd=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),col=<span class="st">"darkblue"</span>)
 <span class="co">## Wrong estimates:</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">h</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bpmz</span>)$<span class="no">prob</span>[<span class="st">"Concordance"</span>,],<span class="kw">lwd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),<span class="kw">col</span><span class="kw">=</span><span class="st">"lightgray"</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(h=<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bpmz</span>)<span class="op">$</span><span class="kw">prob</span>[<span class="st">"Concordance"</span>,],lwd=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>),col=<span class="st">"lightgray"</span>, lty=<span class="fl">2</span>)
+</pre></div>
 <p><img src="reference/figures/ex1-1.png" title="plot of chunk ex1" alt="plot of chunk ex1" width="60%"></p>
 </div>
 </div>
@@ -244,7 +252,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/kkholst/mets"><img src="https://travis-ci.org/kkholst/mets.svg?branch=master" alt="travis"></a></li>
+<li><a href="https://travis-ci.com/kkholst/mets"><img src="https://travis-ci.com/kkholst/mets.svg?branch=master" alt="travis"></a></li>
 <li><a href="https://codecov.io/github/kkholst/mets?branch=master"><img src="https://codecov.io/github/kkholst/mets/coverage.svg?branch=master" alt="coverage"></a></li>
 <li><a href="https://CRAN.R-project.org/package=mets"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
 <li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/mets"><img src="https://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>
@@ -259,7 +267,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

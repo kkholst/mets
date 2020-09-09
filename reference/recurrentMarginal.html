@@ -172,7 +172,7 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
  $$\Lambda_d(u|x=0) $$ being the cumulative baseline for death.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>recurrentMarginal</span>(<span class='no'>recurrent</span>, <span class='no'>death</span>, <span class='kw'>fixbeta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>km</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>recurrentMarginal</span>(<span class='kw'>recurrent</span>, <span class='kw'>death</span>, fixbeta = <span class='kw'>NULL</span>, km = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,72 +206,80 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
 
     <p>Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, 
             Biometrics, 554--562.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>drcumhaz</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='no'>drcumhaz</span>
-<span class='no'>base1</span> <span class='kw'>&lt;-</span> <span class='no'>base1cumhaz</span>
-<span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
-<span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
-<span class='no'>rr</span>$<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>rr</span>))
-<span class='no'>rr</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>((<span class='no'>rr</span>$<span class='no'>id</span>-<span class='fl'>0.01</span>)/<span class='fl'>500</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
+<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
+<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
+<span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simRecurrent.html'>simRecurrent</a></span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>)
+<span class='kw'>rr</span><span class='op'>$</span><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>rr</span>)) 
+<span class='kw'>rr</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>((<span class='kw'>rr</span><span class='op'>$</span><span class='kw'>id</span><span class='op'>-</span><span class='fl'>0.01</span>)<span class='op'>/</span><span class='fl'>500</span>)
 
 <span class='co'>##  to fit non-parametric models with just a baseline </span>
-<span class='no'>xr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>death</span>)~<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
-<span class='fu'>bplot</span>(<span class='no'>dr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(<span class='kw'>main</span><span class='kw'>=</span><span class='st'>"death"</span>)
-<span class='fu'>bplot</span>(<span class='no'>xr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>xr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>death</span>)<span class='op'>~</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>dr</span>,se=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(main=<span class='st'>"death"</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>xr</span>,se=<span class='fl'>TRUE</span>)
 <span class='co'>### robust standard errors </span>
-<span class='no'>rxr</span> <span class='kw'>&lt;-</span>   <span class='fu'>robust.phreg</span>(<span class='no'>xr</span>,<span class='kw'>fixbeta</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='fu'>bplot</span>(<span class='no'>rxr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>4</span>)
+<span class='kw'>rxr</span> <span class='op'>&lt;-</span>   <span class='fu'><a href='phreg.html'>robust.phreg</a></span>(<span class='kw'>xr</span>,fixbeta=<span class='fl'>1</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>rxr</span>,se=<span class='fl'>TRUE</span>,robust=<span class='fl'>TRUE</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>4</span>)
 
 <span class='co'>## marginal mean of expected number of recurrent events </span>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='no'>xr</span>,<span class='no'>dr</span>)
-<span class='fu'>bplot</span>(<span class='no'>out</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"marginal mean"</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='img'><img src='recurrentMarginal-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='kw'>xr</span>,<span class='kw'>dr</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out</span>,se=<span class='fl'>TRUE</span>,ylab=<span class='st'>"marginal mean"</span>,col=<span class='fl'>2</span>)
+</div><div class='img'><img src='recurrentMarginal-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>########################################################################</span>
 <span class='co'>###   with strata     ##################################################</span>
 <span class='co'>########################################################################</span>
-<span class='no'>xr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'>strata</span>(<span class='no'>strata</span>)+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>death</span>)~<span class='fu'>strata</span>(<span class='no'>strata</span>)+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
-<span class='fu'>bplot</span>(<span class='no'>dr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(<span class='kw'>main</span><span class='kw'>=</span><span class='st'>"death"</span>)
-<span class='fu'>bplot</span>(<span class='no'>xr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>rxr</span> <span class='kw'>&lt;-</span>   <span class='fu'>robust.phreg</span>(<span class='no'>xr</span>,<span class='kw'>fixbeta</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='fu'>bplot</span>(<span class='no'>rxr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)
+<span class='kw'>xr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>death</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>dr</span>,se=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(main=<span class='st'>"death"</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>xr</span>,se=<span class='fl'>TRUE</span>)
+<span class='kw'>rxr</span> <span class='op'>&lt;-</span>   <span class='fu'><a href='phreg.html'>robust.phreg</a></span>(<span class='kw'>xr</span>,fixbeta=<span class='fl'>1</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>rxr</span>,se=<span class='fl'>TRUE</span>,robust=<span class='fl'>TRUE</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='no'>xr</span>,<span class='no'>dr</span>)
-<span class='fu'>bplot</span>(<span class='no'>out</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"marginal mean"</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)</div><div class='img'><img src='recurrentMarginal-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='kw'>xr</span>,<span class='kw'>dr</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out</span>,se=<span class='fl'>TRUE</span>,ylab=<span class='st'>"marginal mean"</span>,col=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+</div><div class='img'><img src='recurrentMarginal-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>########################################################################</span>
 <span class='co'>###   cox case        ##################################################</span>
 <span class='co'>########################################################################</span>
-<span class='no'>xr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='no'>x</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>entry</span>,<span class='no'>time</span>,<span class='no'>death</span>)~<span class='no'>x</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>rr</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
-<span class='fu'>bplot</span>(<span class='no'>dr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(<span class='kw'>main</span><span class='kw'>=</span><span class='st'>"death"</span>)
-<span class='fu'>bplot</span>(<span class='no'>xr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>rxr</span> <span class='kw'>&lt;-</span>   <span class='fu'>robust.phreg</span>(<span class='no'>xr</span>)
-<span class='fu'>bplot</span>(<span class='no'>rxr</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>robust</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)
+<span class='kw'>xr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>entry</span>,<span class='kw'>time</span>,<span class='kw'>death</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>rr</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>dr</span>,se=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/title.html'>title</a></span>(main=<span class='st'>"death"</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>xr</span>,se=<span class='fl'>TRUE</span>)
+<span class='kw'>rxr</span> <span class='op'>&lt;-</span>   <span class='fu'><a href='phreg.html'>robust.phreg</a></span>(<span class='kw'>xr</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>rxr</span>,se=<span class='fl'>TRUE</span>,robust=<span class='fl'>TRUE</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='no'>xr</span>,<span class='no'>dr</span>)
-<span class='fu'>bplot</span>(<span class='no'>out</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"marginal mean"</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)</div><div class='img'><img src='recurrentMarginal-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='kw'>xr</span>,<span class='kw'>dr</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out</span>,se=<span class='fl'>TRUE</span>,ylab=<span class='st'>"marginal mean"</span>,col=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+</div><div class='img'><img src='recurrentMarginal-3.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>########################################################################</span>
 <span class='co'>###   CIF  #############################################################</span>
 <span class='co'>########################################################################</span>
 <span class='co'>### use of function to compute cumulative incidence (cif) with robust standard errors</span>
- <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
- <span class='no'>bmt</span>$<span class='no'>id</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>bmt</span>)
- <span class='no'>xr</span>  <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>cause</span><span class='kw'>==</span><span class='fl'>1</span>)~<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>)
- <span class='no'>dr</span>  <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>cause</span><span class='kw'>!=</span><span class='fl'>0</span>)~<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>)
+ <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+ <span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>bmt</span>)
+ <span class='kw'>xr</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>cause</span><span class='op'>==</span><span class='fl'>1</span>)<span class='op'>~</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>bmt</span>)
+ <span class='kw'>dr</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>!=<span class='fl'>0</span>)<span class='op'>~</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>bmt</span>)
 
- <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='no'>xr</span>,<span class='no'>dr</span>,<span class='kw'>km</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
- <span class='fu'>bplot</span>(<span class='no'>out</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>ylab</span><span class='kw'>=</span><span class='st'>"cumulative incidence"</span>)</div><div class='img'><img src='recurrentMarginal-4.png' alt='' width='700' height='433' /></div></pre>
+ <span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>recurrentMarginal</span>(<span class='kw'>xr</span>,<span class='kw'>dr</span>,km=<span class='fl'>TRUE</span>)
+ <span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out</span>,se=<span class='fl'>TRUE</span>,ylab=<span class='st'>"cumulative incidence"</span>)
+
+</div><div class='img'><img src='recurrentMarginal-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -287,7 +295,7 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -109,7 +109,7 @@
       <h1 data-toc-skip>Analysis of bivariate binomial data: Twin analysis</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-09-02</h4>
+            <h4 class="date">2020-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/binomial-twin.Rmd"><code>vignettes/binomial-twin.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-twin.Rmd</code></div>
@@ -228,27 +228,30 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <p>We consider the twin-stutter where for pairs of twins that are either dizygotic or monozygotic we have recorded whether the twins are stuttering </p>
 <p>We here consider MZ and same sex DZ twins.</p>
 <p>Looking at the data</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mets</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">twinstut</span>)
-<span class="no">twinstut</span>$<span class="no">binstut</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*(<span class="no">twinstut</span>$<span class="no">stutter</span><span class="kw">==</span><span class="st">"yes"</span>)
-<span class="no">twinsall</span> <span class="kw">&lt;-</span> <span class="no">twinstut</span>
-<span class="no">twinstut</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">twinstut</span>,<span class="no">zyg</span><span class="kw">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mz"</span>,<span class="st">"dz"</span>))
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">twinstut</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">twinstut</span>)
+<span class="kw">twinstut</span><span class="op">$</span><span class="kw">binstut</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">twinstut</span><span class="op">$</span><span class="kw">stutter</span><span class="op">==</span><span class="st">"yes"</span>)
+<span class="kw">twinsall</span> <span class="op">&lt;-</span> <span class="kw">twinstut</span>
+<span class="kw">twinstut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">twinstut</span>,<span class="kw">zyg</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mz"</span>,<span class="st">"dz"</span>))
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">twinstut</span>)
 <span class="co">#&gt;    tvparnr zyg stutter    sex age nr binstut</span>
 <span class="co">#&gt; 1        1  mz      no female  71  1       0</span>
 <span class="co">#&gt; 2        1  mz      no female  71  2       0</span>
 <span class="co">#&gt; 3        2  dz      no female  71  1       0</span>
 <span class="co">#&gt; 8        5  mz      no female  71  1       0</span>
 <span class="co">#&gt; 9        5  mz      no female  71  2       0</span>
-<span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></pre></body></html></div>
+<span class="co">#&gt; 11       7  dz      no   male  71  1       0</span>
+</pre></div>
 </div>
 <div id="pairwise-odds-ratio-model-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pairwise-odds-ratio-model-1" class="anchor"></a>Pairwise odds ratio model</h2>
 <p>We start by fitting an overall dependence OR for both MZ and DZ even though the dependence is expected to be different across zygosity.</p>
 <p>The first step is to fit the marginal model adjusting for marginal covariates. We here note that there is a rather strong gender effect in the risk of stuttering.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">margbin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">binstut</span>~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>)+<span class="no">age</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">margbin</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>)<span class="op">+</span><span class="kw">age</span>,data=<span class="kw">twinstut</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">margbin</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
 <span class="co">#&gt; glm(formula = binstut ~ factor(sex) + age, family = binomial(), </span>
@@ -272,11 +275,13 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; Residual deviance: 9117.0  on 21285  degrees of freedom</span>
 <span class="co">#&gt; AIC: 9123</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Number of Fisher Scoring iterations: 6</span></pre></body></html></div>
+<span class="co">#&gt; Number of Fisher Scoring iterations: 6</span>
+</pre></div>
 <p>Now estimating the OR parameter. We see a strong dependence with an OR at around 8 that is clearly significant.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">bina</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-                       <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bina</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,var.link=<span class="fl">1</span>,
+                       clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,detail=<span class="fl">0</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bina</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -291,13 +296,15 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>Now, and more interestingly, we consider an OR that depends on zygosity and note that MZ have a much larger OR than DZ twins. This type of trait is somewhat complicated to interpret, but clearly, one option is that that there is a genetic effect, alternatively there might be a stronger environmental effect for MZ twins.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># design for OR dependence </span>
-<span class="no">theta.des</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( ~-<span class="fl">1</span>+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">zyg</span>),<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>)
-<span class="no">bin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-                          <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">theta.des</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bin</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># design for OR dependence </span>
+<span class="kw">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">zyg</span>),data=<span class="kw">twinstut</span>)
+<span class="kw">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,var.link=<span class="fl">1</span>,
+                          clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,theta.des=<span class="kw">theta.des</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bin</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -314,13 +321,15 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>We now consider further regression modelling of the OR structure by considering possible interactions between sex and zygozsity. We see that MZ has a much higher dependence and that males have a much lower dependence. We tested for interaction in this model and these were not significant.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">twinstut</span>$<span class="no">cage</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>(<span class="no">twinstut</span>$<span class="no">age</span>)
-<span class="no">theta.des</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( ~-<span class="fl">1</span>+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">zyg</span>)+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>),<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>)
-<span class="no">bina</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-                          <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">theta.des</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bina</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">twinstut</span><span class="op">$</span><span class="kw">cage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>(<span class="kw">twinstut</span><span class="op">$</span><span class="kw">age</span>)
+<span class="kw">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">zyg</span>)<span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>),data=<span class="kw">twinstut</span>)
+<span class="kw">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,var.link=<span class="fl">1</span>,
+                          clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,theta.des=<span class="kw">theta.des</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bina</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -339,19 +348,21 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 </div>
 <div id="alternative-syntax" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alternative-syntax" class="anchor"></a>Alternative syntax</h2>
 <p>We now demonstrate how the models can fitted jointly and with anohter syntax, that ofcourse just fits the marginal model and subsequently fits the pairwise OR model.</p>
 <p>First noticing as before that MZ twins have a much higher dependence.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"> <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+ <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span>
  <span class="co"># could also use zyg2 (since zyg2=zyg1 within twinpair's)</span>
- <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/easy.binomial.twostage.html">easy.binomial.twostage</a></span>(<span class="no">stutter</span>~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>)+<span class="no">age</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,
-                <span class="kw">response</span><span class="kw">=</span><span class="st">"binstut"</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-                <span class="kw">theta.formula</span><span class="kw">=</span>~-<span class="fl">1</span>+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">zyg1</span>))
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">out</span>)
+ <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/easy.binomial.twostage.html">easy.binomial.twostage</a></span>(<span class="kw">stutter</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>)<span class="op">+</span><span class="kw">age</span>,data=<span class="kw">twinstut</span>,
+                response=<span class="st">"binstut"</span>,id=<span class="st">"tvparnr"</span>,var.link=<span class="fl">1</span>,
+                theta.formula=<span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">zyg1</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">out</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -368,19 +379,21 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>Now considering all data and estimating separate effects for the OR for opposite sex DZ twins and same sex twins. We here find that os twins are not markedly different from the same sex DZ twins.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"> <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+ <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span>
  <span class="co"># could also use zyg2 (since zyg2=zyg1 within twinpair's))</span>
-
- <span class="no">desfs</span><span class="kw">&lt;-</span><span class="kw">function</span>(<span class="no">x</span>,<span class="no">num1</span><span class="kw">=</span><span class="st">"zyg1"</span>,<span class="no">num2</span><span class="kw">=</span><span class="st">"zyg2"</span>)
-         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">x</span>[<span class="no">num1</span>]<span class="kw">==</span><span class="st">"dz"</span>,<span class="no">x</span>[<span class="no">num1</span>]<span class="kw">==</span><span class="st">"mz"</span>,<span class="no">x</span>[<span class="no">num1</span>]<span class="kw">==</span><span class="st">"os"</span>)*<span class="fl">1</span>
-
- <span class="no">margbinall</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">binstut</span>~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>)+<span class="no">age</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinsall</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
- <span class="no">out3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/easy.binomial.twostage.html">easy.binomial.twostage</a></span>(<span class="no">binstut</span>~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>)+<span class="no">age</span>,
-       <span class="kw">data</span><span class="kw">=</span><span class="no">twinsall</span>,<span class="kw">response</span><span class="kw">=</span><span class="st">"binstut"</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-       <span class="kw">theta.formula</span><span class="kw">=</span><span class="no">desfs</span>,<span class="kw">desnames</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"dz"</span>,<span class="st">"mz"</span>,<span class="st">"os"</span>))
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">out3</span>)
+ 
+ <span class="kw">desfs</span><span class="op">&lt;-</span><span class="fu">function</span>(<span class="kw">x</span>,<span class="kw">num1</span>=<span class="st">"zyg1"</span>,<span class="kw">num2</span>=<span class="st">"zyg2"</span>)
+         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">x</span>[<span class="kw">num1</span>]<span class="op">==</span><span class="st">"dz"</span>,<span class="kw">x</span>[<span class="kw">num1</span>]<span class="op">==</span><span class="st">"mz"</span>,<span class="kw">x</span>[<span class="kw">num1</span>]<span class="op">==</span><span class="st">"os"</span>)<span class="op">*</span><span class="fl">1</span>
+     
+ <span class="kw">margbinall</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>)<span class="op">+</span><span class="kw">age</span>,data=<span class="kw">twinsall</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+ <span class="kw">out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/easy.binomial.twostage.html">easy.binomial.twostage</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>)<span class="op">+</span><span class="kw">age</span>,
+       data=<span class="kw">twinsall</span>,response=<span class="st">"binstut"</span>,id=<span class="st">"tvparnr"</span>,var.link=<span class="fl">1</span>,
+       theta.formula=<span class="kw">desfs</span>,desnames=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"dz"</span>,<span class="st">"mz"</span>,<span class="st">"os"</span>))
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">out3</span>)
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
@@ -399,26 +412,30 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 </div>
 <div id="bivariate-probit-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bivariate-probit-model" class="anchor"></a>Bivariate Probit model</h2>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mets</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">twinstut</span>)
-<span class="no">twinstut</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">twinstut</span>,<span class="no">zyg</span><span class="kw">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mz"</span>,<span class="st">"dz"</span>))
-<span class="no">twinstut</span>$<span class="no">binstut</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*(<span class="no">twinstut</span>$<span class="no">stutter</span><span class="kw">==</span><span class="st">"yes"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">twinstut</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">twinstut</span>)
+<span class="kw">twinstut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">twinstut</span>,<span class="kw">zyg</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mz"</span>,<span class="st">"dz"</span>))
+<span class="kw">twinstut</span><span class="op">$</span><span class="kw">binstut</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">twinstut</span><span class="op">$</span><span class="kw">stutter</span><span class="op">==</span><span class="st">"yes"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">twinstut</span>)
 <span class="co">#&gt;    tvparnr zyg stutter    sex age nr binstut</span>
 <span class="co">#&gt; 1        1  mz      no female  71  1       0</span>
 <span class="co">#&gt; 2        1  mz      no female  71  2       0</span>
 <span class="co">#&gt; 3        2  dz      no female  71  1       0</span>
 <span class="co">#&gt; 8        5  mz      no female  71  1       0</span>
 <span class="co">#&gt; 9        5  mz      no female  71  2       0</span>
-<span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></pre></body></html></div>
+<span class="co">#&gt; 11       7  dz      no   male  71  1       0</span>
+</pre></div>
 <p>First testing for same dependence in MZ and DZ that we recommend doing by comparing the correlations of MZ and DZ twins. Apart from regression correction in the mean this is an un-structured model, and the useful concordance and casewise concordance estimates can be reported from this analysis.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">b1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bptwin.html">bptwin</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">DZ</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"un"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">b1</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,id=<span class="st">"tvparnr"</span>,zyg=<span class="st">"zyg"</span>,DZ=<span class="st">"dz"</span>,type=<span class="st">"un"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">b1</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                Estimate   Std.Err        Z p-value    </span>
 <span class="co">#&gt; (Intercept)   -1.794823  0.023289 -77.0667 &lt; 2e-16 ***</span>
@@ -451,14 +468,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; log(OR)              0.63527  0.09013 1.18040</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5% 97.5%</span>
-<span class="co">#&gt; Broad-sense heritability   1      NaN  NaN</span></pre></body></html></div>
+<span class="co">#&gt; Broad-sense heritability   1      NaN  NaN</span>
+</pre></div>
 </div>
 <div id="polygenic-modelling" class="section level2">
 <h2 class="hasAnchor">
 <a href="#polygenic-modelling" class="anchor"></a>Polygenic modelling</h2>
 <p>We now turn attention to specific polygenic modelling where special random effects are used to specify ACE, AE, ADE models and so forth. This is very easy with the bptwin function. The key parts of the output are the sizes of the genetic component A and the environmental component, and we can compare with the results of the unstructed model above. Also formally we can test if this submodel is acceptable by a likelihood ratio test.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">b1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bptwin.html">bptwin</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">DZ</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ace"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">b1</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,id=<span class="st">"tvparnr"</span>,zyg=<span class="st">"zyg"</span>,DZ=<span class="st">"dz"</span>,type=<span class="st">"ace"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">b1</span>)
 <span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span>
 
 <span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span>
@@ -497,9 +516,11 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; log(OR)              1.69996  1.57262 1.82730</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5%    97.5%  </span>
-<span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span></pre></body></html></div>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">b0</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/bptwin.html">bptwin</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">DZ</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ae"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">b0</span>)
+<span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span>
+</pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="kw">b0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,id=<span class="st">"tvparnr"</span>,zyg=<span class="st">"zyg"</span>,DZ=<span class="st">"dz"</span>,type=<span class="st">"ae"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">b0</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;             Estimate  Std.Err        Z   p-value    </span>
 <span class="co">#&gt; (Intercept) -3.70371  0.24449 -15.1485 &lt; 2.2e-16 ***</span>
@@ -533,18 +554,20 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; log(OR)              1.69996  1.57262 1.82730</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5%    97.5%  </span>
-<span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span></pre></body></html></div>
+<span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span>
+</pre></div>
 </div>
 <div id="additive-gamma-random-effects" class="section level2">
 <h2 class="hasAnchor">
 <a href="#additive-gamma-random-effects" class="anchor"></a>Additive gamma random effects</h2>
 <p>Fitting first a model with different size random effects for MZ and DZ. We note that as before in the OR and biprobit model the dependence is much stronger for MZ twins. We also test if these are the same by parametrizing the OR model with an intercept. This clearly shows a significant difference.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">theta.des</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( ~-<span class="fl">1</span>+<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">zyg</span>),<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>)
-<span class="no">margbin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
-<span class="no">bintwin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">model</span><span class="kw">=</span><span class="st">"gamma"</span>,
-     <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>,<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)/<span class="fl">1</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-     <span class="kw">theta.des</span><span class="kw">=</span><span class="no">theta.des</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bintwin</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="kw">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">zyg</span>),data=<span class="kw">twinstut</span>)
+<span class="kw">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+<span class="kw">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,model=<span class="st">"gamma"</span>,
+     clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,detail=<span class="fl">0</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)<span class="op">/</span><span class="fl">1</span>,var.link=<span class="fl">1</span>,
+     theta.des=<span class="kw">theta.des</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bintwin</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects </span>
 <span class="co">#&gt; With log-link</span>
@@ -565,12 +588,12 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
 
 <span class="co"># test for same dependence in MZ and DZ </span>
-<span class="no">theta.des</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( ~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">zyg</span>),<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>)
-<span class="no">margbin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
-<span class="no">bintwin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">model</span><span class="kw">=</span><span class="st">"gamma"</span>,
-     <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>,<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)/<span class="fl">1</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">1</span>,
-     <span class="kw">theta.des</span><span class="kw">=</span><span class="no">theta.des</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bintwin</span>)
+<span class="kw">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>( <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">zyg</span>),data=<span class="kw">twinstut</span>)
+<span class="kw">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+<span class="kw">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,model=<span class="st">"gamma"</span>,
+     clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,detail=<span class="fl">0</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)<span class="op">/</span><span class="fl">1</span>,var.link=<span class="fl">1</span>,
+     theta.des=<span class="kw">theta.des</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bintwin</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects </span>
 <span class="co">#&gt; With log-link</span>
@@ -588,14 +611,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] "gamma"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 </div>
 <div id="polygenic-modelling-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#polygenic-modelling-1" class="anchor"></a>Polygenic modelling</h2>
 <p>First setting up the random effects design for the random effects and the the relationship between variance parameters. We see that the genetic random effect has size one for MZ and 0.5 for DZ subjects, that have shared and non-shared genetic components with variance 0.5 such that the total genetic variance is the same for all subjects. The shared environmental effect is the samme for all. Thus two parameters with these bands.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">twin.polygen.design</a></span>(<span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zygname</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ace"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out</span>$<span class="no">des.rv</span>,<span class="no">twinstut</span>$<span class="no">tvparnr</span>),<span class="fl">10</span>)
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">twin.polygen.design</a></span>(<span class="kw">twinstut</span>,id=<span class="st">"tvparnr"</span>,zygname=<span class="st">"zyg"</span>,zyg=<span class="st">"dz"</span>,type=<span class="st">"ace"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>),<span class="fl">10</span>)
 <span class="co">#&gt;    MZ DZ DZns1 DZns2 env   </span>
 <span class="co">#&gt; 1   1  0     0     0   1  1</span>
 <span class="co">#&gt; 2   1  0     0     0   1  1</span>
@@ -607,19 +632,21 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; 13  0  1     0     1   1  8</span>
 <span class="co">#&gt; 15  0  1     1     0   1 10</span>
 <span class="co">#&gt; 18  0  1     1     0   1 12</span>
-<span class="no">out</span>$<span class="no">pardes</span>
+<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]  1.0    0</span>
 <span class="co">#&gt; [2,]  0.5    0</span>
 <span class="co">#&gt; [3,]  0.5    0</span>
 <span class="co">#&gt; [4,]  0.5    0</span>
-<span class="co">#&gt; [5,]  0.0    1</span></pre></body></html></div>
+<span class="co">#&gt; [5,]  0.0    1</span>
+</pre></div>
 <p>Now, fitting the ACE model, we see that the variance of the genetic, component, is 1.5 and the environmental variance is -0.5. Thus suggesting that the ACE model does not fit the data. When the random design is given we automatically use the gamma fralty model.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">margbin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">binstut</span>~<span class="no">sex</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,<span class="kw">family</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
-<span class="no">bintwin1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,
-     <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>,<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)/<span class="fl">1</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">0</span>,
-     <span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">des.rv</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">pardes</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bintwin1</span>)
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="kw">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">binstut</span><span class="op">~</span><span class="kw">sex</span>,data=<span class="kw">twinstut</span>,family=<span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>())
+<span class="kw">bintwin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,
+     clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,detail=<span class="fl">0</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)<span class="op">/</span><span class="fl">1</span>,var.link=<span class="fl">0</span>,
+     random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bintwin1</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -643,9 +670,11 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; p1   0.9814  0.1023 0.7809 1.182 8.292e-22</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>For this model we estimate the concordance and casewise concordance as well as the marginal rates of stuttering for females.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">concordanceTwinACE</a></span>(<span class="no">bintwin1</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ace"</span>)
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="fu"><a href="../reference/npc.html">concordanceTwinACE</a></span>(<span class="kw">bintwin1</span>,type=<span class="st">"ace"</span>)
 <span class="co">#&gt; $MZ</span>
 <span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; concordance           0.01822 0.001469 0.01534 0.02110 2.612e-35</span>
@@ -656,14 +685,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt;                      Estimate   Std.Err     2.5%    97.5%   P-value</span>
 <span class="co">#&gt; concordance          0.002353 0.0005889 0.001199 0.003507 6.453e-05</span>
 <span class="co">#&gt; casewise concordance 0.065007 0.0158357 0.033970 0.096045 4.041e-05</span>
-<span class="co">#&gt; marginal             0.036197 0.0018769 0.032518 0.039876 7.148e-83</span></pre></body></html></div>
+<span class="co">#&gt; marginal             0.036197 0.0018769 0.032518 0.039876 7.148e-83</span>
+</pre></div>
 <p>The E component was not consistent with the fit of the data and we now consider instead the AE model.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">twin.polygen.design</a></span>(<span class="no">twinstut</span>,<span class="kw">id</span><span class="kw">=</span><span class="st">"tvparnr"</span>,<span class="kw">zygname</span><span class="kw">=</span><span class="st">"zyg"</span>,<span class="kw">zyg</span><span class="kw">=</span><span class="st">"dz"</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ae"</span>)
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">twin.polygen.design</a></span>(<span class="kw">twinstut</span>,id=<span class="st">"tvparnr"</span>,zygname=<span class="st">"zyg"</span>,zyg=<span class="st">"dz"</span>,type=<span class="st">"ae"</span>)
 
-<span class="no">bintwin</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/binomial.twostage.html">binomial.twostage</a></span>(<span class="no">margbin</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">twinstut</span>,
-     <span class="kw">clusters</span><span class="kw">=</span><span class="no">twinstut</span>$<span class="no">tvparnr</span>,<span class="kw">detail</span><span class="kw">=</span><span class="fl">0</span>,<span class="kw">theta</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)/<span class="fl">1</span>,<span class="kw">var.link</span><span class="kw">=</span><span class="fl">0</span>,
-     <span class="kw">random.design</span><span class="kw">=</span><span class="no">out</span>$<span class="no">des.rv</span>,<span class="kw">theta.des</span><span class="kw">=</span><span class="no">out</span>$<span class="no">pardes</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">bintwin</span>)
+<span class="kw">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span>(<span class="kw">margbin</span>,data=<span class="kw">twinstut</span>,
+     clusters=<span class="kw">twinstut</span><span class="op">$</span><span class="kw">tvparnr</span>,detail=<span class="fl">0</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>)<span class="op">/</span><span class="fl">1</span>,var.link=<span class="fl">0</span>,
+     random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">bintwin</span>)
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -685,9 +716,11 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; p1   0.9095 0.09536 0.7226 1.096 1.469e-21</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+</pre></div>
 <p>Again, the concordance can be computed:</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/internal.html">concordanceTwinACE</a></span>(<span class="no">bintwin</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">"ae"</span>)
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="../reference/npc.html">concordanceTwinACE</a></span>(<span class="kw">bintwin</span>,type=<span class="st">"ae"</span>)
 <span class="co">#&gt; $MZ</span>
 <span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%   P-value</span>
 <span class="co">#&gt; concordance           0.01736 0.001427 0.01456 0.02016 5.005e-34</span>
@@ -698,13 +731,15 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt;                      Estimate   Std.Err     2.5%    97.5%    P-value</span>
 <span class="co">#&gt; concordance          0.004769 0.0003926 0.003999 0.005538  5.938e-34</span>
 <span class="co">#&gt; casewise concordance 0.131750 0.0054168 0.121133 0.142367 1.139e-130</span>
-<span class="co">#&gt; marginal             0.036197 0.0018769 0.032518 0.039876  7.148e-83</span></pre></body></html></div>
+<span class="co">#&gt; marginal             0.036197 0.0018769 0.032518 0.039876  7.148e-83</span>
+</pre></div>
 </div>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 <span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
@@ -728,17 +763,18 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
-<span class="co">#&gt;  [4] splines_4.0.2       MASS_7.3-51.6       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.2         grid_4.0.2          xfun_0.16          </span>
-<span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
-<span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     ucminf_1.1-4       </span>
-<span class="co">#&gt; [19] numDeriv_2016.8-1.1 pkgdown_1.5.1       crayon_1.3.4       </span>
-<span class="co">#&gt; [22] Matrix_1.2-18       fs_1.5.0            memoise_1.1.0      </span>
-<span class="co">#&gt; [25] evaluate_0.14       rmarkdown_2.3       stringi_1.4.6      </span>
-<span class="co">#&gt; [28] compiler_4.0.2      desc_1.2.0          backports_1.1.9    </span>
-<span class="co">#&gt; [31] mvtnorm_1.1-1</span></pre></body></html></div>
+<span class="co">#&gt;  [1] Rcpp_1.0.5          cpp11_0.2.1         knitr_1.29         </span>
+<span class="co">#&gt;  [4] magrittr_1.5        splines_4.0.2       lattice_0.20-41    </span>
+<span class="co">#&gt;  [7] R6_2.4.1            ragg_0.3.1          rlang_0.4.7        </span>
+<span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
+<span class="co">#&gt; [13] xfun_0.17           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    rprojroot_1.3-2    </span>
+<span class="co">#&gt; [19] digest_0.6.25       ucminf_1.1-4        numDeriv_2016.8-1.1</span>
+<span class="co">#&gt; [22] pkgdown_1.6.0       crayon_1.3.4        Matrix_1.2-18      </span>
+<span class="co">#&gt; [25] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
+<span class="co">#&gt; [28] rmarkdown_2.3       stringi_1.5.3       compiler_4.0.2     </span>
+<span class="co">#&gt; [31] desc_1.2.0          backports_1.1.9     mvtnorm_1.1-1</span>
+</pre></div>
 </div>
   </div>
 
@@ -757,7 +793,7 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

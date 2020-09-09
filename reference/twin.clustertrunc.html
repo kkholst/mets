@@ -157,14 +157,14 @@
     </div>
 
     <pre class="usage"><span class='fu'>twin.clustertrunc</span>(
-  <span class='no'>survformula</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>final.fitting</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>survformula</span>,
+  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
+  theta.des = <span class='kw'>NULL</span>,
+  clusters = <span class='kw'>NULL</span>,
+  var.link = <span class='fl'>1</span>,
+  Nit = <span class='fl'>10</span>,
+  final.fitting = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -204,16 +204,20 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>"timereg"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>diabetes</span>)
-<span class='no'>v</span> <span class='kw'>&lt;-</span> <span class='no'>diabetes</span>$<span class='no'>time</span>*<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>diabetes</span>))*<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>diabetes</span>),<span class='fl'>1</span>,<span class='fl'>0.5</span>)
-<span class='no'>diabetes</span>$<span class='no'>v</span> <span class='kw'>&lt;-</span> <span class='no'>v</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>diabetes</span>)
+<span class='kw'>v</span> <span class='op'>&lt;-</span> <span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>time</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>diabetes</span>))<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>diabetes</span>),<span class='fl'>1</span>,<span class='fl'>0.5</span>)
+<span class='kw'>diabetes</span><span class='op'>$</span><span class='kw'>v</span> <span class='op'>&lt;-</span> <span class='kw'>v</span>
 
-<span class='no'>aout</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/internal-addreg.html'>twin.clustertrunc</a></span>(<span class='fu'>Surv</span>(<span class='no'>v</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fl'>1</span>+<span class='no'>treat</span>+<span class='no'>adult</span>,
-                 <span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='st'>"id"</span>)
-<span class='no'>aout</span>$<span class='no'>two</span>        <span class='co'>## twostage output</span></div><div class='output co'>#&gt; 
+<span class='kw'>aout</span> <span class='op'>&lt;-</span> <span class='fu'>twin.clustertrunc</span>(<span class='fu'>Surv</span>(<span class='kw'>v</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>treat</span><span class='op'>+</span><span class='kw'>adult</span>,
+     data=<span class='kw'>diabetes</span>,clusters=<span class='st'>"id"</span>)
+<span class='kw'>aout</span><span class='op'>$</span><span class='kw'>two</span>        <span class='co'>## twostage output</span>
+</div><div class='output co'>#&gt; 
 #&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link 
@@ -229,12 +233,13 @@
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>aout</span>$<span class='no'>marg</span>) <span class='co'>## marginal model output</span>
+#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>aout</span><span class='op'>$</span><span class='kw'>marg</span>) <span class='co'>## marginal model output</span>
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/internal-addreg.html'>twin.clustertrunc</a></span>(<span class='fu'>Surv</span>(<span class='no'>v</span>,<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span>(<span class='no'>treat</span>)+<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span>(<span class='no'>adult</span>),
-                 <span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='st'>"id"</span>)
-<span class='no'>out</span>$<span class='no'>two</span>        <span class='co'>## twostage output</span></div><div class='output co'>#&gt; 
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>twin.clustertrunc</span>(<span class='fu'>Surv</span>(<span class='kw'>v</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span>(<span class='kw'>treat</span>)<span class='op'>+</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span>(<span class='kw'>adult</span>),
+     data=<span class='kw'>diabetes</span>,clusters=<span class='st'>"id"</span>)
+<span class='kw'>out</span><span class='op'>$</span><span class='kw'>two</span>        <span class='co'>## twostage output</span>
+</div><div class='output co'>#&gt; 
 #&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link 
@@ -250,7 +255,8 @@
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>out</span>$<span class='no'>marg</span>) <span class='co'>## marginal model output</span></div><div class='img'><img src='twin.clustertrunc-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>marg</span>) <span class='co'>## marginal model output</span>
+</div><div class='img'><img src='twin.clustertrunc-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -266,7 +272,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

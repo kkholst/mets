@@ -157,18 +157,18 @@
     </div>
 
     <pre class="usage"><span class='fu'>simRecurrent</span>(
-  <span class='no'>n</span>,
-  <span class='no'>cumhaz</span>,
-  <span class='kw'>death.cumhaz</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cumhaz2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>gap.time</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>max.recurrent</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>dhaz</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>haz2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dependence</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>var.z</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>cor.mat</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>n</span>,
+  <span class='kw'>cumhaz</span>,
+  death.cumhaz = <span class='kw'>NULL</span>,
+  cumhaz2 = <span class='kw'>NULL</span>,
+  gap.time = <span class='fl'>FALSE</span>,
+  max.recurrent = <span class='fl'>100</span>,
+  dhaz = <span class='kw'>NULL</span>,
+  haz2 = <span class='kw'>NULL</span>,
+  dependence = <span class='fl'>0</span>,
+  var.z = <span class='fl'>2</span>,
+  cor.mat = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -231,24 +231,28 @@ first random effect is z1 and shared for a possible second cause,  second random
     <p>Must give hazard of death and recurrent events.  Possible with two
 event types and their dependence can be specified but the two recurrent events need
 to have the same random effect,  simRecurrentII more flexible !</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>########################################</span>
 <span class='co'>## getting some rates to mimick </span>
 <span class='co'>########################################</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>drcumhaz</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='no'>drcumhaz</span>
-<span class='no'>base1</span> <span class='kw'>&lt;-</span> <span class='no'>base1cumhaz</span>
-<span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
+<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
+<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
 
  <span class='co'>######################################################################</span>
  <span class='co'>### simulating simple model that mimicks data </span>
  <span class='co'>######################################################################</span>
- <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>5</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
- <span class='fu'>dlist</span>(<span class='no'>rr</span>,<span class='no'>.</span>~<span class='no'>id</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; id: 1
+ <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>5</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>)
+ <span class='fu'><a href='dprint.html'>dlist</a></span>(<span class='kw'>rr</span>,<span class='kw'>.</span><span class='op'>~</span><span class='kw'>id</span>,n=<span class='fl'>0</span>)
+</div><div class='output co'>#&gt; id: 1
 #&gt;   entry     time status rr    dtime fdeath death start     stop
 #&gt; 1     0 94.74704      0  1 94.74704      1     1     0 94.74704
 #&gt; ------------------------------------------------------------ 
@@ -275,29 +279,35 @@ to have the same random effect,  simRecurrentII more flexible !</p>
 #&gt; id: 5
 #&gt;   entry     time status rr    dtime fdeath death start     stop
 #&gt; 5     0 154.8258      0  1 154.8258      1     1     0 154.8258</div><div class='input'>
- <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
- <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
- <span class='fu'>showfitsim</span>(<span class='kw'>causes</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='no'>rr</span>,<span class='no'>dr</span>,<span class='no'>base1</span>,<span class='no'>base1</span>)
+ <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>)
+ <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
+ <span class='fu'>showfitsim</span>(causes=<span class='fl'>1</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base1</span>)
 
 <span class='co'>######################################################################</span>
 <span class='co'>### simulating simple model that mimicks data </span>
 <span class='co'>### now with two event types and second type has same rate as death rate</span>
 <span class='co'>######################################################################</span>
 
- <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>,<span class='kw'>cumhaz2</span><span class='kw'>=</span><span class='no'>base4</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
+ <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>,cumhaz2=<span class='kw'>base4</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>rr</span>,<span class='op'>~</span><span class='kw'>death</span><span class='op'>+</span><span class='kw'>status</span>)
+</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             120 2887  413
-#&gt; 1             880    0    0</div><div class='input'> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))</div><div class='img'><img src='simRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(<span class='kw'>causes</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='no'>rr</span>,<span class='no'>dr</span>,<span class='no'>base1</span>,<span class='no'>base4</span>)
+#&gt; 1             880    0    0</div><div class='input'> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+</div><div class='img'><img src='simRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(causes=<span class='fl'>2</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base4</span>)
 
 <span class='co'>######################################################################</span>
 <span class='co'>### simulating simple model </span>
 <span class='co'>### random effect for all causes (Z shared for death and recurrent) </span>
 <span class='co'>######################################################################</span>
 
- <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>,<span class='kw'>dependence</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>var.gamma</span><span class='kw'>=</span><span class='fl'>0.4</span>)
+ <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>,dependence=<span class='fl'>1</span>,var.gamma=<span class='fl'>0.4</span>)
  <span class='co'>### marginals do fit after input after integrating out</span>
- <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))</div><div class='img'><img src='simRecurrent-2.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(<span class='kw'>causes</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='no'>rr</span>,<span class='no'>dr</span>,<span class='no'>base1</span>,<span class='no'>base1</span>)</div><div class='img'><img src='simRecurrent-3.png' alt='' width='700' height='433' /></div></pre>
+ <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+</div><div class='img'><img src='simRecurrent-2.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(causes=<span class='fl'>1</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base1</span>)
+
+</div><div class='img'><img src='simRecurrent-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -313,7 +323,7 @@ to have the same random effect,  simRecurrentII more flexible !</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

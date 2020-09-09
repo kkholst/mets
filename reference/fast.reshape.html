@@ -157,21 +157,21 @@
     </div>
 
     <pre class="usage"><span class='fu'>fast.reshape</span>(
-  <span class='no'>data</span>,
-  <span class='no'>varying</span>,
-  <span class='no'>id</span>,
-  <span class='no'>num</span>,
-  <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='no'>keep</span>,
-  <span class='kw'>idname</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
-  <span class='kw'>numname</span> <span class='kw'>=</span> <span class='st'>"num"</span>,
-  <span class='kw'>factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>idcombine</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>labelnum</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>labels</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fu'>mets.options</span>()$<span class='no'>regex</span>,
-  <span class='kw'>dropid</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>varying</span>,
+  <span class='kw'>id</span>,
+  <span class='kw'>num</span>,
+  sep = <span class='st'>""</span>,
+  <span class='kw'>keep</span>,
+  idname = <span class='st'>"id"</span>,
+  numname = <span class='st'>"num"</span>,
+  factor = <span class='fl'>FALSE</span>,
+  idcombine = <span class='fl'>TRUE</span>,
+  labelnum = <span class='fl'>FALSE</span>,
+  <span class='kw'>labels</span>,
+  regex = <span class='fu'><a href='mets.options.html'>mets.options</a></span>()<span class='op'>$</span><span class='kw'>regex</span>,
+  dropid = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -240,17 +240,22 @@ Otherwise the first variable is only used as identifier.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike, Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>"lava"</span>)
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>,<span class='no'>y4</span>)~<span class='no'>x</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>5</span>)
-<span class='no'>d</span></div><div class='output co'>#&gt;           y1         y2        y3         y4          x
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/kkholst/lava'>"lava"</a></span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>,<span class='kw'>y4</span>)<span class='op'>~</span><span class='kw'>x</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>5</span>)
+<span class='kw'>d</span>
+</div><div class='output co'>#&gt;           y1         y2        y3         y4          x
 #&gt; 1  2.2363835  0.4946415  1.230584  0.3874222  0.9621697
 #&gt; 2  2.2162689  1.7399893  2.007292  2.4714479  1.3152824
 #&gt; 3 -0.9677689 -1.8707039 -0.905182 -2.2929790 -1.9867900
 #&gt; 4 -0.7195039 -2.5031543 -2.188153 -1.2104840 -0.4562290
-#&gt; 5 -0.7458861  0.5135096 -2.062469 -0.1541229 -0.2447923</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>)</div><div class='output co'>#&gt;             x          y id num
+#&gt; 5 -0.7458861  0.5135096 -2.062469 -0.1541229 -0.2447923</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>)
+</div><div class='output co'>#&gt;             x          y id num
 #&gt; 1   0.9621697  2.2363835  1   1
 #&gt; 2   0.9621697  0.4946415  1   2
 #&gt; 3   0.9621697  1.2305837  1   3
@@ -270,7 +275,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 17 -0.2447923 -0.7458861  5   1
 #&gt; 18 -0.2447923  0.5135096  5   2
 #&gt; 19 -0.2447923 -2.0624691  5   3
-#&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>),<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>)</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
+#&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>),id=<span class='st'>"id"</span>)
+</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
 #&gt; 1  0.9621697  2.2363835  1    1  0.9621697  0.4946415    2  0.9621697  1.230584
 #&gt; 2  1.3152824  2.2162689  2    1  1.3152824  1.7399893    2  1.3152824  2.007292
 #&gt; 3 -1.9867900 -0.9677689  3    1 -1.9867900 -1.8707039    2 -1.9867900 -0.905182
@@ -283,7 +289,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 4    3 -0.4562290 -1.2104840    4
 #&gt; 5    3 -0.2447923 -0.1541229    4</div><div class='input'>
 <span class='co'>##### From wide-format</span>
-(<span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>))</div><div class='output co'>#&gt;             x          y id num
+(<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>))
+</div><div class='output co'>#&gt;             x          y id num
 #&gt; 1   0.9621697  2.2363835  1   1
 #&gt; 2   0.9621697  0.4946415  1   2
 #&gt; 3   0.9621697  1.2305837  1   3
@@ -305,7 +312,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 19 -0.2447923 -2.0624691  5   3
 #&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'><span class='co'>## Same with explicit setting new id and number variable/column names</span>
 <span class='co'>## and seperator "" (default) and dropping x</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>,<span class='kw'>idname</span><span class='kw'>=</span><span class='st'>"a"</span>,<span class='kw'>timevar</span><span class='kw'>=</span><span class='st'>"b"</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>,<span class='kw'>keep</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>())</div><div class='output co'>#&gt;             y a num
+<span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>,idname=<span class='st'>"a"</span>,timevar=<span class='st'>"b"</span>,sep=<span class='st'>""</span>,keep=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>())
+</div><div class='output co'>#&gt;             y a num
 #&gt; 1   2.2363835 1   1
 #&gt; 2   0.4946415 1   2
 #&gt; 3   1.2305837 1   3
@@ -326,7 +334,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 18  0.5135096 5   2
 #&gt; 19 -2.0624691 5   3
 #&gt; 20 -0.1541229 5   4</div><div class='input'><span class='co'>## Same with 'reshape' list-syntax</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>,<span class='st'>"y2"</span>,<span class='st'>"y3"</span>,<span class='st'>"y4"</span>)),<span class='kw'>labelnum</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;             x         y1 id num
+<span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>,<span class='st'>"y2"</span>,<span class='st'>"y3"</span>,<span class='st'>"y4"</span>)),labelnum=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;             x         y1 id num
 #&gt; 1   0.9621697  2.2363835  1   1
 #&gt; 2   0.9621697  0.4946415  1   2
 #&gt; 3   0.9621697  1.2305837  1   3
@@ -348,7 +357,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 19 -0.2447923 -2.0624691  5   3
 #&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'>
 <span class='co'>##### From long-format</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>dd</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>)</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
+<span class='fu'>fast.reshape</span>(<span class='kw'>dd</span>,id=<span class='st'>"id"</span>)
+</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
 #&gt; 1  0.9621697  2.2363835  1    1  0.9621697  0.4946415    2  0.9621697  1.230584
 #&gt; 2  1.3152824  2.2162689  2    1  1.3152824  1.7399893    2  1.3152824  2.007292
 #&gt; 3 -1.9867900 -0.9677689  3    1 -1.9867900 -1.8707039    2 -1.9867900 -0.905182
@@ -360,43 +370,51 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 3    3 -1.9867900 -2.2929790    4
 #&gt; 4    3 -0.4562290 -1.2104840    4
 #&gt; 5    3 -0.2447923 -0.1541229    4</div><div class='input'><span class='co'>## Restrict set up within-cluster varying variables</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>dd</span>,<span class='st'>"y"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>)</div><div class='output co'>#&gt;            x         y1 id num         y2        y3         y4
+<span class='fu'>fast.reshape</span>(<span class='kw'>dd</span>,<span class='st'>"y"</span>,id=<span class='st'>"id"</span>)
+</div><div class='output co'>#&gt;            x         y1 id num         y2        y3         y4
 #&gt; 1  0.9621697  2.2363835  1   1  0.4946415  1.230584  0.3874222
 #&gt; 2  1.3152824  2.2162689  2   1  1.7399893  2.007292  2.4714479
 #&gt; 3 -1.9867900 -0.9677689  3   1 -1.8707039 -0.905182 -2.2929790
 #&gt; 4 -0.4562290 -0.7195039  4   1 -2.5031543 -2.188153 -1.2104840
-#&gt; 5 -0.2447923 -0.7458861  5   1  0.5135096 -2.062469 -0.1541229</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>dd</span>,<span class='st'>"y"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>keep</span><span class='kw'>=</span><span class='st'>"x"</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>"."</span>)</div><div class='output co'>#&gt;            x        y.1 id        y.2       y.3        y.4
+#&gt; 5 -0.2447923 -0.7458861  5   1  0.5135096 -2.062469 -0.1541229</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>dd</span>,<span class='st'>"y"</span>,id=<span class='st'>"id"</span>,keep=<span class='st'>"x"</span>,sep=<span class='st'>"."</span>)
+</div><div class='output co'>#&gt;            x        y.1 id        y.2       y.3        y.4
 #&gt; 1  0.9621697  2.2363835  1  0.4946415  1.230584  0.3874222
 #&gt; 2  1.3152824  2.2162689  2  1.7399893  2.007292  2.4714479
 #&gt; 3 -1.9867900 -0.9677689  3 -1.8707039 -0.905182 -2.2929790
 #&gt; 4 -0.4562290 -0.7195039  4 -2.5031543 -2.188153 -1.2104840
 #&gt; 5 -0.2447923 -0.7458861  5  0.5135096 -2.062469 -0.1541229</div><div class='input'>
 <span class='co'>#####</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>id</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>,<span class='fl'>5</span>,<span class='fl'>6</span>,<span class='fl'>6</span>,<span class='fl'>7</span>),<span class='kw'>y</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>5</span>,<span class='kw'>x</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>5</span>,<span class='kw'>tv</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='no'>x</span></div><div class='output co'>#&gt;   id y x tv
+<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(id=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>,<span class='fl'>5</span>,<span class='fl'>6</span>,<span class='fl'>6</span>,<span class='fl'>7</span>),y=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,x=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,tv=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>))
+<span class='kw'>x</span>
+</div><div class='output co'>#&gt;   id y x tv
 #&gt; 1  5 1 1  1
 #&gt; 2  5 2 2  2
 #&gt; 3  6 3 3  2
 #&gt; 4  6 4 4  1
-#&gt; 5  7 5 5  2</div><div class='input'>(<span class='no'>xw</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>x</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>))</div><div class='output co'>#&gt;   id y1 x1 tv1 y2 x2 tv2
+#&gt; 5  7 5 5  2</div><div class='input'>(<span class='kw'>xw</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>x</span>,id=<span class='st'>"id"</span>))
+</div><div class='output co'>#&gt;   id y1 x1 tv1 y2 x2 tv2
 #&gt; 1  5  1  1   1  2  2   2
 #&gt; 2  6  3  3   2  4  4   1
-#&gt; 3  7  5  5   2 NA NA  NA</div><div class='input'>(<span class='no'>xl</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>xw</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>),<span class='kw'>idname</span><span class='kw'>=</span><span class='st'>"id2"</span>,<span class='kw'>keep</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>()))</div><div class='output co'>#&gt;    y  x id2 num
+#&gt; 3  7  5  5   2 NA NA  NA</div><div class='input'>(<span class='kw'>xl</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>xw</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>),idname=<span class='st'>"id2"</span>,keep=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>()))
+</div><div class='output co'>#&gt;    y  x id2 num
 #&gt; 1  1  1   1   1
 #&gt; 2  2  2   1   2
 #&gt; 3  3  3   2   1
 #&gt; 4  4  4   2   2
 #&gt; 5  5  5   3   1
-#&gt; 6 NA NA   3   2</div><div class='input'>(<span class='no'>xl</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>xw</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>,<span class='st'>"tv"</span>)))</div><div class='output co'>#&gt;   id  y  x tv num
+#&gt; 6 NA NA   3   2</div><div class='input'>(<span class='kw'>xl</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>xw</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>,<span class='st'>"tv"</span>)))
+</div><div class='output co'>#&gt;   id  y  x tv num
 #&gt; 1  5  1  1  1   1
 #&gt; 2  5  2  2  2   2
 #&gt; 3  6  3  3  2   1
 #&gt; 4  6  4  4  1   2
 #&gt; 5  7  5  5  2   1
-#&gt; 6  7 NA NA NA   2</div><div class='input'>(<span class='no'>xw2</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>xl</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>num</span><span class='kw'>=</span><span class='st'>"num"</span>))</div><div class='output co'>#&gt;   id y1 x1 tv1 y2 x2 tv2
+#&gt; 6  7 NA NA NA   2</div><div class='input'>(<span class='kw'>xw2</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>xl</span>,id=<span class='st'>"id"</span>,num=<span class='st'>"num"</span>))
+</div><div class='output co'>#&gt;   id y1 x1 tv1 y2 x2 tv2
 #&gt; 1  5  1  1   1  2  2   2
 #&gt; 2  6  3  3   2  4  4   1
-#&gt; 3  7  5  5   2 NA NA  NA</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>xw2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>),<span class='kw'>idname</span><span class='kw'>=</span><span class='st'>"id"</span>)</div><div class='output co'>#&gt;   id tv1 tv2  y  x num
+#&gt; 3  7  5  5   2 NA NA  NA</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>xw2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"x"</span>),idname=<span class='st'>"id"</span>)
+</div><div class='output co'>#&gt;   id tv1 tv2  y  x num
 #&gt; 1  5   1   2  1  1   1
 #&gt; 2  5   1   2  2  2   2
 #&gt; 3  6   2   1  3  3   1
@@ -408,11 +426,13 @@ Otherwise the first variable is only used as identifier.</p></td>
 <span class='co'>### varying=list(c("ym","yf","yb1","yb2")))</span>
 
 <span class='co'>##### Family cluster example</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>mets</span><span class='kw ns'>:::</span><span class='fu'>simBinFam</span>(<span class='fl'>3</span>)
-<span class='no'>d</span></div><div class='output co'>#&gt;       agem     agef     ageb1    ageb2 xm xf xb1 xb2 ym yf yb1 yb2 id
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='kw'>mets</span>:::<span class='fu'><a href='npc.html'>simBinFam</a></span>(<span class='fl'>3</span>)
+<span class='kw'>d</span>
+</div><div class='output co'>#&gt;       agem     agef     ageb1    ageb2 xm xf xb1 xb2 ym yf yb1 yb2 id
 #&gt; 1 26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1   1   1  1
 #&gt; 2 29.41234 32.91351 14.899234 16.33437  1  1   1   1  1  1   1   1  2
-#&gt; 3 23.75109 24.91365 13.758275 15.12345  1  1   1   0  1  1   0   0  3</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='kw'>var</span><span class='kw'>=</span><span class='st'>"y"</span>)</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id y num
+#&gt; 3 23.75109 24.91365 13.758275 15.12345  1  1   1   0  1  1   0   0  3</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,var=<span class='st'>"y"</span>)
+</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id y num
 #&gt; 1  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1   m
 #&gt; 2  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1   f
 #&gt; 3  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1  b1
@@ -424,7 +444,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 9  23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 1   m
 #&gt; 10 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 1   f
 #&gt; 11 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 0  b1
-#&gt; 12 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 0  b2</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='kw'>varying</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ym"</span>,<span class='st'>"yf"</span>,<span class='st'>"yb1"</span>,<span class='st'>"yb2"</span>)))</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id ym num
+#&gt; 12 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 0  b2</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,varying=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ym"</span>,<span class='st'>"yf"</span>,<span class='st'>"yb1"</span>,<span class='st'>"yb2"</span>)))
+</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id ym num
 #&gt; 1  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1  ym
 #&gt; 2  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1  yf
 #&gt; 3  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1 yb1
@@ -437,8 +458,9 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 10 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  1  yf
 #&gt; 11 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  0 yb1
 #&gt; 12 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  0 yb2</div><div class='input'>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>sim</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(~<span class='no'>y1</span>+<span class='no'>y2</span>+<span class='no'>ya</span>),<span class='fl'>10</span>)
-<span class='no'>d</span></div><div class='output co'>#&gt;             y1          y2          ya
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span><span class='op'>+</span><span class='kw'>ya</span>),<span class='fl'>10</span>)
+<span class='kw'>d</span>
+</div><div class='output co'>#&gt;             y1          y2          ya
 #&gt; 1   1.33764478 -0.41504725  0.26237568
 #&gt; 2  -0.10942127  0.34119368 -0.45628311
 #&gt; 3   0.91679581  1.39342931 -0.60957449
@@ -448,7 +470,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 7  -0.14178005  0.52109427  0.46564005
 #&gt; 8  -2.22750533  0.06642853 -0.18651948
 #&gt; 9  -1.02616727  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 -1.59965484 -0.34129512</div><div class='input'>(<span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>))</div><div class='output co'>#&gt;              y id num
+#&gt; 10 -0.05472261 -1.59965484 -0.34129512</div><div class='input'>(<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>))
+</div><div class='output co'>#&gt;              y id num
 #&gt; 1   1.33764478  1   1
 #&gt; 2  -0.41504725  1   2
 #&gt; 3   0.26237568  1   a
@@ -478,7 +501,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 27 -0.04165241  9   a
 #&gt; 28 -0.05472261 10   1
 #&gt; 29 -1.59965484 10   2
-#&gt; 30 -0.34129512 10   a</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='st'>"y"</span>,<span class='kw'>labelnum</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;             ya           y id num
+#&gt; 30 -0.34129512 10   a</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='st'>"y"</span>,labelnum=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;             ya           y id num
 #&gt; 1   0.26237568  1.33764478  1   1
 #&gt; 2   0.26237568 -0.41504725  1   2
 #&gt; 3  -0.45628311 -0.10942127  2   1
@@ -498,7 +522,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 17 -0.04165241 -1.02616727  9   1
 #&gt; 18 -0.04165241  0.51126046  9   2
 #&gt; 19 -0.34129512 -0.05472261 10   1
-#&gt; 20 -0.34129512 -1.59965484 10   2</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>dd</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>num</span><span class='kw'>=</span><span class='st'>"num"</span>)</div><div class='output co'>#&gt;             y1 id          y2          ya
+#&gt; 20 -0.34129512 -1.59965484 10   2</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>dd</span>,id=<span class='st'>"id"</span>,num=<span class='st'>"num"</span>)
+</div><div class='output co'>#&gt;             y1 id          y2          ya
 #&gt; 1   1.33764478  1 -0.41504725  0.26237568
 #&gt; 2  -0.10942127  2  0.34119368 -0.45628311
 #&gt; 3   0.91679581  3  1.39342931 -0.60957449
@@ -508,7 +533,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 7  -0.14178005  7  0.52109427  0.46564005
 #&gt; 8  -2.22750533  8  0.06642853 -0.18651948
 #&gt; 9  -1.02616727  9  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>dd</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>num</span><span class='kw'>=</span><span class='st'>"num"</span>,<span class='kw'>labelnum</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;             y1 id          y2          y3
+#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>dd</span>,id=<span class='st'>"id"</span>,num=<span class='st'>"num"</span>,labelnum=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;             y1 id          y2          y3
 #&gt; 1   1.33764478  1 -0.41504725  0.26237568
 #&gt; 2  -0.10942127  2  0.34119368 -0.45628311
 #&gt; 3   0.91679581  3  1.39342931 -0.60957449
@@ -518,7 +544,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 7  -0.14178005  7  0.52109427  0.46564005
 #&gt; 8  -2.22750533  8  0.06642853 -0.18651948
 #&gt; 9  -1.02616727  9  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>a</span><span class='kw'>=</span><span class='st'>"y"</span>),<span class='kw'>labelnum</span><span class='kw'>=</span><span class='fl'>TRUE</span>) <span class='co'>## New column name</span></div><div class='output co'>#&gt;             ya           a id num
+#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a=<span class='st'>"y"</span>),labelnum=<span class='fl'>TRUE</span>) <span class='co'>## New column name</span>
+</div><div class='output co'>#&gt;             ya           a id num
 #&gt; 1   0.26237568  1.33764478  1   1
 #&gt; 2   0.26237568 -0.41504725  1   2
 #&gt; 3  -0.45628311 -0.10942127  2   1
@@ -541,16 +568,18 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 20 -0.34129512 -1.59965484 10   2</div><div class='input'>
 
 <span class='co'>##### Unbalanced data</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>y1</span>,<span class='no'>y2</span>,<span class='no'>y3</span>,<span class='no'>y4</span>)~ <span class='no'>x</span>+<span class='no'>z1</span>+<span class='no'>z3</span>+<span class='no'>z5</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>sim</a></span>(<span class='no'>m</span>,<span class='fl'>3</span>)
-<span class='no'>d</span></div><div class='output co'>#&gt;           y1         y2        y3         y4          x          z1          z3
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>,<span class='kw'>y3</span>,<span class='kw'>y4</span>)<span class='op'>~</span> <span class='kw'>x</span><span class='op'>+</span><span class='kw'>z1</span><span class='op'>+</span><span class='kw'>z3</span><span class='op'>+</span><span class='kw'>z5</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>3</span>)
+<span class='kw'>d</span>
+</div><div class='output co'>#&gt;           y1         y2        y3         y4          x          z1          z3
 #&gt; 1  2.0533778  1.7691243  2.590250  2.4621101 -0.2905331  0.65021574  0.05225591
 #&gt; 2 -1.6883598 -2.2693025 -3.258077 -0.6541728  1.5555723 -1.68832368 -0.48894459
 #&gt; 3  0.5963096  0.7015472  1.569971 -1.7878806  0.7315199 -0.05380033 -1.20277031
 #&gt;           z5
 #&gt; 1  0.9821673
 #&gt; 2 -1.1820431
-#&gt; 3  0.1141341</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='no'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"z"</span>))</div><div class='output co'>#&gt;             x          y           z id num
+#&gt; 3  0.1141341</div><div class='input'><span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>,<span class='st'>"z"</span>))
+</div><div class='output co'>#&gt;             x          y           z id num
 #&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
 #&gt; 2  -0.2905331  1.7691243          NA  1   2
 #&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
@@ -567,7 +596,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 14  0.7315199 -1.7878806          NA  3   4
 #&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
 <span class='co'>##### not-varying syntax:</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>d</span>,-<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt;             x          y           z id num
+<span class='fu'>fast.reshape</span>(<span class='kw'>d</span>,<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>))
+</div><div class='output co'>#&gt;             x          y           z id num
 #&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
 #&gt; 2  -0.2905331  1.7691243          NA  1   2
 #&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
@@ -584,7 +614,8 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 14  0.7315199 -1.7878806          NA  3   4
 #&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
 <span class='co'>##### Automatically define varying variables from trailing digits</span>
-<span class='fu'>fast.reshape</span>(<span class='no'>d</span>)</div><div class='output co'>#&gt;             x          y           z id num
+<span class='fu'>fast.reshape</span>(<span class='kw'>d</span>)
+</div><div class='output co'>#&gt;             x          y           z id num
 #&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
 #&gt; 2  -0.2905331  1.7691243          NA  1   2
 #&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
@@ -601,17 +632,20 @@ Otherwise the first variable is only used as identifier.</p></td>
 #&gt; 14  0.7315199 -1.7878806          NA  3   4
 #&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
 <span class='co'>##### Prostate cancer example</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>prt</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>prtw</span> <span class='kw'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='no'>prt</span>,<span class='st'>"cancer"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>))</div><div class='output co'>#&gt;    country      time status zyg id cancer1 cancer2
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>prt</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>prtw</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span>(<span class='kw'>prt</span>,<span class='st'>"cancer"</span>,id=<span class='st'>"id"</span>))
+</div><div class='output co'>#&gt;    country      time status zyg id cancer1 cancer2
 #&gt; 31 Denmark  96.98833      1  DZ  1       0       0
 #&gt; 39 Denmark  68.04498      1  DZ  3       0       0
 #&gt; 51 Denmark  78.78068      1  DZ  5       0       0
 #&gt; 70 Denmark 100.95488      1  MZ  9       0       0
 #&gt; 83 Denmark 104.55035      1  DZ 12       0       1
-#&gt; 95 Denmark  95.65324      1  DZ 15       0       0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/ftable.html'>ftable</a></span>(<span class='no'>cancer1</span>~<span class='no'>cancer2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prtw</span>)</div><div class='output co'>#&gt;         cancer1     0     1
+#&gt; 95 Denmark  95.65324      1  DZ 15       0       0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/ftable.html'>ftable</a></span>(<span class='kw'>cancer1</span><span class='op'>~</span><span class='kw'>cancer2</span>,data=<span class='kw'>prtw</span>)
+</div><div class='output co'>#&gt;         cancer1     0     1
 #&gt; cancer2                    
 #&gt; 0               13405   349
-#&gt; 1                 362   106</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>prtw</span>)</div></pre>
+#&gt; 1                 362   106</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='kw'>prtw</span>)
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -627,7 +661,7 @@ Otherwise the first variable is only used as identifier.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

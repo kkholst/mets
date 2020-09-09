@@ -156,7 +156,7 @@
     <p>Split a data set and run function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>divide.conquer</span>(<span class='kw'>func</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>data</span>, <span class='no'>size</span>, <span class='no'>splits</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>divide.conquer</span>(func = <span class='kw'>NULL</span>, <span class='kw'>data</span>, <span class='kw'>size</span>, <span class='kw'>splits</span>, id = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,12 +187,16 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike, Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>timereg</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>divide.conquer</span>(<span class='no'>prop.odds</span>,<span class='no'>TRACE</span>,
-             <span class='kw'>formula</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>chf</span>+<span class='no'>vf</span>+<span class='no'>age</span>,<span class='kw'>n.sim</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>200</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/scheike/timereg'>timereg</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>divide.conquer</span>(<span class='kw'>prop.odds</span>,<span class='kw'>TRACE</span>,
+       formula=<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>age</span>,n.sim=<span class='fl'>0</span>,size=<span class='fl'>200</span>)
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -208,7 +212,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

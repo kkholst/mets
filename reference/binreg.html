@@ -159,22 +159,22 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
     </div>
 
     <pre class="usage"><span class='fu'>binreg</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>cause</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>beta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cens.weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cens.model</span> <span class='kw'>=</span> ~+<span class='fl'>1</span>,
-  <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>kaplan.meier</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>no.opt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
-  <span class='kw'>augmentation</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  cause = <span class='fl'>1</span>,
+  time = <span class='kw'>NULL</span>,
+  beta = <span class='kw'>NULL</span>,
+  offset = <span class='kw'>NULL</span>,
+  weights = <span class='kw'>NULL</span>,
+  cens.weights = <span class='kw'>NULL</span>,
+  cens.model = <span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,
+  se = <span class='fl'>TRUE</span>,
+  kaplan.meier = <span class='fl'>TRUE</span>,
+  cens.code = <span class='fl'>0</span>,
+  no.opt = <span class='fl'>FALSE</span>,
+  method = <span class='st'>"nr"</span>,
+  augmentation = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -254,13 +254,17 @@ for IPCW adjusted responses.</p>
 <p>variance is based on  $$ \sum w_i^2 $$ also with IPCW adjustment, and naive.var is variance 
 under known censoring model.</p>
 <p>Censoring model may depend on strata.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
 <span class='co'># logistic regresion with IPCW binomial regression </span>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>,time=<span class='fl'>50</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
@@ -276,10 +280,13 @@ under known censoring model.</p>
 #&gt; [(Intercept)]  0.83682 0.10645 0.62819 1.04546  0.1253
 #&gt; [tcell]        0.65265 0.22714 0.20746 1.09784  0.1262
 #&gt; [platelet]     0.64272 0.15578 0.33740 0.94804  0.0218
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>tcell</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),<span class='kw'>platelet</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>)),<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        pred         se     lower     upper
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(tcell=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),platelet=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>)),se=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt;        pred         se     lower     upper
 #&gt; 1 0.3497382 0.04857251 0.2545361 0.4449403
 #&gt; 2 0.2598194 0.07038970 0.1218556 0.3977833</div><div class='input'>
-<span class='no'>outs</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>cens.model</span><span class='kw'>=</span>~<span class='fu'>strata</span>(<span class='no'>tcell</span>,<span class='no'>platelet</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>outs</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>outs</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>,time=<span class='fl'>50</span>,cens.model=<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>tcell</span>,<span class='kw'>platelet</span>))
+</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>outs</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
@@ -299,17 +306,18 @@ under known censoring model.</p>
 <span class='co'>##########################################</span>
 <span class='co'>### risk-ratio of different causes #######</span>
 <span class='co'>##########################################</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
-<span class='no'>bmt</span>$<span class='no'>id</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>bmt</span>)
-<span class='no'>bmt</span>$<span class='no'>status</span> <span class='kw'>&lt;-</span> <span class='no'>bmt</span>$<span class='no'>cause</span>
-<span class='no'>bmt</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='no'>bmt</span>
-<span class='no'>bmtdob</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span><span class='fl'>2</span>
-<span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>bmtdob</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='no'>cause</span><span class='kw'>==</span><span class='fl'>2</span>)
-<span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>bmtdob</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='no'>cause</span><span class='kw'>==</span><span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>bmt</span>)
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>status</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>cause</span>
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span>
+<span class='kw'>bmtdob</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span><span class='fl'>2</span>
+<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>bmtdob</span>,status=<span class='fl'>1</span>,<span class='kw'>cause</span><span class='op'>==</span><span class='fl'>2</span>)
+<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>bmtdob</span>,status=<span class='fl'>2</span>,<span class='kw'>cause</span><span class='op'>==</span><span class='fl'>1</span>)
 <span class='co'>###</span>
-<span class='no'>bmtdob</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='no'>bmt</span>,<span class='no'>bmtdob</span>)
-<span class='fu'>dtable</span>(<span class='no'>bmtdob</span>,<span class='no'>cause</span>+<span class='no'>status</span>~<span class='no'>strata</span>)</div><div class='output co'>#&gt; strata: 1
+<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='kw'>bmt</span>,<span class='kw'>bmtdob</span>)
+<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>bmtdob</span>,<span class='kw'>cause</span><span class='op'>+</span><span class='kw'>status</span><span class='op'>~</span><span class='kw'>strata</span>)
+</div><div class='output co'>#&gt; strata: 1
 #&gt; 
 #&gt;       status   0   1   2
 #&gt; cause                   
@@ -324,12 +332,15 @@ under known censoring model.</p>
 #&gt; 0            160   0   0
 #&gt; 1              0   0 161
 #&gt; 2              0  87   0</div><div class='input'>
-<span class='no'>cif1</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~+<span class='fl'>1</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-<span class='no'>cif2</span> <span class='kw'>&lt;-</span> <span class='fu'>cif</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~+<span class='fl'>1</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='fu'>bplot</span>(<span class='no'>cif1</span>)</div><div class='input'><span class='fu'>bplot</span>(<span class='no'>cif2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='img'><img src='binreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>cifs1</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='no'>cifs2</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>tcell</span>+<span class='no'>platelet</span>+<span class='no'>age</span>,<span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs1</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>cif1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>)
+<span class='kw'>cif2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>2</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>cif1</span>)
+</div><div class='input'><span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>cif2</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
+</div><div class='img'><img src='binreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>cifs1</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>50</span>)
+<span class='kw'>cifs2</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>2</span>,time=<span class='fl'>50</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifs1</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
@@ -347,7 +358,8 @@ under known censoring model.</p>
 #&gt; [tcell]        0.52885 0.18986 0.15674 0.90096  0.0131
 #&gt; [platelet]     0.70309 0.17374 0.36257 1.04362  0.0875
 #&gt; [age]          1.52161 0.16266 1.20281 1.84042  0.0013
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifs2</span>)</div><div class='output co'>#&gt; 
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifs2</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408     85
 #&gt; 
@@ -366,10 +378,11 @@ under known censoring model.</p>
 #&gt; [platelet]     0.96954 0.27087 0.43864 1.50044  0.9105
 #&gt; [age]          0.91095 0.12979 0.65657 1.16533  0.4926
 #&gt; </div><div class='input'>
-<span class='no'>cifdob</span> <span class='kw'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+
-         <span class='no'>tcell</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+<span class='no'>platelet</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)+<span class='no'>age</span>*<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>strata</span>)
-         +<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='no'>bmtdob</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>cens.model</span><span class='kw'>=</span>~<span class='fu'>strata</span>(<span class='no'>strata</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cifdob</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>cifdob</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span>
+   <span class='kw'>tcell</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='kw'>platelet</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='kw'>age</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)
+   <span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),<span class='kw'>bmtdob</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>50</span>,cens.model=<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>strata</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifdob</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  816    245
 #&gt; 
@@ -396,15 +409,16 @@ under known censoring model.</p>
 #&gt; [factor(strata)2:platelet]  1.37897  0.59561  0.21159  2.54634  0.5246
 #&gt; [factor(strata)2:age]       0.59867  0.12394  0.35575  0.84159  0.0012
 #&gt; </div><div class='input'>
-<span class='no'>riskratio</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>p</span>) {
-  <span class='no'>expit</span>  <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fl'>1</span>/(<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(-<span class='no'>z</span>)) <span class='co'>## expit</span>
-  <span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>))
-  <span class='no'>lp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>Z</span> <span class='kw'>%*%</span> <span class='no'>p</span>)
-  <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'>expit</span>(<span class='no'>lp</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>p</span>[<span class='fl'>1</span>]/<span class='no'>p</span>[<span class='fl'>2</span>])
+<span class='kw'>riskratio</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>p</span>) {
+  <span class='kw'>expit</span>  <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fl'>1</span><span class='op'>/</span>(<span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='op'>-</span><span class='kw'>z</span>)) <span class='co'>## expit</span>
+  <span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>))
+  <span class='kw'>lp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Z</span> <span class='op'>%*%</span> <span class='kw'>p</span>)
+  <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>expit</span>(<span class='kw'>lp</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>/</span><span class='kw'>p</span>[<span class='fl'>2</span>])
 }
 
-<span class='fu'>estimate</span>(<span class='kw'>coef</span><span class='kw'>=</span><span class='no'>cifdob</span>$<span class='no'>coef</span>,<span class='kw'>vcov</span><span class='kw'>=</span><span class='no'>cifdob</span>$<span class='no'>var</span>,<span class='kw'>f</span><span class='kw'>=</span><span class='no'>riskratio</span>)</div><div class='output co'>#&gt;    Estimate Std.Err   2.5% 97.5% P-value
+<span class='fu'>estimate</span>(coef=<span class='kw'>cifdob</span><span class='op'>$</span><span class='kw'>coef</span>,vcov=<span class='kw'>cifdob</span><span class='op'>$</span><span class='kw'>var</span>,f=<span class='kw'>riskratio</span>)
+</div><div class='output co'>#&gt;    Estimate Std.Err   2.5% 97.5% P-value
 #&gt; p1   0.6639  0.2764 0.1221 1.206 0.01631</div><div class='input'>
 </div></pre>
   </div>
@@ -422,7 +436,7 @@ under known censoring model.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -156,7 +156,7 @@
     <p>Split a data set and run function of cox-aalen type and aggregate results</p>
     </div>
 
-    <pre class="usage"><span class='fu'>divide.conquer.timereg</span>(<span class='kw'>func</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>data</span>, <span class='no'>size</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>divide.conquer.timereg</span>(func = <span class='kw'>NULL</span>, <span class='kw'>data</span>, <span class='kw'>size</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,27 +179,33 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike, Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>timereg</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
-<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>divide.conquer.timereg</span>(<span class='no'>prop.odds</span>,<span class='no'>TRACE</span>,
-                            <span class='kw'>formula</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>chf</span>+<span class='no'>vf</span>+<span class='no'>age</span>,<span class='kw'>n.sim</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>200</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>a</span>)</div><div class='output co'>#&gt;      Coef.      SE Robust SE D2log(L)^-1     z    P-val lower2.5% upper97.5%
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/scheike/timereg'>timereg</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
+<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>divide.conquer.timereg</span>(<span class='kw'>prop.odds</span>,<span class='kw'>TRACE</span>,
+                            formula=<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>age</span>,n.sim=<span class='fl'>0</span>,size=<span class='fl'>200</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>a</span>)
+</div><div class='output co'>#&gt;      Coef.      SE Robust SE D2log(L)^-1     z    P-val lower2.5% upper97.5%
 #&gt; chf 1.0700 0.09920    0.0983           1 10.90 0.00e+00    0.8760     1.2600
 #&gt; vf  1.5400 0.20100    0.2280           1  6.77 1.28e-11    1.1500     1.9300
-#&gt; age 0.0735 0.00529    0.0052           1 14.10 0.00e+00    0.0631     0.0839</div><div class='input'><span class='no'>a2</span> <span class='kw'>&lt;-</span> <span class='fu'>divide.conquer.timereg</span>(<span class='no'>prop.odds</span>,<span class='no'>TRACE</span>,
-                             <span class='kw'>formula</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>chf</span>+<span class='no'>vf</span>+<span class='no'>age</span>,<span class='kw'>n.sim</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>500</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>a2</span>)</div><div class='output co'>#&gt;      Coef.     SE Robust SE D2log(L)^-1     z    P-val lower2.5% upper97.5%
+#&gt; age 0.0735 0.00529    0.0052           1 14.10 0.00e+00    0.0631     0.0839</div><div class='input'><span class='kw'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>divide.conquer.timereg</span>(<span class='kw'>prop.odds</span>,<span class='kw'>TRACE</span>,
+                             formula=<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>age</span>,n.sim=<span class='fl'>0</span>,size=<span class='fl'>500</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>a2</span>)
+</div><div class='output co'>#&gt;      Coef.     SE Robust SE D2log(L)^-1     z    P-val lower2.5% upper97.5%
 #&gt; chf 1.0900 0.0982   0.09820           1 11.10 0.00e+00    0.8980     1.2800
 #&gt; vf  1.4000 0.1940   0.21500           1  6.53 6.52e-11    1.0200     1.7800
 #&gt; age 0.0738 0.0053   0.00522           1 14.10 0.00e+00    0.0634     0.0842</div><div class='input'>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>a</span>,<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>8</span>),<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.01</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>new</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>a2</span>,<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>8</span>),<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.01</span>))
-}</div></pre>
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>a</span>,xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>8</span>),ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.01</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(new=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>a2</span>,xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>8</span>),ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.01</span>))
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -215,7 +221,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

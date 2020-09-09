@@ -156,7 +156,7 @@
     <p>summary, tables, and correlations for data frames</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dcor</span>(<span class='no'>data</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>use</span> <span class='kw'>=</span> <span class='st'>"pairwise.complete.obs"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dcor</span>(<span class='kw'>data</span>, y = <span class='kw'>NULL</span>, x = <span class='kw'>NULL</span>, use = <span class='st'>"pairwise.complete.obs"</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,20 +183,25 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst and Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sTRACE"</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"timereg"</span>)
-<span class='no'>dt</span><span class='kw'>&lt;-</span> <span class='no'>sTRACE</span>
-<span class='no'>dt</span>$<span class='no'>time2</span> <span class='kw'>&lt;-</span> <span class='no'>dt</span>$<span class='no'>time</span>^<span class='fl'>2</span>
-<span class='no'>dt</span>$<span class='no'>wmi2</span> <span class='kw'>&lt;-</span> <span class='no'>dt</span>$<span class='no'>wmi</span>^<span class='fl'>2</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>dt</span>)</div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     time2 wmi2
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sTRACE"</span>,package=<span class='st'>"timereg"</span>)
+<span class='kw'>dt</span><span class='op'>&lt;-</span> <span class='kw'>sTRACE</span>
+<span class='kw'>dt</span><span class='op'>$</span><span class='kw'>time2</span> <span class='op'>&lt;-</span> <span class='kw'>dt</span><span class='op'>$</span><span class='kw'>time</span><span class='op'>^</span><span class='fl'>2</span>
+<span class='kw'>dt</span><span class='op'>$</span><span class='kw'>wmi2</span> <span class='op'>&lt;-</span> <span class='kw'>dt</span><span class='op'>$</span><span class='kw'>wmi</span><span class='op'>^</span><span class='fl'>2</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>dt</span>)
+</div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     time2 wmi2
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0  1.809025 2.25
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 47.748100 3.61
 #&gt; X784   784 0.8      9   0 78.081   0        1 0.196000  0  0.038416 0.64
 #&gt; X3763 3763 1.3      0   0 55.479   1        0 7.543000  0 56.896849 1.69
 #&gt; X2927 2927 1.6      0   1 62.997   0        0 7.126000  0 50.779876 2.56
 #&gt; X4511 4511 1.0      9   1 67.644   1        0 4.532606  0 20.544520 1.00</div><div class='input'>
-<span class='fu'>dcor</span>(<span class='no'>dt</span>)</div><div class='output co'>#&gt;                     no          wmi        status         chf         age
+<span class='fu'>dcor</span>(<span class='kw'>dt</span>)
+</div><div class='output co'>#&gt;                     no          wmi        status         chf         age
 #&gt; no        1.0000000000 -0.009437654  0.0002042854  0.03176893 -0.08317491
 #&gt; wmi      -0.0094376537  1.000000000 -0.3103788196 -0.37464791 -0.19288208
 #&gt; status    0.0002042854 -0.310378820  1.0000000000  0.34237066  0.43051203
@@ -234,11 +239,13 @@
 #&gt; wmi2      1.000000000
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'>
-<span class='fu'>dcor</span>(<span class='no'>dt</span>,~<span class='no'>time</span>+<span class='no'>wmi</span>)</div><div class='output co'>#&gt;           time       wmi
+<span class='fu'>dcor</span>(<span class='kw'>dt</span>,<span class='op'>~</span><span class='kw'>time</span><span class='op'>+</span><span class='kw'>wmi</span>)
+</div><div class='output co'>#&gt;           time       wmi
 #&gt; time 1.0000000 0.3285823
 #&gt; wmi  0.3285823 1.0000000
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dcor</span>(<span class='no'>dt</span>,~<span class='no'>time</span>+<span class='no'>wmi</span>,~<span class='no'>vf</span>+<span class='no'>chf</span>)</div><div class='output co'>#&gt; vf: 0
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dcor</span>(<span class='kw'>dt</span>,<span class='op'>~</span><span class='kw'>time</span><span class='op'>+</span><span class='kw'>wmi</span>,<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span>)
+</div><div class='output co'>#&gt; vf: 0
 #&gt; chf: 0
 #&gt;           time       wmi
 #&gt; time 1.0000000 0.2443018
@@ -260,7 +267,8 @@
 #&gt; chf: 1
 #&gt;          time      wmi
 #&gt; time 1.000000 0.354452
-#&gt; wmi  0.354452 1.000000</div><div class='input'><span class='fu'>dcor</span>(<span class='no'>dt</span>,<span class='no'>time</span>+<span class='no'>wmi</span>~<span class='no'>vf</span>+<span class='no'>chf</span>)</div><div class='output co'>#&gt; vf: 0
+#&gt; wmi  0.354452 1.000000</div><div class='input'><span class='fu'>dcor</span>(<span class='kw'>dt</span>,<span class='kw'>time</span><span class='op'>+</span><span class='kw'>wmi</span><span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span>)
+</div><div class='output co'>#&gt; vf: 0
 #&gt; chf: 0
 #&gt;           time       wmi
 #&gt; time 1.0000000 0.2443018
@@ -283,7 +291,8 @@
 #&gt;          time      wmi
 #&gt; time 1.000000 0.354452
 #&gt; wmi  0.354452 1.000000</div><div class='input'>
-<span class='fu'>dcor</span>(<span class='no'>dt</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"time*"</span>,<span class='st'>"wmi*"</span>),~<span class='no'>vf</span>+<span class='no'>chf</span>)</div><div class='output co'>#&gt; vf: 0
+<span class='fu'>dcor</span>(<span class='kw'>dt</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"time*"</span>,<span class='st'>"wmi*"</span>),<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span>)
+</div><div class='output co'>#&gt; vf: 0
 #&gt; chf: 0
 #&gt;            time     time2       wmi      wmi2
 #&gt; time  1.0000000 0.9744619 0.2443018 0.2286891
@@ -329,7 +338,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

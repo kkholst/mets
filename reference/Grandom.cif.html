@@ -171,34 +171,34 @@ $$</p>
     </div>
 
     <pre class="usage"><span class='fu'>Grandom.cif</span>(
-  <span class='no'>cif</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>cause</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cif2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>times</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cause1</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cause2</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cens.model</span> <span class='kw'>=</span> <span class='st'>"KM"</span>,
-  <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>40</span>,
-  <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>sym</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>same.cens</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>censoring.weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
-  <span class='kw'>entry</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>estimator</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>trunkp</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>admin.cens</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>random.design</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>cif</span>,
+  <span class='kw'>data</span>,
+  cause = <span class='kw'>NULL</span>,
+  cif2 = <span class='kw'>NULL</span>,
+  times = <span class='kw'>NULL</span>,
+  cause1 = <span class='fl'>1</span>,
+  cause2 = <span class='fl'>1</span>,
+  cens.code = <span class='kw'>NULL</span>,
+  cens.model = <span class='st'>"KM"</span>,
+  Nit = <span class='fl'>40</span>,
+  detail = <span class='fl'>0</span>,
+  clusters = <span class='kw'>NULL</span>,
+  theta = <span class='kw'>NULL</span>,
+  theta.des = <span class='kw'>NULL</span>,
+  weights = <span class='kw'>NULL</span>,
+  step = <span class='fl'>1</span>,
+  sym = <span class='fl'>0</span>,
+  same.cens = <span class='fl'>FALSE</span>,
+  censoring.weights = <span class='kw'>NULL</span>,
+  silent = <span class='fl'>1</span>,
+  var.link = <span class='fl'>0</span>,
+  score.method = <span class='st'>"nr"</span>,
+  entry = <span class='kw'>NULL</span>,
+  estimator = <span class='fl'>1</span>,
+  trunkp = <span class='fl'>1</span>,
+  admin.cens = <span class='kw'>NULL</span>,
+  random.design = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -361,21 +361,25 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 Multivariate Competing Risks Data, Scheike and Sun (2013), Biostatitistics.</p>
 <p>Scheike, Holst, Hjelmborg (2014),  LIDA,  
 Estimating heritability for cause specific hazards based on twin data</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='co'>## Reduce Ex.Timings</span>
- <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>simnordic.random</span>(<span class='fl'>5000</span>,<span class='kw'>delayed</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-       <span class='kw'>cordz</span><span class='kw'>=</span><span class='fl'>1.0</span>,<span class='kw'>cormz</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>lam0</span><span class='kw'>=</span><span class='fl'>0.3</span>,<span class='kw'>country</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
- <span class='no'>times</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>50</span>,<span class='fl'>90</span>,<span class='kw'>by</span><span class='kw'>=</span><span class='fl'>10</span>)
- <span class='no'>addm</span><span class='kw'>&lt;-</span><span class='fu'>comp.risk</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>country</span>)+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,
- <span class='kw'>times</span><span class='kw'>=</span><span class='no'>times</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>max.clust</span><span class='kw'>=</span><span class='kw'>NULL</span>)
+ <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simnordic.random</a></span>(<span class='fl'>5000</span>,delayed=<span class='fl'>TRUE</span>,
+       cordz=<span class='fl'>1.0</span>,cormz=<span class='fl'>2</span>,lam0=<span class='fl'>0.3</span>,country=<span class='fl'>TRUE</span>)
+ <span class='kw'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>50</span>,<span class='fl'>90</span>,by=<span class='fl'>10</span>)
+ <span class='kw'>addm</span><span class='op'>&lt;-</span><span class='fu'>comp.risk</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>country</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>d</span>,
+ times=<span class='kw'>times</span>,cause=<span class='fl'>1</span>,max.clust=<span class='kw'>NULL</span>)
 
  <span class='co'>### making group indidcator </span>
- <span class='no'>mm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>zyg</span>),<span class='no'>d</span>)
+ <span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),<span class='kw'>d</span>)
 
- <span class='no'>out1m</span><span class='kw'>&lt;-</span><span class='fu'>random.cif</span>(<span class='no'>addm</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>cause1</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>cause2</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fl'>1</span>,
-                   <span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>mm</span>,<span class='kw'>same.cens</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out1m</span>)</div><div class='output co'>#&gt; Random effect variance for variation due to clusters
+ <span class='kw'>out1m</span><span class='op'>&lt;-</span><span class='fu'><a href='random.cif.html'>random.cif</a></span>(<span class='kw'>addm</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta=<span class='fl'>1</span>,
+       theta.des=<span class='kw'>mm</span>,same.cens=<span class='fl'>TRUE</span>)
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1m</span>)
+</div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
@@ -384,13 +388,14 @@ Estimating heritability for cause specific hazards based on twin data</p>
 #&gt; factor(zyg)DZ 1.143917 0.2085530 5.485017 4.134293e-08         2.143917
 #&gt;                      SE
 #&gt; factor(zyg)MZ 0.3029729
-#&gt; factor(zyg)DZ 0.2085530</div><div class='input'>
+#&gt; factor(zyg)DZ 0.2085530</div><div class='input'> 
  <span class='co'>## this model can also be formulated as a random effects model </span>
  <span class='co'>## but with different parameters</span>
- <span class='no'>out2m</span><span class='kw'>&lt;-</span><span class='fu'>Grandom.cif</span>(<span class='no'>addm</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>cause1</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>cause2</span><span class='kw'>=</span><span class='fl'>1</span>,
-                    <span class='kw'>theta</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>1</span>),<span class='kw'>step</span><span class='kw'>=</span><span class='fl'>1.0</span>,
-                    <span class='kw'>random.design</span><span class='kw'>=</span><span class='no'>mm</span>,<span class='kw'>same.cens</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out2m</span>)</div><div class='output co'>#&gt; Random effect parameters for additive gamma random effects 
+ <span class='kw'>out2m</span><span class='op'>&lt;-</span><span class='fu'>Grandom.cif</span>(<span class='kw'>addm</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,
+        theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>1</span>),step=<span class='fl'>1.0</span>,
+        random.design=<span class='kw'>mm</span>,same.cens=<span class='fl'>TRUE</span>)
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2m</span>)
+</div><div class='output co'>#&gt; Random effect parameters for additive gamma random effects 
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
@@ -406,28 +411,31 @@ Estimating heritability for cause specific hazards based on twin data</p>
 #&gt;    Estimate Std.Err   2.5%  97.5%   P-value
 #&gt; p1   0.5498  0.1283 0.2984 0.8013 1.821e-05
 #&gt; p2   1.0000  0.0000 1.0000 1.0000 0.000e+00
-#&gt; </div><div class='input'> <span class='fl'>1</span>/<span class='no'>out2m</span>$<span class='no'>theta</span></div><div class='output co'>#&gt;          [,1]
+#&gt; </div><div class='input'> <span class='fl'>1</span><span class='op'>/</span><span class='kw'>out2m</span><span class='op'>$</span><span class='kw'>theta</span>
+</div><div class='output co'>#&gt;          [,1]
 #&gt; [1,] 2.080559
-#&gt; [2,] 1.143917</div><div class='input'> <span class='no'>out1m</span>$<span class='no'>theta</span></div><div class='output co'>#&gt;          [,1]
+#&gt; [2,] 1.143917</div><div class='input'> <span class='kw'>out1m</span><span class='op'>$</span><span class='kw'>theta</span>
+</div><div class='output co'>#&gt;          [,1]
 #&gt; [1,] 2.080559
-#&gt; [2,] 1.143917</div><div class='input'>
+#&gt; [2,] 1.143917</div><div class='input'> 
  <span class='co'>####################################################################</span>
  <span class='co'>################### ACE modelling of twin data #####################</span>
  <span class='co'>####################################################################</span>
  <span class='co'>### assume that zygbin gives the zygosity of mono and dizygotic twins</span>
  <span class='co'>### 0 for mono and 1 for dizygotic twins. We now formulate and AC model</span>
- <span class='no'>zygbin</span> <span class='kw'>&lt;-</span> <span class='no'>d</span>$<span class='no'>zyg</span><span class='kw'>==</span><span class='st'>"DZ"</span>
+ <span class='kw'>zygbin</span> <span class='op'>&lt;-</span> <span class='kw'>d</span><span class='op'>$</span><span class='kw'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span>
 
- <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>d</span>)
+ <span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d</span>)
  <span class='co'>### random effects for each cluster</span>
- <span class='no'>des.rv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='no'>mm</span>,(<span class='no'>zygbin</span><span class='kw'>==</span><span class='fl'>1</span>)*<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>)),(<span class='no'>zygbin</span><span class='kw'>==</span><span class='fl'>1</span>)*<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>)),<span class='fl'>1</span>)
+ <span class='kw'>des.rv</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>mm</span>,(<span class='kw'>zygbin</span><span class='op'>==</span><span class='fl'>1</span>)<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>)),(<span class='kw'>zygbin</span><span class='op'>==</span><span class='fl'>1</span>)<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>)),<span class='fl'>1</span>)
  <span class='co'>### design making parameters half the variance for dizygotic components</span>
- <span class='no'>pardes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>))
+ <span class='kw'>pardes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>))
 
- <span class='no'>outacem</span> <span class='kw'>&lt;-</span><span class='fu'>Grandom.cif</span>(<span class='no'>addm</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>d</span>,<span class='kw'>cause1</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>cause2</span><span class='kw'>=</span><span class='fl'>1</span>,
-                <span class='kw'>same.cens</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>theta</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.35</span>,<span class='fl'>0.15</span>),
-            <span class='kw'>step</span><span class='kw'>=</span><span class='fl'>1.0</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>pardes</span>,<span class='kw'>random.design</span><span class='kw'>=</span><span class='no'>des.rv</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>outacem</span>)</div><div class='output co'>#&gt; Random effect parameters for additive gamma random effects 
+ <span class='kw'>outacem</span> <span class='op'>&lt;-</span><span class='fu'>Grandom.cif</span>(<span class='kw'>addm</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,
+    same.cens=<span class='fl'>TRUE</span>,theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.35</span>,<span class='fl'>0.15</span>),
+            step=<span class='fl'>1.0</span>,theta.des=<span class='kw'>pardes</span>,random.design=<span class='kw'>des.rv</span>)
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>outacem</span>)
+</div><div class='output co'>#&gt; Random effect parameters for additive gamma random effects 
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
@@ -461,7 +469,7 @@ Estimating heritability for cause specific hazards based on twin data</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

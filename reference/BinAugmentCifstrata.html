@@ -175,15 +175,15 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
     </div>
 
     <pre class="usage"><span class='fu'>BinAugmentCifstrata</span>(
-  <span class='no'>formula</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data</span>,
-  <span class='kw'>cause</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cens.code</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>km</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  data = <span class='kw'>data</span>,
+  cause = <span class='fl'>1</span>,
+  cens.code = <span class='fl'>0</span>,
+  km = <span class='fl'>TRUE</span>,
+  time = <span class='kw'>NULL</span>,
+  weights = <span class='kw'>NULL</span>,
+  offset = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -232,46 +232,52 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
     <p>Standard errors computed under assumption of correct $$G_c(s)$$ model.</p>
 <p>Augmentation term only computed for standard FG model, since strata is used to 
 specify working models for CIF's.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
-<span class='fu'>dcut</span>(<span class='no'>bmt</span>,<span class='kw'>breaks</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='kw'>&lt;-</span> ~<span class='no'>age</span>
-<span class='no'>out1</span><span class='kw'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>platelet</span>+<span class='no'>agecat.2</span>+
-                  <span class='fu'>strata</span>(<span class='no'>platelet</span>,<span class='no'>agecat.2</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>40</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out1</span>)</div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>bmt</span>,breaks=<span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>age</span> 
+<span class='kw'>out1</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>agecat.2</span><span class='op'>+</span>
+      <span class='fu'>strata</span>(<span class='kw'>platelet</span>,<span class='kw'>agecat.2</span>),data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>40</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    157
 #&gt; 
 #&gt;  408 clusters
 #&gt; log-coeffients:
 #&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; (Intercept)          -0.50060  0.17070 -0.83517 -0.16603  0.0034
-#&gt; platelet             -0.63520  0.23597 -1.09769 -0.17271  0.0071
-#&gt; agecat.2(0.203,1.94]  0.53808  0.21193  0.12271  0.95344  0.0111
+#&gt; (Intercept)          -0.50047  0.17067 -0.83497 -0.16596  0.0034
+#&gt; platelet             -0.63482  0.23592 -1.09722 -0.17242  0.0071
+#&gt; agecat.2(0.203,1.94]  0.53812  0.21190  0.12280  0.95344  0.0111
 #&gt; 
 #&gt; exp(coeffients):
 #&gt;                        Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]           0.60617 0.10347 0.40336 0.80897  0.0001
-#&gt; [platelet]              0.52983 0.12502 0.28479 0.77487  0.0002
-#&gt; [agecat.2(0.203,1.94]]  1.71271 0.36297 1.00131 2.42411  0.0496
+#&gt; [(Intercept)]           0.60625 0.10347 0.40345 0.80904  0.0001
+#&gt; [platelet]              0.53003 0.12505 0.28495 0.77511  0.0002
+#&gt; [agecat.2(0.203,1.94]]  1.71279 0.36294 1.00143 2.42414  0.0495
 #&gt; </div><div class='input'>
-<span class='no'>out2</span><span class='kw'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>platelet</span>+<span class='no'>agecat.2</span>+
-    <span class='fu'>strata</span>(<span class='no'>platelet</span>,<span class='no'>agecat.2</span>)+<span class='fu'>strataC</span>(<span class='no'>platelet</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='fl'>40</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out2</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>out2</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>agecat.2</span><span class='op'>+</span>
+    <span class='fu'>strata</span>(<span class='kw'>platelet</span>,<span class='kw'>agecat.2</span>)<span class='op'>+</span><span class='fu'><a href='FG_AugmentCifstrata.html'>strataC</a></span>(<span class='kw'>platelet</span>),data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>40</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2</span>)
+</div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    157
 #&gt; 
 #&gt;  408 clusters
 #&gt; log-coeffients:
 #&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; (Intercept)          -0.50014  0.17121 -0.83570 -0.16457  0.0035
-#&gt; platelet             -0.63664  0.23730 -1.10173 -0.17155  0.0073
-#&gt; agecat.2(0.203,1.94]  0.53724  0.21225  0.12123  0.95325  0.0114
+#&gt; (Intercept)          -0.49984  0.17116 -0.83531 -0.16437  0.0035
+#&gt; platelet             -0.63650  0.23730 -1.10161 -0.17139  0.0073
+#&gt; agecat.2(0.203,1.94]  0.53709  0.21223  0.12112  0.95307  0.0114
 #&gt; 
 #&gt; exp(coeffients):
 #&gt;                        Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]           0.60645 0.10383 0.40295 0.80995  0.0002
-#&gt; [platelet]              0.52907 0.12555 0.28300 0.77513  0.0002
-#&gt; [agecat.2(0.203,1.94]]  1.71128 0.36323 0.99937 2.42319  0.0502
+#&gt; [(Intercept)]           0.60663 0.10383 0.40312 0.81014  0.0002
+#&gt; [platelet]              0.52914 0.12557 0.28303 0.77525  0.0002
+#&gt; [agecat.2(0.203,1.94]]  1.71103 0.36314 0.99929 2.42277  0.0502
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -288,7 +294,7 @@ specify working models for CIF's.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

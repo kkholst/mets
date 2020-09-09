@@ -157,18 +157,18 @@
     </div>
 
     <pre class="usage"><span class='fu'>simRecurrentTS</span>(
-  <span class='no'>n</span>,
-  <span class='no'>cumhaz</span>,
-  <span class='no'>cumhaz2</span>,
-  <span class='kw'>death.cumhaz</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>),
-  <span class='kw'>share1</span> <span class='kw'>=</span> <span class='fl'>0.3</span>,
-  <span class='kw'>vargamD</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>vargam12</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>gap.time</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>max.recurrent</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>cens</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>n</span>,
+  <span class='kw'>cumhaz</span>,
+  <span class='kw'>cumhaz2</span>,
+  death.cumhaz = <span class='kw'>NULL</span>,
+  nu = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>),
+  share1 = <span class='fl'>0.3</span>,
+  vargamD = <span class='fl'>2</span>,
+  vargam12 = <span class='fl'>0.5</span>,
+  gap.time = <span class='fl'>FALSE</span>,
+  max.recurrent = <span class='fl'>100</span>,
+  cens = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -236,25 +236,30 @@ to share random effect.</p>
 $$Z.death=Zd1+Zd2$$  gamma distributions 
 $$Zdj$$  gamma distribution  with mean parameters (sharej), vargamD,  share2=1-share1
 $$Z12$$  gamma distribution with mean 1 and variance vargam12</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>########################################</span>
 <span class='co'>## getting some rates to mimick </span>
 <span class='co'>########################################</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>drcumhaz</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='no'>drcumhaz</span>
-<span class='no'>base1</span> <span class='kw'>&lt;-</span> <span class='no'>base1cumhaz</span>
-<span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
+<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
+<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
 
-<span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrentTS</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='no'>base4</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)
-<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrentTS</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,<span class='kw'>base4</span>,death.cumhaz=<span class='kw'>dr</span>)
+<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>rr</span>,<span class='op'>~</span><span class='kw'>death</span><span class='op'>+</span><span class='kw'>status</span>)
+</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             158 2975  389
-#&gt; 1             838    0    0</div><div class='input'><span class='fu'>showfitsim</span>(<span class='kw'>causes</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='no'>rr</span>,<span class='no'>dr</span>,<span class='no'>base1</span>,<span class='no'>base4</span>)</div><div class='img'><img src='simRecurrentTS-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='simRecurrentTS-2.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; 1             838    0    0</div><div class='input'><span class='fu'><a href='simRecurrent.html'>showfitsim</a></span>(causes=<span class='fl'>2</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base4</span>)
+</div><div class='img'><img src='simRecurrentTS-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='simRecurrentTS-2.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -271,7 +276,7 @@ $$Z12$$  gamma distribution with mean 1 and variance vargam12</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

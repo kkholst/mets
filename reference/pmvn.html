@@ -156,7 +156,7 @@
     <p>Multivariate normal distribution function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pmvn</span>(<span class='no'>lower</span>, <span class='no'>upper</span>, <span class='no'>mu</span>, <span class='no'>sigma</span>, <span class='kw'>cor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>pmvn</span>(<span class='kw'>lower</span>, <span class='kw'>upper</span>, <span class='kw'>mu</span>, <span class='kw'>sigma</span>, cor = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,11 +185,12 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>lower</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,-<span class='fl'>Inf</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>Inf</span>,<span class='fl'>0</span>))
-<span class='no'>upper</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>Inf</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>Inf</span>))
-<span class='no'>mu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>1</span>,<span class='fl'>1</span>))
-<span class='no'>sigma</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>2</span>)+<span class='fl'>1</span>
-<span class='fu'>pmvn</span>(<span class='kw'>lower</span><span class='kw'>=</span><span class='no'>lower</span>,<span class='kw'>upper</span><span class='kw'>=</span><span class='no'>upper</span>,<span class='kw'>mu</span><span class='kw'>=</span><span class='no'>mu</span>,<span class='kw'>sigma</span><span class='kw'>=</span><span class='no'>sigma</span>)</div><div class='output co'>#&gt; [1] 0.1265479 0.5361516</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>lower</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='op'>-</span><span class='fl'>Inf</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>Inf</span>,<span class='fl'>0</span>))
+<span class='kw'>upper</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>Inf</span>,<span class='fl'>0</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>Inf</span>))
+<span class='kw'>mu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>))
+<span class='kw'>sigma</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>2</span>)<span class='op'>+</span><span class='fl'>1</span>
+<span class='fu'>pmvn</span>(lower=<span class='kw'>lower</span>,upper=<span class='kw'>upper</span>,mu=<span class='kw'>mu</span>,sigma=<span class='kw'>sigma</span>)
+</div><div class='output co'>#&gt; [1] 0.1265479 0.5361516</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -205,7 +206,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

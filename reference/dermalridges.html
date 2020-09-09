@@ -170,8 +170,9 @@ asymmetry in finger ridge-counts.  Annals of Eugenics 17 (1),
 pp.211--231. DOI: 10.1111/j.1469-1809.1952.tb02513.x</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dermalridges</span>)
-<span class='fu'>fast.reshape</span>(<span class='no'>dermalridges</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"family"</span>,<span class='kw'>varying</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"child.left"</span>,<span class='st'>"child.right"</span>,<span class='st'>"sex"</span>))</div><div class='output co'>#&gt;     father.left father.right mother.left mother.right   sex1 child.left1
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>dermalridges</span>)
+<span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span>(<span class='kw'>dermalridges</span>,id=<span class='st'>"family"</span>,varying=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"child.left"</span>,<span class='st'>"child.right"</span>,<span class='st'>"sex"</span>))
+</div><div class='output co'>#&gt;     father.left father.right mother.left mother.right   sex1 child.left1
 #&gt; 1            51           63           5           18   male          66
 #&gt; 2             7            8          78           82 female          30
 #&gt; 3            30           35          95           91   male          54
@@ -390,7 +391,7 @@ pp.211--231. DOI: 10.1111/j.1469-1809.1952.tb02513.x</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

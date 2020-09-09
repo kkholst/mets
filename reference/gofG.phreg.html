@@ -160,7 +160,7 @@ other to see if lines are straight, with 50 resample versions under the
 assumptiosn that the stratified Cox is correct</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gofG.phreg</span>(<span class='no'>x</span>, <span class='kw'>sim</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>lm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>gofG.phreg</span>(<span class='kw'>x</span>, sim = <span class='fl'>0</span>, silent = <span class='fl'>1</span>, lm = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,19 +187,23 @@ assumptiosn that the stratified Cox is correct</p>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike and Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
 
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='fu'>strata</span>(<span class='no'>vf</span>)+<span class='no'>chf</span>+<span class='no'>wmi</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>)
-<span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>vf</span>+<span class='fu'>strata</span>(<span class='no'>chf</span>)+<span class='no'>wmi</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACE</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>)<span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>wmi</span>,data=<span class='kw'>TRACE</span>) 
+<span class='kw'>m2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>chf</span>)<span class='op'>+</span><span class='kw'>wmi</span>,data=<span class='kw'>TRACE</span>) 
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
 
-<span class='fu'>gofG.phreg</span>(<span class='no'>m1</span>)
-<span class='fu'>gofG.phreg</span>(<span class='no'>m2</span>)
+<span class='fu'>gofG.phreg</span>(<span class='kw'>m1</span>)
+<span class='fu'>gofG.phreg</span>(<span class='kw'>m2</span>)
 
-<span class='fu'>bplot</span>(<span class='no'>m1</span>,<span class='kw'>log</span><span class='kw'>=</span><span class='st'>"y"</span>)
-<span class='fu'>bplot</span>(<span class='no'>m2</span>,<span class='kw'>log</span><span class='kw'>=</span><span class='st'>"y"</span>)</div><div class='img'><img src='gofG.phreg-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>m1</span>,log=<span class='st'>"y"</span>)
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>m2</span>,log=<span class='st'>"y"</span>)
+</div><div class='img'><img src='gofG.phreg-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -215,7 +219,7 @@ assumptiosn that the stratified Cox is correct</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

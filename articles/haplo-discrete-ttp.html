@@ -109,7 +109,7 @@
       <h1 data-toc-skip>Haplotype Discrete Survival Models</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-09-02</h4>
+            <h4 class="date">2020-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/haplo-discrete-ttp.Rmd"><code>vignettes/haplo-discrete-ttp.Rmd</code></a></small>
       <div class="hidden name"><code>haplo-discrete-ttp.Rmd</code></div>
@@ -130,11 +130,12 @@
 \end{align*}\]</span> where x(h) is a regression design of x and haplotypes <span class="math inline">\(h=(h_1,h_2)\)</span></p>
 <p>For standard errors we assume that haplotype probabilities are known.</p>
 <p>We are particularly interested in the types haplotypes:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">types</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DCGCGCTCACG"</span>,<span class="st">"DTCCGCTGACG"</span>,<span class="st">"ITCAGTTGACG"</span>,<span class="st">"ITCCGCTGAGG"</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="kw">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DCGCGCTCACG"</span>,<span class="st">"DTCCGCTGACG"</span>,<span class="st">"ITCAGTTGACG"</span>,<span class="st">"ITCCGCTGAGG"</span>)
 
 <span class="co">## some haplotypes frequencies for simulations </span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">hapfreqs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">hapfreqs</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">hapfreqs</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">hapfreqs</span>)
 <span class="co">#&gt;             index   haplotype     freq</span>
 <span class="co">#&gt; DCGAGCTCACG     1 DCGAGCTCACG 0.010681</span>
 <span class="co">#&gt; DCGCGCTCACG     2 DCGCGCTCACG 0.138387</span>
@@ -154,18 +155,22 @@
 <span class="co">#&gt; ITCCGCTGAGG    16 ITCCGCTGAGG 0.291273</span>
 <span class="co">#&gt; ITCCGTTGACG    17 ITCCGTTGACG 0.031089</span>
 <span class="co">#&gt; ITCCGTCGACG    18 ITCCGTCGACG 0.001502</span>
-<span class="co">#&gt; ITCCCCTGAGG    19 ITCCCCTGAGG 0.000653</span></pre></body></html></div>
+<span class="co">#&gt; ITCCCCTGAGG    19 ITCCCCTGAGG 0.000653</span>
+</pre></div>
 <p>Among the types of interest we look up the frequencies and choose a baseline</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">www</span> <span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">hapfreqs</span>$<span class="no">haplotype</span> <span class="kw">%in%</span> <span class="no">types</span>)
-<span class="no">hapfreqs</span>$<span class="no">freq</span>[<span class="no">www</span>]
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">www</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="kw">hapfreqs</span><span class="op">$</span><span class="kw">haplotype</span> <span class="op">%in%</span> <span class="kw">types</span>)
+<span class="kw">hapfreqs</span><span class="op">$</span><span class="kw">freq</span>[<span class="kw">www</span>]
 <span class="co">#&gt; [1] 0.138387 0.103394 0.048124 0.291273</span>
 
-<span class="no">baseline</span><span class="kw">=</span><span class="no">hapfreqs</span>$<span class="no">haplotype</span>[<span class="fl">9</span>]
-<span class="no">baseline</span>
-<span class="co">#&gt; [1] "DTGCGCTCGCG"</span></pre></body></html></div>
+<span class="kw">baseline</span><span class="op">=</span><span class="kw">hapfreqs</span><span class="op">$</span><span class="kw">haplotype</span>[<span class="fl">9</span>]
+<span class="kw">baseline</span>
+<span class="co">#&gt; [1] "DTGCGCTCGCG"</span>
+</pre></div>
 <p>We have cycle specific data with <span class="math inline">\(id\)</span> and outcome <span class="math inline">\(y\)</span></p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">haploX</span>)
-<span class="fu">dlist</span>(<span class="no">haploX</span>,<span class="no">.</span>~<span class="no">id</span><span class="kw">|</span><span class="no">id</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">7</span>))
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">haploX</span>)
+<span class="fu"><a href="../reference/dprint.html">dlist</a></span>(<span class="kw">haploX</span>,<span class="kw">.</span><span class="op">~</span><span class="kw">id</span><span class="op">|</span><span class="kw">id</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">7</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; id: 1</span>
@@ -191,52 +196,60 @@
 <span class="co">#&gt; 38 0 1  0  0  0  2     2        0     </span>
 <span class="co">#&gt; 39 1 1  0  0  0  3     3        0     </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] matrix array</span></pre></body></html></div>
+<span class="co">#&gt; [1] matrix array</span>
+</pre></div>
 <p>and a list of possible haplo-types for each id and how likely they are <span class="math inline">\(p\)</span> (the sum of within each id is 1):</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">hHaplos</span>) <span class="co">## loads ghaplos </span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">ghaplos</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">hHaplos</span>) <span class="co">## loads ghaplos </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">ghaplos</span>)
 <span class="co">#&gt;    id      haplo1      haplo2          p</span>
 <span class="co">#&gt; 1   1 DTGCGCTCGCG DTGAGCTCGCG 1.00000000</span>
 <span class="co">#&gt; 19  2 ITCCGTTGACG DTGAGCTCGCG 0.06867716</span>
 <span class="co">#&gt; 21  2 ITCAGTTGACG DTGCGCTCGCG 0.93132284</span>
 <span class="co">#&gt; 51  3 ITCCGTTGACG DTGAGCTCGCG 0.06867716</span>
 <span class="co">#&gt; 53  3 ITCAGTTGACG DTGCGCTCGCG 0.93132284</span>
-<span class="co">#&gt; 66  4 DTGCGCTCGCG DTGCGCTCGCG 1.00000000</span></pre></body></html></div>
+<span class="co">#&gt; 66  4 DTGCGCTCGCG DTGCGCTCGCG 1.00000000</span>
+</pre></div>
 <p>The first id=1 has the haplotype fully observed, but id=2 has two possible haplotypes consistent with the observed genotype for this id, the probabiblities are 7% and 93%, respectively.</p>
 <p>With the baseline given above we can specify a regression design that gives an effect if a “type” is present (sm=0), or an additive effect of haplotypes (sm=1):</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">designftypes</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>,<span class="no">sm</span><span class="kw">=</span><span class="fl">0</span>) {
-<span class="no">hap1</span><span class="kw">=</span><span class="no">x</span>[<span class="fl">1</span>]
-<span class="no">hap2</span><span class="kw">=</span><span class="no">x</span>[<span class="fl">2</span>]
-<span class="kw">if</span> (<span class="no">sm</span><span class="kw">==</span><span class="fl">0</span>) <span class="no">y</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*( (<span class="no">hap1</span><span class="kw">==</span><span class="no">types</span>) <span class="kw">|</span> (<span class="no">hap2</span><span class="kw">==</span><span class="no">types</span>))
-<span class="kw">if</span> (<span class="no">sm</span><span class="kw">==</span><span class="fl">1</span>) <span class="no">y</span> <span class="kw">&lt;-</span> <span class="fl">1</span>*(<span class="no">hap1</span><span class="kw">==</span><span class="no">types</span>) + <span class="fl">1</span>*(<span class="no">hap2</span><span class="kw">==</span><span class="no">types</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="no">y</span>)
-}</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">designftypes</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>,<span class="kw">sm</span>=<span class="fl">0</span>) {
+<span class="kw">hap1</span><span class="op">=</span><span class="kw">x</span>[<span class="fl">1</span>]
+<span class="kw">hap2</span><span class="op">=</span><span class="kw">x</span>[<span class="fl">2</span>]
+<span class="co">if</span> (<span class="kw">sm</span><span class="op">==</span><span class="fl">0</span>) <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>( (<span class="kw">hap1</span><span class="op">==</span><span class="kw">types</span>) <span class="op">|</span> (<span class="kw">hap2</span><span class="op">==</span><span class="kw">types</span>))
+<span class="co">if</span> (<span class="kw">sm</span><span class="op">==</span><span class="fl">1</span>) <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">hap1</span><span class="op">==</span><span class="kw">types</span>) <span class="op">+</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">hap2</span><span class="op">==</span><span class="kw">types</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">y</span>)
+}
+</pre></div>
 <p>To fit the model we start by constructing a time-design (named X) and takes the haplotype distributions for each id</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">haploX</span>$<span class="no">time</span> <span class="kw">&lt;-</span> <span class="no">haploX</span>$<span class="no">times</span>
-<span class="no">Xdes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(~<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">time</span>),<span class="no">haploX</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">Xdes</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"X"</span>,<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">Xdes</span>),<span class="kw">sep</span><span class="kw">=</span><span class="st">""</span>)
-<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu">dkeep</span>(<span class="no">haploX</span>,~<span class="no">id</span>+<span class="no">y</span>+<span class="no">time</span>)
-<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">X</span>,<span class="no">Xdes</span>)
-<span class="no">Haplos</span> <span class="kw">&lt;-</span> <span class="fu">dkeep</span>(<span class="no">ghaplos</span>,~<span class="no">id</span>+<span class="st">"haplo*"</span>+<span class="no">p</span>)
-<span class="no">desnames</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"X"</span>,<span class="fl">1</span>:<span class="fl">6</span>,<span class="kw">sep</span><span class="kw">=</span><span class="st">""</span>)   <span class="co"># six X's related to 6 cycles </span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">X</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">haploX</span><span class="op">$</span><span class="kw">time</span> <span class="op">&lt;-</span> <span class="kw">haploX</span><span class="op">$</span><span class="kw">times</span>
+<span class="kw">Xdes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">time</span>),<span class="kw">haploX</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">Xdes</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"X"</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="kw">Xdes</span>),sep=<span class="st">""</span>)
+<span class="kw">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dcut.html">dkeep</a></span>(<span class="kw">haploX</span>,<span class="op">~</span><span class="kw">id</span><span class="op">+</span><span class="kw">y</span><span class="op">+</span><span class="kw">time</span>)
+<span class="kw">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">X</span>,<span class="kw">Xdes</span>)
+<span class="kw">Haplos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dcut.html">dkeep</a></span>(<span class="kw">ghaplos</span>,<span class="op">~</span><span class="kw">id</span><span class="op">+</span><span class="st">"haplo*"</span><span class="op">+</span><span class="kw">p</span>)
+<span class="kw">desnames</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"X"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,sep=<span class="st">""</span>)   <span class="co"># six X's related to 6 cycles </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">X</span>)
 <span class="co">#&gt;   id y time X1 X2 X3 X4 X5 X6</span>
 <span class="co">#&gt; 1  1 0    1  1  0  0  0  0  0</span>
 <span class="co">#&gt; 2  1 0    2  1  1  0  0  0  0</span>
 <span class="co">#&gt; 3  1 0    3  1  0  1  0  0  0</span>
 <span class="co">#&gt; 4  1 0    4  1  0  0  1  0  0</span>
 <span class="co">#&gt; 5  1 0    5  1  0  0  0  1  0</span>
-<span class="co">#&gt; 6  1 0    6  1  0  0  0  0  1</span></pre></body></html></div>
+<span class="co">#&gt; 6  1 0    6  1  0  0  0  0  1</span>
+</pre></div>
 <p>Now we can fit the model with the design given by the designfunction</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu">haplo.surv.discrete</span>(<span class="kw">X</span><span class="kw">=</span><span class="no">X</span>,<span class="kw">y</span><span class="kw">=</span><span class="st">"y"</span>,<span class="kw">time.name</span><span class="kw">=</span><span class="st">"time"</span>,
-      <span class="kw">Haplos</span><span class="kw">=</span><span class="no">Haplos</span>,<span class="kw">desnames</span><span class="kw">=</span><span class="no">desnames</span>,<span class="kw">designfunc</span><span class="kw">=</span><span class="no">designftypes</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">out</span>$<span class="no">coef</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">desnames</span>,<span class="no">types</span>)
-<span class="no">out</span>$<span class="no">coef</span>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/haplo.surv.discrete.html">haplo.surv.discrete</a></span>(X=<span class="kw">X</span>,y=<span class="st">"y"</span>,time.name=<span class="st">"time"</span>,
+      Haplos=<span class="kw">Haplos</span>,desnames=<span class="kw">desnames</span>,designfunc=<span class="kw">designftypes</span>) 
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">coef</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">desnames</span>,<span class="kw">types</span>)
+<span class="kw">out</span><span class="op">$</span><span class="kw">coef</span>
 <span class="co">#&gt;          X1          X2          X3          X4          X5          X6 </span>
 <span class="co">#&gt; -1.82153345 -0.61608261 -0.17143057 -1.27152045 -0.28635976 -0.19349091 </span>
 <span class="co">#&gt; DCGCGCTCACG DTCCGCTGACG ITCAGTTGACG ITCCGCTGAGG </span>
 <span class="co">#&gt;  0.79753613  0.65747412  0.06119231  0.31666905</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">out</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">out</span>)
 <span class="co">#&gt;             Estimate Std.Err     2.5%   97.5%   P-value</span>
 <span class="co">#&gt; X1          -1.82153  0.1619 -2.13892 -1.5041 2.355e-29</span>
 <span class="co">#&gt; X2          -0.61608  0.1895 -0.98748 -0.2447 1.149e-03</span>
@@ -247,13 +260,15 @@
 <span class="co">#&gt; DCGCGCTCACG  0.79754  0.1494  0.50465  1.0904 9.445e-08</span>
 <span class="co">#&gt; DTCCGCTGACG  0.65747  0.1621  0.33971  0.9752 5.007e-05</span>
 <span class="co">#&gt; ITCAGTTGACG  0.06119  0.2145 -0.35931  0.4817 7.755e-01</span>
-<span class="co">#&gt; ITCCGCTGAGG  0.31667  0.1361  0.04989  0.5834 1.999e-02</span></pre></body></html></div>
+<span class="co">#&gt; ITCCGCTGAGG  0.31667  0.1361  0.04989  0.5834 1.999e-02</span>
+</pre></div>
 <p>Haplotypes “DCGCGCTCACG” “DTCCGCTGACG” gives increased hazard of pregnancy</p>
 <p>The data was generated with these true coefficients</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">tcoef</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">1.93110204</span>,-<span class="fl">0.47531630</span>,-<span class="fl">0.04118204</span>,-<span class="fl">1.57872602</span>,-<span class="fl">0.22176426</span>,-<span class="fl">0.13836416</span>,
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">tcoef</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">1.93110204</span>,<span class="op">-</span><span class="fl">0.47531630</span>,<span class="op">-</span><span class="fl">0.04118204</span>,<span class="op">-</span><span class="fl">1.57872602</span>,<span class="op">-</span><span class="fl">0.22176426</span>,<span class="op">-</span><span class="fl">0.13836416</span>,
 <span class="fl">0.88830288</span>,<span class="fl">0.60756224</span>,<span class="fl">0.39802821</span>,<span class="fl">0.32706859</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out</span>$<span class="no">coef</span>,<span class="no">tcoef</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">coef</span>,<span class="kw">tcoef</span>)
 <span class="co">#&gt;                               tcoef</span>
 <span class="co">#&gt; X1          -1.82153345 -1.93110204</span>
 <span class="co">#&gt; X2          -0.61608261 -0.47531630</span>
@@ -264,9 +279,11 @@
 <span class="co">#&gt; DCGCGCTCACG  0.79753613  0.88830288</span>
 <span class="co">#&gt; DTCCGCTGACG  0.65747412  0.60756224</span>
 <span class="co">#&gt; ITCAGTTGACG  0.06119231  0.39802821</span>
-<span class="co">#&gt; ITCCGCTGAGG  0.31666905  0.32706859</span></pre></body></html></div>
+<span class="co">#&gt; ITCCGCTGAGG  0.31666905  0.32706859</span>
+</pre></div>
 <p>The design fitted can be found in the output</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">out</span>$<span class="no">X</span>,<span class="fl">10</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">X</span>,<span class="fl">10</span>)
 <span class="co">#&gt;    X1 X2 X3 X4 X5 X6 haplo1 haplo2 haplo3 haplo4</span>
 <span class="co">#&gt; 1   1  0  0  0  0  0      0      0      0      0</span>
 <span class="co">#&gt; 2   1  1  0  0  0  0      0      0      0      0</span>
@@ -277,12 +294,14 @@
 <span class="co">#&gt; 8   1  0  0  0  0  0      0      0      1      0</span>
 <span class="co">#&gt; 10  1  1  0  0  0  0      0      0      1      0</span>
 <span class="co">#&gt; 12  1  0  1  0  0  0      0      0      1      0</span>
-<span class="co">#&gt; 14  1  0  0  1  0  0      0      0      1      0</span></pre></body></html></div>
+<span class="co">#&gt; 14  1  0  0  1  0  0      0      0      1      0</span>
+</pre></div>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 <span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
@@ -306,16 +325,18 @@
 <span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
-<span class="co">#&gt;  [4] splines_4.0.2       MASS_7.3-51.6       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.2         grid_4.0.2          xfun_0.16          </span>
-<span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
-<span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     numDeriv_2016.8-1.1</span>
-<span class="co">#&gt; [19] pkgdown_1.5.1       crayon_1.3.4        Matrix_1.2-18      </span>
-<span class="co">#&gt; [22] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
-<span class="co">#&gt; [25] rmarkdown_2.3       stringi_1.4.6       compiler_4.0.2     </span>
-<span class="co">#&gt; [28] desc_1.2.0          backports_1.1.9     mvtnorm_1.1-1</span></pre></body></html></div>
+<span class="co">#&gt;  [1] Rcpp_1.0.5          cpp11_0.2.1         knitr_1.29         </span>
+<span class="co">#&gt;  [4] magrittr_1.5        splines_4.0.2       lattice_0.20-41    </span>
+<span class="co">#&gt;  [7] R6_2.4.1            ragg_0.3.1          rlang_0.4.7        </span>
+<span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
+<span class="co">#&gt; [13] xfun_0.17           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    rprojroot_1.3-2    </span>
+<span class="co">#&gt; [19] digest_0.6.25       numDeriv_2016.8-1.1 pkgdown_1.6.0      </span>
+<span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       fs_1.5.0           </span>
+<span class="co">#&gt; [25] memoise_1.1.0       evaluate_0.14       rmarkdown_2.3      </span>
+<span class="co">#&gt; [28] stringi_1.5.3       compiler_4.0.2      desc_1.2.0         </span>
+<span class="co">#&gt; [31] backports_1.1.9     mvtnorm_1.1-1</span>
+</pre></div>
 </div>
   </div>
 
@@ -334,7 +355,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

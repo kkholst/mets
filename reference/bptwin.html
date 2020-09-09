@@ -157,31 +157,31 @@
     </div>
 
     <pre class="usage"><span class='fu'>bptwin</span>(
-  <span class='no'>x</span>,
-  <span class='no'>data</span>,
-  <span class='no'>id</span>,
-  <span class='no'>zyg</span>,
-  <span class='no'>DZ</span>,
-  <span class='kw'>group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>num</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>biweight</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='no'>x</span>),
-  <span class='kw'>strata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>messages</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>0</span>),
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"ace"</span>,
-  <span class='kw'>eqmean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>pairs.only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>samecens</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>allmarg</span> <span class='kw'>=</span> <span class='no'>samecens</span> <span class='kw'>&amp;</span> !<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>weights</span>),
-  <span class='kw'>stderr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>robustvar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>p</span>,
-  <span class='kw'>indiv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>constrain</span>,
-  <span class='kw'>bound</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>varlink</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>data</span>,
+  <span class='kw'>id</span>,
+  <span class='kw'>zyg</span>,
+  <span class='kw'>DZ</span>,
+  group = <span class='kw'>NULL</span>,
+  num = <span class='kw'>NULL</span>,
+  weights = <span class='kw'>NULL</span>,
+  biweight = <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='kw'>x</span>),
+  strata = <span class='kw'>NULL</span>,
+  messages = <span class='fl'>1</span>,
+  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>0</span>),
+  type = <span class='st'>"ace"</span>,
+  eqmean = <span class='fl'>TRUE</span>,
+  pairs.only = <span class='fl'>FALSE</span>,
+  samecens = <span class='fl'>TRUE</span>,
+  allmarg = <span class='kw'>samecens</span> <span class='op'>&amp;</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>weights</span>),
+  stderr = <span class='fl'>TRUE</span>,
+  robustvar = <span class='fl'>TRUE</span>,
+  <span class='kw'>p</span>,
+  indiv = <span class='fl'>FALSE</span>,
+  <span class='kw'>constrain</span>,
+  bound = <span class='fl'>FALSE</span>,
+  <span class='kw'>varlink</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -300,14 +300,18 @@ genetic factors, unique environmental factors).</p></td>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>twinlm</code>, <code>twinlm.time</code>, <code>twinlm.strata</code>, <code>twinsim</code></p></div>
+    <div class='dont-index'><p><code><a href='twinlm.html'>twinlm</a></code>, <code>twinlm.time</code>, <code><a href='twinlm.html'>twinlm.strata</a></code>, <code><a href='twinsim.html'>twinsim</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>twinstut</span>)
-<span class='no'>b0</span> <span class='kw'>&lt;-</span> <span class='fu'>bptwin</span>(<span class='no'>stutter</span>~<span class='no'>sex</span>,
-             <span class='kw'>data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/droplevels.html'>droplevels</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>twinstut</span>,<span class='no'>zyg</span><span class='kw'>%in%</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mz"</span>,<span class='st'>"dz"</span>))),
-             <span class='kw'>id</span><span class='kw'>=</span><span class='st'>"tvparnr"</span>,<span class='kw'>zyg</span><span class='kw'>=</span><span class='st'>"zyg"</span>,<span class='kw'>DZ</span><span class='kw'>=</span><span class='st'>"dz"</span>,<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"ae"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>b0</span>)</div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>twinstut</span>)
+<span class='kw'>b0</span> <span class='op'>&lt;-</span> <span class='fu'>bptwin</span>(<span class='kw'>stutter</span><span class='op'>~</span><span class='kw'>sex</span>,
+             data=<span class='fu'><a href='https://rdrr.io/r/base/droplevels.html'>droplevels</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>twinstut</span>,<span class='kw'>zyg</span><span class='op'>%in%</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mz"</span>,<span class='st'>"dz"</span>))),
+             id=<span class='st'>"tvparnr"</span>,zyg=<span class='st'>"zyg"</span>,DZ=<span class='st'>"dz"</span>,type=<span class='st'>"ae"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>b0</span>)
+</div><div class='output co'>#&gt; 
 #&gt;             Estimate  Std.Err        Z   p-value    
 #&gt; (Intercept) -3.70371  0.24449 -15.1485 &lt; 2.2e-16 ***
 #&gt; sexmale      0.83310  0.08255  10.0920 &lt; 2.2e-16 ***
@@ -357,7 +361,7 @@ genetic factors, unique environmental factors).</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -179,15 +179,15 @@ where \(z\) is specified by theta.des . The link function can be the exp when va
     </div>
 
     <pre class="usage"><span class='fu'>twostageMLE</span>(
-  <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"NR"</span>,
-  <span class='kw'>no.opt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>margsurv</span>,
+  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
+  theta = <span class='kw'>NULL</span>,
+  theta.des = <span class='kw'>NULL</span>,
+  var.link = <span class='fl'>0</span>,
+  method = <span class='st'>"NR"</span>,
+  no.opt = <span class='fl'>FALSE</span>,
+  weights = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -242,12 +242,16 @@ Scheike and Holst, working paper</p>
 survival data, Biometrics, (1995).</p>
 <p>Glidden (2000), A Two-Stage estimator of the dependence
 parameter for the Clayton Oakes model, LIDA, (2000).</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>diabetes</span>)
-<span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>1</span>)~<span class='no'>treat</span>+<span class='fu'>cluster</span>(<span class='no'>id</span>),<span class='no'>diabetes</span>)
-<span class='no'>oo</span> <span class='kw'>&lt;-</span> <span class='fu'>twostageMLE</span>(<span class='no'>dd</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>oo</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>diabetes</span>)
+<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>1</span>)<span class='op'>~</span><span class='kw'>treat</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),<span class='kw'>diabetes</span>)
+<span class='kw'>oo</span> <span class='op'>&lt;-</span> <span class='fu'>twostageMLE</span>(<span class='kw'>dd</span>,data=<span class='kw'>diabetes</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>oo</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                 Coef.        SE       z       P-val Kendall tau         SE
 #&gt; dependence1 0.9526614 0.3543033 2.68883 0.007170289    0.322645 0.08127892
@@ -257,10 +261,11 @@ parameter for the Clayton Oakes model, LIDA, (2000).</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='no'>theta.des</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>adult</span>),<span class='no'>diabetes</span>)
+<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>adult</span>),<span class='kw'>diabetes</span>)
 
-<span class='no'>oo</span> <span class='kw'>&lt;-</span><span class='fu'>twostageMLE</span>(<span class='no'>dd</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>diabetes</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>theta.des</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>oo</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>oo</span> <span class='op'>&lt;-</span><span class='fu'>twostageMLE</span>(<span class='kw'>dd</span>,data=<span class='kw'>diabetes</span>,theta.des=<span class='kw'>theta.des</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>oo</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                    Coef.        SE        z      P-val Kendall tau         SE
 #&gt; factor(adult)1 0.9117633 0.4000030 2.279391 0.02264381   0.3131310 0.09435851
@@ -286,7 +291,7 @@ parameter for the Clayton Oakes model, LIDA, (2000).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

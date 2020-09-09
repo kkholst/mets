@@ -109,7 +109,7 @@
       <h1 data-toc-skip>dUtility data-frame manipulations</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-09-02</h4>
+            <h4 class="date">2020-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/basic-dutils.Rmd"><code>vignettes/basic-dutils.Rmd</code></a></small>
       <div class="hidden name"><code>basic-dutils.Rmd</code></div>
@@ -131,10 +131,14 @@
 </ul>
 <p>Here are some key data-manipulation steps on a data-frame which is how we typically organize our data in R. After having read the data into R it will typically be a data-frame, if not we can force it to be a data-frame. The basic idea of the utility functions is to get a simple and easy to type way of making simple data-manipulation on a data-frame much like what is possible in SAS or STATA.</p>
 <p>The functions, say, dcut, dfactor and so on are all functions that basically does what the base R cut, factor do, but are easier to use in the context of data-frames and have additional functionality.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mets</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">is.data.frame</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] TRUE</span></pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">is.data.frame</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] TRUE</span>
+</pre></div>
 <p>Here we work on the melanoma data that is already read into R and is a data-frame.</p>
 </div>
 <div id="dutility-functions" class="section level1">
@@ -158,69 +162,90 @@
 </ul>
 <p>A useful feature is that y and x as well as the subset condition can be specified using regular-expressions or by wildcards (default). Here to illustrate this, we compute the means of certain variables.</p>
 <p>First just oveall</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>)))
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>)))
 <span class="co">#&gt;         thick I(log(thick)) </span>
-<span class="co">#&gt;    291.985366      5.223341</span></pre></body></html></div>
+<span class="co">#&gt;    291.985366      5.223341</span>
+</pre></div>
 <p>now only when days&gt;500</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))<span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>))<span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">days</span><span class="op">&gt;</span><span class="fl">500</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;         thick I(log(thick)) </span>
-<span class="co">#&gt;    271.582011      5.168691</span></pre></body></html></div>
+<span class="co">#&gt;    271.582011      5.168691</span>
+</pre></div>
 <p>and now after sex but only when days&gt;500</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>))<span class="op">~</span><span class="kw">sex</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">days</span><span class="op">&gt;</span><span class="fl">500</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;   sex    thick I(log(thick))</span>
 <span class="co">#&gt; 1   0 242.9580      5.060086</span>
-<span class="co">#&gt; 2   1 320.2429      5.353321</span></pre></body></html></div>
+<span class="co">#&gt; 2   1 320.2429      5.353321</span>
+</pre></div>
 <p>and finally after quartiles of days (via the dcut function)</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>))~<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">days</span>)))
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>))<span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">days</span>)))
 <span class="co">#&gt;         I(dcut(days))    thick I(log(thick))</span>
 <span class="co">#&gt; 1       [10,1.52e+03] 482.1731      5.799525</span>
 <span class="co">#&gt; 2    (1.52e+03,2e+03] 208.5490      4.987652</span>
 <span class="co">#&gt; 3    (2e+03,3.04e+03] 223.2941      4.974759</span>
-<span class="co">#&gt; 4 (3.04e+03,5.56e+03] 250.1961      5.120129</span></pre></body></html></div>
+<span class="co">#&gt; 4 (3.04e+03,5.56e+03] 250.1961      5.120129</span>
+</pre></div>
 <p>or summary of all variables starting with “s” and that contains “a”</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="st">"s*"</span>+<span class="st">"*a*"</span>~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">500</span>))
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="st">"s*"</span><span class="op">+</span><span class="st">"*a*"</span><span class="op">~</span><span class="kw">sex</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">days</span><span class="op">&gt;</span><span class="fl">500</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;   sex   status     days</span>
 <span class="co">#&gt; 1   0 1.831933 2399.143</span>
-<span class="co">#&gt; 2   1 1.714286 2169.800</span></pre></body></html></div>
+<span class="co">#&gt; 2   1 1.714286 2169.800</span>
+</pre></div>
 </div>
 <div id="renaming-deleting-keeping-dropping-variables" class="section level1">
 <h1 class="hasAnchor">
 <a href="#renaming-deleting-keeping-dropping-variables" class="anchor"></a>Renaming, deleting, keeping, dropping variables</h1>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">drename</a></span>(<span class="no">melanoma</span>,<span class="no">tykkelse</span>~<span class="no">thick</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] "no"       "status"   "days"     "ulc"      "tykkelse" "sex"</span></pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">drename</a></span>(<span class="kw">melanoma</span>,<span class="kw">tykkelse</span><span class="op">~</span><span class="kw">thick</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] "no"       "status"   "days"     "ulc"      "tykkelse" "sex"</span>
+</pre></div>
 <p>Deleting variables</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">drm</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">sex</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span></pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">drm</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">sex</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span>
+</pre></div>
 <p>or sas style</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">ddrop</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">sex</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span></pre></body></html></div>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">ddrop</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">sex</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span>
+</pre></div>
 <p>alternatively we can also keep certain variables</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dkeep</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">sex</span>+<span class="no">status</span>+<span class="no">days</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] "thick"  "sex"    "status" "days"</span></pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">dkeep</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">sex</span><span class="op">+</span><span class="kw">status</span><span class="op">+</span><span class="kw">days</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] "thick"  "sex"    "status" "days"</span>
+</pre></div>
 <p>This can also be done with direct asignment</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">ddrop</a></span>(<span class="no">melanoma</span>) <span class="kw">&lt;-</span> ~<span class="no">thick</span>+<span class="no">sex</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">melanoma</span>)
-<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span></pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="fu"><a href="../reference/dcut.html">ddrop</a></span>(<span class="kw">melanoma</span>) <span class="op">&lt;-</span> <span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">sex</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">melanoma</span>)
+<span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span>
+</pre></div>
 </div>
 <div id="looking-at-the-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#looking-at-the-data" class="anchor"></a>Looking at the data</h1>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dstr</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="fu"><a href="../reference/dcor.html">dstr</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; 'data.frame':    205 obs. of  6 variables:</span>
 <span class="co">#&gt;  $ no    : int  789 13 97 16 21 469 685 7 932 944 ...</span>
 <span class="co">#&gt;  $ status: int  3 3 2 3 1 1 1 1 3 1 ...</span>
@@ -229,9 +254,11 @@
 <span class="co">#&gt;  $ thick : int  676 65 134 290 1208 484 516 1288 322 741 ...</span>
 <span class="co">#&gt;  $ sex   : int  1 1 1 0 1 1 1 1 0 0 ...</span>
 <span class="co">#&gt; Warning in structure(res, ngroupvar = 0, class = c("daggregate", class(res))): Calling 'structure(NULL, *)' is deprecated, as NULL cannot have attributes.</span>
-<span class="co">#&gt;   Consider 'structure(list(), *)' instead.</span></pre></body></html></div>
+<span class="co">#&gt;   Consider 'structure(list(), *)' instead.</span>
+</pre></div>
 <p>The data can in Rstudio be seen as a data-table but to list certain parts of the data in output window</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dlist</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="fu"><a href="../reference/dprint.html">dlist</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt;     no  status days ulc thick sex</span>
 <span class="co">#&gt; 1   789 3       10  1    676  1  </span>
 <span class="co">#&gt; 2    13 3       30  0     65  1  </span>
@@ -245,8 +272,10 @@
 <span class="co">#&gt; 204 606 2      4926 0   226   0  </span>
 <span class="co">#&gt; 205 328 2      5565 0   290   0  </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] matrix array</span></pre></body></html></div>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dlist</a></span>(<span class="no">melanoma</span>, ~<span class="no">.</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
+<span class="co">#&gt; [1] matrix array</span>
+</pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="fu"><a href="../reference/dprint.html">dlist</a></span>(<span class="kw">melanoma</span>, <span class="op">~</span><span class="kw">.</span><span class="op">|</span><span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;     no  status days ulc thick</span>
@@ -262,8 +291,10 @@
 <span class="co">#&gt; 198 493 2      4310 0   210  </span>
 <span class="co">#&gt; 201 317 2      4492 1   706  </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] matrix array</span></pre></body></html></div>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dlist</a></span>(<span class="no">melanoma</span>, ~<span class="no">ulc</span>+<span class="no">days</span>+<span class="no">thick</span>+<span class="no">sex</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
+<span class="co">#&gt; [1] matrix array</span>
+</pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu"><a href="../reference/dprint.html">dlist</a></span>(<span class="kw">melanoma</span>, <span class="op">~</span><span class="kw">ulc</span><span class="op">+</span><span class="kw">days</span><span class="op">+</span><span class="kw">thick</span><span class="op">+</span><span class="kw">sex</span><span class="op">|</span><span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;     ulc days thick sex</span>
@@ -279,9 +310,11 @@
 <span class="co">#&gt; 198 0   4310 210   1  </span>
 <span class="co">#&gt; 201 1   4492 706   1  </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] matrix array</span></pre></body></html></div>
+<span class="co">#&gt; [1] matrix array</span>
+</pre></div>
 <p>Getting summaries</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt;        no            status          days           ulc            thick     </span>
 <span class="co">#&gt;  Min.   :  2.0   Min.   :1.00   Min.   :  10   Min.   :0.000   Min.   :  10  </span>
 <span class="co">#&gt;  1st Qu.:222.0   1st Qu.:1.00   1st Qu.:1525   1st Qu.:0.000   1st Qu.:  97  </span>
@@ -295,18 +328,22 @@
 <span class="co">#&gt;  Median :0.0000  </span>
 <span class="co">#&gt;  Mean   :0.3854  </span>
 <span class="co">#&gt;  3rd Qu.:1.0000  </span>
-<span class="co">#&gt;  Max.   :1.0000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :1.0000</span>
+</pre></div>
 <p>or for specfic variables</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">status</span>+<span class="no">sex</span>)
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">status</span><span class="op">+</span><span class="kw">sex</span>)
 <span class="co">#&gt;      thick          status          sex        </span>
 <span class="co">#&gt;  Min.   :  10   Min.   :1.00   Min.   :0.0000  </span>
 <span class="co">#&gt;  1st Qu.:  97   1st Qu.:1.00   1st Qu.:0.0000  </span>
 <span class="co">#&gt;  Median : 194   Median :2.00   Median :0.0000  </span>
 <span class="co">#&gt;  Mean   : 292   Mean   :1.79   Mean   :0.3854  </span>
 <span class="co">#&gt;  3rd Qu.: 356   3rd Qu.:2.00   3rd Qu.:1.0000  </span>
-<span class="co">#&gt;  Max.   :1742   Max.   :3.00   Max.   :1.0000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :1742   Max.   :3.00   Max.   :1.0000</span>
+</pre></div>
 <p>Summaries in different groups (sex)</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span>)
+<div class="sourceCode" id="cb19"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="kw">days</span><span class="op">+</span><span class="kw">status</span><span class="op">~</span><span class="kw">sex</span>)
 <span class="co">#&gt; sex: 0</span>
 <span class="co">#&gt;      thick             days          status     </span>
 <span class="co">#&gt;  Min.   :  10.0   Min.   :  99   Min.   :1.000  </span>
@@ -323,9 +360,11 @@
 <span class="co">#&gt;  Median : 258.0   Median :1860   Median :2.000  </span>
 <span class="co">#&gt;  Mean   : 361.1   Mean   :1946   Mean   :1.722  </span>
 <span class="co">#&gt;  3rd Qu.: 484.0   3rd Qu.:2784   3rd Qu.:2.000  </span>
-<span class="co">#&gt;  Max.   :1466.0   Max.   :4492   Max.   :3.000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :1466.0   Max.   :4492   Max.   :3.000</span>
+</pre></div>
 <p>and only among those with thin-tumours or only females (sex==1)</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span><span class="kw">|</span><span class="no">thick</span><span class="kw">&lt;</span><span class="fl">97</span>)
+<div class="sourceCode" id="cb20"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="kw">days</span><span class="op">+</span><span class="kw">status</span><span class="op">~</span><span class="kw">sex</span><span class="op">|</span><span class="kw">thick</span><span class="op">&lt;</span><span class="fl">97</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; sex: 0</span>
@@ -344,8 +383,10 @@
 <span class="co">#&gt;  Median :65.00   Median :2886   Median :2.000  </span>
 <span class="co">#&gt;  Mean   :55.75   Mean   :2632   Mean   :1.875  </span>
 <span class="co">#&gt;  3rd Qu.:81.00   3rd Qu.:3328   3rd Qu.:2.000  </span>
-<span class="co">#&gt;  Max.   :81.00   Max.   :4207   Max.   :3.000</span></pre></body></html></div>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">status</span>~+<span class="fl">1</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
+<span class="co">#&gt;  Max.   :81.00   Max.   :4207   Max.   :3.000</span>
+</pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="kw">status</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">|</span><span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;      thick            status     </span>
@@ -354,9 +395,11 @@
 <span class="co">#&gt;  Median : 258.0   Median :2.000  </span>
 <span class="co">#&gt;  Mean   : 361.1   Mean   :1.722  </span>
 <span class="co">#&gt;  3rd Qu.: 484.0   3rd Qu.:2.000  </span>
-<span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span>
+</pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>+<span class="no">status</span><span class="kw">|</span><span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">status</span><span class="op">|</span><span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt;      thick            status     </span>
@@ -365,9 +408,11 @@
 <span class="co">#&gt;  Median : 258.0   Median :2.000  </span>
 <span class="co">#&gt;  Mean   : 361.1   Mean   :1.722  </span>
 <span class="co">#&gt;  3rd Qu.: 484.0   3rd Qu.:2.000  </span>
-<span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span>
+</pre></div>
 <p>To make more complex conditions need to use the I()</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dsummary</a></span>(<span class="no">melanoma</span>,<span class="no">thick</span>+<span class="no">days</span>+<span class="no">status</span>~<span class="no">sex</span><span class="kw">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">thick</span><span class="kw">&lt;</span><span class="fl">97</span> <span class="kw">&amp;</span> <span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>))
+<div class="sourceCode" id="cb23"><pre class="downlit">
+<span class="fu"><a href="../reference/dcor.html">dsummary</a></span>(<span class="kw">melanoma</span>,<span class="kw">thick</span><span class="op">+</span><span class="kw">days</span><span class="op">+</span><span class="kw">status</span><span class="op">~</span><span class="kw">sex</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">thick</span><span class="op">&lt;</span><span class="fl">97</span> <span class="op">&amp;</span> <span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>))
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; sex: 1</span>
@@ -377,17 +422,21 @@
 <span class="co">#&gt;  Median :65.00   Median :2886   Median :2.000  </span>
 <span class="co">#&gt;  Mean   :55.75   Mean   :2632   Mean   :1.875  </span>
 <span class="co">#&gt;  3rd Qu.:81.00   3rd Qu.:3328   3rd Qu.:2.000  </span>
-<span class="co">#&gt;  Max.   :81.00   Max.   :4207   Max.   :3.000</span></pre></body></html></div>
+<span class="co">#&gt;  Max.   :81.00   Max.   :4207   Max.   :3.000</span>
+</pre></div>
 <p>Tables between variables</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>)
+<div class="sourceCode" id="cb24"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">status</span><span class="op">+</span><span class="kw">sex</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;        sex  0  1</span>
 <span class="co">#&gt; status          </span>
 <span class="co">#&gt; 1          28 29</span>
 <span class="co">#&gt; 2          91 43</span>
-<span class="co">#&gt; 3           7  7</span></pre></body></html></div>
+<span class="co">#&gt; 3           7  7</span>
+</pre></div>
 <p>All bivariate tables</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">2</span>)
+<div class="sourceCode" id="cb25"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">status</span><span class="op">+</span><span class="kw">sex</span><span class="op">+</span><span class="kw">ulc</span>,level=<span class="fl">2</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;    status</span>
 <span class="co">#&gt; sex  1  2  3</span>
@@ -402,9 +451,11 @@
 <span class="co">#&gt;    sex</span>
 <span class="co">#&gt; ulc  0  1</span>
 <span class="co">#&gt;   0 79 36</span>
-<span class="co">#&gt;   1 47 43</span></pre></body></html></div>
+<span class="co">#&gt;   1 47 43</span>
+</pre></div>
 <p>All univariate tables</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">1</span>)
+<div class="sourceCode" id="cb26"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">status</span><span class="op">+</span><span class="kw">sex</span><span class="op">+</span><span class="kw">ulc</span>,level=<span class="fl">1</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; status</span>
 <span class="co">#&gt;   1   2   3 </span>
@@ -416,9 +467,11 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ulc</span>
 <span class="co">#&gt;   0   1 </span>
-<span class="co">#&gt; 115  90</span></pre></body></html></div>
+<span class="co">#&gt; 115  90</span>
+</pre></div>
 <p>and with new variables</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>+<span class="no">sex</span>+<span class="no">ulc</span>+<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">days</span>)+<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">days</span><span class="kw">&gt;</span><span class="fl">300</span>),<span class="kw">level</span><span class="kw">=</span><span class="fl">1</span>)
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">status</span><span class="op">+</span><span class="kw">sex</span><span class="op">+</span><span class="kw">ulc</span><span class="op">+</span><span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">days</span>)<span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">days</span><span class="op">&gt;</span><span class="fl">300</span>),level=<span class="fl">1</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; status</span>
 <span class="co">#&gt;   1   2   3 </span>
@@ -438,87 +491,105 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; I(days &gt; 300)</span>
 <span class="co">#&gt; FALSE  TRUE </span>
-<span class="co">#&gt;    11   194</span></pre></body></html></div>
+<span class="co">#&gt;    11   194</span>
+</pre></div>
 </div>
 <div id="sorting-the-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sorting-the-data" class="anchor"></a>Sorting the data</h1>
 <p>To sort the data</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">mel</span><span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dsort.html">dsort</a></span>(<span class="no">melanoma</span>,~<span class="no">days</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dsort.html">dsort</a></span>(<span class="no">melanoma</span>) <span class="kw">&lt;-</span> ~<span class="no">days</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">mel</span>)
+<div class="sourceCode" id="cb28"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">mel</span><span class="op">=</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">days</span>)
+<span class="fu"><a href="../reference/dsort.html">dsort</a></span>(<span class="kw">melanoma</span>) <span class="op">&lt;-</span> <span class="op">~</span><span class="kw">days</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">mel</span>)
 <span class="co">#&gt;    no status days ulc thick sex</span>
 <span class="co">#&gt; 1 789      3   10   1   676   1</span>
 <span class="co">#&gt; 2  13      3   30   0    65   1</span>
 <span class="co">#&gt; 3  97      2   35   0   134   1</span>
 <span class="co">#&gt; 4  16      3   99   0   290   0</span>
 <span class="co">#&gt; 5  21      1  185   1  1208   1</span>
-<span class="co">#&gt; 6 469      1  204   1   484   1</span></pre></body></html></div>
+<span class="co">#&gt; 6 469      1  204   1   484   1</span>
+</pre></div>
 <p>and to sort after multiple variables increasing and decreasing</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dsort.html">dsort</a></span>(<span class="no">melanoma</span>) <span class="kw">&lt;-</span> ~<span class="no">days</span>-<span class="no">status</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb29"><pre class="downlit">
+<span class="fu"><a href="../reference/dsort.html">dsort</a></span>(<span class="kw">melanoma</span>) <span class="op">&lt;-</span> <span class="op">~</span><span class="kw">days</span><span class="op">-</span><span class="kw">status</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt;    no status days ulc thick sex</span>
 <span class="co">#&gt; 1 789      3   10   1   676   1</span>
 <span class="co">#&gt; 2  13      3   30   0    65   1</span>
 <span class="co">#&gt; 3  97      2   35   0   134   1</span>
 <span class="co">#&gt; 4  16      3   99   0   290   0</span>
 <span class="co">#&gt; 5  21      1  185   1  1208   1</span>
-<span class="co">#&gt; 6 469      1  204   1   484   1</span></pre></body></html></div>
+<span class="co">#&gt; 6 469      1  204   1   484   1</span>
+</pre></div>
 </div>
 <div id="making-new-variales-for-the-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#making-new-variales-for-the-analysis" class="anchor"></a>Making new variales for the analysis</h1>
 <p>To define a bunch of new covariates within a data-frame</p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">melanoma</span><span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">melanoma</span>, <span class="kw">thick2</span><span class="kw">=</span><span class="no">thick</span>^<span class="fl">2</span>, <span class="kw">lthick</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">thick</span>) )
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dprint.html">dhead</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb30"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">melanoma</span><span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="kw">melanoma</span>, thick2=<span class="kw">thick</span><span class="op">^</span><span class="fl">2</span>, lthick=<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>) ) 
+<span class="fu"><a href="../reference/dprint.html">dhead</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt;    no status days ulc thick sex  thick2   lthick</span>
 <span class="co">#&gt; 1 789      3   10   1   676   1  456976 6.516193</span>
 <span class="co">#&gt; 2  13      3   30   0    65   1    4225 4.174387</span>
 <span class="co">#&gt; 3  97      2   35   0   134   1   17956 4.897840</span>
 <span class="co">#&gt; 4  16      3   99   0   290   0   84100 5.669881</span>
 <span class="co">#&gt; 5  21      1  185   1  1208   1 1459264 7.096721</span>
-<span class="co">#&gt; 6 469      1  204   1   484   1  234256 6.182085</span></pre></body></html></div>
+<span class="co">#&gt; 6 469      1  204   1   484   1  234256 6.182085</span>
+</pre></div>
 <p>When the above definitions are done using a condition this can be achieved using the dtransform function that extends transform with a possible condition</p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"> <span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtransform.html">dtransform</a></span>(<span class="no">melanoma</span>,<span class="kw">ll</span><span class="kw">=</span><span class="no">thick</span>*<span class="fl">1.05</span>^<span class="no">ulc</span>,<span class="no">sex</span><span class="kw">==</span><span class="fl">1</span>)
- <span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtransform.html">dtransform</a></span>(<span class="no">melanoma</span>,<span class="kw">ll</span><span class="kw">=</span><span class="no">thick</span>,<span class="no">sex</span><span class="kw">!=</span><span class="fl">1</span>)
- <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dmean</a></span>(<span class="no">melanoma</span>,<span class="no">ll</span>~<span class="no">sex</span>+<span class="no">ulc</span>)
+<div class="sourceCode" id="cb31"><pre class="downlit">
+ <span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dtransform.html">dtransform</a></span>(<span class="kw">melanoma</span>,ll=<span class="kw">thick</span><span class="op">*</span><span class="fl">1.05</span><span class="op">^</span><span class="kw">ulc</span>,<span class="kw">sex</span><span class="op">==</span><span class="fl">1</span>)  
+ <span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dtransform.html">dtransform</a></span>(<span class="kw">melanoma</span>,ll=<span class="kw">thick</span>,<span class="kw">sex</span>!=<span class="fl">1</span>)  
+ <span class="fu"><a href="../reference/dcor.html">dmean</a></span>(<span class="kw">melanoma</span>,<span class="kw">ll</span><span class="op">~</span><span class="kw">sex</span><span class="op">+</span><span class="kw">ulc</span>)
 <span class="co">#&gt;   sex ulc       ll</span>
 <span class="co">#&gt; 1   0   0 173.7342</span>
 <span class="co">#&gt; 2   1   0 197.3611</span>
 <span class="co">#&gt; 3   0   1 374.5532</span>
-<span class="co">#&gt; 4   1   1 523.1198</span></pre></body></html></div>
+<span class="co">#&gt; 4   1   1 523.1198</span>
+</pre></div>
 </div>
 <div id="making-factors-groupings" class="section level1">
 <h1 class="hasAnchor">
 <a href="#making-factors-groupings" class="anchor"></a>Making factors (groupings)</h1>
 <p>On the melanoma data the variable thick gives the thickness of the melanom tumour. For some analyses we would like to make a factor depending on the thickness. This can be done in several different ways</p>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,~<span class="no">thick</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb32"><pre class="downlit">
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thick</span>,breaks=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>))
+</pre></div>
 <p>New variable is named thickcat.0 by default.</p>
 <p>To see levels of factors in data-frame</p>
-<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb33"><pre class="downlit">
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat.0 #levels=:4 </span>
 <span class="co">#&gt; [1] "[0,200]"     "(200,500]"   "(500,800]"   "(800,2e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>Checking group sizes</p>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat.0</span>)
+<div class="sourceCode" id="cb34"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat.0</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; thickcat.0</span>
 <span class="co">#&gt;     [0,200]   (200,500]   (500,800] (800,2e+03] </span>
-<span class="co">#&gt;         109          64          20          12</span></pre></body></html></div>
+<span class="co">#&gt;         109          64          20          12</span>
+</pre></div>
 <p>With adding to the data-frame directly</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>)) <span class="kw">&lt;-</span> <span class="no">gr.thick1</span>~<span class="no">thick</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb35"><pre class="downlit">
+<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,breaks=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>)) <span class="op">&lt;-</span> <span class="kw">gr.thick1</span><span class="op">~</span><span class="kw">thick</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat.0 #levels=:4 </span>
 <span class="co">#&gt; [1] "[0,200]"     "(200,500]"   "(500,800]"   "(800,2e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; gr.thick1 #levels=:4 </span>
 <span class="co">#&gt; [1] "[0,200]"     "(200,500]"   "(500,800]"   "(800,2e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>new variable is named thickcat.0 (after first cut-point), or to get quartiles with default names thick.cat.4</p>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>) <span class="kw">&lt;-</span> ~ <span class="no">thick</span>  <span class="co"># new variable is thickcat.4</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb36"><pre class="downlit">
+<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>) <span class="op">&lt;-</span> <span class="op">~</span> <span class="kw">thick</span>  <span class="co"># new variable is thickcat.4</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat.0 #levels=:4 </span>
 <span class="co">#&gt; [1] "[0,200]"     "(200,500]"   "(500,800]"   "(800,2e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
@@ -527,67 +598,81 @@
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; thickcat.4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>or median groups, here starting again with the original data,</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fl">2</span>) <span class="kw">&lt;-</span> ~ <span class="no">thick</span>  <span class="co"># new variable is thick.2</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb37"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,breaks=<span class="fl">2</span>) <span class="op">&lt;-</span> <span class="op">~</span> <span class="kw">thick</span>  <span class="co"># new variable is thick.2</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat.2 #levels=:2 </span>
 <span class="co">#&gt; [1] "[10,194]"       "(194,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>to control new names</p>
-<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">mela</span><span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,<span class="no">thickcat4</span>+<span class="no">dayscat4</span>~<span class="no">thick</span>+<span class="no">days</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fl">4</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">mela</span>)
+<div class="sourceCode" id="cb38"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">mela</span><span class="op">=</span> <span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,<span class="kw">thickcat4</span><span class="op">+</span><span class="kw">dayscat4</span><span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">days</span>,breaks=<span class="fl">4</span>)
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">mela</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; dayscat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,1.52e+03]"       "(1.52e+03,2e+03]"    "(2e+03,3.04e+03]"   </span>
 <span class="co">#&gt; [4] "(3.04e+03,5.56e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fl">4</span>) <span class="kw">&lt;-</span> <span class="no">thickcat4</span>+<span class="no">dayscat4</span>~<span class="no">thick</span>+<span class="no">days</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb39"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,breaks=<span class="fl">4</span>) <span class="op">&lt;-</span> <span class="kw">thickcat4</span><span class="op">+</span><span class="kw">dayscat4</span><span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">days</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; dayscat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,1.52e+03]"       "(1.52e+03,2e+03]"    "(2e+03,3.04e+03]"   </span>
 <span class="co">#&gt; [4] "(3.04e+03,5.56e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>This can also be typed out more specifically</p>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">melanoma</span>$<span class="no">gthick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span>(<span class="no">melanoma</span>$<span class="no">thick</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>))
-<span class="no">melanoma</span>$<span class="no">gthick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span>(<span class="no">melanoma</span>$<span class="no">thick</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="no">melanoma</span>$<span class="no">thick</span>),<span class="kw">include.lowest</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb40"><pre class="downlit">
+<span class="kw">melanoma</span><span class="op">$</span><span class="kw">gthick</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span>(<span class="kw">melanoma</span><span class="op">$</span><span class="kw">thick</span>,breaks=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span>))
+<span class="kw">melanoma</span><span class="op">$</span><span class="kw">gthick</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span>(<span class="kw">melanoma</span><span class="op">$</span><span class="kw">thick</span>,breaks=<span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span>(<span class="kw">melanoma</span><span class="op">$</span><span class="kw">thick</span>),include.lowest=<span class="fl">TRUE</span>)
+</pre></div>
 </div>
 <div id="working-with-factors" class="section level1">
 <h1 class="hasAnchor">
 <a href="#working-with-factors" class="anchor"></a>Working with factors</h1>
 <p>To see levels of covariates in data-frame</p>
-<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dcut</a></span>(<span class="no">melanoma</span>,<span class="kw">breaks</span><span class="kw">=</span><span class="fl">4</span>) <span class="kw">&lt;-</span> <span class="no">thickcat4</span>~<span class="no">thick</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb41"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="fu"><a href="../reference/dcut.html">dcut</a></span>(<span class="kw">melanoma</span>,breaks=<span class="fl">4</span>) <span class="op">&lt;-</span> <span class="kw">thickcat4</span><span class="op">~</span><span class="kw">thick</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>) 
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>To relevel the factor</p>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>)
+<div class="sourceCode" id="cb42"><pre class="downlit">
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat4</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; thickcat4</span>
 <span class="co">#&gt;        [10,97]       (97,194]      (194,356] (356,1.74e+03] </span>
 <span class="co">#&gt;             56             53             45             51</span>
-<span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>,<span class="kw">ref</span><span class="kw">=</span><span class="st">"(194,356]"</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat4</span>,ref=<span class="st">"(194,356]"</span>)
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; thickcat4.(194,356] #levels=:4 </span>
 <span class="co">#&gt; [1] "(194,356]"      "[10,97]"        "(97,194]"       "(356,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>or to take the third level in the list of levels, same as above,</p>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>,<span class="kw">ref</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb43"><pre class="downlit">
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat4</span>,ref=<span class="fl">2</span>)
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
@@ -596,10 +681,12 @@
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; thickcat4.2 #levels=:4 </span>
 <span class="co">#&gt; [1] "(97,194]"       "[10,97]"        "(194,356]"      "(356,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>To combine levels of a factor (first combinining first 3 groups into one)</p>
-<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>,<span class="kw">newlevels</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">3</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb44"><pre class="downlit">
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat4</span>,newlevels=<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>)
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
@@ -611,37 +698,43 @@
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; thickcat4.1:3 #levels=:2 </span>
 <span class="co">#&gt; [1] "[10,97]-(194,356]" "(356,1.74e+03]"   </span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>or to combine groups 1 and 2 into one group and 3 and 4 into another</p>
-<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcut.html">dkeep</a></span>(<span class="no">melanoma</span>) <span class="kw">&lt;-</span> ~<span class="no">thick</span>+<span class="no">thickcat4</span>
-<span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">melanoma</span>,<span class="no">gthick2</span>~<span class="no">thickcat4</span>,<span class="kw">newlevels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">1</span>:<span class="fl">2</span>,<span class="fl">3</span>:<span class="fl">4</span>))
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb45"><pre class="downlit">
+<span class="fu"><a href="../reference/dcut.html">dkeep</a></span>(<span class="kw">melanoma</span>) <span class="op">&lt;-</span> <span class="op">~</span><span class="kw">thick</span><span class="op">+</span><span class="kw">thickcat4</span>
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">melanoma</span>,<span class="kw">gthick2</span><span class="op">~</span><span class="kw">thickcat4</span>,newlevels=<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>))
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; gthick2 #levels=:2 </span>
 <span class="co">#&gt; [1] "[10,97]-(97,194]"         "(194,356]-(356,1.74e+03]"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 <p>Changing order of factor levels</p>
-<div class="sourceCode" id="cb46"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dfactor</a></span>(<span class="no">melanoma</span>,<span class="kw">levels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>)) <span class="kw">&lt;-</span>  <span class="no">thickcat4.2</span>~<span class="no">thickcat4</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevel</a></span>(<span class="no">melanoma</span>,~ <span class="st">"thickcat4*"</span>)
+<div class="sourceCode" id="cb46"><pre class="downlit">
+<span class="fu"><a href="../reference/drelevel.html">dfactor</a></span>(<span class="kw">melanoma</span>,levels=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>)) <span class="op">&lt;-</span>  <span class="kw">thickcat4.2</span><span class="op">~</span><span class="kw">thickcat4</span>
+<span class="fu"><a href="../reference/drelevel.html">dlevel</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span> <span class="st">"thickcat4*"</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; thickcat4.2 #levels=:4 </span>
 <span class="co">#&gt; [1] "(194,356]"      "[10,97]"        "(97,194]"       "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">thickcat4</span>+<span class="no">thickcat4.2</span>)
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">thickcat4</span><span class="op">+</span><span class="kw">thickcat4.2</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                thickcat4.2 (194,356] [10,97] (97,194] (356,1.74e+03]</span>
 <span class="co">#&gt; thickcat4                                                           </span>
 <span class="co">#&gt; [10,97]                            0      56        0              0</span>
 <span class="co">#&gt; (97,194]                           0       0       53              0</span>
 <span class="co">#&gt; (194,356]                         45       0        0              0</span>
-<span class="co">#&gt; (356,1.74e+03]                     0       0        0             51</span></pre></body></html></div>
+<span class="co">#&gt; (356,1.74e+03]                     0       0        0             51</span>
+</pre></div>
 <p>Combine levels but now control factor-level names</p>
-<div class="sourceCode" id="cb47"><html><body><pre class="r"><span class="no">melanoma</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">drelevel</a></span>(<span class="no">melanoma</span>,<span class="no">gthick3</span>~<span class="no">thickcat4</span>,<span class="kw">newlevels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">group1.2</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">2</span>,<span class="kw">group3.4</span><span class="kw">=</span><span class="fl">3</span>:<span class="fl">4</span>))
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dlevels</a></span>(<span class="no">melanoma</span>)
+<div class="sourceCode" id="cb47"><pre class="downlit">
+<span class="kw">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/drelevel.html">drelevel</a></span>(<span class="kw">melanoma</span>,<span class="kw">gthick3</span><span class="op">~</span><span class="kw">thickcat4</span>,newlevels=<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(group1.2=<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,group3.4=<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>))
+<span class="fu"><a href="../reference/drelevel.html">dlevels</a></span>(<span class="kw">melanoma</span>)
 <span class="co">#&gt; thickcat4 #levels=:4 </span>
 <span class="co">#&gt; [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"</span>
 <span class="co">#&gt; -----------------------------------------</span>
@@ -653,31 +746,35 @@
 <span class="co">#&gt; -----------------------------------------</span>
 <span class="co">#&gt; gthick3 #levels=:2 </span>
 <span class="co">#&gt; [1] "group1.2" "group3.4"</span>
-<span class="co">#&gt; -----------------------------------------</span></pre></body></html></div>
+<span class="co">#&gt; -----------------------------------------</span>
+</pre></div>
 </div>
 <div id="making-a-factor-from-existing-numeric-variable-and-vice-versa" class="section level1">
 <h1 class="hasAnchor">
 <a href="#making-a-factor-from-existing-numeric-variable-and-vice-versa" class="anchor"></a>Making a factor from existing numeric variable and vice versa</h1>
 <p>A numeric variable “status” with values 1,2,3 into a factor by</p>
-<div class="sourceCode" id="cb48"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">melanoma</span>)
-<span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dfactor</a></span>(<span class="no">melanoma</span>,~<span class="no">status</span>, <span class="kw">labels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"malignant-melanoma"</span>,<span class="st">"censoring"</span>,<span class="st">"dead-other"</span>))
-<span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dfactor</a></span>(<span class="no">melanoma</span>,<span class="no">sexl</span>~<span class="no">sex</span>,<span class="kw">labels</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"females"</span>,<span class="st">"males"</span>))
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="no">sexl</span>+<span class="no">status.f</span>)
+<div class="sourceCode" id="cb48"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">melanoma</span>)
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">status</span>, labels=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"malignant-melanoma"</span>,<span class="st">"censoring"</span>,<span class="st">"dead-other"</span>))
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span>(<span class="kw">melanoma</span>,<span class="kw">sexl</span><span class="op">~</span><span class="kw">sex</span>,labels=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"females"</span>,<span class="st">"males"</span>))
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">sexl</span><span class="op">+</span><span class="kw">status.f</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt;         status.f malignant-melanoma censoring dead-other</span>
 <span class="co">#&gt; sexl                                                    </span>
 <span class="co">#&gt; females                          28        91          7</span>
-<span class="co">#&gt; males                            29        43          7</span></pre></body></html></div>
+<span class="co">#&gt; males                            29        43          7</span>
+</pre></div>
 <p>A gender factor with values “M”, “F” can be converted into numerics by</p>
-<div class="sourceCode" id="cb49"><html><body><pre class="r"><span class="no">melanoma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mets/man/drelevel.html">dnumeric</a></span>(<span class="no">melanoma</span>,~<span class="no">sexl</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dcor.html">dstr</a></span>(<span class="no">melanoma</span>,<span class="st">"sex*"</span>)
+<div class="sourceCode" id="cb49"><pre class="downlit">
+<span class="kw">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">dnumeric</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="kw">sexl</span>)
+<span class="fu"><a href="../reference/dcor.html">dstr</a></span>(<span class="kw">melanoma</span>,<span class="st">"sex*"</span>)
 <span class="co">#&gt; 'data.frame':    205 obs. of  3 variables:</span>
 <span class="co">#&gt;  $ sex   : int  1 1 1 0 1 1 1 1 0 0 ...</span>
 <span class="co">#&gt;  $ sexl  : Factor w/ 2 levels "females","males": 2 2 2 1 2 2 2 2 1 1 ...</span>
 <span class="co">#&gt;  $ sexl.n: num  2 2 2 1 2 2 2 2 1 1 ...</span>
 <span class="co">#&gt; Warning in structure(res, ngroupvar = 0, class = c("daggregate", class(res))): Calling 'structure(NULL, *)' is deprecated, as NULL cannot have attributes.</span>
 <span class="co">#&gt;   Consider 'structure(list(), *)' instead.</span>
-<span class="fu"><a href="https://rdrr.io/pkg/mets/man/dtable.html">dtable</a></span>(<span class="no">melanoma</span>,~<span class="st">'sex*'</span>,<span class="kw">level</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">melanoma</span>,<span class="op">~</span><span class="st">'sex*'</span>,level=<span class="fl">2</span>)
 <span class="co">#&gt; Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 <span class="co">#&gt;   Consider formula(paste(x, collapse = " ")) instead.</span>
 <span class="co">#&gt; </span>
@@ -694,12 +791,14 @@
 <span class="co">#&gt;       sexl</span>
 <span class="co">#&gt; sexl.n females males</span>
 <span class="co">#&gt;      1     126     0</span>
-<span class="co">#&gt;      2       0    79</span></pre></body></html></div>
+<span class="co">#&gt;      2       0    79</span>
+</pre></div>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb50"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
+<div class="sourceCode" id="cb50"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 <span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
@@ -723,16 +822,18 @@
 <span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.7      timereg_1.9.7   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.5          knitr_1.29          magrittr_1.5       </span>
-<span class="co">#&gt;  [4] splines_4.0.2       MASS_7.3-51.6       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.4.1            rlang_0.4.7         stringr_1.4.0      </span>
-<span class="co">#&gt; [10] tools_4.0.2         grid_4.0.2          xfun_0.16          </span>
-<span class="co">#&gt; [13] htmltools_0.5.0     yaml_2.2.1          assertthat_0.2.1   </span>
-<span class="co">#&gt; [16] digest_0.6.25       rprojroot_1.3-2     numDeriv_2016.8-1.1</span>
-<span class="co">#&gt; [19] pkgdown_1.5.1       crayon_1.3.4        Matrix_1.2-18      </span>
-<span class="co">#&gt; [22] fs_1.5.0            memoise_1.1.0       evaluate_0.14      </span>
-<span class="co">#&gt; [25] rmarkdown_2.3       stringi_1.4.6       compiler_4.0.2     </span>
-<span class="co">#&gt; [28] desc_1.2.0          backports_1.1.9     mvtnorm_1.1-1</span></pre></body></html></div>
+<span class="co">#&gt;  [1] Rcpp_1.0.5          cpp11_0.2.1         knitr_1.29         </span>
+<span class="co">#&gt;  [4] magrittr_1.5        splines_4.0.2       lattice_0.20-41    </span>
+<span class="co">#&gt;  [7] R6_2.4.1            ragg_0.3.1          rlang_0.4.7        </span>
+<span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
+<span class="co">#&gt; [13] xfun_0.17           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    rprojroot_1.3-2    </span>
+<span class="co">#&gt; [19] digest_0.6.25       numDeriv_2016.8-1.1 pkgdown_1.6.0      </span>
+<span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       fs_1.5.0           </span>
+<span class="co">#&gt; [25] memoise_1.1.0       evaluate_0.14       rmarkdown_2.3      </span>
+<span class="co">#&gt; [28] stringi_1.5.3       compiler_4.0.2      desc_1.2.0         </span>
+<span class="co">#&gt; [31] backports_1.1.9     mvtnorm_1.1-1</span>
+</pre></div>
 </div>
   </div>
 
@@ -751,7 +852,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

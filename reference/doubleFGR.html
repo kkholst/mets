@@ -192,7 +192,7 @@ F_2(t,X_2,X) = ( 1 - \exp( \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\infty
 $$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>doubleFGR</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>X2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>doubleFGR</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, offset = <span class='kw'>NULL</span>, weights = <span class='kw'>NULL</span>, X2 = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -223,107 +223,112 @@ $$</p>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
-<span class='no'>bmt</span>$<span class='no'>age2</span> <span class='kw'>&lt;-</span> <span class='no'>bmt</span>$<span class='no'>age</span>
-<span class='no'>newdata</span> <span class='kw'>&lt;-</span> <span class='no'>bmt</span>[<span class='fl'>1</span>:<span class='fl'>19</span>,]
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>,<span class='fl'>3</span>))
+    <pre class="examples"><div class='input'><span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>age2</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>age</span>
+<span class='kw'>newdata</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>19</span>,]
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>,<span class='fl'>3</span>))
 
 <span class='co'>## same X1 and X2</span>
-<span class='no'>pr2</span> <span class='kw'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>age</span>+<span class='no'>platelet</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>restrict</span><span class='kw'>=</span><span class='no'>res</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>pr2</span> <span class='op'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>platelet</span>,data=<span class='kw'>bmt</span>,restrict=<span class='kw'>res</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>1</span>)
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>,add=<span class='fl'>TRUE</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
 
-<span class='no'>pr2</span> <span class='kw'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='fu'>strata</span>(<span class='no'>platelet</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>restrict</span><span class='kw'>=</span><span class='no'>res</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>pr2</span> <span class='op'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>platelet</span>),data=<span class='kw'>bmt</span>,restrict=<span class='kw'>res</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>1</span>)
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>,add=<span class='fl'>TRUE</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,,newdata=<span class='kw'>newdata</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
 
 <span class='co'>## different X1 and X2</span>
-<span class='no'>pr2</span> <span class='kw'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>age</span>+<span class='no'>platelet</span>+<span class='no'>age2</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>X2</span><span class='kw'>=</span><span class='fl'>3</span>,<span class='kw'>restrict</span><span class='kw'>=</span><span class='no'>res</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>pr2</span> <span class='op'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age2</span>,data=<span class='kw'>bmt</span>,X2=<span class='fl'>3</span>,restrict=<span class='kw'>res</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>1</span>)
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>,add=<span class='fl'>TRUE</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
 
 <span class='co'>### uden X1</span>
-<span class='no'>pr2</span> <span class='kw'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>age</span>+<span class='no'>platelet</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>X2</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>restrict</span><span class='kw'>=</span><span class='no'>res</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>pr2</span> <span class='op'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>platelet</span>,data=<span class='kw'>bmt</span>,X2=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,restrict=<span class='kw'>res</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>1</span>)
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>,add=<span class='fl'>TRUE</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>)
-<span class='no'>p22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>)
+<span class='kw'>p22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
 
 <span class='co'>### without X2</span>
-<span class='no'>pr2</span> <span class='kw'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>cause</span>)~<span class='no'>age</span>+<span class='no'>platelet</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>bmt</span>,<span class='kw'>X2</span><span class='kw'>=</span><span class='fl'>0</span>,<span class='kw'>restrict</span><span class='kw'>=</span><span class='no'>res</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>1</span>)
-  <span class='fu'>bplotdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='kw'>pr2</span> <span class='op'>&lt;-</span> <span class='fu'>doubleFGR</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>platelet</span>,data=<span class='kw'>bmt</span>,X2=<span class='fl'>0</span>,restrict=<span class='kw'>res</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>1</span>)
+  <span class='fu'>bplotdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>,add=<span class='fl'>TRUE</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>newdata</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,newdata=<span class='kw'>newdata</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
 }
-<span class='no'>pp21</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>)
-<span class='no'>pp22</span> <span class='kw'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='no'>pr2</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp21</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>pp22</span>,<span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fl'>2</span>)
-}</div></pre>
+<span class='kw'>pp21</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>)
+<span class='kw'>pp22</span> <span class='op'>&lt;-</span> <span class='fu'>predictdFG</span>(<span class='kw'>pr2</span>,cause=<span class='fl'>2</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp21</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp22</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
+}
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -339,7 +344,7 @@ $$</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

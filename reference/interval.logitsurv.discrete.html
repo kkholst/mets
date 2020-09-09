@@ -167,17 +167,17 @@ $$</p>
     </div>
 
     <pre class="usage"><span class='fu'>interval.logitsurv.discrete</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>beta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>no.opt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"NR"</span>,
-  <span class='kw'>stderr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>offsets</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>exp.link</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>increment</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  beta = <span class='kw'>NULL</span>,
+  no.opt = <span class='fl'>FALSE</span>,
+  method = <span class='st'>"NR"</span>,
+  stderr = <span class='fl'>TRUE</span>,
+  weights = <span class='kw'>NULL</span>,
+  offsets = <span class='kw'>NULL</span>,
+  exp.link = <span class='fl'>1</span>,
+  increment = <span class='fl'>1</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -237,10 +237,14 @@ When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an o
 $$
  \prod  P(T_i &gt;t_{il} | x) - P(T_i&gt; t_{ir}| x) 
 $$</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ttpd</span>)
-<span class='fu'>dtable</span>(<span class='no'>ttpd</span>,~<span class='no'>entry</span>+<span class='no'>time2</span>)</div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ttpd</span>) 
+<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>ttpd</span>,<span class='op'>~</span><span class='kw'>entry</span><span class='op'>+</span><span class='kw'>time2</span>)
+</div><div class='output co'>#&gt; 
 #&gt;       time2   1   2   3   4   5   6 Inf
 #&gt; entry                                  
 #&gt; 0           316   0   0   0   0   0   0
@@ -249,8 +253,9 @@ $$</p>
 #&gt; 3             0   0   0  23   0   0   0
 #&gt; 4             0   0   0   0  90   0   0
 #&gt; 5             0   0   0   0   0  68   0
-#&gt; 6             0   0   0   0   0   0 220</div><div class='input'><span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='no'>entry</span>,<span class='no'>time2</span>)~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>X3</span>+<span class='no'>X4</span>,<span class='no'>ttpd</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt;       Estimate Std.Err     2.5%   97.5%   P-value
+#&gt; 6             0   0   0   0   0   0 220</div><div class='input'><span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>entry</span>,<span class='kw'>time2</span>)<span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>ttpd</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+</div><div class='output co'>#&gt;       Estimate Std.Err     2.5%   97.5%   P-value
 #&gt; time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43
 #&gt; time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45
 #&gt; time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22
@@ -261,31 +266,34 @@ $$</p>
 #&gt; X2      0.6962  0.1156  0.46953  0.9228 1.739e-09
 #&gt; X3      0.3466  0.1150  0.12110  0.5721 2.590e-03
 #&gt; X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</div><div class='input'>
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-<span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>*<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='no'>n</span>,<span class='fl'>4</span>)
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='no'>out</span>$<span class='no'>coef</span>,<span class='no'>Z</span>)
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='no'>outsim</span>,<span class='kw'>left</span><span class='kw'>=</span><span class='no'>time</span>,<span class='kw'>right</span><span class='kw'>=</span><span class='no'>time</span>+<span class='fl'>1</span>)
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>outsim</span>,<span class='kw'>right</span><span class='kw'>=</span><span class='fl'>Inf</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>0</span>)
+<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='kw'>n</span>,<span class='fl'>4</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>,<span class='kw'>Z</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>outsim</span>,left=<span class='kw'>time</span>,right=<span class='kw'>time</span><span class='op'>+</span><span class='fl'>1</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>outsim</span>,right=<span class='fl'>Inf</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)
 
-<span class='no'>outss</span> <span class='kw'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='no'>left</span>,<span class='no'>right</span>)~+<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>X3</span>+<span class='no'>X4</span>,<span class='no'>outsim</span>)
+<span class='kw'>outss</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>left</span>,<span class='kw'>right</span>)<span class='op'>~</span><span class='op'>+</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>outsim</span>)
 
-<span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>0</span>,<span class='fl'>5</span>,<span class='fl'>4</span>)
-<span class='no'>Z</span>[<span class='fl'>2</span>:<span class='fl'>5</span>,<span class='fl'>1</span>:<span class='fl'>4</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>4</span>)
-<span class='no'>pred</span> <span class='kw'>&lt;-</span> <span class='fu'>predictlogitSurvd</span>(<span class='no'>out</span>,<span class='kw'>se</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-<span class='fu'>plotSurvd</span>(<span class='no'>pred</span>)</div><div class='img'><img src='interval.logitsurv.discrete-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>0</span>,<span class='fl'>5</span>,<span class='fl'>4</span>)
+<span class='kw'>Z</span>[<span class='fl'>2</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>] <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>4</span>)
+<span class='kw'>pred</span> <span class='op'>&lt;-</span> <span class='fu'>predictlogitSurvd</span>(<span class='kw'>out</span>,se=<span class='fl'>FALSE</span>)
+<span class='fu'><a href='haplo.surv.discrete.html'>plotSurvd</a></span>(<span class='kw'>pred</span>)
+</div><div class='img'><img src='interval.logitsurv.discrete-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## simulations </span>
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-<span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>*<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='no'>n</span>,<span class='fl'>4</span>)
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='no'>out</span>$<span class='no'>coef</span>,<span class='no'>Z</span>)
+<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='kw'>n</span>,<span class='fl'>4</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>,<span class='kw'>Z</span>)
 <span class='co'>###</span>
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='no'>outsim</span>,<span class='kw'>left</span><span class='kw'>=</span><span class='no'>time</span>,<span class='kw'>right</span><span class='kw'>=</span><span class='no'>time</span>+<span class='fl'>1</span>)
-<span class='no'>outsim</span> <span class='kw'>&lt;-</span> <span class='fu'>dtransform</span>(<span class='no'>outsim</span>,<span class='kw'>right</span><span class='kw'>=</span><span class='fl'>Inf</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>0</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>outsim</span>,left=<span class='kw'>time</span>,right=<span class='kw'>time</span><span class='op'>+</span><span class='fl'>1</span>)
+<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>outsim</span>,right=<span class='fl'>Inf</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)
 
-<span class='no'>out</span>$<span class='no'>coef</span></div><div class='output co'>#&gt;      time1      time2      time3      time4      time5      time6         X1 
+<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>
+</div><div class='output co'>#&gt;      time1      time2      time3      time4      time5      time6         X1 
 #&gt; -2.0064097 -2.1748971 -1.4580661 -2.9260102 -1.2050516 -0.9102138  0.9912536 
 #&gt;         X2         X3         X4 
-#&gt;  0.6961586  0.3465918  0.3222509 </div><div class='input'><span class='no'>outss</span> <span class='kw'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='no'>left</span>,<span class='no'>right</span>)~+<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>X3</span>+<span class='no'>X4</span>,<span class='no'>outsim</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>outss</span>)</div><div class='output co'>#&gt;       Estimate   Std.Err       2.5%     97.5%   P-value
+#&gt;  0.6961586  0.3465918  0.3222509 </div><div class='input'><span class='kw'>outss</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>left</span>,<span class='kw'>right</span>)<span class='op'>~</span><span class='op'>+</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>outsim</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>outss</span>)
+</div><div class='output co'>#&gt;       Estimate   Std.Err       2.5%     97.5%   P-value
 #&gt; time1  -2.1388    0.4625    -3.0453   -1.2323 3.757e-06
 #&gt; time2  -2.0336    0.4658    -2.9467   -1.1206 1.268e-05
 #&gt; time3  -1.8649    0.4896    -2.8246   -0.9052 1.397e-04
@@ -312,7 +320,7 @@ $$</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

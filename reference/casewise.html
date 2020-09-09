@@ -156,7 +156,7 @@
     <p>.. content for description (no empty lines) ..</p>
     </div>
 
-    <pre class="usage"><span class='fu'>casewise</span>(<span class='no'>conc</span>, <span class='no'>marg</span>, <span class='no'>cause.marg</span>)</pre>
+    <pre class="usage"><span class='fu'>casewise</span>(<span class='kw'>conc</span>, <span class='kw'>marg</span>, <span class='kw'>cause.marg</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,28 +175,35 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='co'>## Reduce Ex.Timings</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>prodlim</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>prt</span>);
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>prodlim</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>prt</span>);
 
 <span class='co'>### marginal cumulative incidence of prostate cancer##' </span>
-<span class='no'>outm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/prodlim/man/prodlim.html'>prodlim</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/prodlim/man/Hist.html'>Hist</a></span>(<span class='no'>time</span>,<span class='no'>status</span>)~+<span class='fl'>1</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prt</span>)
+<span class='kw'>outm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/prodlim/man/prodlim.html'>prodlim</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/prodlim/man/Hist.html'>Hist</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,data=<span class='kw'>prt</span>)
 
-<span class='no'>times</span> <span class='kw'>&lt;-</span> <span class='fl'>60</span>:<span class='fl'>100</span>
-<span class='no'>cifmz</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>outm</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='no'>times</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>zyg</span><span class='kw'>=</span><span class='st'>"MZ"</span>)) <span class='co'>## cause is 2 (second cause) </span>
-<span class='no'>cifdz</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>outm</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='no'>times</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>zyg</span><span class='kw'>=</span><span class='st'>"DZ"</span>))
+<span class='kw'>times</span> <span class='op'>&lt;-</span> <span class='fl'>60</span><span class='op'>:</span><span class='fl'>100</span>
+<span class='kw'>cifmz</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>outm</span>,cause=<span class='fl'>2</span>,time=<span class='kw'>times</span>,newdata=<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(zyg=<span class='st'>"MZ"</span>)) <span class='co'>## cause is 2 (second cause) </span>
+<span class='kw'>cifdz</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>outm</span>,cause=<span class='fl'>2</span>,time=<span class='kw'>times</span>,newdata=<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(zyg=<span class='st'>"DZ"</span>))
 
 <span class='co'>### concordance for MZ and DZ twins</span>
-<span class='no'>cc</span> <span class='kw'>&lt;-</span> <span class='fu'>bicomprisk</span>(<span class='fu'>Event</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'>strata</span>(<span class='no'>zyg</span>)+<span class='fu'>id</span>(<span class='no'>id</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prt</span>,<span class='kw'>cause</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>),<span class='kw'>prodlim</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>Strata 'DZ'</span></div><div class='output co'>#&gt; <span class='message'>Strata 'MZ'</span></div><div class='input'><span class='no'>cdz</span> <span class='kw'>&lt;-</span> <span class='no'>cc</span>$<span class='no'>model</span>$<span class='st'>"DZ"</span>
-<span class='no'>cmz</span> <span class='kw'>&lt;-</span> <span class='no'>cc</span>$<span class='no'>model</span>$<span class='st'>"MZ"</span>
+<span class='kw'>cc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='bicomprisk.html'>bicomprisk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>zyg</span>)<span class='op'>+</span><span class='fu'>id</span>(<span class='kw'>id</span>),data=<span class='kw'>prt</span>,cause=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>),prodlim=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; <span class='message'>Strata 'DZ'</span></div><div class='output co'>#&gt; <span class='message'>Strata 'MZ'</span></div><div class='input'><span class='kw'>cdz</span> <span class='op'>&lt;-</span> <span class='kw'>cc</span><span class='op'>$</span><span class='kw'>model</span><span class='op'>$</span><span class='st'>"DZ"</span>
+<span class='kw'>cmz</span> <span class='op'>&lt;-</span> <span class='kw'>cc</span><span class='op'>$</span><span class='kw'>model</span><span class='op'>$</span><span class='st'>"MZ"</span>
 
-<span class='no'>cdz</span> <span class='kw'>&lt;-</span> <span class='fu'>casewise</span>(<span class='no'>cdz</span>,<span class='no'>outm</span>,<span class='kw'>cause.marg</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='no'>cmz</span> <span class='kw'>&lt;-</span> <span class='fu'>casewise</span>(<span class='no'>cmz</span>,<span class='no'>outm</span>,<span class='kw'>cause.marg</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='kw'>cdz</span> <span class='op'>&lt;-</span> <span class='fu'>casewise</span>(<span class='kw'>cdz</span>,<span class='kw'>outm</span>,cause.marg=<span class='fl'>2</span>) 
+<span class='kw'>cmz</span> <span class='op'>&lt;-</span> <span class='fu'>casewise</span>(<span class='kw'>cmz</span>,<span class='kw'>outm</span>,cause.marg=<span class='fl'>2</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>cmz</span>,<span class='kw'>ci</span><span class='kw'>=</span><span class='kw'>NULL</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>),<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>60</span>,<span class='fl'>100</span>),<span class='kw'>legend</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>2</span>,<span class='fl'>1</span>))</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>new</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>cdz</span>,<span class='kw'>ci</span><span class='kw'>=</span><span class='kw'>NULL</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>),<span class='kw'>xlim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>60</span>,<span class='fl'>100</span>),<span class='kw'>legend</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='casewise-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cdz</span>)</div><div class='output co'>#&gt; Casewise concordance and standard errors 
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>cmz</span>,ci=<span class='kw'>NULL</span>,ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>),xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>60</span>,<span class='fl'>100</span>),legend=<span class='fl'>TRUE</span>,col=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>2</span>,<span class='fl'>1</span>))
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(new=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>cdz</span>,ci=<span class='kw'>NULL</span>,ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>),xlim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>60</span>,<span class='fl'>100</span>),legend=<span class='fl'>TRUE</span>)
+</div><div class='img'><img src='casewise-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cdz</span>)
+</div><div class='output co'>#&gt; Casewise concordance and standard errors 
 #&gt;        time casewise conc se casewise
 #&gt;  [1,]  59.6        0.0810      0.0810
 #&gt;  [2,]  60.7        0.0627      0.0627
@@ -246,7 +253,8 @@
 #&gt; [46,] 107.0        0.1690      0.0276
 #&gt; [47,] 108.0        0.1680      0.0274
 #&gt; 
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>cmz</span>)</div><div class='output co'>#&gt; Casewise concordance and standard errors 
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cmz</span>)
+</div><div class='output co'>#&gt; Casewise concordance and standard errors 
 #&gt;        time casewise conc se casewise
 #&gt;  [1,]  59.8         0.152      0.1520
 #&gt;  [2,]  60.9         0.468      0.2340
@@ -313,7 +321,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

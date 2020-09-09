@@ -163,28 +163,28 @@ Useful in particular for family design data.</p>
     </div>
 
     <pre class="usage"><span class='fu'>easy.survival.twostage</span>(
-  <span class='kw'>margsurv</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nlminb"</span>,
-  <span class='kw'>status</span> <span class='kw'>=</span> <span class='st'>"status"</span>,
-  <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"time"</span>,
-  <span class='kw'>entry</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
-  <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
-  <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta.formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>desnames</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>deshelp</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"plackett"</span>,
-  <span class='kw'>marginal.surv</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>se.clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  margsurv = <span class='kw'>NULL</span>,
+  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
+  score.method = <span class='st'>"nlminb"</span>,
+  status = <span class='st'>"status"</span>,
+  time = <span class='st'>"time"</span>,
+  entry = <span class='kw'>NULL</span>,
+  id = <span class='st'>"id"</span>,
+  Nit = <span class='fl'>60</span>,
+  detail = <span class='fl'>0</span>,
+  silent = <span class='fl'>1</span>,
+  weights = <span class='kw'>NULL</span>,
+  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  theta = <span class='kw'>NULL</span>,
+  theta.formula = <span class='kw'>NULL</span>,
+  desnames = <span class='kw'>NULL</span>,
+  deshelp = <span class='fl'>0</span>,
+  var.link = <span class='fl'>1</span>,
+  step = <span class='fl'>0.5</span>,
+  model = <span class='st'>"plackett"</span>,
+  marginal.surv = <span class='kw'>NULL</span>,
+  strata = <span class='kw'>NULL</span>,
+  se.clusters = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -288,12 +288,13 @@ based on the pairwise bivariate models.</p>
 likelihood assuming that the marginals are known.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mets</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"prt"</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"mets"</span>)
-<span class='no'>prtsam</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/blocksample.html'>blocksample</a></span>(<span class='no'>prt</span>,<span class='kw'>idvar</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='fl'>1e3</span>,<span class='kw'>replace</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-<span class='no'>margp</span> <span class='kw'>&lt;-</span> <span class='fu'>coxph</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>1</span>)~<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>country</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prtsam</span>)
-<span class='no'>fitco</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/survival.twostage.html'>survival.twostage</a></span>(<span class='no'>margp</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prtsam</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>prtsam</span>$<span class='no'>id</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/mets'>mets</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"prt"</span>,package=<span class='st'>"mets"</span>)
+<span class='kw'>prtsam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='blocksample.html'>blocksample</a></span>(<span class='kw'>prt</span>,idvar=<span class='st'>"id"</span>,<span class='fl'>1e3</span>,replace=<span class='fl'>FALSE</span>)
+<span class='kw'>margp</span> <span class='op'>&lt;-</span> <span class='fu'>coxph</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>1</span>)<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>country</span>),data=<span class='kw'>prtsam</span>)
+<span class='kw'>fitco</span> <span class='op'>&lt;-</span> <span class='fu'><a href='survival.twostage.html'>survival.twostage</a></span>(<span class='kw'>margp</span>,data=<span class='kw'>prtsam</span>,clusters=<span class='kw'>prtsam</span><span class='op'>$</span><span class='kw'>id</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitco</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;             log-Coef.        SE         z        P-val Kendall tau         SE
@@ -308,9 +309,10 @@ likelihood assuming that the marginals are known.</p>
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='no'>des</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>zyg</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prtsam</span>);
-<span class='no'>fitco</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/survival.twostage.html'>survival.twostage</a></span>(<span class='no'>margp</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>prtsam</span>,<span class='kw'>theta.des</span><span class='kw'>=</span><span class='no'>des</span>,<span class='kw'>clusters</span><span class='kw'>=</span><span class='no'>prtsam</span>$<span class='no'>id</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fitco</span>)</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
+<span class='kw'>des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),data=<span class='kw'>prtsam</span>);
+<span class='kw'>fitco</span> <span class='op'>&lt;-</span> <span class='fu'><a href='survival.twostage.html'>survival.twostage</a></span>(<span class='kw'>margp</span>,data=<span class='kw'>prtsam</span>,theta.des=<span class='kw'>des</span>,clusters=<span class='kw'>prtsam</span><span class='op'>$</span><span class='kw'>id</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fitco</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                log-Coef.        SE         z      P-val Kendall tau         SE
@@ -326,26 +328,27 @@ likelihood assuming that the marginals are known.</p>
 #&gt; [1] "clayton.oakes"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>prtsam</span>)
+#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='kw'>prtsam</span>)
 
-<span class='no'>dfam</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/internal.html'>simSurvFam</a></span>(<span class='fl'>1000</span>)
-<span class='no'>dfam</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/fast.reshape.html'>fast.reshape</a></span>(<span class='no'>dfam</span>,<span class='kw'>var</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"time"</span>,<span class='st'>"status"</span>))
+<span class='kw'>dfam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simSurvFam</a></span>(<span class='fl'>1000</span>)
+<span class='kw'>dfam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span>(<span class='kw'>dfam</span>,var=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>,<span class='st'>"time"</span>,<span class='st'>"status"</span>))
 
-<span class='no'>desfs</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>,<span class='no'>num1</span><span class='kw'>=</span><span class='st'>"num1"</span>,<span class='no'>num2</span><span class='kw'>=</span><span class='st'>"num2"</span>)
+<span class='kw'>desfs</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>,<span class='kw'>num1</span>=<span class='st'>"num1"</span>,<span class='kw'>num2</span>=<span class='st'>"num2"</span>)
 {
-<span class='no'>pp</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='st'>"m"</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='st'>"f"</span>)*<span class='fl'>1</span>   <span class='co'>## mother-father</span>
-<span class='no'>pc</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='st'>"m"</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='st'>"f"</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='st'>"b1"</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='st'>"b2"</span>)*<span class='fl'>1</span> <span class='co'>## mother-child</span>
-<span class='no'>cc</span> <span class='kw'>&lt;-</span> (<span class='no'>x</span>[<span class='no'>num1</span>]<span class='kw'>==</span><span class='st'>"b1"</span>)*(<span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='st'>"b1"</span> <span class='kw'>|</span> <span class='no'>x</span>[<span class='no'>num2</span>]<span class='kw'>==</span><span class='st'>"b2"</span>)*<span class='fl'>1</span>               <span class='co'>## child-child</span>
-<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>pp</span>,<span class='no'>pc</span>,<span class='no'>cc</span>)
+<span class='kw'>pp</span> <span class='op'>&lt;-</span> (<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"m"</span>)<span class='op'>*</span>(<span class='kw'>x</span>[<span class='kw'>num2</span>]<span class='op'>==</span><span class='st'>"f"</span>)<span class='op'>*</span><span class='fl'>1</span>   <span class='co'>## mother-father</span>
+<span class='kw'>pc</span> <span class='op'>&lt;-</span> (<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"m"</span> <span class='op'>|</span> <span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"f"</span>)<span class='op'>*</span>(<span class='kw'>x</span>[<span class='kw'>num2</span>]<span class='op'>==</span><span class='st'>"b1"</span> <span class='op'>|</span> <span class='kw'>x</span>[<span class='kw'>num2</span>]<span class='op'>==</span><span class='st'>"b2"</span>)<span class='op'>*</span><span class='fl'>1</span> <span class='co'>## mother-child</span>
+<span class='kw'>cc</span> <span class='op'>&lt;-</span> (<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"b1"</span>)<span class='op'>*</span>(<span class='kw'>x</span>[<span class='kw'>num2</span>]<span class='op'>==</span><span class='st'>"b1"</span> <span class='op'>|</span> <span class='kw'>x</span>[<span class='kw'>num2</span>]<span class='op'>==</span><span class='st'>"b2"</span>)<span class='op'>*</span><span class='fl'>1</span>               <span class='co'>## child-child</span>
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>pp</span>,<span class='kw'>pc</span>,<span class='kw'>cc</span>)
 }
 
-<span class='no'>marg</span> <span class='kw'>&lt;-</span> <span class='fu'>coxph</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span>)~<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>num</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>dfam</span>)
-<span class='no'>out3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/easy.survival.twostage.html'>easy.survival.twostage</a></span>(<span class='no'>marg</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>dfam</span>,<span class='kw'>time</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,
-             <span class='kw'>deshelp</span><span class='kw'>=</span><span class='fl'>0</span>,
-             <span class='kw'>score.method</span><span class='kw'>=</span><span class='st'>"nr"</span>,<span class='kw'>theta.formula</span><span class='kw'>=</span><span class='no'>desfs</span>,
-             <span class='kw'>model</span><span class='kw'>=</span><span class='st'>"plackett"</span>,
-             <span class='kw'>desnames</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"parent-parent"</span>,<span class='st'>"parent-child"</span>,<span class='st'>"child-cild"</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>out3</span>)</div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
+<span class='kw'>marg</span> <span class='op'>&lt;-</span> <span class='fu'>coxph</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>num</span>),data=<span class='kw'>dfam</span>)
+<span class='kw'>out3</span> <span class='op'>&lt;-</span> <span class='fu'>easy.survival.twostage</span>(<span class='kw'>marg</span>,data=<span class='kw'>dfam</span>,time=<span class='st'>"time"</span>,status=<span class='st'>"status"</span>,id=<span class='st'>"id"</span>,
+             deshelp=<span class='fl'>0</span>,
+             score.method=<span class='st'>"nr"</span>,theta.formula=<span class='kw'>desfs</span>,
+             model=<span class='st'>"plackett"</span>,
+             desnames=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"parent-parent"</span>,<span class='st'>"parent-child"</span>,<span class='st'>"child-cild"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out3</span>)
+</div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;               log-Coef.         SE         z        P-val Spearman Corr.
 #&gt; parent-parent 1.4395408 0.09217263 15.617877 0.000000e+00      0.4489952
@@ -383,7 +386,7 @@ likelihood assuming that the marginals are known.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

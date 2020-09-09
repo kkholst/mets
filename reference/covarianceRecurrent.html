@@ -159,15 +159,15 @@ where there is terminal event</p>
     </div>
 
     <pre class="usage"><span class='fu'>covarianceRecurrent</span>(
-  <span class='no'>data</span>,
-  <span class='no'>type1</span>,
-  <span class='no'>type2</span>,
-  <span class='kw'>status</span> <span class='kw'>=</span> <span class='st'>"status"</span>,
-  <span class='kw'>death</span> <span class='kw'>=</span> <span class='st'>"death"</span>,
-  <span class='kw'>start</span> <span class='kw'>=</span> <span class='st'>"start"</span>,
-  <span class='kw'>stop</span> <span class='kw'>=</span> <span class='st'>"stop"</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
-  <span class='kw'>names.count</span> <span class='kw'>=</span> <span class='st'>"Count"</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>type1</span>,
+  <span class='kw'>type2</span>,
+  status = <span class='st'>"status"</span>,
+  death = <span class='st'>"death"</span>,
+  start = <span class='st'>"start"</span>,
+  stop = <span class='st'>"stop"</span>,
+  id = <span class='st'>"id"</span>,
+  names.count = <span class='st'>"Count"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -216,32 +216,40 @@ where there is terminal event</p>
     <p>Scheike, Eriksson, Tribler (2019) 
             The mean, variance and correlation for bivariate recurrent events
             with a terminal event,  JRSS-C</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>########################################</span>
 <span class='co'>## getting some data to work on </span>
 <span class='co'>########################################</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>drcumhaz</span>)
-<span class='no'>dr</span> <span class='kw'>&lt;-</span> <span class='no'>drcumhaz</span>
-<span class='no'>base1</span> <span class='kw'>&lt;-</span> <span class='no'>base1cumhaz</span>
-<span class='no'>base4</span> <span class='kw'>&lt;-</span> <span class='no'>base4cumhaz</span>
-<span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='no'>base1</span>,<span class='kw'>cumhaz2</span><span class='kw'>=</span><span class='no'>base4</span>,<span class='kw'>death.cumhaz</span><span class='kw'>=</span><span class='no'>dr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'><span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'>count.history</span>(<span class='no'>rr</span>)
-<span class='no'>rr</span>$<span class='no'>strata</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='fu'>dtable</span>(<span class='no'>rr</span>,~<span class='no'>death</span>+<span class='no'>status</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
+<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
+<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
+<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
+<span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simRecurrent.html'>simRecurrent</a></span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,cumhaz2=<span class='kw'>base4</span>,death.cumhaz=<span class='kw'>dr</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'><span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='count.history.html'>count.history</a></span>(<span class='kw'>rr</span>)
+<span class='kw'>rr</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>rr</span>,<span class='op'>~</span><span class='kw'>death</span><span class='op'>+</span><span class='kw'>status</span>)
+</div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             112 2785  373
 #&gt; 1             888    0    0</div><div class='input'>
-<span class='no'>covrp</span> <span class='kw'>&lt;-</span> <span class='fu'>covarianceRecurrent</span>(<span class='no'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>death</span><span class='kw'>=</span><span class='st'>"death"</span>,
-                        <span class='kw'>start</span><span class='kw'>=</span><span class='st'>"entry"</span>,<span class='kw'>stop</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>names.count</span><span class='kw'>=</span><span class='st'>"Count"</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>covrp</span>)</div><div class='img'><img src='covarianceRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>covrp</span> <span class='op'>&lt;-</span> <span class='fu'>covarianceRecurrent</span>(<span class='kw'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,status=<span class='st'>"status"</span>,death=<span class='st'>"death"</span>,
+                        start=<span class='st'>"entry"</span>,stop=<span class='st'>"time"</span>,id=<span class='st'>"id"</span>,names.count=<span class='st'>"Count"</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>)) 
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>covrp</span>)
+</div><div class='img'><img src='covarianceRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>### with strata, each strata in matrix column, provides basis for fast Bootstrap</span>
-<span class='no'>covrpS</span> <span class='kw'>&lt;-</span> <span class='fu'>covarianceRecurrentS</span>(<span class='no'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='kw'>status</span><span class='kw'>=</span><span class='st'>"status"</span>,<span class='kw'>death</span><span class='kw'>=</span><span class='st'>"death"</span>,
-        <span class='kw'>start</span><span class='kw'>=</span><span class='st'>"entry"</span>,<span class='kw'>stop</span><span class='kw'>=</span><span class='st'>"time"</span>,<span class='kw'>strata</span><span class='kw'>=</span><span class='st'>"strata"</span>,<span class='kw'>id</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>names.count</span><span class='kw'>=</span><span class='st'>"Count"</span>)</div></pre>
+<span class='kw'>covrpS</span> <span class='op'>&lt;-</span> <span class='fu'>covarianceRecurrentS</span>(<span class='kw'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,status=<span class='st'>"status"</span>,death=<span class='st'>"death"</span>,
+        start=<span class='st'>"entry"</span>,stop=<span class='st'>"time"</span>,strata=<span class='st'>"strata"</span>,id=<span class='st'>"id"</span>,names.count=<span class='st'>"Count"</span>)
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -257,7 +265,7 @@ where there is terminal event</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

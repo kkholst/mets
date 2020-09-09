@@ -164,7 +164,7 @@ where $$\beta_1 = 0$$, such that $$\sum_j P_j = 1$$ using phreg function.
 Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mlogit</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>mlogit</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, offset = <span class='kw'>NULL</span>, weights = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,20 +196,25 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$</p>
     <p>Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
 Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</p>
 <p>Can also get influence functions (possibly robust) via iid() function, response should be a factor.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bmt</span>)
-<span class='fu'>dfactor</span>(<span class='no'>bmt</span>) <span class='kw'>&lt;-</span> <span class='no'>cause1f</span>~<span class='no'>cause</span>
-<span class='fu'>drelevel</span>(<span class='no'>bmt</span>,<span class='kw'>ref</span><span class='kw'>=</span><span class='fl'>3</span>) <span class='kw'>&lt;-</span> <span class='no'>cause3f</span>~<span class='no'>cause</span>
-<span class='fu'>dlevels</span>(<span class='no'>bmt</span>)</div><div class='output co'>#&gt; cause1f #levels=:3 
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+<span class='fu'><a href='drelevel.html'>dfactor</a></span>(<span class='kw'>bmt</span>) <span class='op'>&lt;-</span> <span class='kw'>cause1f</span><span class='op'>~</span><span class='kw'>cause</span>
+<span class='fu'><a href='drelevel.html'>drelevel</a></span>(<span class='kw'>bmt</span>,ref=<span class='fl'>3</span>) <span class='op'>&lt;-</span> <span class='kw'>cause3f</span><span class='op'>~</span><span class='kw'>cause</span>
+<span class='fu'><a href='drelevel.html'>dlevels</a></span>(<span class='kw'>bmt</span>)
+</div><div class='output co'>#&gt; cause1f #levels=:3 
 #&gt; [1] "0" "1" "2"
 #&gt; -----------------------------------------
 #&gt; cause3f #levels=:3 
 #&gt; [1] "2" "0" "1"
 #&gt; -----------------------------------------</div><div class='input'>
-<span class='no'>mreg</span> <span class='kw'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='no'>cause1f</span>~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>mreg</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>mreg</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='kw'>cause1f</span><span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>mreg</span>)
+</div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1224    408
 #&gt; 
@@ -232,8 +237,9 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 #&gt; [XXtcell]       1.657072 0.604514 0.472246 2.841899  0.2771
 #&gt; [XXplatelet]    0.698444 0.203458 0.299674 1.097214  0.1383
 #&gt; </div><div class='input'>
-<span class='no'>mreg3</span> <span class='kw'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='no'>cause3f</span>~<span class='no'>tcell</span>+<span class='no'>platelet</span>,<span class='no'>bmt</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>mreg3</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>mreg3</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='kw'>cause3f</span><span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>mreg3</span>)
+</div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1224    408
 #&gt; 
@@ -257,7 +263,8 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 #&gt; [XXplatelet]     0.72093 0.21933 0.29106 1.15080  0.2032
 #&gt; </div><div class='input'>
 <span class='co'>## inverse information standard errors </span>
-<span class='fu'>estimate</span>(<span class='kw'>coef</span><span class='kw'>=</span><span class='no'>mreg3</span>$<span class='no'>coef</span>,<span class='kw'>vcov</span><span class='kw'>=</span><span class='no'>mreg3</span>$<span class='no'>II</span>)</div><div class='output co'>#&gt;                 Estimate Std.Err    2.5%    97.5%   P-value
+<span class='fu'><a href='https://rdrr.io/pkg/lava/man/estimate.default.html'>estimate</a></span>(coef=<span class='kw'>mreg3</span><span class='op'>$</span><span class='kw'>coef</span>,vcov=<span class='kw'>mreg3</span><span class='op'>$</span><span class='kw'>II</span>)
+</div><div class='output co'>#&gt;                 Estimate Std.Err    2.5%    97.5%   P-value
 #&gt; XX(Intercept)     0.5657  0.1708  0.2309  0.90038 9.259e-04
 #&gt; XXtcell          -0.5051  0.3623 -1.2151  0.20497 1.633e-01
 #&gt; XXplatelet        0.3589  0.2873 -0.2041  0.92194 2.115e-01
@@ -280,7 +287,7 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

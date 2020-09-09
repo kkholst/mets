@@ -287,38 +287,38 @@ proband.</p>
     </div>
 
     <pre class="usage"><span class='fu'>survival.iterative</span>(
-  <span class='no'>margsurv</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>score.method</span> <span class='kw'>=</span> <span class='st'>"nr"</span>,
-  <span class='kw'>Nit</span> <span class='kw'>=</span> <span class='fl'>60</span>,
-  <span class='kw'>detail</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>theta.des</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.link</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>iid</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"clayton.oakes"</span>,
-  <span class='kw'>marginal.trunc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>marginal.survival</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>marginal.status</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>se.clusters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>max.clust</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>numDeriv</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>random.design</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pairs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pairs.rvs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>numDeriv.method</span> <span class='kw'>=</span> <span class='st'>"simple"</span>,
-  <span class='kw'>additive.gamma.sum</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var.par</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cr.models</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>case.control</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ascertained</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>shut.up</span> <span class='kw'>=</span> <span class='fl'>0</span>
+  <span class='kw'>margsurv</span>,
+  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
+  score.method = <span class='st'>"nr"</span>,
+  Nit = <span class='fl'>60</span>,
+  detail = <span class='fl'>0</span>,
+  clusters = <span class='kw'>NULL</span>,
+  silent = <span class='fl'>1</span>,
+  weights = <span class='kw'>NULL</span>,
+  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  theta = <span class='kw'>NULL</span>,
+  theta.des = <span class='kw'>NULL</span>,
+  var.link = <span class='fl'>1</span>,
+  iid = <span class='fl'>1</span>,
+  step = <span class='fl'>0.5</span>,
+  model = <span class='st'>"clayton.oakes"</span>,
+  marginal.trunc = <span class='kw'>NULL</span>,
+  marginal.survival = <span class='kw'>NULL</span>,
+  marginal.status = <span class='kw'>NULL</span>,
+  strata = <span class='kw'>NULL</span>,
+  se.clusters = <span class='kw'>NULL</span>,
+  max.clust = <span class='kw'>NULL</span>,
+  numDeriv = <span class='fl'>0</span>,
+  random.design = <span class='kw'>NULL</span>,
+  pairs = <span class='kw'>NULL</span>,
+  pairs.rvs = <span class='kw'>NULL</span>,
+  numDeriv.method = <span class='st'>"simple"</span>,
+  additive.gamma.sum = <span class='kw'>NULL</span>,
+  var.par = <span class='fl'>1</span>,
+  cr.models = <span class='kw'>NULL</span>,
+  case.control = <span class='fl'>0</span>,
+  ascertained = <span class='fl'>0</span>,
+  shut.up = <span class='fl'>0</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -467,6 +467,9 @@ and ascertained sampling</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -483,7 +486,7 @@ and ascertained sampling</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

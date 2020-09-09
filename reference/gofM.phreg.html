@@ -159,14 +159,14 @@ p-values based on Lin, Wei, Ying resampling.</p>
     </div>
 
     <pre class="usage"><span class='fu'>gofM.phreg</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>modelmatrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>n.sim</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  offset = <span class='kw'>NULL</span>,
+  weights = <span class='kw'>NULL</span>,
+  modelmatrix = <span class='kw'>NULL</span>,
+  n.sim = <span class='fl'>1000</span>,
+  silent = <span class='fl'>1</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -217,17 +217,21 @@ and resamples its asymptotic distribution.</p>
 M will be a design matrix for the continous covariates that gives for example
 the quartiles, and then the plot will show if for the different quartiles of the covariate the risk
 prediction is consistent over time  (time x covariate interaction).</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Thomas Scheike and Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mets</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>TRACE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/mets'>mets</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='no'>TRACEsam</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/blocksample.html'>blocksample</a></span>(<span class='no'>TRACE</span>,<span class='kw'>idvar</span><span class='kw'>=</span><span class='st'>"id"</span>,<span class='kw'>replace</span><span class='kw'>=</span><span class='fl'>FALSE</span>,<span class='fl'>100</span>)
+<span class='kw'>TRACEsam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='blocksample.html'>blocksample</a></span>(<span class='kw'>TRACE</span>,idvar=<span class='st'>"id"</span>,replace=<span class='fl'>FALSE</span>,<span class='fl'>100</span>)
 
-<span class='fu'><a href='https://rdrr.io/pkg/mets/man/dcut.html'>dcut</a></span>(<span class='no'>TRACEsam</span>)  <span class='kw'>&lt;-</span> ~<span class='no'>.</span>
-<span class='no'>mm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(~-<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>wmicat.4</span>),<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACEsam</span>)
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/gofM.phreg.html'>gofM.phreg</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='no'>vf</span>+<span class='no'>chf</span>+<span class='no'>wmi</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACEsam</span>,<span class='kw'>modelmatrix</span><span class='kw'>=</span><span class='no'>mm</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
+<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>TRACEsam</span>)  <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span> 
+<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>wmicat.4</span>),data=<span class='kw'>TRACEsam</span>)
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>gofM.phreg</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>wmi</span>,data=<span class='kw'>TRACEsam</span>,modelmatrix=<span class='kw'>mm</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>m1</span>)
+</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
 #&gt;                            Sup_t |U(t)|  pval
 #&gt; factor(wmicat.4)[0.4,1.1]      5.788752 0.021
 #&gt; factor(wmicat.4)(1.1,1.4]      2.633143 0.591
@@ -236,13 +240,14 @@ prediction is consistent over time  (time x covariate interaction).</p>
 #&gt; 
 #&gt; Cumulative score process versus covariates (discrete z via model.matrix):
 #&gt;         Sup_z |U(tau,z)|  pval
-#&gt; matrixZ         1.801626 0.812</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>m1</span>)
+#&gt; matrixZ         1.801626 0.812</div><div class='input'><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>m1</span>)
 }
 
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/gofM.phreg.html'>gofM.phreg</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='fu'>strata</span>(<span class='no'>vf</span>)+<span class='no'>chf</span>+<span class='no'>wmi</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACEsam</span>,<span class='kw'>modelmatrix</span><span class='kw'>=</span><span class='no'>mm</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>gofM.phreg</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>)<span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>wmi</span>,data=<span class='kw'>TRACEsam</span>,modelmatrix=<span class='kw'>mm</span>) 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>m1</span>)
+</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
 #&gt;                            Sup_t |U(t)|  pval
 #&gt; factor(wmicat.4)[0.4,1.1]      6.049754 0.022
 #&gt; factor(wmicat.4)(1.1,1.4]      2.211031 0.757
@@ -253,9 +258,10 @@ prediction is consistent over time  (time x covariate interaction).</p>
 #&gt;         Sup_z |U(tau,z)|  pval
 #&gt; matrixZ         1.228032 0.934</div><div class='input'>
 <span class='co'>## cumulative sums in covariates, via design matrix mm </span>
-<span class='no'>mm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/gofZ.phreg.html'>cumContr</a></span>(<span class='no'>TRACEsam</span>$<span class='no'>wmi</span>,<span class='kw'>breaks</span><span class='kw'>=</span><span class='fl'>10</span>,<span class='kw'>equi</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mets/man/gofM.phreg.html'>gofM.phreg</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>==</span><span class='fl'>9</span>)~<span class='fu'>strata</span>(<span class='no'>vf</span>)+<span class='no'>chf</span>+<span class='no'>wmi</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>TRACEsam</span>,
-                  <span class='kw'>modelmatrix</span><span class='kw'>=</span><span class='no'>mm</span>,<span class='kw'>silent</span><span class='kw'>=</span><span class='fl'>0</span>)</div><div class='output co'>#&gt; Cumulative score process test for modelmatrix:
+<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gofZ.phreg.html'>cumContr</a></span>(<span class='kw'>TRACEsam</span><span class='op'>$</span><span class='kw'>wmi</span>,breaks=<span class='fl'>10</span>,equi=<span class='fl'>TRUE</span>)
+<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'>gofM.phreg</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>)<span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>wmi</span>,data=<span class='kw'>TRACEsam</span>,
+      modelmatrix=<span class='kw'>mm</span>,silent=<span class='fl'>0</span>)
+</div><div class='output co'>#&gt; Cumulative score process test for modelmatrix:
 #&gt;        Sup_t |U(t)| pval
 #&gt; &lt;=0.56         0.84 0.35
 #&gt; &lt;=0.72         1.93 0.39
@@ -266,7 +272,8 @@ prediction is consistent over time  (time x covariate interaction).</p>
 #&gt; &lt;=1.52         3.20 0.29
 #&gt; &lt;=1.68         1.83 0.81
 #&gt; &lt;=1.84         1.25 0.82
-#&gt; &lt;=2            0.00 1.00</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
+#&gt; &lt;=2            0.00 1.00</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>m1</span>)
+</div><div class='output co'>#&gt; Cumulative residuals versus modelmatrix :
 #&gt;        Sup_t |U(t)|  pval
 #&gt; &lt;=0.56    0.8423856 0.352
 #&gt; &lt;=0.72    1.9258405 0.394
@@ -298,7 +305,7 @@ prediction is consistent over time  (time x covariate interaction).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>
