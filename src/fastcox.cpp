@@ -15,7 +15,7 @@ RcppExport SEXP FastCoxPrep(SEXP EntrySEXP,
 		SEXP XSEXP,
 		SEXP IdSEXP,
 		SEXP TruncationSEXP) {
-	BEGIN_RCPP
+BEGIN_RCPP
 		arma::vec Entry = Rcpp::as<arma::vec>(EntrySEXP);
 	arma::vec  Exit  = Rcpp::as<arma::vec>(ExitSEXP);
 	arma::Col<int> Status= Rcpp::as<arma::Col<int> >(StatusSEXP);
@@ -91,8 +91,8 @@ RcppExport SEXP FastCoxPrep(SEXP EntrySEXP,
 					Rcpp::Named("ord")=idx,
 					Rcpp::Named("time")=Exit,
 					Rcpp::Named("id")=newId
-					)));
-	END_RCPP
+					     )));
+END_RCPP
 }
 
 RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP,
@@ -604,7 +604,9 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 	return(rres);
 }
 
-RcppExport SEXP revcumsum2stratafdNR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP istarta) {
+RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata,
+				     SEXP instrata, SEXP istrata2,
+				     SEXP instrata2, SEXP istarta) {
 	colvec a = Rcpp::as<colvec>(ia);
 	colvec dN = Rcpp::as<colvec>(idN);
 //	mat Gtc = Rcpp::as<mat>(iGtc);

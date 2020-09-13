@@ -80,7 +80,7 @@ extern SEXP revcumsumR(SEXP);
 extern SEXP revcumsumstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsum2strataR(SEXP,SEXP, SEXP,SEXP,SEXP);
 extern SEXP cumsum2strataR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-extern SEXP revcumsum2stratafdNR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP revcumsum2stratafdNR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP S0_FG_GcR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP vecAllStrataR(SEXP,SEXP, SEXP);
 extern SEXP tailstrataR(SEXP,SEXP, SEXP);
