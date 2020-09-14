@@ -769,7 +769,7 @@ strataC <- survival:::strata
 ##' using a KM for \deqn{G_c(t)} and a working model for cumulative baseline
 ##' related to \deqn{F_1^*(t,s)} and \deqn{s} is strata,
 ##' \deqn{S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)}, and
-##' \deqn{E(\beta^p,t)} is given.
+##' \deqn{E(\beta^p,t)} is given. Assumes that no strata for baseline of ine-Gay model that is augmented. 
 ##'
 ##' After a couple of iterations we end up with a solution of
 ##' \deqn{
