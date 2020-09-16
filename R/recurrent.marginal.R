@@ -167,8 +167,27 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
      cumhaz=cbind(varrs$time,varrs$mu),se.cumhaz=cbind(varrs$time,varrs$se.mu),
      strata=varrs$strata,nstrata=xr$nstrata,jumps=1:nrow(varrs),
      strata.name=xr$strata.name,strata.level=recurrent$strata.level)
+ class(out) <- "recurrent"
  return(out)
 }# }}}
+
+##' @export
+summary.recurrent <- function(object,times=NULL,...) {
+ if (is.null(times)) times <- object$times
+
+ where <- fast.approx(c(0,object$times),times,type="left")
+ mu <- c(0,object$mu)[where]
+ se.mu <- c(0,object$se.mu)[where]
+ se.logmu=se.mu/mu
+ lower <- exp(log(mu) - 1.96*se.logmu)
+ upper <- exp(log(mu) + 1.96*se.logmu)
+
+ out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
+ names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%")
+ return(out)
+}
+
+
 
 ###recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=FALSE,...)
 ###{# {{{
