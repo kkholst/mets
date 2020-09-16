@@ -206,7 +206,7 @@ summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {#
  lower <- mu - 1.96*se.mu
  upper <- mu + 1.96*se.mu
  }
- } else {se.logmu <- lower <- upper <- NULL }
+ } else {se.mu <- se.logmu <- lower <- upper <- NA}
 
 
  out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
