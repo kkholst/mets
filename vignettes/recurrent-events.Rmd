@@ -308,11 +308,10 @@ We could also use the product-limit estimator to estimate the probability of
 exceeding "k" events, and then standard errors are also returned: 
 
 ```{r}
-## library(prodlim)
-## oop <- prob.exceed.recurrent(rr,1)
-## bplot(oo)
-## matlines(oop$times,oop$prob)
-## summaryTimeobject(oop$times,oop$prob,se.mu=oop$se.prob,times=1000)
+ oop <- prob.exceed.recurrent(rr,1)
+ bplot(oo)
+ matlines(oop$times,oop$prob,type="l")
+ summaryTimeobject(oop$times,oop$prob,se.mu=oop$se.prob,times=1000)
 ```
 
 We note from the plot that the estimates are quite similar. 
