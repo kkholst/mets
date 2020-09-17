@@ -1,6 +1,15 @@
 pandoc: '2.2'
-pkgdown: 1.6.0
+pkgdown: 1.6.1
 pkgdown_sha: ~
-articles: []
-last_built: 2020-09-09T18:08Z
+articles:
+  basic-dutils: basic-dutils.html
+  binomial-family: binomial-family.html
+  binomial-twin: binomial-twin.html
+  cifreg: cifreg.html
+  haplo-discrete-ttp: haplo-discrete-ttp.html
+  marginal-cox: marginal-cox.html
+  quantitative-twin: quantitative-twin.html
+  recurrent-events: recurrent-events.html
+  twostage-survival: twostage-survival.html
+last_built: 2020-09-17T23:22Z
 
