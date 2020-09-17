@@ -316,6 +316,14 @@ exceeding "k" events, and then standard errors are also returned:
 
 We note from the plot that the estimates are quite similar. 
 
+Finally, we make a plot with 95\% confidence intervals
+
+```{r}
+matplot(oop$times,oop$prob,type="l")
+for (i in seq(ncol(oop$prob))) 
+	plotConfRegion(oop$times,cbind(oop$se.lower[,i],oop$se.upper[,i]),col=i)
+```
+
 
 Multiple events 
 ================
