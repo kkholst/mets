@@ -167,6 +167,50 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
      cumhaz=cbind(varrs$time,varrs$mu),se.cumhaz=cbind(varrs$time,varrs$se.mu),
      strata=varrs$strata,nstrata=xr$nstrata,jumps=1:nrow(varrs),
      strata.name=xr$strata.name,strata.level=recurrent$strata.level)
+ class(out) <- "recurrent"
+ return(out)
+}# }}}
+
+##' @export
+summary.recurrent <- function(object,times=NULL,...) {
+ if (is.null(times)) times <- object$times
+
+ where <- fast.approx(c(0,object$times),times,type="left")
+ mu <- c(0,object$mu)[where]
+ se.mu <- c(0,object$se.mu)[where]
+ se.logmu=se.mu/mu
+ lower <- exp(log(mu) - 1.96*se.logmu)
+ upper <- exp(log(mu) + 1.96*se.logmu)
+
+ out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
+ names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%")
+ return(out)
+}
+
+
+##' @export
+summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {# {{{
+ if (is.null(times)) times <- mutimes
+
+ where <- fast.approx(c(0,mutimes),times,type="left")
+
+ ##  see if object is vector or matrix
+ if (is.matrix(mu)) mu <- rbind(0,mu)[where,] else mu <- c(0,mu)[where]
+ if (!is.null(se.mu)) {
+     if (is.matrix(se.mu)) se.mu <- rbind(0,se.mu)[where,] else se.mu <- c(0,se.mu)[where]
+ se.logmu=se.mu/mu
+ if (type=="log") {
+ lower <- exp(log(mu) - 1.96*se.logmu)
+ upper <- exp(log(mu) + 1.96*se.logmu)
+ } else {
+ lower <- mu - 1.96*se.mu
+ upper <- mu + 1.96*se.mu
+ }
+ } else {se.mu <- se.logmu <- lower <- upper <- NA}
+
+
+ out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
+ names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%")
  return(out)
 }# }}}
 
@@ -2344,7 +2388,7 @@ return(data)
 ##' \donttest{
 ##' ### do not test to avoid dependence on prodlim 
 ##' ### now estimation based on cumualative incidence, but do not test to avoid dependence on prodlim 
-##' library(prodlim)
+##' ### library(prodlim)
 ##' pp <- prob.exceed.recurrent(rr,1,status="status",death="death",start="entry",stop="time",id="id")
 ##' with(pp, matplot(times,prob,type="s"))
 ##' ###
@@ -2352,9 +2396,9 @@ return(data)
 ##' with(pp, matlines(times,se.upper,type="s"))
 ##' }
 ##' @export
-##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata
+##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryTimeobject
 prob.exceed.recurrent <- function(data,type,status="status",death="death",
- start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=FALSE,
+ start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=TRUE,
  strata=NULL,all.cifs=FALSE,...)
 {# {{{
 ### setting up data 
@@ -2386,12 +2430,12 @@ if (is.null(times)) times <- sort(unique(tstop[stat==type]))
 if (is.null(exceed)) exceed <- sort(unique(count))
 
 if (!cifmets) {
-if (is.null(strata)) form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+1",sep=""))
-else form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+",strata,sep="")) 
+   if (is.null(strata)) form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+1",sep=""))
+   else form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+",strata,sep="")) 
 }
 else {
-	if (is.null(strata)) form <- as.formula(paste("Event(entry=",start,",",stop,",statN)~+1",sep=""))
-	else form <- as.formula(paste("Event(entry=",start,",",stop,",statN)~strata(",strata,")",sep=""))
+   if (is.null(strata)) form <- as.formula(paste("Event(",start,",",stop,",statN)~+1",sep=""))
+   else form <- as.formula(paste("Event(",start,",",stop,",statN)~strata(",strata,")",sep=""))
 }
 
 cif.exceed <- NULL

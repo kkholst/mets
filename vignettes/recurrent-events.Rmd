@@ -185,7 +185,14 @@ out <- recurrentMarginal(xr,dr)
 bplot(out,se=TRUE,ylab="marginal mean",col=2)
 ```
 
-We can do the same with strata 
+We can also extract the estimate in different time-points 
+
+```{r}
+summary(out,times=c(1000,2000))
+```
+
+The marginal mean can also be estimated in a stratified case:
+
 
 ```{r}
 xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
@@ -205,7 +212,7 @@ Furhter, if we adjust for covariates for the two rates we can still do
 predictions of marginal mean, what can be plotted is the baseline marginal mean, 
 that is for the covariates equal to 0 for both models. Predictions for specific 
 covariates can also be obtained with the recmarg (recurren marginal mean used 
- solely for predictions without standard error computation). 
+solely for predictions without standard error computation). 
 
 ```{r}
 # cox case
@@ -225,6 +232,7 @@ bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
 outX <- recmarg(xr,dr,Xr=1,Xd=1)
 bplot(outX,add=TRUE,col=3)
 ```
+
 
 Other marginal properties 
 =========================
@@ -295,6 +303,27 @@ with(oo,plot(time,mu,col=2,type="l"))
 #
 with(oo,plot(time,varN,type="l"))
 ```
+
+We could also use the product-limit estimator to estimate the probability of 
+exceeding "k" events, and then standard errors are also returned: 
+
+```{r}
+ oop <- prob.exceed.recurrent(rr,1)
+ bplot(oo)
+ matlines(oop$times,oop$prob,type="l")
+ summaryTimeobject(oop$times,oop$prob,se.mu=oop$se.prob,times=1000)
+```
+
+We note from the plot that the estimates are quite similar. 
+
+Finally, we make a plot with 95\% confidence intervals
+
+```{r}
+matplot(oop$times,oop$prob,type="l")
+for (i in seq(ncol(oop$prob))) 
+	plotConfRegion(oop$times,cbind(oop$se.lower[,i],oop$se.upper[,i]),col=i)
+```
+
 
 Multiple events 
 ================

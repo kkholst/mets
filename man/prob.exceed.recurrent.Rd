@@ -6,6 +6,7 @@
 \alias{prob.exceedBiRecurrent}
 \alias{prob.exceedRecurrentStrata}
 \alias{prob.exceedBiRecurrentStrata}
+\alias{summaryTimeobject}
 \title{Estimation of probability of more that k events for recurrent events process}
 \usage{
 prob.exceed.recurrent(
@@ -18,7 +19,7 @@ prob.exceed.recurrent(
   id = "id",
   times = NULL,
   exceed = NULL,
-  cifmets = FALSE,
+  cifmets = TRUE,
   strata = NULL,
   all.cifs = FALSE,
   ...
@@ -94,7 +95,7 @@ legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
 \donttest{
 ### do not test to avoid dependence on prodlim 
 ### now estimation based on cumualative incidence, but do not test to avoid dependence on prodlim 
-library(prodlim)
+### library(prodlim)
 pp <- prob.exceed.recurrent(rr,1,status="status",death="death",start="entry",stop="time",id="id")
 with(pp, matplot(times,prob,type="s"))
 ###
