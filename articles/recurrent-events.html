@@ -109,7 +109,7 @@
       <h1 data-toc-skip>Recurrent events</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-09-17</h4>
+            <h4 class="date">2020-09-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/recurrent-events.Rmd"><code>vignettes/recurrent-events.Rmd</code></a></small>
       <div class="hidden name"><code>recurrent-events.Rmd</code></div>
@@ -292,8 +292,15 @@ Then the intensities are
 <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span>(<span class="kw">out</span>,se=<span class="fl">TRUE</span>,ylab=<span class="st">"marginal mean"</span>,col=<span class="fl">2</span>)
 </pre></div>
 <p><img src="recurrent-events_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>We can do the same with strata</p>
+<p>We can also extract the estimate in different time-points</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">out</span>,times=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1000</span>,<span class="fl">2000</span>))
+<span class="co">#&gt;   times  mean    se-mean  CI-2.5% CI-97.5%</span>
+<span class="co">#&gt; 1  1000 1.207 0.04227054 1.126929 1.292760</span>
+<span class="co">#&gt; 2  2000 1.922 0.06531928 1.798145 2.054386</span>
+</pre></div>
+<p>The marginal mean can also be estimated in a stratified case:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">entry</span>,<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="fu">strata</span>(<span class="kw">strata</span>)<span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">rr</span>)
 <span class="kw">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">entry</span>,<span class="kw">time</span>,<span class="kw">death</span>)<span class="op">~</span><span class="fu">strata</span>(<span class="kw">strata</span>)<span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">rr</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>))
@@ -306,9 +313,9 @@ Then the intensities are
 <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span>(<span class="kw">xr</span>,<span class="kw">dr</span>)
 <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span>(<span class="kw">out</span>,se=<span class="fl">TRUE</span>,ylab=<span class="st">"marginal mean"</span>,col=<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>Furhter, if we adjust for covariates for the two rates we can still do predictions of marginal mean, what can be plotted is the baseline marginal mean, that is for the covariates equal to 0 for both models. Predictions for specific covariates can also be obtained with the recmarg (recurren marginal mean used solely for predictions without standard error computation).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co"># cox case</span>
 <span class="kw">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">entry</span>,<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">x</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">rr</span>)
 <span class="kw">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">entry</span>,<span class="kw">time</span>,<span class="kw">death</span>)<span class="op">~</span><span class="kw">x</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">rr</span>)
@@ -326,7 +333,7 @@ Then the intensities are
 <span class="kw">outX</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recmarg</a></span>(<span class="kw">xr</span>,<span class="kw">dr</span>,Xr=<span class="fl">1</span>,Xd=<span class="fl">1</span>)
 <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span>(<span class="kw">outX</span>,add=<span class="fl">TRUE</span>,col=<span class="fl">3</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 <div id="other-marginal-properties" class="section level1">
 <h1 class="hasAnchor">
@@ -361,7 +368,7 @@ Then the intensities are
             \frac{1}{Y_{1\bullet}^{k-1}(s)} d N_{1\bullet}^{k-1}(s).
 \end{align*}\]</span></p>
 <p>To compute these estimators we need to set up the data by computing the number of previous events of type “1” by the count.history function</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co">###cor.mat &lt;- corM &lt;- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))</span>
 <span class="co">###rr &lt;- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=ddr)</span>
 <span class="kw">rr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/count.history.html">count.history</a></span>(<span class="kw">rr</span>)
@@ -375,21 +382,58 @@ Then the intensities are
 <span class="kw">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceedRecurrent</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>)
 <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span>(<span class="kw">oo</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>We can also look at the mean and variance based on the estimators just described</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">time</span>,<span class="kw">mu</span>,col=<span class="fl">2</span>,type=<span class="st">"l"</span>))
 <span class="co">#</span>
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">time</span>,<span class="kw">varN</span>,type=<span class="st">"l"</span>))
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<p>We could also use the product-limit estimator to estimate the probability of exceeding “k” events, and then standard errors are also returned:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+ <span class="kw">oop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceed.recurrent</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>)
+ <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span>(<span class="kw">oo</span>)
+ <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matlines</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">times</span>,<span class="kw">oop</span><span class="op">$</span><span class="kw">prob</span>,type=<span class="st">"l"</span>)
+</pre></div>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+ <span class="fu"><a href="../reference/prob.exceed.recurrent.html">summaryTimeobject</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">times</span>,<span class="kw">oop</span><span class="op">$</span><span class="kw">prob</span>,se.mu=<span class="kw">oop</span><span class="op">$</span><span class="kw">se.prob</span>,times=<span class="fl">1000</span>)
+<span class="co">#&gt;            times  mean     se-mean      CI-2.5%    CI-97.5%</span>
+<span class="co">#&gt; N=0         1000 0.396 0.015477175 0.3667975325 0.427527413</span>
+<span class="co">#&gt; exceed&gt;=1   1000 0.604 0.015477175 0.5744139212 0.635109956</span>
+<span class="co">#&gt; exceed&gt;=2   1000 0.345 0.014837022 0.3171113363 0.375341359</span>
+<span class="co">#&gt; exceed&gt;=3   1000 0.151 0.011169269 0.1306211625 0.174558238</span>
+<span class="co">#&gt; exceed&gt;=4   1000 0.067 0.007881577 0.0532036544 0.084373903</span>
+<span class="co">#&gt; exceed&gt;=5   1000 0.030 0.005360050 0.0211366284 0.042580112</span>
+<span class="co">#&gt; exceed&gt;=6   1000 0.009 0.002982050 0.0047011184 0.017229943</span>
+<span class="co">#&gt; exceed&gt;=7   1000 0.001 0.000999290 0.0001410546 0.007089455</span>
+<span class="co">#&gt; exceed&gt;=8   1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=9   1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=10  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=11  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=12  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=13  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=14  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=15  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=16  1000 0.000 0.000000000          NaN         NaN</span>
+<span class="co">#&gt; exceed&gt;=17  1000 0.000 0.000000000          NaN         NaN</span>
+</pre></div>
+<p>We note from the plot that the estimates are quite similar.</p>
+<p>Finally, we make a plot with 95% confidence intervals</p>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">times</span>,<span class="kw">oop</span><span class="op">$</span><span class="kw">prob</span>,type=<span class="st">"l"</span>)
+<span class="co">for</span> (<span class="kw">i</span> <span class="co">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">prob</span>))) 
+    <span class="fu"><a href="../reference/basehazplot.phreg.html">plotConfRegion</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">times</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">oop</span><span class="op">$</span><span class="kw">se.lower</span>[,<span class="kw">i</span>],<span class="kw">oop</span><span class="op">$</span><span class="kw">se.upper</span>[,<span class="kw">i</span>]),col=<span class="kw">i</span>)
+</pre></div>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 </div>
 <div id="multiple-events" class="section level1">
 <h1 class="hasAnchor">
 <a href="#multiple-events" class="anchor"></a>Multiple events</h1>
 <p>We now generate recurrent events with two types of events. We start by generating data as before where all events are independent.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
+<div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="kw">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrent.html">simRecurrent</a></span>(<span class="fl">1000</span>,<span class="kw">base1</span>,cumhaz2=<span class="kw">base4</span>,death.cumhaz=<span class="kw">ddr</span>)
 <span class="co">#&gt; Warning in regularize.values(x, y, ties, missing(ties), na.rm = na.rm):</span>
 <span class="co">#&gt; collapsing to unique 'x' values</span>
@@ -402,14 +446,14 @@ Then the intensities are
 <span class="co">#&gt; 1             876    0    0</span>
 </pre></div>
 <p>Based on this we can estimate also the joint distribution function, that is the probability that <span class="math inline">\((N_1(t) \geq k_1, N_2(t) \geq k_2)\)</span></p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
+<div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="co"># Bivariate probability of exceeding </span>
 <span class="kw">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceedBiRecurrent</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,exceed1=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">5</span>,<span class="fl">10</span>),exceed2=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>))
 <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">oo</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></span>(<span class="kw">time</span>,<span class="kw">pe1e2</span>,type=<span class="st">"s"</span>))
 <span class="kw">nc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="kw">oo</span><span class="op">$</span><span class="kw">pe1e2</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="st">"topleft"</span>,legend=<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">oo</span><span class="op">$</span><span class="kw">pe1e2</span>),lty=<span class="fl">1</span><span class="op">:</span><span class="kw">nc</span>,col=<span class="fl">1</span><span class="op">:</span><span class="kw">nc</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <div id="dependence-between-events-covariance" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dependence-between-events-covariance" class="anchor"></a>Dependence between events: Covariance</h2>
@@ -464,7 +508,7 @@ E(\int_0^t N_1^*(s-) dN_2^*(s) ) &amp; = \sum_k E( \int_0^t k I(N_1^*(s-)=k) I(D
 We here, however, use a simple block bootstrap to get standard errors.</p>
 <p>We can thus estimate the standard errors and of the estimators and their difference <span class="math inline">\(\hat E(N_1^*(t) N_2^*(t))- \hat E_I(N_1^*(t) N_2^*(t))\)</span>.</p>
 <p>Note that we have terms for whether * <span class="math inline">\(N_1\)</span> is predicitive for <span class="math inline">\(N_2\)</span> * N1 -&gt; N2 : <span class="math inline">\(E( \int_0^t N_1^*(s-) dN_2^*(s) )\)</span> * this is equivalent to a weighted log-rank test * <span class="math inline">\(N_2\)</span> is predicitive for <span class="math inline">\(N_1\)</span> * N2 -&gt; N1 : <span class="math inline">\(E( \int_0^t N_2^*(s-) dN_1^*(s) )\)</span> * this is equivalent to a weighted log-rank test</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
+<div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="kw">rr</span><span class="op">$</span><span class="kw">strata</span> <span class="op">&lt;-</span> <span class="fl">1</span>
 <span class="fu"><a href="../reference/dtable.html">dtable</a></span>(<span class="kw">rr</span>,<span class="op">~</span><span class="kw">death</span><span class="op">+</span><span class="kw">status</span>)
 <span class="co">#&gt; </span>
@@ -478,8 +522,8 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>)) 
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">covrp</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit">
 
 <span class="co"># with strata, each strata in matrix column, provides basis for fast Bootstrap</span>
 <span class="kw">covrpS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrentS</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status=<span class="st">"status"</span>,death=<span class="st">"death"</span>,
@@ -490,7 +534,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <h2 class="hasAnchor">
 <a href="#bootstrap-standard-errors-for-terms" class="anchor"></a>Bootstrap standard errors for terms</h2>
 <p>First fitting the model again to get our estimates of interst, and then computing them for some specific time-points</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
+<div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="kw">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">500</span>,<span class="fl">5000</span>,<span class="fl">500</span>)
 
 <span class="kw">coo1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status=<span class="st">"status"</span>,start=<span class="st">"entry"</span>,stop=<span class="st">"time"</span>)
@@ -527,7 +571,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span class="co">#&gt; [10,]  5000 1.21985056 1.20821774</span>
 </pre></div>
 <p>To get the bootstrap standard errors there is a quick memory demanding function (with S for speed and strata) BootcovariancerecurrenceS and slow function that goes through the loops in R Bootcovariancerecurrence.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
+<div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">bt1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">BootcovariancerecurrenceS</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status=<span class="st">"status"</span>,start=<span class="st">"entry"</span>,stop=<span class="st">"time"</span>,K=<span class="fl">100</span>,times=<span class="kw">times</span>)
 <span class="co">#bt1 &lt;- Bootcovariancerecurrence(rr,1,2,status="status",start="entry",stop="time",K=K,times=times)</span>
 
@@ -544,7 +588,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
     )
 </pre></div>
 <p>We then look at the test for overall dependence in the different time-points. We here have no suggestion of dependence.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
+<div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="kw">tt</span>  <span class="op">&lt;-</span> <span class="kw">output</span><span class="op">$</span><span class="kw">dmugi</span><span class="op">/</span><span class="kw">output</span><span class="op">$</span><span class="kw">bse.dmugi</span>
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">times</span>,<span class="fl">2</span><span class="op">*</span>(<span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">tt</span>))))
 <span class="co">#&gt;       times          </span>
@@ -560,7 +604,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span class="co">#&gt; [10,]  5000 0.7575287</span>
 </pre></div>
 <p>We can also take out the specific components for whether <span class="math inline">\(N_1\)</span> is predictive for <span class="math inline">\(N_2\)</span> and vice versa. We here have no suggestion of dependence.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
+<div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="kw">t21</span>  <span class="op">&lt;-</span> <span class="kw">output</span><span class="op">$</span><span class="kw">dmu1.i</span><span class="op">/</span><span class="kw">output</span><span class="op">$</span><span class="kw">bse.dmu1.i</span> 
 <span class="kw">t12</span>  <span class="op">&lt;-</span> <span class="kw">output</span><span class="op">$</span><span class="kw">dmu2.i</span><span class="op">/</span><span class="kw">output</span><span class="op">$</span><span class="kw">bse.dmu2.i</span> 
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">times</span>,<span class="fl">2</span><span class="op">*</span>(<span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">t21</span>))),<span class="fl">2</span><span class="op">*</span>(<span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">t12</span>))))
@@ -577,12 +621,12 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span class="co">#&gt; [10,]  5000 0.7659277 0.4528401</span>
 </pre></div>
 <p>We finally plot the boostrap samples</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
 <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></span>(<span class="kw">bt1</span><span class="op">$</span><span class="kw">time</span>,<span class="kw">bt1</span><span class="op">$</span><span class="kw">EN1N2</span>,type=<span class="st">"l"</span>,lwd=<span class="fl">0.3</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></span>(<span class="kw">bt1</span><span class="op">$</span><span class="kw">time</span>,<span class="kw">bt1</span><span class="op">$</span><span class="kw">EIN1N2</span>,type=<span class="st">"l"</span>,lwd=<span class="fl">0.3</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
 </div>
 </div>
 <div id="looking-at-other-simulations-with-dependence" class="section level1">
@@ -592,7 +636,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <ul>
 <li>Scenario I <span class="math inline">\(\rho=(0,0.0,0.0)\)</span> Independence among all efects.</li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit">
+<div class="sourceCode" id="cb21"><pre class="downlit">
   <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">base1cumhaz</span>)
   <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">base4cumhaz</span>)
   <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">drcumhaz</span>)
@@ -614,8 +658,8 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
   <span class="kw">coo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span>(<span class="kw">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status=<span class="st">"status"</span>,start=<span class="st">"entry"</span>,stop=<span class="st">"time"</span>)
   <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">coo</span>,main =<span class="st">"Scenario I"</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-17-1.png" width="700"> * Scenario II <span class="math inline">\(\rho=(0,0.5,0.5)\)</span> Independence among survivors but dependence on terminal event</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-20-1.png" width="700"> * Scenario II <span class="math inline">\(\rho=(0,0.5,0.5)\)</span> Independence among survivors but dependence on terminal event</p>
+<div class="sourceCode" id="cb22"><pre class="downlit">
   <span class="kw">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span>)
   <span class="co"># death related to  both causes in same way </span>
   <span class="kw">cor.mat</span> <span class="op">&lt;-</span> <span class="kw">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>))
@@ -625,11 +669,11 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
   <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>))
   <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">coo</span>,main =<span class="st">"Scenario II"</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
 <ul>
 <li>Scenario III <span class="math inline">\(\rho=(0.5,0.5,0.5)\)</span> Positive dependence among survivors and dependence on terminal event</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="downlit">
+<div class="sourceCode" id="cb23"><pre class="downlit">
   <span class="kw">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span>)
   <span class="co"># positive dependence for N1 and N2 all related in same way</span>
   <span class="kw">cor.mat</span> <span class="op">&lt;-</span> <span class="kw">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>))
@@ -639,11 +683,11 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
   <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>))
   <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">coo</span>,main=<span class="st">"Scenario III"</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 <ul>
 <li>Scenario IV <span class="math inline">\(\rho=(-0.4,0.5,0.5)\)</span> Negative dependence among survivors and positive dependence on terminal event</li>
 </ul>
-<div class="sourceCode" id="cb20"><pre class="downlit">
+<div class="sourceCode" id="cb24"><pre class="downlit">
   <span class="kw">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span>)
   <span class="co"># negative dependence for N1 and N2 all related in same way</span>
   <span class="kw">cor.mat</span> <span class="op">&lt;-</span> <span class="kw">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.0</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>))
@@ -653,12 +697,12 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
   <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(mfrow=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>))
   <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">coo</span>,main=<span class="st">"Scenario IV"</span>)
 </pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 <span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
