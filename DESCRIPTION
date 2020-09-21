@@ -2,7 +2,7 @@ Package: mets
 Type: Package
 Title: Analysis of Multivariate Event Times
 Version: 1.2.8.1
-Date: 2020-08-14
+Date: 2020-09-21
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Thomas Scheike", role=c("aut")))
 Author: Klaus K. Holst [aut, cre], Thomas Scheike [aut]
