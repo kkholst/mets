@@ -185,6 +185,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     data$statusC <- statusC
     cens.strata <- cens.nstrata <- NULL
 
+    if (length(whereC)>0) {
     if (is.null(Gc)) {
         kmt <- TRUE
         if (class(cens.model)[1]=="formula") {
@@ -202,6 +203,14 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         Stime <- Gc
         Pcens.model <- list(time=exit,surv=Gc,strata=0)
         nCstrata <- 1
+	cens.strata <- rep(0,length(exit))
+    }
+    } else { 
+	formC <- NULL
+        Stime <- Gc  <- rep(1,length(exit))
+        Pcens.model <- list(time=exit,surv=Gc,strata=0)
+        nCstrata <- 1
+	cens.strata <- rep(0,length(exit))
     }
 
     Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
@@ -260,8 +269,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         ## use right because we want S_0(T_jump)
         where <- indexstrata(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata,type="right")
     }# }}}
-
-
 
 
     obj <- function(pp,all=FALSE) {# {{{
@@ -361,7 +368,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             with(out,structure(-ploglik, gradient=-gradient, hessian=-hessian))
     }# }}}
 
-    if (length(jumps)==0) no.opt <- TRUE
+   if (length(jumps)==0) no.opt <- TRUE
 
     opt <- NULL
     if (p>0) {# {{{
@@ -380,6 +387,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     } else {
         val <- obj(0,all=TRUE)
     }# }}}
+
 
 ###    browser()
 ### opt <- lava::NR(beta,obj); beta.s <- opt$par
@@ -410,6 +418,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     mid <- max(xx2$id)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
+
 
     if (length(other)>=1) { ## martingale part for type-2 after T
 
