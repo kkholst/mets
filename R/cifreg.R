@@ -1002,6 +1002,8 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     Et[jumps1,] <- E
 
     Lam1fg <- -log(1-cif1)
+    ## to deal with cif1=1 in which case cif2=0
+    Lam1fg[is.na(Lam1fg)] <- 0
     laststrata <- tailstrata(xxstrata,nstrata)
     gtstart <- Lam1fg[laststrata]
     dLam1fg <- c(diffstrata(Lam1fg,xxstrata,nstrata))
