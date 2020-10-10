@@ -488,8 +488,7 @@
 #&gt;  3rd Qu.:6.900   3rd Qu.:3.175   3rd Qu.:5.875   3rd Qu.:2.300  
 #&gt;  Max.   :7.900   Max.   :3.800   Max.   :6.900   Max.   :2.500  </div><div class='input'><span class='fu'><a href='dprint.html'>dlist</a></span>(<span class='kw'>iris</span>,<span class='kw'>Petal.Length</span><span class='op'>+</span><span class='kw'>Sepal.Length</span> <span class='op'>~</span> <span class='kw'>Species</span> <span class='op'>|</span><span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.3</span> <span class='op'>&amp;</span> <span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>5</span>,
             n=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,<span class='op'>-</span>(<span class='fl'>3</span><span class='op'>:</span><span class='fl'>1</span>)))
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; Species: setosa
+</div><div class='output co'>#&gt; Species: setosa
 #&gt;     Petal.Length Sepal.Length
 #&gt; 1   1.4          5.1         
 #&gt; 6   1.7          5.4         
@@ -524,8 +523,7 @@
 #&gt; 150 5.1          5.9         
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span>)<span class='op'>~</span><span class='kw'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span>))
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; Species: setosa
+</div><div class='output co'>#&gt; Species: setosa
 #&gt;  I(Sepal.Length &gt; 7)
 #&gt;  Mode :logical      
 #&gt;  FALSE:13           
@@ -541,8 +539,7 @@
 #&gt;  FALSE:38           
 #&gt;  TRUE :12           </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span>)<span class='op'>~</span><span class='kw'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span>),
                  fun=<span class='kw'>table</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; Species: setosa
+</div><div class='output co'>#&gt; Species: setosa
 #&gt; 
 #&gt; FALSE 
 #&gt;    13 
@@ -565,8 +562,7 @@
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>iris</span>)
 <span class='fu'><a href='dcut.html'>drename</a></span>(<span class='kw'>iris</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
 <span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='kw'>species</span><span class='op'>|</span><span class='kw'>species</span>!=<span class='st'>"virginica"</span>,fun=<span class='kw'>plot</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='img'><img src='daggregate-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; species: setosa
+</div><div class='img'><img src='daggregate-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; species: setosa
 #&gt; NULL
 #&gt; ------------------------------------------------------------ 
 #&gt; species: versicolor
@@ -574,8 +570,7 @@
 #&gt; ------------------------------------------------------------ 
 #&gt; species: virginica
 #&gt; NULL</div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>species</span>))<span class='op'>|</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>species</span>))!=<span class='fl'>1</span>,fun=<span class='kw'>summary</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; I(as.numeric(species)): 2
+</div><div class='output co'>#&gt; I(as.numeric(species)): 2
 #&gt;   sepal.length    sepal.width   
 #&gt;  Min.   :4.900   Min.   :2.000  
 #&gt;  1st Qu.:5.600   1st Qu.:2.525  
@@ -594,8 +589,7 @@
 #&gt;  Max.   :7.900   Max.   :3.800  </div><div class='input'>
 <span class='fu'><a href='drelevel.html'>dnumeric</a></span>(<span class='kw'>iris</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>species</span>
 <span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='kw'>species.n</span><span class='op'>|</span><span class='kw'>species.n</span>!=<span class='fl'>1</span>,fun=<span class='kw'>summary</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; species.n: 2
+</div><div class='output co'>#&gt; species.n: 2
 #&gt;   sepal.length    sepal.width   
 #&gt;  Min.   :4.900   Min.   :2.000  
 #&gt;  1st Qu.:5.600   1st Qu.:2.525  

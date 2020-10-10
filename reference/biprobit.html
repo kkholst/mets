@@ -287,7 +287,7 @@
 #&gt; 1 -2.135152 0.7568562         1  MZ
 #&gt; 2 -2.172390 0.1960491         2  DZ</div><div class='input'>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/kkholst/lava'>lava</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/lava'>lava</a></span>)
 <span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>)<span class='op'>~</span><span class='kw'>x</span>)
 <span class='fu'><a href='https://rdrr.io/pkg/lava/man/covariance.html'>covariance</a></span>(<span class='kw'>m</span>,<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>y2</span>) <span class='op'>&lt;-</span> <span class='st'>"r"</span>
 <span class='fu'><a href='https://rdrr.io/pkg/lava/man/constrain-set.html'>constrain</a></span>(<span class='kw'>m</span>,<span class='kw'>r</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span>(<span class='kw'>x</span>[<span class='fl'>2</span>]<span class='op'>+</span><span class='kw'>x</span>[<span class='fl'>3</span>]<span class='op'>*</span><span class='kw'>x</span>[<span class='fl'>1</span>])

@@ -369,10 +369,8 @@
 #&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'>
 <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>[,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>]
 <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(z=<span class='kw'>mean</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>z</span>), z=<span class='fl'>1</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'>
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>z</span>), z=<span class='fl'>1</span>)
+
 <span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='kw'>x</span>,<span class='fl'>1</span>,<span class='kw'>min</span>)
 <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span>, min=<span class='kw'>f</span>)
 </div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
@@ -421,8 +419,7 @@
 #&gt; 10  0.32855431
 #&gt; 11 -0.18616474</div><div class='input'><span class='co'>## wildcards </span>
 <span class='fu'>dby2</span>(<span class='kw'>a</span>,<span class='st'>'y*'</span><span class='op'>+</span><span class='st'>'x*'</span><span class='op'>~</span><span class='kw'>id</span>,<span class='kw'>mean</span>) 
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num         z   median.y    median.x      mean.y
+</div><div class='output co'>#&gt;              y           x id num         z   median.y    median.x      mean.y
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.5533681  0.03833857 -1.06455561
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000 -1.5533681  0.03833857 -1.06455561
 #&gt; 3  -1.55336807 -2.03545050  1   3 0.8011568 -1.5533681  0.03833857 -1.06455561
@@ -449,8 +446,7 @@
 
 <span class='co'>## subset</span>
 <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(z=<span class='fl'>NA</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='kw'>d</span>
+<span class='kw'>d</span>
 </div><div class='output co'>#&gt;              y           x id num  z
 #&gt; 1  -1.79543538  0.55634005  1   1  1
 #&gt; 2   0.15513661  0.03833857  1   2  1
@@ -463,8 +459,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  1
 #&gt; 10 -0.30420261  0.19521967  3   4  1
 #&gt; 11 -0.24722026 -0.18616474  4   1 NA</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, v=<span class='kw'>mean</span>,z=<span class='fl'>1</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num          v  z
+</div><div class='output co'>#&gt;              y           x id num          v  z
 #&gt; 1  -1.79543538  0.55634005  1   1 -0.8201494  1
 #&gt; 2   0.15513661  0.03833857  1   2 -0.8201494  1
 #&gt; 3  -1.55336807 -2.03545050  1   3         NA NA
@@ -476,8 +471,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.1752954  1
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1752954  1
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203  1</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, <span class='kw'>mean</span>, <span class='kw'>median</span>, COLUMN=<span class='fl'>TRUE</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;              y           x id num  z     mean.y     mean.x   median.y
+</div><div class='output co'>#&gt;              y           x id num  z     mean.y     mean.x   median.y
 #&gt; 1  -1.79543538  0.55634005  1   1  1 -0.8201494  0.2973393 -0.8201494
 #&gt; 2   0.15513661  0.03833857  1   2  1 -0.8201494  0.2973393 -0.8201494
 #&gt; 3  -1.55336807 -2.03545050  1   3 NA         NA         NA         NA
@@ -502,14 +496,12 @@
 #&gt; 10  0.46188895
 #&gt; 11 -0.18616474</div><div class='input'>
 <span class='fu'>dby2</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='kw'>mean</span>, REDUCE=<span class='fl'>TRUE</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;   id     mean.y    mean.x
+</div><div class='output co'>#&gt;   id     mean.y    mean.x
 #&gt; 1  1 -0.8201494 0.2973393
 #&gt; 2  2 -0.8780987 1.0514008
 #&gt; 3  3 -0.1752954 0.6077648</div><div class='input'>
 <span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>,<span class='kw'>mean</span>,ALL=<span class='fl'>FALSE</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt;             y           x id num  z        mean
+</div><div class='output co'>#&gt;             y           x id num  z        mean
 #&gt; 3  -1.5533681 -2.03545050  1   3 NA -1.55336807
 #&gt; 4  -0.7160315 -0.06096876  2   1 NA  0.03436654
 #&gt; 6   0.7847646 -0.11705507  2   3 NA  0.03436654
@@ -518,8 +510,7 @@
 <span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='kw'>iris</span>
 <span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span>(<span class='kw'>a</span>,y=<span class='fl'>1</span>)
 <span class='fu'>dby</span>(<span class='kw'>a</span>,<span class='kw'>Species</span><span class='op'>==</span><span class='st'>"versicolor"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(y=<span class='fl'>2</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
