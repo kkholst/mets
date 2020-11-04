@@ -1,0 +1,105 @@
+---
+title: "Binomial Regression"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Binomial Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Binomial Regression for censored data 
+=====================================
+
+The binreg function does direct binomial regression for one time-point, $t$, 
+fitting the model 
+\begin{align*}
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta) 
+\end{align*}
+the estimation is based on IPCW weighted EE
+\begin{align*}
+ U(\beta) = &  X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - \mbox{expit}( X^T beta)) = 0 
+\end{align*}
+for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
+distribution. 
+
+Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
+under known censoring model. 
+
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(1000) # to control output in simulatins for p-values below.
+
+ data(bmt)
+ # logistic regresion with IPCW binomial regression 
+ out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+```
+
+We can also compute predictions using the estimates 
+```{r}
+ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
+```
+
+Further the censoring model can depend on strata 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
+ summary(outs)
+```
+
+
+Augmenting the Binomial Regression 
+===================================
+
+Rather than using a larger censoring model we can also compute the augmentation term directly and
+then fit the binomial regression model based on this augmentation term and do a couple of iterations 
+
+ Computes  the augmentation term for each individual as well as the sum
+\begin{align*}
+ A & = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
+\end{align*}
+ with 
+\begin{align*}
+ H(u,X) & = F_1^*(t,s) - F_1^*(u,s)
+\end{align*}
+ using a KM for $G_c(t)$ and a working model for cumulative baseline
+ related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
+
+ Standard errors computed under assumption of correct $G_c(s)$ model.
+
+```{r}
+ data(bmt)
+ dcut(bmt,breaks=2) <- ~age 
+ out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+			  strata(platelet,agecat.2),data=bmt,cause=1,time=40)
+ summary(out1)
+
+ out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
+ summary(out2)
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+
