@@ -204,6 +204,30 @@ so that the influence function becomes
 with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)$.
 
 
+SE's for the baseline and predictions of FG
+===========================================
+
+
+The baseline can also be written as a sum of iid terms and for fixed t this iid decomposition can be
+obtained and used for constructing confidence intervals for predictions 
+
+
+```{r}
+ ### predictions with CI based on iid decomposition of baseline and beta
+ fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cox.prep=TRUE)
+ Biid <- mets:::iid.baseline.cifreg(fg,time=3)
+ head(Biid)
+```
+
+Now using the iid decomposition of the baseline together with iid decomposition of 
+$\hat \beta - \beta_0$ we can construct confidence intervals for predictions 
+
+
+```{r}
+ FGprediid(Biid,dd)
+```
+
+
 Augmenting the FG-estimator 
 ===========================
 

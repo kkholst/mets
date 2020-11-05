@@ -62,7 +62,7 @@
 ##'
 ##' ### predictions with CI based on iid decomposition of baseline and beta
 ##' fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
-##' Biid <- iid.baseline.cifreg(fg,time=20)
+##' Biid <- mets:::iid.baseline.cifreg(fg,time=20)
 ##' FGprediid(Biid,bmt[1:5,])
 ##'
 ##' @aliases vecAllStrata diffstrata iid.baseline.cifreg FGprediid 
