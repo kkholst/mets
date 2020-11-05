@@ -1039,7 +1039,7 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
   print(nn,quote=FALSE)  
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
   if (!is.null(x$coef)) {
-    cat("log-coeffients:\n")
+    cat("coeffients:\n")
     printCoefmat(x$coef,...)
     cat("\n")
     cat("exp(coeffients):\n")
