@@ -195,12 +195,13 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
+  if (no.opt==FALSE & p!=0) {
+         II <- - tryCatch(solve(val$hessian),error=
+             function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
+  } else II <- matrix(0,p,p)
+
   ### computes Breslow estimator 
   if (cumhaz==TRUE) { # {{{
-	 if (no.opt==FALSE & p!=0) {
-               II <- - tryCatch(solve(val$hessian),error=
-	              function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
-	 } else II <- matrix(0,p,p)
 	 strata <- val$strata[val$jumps]
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
@@ -234,6 +235,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 		opt=opt, 
 		cumhaz=cumhaz, se.cumhaz=se.cumhaz,
 		lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
+		ihessian=II,
 		II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
   res
@@ -1660,7 +1662,7 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
 		if (object$p>0) {
 			Ps <- Pt[strata==j,,drop=FALSE]
 			Ps <- rbind(0,Ps)[where,,drop=FALSE]
-                        ##  print(Xs); print(varbeta); print(dim(Ps)); print((Xs %*% varbeta))
+###                         print(Xs); print(varbeta); print(dim(Ps)); print((Xs %*% varbeta))
 			Xbeta <- Xs %*% varbeta
 			seXbeta <- rowSums(Xbeta*Xs)^.5
 			cov2 <- cov1 <- Xbeta %*% t(Ps*hazt[where])
