@@ -65,8 +65,10 @@ Further the censoring model can depend on strata
 Augmenting the Binomial Regression 
 ===================================
 
-Rather than using a larger censoring model we can also compute the augmentation term directly and
-then fit the binomial regression model based on this augmentation term and do a couple of iterations 
+Rather than using a larger censoring model we can also compute an  augmentation term and
+then fit the binomial regression model based on this augmentation term. 
+Here we compute the augmentation based on stratified non-parametric estimates of $F_1(t,S(X))$, 
+where $S(X)$ gives strata based on $X$ as a working model. 
 
  Computes  the augmentation term for each individual as well as the sum
 \begin{align*}
@@ -74,12 +76,12 @@ then fit the binomial regression model based on this augmentation term and do a 
 \end{align*}
  with 
 \begin{align*}
- H(u,X) & = F_1^*(t,s) - F_1^*(u,s)
+ H(u,X) & = F_1^*(t,S(X)) - F_1^*(u,S(X))
 \end{align*}
- using a KM for $G_c(t)$ and a working model for cumulative baseline
- related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
+using a KM for $G_c(t)$ and a working model for cumulative baseline
+related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
 
- Standard errors computed under assumption of correct $G_c(s)$ model.
+ Standard errors computed under assumption of correct but estimated $G_c(s)$ model.
 
 ```{r}
  data(bmt)
