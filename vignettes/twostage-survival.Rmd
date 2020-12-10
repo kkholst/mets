@@ -223,7 +223,17 @@ modelling, so here it is better to use the twostageMLE.
  fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
                   clusters=diabetes$id,var.link=0,model="clayton.oakes")
  summary(fitco3)
+ 
+ fitco4 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
+                  clusters=diabetes$id,var.link=0,model="clayton.oakes",numDeriv=1)
+ summary(fitco4)
 ```
+
+Note, the standard errors are slightly different when comparing fitco1 with fitco3 
+since the survival.twostage uses numerical derivatives for the uncertainty in the 
+direction of the marginal model, and in addition approximates the derivative of the 
+score (the hessian) with squared first derivatives that should be fine with n is 
+large enough.  This is improved when we estimate the second derivative numerically (fitco4). 
 
 The marginal models can be either structured Cox model or as here 
 with a baseline for each strata. This gives quite similar results to those
@@ -232,8 +242,11 @@ before.
 ```{r}
   # without covariates but marginal model stratified 
   marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
+ fitco<-twostageMLE(marg,data=diabetes,theta=1.0)
+ summary(fitco)
+
   fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
-		   model="clayton.oakes")
+		   model="clayton.oakes",var.link=0)
   summary(fitcoa)
 ```
 

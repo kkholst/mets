@@ -232,8 +232,7 @@
 ##' var.par=0 specifies that the \eqn{\lambda_j}'s are used as parameters.
 ##' @param cr.models competing risks models for two.stage=0, should be given as a list with models for each cause
 ##' @param case.control assumes case control structure for "pairs" with second column being the probands,
-##' when this options is used the twostage model is profiled out via the paired estimating equations for the
-##' survival model.
+##' when this options is used the twostage model is profiled out via the paired estimating equations for the survival model.
 ##' @param ascertained if the pair are sampled only when there is an event. This is in contrast to
 ##' case.control sampling where a proband is given. This can be combined with control probands. Pair-call
 ##' of twostage is needed  and second column of pairs are the first jump time with an event for ascertained pairs,
@@ -636,13 +635,13 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		  D2thetal<- out$D2thetal
 		  Dlamthetal <- -(D1thetal+D2thetal)
 		  ## ordered as original data
-                  Fbeta <- t(Dlamthetal) %*% (margsurv$X *cumhazt*psurvmarg*rr)
+                  Fbeta <- t(Dlamthetal) %*% (margsurv$X *cumhazt*psurvmarg)
 
                   ### timeordered
-###               Gbasem <- apply(-Dlamthetal[xx$ord+1,,drop=FALSE]*psurvmarg[xx$ord+1]*rr[xx$ord+1],2,cumsumstratasum,xx$strata,xx$nstrata,type="lagsum")
 		  ## t- not needed because using S(T-) for survival already
                   Gbasedt <- Dlamthetal[xx$ord+1,,drop=FALSE]*psurvmarg[xx$ord+1]*rr[xx$ord+1]
                   Gbase <- apply(Gbasedt,2,revcumsumstrata,xx$strata,xx$nstrata)
+###		  print(Gbase)
 
                   if (fixbeta==0) { # {{{ iid after beta of marginal model
 		     Z <- xx$X
@@ -659,8 +658,8 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
 		     UUbeta <- apply(MGt,2,sumstrata,id-1,max(id))
 		     UUbeta <- UUbeta %*% invhess
-		     GbaseEdLam0 <- t(Gbasedt) %*% (E*S0i)
-		     Fbeta   <-  Fbeta +  GbaseEdLam0
+		     GbaseEdLam0 <- t(Gbase) %*% (E*S0i)
+		     Fbeta   <-  Fbeta -  GbaseEdLam0
 		     Fbetaiid <- UUbeta %*% t(Fbeta)
 	          }# }}}
 
@@ -677,22 +676,9 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 	  MGt <- (GbasedN[,drop=FALSE]-GbasedLam0*rr)*c(xx$weights)
 	  MGti <- apply(MGt,2,sumstrata,id-1,max(id))
 
+	  if (fixbeta==0) MGti <-  MGti + Fbetaiid
 	  theta.iid <-  -theta.iid + MGti
-	  if (fixbeta==0) theta.iid <-  theta.iid + Fbetaiid
-	  ## add id's after rownames that may not be exactly the same in marginal model and in pairs for fitting
-###	  if (all.equal(uxid,ucc)==TRUE) {
-###	     theta.iid <-  theta.iid + MGti
-###	     if (fixbeta==0) theta.iid  <-  theta.iid - Fbetaiid
-###	  } else {
-###	     allid <-  unique(c(uxid,ucc))
-###	     theta.iid <- matrix(0,length(allid),ncol(theta.iid))
-###	     rownames(theta.iid) <- allid
-###	     theta.iid[rownames(score.iid),] <- score.iid
-###	     theta.iid[rownames(MGti),] <- theta.iid[rownames(MGti),] + MGti
-###	     if (fixbeta==0) theta.iid[rownames(MGti),] <-  theta.iid[rownames(MGti),]+Fbetaiid
-###	  }
-
-	  out$theta.iid <- -theta.iid
+	  out$theta.iid <- theta.iid
 	  } ## }}}
    } ## }}}
 
@@ -797,7 +783,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 	  all.likepairs <- out$all.likepairs
 	  colnames(all.likepairs) <- c("surv","dt","ds","dtds","cause1","cause2")
   }# }}}
-     theta.iid <- -out$theta.iid %*% hessi
+     theta.iid <- out$theta.iid %*% hessi
 ### rownames not set to make more robust
 ###     if (is.null(call.secluster)) rownames(theta.iid) <- unique(cluster.call) else rownames(theta.iid) <- unique(se.clusters)
      robvar.theta  <- crossprod(theta.iid)
@@ -1705,16 +1691,17 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ##' @param method type of opitmizer, default is Newton-Raphson "NR"
 ##' @param no.opt to not optimize, for example to get score and iid for specific theta
 ##' @param weights cluster specific weights, but given with length equivalent to data-set, weights for score equations
+##' @param se.cluster specifies how the influence functions are summed before squared when computing the variance. Note that the id from the marginal model is used to construct MLE, and then these scores can be summed with the se.cluster argument. 
 ##' @param ... arguments to be passed to  optimizer
 ##' @export
 twostageMLE <-function(margsurv,data=parent.frame(),
-theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,...)
+theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,se.cluster=NULL,...)
 {# {{{
  if (class(margsurv)!="phreg")  stop("Must use phreg for this \n");
 
  clusters <- margsurv$cox.prep$id
  n <- nrow(margsurv$cox.prep$X)
- secluster <- NULL
+
 
  if (is.null(theta.des)==TRUE) ptheta<-1;
  if (is.null(theta.des)==TRUE) theta.des<-matrix(1,n,ptheta) else theta.des<-as.matrix(theta.des);
@@ -1763,14 +1750,13 @@ theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,...)
   ### clusterspecific weights
   weights <- weights[firstid]
 
-###  par <- c(2,2,0.1)
-###  par <- 2
+  thetaX<- as.matrix(theta.des[firstid,,drop=FALSE])
+
 obj <- function(par,all=FALSE)
 {# {{{
 
-if (var.link==1) epar <- c(exp(par)) else epar <- c(par)
+if (var.link==1) epar <- c(exp(c(par))) else epar <- c(par)
 
-thetaX<- as.matrix(theta.des[firstid,,drop=FALSE])
 thetav <- c(as.matrix(theta.des) %*%  c(epar))
 thetai <-thetav[firstid]
 
@@ -1799,8 +1785,8 @@ Dhes  <- c(D2N+(2/thetai^2)*Hs/R-(2/thetai^3)*log(R)-(1/thetai+Ni.tau)*(H2*R-Hs*
 Dhes  <-  Dhes * c(weights)
 
 if (var.link==1) {
-	scoreiid  <-  scoreiid * c(exp(par));
-	Dhes<- Dhes* thetai^2 + thetai *  Dltheta
+scoreiid  <-  scoreiid * c(thetai);  
+Dhes<- Dhes* thetai^2 + thetai *  Dltheta
 }
 
 gradient <- apply(scoreiid,2,sum)
@@ -1854,17 +1840,15 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
    R <- c(sumstrata((exp(thetav*H)-1),xx$id,mid)) + 1
    H2 <- c(sumstrata(H^2*exp(thetav*H),xx$id,mid) )
 
-Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(thetav*H)/R[id]+statusxx+(1+thetav*Ni.tau[id])*exp(thetav*H)*Hs[id]/R[id]^2)
+   Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(thetav*H)/R[id]+statusxx+(1+thetav*Ni.tau[id])*exp(thetav*H)*Hs[id]/R[id]^2)
 
-   if (var.link==1) {
-	Ft  <-  Ft * c(exp(par));
-   }
-   Gt <- c(RR *Ft * xx$sign * weightsid)
-   Ft  <- c( Ft * H * weightsid )
-
-  Gbase <- apply(Gt* theta.des,2,revcumsumstrata,xx$strata,xx$nstrata)
+  if (var.link==1) {
+	Ft  <-  Ft * c(exp(theta.des %*% val$coef));
+  }
+  Gt <- c(RR *Ft * xx$sign * weightsid)
+  Ft  <- c( Ft * H * weightsid )
   Fbeta <-  t(theta.des) %*% ( xx$X * Ft )
-
+  Gbase <- apply(Gt* theta.des,2,revcumsumstrata,xx$strata,xx$nstrata)
 
   ### beta part
   if (fixbeta==0) {
@@ -1902,13 +1886,27 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
 
 ###  if (fixbeta==0) print(cbind(val$score.iid,MGti,Fbetaiid)) else print(cbind(val$score.iid,MGti))
 
+  if (fixbeta==0) MGti <- MGti+Fbetaiid
   theta.iid <-  val$score.iid + MGti
-  if (fixbeta==0) theta.iid  <-  theta.iid + Fbetaiid
   theta.iid  <-  theta.iid %*% hessianI
   ## take names from phreg call
   if (!is.null(margsurv$id)) rownames(theta.iid) <- unique(margsurv$id)
   val$theta.iid <- theta.iid
 # }}}
+  }
+
+  ### if se.cluster is there we cluster iid-decomp before squaring 
+  if (!is.null(se.cluster)) 
+	  if (length(se.cluster)!=length(clusters)) stop("Length of seclusters and clusters must be same\n");
+
+  if (!is.null(se.cluster)) {
+      iids <-  unique(se.cluster);
+      nseclust  <- length(iids);
+      if (is.numeric(se.cluster)) se.cluster <-  fast.approx(iids,se.cluster)-1
+       else se.cluster <- as.integer(factor(se.cluster, labels = seq(nseclust)))-1
+
+      val$theta.iid <-       apply(val$theta.iid,se.cluster,nseclust)
+      val$theta.iid.naive <- apply(val$theta.iid.naive,se.cluster,nseclust)
   }
 
   var <- robvar.theta  <-  var.theta  <-  crossprod(val$theta.iid)
@@ -1920,7 +1918,7 @@ Ft <- ((1/(thetav*R[id]))*exp(thetav*H)-(1/thetav+Ni.tau[id])*(1+thetav*H)*exp(t
 	             var.naive=naive.var)
   class(val) <- "mets.twostage"
   attr(val,"clusters") <- clusters
-###  attr(val,"secluster") <- c(se.clusters)
+  attr(val,"secluster") <- c(se.cluster)
   attr(val,"var.link")<-var.link;
   attr(val,"ptheta")<-ptheta
   attr(val,"n")<-n ;

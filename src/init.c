@@ -66,7 +66,7 @@ extern SEXP twostageloglikeRVpairs(SEXP, SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP, SEXP, SEXP);
 extern SEXP Uhat(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP uniprobit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP CubeVec(SEXP, SEXP);
+extern SEXP CubeVec(SEXP, SEXP,SEXP);
 extern SEXP vecMatMat(SEXP, SEXP);
 extern SEXP OutCov(SEXP, SEXP);
 extern SEXP MatxCube(SEXP, SEXP, SEXP);
@@ -126,7 +126,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"clusterindexdata",                  (DL_FUNC) &clusterindexdata,                   4},
     {"clusterindexM",                     (DL_FUNC) &clusterindexM,                      5},
     {"cor",                               (DL_FUNC) &cor,                               40},
-    {"CubeVec",                           (DL_FUNC) &CubeVec,                            2},
+    {"CubeVec",                           (DL_FUNC) &CubeVec,                            3},
     {"CubeMat",                           (DL_FUNC) &CubeMat,                            2},
     {"familypairindex",                   (DL_FUNC) &familypairindex,                    3},
     {"FastApprox",                        (DL_FUNC) &FastApprox,                         4},

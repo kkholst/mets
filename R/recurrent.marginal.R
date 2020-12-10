@@ -2324,7 +2324,6 @@ return(data)
 }# }}}
 
 
-
 ##' Estimation of probability of more that k events for recurrent events process
 ##'
 ##' Estimation of probability of more that k events for recurrent events process

@@ -1736,7 +1736,7 @@ mat CubeVecC(mat XX, vec beta,int dim1) {/*{{{*/
 	return(XXbeta);
 }/*}}}*/
 
-RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP)
+RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP,SEXP iinv)
 {/*{{{*/
 	BEGIN_RCPP
 //		colvec beta = Rcpp::as<colvec>(betaSEXP);
@@ -1744,11 +1744,14 @@ RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP)
 	mat beta = Rcpp::as<mat>(betaSEXP);
 	unsigned p = beta.n_cols;
 	unsigned n = XX.n_rows;
+	unsigned inv = Rcpp::as<int>(iinv);
 
 	mat XXbeta(n,p);
 	mat iXXbeta(n,p*p);
+	mat iXX(p,p); 
 	for (unsigned j=0; j<n; j++)  {
-		mat iXX= pinv(reshape(XX.row(j),p,p));
+		if (inv==1) iXX= pinv(reshape(XX.row(j),p,p));
+		else iXX=reshape(XX.row(j),p,p); 
 		iXXbeta.row(j)=vectorise(iXX).t();
 		XXbeta.row(j)=(iXX*(beta.row(j)).t()).t();
 	}
