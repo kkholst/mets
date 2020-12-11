@@ -14,21 +14,17 @@ survival.twostage(
   margsurv,
   data = parent.frame(),
   score.method = "nr",
-  Nit = 60,
   detail = 0,
   clusters = NULL,
   silent = 1,
   weights = NULL,
-  control = list(),
   theta = NULL,
   theta.des = NULL,
   var.link = 1,
   baseline.iid = 1,
-  step = 0.5,
   model = "clayton.oakes",
   marginal.trunc = NULL,
   marginal.survival = NULL,
-  marginal.status = NULL,
   strata = NULL,
   se.clusters = NULL,
   numDeriv = 0,
@@ -38,10 +34,8 @@ survival.twostage(
   numDeriv.method = "simple",
   additive.gamma.sum = NULL,
   var.par = 1,
-  cr.models = NULL,
-  case.control = 0,
-  ascertained = 0,
-  shut.up = 0
+  no.opt = FALSE,
+  ...
 )
 }
 \arguments{
@@ -51,8 +45,6 @@ survival.twostage(
 
 \item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
 
-\item{Nit}{Number of iterations}
-
 \item{detail}{Detail}
 
 \item{clusters}{Cluster variable}
@@ -60,8 +52,6 @@ survival.twostage(
 \item{silent}{Debug information}
 
 \item{weights}{Weights}
-
-\item{control}{Optimization arguments}
 
 \item{theta}{Starting values for variance components}
 
@@ -72,15 +62,11 @@ theta-design for this pair, is given in pairs as column 5}
 
 \item{baseline.iid}{to adjust for baseline estimation, using phreg function on same data.}
 
-\item{step}{Step size}
-
 \item{model}{model}
 
 \item{marginal.trunc}{marginal left truncation probabilities}
 
 \item{marginal.survival}{optional vector of marginal survival probabilities}
-
-\item{marginal.status}{related to marginal survival probabilities}
 
 \item{strata}{strata for fitting, see example}
 
@@ -105,18 +91,9 @@ of theta parameters), when null then sums all parameters.}
 \item{var.par}{is 1 for the default parametrization with the variances of the random effects,
 var.par=0 specifies that the \eqn{\lambda_j}'s are used as parameters.}
 
-\item{cr.models}{competing risks models for two.stage=0, should be given as a list with models for each cause}
+\item{no.opt}{for not optimizng}
 
-\item{case.control}{assumes case control structure for "pairs" with second column being the probands,
-when this options is used the twostage model is profiled out via the paired estimating equations for the
-survival model.}
-
-\item{ascertained}{if the pair are sampled only when there is an event. This is in contrast to
-case.control sampling where a proband is given. This can be combined with control probands. Pair-call
-of twostage is needed  and second column of pairs are the first jump time with an event for ascertained pairs,
-or time of control proband.}
-
-\item{shut.up}{to make the program more silent in the context of iterative procedures for case-control
+\item{...}{Additional arguments to maximizer NR of lava.
 and ascertained sampling}
 }
 \description{

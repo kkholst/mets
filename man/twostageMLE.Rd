@@ -13,6 +13,7 @@ twostageMLE(
   method = "NR",
   no.opt = FALSE,
   weights = NULL,
+  se.cluster = NULL,
   ...
 )
 }
@@ -33,6 +34,8 @@ twostageMLE(
 \item{no.opt}{to not optimize, for example to get score and iid for specific theta}
 
 \item{weights}{cluster specific weights, but given with length equivalent to data-set, weights for score equations}
+
+\item{se.cluster}{specifies how the influence functions are summed before squared when computing the variance. Note that the id from the marginal model is used to construct MLE, and then these scores can be summed with the se.cluster argument.}
 
 \item{...}{arguments to be passed to  optimizer}
 }

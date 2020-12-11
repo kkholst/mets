@@ -675,14 +675,14 @@ This model has a more free parameter than the Clayton-Oakes model.
  
  # Plackett model
  mph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
- fitp <- survival.twostage(mph,data=diabetes,theta=3.0,Nit=40,
+ fitp <- survival.twostage(mph,data=diabetes,theta=3.0,
                 clusters=diabetes$id,var.link=1,model="plackett")
  summary(fitp)
  
  # without covariates but with stratafied 
  marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
  fitpa <- survival.twostage(marg,data=diabetes,theta=1.0,
-                 clusters=diabetes$id,score.method="optimize")
+                 clusters=diabetes$id)
  summary(fitpa)
  
  fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,

@@ -75,16 +75,14 @@
 ##' @references
 ##' Two-stage binomial modelling
 ##' @examples
-##' library("timereg")
-##' data("twinstut",package="mets")
+##' data(twinstut)
 ##' twinstut0 <- subset(twinstut, tvparnr<11000)
 ##' twinstut <- twinstut0
 ##' twinstut$binstut <- (twinstut$stutter=="yes")*1
 ##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 ##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 ##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
-##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-##' 	                 method="nr")
+##'          clusters=twinstut$tvparnr,theta.des=theta.des,detail=0)
 ##' summary(bin)
 ##'
 ##' twinstut$cage <- scale(twinstut$age)
@@ -156,12 +154,10 @@
 ##' @param margbin Marginal binomial model
 ##' @param data data frame
 ##' @param method Scoring method default is  "nr"
-##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
 ##' @param silent Debug information
 ##' @param weights Weights for log-likelihood, can be used for each type of outcome in 2x2 tables.
-##' @param control Optimization arguments
 ##' @param theta Starting values for variance components
 ##' @param theta.des design for dependence parameters, when pairs are given the indeces of the
 ##' theta-design for this pair, is given in pairs as column 5
@@ -169,7 +165,6 @@
 ##' @param var.par parametrization
 ##' @param var.func when alternative parametrizations are used this function can specify how the paramters are related to the \eqn{\lambda_j}'s.
 ##' @param iid Calculate i.i.d. decomposition when iid>=1, when iid=2 then avoids adding the uncertainty for marginal paramters for additive gamma model (default).
-##' @param step Step size
 ##' @param notaylor Taylor expansion
 ##' @param model model
 ##' @param marginal.p vector of marginal probabilities
@@ -188,14 +183,15 @@
 ##' @param case.control if data is case control data for pair call, and here 2nd column of pairs are probands (cases or controls)
 ##' @param twostage default twostage=1, to fit MLE use twostage=0
 ##' @param beta is starting value for beta for MLE version
+##' @param no.opt for not optimizing 
+##' @param ... for NR of lava 
 binomial.twostage <- function(margbin,data=parent.frame(),
-     method="nr",Nit=60,detail=0,clusters=NULL,silent=1,weights=NULL,
-     control=list(),theta=NULL,theta.des=NULL,var.link=0,var.par=1,var.func=NULL,
-     iid=1,step=1.0,notaylor=1,model="plackett",marginal.p=NULL,beta.iid=NULL,Dbeta.iid=NULL,
+     method="nr",detail=0,clusters=NULL,silent=1,weights=NULL,
+     theta=NULL,theta.des=NULL,var.link=0,var.par=1,var.func=NULL,
+     iid=1,notaylor=1,model="plackett",marginal.p=NULL,beta.iid=NULL,Dbeta.iid=NULL,
      strata=NULL,max.clust=NULL,se.clusters=NULL,numDeriv=0,
      random.design=NULL,pairs=NULL,dim.theta=NULL,additive.gamma.sum=NULL,
-     pair.ascertained=0,case.control=0,
-     twostage=1,beta=NULL)
+     pair.ascertained=0,case.control=0,no.opt=FALSE,twostage=1,beta=NULL,...)
 { ## {{{
     ## {{{ seting up design and variables
     rate.sim <- 1; sym=1;
@@ -296,7 +292,7 @@ if (pair.structure==1) {
 
     theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta);
 
-    loglike <- function(par)
+    obj <- function(par)
     { ## {{{
 
       if (pair.structure==0 | dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par[seq(1,ptheta)]),nrow=ptheta,ncol=1);
@@ -382,160 +378,62 @@ if (pair.structure==1) {
 
             attr(outl,"grad") <- attr(outl,"gradient") <-outl$score
 	    attr(outl,"hessian") <- outl$Dscore
-###	    outl$hessian <- outl$Dscore
-###	    outl$gradient <- outl$score
+            outl$gradient <- outl$score 
+            outl$hessian <- -outl$Dscore
 
-            if (oout==0) ret <- c(-1*outl$loglike) else if (oout==1) ret <- sum(outl$score^2) else if (oout==3) ret <- outl$score else ret <- outl
-	    return(ret)
-        } ## }}}
+###            if (oout==0) ret <- c(-1*outl$loglike) else if (oout==1) ret <- sum(outl$score^2) else if (oout==3) ret <- outl$score else ret <- outl
 
-    if (method=="optimize" && ptheta!=1) {
-	    cat("optimize only works for d==1, score.mehod set to nlminb \n");
-	    method <- "nlminb";
-    }
+    if (oout==0) ret <- with(outl,structure(-outl$loglike,gradient=-gradient,hessian=-hessian))
+    else if (oout==1) ret <- outl$gradient 
+    else if (oout==2) ret <- outl
 
-    theta.iid <- NULL
-    logl <- NULL
-    p <- theta
-    if (twostage==0) p <- c(p,beta);
-    theta <- p
+    return(ret)
+    } ## }}}
 
-    if (method=="nr") { ## {{{
-        oout <- 2;  ### output control for obj
+  theta.iid <- NULL
+  logl <- NULL
+  p <- theta
+  if (twostage==0) p <- c(p,beta);
+  theta <- p
+    
+  oout <- 0
+  opt <- NULL
+  if (no.opt==FALSE) {
+      if (tolower(method)=="nr") {
+          tim <- system.time(opt <- lava::NR(p,obj,...))
+          opt$timing <- tim
+          opt$estimate <- opt$par
+      } else {
+          opt <- nlm(obj,beta,...)
+          opt$method <- "nlm"
+      }
+      cc <- opt$estimate;  ## names(cc) <- colnames(X)
+###      if (!stderr) return(cc)
+      oout <- 2
+      val <- c(list(coef=cc),obj(opt$estimate))
+ } else val <- c(list(coef=beta),obj(p))
+ theta <- matrix(val$coef,ncol=1)
 
-        if (Nit>0)
-            for (i in 1:Nit)
-            {
-                    out <- loglike(p)
-                    hess <-  -1* out$Dscore
-                    if (!is.na(sum(hess))) hessi <- lava::Inverse(out$Dscore) else hessi <- hess
-                    if (detail==1) {## {{{
-                        cat(paste("Fisher-Scoring ===================: it=",i,"\n"));
-                        cat("theta:");print(c(p))
-                        cat("loglike:");cat(c(out$loglike),"\n");
-                        cat("score:");cat(c(out$score),"\n");
-                        cat("hess:\n"); cat(out$Dscore,"\n");
-                    }## }}}
-                    delta <- hessi %*% out$score *step
-	            if (Nit>0) {
-                    p <- p + delta* step
-                    theta <- p;
-		    }
-                    if (is.nan(sum(out$score))) break;
-                    if (sum(abs(out$score))<0.00001) break;
-                    if (max(abs(theta))>20 & var.link==0) { cat("theta too large lacking convergence \n"); break; }
-                }
-        if (!is.nan(sum(p))) {
-            if (detail==1 && iid==1) cat("iid decomposition\n");
-            out <- loglike(p)
-            logl <- out$loglike
-            score1 <- score <- out$score
-            oout <- 0;
-            hess1 <- hess <- -1*out$Dscore
-###            if (iid==1) theta.iid <- out$theta.iid
-            if (detail==1 && iid==1) cat("finished iid decomposition\n");
+    if (numDeriv>=1) {
+         oout <- 1
+         if (detail==1 ) cat("starting numDeriv for second derivative \n");
+         val$hessian <- numDeriv::jacobian(obj,p,method="simple")
+         if (detail==1 ) cat("finished numDeriv for second derivative \n");
         }
-        if (numDeriv==1) {
-            if (detail==1 ) cat("starting numDeriv for second derivative \n");
-            oout <- 0;
-            score2 <- numDeriv::jacobian(loglike,p)
-	    if (detail==1) {
-		    cat("Derivative\n");
-	            cat(c(out$score))
-		    cat("\n Numerical Derivative\n");
-	            cat(c(score2))
-	            cat("\n")
-	    }
-	    score1 <- matrix(score2,ncol=1)
-            oout <- 3
-            hess <- numDeriv::jacobian(loglike,p)
-            if (detail==1 ){
-                  cat("finished numDeriv for second derivative \n");
-	          cat("Numerical derivative second derivative \n");
-	          print(hess)
-	          cat("average second moment, for -scoring\n");
-	          print(out$Dscore)
-	    }
-        }
-        if (detail==1 & Nit==0) {## {{{
-            cat(paste("Fisher-Scoring ===================: final","\n"));
-            cat("theta:");print(c(p))
-            cat("loglike:");cat(c(out$loglike),"\n");
-            cat("score:");cat(c(out$score),"\n");
-            cat("hess:\n"); cat(out$Dscore,"\n");
-        }## }}}
-        if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- diag(nrow(hess))
-        ## }}}
-    } else if (method=="nlminb") { ## {{{ nlminb optimizer
-        oout <- 0;
-        tryCatch(opt <- nlminb(theta,loglike,control=control),error=function(x) NA)
-        if (detail==1) print(opt);
 
-        if (detail==1 && iid==1) cat("iid decomposition\n");
-        oout <- 2
-        theta <- opt$par
-        out <- loglike(opt$par)
-        logl <- out$loglike
-        score1 <- score <- out$score
-        hess1 <- hess <- - out$Dscore
-        if (iid==1) theta.iid <- out$theta.iid
-        if (numDeriv==1) {
-            oout <- 3;
-            p <- theta
-            hess <- -1 * numDeriv::jacobian(loglike,theta)
-        }
-        hessi <- lava::Inverse(hess);
-        ## }}}
-    } else if (method=="optimize" && ptheta==1) { ## {{{  optimizer
-        oout <- 0;
-        if (var.link==1) {mino <- -20; maxo <- 10;} else {mino <- 0.001; maxo <- 100;}
-        tryCatch(opt <- optimize(loglike,c(mino,maxo)));
-        if (detail==1) print(opt);
+  hess <- val$hessian
+  if (!is.na(sum(hess))) hessi <- lava::Inverse(val$hessian) else hessi <- diag(nrow(val$hessian))
 
-        opt$par <- opt$minimum
-        theta <- opt$par
-        if (detail==1 && iid==1) cat("iid decomposition\n");
-        oout <- 2
-        out <- loglike(opt$par)
-        logl <- out$loglike
-        score1 <- score <- out$score
-        hess1 <- hess <- - out$Dscore
-        if (iid==1) theta.iid <- out$theta.iid
-        if (numDeriv==1) {
-            oout <- 3;
-            p <- opt$par
-            hess <-  -1* numDeriv::jacobian(loglike,p)
-        }
-        hessi <- lava::Inverse(hess);
-        ## }}}
-    } else if (method=="nlm") { ## {{{ nlm optimizer
-        iid <- 0; oout <- 0;
-        tryCatch(opt <- nlm(loglike,theta,hessian=TRUE,print.level=detail),error=function(x) NA)
-        iid <- 1;
-        hess <-  opt$hessian
-        score <- opt$gradient
-        if (detail==1) print(opt);
-        hessi <-  lava::Inverse(hess);
-        theta <- opt$estimate
-        if (detail==1 && iid==1) cat("iid decomposition\n");
-        oout <- 2
-        out <- loglike(opt$estimate)
-        logl <- out$loglike
-        score1 <- out$score
-        hess1 <- -1* out$Dscore
-        if (iid==1) theta.iid <- out$theta.iid
-        ## }}}
-    }  else stop("methods = optimize(dim=1) nlm nlminb nr\n");
 
     ## {{{ handling output
     iid.tot <- NULL
     var.tot <- robvar.theta <- NULL
     beta <- NULL
     if (iid>=1) {
-        theta.iid <- out$theta.iid %*% hessi
+        theta.iid <- val$theta.iid %*% hessi
         if (dep.model==3 & iid!=2  & (!is.null(beta.iid)))
-	if (nrow(beta.iid)==nrow(out$theta.iid) & twostage==1) {
-	     theta.beta.iid <- (beta.iid %*% t(out$DbetaDtheta) ) %*% hessi
+	if (nrow(beta.iid)==nrow(val$theta.iid) & twostage==1) {
+	     theta.beta.iid <- (beta.iid %*% t(val$DbetaDtheta) ) %*% hessi
 	     theta.iid  <- theta.iid+theta.beta.iid
 	     iid.tot <- cbind(theta.iid,beta.iid)
 	     var.tot <- crossprod(iid.tot)
@@ -553,9 +451,9 @@ if (pair.structure==1) {
 ###    theta <- matrix(theta,length(c(theta)),1)
    if (length(thetanames)==nrow(theta)) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
 
-    ud <- list(theta=theta,score=score,hess=hess,hessi=hessi,var.theta=var.theta,model=model,robvar.theta=robvar.theta,
-    theta.iid=theta.iid,thetanames=thetanames,
-    loglike=-logl,score1=score1,Dscore=out$Dscore,
+    ud <- list(coef=val$coef,theta=theta,score=val$gradient,hess=hess,hessi=hessi,
+	       var.theta=var.theta,model=model,robvar.theta=robvar.theta,
+    theta.iid=theta.iid,thetanames=thetanames,loglike=val$loglike,Dscore=val$Dscore,
     margsurv=ps,iid.tot=iid.tot,var.tot=var.tot,beta=beta);
     class(ud)<-"mets.twostage"
     attr(ud, "binomial") <- TRUE
@@ -569,13 +467,13 @@ if (pair.structure==1) {
     attr(ud,"antpers")<-antpers;
     attr(ud,"antclust")<-antclust;
     attr(ud, "Type") <- model
-    attr(ud,"DbetaDtheta")<-out$DbetaDtheta;
+    attr(ud,"DbetaDtheta")<-val$DbetaDtheta;
     attr(ud,"ags")<- additive.gamma.sum
     attr(ud,"twostage")<- twostage
     attr(ud,"pair.ascertained")<- pair.ascertained
     ### to be consistent with structure for survival twostage model
     attr(ud, "additive-gamma") <- (dep.model==3)*1
-    attr(ud, "likepairs") <- c(out$likepairs)
+    attr(ud, "likepairs") <- c(val$likepairs)
     if (dep.model==3 & pair.structure==0) {
        attr(ud, "pardes") <- theta.des
        attr(ud, "theta.des") <- theta.des
@@ -593,6 +491,7 @@ if (pair.structure==1) {
     return(ud);
     ## }}}
 } ## }}}
+
 
 ##' @export
 p11.binomial.twostage.RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,i=1,j=1) { ## {{{
