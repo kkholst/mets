@@ -4063,7 +4063,7 @@ object.defined <- function(object)
 ##' @export
 twin.polygen.design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { ## {{{
   ### twin case
-  nid <- table(data[,id])
+###  nid <- table(data[,id])
   id <- data[,id]
   tv <- diff(c(NA,id))
   tv[tv!=0 | is.na(tv)] <- 1
@@ -4144,7 +4144,7 @@ return(res)
 ace.family.design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) {
 ## {{{
   ### standard family case
-  nid <- table(data[,id])
+###  nid <- table(data[,id])
   id <- data[,id]
 
   if (type=="ace") { ### ace ## {{{

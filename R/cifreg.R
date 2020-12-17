@@ -213,6 +213,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	cens.strata <- rep(0,length(exit))
     }
 
+
     Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status==cause)
@@ -389,13 +390,14 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     }# }}}
 
 
-###    browser()
 ### opt <- lava::NR(beta,obj); beta.s <- opt$par
     beta.s <- val$coef
     if (is.null(beta.s)) beta.s <- 0
     ## getting final S's
     opt <-  val ## obj(beta.s,all=TRUE)
 
+
+    if (p>0) {
 ### iid version given G_c
     ## {{{
     ##iid robust phreg
@@ -418,7 +420,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     mid <- max(xx2$id)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
-
 
     if (length(other)>=1) { ## martingale part for type-2 after T
 
@@ -483,6 +484,8 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     UUiid <- UU %*% iH
     var1 <-  crossprod(UUiid)
     varmc <-  crossprod(Uiid)
+    ### end if (p>0)
+    } else {varmc <- var1 <- 0; MGc <- iH <- UUiid <- Uiid <- NULL}
     strata <- xx2$strata[jumps]
     cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
     colnames(cumhaz)    <- c("time","cumhaz")

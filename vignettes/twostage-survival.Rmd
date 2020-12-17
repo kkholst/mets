@@ -233,7 +233,7 @@ Note, the standard errors are slightly different when comparing fitco1 with fitc
 since the survival.twostage uses numerical derivatives for the uncertainty in the 
 direction of the marginal model, and in addition approximates the derivative of the 
 score (the hessian) with squared first derivatives that should be fine with n is 
-large enough.  This is improved when we estimate the second derivative numerically (fitco4). 
+large enough. This is improved when we estimate the second derivative numerically (fitco4). 
 
 The marginal models can be either structured Cox model or as here 
 with a baseline for each strata. This gives quite similar results to those
@@ -327,7 +327,7 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
 ```{r}
  data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
 
- out <- twin.polygen.design(data,id="cluster")
+ out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  pardes <- out$pardes
  pardes 
 ```
@@ -358,11 +358,16 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
  subject is also computed and is here around $3$, as we indeed constructed.
 
 ```{r}
+### data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
+### out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
  ts <- twostage(aa,data=data,clusters=data$cluster,detail=0,
-      theta=c(2,1),var.link=0,step=0.5,random.design=des.rv,theta.des=pardes)
+      theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
  summary(ts)
 ```
+
+ - A nice feature of the procdure is that it scales linearly in the number of observations
+    - 1 mill pairs had a running time of 2 minutes. 
 
 The estimates can be transformed into Kendall's tau estimates for MZ and DZ twins. The Kendall's tau
 in the above output reflects how  a gamma distributed random effect in the normal Clayton-Oakes model
@@ -426,8 +431,7 @@ summary(ts)
 
 The model can also be fitted by specifying the pairs that 
 one wants for the pairwise likelhood. This is done by
-specifying the pairs argument. 
-We start by considering all pairs as we also did before. 
+specifying the pairs argument.  We start by considering all pairs as we also did before. 
 
 All pairs can be written up by calling the familycluster.index
 function. 
@@ -459,7 +463,7 @@ are also specified as before.
 ```{r}
 ssid <- sort(sample(1:nrow(pairs),2000))
 tsd <- twostage(pa,data=data,clusters=data$cluster,
-    theta=c(2,1)/10,var.link=0,step=1.0, random.design=out$des.rv,
+    theta=c(2,1)/10,var.link=0,random.design=out$des.rv,
    theta.des=out$pardes,pairs=pairs[ssid,])
 summary(tsd)
 ```
@@ -595,18 +599,20 @@ tsdid$theta
 Finally the same model structure can be setup based on a Kinship coefficient. 
 
 ```{r}
-kinship  <- c()
-for (i in 1:nrow(pair.new))
-{
-if (pair.types[i,1]=="mother" & pair.types[i,2]=="father") pk1 <- 0 else pk1 <- 0.5
-kinship <- c(kinship,pk1)
-}
+kinship  <- rep(0.5,nrow(pair.types))
+kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
+
+###for (i in 1:nrow(pair.new))
+###{
+###if (pair.types[i,1]=="mother" & pair.types[i,2]=="father") pk1 <- 0 else pk1 <- 0.5
+###kinship <- c(kinship,pk1)
+###}
 head(kinship,n=10)
 
 out <- make.pairwise.design(pair.new,kinship,type="ace") 
 ```
 
-Same same 
+Same output as before 
 
 ```{r}
 tsdid3 <- twostage(pa,data=dataid,clusters=dataid$cluster,
@@ -619,15 +625,13 @@ tsdid$theta
 
 Now fitting the AE model without the "C" component for shared environment: 
 
-
 ```{r}
-out <- make.pairwise.design(pair.new,kinship,type="ae") 
+outae <- make.pairwise.design(pair.new,kinship,type="ae") 
 tsdid4 <- twostage(pa,data=dataid,clusters=dataid$cluster,
-   theta=c(2,1)/10,var.link=0,step=1.0,random.design=out$random.design,
-   baseline.iid=0,theta.des=out$theta.des,pairs=out$new.pairs,dim.theta=1)
+   theta=c(2,1)/10,var.link=0,random.design=outae$random.design,
+   baseline.iid=0,theta.des=outae$theta.des,pairs=outae$new.pairs,dim.theta=1)
 summary(tsdid4)
 ```
-
 
 
 Univariate plackett model twostage models 
