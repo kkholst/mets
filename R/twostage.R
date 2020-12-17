@@ -251,6 +251,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   if ((!is.null(margsurv)) | (!is.null(marginal.survival))) fix.baseline <- 1
   antpers <- nrow(data); RR <-  rep(1,antpers);
 
+
   if (!is.null(margsurv)) {
      rrr <-  readmargsurv(margsurv,data,clusters)
      psurvmarg <- rrr$psurvmarg; ptrunc <- rrr$ptrunc; start.time <- rrr$entry;
@@ -403,12 +404,13 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 ###      if (!stderr) return(cc)
       oout <- 2
       val <- c(list(coef=cc),obj(opt$estimate))
- } else val <- c(list(coef=beta),obj(p))
+ } else {oout <- 2; val <- c(list(coef=p),obj(p))}
 
      if (numDeriv>=1) {
+	 p <- val$coef
          oout <- 1
          if (detail==1 ) cat("starting numDeriv for second derivative \n");
-         val$hessian <- numDeriv::jacobian(obj,p,method="simple")
+         val$hessian <- numDeriv::jacobian(obj,p,method=numDeriv.method)
          if (detail==1 ) cat("finished numDeriv for second derivative \n");
         }
 
@@ -423,7 +425,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 	    ucc <-  unique(cluster.call)
 	    if (length(ucc)== nrow(theta.iid))
 		    rownames(theta.iid) <- unique(cluster.call)
-  ### lets iid for theta be just score to start, correction for marginal for phreg call
+                ### lets iid for theta be just score to start, correction for marginal for phreg call
 
                 if (class(margsurv)=="phreg" & baseline.iid==1) {  ## {{{ adjust for baseline when phreg is used
 
@@ -439,7 +441,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		  D2thetal<- val$D2thetal
 		  Dlamthetal <- -(D1thetal+D2thetal)
 		  ## ordered as original data
-                  Fbeta <- t(Dlamthetal) %*% (margsurv$X *cumhazt*psurvmarg)
+                  Fbeta <- t(Dlamthetal) %*% (margsurv$X *c(cumhazt*psurvmarg))
 
                   ### timeordered
 		  ## t- not needed because using S(T-) for survival already
@@ -517,11 +519,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
 
   ud <- list(theta=matrix(val$coef,ncol=1),coef=val$coef,score=val$gradient,hess=hess,hessi=hessi,var.theta=var.theta,
-	     model=model,robvar.theta=robvar.theta,
-             theta.iid=theta.iid,loglikeiid=loglikeiid,likepairs=likepairs,
-	     thetanames=thetanames,loglike=logl,score1=score1,Dscore=val$Dscore,
-	     marginal.surv=marginal.surv,marginal.trunc=marginal.trunc,
-	     se=diag(robvar.theta)^.5,score.iid=-score.iid,theta.des=theta.des,random.design=random.design)
+     model=model,robvar.theta=robvar.theta,
+     theta.iid=theta.iid,loglikeiid=loglikeiid,likepairs=likepairs,
+     thetanames=thetanames,loglike=logl,score1=score1,Dscore=val$Dscore,
+     marginal.surv=marginal.surv,marginal.trunc=marginal.trunc,
+     se=diag(robvar.theta)^.5,score.iid=-score.iid,theta.des=theta.des,random.design=random.design)
   class(ud) <- "mets.twostage"
   attr(ud,"response") <- "survival"
   attr(ud,"Formula") <- formula
@@ -560,6 +562,7 @@ if (dep.model==3 & pair.structure==0) {
   ## }}}
 
 } ## }}}
+
 
 
 ##' @title Twostage survival model for multivariate survival data
@@ -1896,6 +1899,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 ###
 ###} ## }}}
 
+##' @export
 readmargsurv <- function(margsurv,data,clusters)
 {# {{{
 start.time <- 0
