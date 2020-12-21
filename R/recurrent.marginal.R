@@ -260,7 +260,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
  xr0 <- phreg(form1,data=rr,no.opt=TRUE)
  clgl  <- recurrentMarginal(xr0,dr)
 
- browser()
+### browser()
 ### clgl$se.mu
 
   ### censoring weights

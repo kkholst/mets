@@ -153,7 +153,7 @@
 ##' @export
 ##' @param margbin Marginal binomial model
 ##' @param data data frame
-##' @param method Scoring method default is  "nr"
+##' @param method Scoring method "nr", for lava NR optimizer
 ##' @param detail Detail
 ##' @param clusters Cluster variable
 ##' @param silent Debug information

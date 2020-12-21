@@ -48,7 +48,7 @@ binomial.twostage(
 
 \item{data}{data frame}
 
-\item{method}{Scoring method default is  "nr"}
+\item{method}{Scoring method "nr", for lava NR optimizer}
 
 \item{detail}{Detail}
 

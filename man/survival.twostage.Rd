@@ -13,7 +13,7 @@
 survival.twostage(
   margsurv,
   data = parent.frame(),
-  score.method = "nr",
+  method = "nr",
   detail = 0,
   clusters = NULL,
   silent = 1,
@@ -43,7 +43,7 @@ survival.twostage(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
+\item{method}{Scoring method "nr", for lava NR optimizer}
 
 \item{detail}{Detail}
 
@@ -211,7 +211,7 @@ summary(fitcoa)
 ########################################################
 
 d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
-udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
+udp <- piecewise.twostage(c(0,0.5,2),data=d,method="optimize",
                           id="cluster",timevar="time",
                           status="status",model="clayton.oakes",silent=0)
 summary(udp)

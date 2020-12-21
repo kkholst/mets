@@ -7,7 +7,7 @@
 survival.iterative(
   margsurv,
   data = parent.frame(),
-  score.method = "nr",
+  method = "nr",
   Nit = 60,
   detail = 0,
   clusters = NULL,
@@ -43,8 +43,6 @@ survival.iterative(
 \item{margsurv}{Marginal model}
 
 \item{data}{data frame}
-
-\item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
 
 \item{Nit}{Number of iterations}
 
@@ -116,6 +114,8 @@ or time of control proband.}
 
 \item{shut.up}{to make the program more silent in the context of iterative procedures for case-control
 and ascertained sampling}
+
+\item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
 }
 \description{
 Fits additive gamma frailty model

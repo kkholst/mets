@@ -135,7 +135,7 @@
 ##' ########################################################
 ##'
 ##' d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
-##' udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
+##' udp <- piecewise.twostage(c(0,0.5,2),data=d,method="optimize",
 ##'                           id="cluster",timevar="time",
 ##'                           status="status",model="clayton.oakes",silent=0)
 ##' summary(udp)
@@ -199,7 +199,7 @@
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model
 ##' @param data data frame
-##' @param score.method Scoring method "nr", "nlminb", "optimize", "nlm"
+##' @param method Scoring method "nr", for lava NR optimizer
 ##' @param detail Detail
 ##' @param clusters Cluster variable
 ##' @param silent Debug information
@@ -232,7 +232,7 @@
 ##' @aliases survival.twostage twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv 
 ##' @export survival.twostage
 survival.twostage <- function(margsurv,data=parent.frame(),
-    score.method="nr",detail=0,clusters=NULL,
+    method="nr",detail=0,clusters=NULL,
     silent=1,weights=NULL,theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,model="clayton.oakes",
     marginal.trunc=NULL,marginal.survival=NULL,strata=NULL,
@@ -392,7 +392,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   oout <- 0
   opt <- NULL
   if (no.opt==FALSE) {
-      if (tolower(score.method)=="nr") {
+      if (tolower(method)=="nr") {
           tim <- system.time(opt <- lava::NR(p,obj,...))
           opt$timing <- tim
           opt$estimate <- opt$par
@@ -572,7 +572,7 @@ if (dep.model==3 & pair.structure==0) {
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model
 ##' @param data data frame
-##' @param score.method Scoring method "nr", "nlminb", "optimize", "nlm"
+##' @param method Scoring method "nr", "nlminb", "optimize", "nlm"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -613,7 +613,7 @@ if (dep.model==3 & pair.structure==0) {
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' @export survival.twostageCC
 survival.twostageCC <- function(margsurv,data=parent.frame(),
-    score.method="nr",Nit=60,detail=0,clusters=NULL,
+    method="nr",Nit=60,detail=0,clusters=NULL,
     silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,step=0.5,model="clayton.oakes",
     marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -932,9 +932,9 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     return(ret)
   } ## }}}
 
-  if (score.method=="optimize" && ptheta!=1) {
+  if (method=="optimize" && ptheta!=1) {
      cat("optimize only works for d==1, score.mehod set to nlminb \n");
-     score.method <- "nlminb";
+     method <- "nlminb";
   }
 
   score1 <- NULL
@@ -942,7 +942,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   logl <- NULL
   p <- theta
 
-    if (score.method=="nr") { ## {{{
+    if (method=="nr") { ## {{{
         oout <- 2;  ### output control for obj
         if (Nit>0)
             for (i in 1:Nit)
@@ -1080,7 +1080,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
         }## }}}
         if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- diag(nrow(hess))
         ## }}}
-  } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
+  } else if (method=="nlminb") { ## {{{ nlminb optimizer
     oout <- 0;
     tryCatch(opt <- nlminb(theta,loglike,control=control),error=function(x) NA)
     if (detail==1) print(opt);
@@ -1100,7 +1100,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     }
     hessi <- lava::Inverse(hess);
   ## }}}
-  } else if (score.method=="optimize" && ptheta==1) { ## {{{  optimizer
+  } else if (method=="optimize" && ptheta==1) { ## {{{  optimizer
     oout <- 0;
     if (var.link==1) {mino <- -20; maxo <- 10;} else {mino <- 0.001; maxo <- 100;}
     tryCatch(opt <- optimize(loglike,c(mino,maxo)));
@@ -1122,7 +1122,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     hessi <- lava::Inverse(hess);
     if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
   ## }}}
-  } else if (score.method=="nlm") { ## {{{ nlm optimizer
+  } else if (method=="nlm") { ## {{{ nlm optimizer
     iid <- 0; oout <- 0;
     tryCatch(opt <- nlm(loglike,theta,hessian=TRUE,print.level=detail),error=function(x) NA)
     iid <- 1;
@@ -1139,7 +1139,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     hess1 <- out$Dscore
     if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
   ## }}}
-  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n");
+  }  else stop("method = optimize(dim=1) nlm nlminb nr\n");
 
 ## {{{ handling output
   loglikeiid <- NULL
@@ -1279,7 +1279,7 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 
 
 ###survival.twostage <- function(margsurv,data=parent.frame(),
-###    score.method="nr",Nit=60,detail=0,clusters=NULL,
+###    method="nr",Nit=60,detail=0,clusters=NULL,
 ###    silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
 ###    var.link=1,iid=1,step=0.5,model="clayton.oakes",
 ###    marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -2428,7 +2428,7 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
 ##' or time of control proband.
 ##' @param shut.up to make the program more silent in the context of iterative procedures for case-control
 ##' and ascertained sampling
-survival.iterative <- function(margsurv,data=parent.frame(),score.method="nr",Nit=60,detail=0,clusters=NULL,
+survival.iterative <- function(margsurv,data=parent.frame(),method="nr",Nit=60,detail=0,clusters=NULL,
              silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
              var.link=1,iid=1,step=0.5,model="clayton.oakes",
              marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
@@ -3159,9 +3159,9 @@ if (!is.null(margsurv))  {
     return(ret)
   } ## }}}
 
-  if (score.method=="optimize" && ptheta!=1) {
+  if (method=="optimize" && ptheta!=1) {
      cat("optimize only works for d==1, score.mehod set to nlminb \n");
-     score.method <- "nlminb";
+     method <- "nlminb";
   }
 
   score1 <- NULL
@@ -3169,7 +3169,7 @@ if (!is.null(margsurv))  {
   logl <- NULL
   p <- theta
 
-    if (score.method=="nr") { ## {{{
+    if (method=="nr") { ## {{{
         oout <- 2;  ### output control for obj
         if (Nit>0)
             for (i in 1:Nit)
@@ -3253,7 +3253,7 @@ if (!is.null(margsurv))  {
         }## }}}
         if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- diag(nrow(hess))
         ## }}}
-  } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
+  } else if (method=="nlminb") { ## {{{ nlminb optimizer
     oout <- 0;
     if (two.stage==0) oout <- 1 ## score
     tryCatch(opt <- nlminb(theta,loglike,control=control),error=function(x) NA)
@@ -3274,7 +3274,7 @@ if (!is.null(margsurv))  {
     }
     hessi <- lava::Inverse(hess);
   ## }}}
-  } else if (score.method=="optimize" && ptheta==1) { ## {{{  optimizer
+  } else if (method=="optimize" && ptheta==1) { ## {{{  optimizer
     oout <- 0;
     if (var.link==1) {mino <- -20; maxo <- 10;} else {mino <- 0.001; maxo <- 100;}
     tryCatch(opt <- optimize(loglike,c(mino,maxo)));
@@ -3296,7 +3296,7 @@ if (!is.null(margsurv))  {
     hessi <- lava::Inverse(hess);
     if (iid==1) theta.iid <- out$theta.iid
   ## }}}
-  } else if (score.method=="nlm") { ## {{{ nlm optimizer
+  } else if (method=="nlm") { ## {{{ nlm optimizer
     iid <- 0; oout <- 0;
     tryCatch(opt <- nlm(loglike,theta,hessian=TRUE,print.level=detail),error=function(x) NA)
     iid <- 1;
@@ -3313,7 +3313,7 @@ if (!is.null(margsurv))  {
     hess1 <- out$Dscore
     if (iid==1) theta.iid <- out$theta.iid
   ## }}}
-  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n");
+  }  else stop("method = optimize(dim=1) nlm nlminb nr\n");
 
 ## {{{ handling output
   loglikeiid <- NULL
@@ -3681,7 +3681,7 @@ alpha2kendall <- function(theta,link=0) {  ## {{{
 
 ##' @export piecewise.twostage
 piecewise.twostage <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
-            score.method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
+            method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
             control=list(),theta=NULL,theta.des=NULL,var.link=1,
 	    step=0.5,model="plackett",data.return=0)
 { ## {{{
@@ -3746,7 +3746,7 @@ f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+fact
 else f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+factor(",num,"):",covars)))
 marg1 <- aalen(f,data=datalr,n.sim=0,robust=0)
 
-fitlr<-  survival.twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,score.method=score.method,
+fitlr<-  survival.twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
 Nit=Nit,detail=detail,silent=silent,weights=weights,
 baseline.iid=0,control=control,theta=theta,theta.des=theta.des,
 var.link=var.link, step=step)
@@ -3919,7 +3919,7 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' marg <- coxph(Surv(time,status)~factor(num),data=dfam)
 ##' out3 <- easy.survival.twostage(marg,data=dfam,time="time",status="status",id="id",
 ##'              deshelp=0,
-##'              score.method="nr",theta.formula=desfs,
+##'              method="nr",theta.formula=desfs,
 ##'              model="plackett",
 ##'              desnames=c("parent-parent","parent-child","child-cild"))
 ##' summary(out3)
@@ -3928,7 +3928,7 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' @export easy.survival.twostage
 ##' @param margsurv model
 ##' @param data data frame
-##' @param score.method Scoring method
+##' @param method Scoring method
 ##' @param status Status at exit time
 ##' @param time Exit time
 ##' @param entry Entry time
@@ -3948,7 +3948,7 @@ coefmat <- function(est,stderr,digits=3,...) { ## {{{
 ##' @param marginal.surv vector of marginal survival probabilities
 ##' @param strata strata for fitting
 ##' @param se.clusters clusters for iid decomposition for roubst standard errors
-easy.survival.twostage <- function(margsurv=NULL,data=parent.frame(),score.method="nlminb",
+easy.survival.twostage <- function(margsurv=NULL,data=parent.frame(),method="nlminb",
 status="status",time="time",entry=NULL,id="id", Nit=60,detail=0, silent=1,weights=NULL, control=list(),
 theta=NULL,theta.formula=NULL,desnames=NULL,deshelp=0,var.link=1,
 step=0.5,model="plackett",marginal.surv=NULL,strata=NULL,se.clusters=NULL)
@@ -4030,7 +4030,7 @@ if (class(margsurv)[1]=="coxph")
     out <- survival.twostageCC(NULL,data=data.fam,
                     clusters=data.fam$subfam,
 		    theta.des=as.matrix(data.fam[,desnames]),
-                    detail=detail, score.method=score.method, Nit=Nit,step=step,
+                    detail=detail, method=method, Nit=Nit,step=step,
                     theta=theta, var.link=var.link,model=model,
                     marginal.survival=data.fam[,"ps"],
                     marginal.status=data.fam[,status],
