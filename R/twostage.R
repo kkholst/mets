@@ -2385,7 +2385,7 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model
 ##' @param data data frame
-##' @param score.method Scoring method "nr", "nlminb", "optimize", "nlm"
+##' @param method Scoring method "nr", "nlminb", "optimize", "nlm"
 ##' @param Nit Number of iterations
 ##' @param detail Detail
 ##' @param clusters Cluster variable
