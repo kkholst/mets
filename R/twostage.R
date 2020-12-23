@@ -386,7 +386,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
   score1 <- NULL
   theta.iid <- NULL
-  logl <- NULL
   p <- theta
 
   oout <- 0
@@ -515,13 +514,13 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   if (!is.null(colnames(theta.des))) thetanames <- colnames(theta.des) else thetanames <- paste("dependence",1:length(theta),sep="")
   theta <- matrix(theta,length(c(theta)),1)
   if (length(thetanames)==nrow(theta)) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
-  if (!is.null(logl)) logl <- -1*logl
 
 
   ud <- list(theta=matrix(val$coef,ncol=1),coef=val$coef,score=val$gradient,hess=hess,hessi=hessi,var.theta=var.theta,
      model=model,robvar.theta=robvar.theta,
-     theta.iid=theta.iid,loglikeiid=loglikeiid,likepairs=likepairs,
-     thetanames=thetanames,loglike=logl,score1=score1,Dscore=val$Dscore,
+     loglike=val$loglike,loglikeiid=loglikeiid,likepairs=likepairs,
+     theta.iid=theta.iid,thetanames=thetanames,
+     score1=score1,Dscore=val$Dscore,
      marginal.surv=marginal.surv,marginal.trunc=marginal.trunc,
      se=diag(robvar.theta)^.5,score.iid=-score.iid,theta.des=theta.des,random.design=random.design)
   class(ud) <- "mets.twostage"
@@ -562,7 +561,6 @@ if (dep.model==3 & pair.structure==0) {
   ## }}}
 
 } ## }}}
-
 
 
 ##' @title Twostage survival model for multivariate survival data
