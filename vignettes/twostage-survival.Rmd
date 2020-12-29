@@ -567,12 +567,20 @@ random.des[1,]
 random.des[2,]
 matrix(theta.des[1,],4,2)
 ```
-thus sharing only the third random effect with variance $\sigma_e^2$ and having 
-two non-shared random effects with variances $\sigma_g^2$, and finally  a last 
-4th random effect with variance $0$ that thus could have been omitted.
+thus sharing only the third random effect with variance $\sigma_e^2$ and
+having two non-shared random effects with variances $\sigma_g^2$, and finally
+a last 4th random effect with variance $0$ that thus could have been omitted. 
 
 
-now considering the parent and their child, they are 
+The length of all rows of theta.des
+are the maximum number of random effects $\times$ the number of parameters. 
+These two numbers are given in the call. In this case 4 $\times$ 2. 
+So theta.des has rows of length $8$, possibly including some 0's for rows
+not relevant due to fewer random effects, as is the case here for pairs 
+that do not share genetic effects.
+
+
+Now considering the parent and their child, they are 
 thus sharing the first random effect with variance $0.5 \sigma_g^2$ then there are 
 two non-shared random effects with variances $0.5 \sigma_g^2$, and finally a shared 
 environment with variance $\sigma_e^2$. 
@@ -601,12 +609,6 @@ Finally the same model structure can be setup based on a Kinship coefficient.
 ```{r}
 kinship  <- rep(0.5,nrow(pair.types))
 kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
-
-###for (i in 1:nrow(pair.new))
-###{
-###if (pair.types[i,1]=="mother" & pair.types[i,2]=="father") pk1 <- 0 else pk1 <- 0.5
-###kinship <- c(kinship,pk1)
-###}
 head(kinship,n=10)
 
 out <- make.pairwise.design(pair.new,kinship,type="ace") 
