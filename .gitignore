@@ -8,11 +8,14 @@ inst/doc
 inst/misc/workshop*.org
 inst/misc/mena.org
 vignettes/*.html
+vignettes/pdfP
+vignettes/*.bib
 vignettes/*.css
 vignettes/*.html
 vignettes/*.tex
 vignettes/*.pdf
 vignettes/*.R
+vignettes/*.r
 vignettes/*.Rout
 vignettes/*.org
 vignettes/auto
