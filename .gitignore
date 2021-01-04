@@ -11,6 +11,9 @@ vignettes/*.html
 vignette/*.css
 vignette/*.html
 vignette/*.tex
+vignette/*.pdf
+vignette/*.R
+vignette/*.org
 vignette/auto
 *.o
 *.so
