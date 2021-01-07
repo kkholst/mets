@@ -245,6 +245,12 @@ l <- twinlm(bmi ~ ns(age,1)+gender, data=twinbmi,
 summary(l)
 ```
 
+We also consider the ACE model 
+
+```{r   }
+ace0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="ace")
+```
+
 
 # Twin analysis, censored outcomes
 
