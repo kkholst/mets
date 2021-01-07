@@ -99,6 +99,36 @@ Now fitting the Fine-Gray model
  plot(pfg,ylim=c(0,0.2))
 ```
 
+
+SE's for the baseline and predictions of FG
+===========================================
+
+
+The standard errors reported for the FG-estimator are based on the i.i.d 
+decompostion (influence functions) of the estimator that we give later. A similar decompostion
+exist for the baseline and is needed when standard errors of predictions are computed. These
+are a bit harder to compute for all time-points simultaneously, but they can be
+obtained for specific timepoints jointly with the iid decomposition of the regression coefficients and
+then used to get standard errors for predictions. 
+
+
+We here plot the predictions with jittered confidence intervals for the predictions
+at time point 5
+
+```{r}
+### predictions with CI based on iid decomposition of baseline and beta
+fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cox.prep=TRUE)
+Biid <- mets:::iid.baseline.cifreg(fg,time=5)
+pfgse <- FGprediid(Biid,dd)
+pfgse
+plot(pfg,ylim=c(0,0.2))
+for (i in 1:4) lines(c(5,5)+i/10,pfgse[i,3:4],col=i,lwd=2)
+```
+
+The iid decompostions are stored inside Biid, in addition we note that the 
+iid decompostions for $\hat \beta - \beta_0$ are obtained by the command iid()
+
+
 # Comparison 
 
 We compare with the cmprsk function but without running it to avoid dependencies: 
@@ -203,29 +233,6 @@ so that the influence function becomes
 \end{align*}
 with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)$.
 
-
-SE's for the baseline and predictions of FG
-===========================================
-
-
-The baseline can also be written as a sum of iid terms and for fixed t this iid decomposition can be
-obtained and used for constructing confidence intervals for predictions 
-
-
-```{r}
- ### predictions with CI based on iid decomposition of baseline and beta
- fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cox.prep=TRUE)
- Biid <- mets:::iid.baseline.cifreg(fg,time=3)
- head(Biid)
-```
-
-Now using the iid decomposition of the baseline together with iid decomposition of 
-$\hat \beta - \beta_0$ we can construct confidence intervals for predictions 
-
-
-```{r}
- FGprediid(Biid,dd)
-```
 
 
 Augmenting the FG-estimator 
