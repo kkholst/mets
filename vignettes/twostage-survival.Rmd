@@ -217,10 +217,10 @@ modelling, so here it is better to use the twostageMLE.
  summary(fitco1)
  
  # Clayton-Oakes
- fitco2 <- survival.twostage(margph,data=diabetes,theta=0.0,detail=0,
+ fitco2 <- survival.twostage(margph,data=diabetes,theta=0.0,
                   clusters=diabetes$id,var.link=1,model="clayton.oakes")
  summary(fitco2)
- fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
+ fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,
                   clusters=diabetes$id,var.link=0,model="clayton.oakes")
  summary(fitco3)
 ```
@@ -297,8 +297,7 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 test can be constructed. 
 
 ```{r}
- udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
- id="cluster",timevar="time",status="status",model="clayton.oakes",silent=0)
+ udp <- piecewise.twostage(c(0,0.5,2),data=d,id="cluster",timevar="time",status="status",model="clayton.oakes",silent=0)
  summary(udp)
 ```
 
@@ -356,13 +355,29 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
 ### data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
 ### out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
- ts <- twostage(aa,data=data,clusters=data$cluster,detail=0,
+ ts <- twostage(aa,data=data,clusters=data$cluster,
       theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
  summary(ts)
 ```
 
  - A nice feature of the procdure is that it scales linearly in the number of observations
-    - 1 mill pairs had a running time of 2 minutes. 
+    - 1 mill pairs had a running time of around 100 seconds. 
+
+```{r}
+run <- 0
+if (run==1) {
+ data <- simClaytonOakes.twin.ace(1000000,2,1,0,3)
+
+ out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
+ pardes <- out$pardes
+ aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
+ system.time(
+ ts <- twostage(aa,data=data,clusters=data$cluster,
+      theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
+ )
+ summary(ts)
+}
+```
 
 The estimates can be transformed into Kendall's tau estimates for MZ and DZ twins. The Kendall's tau
 in the above output reflects how  a gamma distributed random effect in the normal Clayton-Oakes model
@@ -755,8 +770,7 @@ This model has a more free parameter than the Clayton-Oakes model.
  # Piecewise constant cross hazards ratio modelling
 
  d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
- udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
-                           id="cluster",timevar="time",
+ udp <- piecewise.twostage(c(0,0.5,2),data=d,id="cluster",timevar="time",
                            status="status",model="plackett",silent=0)
  summary(udp)
 ```
