@@ -650,7 +650,6 @@ Pairwise dependence modelling
 ------------------------------
 
 
-
 ```{r}
 library(mets)
 set.seed(1000)
@@ -668,30 +667,19 @@ head(pairs,12)
 
 
 ```{r}
-
- data.fam <- data[mm$familypairindex,]
- data.fam$subfam <- mm$subfamilyindex
- data.fam$cluster <- mm$clusters
-
- data.fam.clust <- fast.reshape(data.fam[,c("subfam","type")],id="subfam")
-
- tdp <-transform(data.fam.clust,tt=interaction(type1,type2))
- tdp$tt <- droplevels(tdp$tt)
- dtable(tdp,~tt)
- tmm <- model.matrix(~-1+tt,tdp)
- 
- theta.des <- tmm[mm$subfamilyindex+1,]
-
+ dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
+ dtypes <- droplevels(dtypes)
+ table(dtypes)
+ dm <- model.matrix(~-1+factor(dtypes))
 ```
 
 Now with the pairs we fit the model 
 
 ```{r}
+pa <- phreg(Surv(time,status)~cluster(cluster),data)
 
-se.clust <- data.fam$cluster
-pa <- phreg(Surv(time,status)~cluster(cluster),data.fam)
-
-tsp <- twostage(pa,data=data.fam,theta.des=theta.des,pairs=pairs,se.clusters=se.clust)
+tsp <- twostage(pa,data=data,theta.des=dm,pairs=cbind(pairs,1:nrow(dm)),
+		se.clusters=data$clust)
 summary(tsp)
 ```
 
