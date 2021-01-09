@@ -223,17 +223,12 @@ modelling, so here it is better to use the twostageMLE.
  fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
                   clusters=diabetes$id,var.link=0,model="clayton.oakes")
  summary(fitco3)
- 
- fitco4 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
-                  clusters=diabetes$id,var.link=0,model="clayton.oakes",numDeriv=1)
- summary(fitco4)
 ```
 
-Note, the standard errors are slightly different when comparing fitco1 with fitco3 
-since the survival.twostage uses numerical derivatives for the uncertainty in the 
-direction of the marginal model, and in addition approximates the derivative of the 
-score (the hessian) with squared first derivatives that should be fine with n is 
-large enough. This is improved when we estimate the second derivative numerically (fitco4). 
+Note, the standard errors are slightly different when comparing 
+fitco1 with fitco3 since the survival.twostage uses numerical 
+derivatives for the hessian and the derivative in the 
+direction of the marginal model. 
 
 The marginal models can be either structured Cox model or as here 
 with a baseline for each strata. This gives quite similar results to those
@@ -633,6 +628,56 @@ tsdid4 <- twostage(pa,data=dataid,clusters=dataid$cluster,
    theta=c(2,1)/10,var.link=0,random.design=outae$random.design,
    baseline.iid=0,theta.des=outae$theta.des,pairs=outae$new.pairs,dim.theta=1)
 summary(tsdid4)
+```
+
+
+Pairwise dependence modelling 
+------------------------------
+
+
+
+```{r}
+library(mets)
+set.seed(1000)
+data <- simClaytonOakes.family.ace(1000,2,1,0,3)
+head(data)
+data$number <- c(1,2,3,4)
+data$child <- 1*(data$number==3)
+
+mm <- familycluster.index(data$cluster)
+head(mm$familypairindex,n=20)
+pairs <- mm$pairs
+dim(pairs)
+head(pairs,12)
+```
+
+
+```{r}
+
+ data.fam <- data[mm$familypairindex,]
+ data.fam$subfam <- mm$subfamilyindex
+ data.fam$cluster <- mm$clusters
+
+ data.fam.clust <- fast.reshape(data.fam[,c("subfam","type")],id="subfam")
+
+ tdp <-transform(data.fam.clust,tt=interaction(type1,type2))
+ tdp$tt <- droplevels(tdp$tt)
+ dtable(tdp,~tt)
+ tmm <- model.matrix(~-1+tt,tdp)
+ 
+ theta.des <- tmm[mm$subfamilyindex+1,]
+
+```
+
+Now with the pairs we fit the model 
+
+```{r}
+
+se.clust <- data.fam$cluster
+pa <- phreg(Surv(time,status)~cluster(cluster),data.fam)
+
+tsp <- twostage(pa,data=data.fam,theta.des=theta.des,pairs=pairs,se.clusters=se.clust)
+summary(tsp)
 ```
 
 

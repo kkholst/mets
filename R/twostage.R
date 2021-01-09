@@ -214,7 +214,7 @@
 ##' @param marginal.survival optional vector of marginal survival probabilities
 ##' @param strata strata for fitting, see example
 ##' @param se.clusters for clusters for se calculation with iid
-##' @param numDeriv to get numDeriv version of second derivative, otherwise uses sum of squared score
+##' @param numDeriv to get numDeriv version of second derivative, otherwise uses sum of squared scores for each pair
 ##' @param random.design random effect design for additive gamma model, when pairs are given the
 ##' indeces of the pairs random.design rows are given as columns 3:4
 ##' @param pairs matrix with rows of indeces (two-columns) for the pairs considered in the pairwise
@@ -236,7 +236,7 @@ survival.twostage <- function(margsurv,data=parent.frame(),
     silent=1,weights=NULL,theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,model="clayton.oakes",
     marginal.trunc=NULL,marginal.survival=NULL,strata=NULL,
-    se.clusters=NULL,numDeriv=0,random.design=NULL,pairs=NULL,dim.theta=NULL,
+    se.clusters=NULL,numDeriv=1,random.design=NULL,pairs=NULL,dim.theta=NULL,
     numDeriv.method="simple",additive.gamma.sum=NULL,var.par=1,no.opt=FALSE,...)
 {## {{{
 ## {{{ seting up design and variables
@@ -361,6 +361,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
       }
       }# }}}
 
+
     if (dep.model==3) {# {{{
        outl$score <-  t(mm) %*% outl$score
        outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
@@ -371,6 +372,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 	       }
        }
     }# }}}
+
 
     outl$gradient <- outl$score 
     outl$hessian <- outl$Dscore
@@ -1263,10 +1265,18 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
    clusterindex <- cbind(pairs[,1:5]-1,ncol(random.design))
   } ## }}}
 
-  if (pair.structure==1 & dep.model!=3) {
-       clusterindex <- pairs-1;
+  if (pair.structure==1 & dep.model!=3) { ## {{{
        antpairs <- nrow(pairs);
+       if ((ncol(pairs)==2)) { ## when only pairs are given we refer to rows of theta.des from 3 column: same as index of pair-1
+       pairs <- cbind(pairs,pairs[,1])
+       }
+       if (ncol(pairs)!=3) stop("with pairstructure and theta.des, 3rd column of pairs must give relevant design from theta.des\n")
+       ## index in c are Rindex -1
+       clusterindex <- pairs-1;
   }# }}}
+
+###  print(head(pairs)); print(head(theta.des))
+###  print(dim(pairs)); print(dim(theta.des))
 
   return(list(random.design=random.design,clusterindex=clusterindex,
 	 antpairs=antpairs,pair.structure=pair.structure,
