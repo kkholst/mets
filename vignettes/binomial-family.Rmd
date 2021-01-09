@@ -285,6 +285,45 @@ summary(tsdid3)
 ```
 
 
+
+Pairwise dependence modelling 
+------------------------------
+
+
+```{r}
+library(mets)
+set.seed(1000)
+data <- simbinClaytonOakes.family.ace(10000,2,1,beta=NULL,alpha=NULL)
+head(data)
+data$number <- c(1,2,3,4)
+data$child <- 1*(data$number==3)
+
+mm <- familycluster.index(data$cluster)
+head(mm$familypairindex,n=20)
+pairs <- mm$pairs
+dim(pairs)
+head(pairs,12)
+```
+
+
+```{r}
+ dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
+ dtypes <- droplevels(dtypes)
+ table(dtypes)
+ dm <- model.matrix(~-1+factor(dtypes))
+```
+
+Now with the pairs we fit the model 
+
+```{r}
+aa <- margbin <- glm(ybin~x,data=data,family=binomial())
+
+tsp <- binomial.twostage(aa,data=data, clusters=data$cluster,
+		 theta.des=dm,pairs=cbind(pairs,1:nrow(dm)))
+summary(tsp)
+```
+
+
 Pairwise odds ratio model 
 =========================
 
