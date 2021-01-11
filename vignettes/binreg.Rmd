@@ -86,18 +86,19 @@ independent. In the case where we in addition had adjusted for other covariates,
 the to apply the delta-theorem thus using the relevant covariances along the lines of 
 
 ```{r}
+dd <- data.frame(tcell=c(0,1))
+p <- predict(outs,dd)
+
 riskdifratio <- function(p,contrast=c(1,-1)) {
-   expit  <- function(z) 1/(1+exp(-z)) ## expit
-   Z <- rbind(c(1,0), c(1,1))
-   lp <- c(Z %*% p)
-   p <- expit(lp)
+   outs$coef <- p
+   p <- predict(outs,dd)[,1]
    pd <- sum(contrast*p)
    r1 <- p[1]/p[2]
    r2 <- p[2]/p[1]
    return(c(pd,r1,r2))
 }
      
-estimate(coef=outs$coef,vcov=outs$var,f=riskdifratio)
+estimate(outs,f=riskdifratio,dd,null=c(0,1,1))
 ```
 
 same as 

@@ -310,6 +310,12 @@ vcov.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
+coef.binreg <- function(object,...) {# {{{
+	return(object$coef)
+}# }}}
+
+
+##' @export
 predict.binreg <- function(object,newdata,se=TRUE,...)
 {# {{{
 

@@ -27,7 +27,7 @@ survival.twostage(
   marginal.survival = NULL,
   strata = NULL,
   se.clusters = NULL,
-  numDeriv = 0,
+  numDeriv = 1,
   random.design = NULL,
   pairs = NULL,
   dim.theta = NULL,
@@ -72,7 +72,7 @@ theta-design for this pair, is given in pairs as column 5}
 
 \item{se.clusters}{for clusters for se calculation with iid}
 
-\item{numDeriv}{to get numDeriv version of second derivative, otherwise uses sum of squared score}
+\item{numDeriv}{to get numDeriv version of second derivative, otherwise uses sum of squared scores for each pair}
 
 \item{random.design}{random effect design for additive gamma model, when pairs are given the
 indeces of the pairs random.design rows are given as columns 3:4}
