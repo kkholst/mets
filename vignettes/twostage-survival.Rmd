@@ -57,6 +57,24 @@ $$
 where $s(k,i)$ is a strata variable. 
 
 
+The constructed likelihood is a composite likehood based on 
+
+  * all pairs within each cluster (when the pairs argument is not used) 
+
+  * the specified pairs when the pairs argument is used. 
+
+
+In addition to the clusters specified for the construction of the composite likelihood these 
+can be added further summed using the se.clusters argument that sums the influence functions over 
+the se.clusters. When se.clusters are not specified it is the same as the cluster argument. 
+
+When the clusters of the dependence parametaters are the same as those of the marginal model and the
+phreg function is used then the standard errors are corrected for the uncertainty from the marginal models, otherwise
+the returned standard errors are computed as if the marginals are known. 
+
+
+
+
 Gamma distributed frailties 
 ==========================
 
@@ -433,8 +451,7 @@ Then we fit the model
 pa <- phreg(Surv(time,status)~+1+cluster(cluster),data=data)
 
 # make ace random effects design
-ts <- twostage(pa,data=data,clusters=data$cluster,
-	var.par=1,var.link=0,theta=c(2,1),
+ts <- twostage(pa,data=data,clusters=data$cluster,var.par=1,var.link=0,theta=c(2,1),
         random.design=out$des.rv,theta.des=out$pardes)
 summary(ts)
 ```
@@ -506,8 +523,7 @@ head(outid$des.rv)
 Now fitting the model using only the pair data. 
 
 ```{r}
-tsdid <- twostage(pa,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,
-	  var.link=0,baseline.iid=0,
+tsdid <- twostage(pa,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,var.link=0,baseline.iid=0,
           random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdid)
 
@@ -515,7 +531,7 @@ paid <- phreg(Surv(time,status)~+1+cluster(cluster),data=dataid)
 tsdidb <- twostage(paid,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,
   var.link=0,random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdidb)
-coef(tsdidb)
+coef(tsdid)
 ```
 
 Estimates changed because we used either the marginal from the full-data, in which case 
@@ -649,9 +665,12 @@ summary(tsdid4)
 Pairwise dependence modelling 
 ------------------------------
 
-We now illustate how to estimate all pairwise associations between different family-members using the twostage function. They key is specify the pairs for
-the composite likelihood directly  and then the associated design-matrix directly.  This needs to be done looking at both subjects in the pairs, and the design therefore 
-follows the pairs and is a matrix where its row is given as the third column in the pairs argument. 
+We now illustate how to estimate all pairwise associations between different
+family-members using the twostage function. They key is specify the pairs for
+the composite likelihood directly  and then the associated design-matrix
+directly.  This needs to be done looking at both subjects in the pairs, and the
+design therefore follows the pairs and is a matrix where its row is given as
+the third column in the pairs argument. 
 
 First we get the pairs to be considered
 
@@ -691,9 +710,8 @@ summary(tsp)
 ```
 
 We note that mother-father have the smallest correlation since they only share the environmental random effect, whereas
-other pairs have a similar correlation (in fact the same due to the way the data was simulated) consiting of 
+other pairs have a similar correlation (in fact the same due to the way the data was simulated) consisting of 
 half the genetic effect and the environmental effect that was also shared. 
-
 
 
 Univariate plackett model twostage models 

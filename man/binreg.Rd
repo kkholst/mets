@@ -119,7 +119,7 @@ riskratio <- function(p) {
   return(p[1]/p[2])
 }
 
-estimate(coef=cifdob$coef,vcov=cifdob$var,f=riskratio)
+estimate(cifdob,f=riskratio)
 
 }
 \author{
