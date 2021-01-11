@@ -78,7 +78,7 @@
 ##'   return(p[1]/p[2])
 ##' }
 ##' 
-##' estimate(coef=cifdob$coef,vcov=cifdob$var,f=riskratio)
+##' estimate(cifdob,f=riskratio)
 ##'
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
