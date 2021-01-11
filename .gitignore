@@ -4,6 +4,8 @@ README.html
 docs
 *.gcno
 TAGS
+man/survival.twostageCC.Rd
+src/minimake
 inst/doc
 inst/misc/workshop*.org
 inst/misc/mena.org
