@@ -44,6 +44,7 @@ under known censoring model.
  set.seed(1000) # to control output in simulatins for p-values below.
 
  data(bmt)
+ bmt$time <- bmt$time+runif(nrow(bmt))*0.01
  # logistic regresion with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
@@ -59,6 +60,54 @@ Further the censoring model can depend on strata
 ```{r}
  outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
  summary(outs)
+```
+
+Absolute risk differences 
+===========================
+
+Now for illustrations I wish to consider the absolute risk difference
+depending on tcell 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
+ summary(outs)
+```
+
+the risk difference is 
+
+```{r}
+ps <-  predict(outs,data.frame(tcell=c(0,1)),se=TRUE)
+ps
+sum( c(1,-1) * ps[,1])
+```
+
+Getting the standard errors are easy enough since the two-groups are
+independent. In the case where we in addition had adjusted for other covariates, however, we would need 
+the to apply the delta-theorem thus using the relevant covariances along the lines of 
+
+```{r}
+riskdif <- function(p,contrast=c(1,-1)) {
+   expit  <- function(z) 1/(1+exp(-z)) ## expit
+   Z <- rbind(c(1,0), c(1,1))
+   lp <- c(Z %*% p)
+   p <- expit(lp)
+   pd <- sum(contrast*p)
+   return(pd)
+}
+     
+estimate(coef=outs$coef,vcov=outs$var,f=riskdif)
+```
+
+same as 
+
+```{r}
+run <- 0
+if (run==1) {
+library(prodlim)
+pl <- prodlim(Hist(time,cause)~tcell,bmt)
+spl <- summary(pl,times=50,asMatrix=TRUE)
+spl
+}
 ```
 
 

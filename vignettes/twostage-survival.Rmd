@@ -649,6 +649,12 @@ summary(tsdid4)
 Pairwise dependence modelling 
 ------------------------------
 
+We now illustate how to estimate all pairwise associations between different family-members using the twostage function. They key is specify the pairs for
+the composite likelihood directly  and then the associated design-matrix directly.  This needs to be done looking at both subjects in the pairs, and the design therefore 
+follows the pairs and is a matrix where its row is given as the third column in the pairs argument. 
+
+First we get the pairs to be considered
+
 
 ```{r}
 library(mets)
@@ -665,23 +671,29 @@ dim(pairs)
 head(pairs,12)
 ```
 
+Now we construct the design matrix related to the pairs 
 
 ```{r}
  dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
  dtypes <- droplevels(dtypes)
  table(dtypes)
  dm <- model.matrix(~-1+factor(dtypes))
+ head(dm)
 ```
 
-Now with the pairs we fit the model 
+Then we fit the model: 
 
 ```{r}
 pa <- phreg(Surv(time,status)~cluster(cluster),data)
 
-tsp <- twostage(pa,data=data,theta.des=dm,pairs=cbind(pairs,1:nrow(dm)),
-		se.clusters=data$clust)
+tsp <- twostage(pa,data=data,theta.des=dm,pairs=cbind(pairs,1:nrow(dm)),se.clusters=data$clust)
 summary(tsp)
 ```
+
+We note that mother-father have the smallest correlation since they only share the environmental random effect, whereas
+other pairs have a similar correlation (in fact the same due to the way the data was simulated) consiting of 
+half the genetic effect and the environmental effect that was also shared. 
+
 
 
 Univariate plackett model twostage models 
