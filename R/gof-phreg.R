@@ -445,7 +445,7 @@ if (is.null(cumhaz)) stop("Must run phreg with cumhaz=TRUE (default)");
 if (nstrata==1) stop("Stratified Cox to look at baselines");
 ###
 
-if (is.null(x$opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
 for (i in 0:(nstrata-2))
 for (j in (i+1):(nstrata-1)) { 

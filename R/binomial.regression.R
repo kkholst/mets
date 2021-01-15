@@ -325,7 +325,13 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
   tt <- terms(upf)
   tt <- delete.response(tt)
   Z <- model.matrix(tt,data=newdata,xlev=xlev)
-  Z <- as.matrix(Z)
+  ## assuming that cluster comes after Z's 
+  Z <- as.matrix(Z)[,1:length(object$coef),drop=FALSE]
+  clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(object$model.frame),perl=TRUE)
+  print(clusterTerm)
+  if (length(clusterTerm)>=1) 
+	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
+
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
