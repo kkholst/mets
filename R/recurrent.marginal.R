@@ -100,7 +100,7 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
-  if (is.null(xr$opt) | is.null(xr$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((xr$no.opt) | is.null(xr$coef)) fixbeta<- 1 else fixbeta <- 0
 
   ### marginal expected events  int_0^t G(s) \lambda_r(s) ds 
   # {{{
@@ -440,7 +440,7 @@ recurrentMarginalgam <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
-  if (is.null(xr$opt) | is.null(xr$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((xr$no.opt) | is.null(xr$coef)) fixbeta<- 1 else fixbeta <- 0
 
   ### marginal expected events  int_0^t G(s) \lambda_r(s) ds 
   # {{{
@@ -795,7 +795,7 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
-  if (is.null(phreg$opt) | is.null(phreg$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((phreg$no.opt) | is.null(phreg$coef)) fixbeta<- 1 else fixbeta <- 0
 
   x <- phreg
   xx <- x$cox.prep

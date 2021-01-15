@@ -386,11 +386,11 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
         } else val <- c(list(coef=beta),obj(beta,all=TRUE))
     } else {
+	no.opt <- TRUE
         val <- obj(0,all=TRUE)
     }# }}}
 
 
-### opt <- lava::NR(beta,obj); beta.s <- opt$par
     beta.s <- val$coef
     if (is.null(beta.s)) beta.s <- 0
     ## getting final S's
@@ -507,10 +507,12 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
                 ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
                 ploglik=opt$ploglik,gradient=opt$gradient,
                 cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
-                strata=xx2$strata,nstrata=nstrata,strata.name=strata.name,
-                strata.level=strata.level,propodds=propodds,
+                strata=xx2$strata,
+		nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
+		propodds=propodds,
                 S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,Ut=opt$U,
-                jumps=jumps,exit=exit,p=p,opt=opt,##n=nrow(X),nevent=length(jumps),
+                jumps=jumps,exit=exit,p=p,
+		no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
                 Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,cause=cause
                 )
 
@@ -544,7 +546,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
   if (!is.null(x$propodds))  stop("Only for Fine-Gray-model") 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
-  if (is.null(x$opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
   if (is.null(x$cox.prep)) stop("call cifreg with cox.prep=TRUE\n"); 
 
@@ -592,6 +594,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
     cumhazA <- cumsumstratasum(S0i,xx2$strata,xx2$nstrata,type="all")
     cumhaz <- c(cumhazA$sum)
 
+
     if (fixbeta==0) {
 	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
 	  Ht <- apply(E*S0i*btimexx,2,cumsumstrata,xx2$strata,xx2$nstrata)
@@ -599,9 +602,11 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
   if (fixbeta==0) rr <- c(xx2$sign*exp(Z %*% coef(x) + xx2$offset)) else rr <- c(xx2$sign*exp(xx2$offset))
 
 ### Martingale  as a function of time and for all subjects to handle strata
-    MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     mid <- max(xx2$id)
+  if (fixbeta==0)  {
+    MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
+  } else  { MGt <- 0 ; UU <- 0}
 
     MGAiid <- NULL
     S0i2 <- rep(0,length(xx2$strata))
@@ -682,7 +687,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         ## }}}
     } else { MGc <- 0; MGBc <- 0}
 
-   betaiid <-  (UU+MGc) %*% x$ihessian
+  if (fixbeta==0) { betaiid <-  (UU+MGc) %*% x$ihessian} else betaiid <- NULL
    MGAiid.naive <- MGAiid
    MGAiid <- MGAiid+MGBc
 
@@ -703,15 +708,17 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 	     strata=strata,nstrata=xx2$nstrata,idstrata=idstrata,nid=nnewid,
 	     beta.iid=betaiid,
 	     coef=coef(x),cumhaz=x$cumhaz,cumhaz.strata=x$strata[x$jumps],
+             nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
 	     model.frame=x$model.frame,formula=x$formula))
 } # }}}
 
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
 {# {{{
-   des <- readPhreg(iidBase,newdata)
-   X <- des$X
-   strata <- des$strata
+  des <- readPhreg(iidBase,newdata)
+  strata <- des$strata
+  if (!is.null(iidBase$beta.iid))  { fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X} else { 
+	  fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); }
 
    At <- c()
    for (i in sort(unique(strata))) {
@@ -723,7 +730,7 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
    if (ncol(X)!=p) stop("X and coef does not match \n"); 
 
 
-   Ft <- function(p,Xi=rep(0,p),type="log") {
+   Ft <- function(p,Xi=rep(0,length(p)-1),type="log") {
        if (type=="log")     y <- log(1-exp(-p[1]*exp(sum(Xi*p[-1]))))
        if (type=="plain")   y <- 1-exp(-p[1]*exp(sum(Xi*p[-1])))
        if (type=="cloglog") y <- log(-log(1-exp(-p[1]*exp(sum(Xi*p[-1])))))
@@ -737,13 +744,16 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
        return(y)
    }
 
-preds <- matrix(0,nrow(X),4)
+preds <- matrix(0,length(strata),4)
 
+k <- 0
 for (i in sort(unique(strata))) {
+   k <- k+1
    wheres <- which(strata==i) 
+if (fixbeta==0)  {
    iidAB <- cbind(iidBase$base.iid,iidBase$beta.iid)[iidBase$strata==i,]
    covv <- crossprod(iidAB)
-   coeff <- c(At[i+1],iidBase$coef)
+   coeff <- c(At[k],iidBase$coef)
    Xs <- X[wheres,,drop=FALSE]
    for (j in seq(1,nrow(Xs)))  {
       Xj <- Xs[j,]
@@ -754,12 +764,24 @@ for (i in sort(unique(strata))) {
       cmat[c(1,3:4)] <- cicmat
       preds[wheres[j],] <- c(cmat)
    } 
+} else {
+      iidAB <- cbind(iidBase$base.iid)[iidBase$strata==i,]
+      covv <- crossprod(iidAB)
+      coeff <- c(At[k])
+      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=1,type=conf.type[1]))
+      cmat <- eud$coefmat
+      cmat <- c(cmat[,-5])
+      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
+      cmat[c(1,3:4)] <- cicmat
+      preds[wheres,] <- matrix(c(cmat),length(wheres),4,byrow=TRUE)
+}
 }
 
 colnames(preds) <- c("pred",paste("se",conf.type[1],sep="-"),"lower","upper")
 
 return(preds)
 }# }}}
+
 
 ##' @export
 strataC <- survival:::strata

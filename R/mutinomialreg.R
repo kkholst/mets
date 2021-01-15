@@ -143,24 +143,25 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   return(res)
 }# }}}
 
-predmlogit <- function(obj,newdata)
-{# {{{
 
-  xlev <- lapply(object$model.frame,levels)
-  ff <- unlist(lapply(object$model.frame,is.factor))
-  upf <- update(object$formula,~.)
-  tt <- terms(upf)
-  tt <- delete.response(tt)
-  Z <- model.matrix(tt,data=newdata,xlev=xlev)
-  Z <- as.matrix(Z)
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
-
-  refg <- 1  ### else refg <- match(ref,types)
-  nrefs <- (1:obj$nlev)[-refg]
-  XX <- c()
-  for (i in nrefs) { XX <- cbind(XX,X*(strat==i));  }
-
-  return(res)
-}# }}}
+###predmlogit(mreg,bmt[1:2,])
+###X <- cbind(1,0,0)
+###predmlogit <- function(object,X)
+###{# {{{
+###
+###  expit  <- function(z) 1/(1+exp(-z)) ## expit
+###
+###  refg <- 1  ### else refg <- match(ref,types)
+###  nrefs <- (1:(object$nlev-1))
+###  px <- ncol(X)
+###  Xbeta <- c()
+###  k <- 1
+###  for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
+###  for (i in nrefs)  print(object$coef[(1:px)+px*(i-1)]); 
+###  head(X)
+###  Xbeta
+###
+###  return(res)
+###}# }}}
 
 
