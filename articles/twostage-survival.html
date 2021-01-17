@@ -109,7 +109,7 @@
       <h1 data-toc-skip>Analysis of multivariate survival data</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2020-12-17</h4>
+            <h4 class="date">2021-01-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/twostage-survival.Rmd"><code>vignettes/twostage-survival.Rmd</code></a></small>
       <div class="hidden name"><code>twostage-survival.Rmd</code></div>
@@ -316,7 +316,7 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.         SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.980754 0.08624194 22.96741     0   0.4975826 0.01088473</span>
+<span class="co">#&gt; dependence1 2.123514 0.09487178 22.38299     0   0.5149768 0.01115917</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; NULL</span>
@@ -330,31 +330,31 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
  <span class="kw">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span>),data=<span class="kw">d</span>,score.method=<span class="st">"optimize"</span>,
  id=<span class="st">"cluster"</span>,timevar=<span class="st">"time"</span>,status=<span class="st">"status"</span>,model=<span class="st">"clayton.oakes"</span>,silent=<span class="fl">0</span>)
 <span class="co">#&gt; Data-set  1 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 531 of  2000</span>
+<span class="co">#&gt;   Number of joint events: 522 of  2000</span>
 <span class="co">#&gt; Data-set  2 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 265 of  1214</span>
+<span class="co">#&gt;   Number of joint events: 243 of  1227</span>
 <span class="co">#&gt; Data-set  3 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 254 of  1201</span>
+<span class="co">#&gt;   Number of joint events: 246 of  1232</span>
 <span class="co">#&gt; Data-set  4 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 619 of  946</span>
+<span class="co">#&gt;   Number of joint events: 631 of  981</span>
  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">udp</span>)
 <span class="co">#&gt; [1] 1</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model </span>
 <span class="co">#&gt; Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="co">#&gt;             0 - 0.5     0.5 - 2</span>
-<span class="co">#&gt; 0 - 0.5 0.002049501 0.002217528</span>
-<span class="co">#&gt; 0.5 - 2 0.002140669 0.005400980</span>
+<span class="co">#&gt;              0 - 0.5      0.5 - 2</span>
+<span class="co">#&gt; 0 - 0.5 -0.000504819 9.184739e-05</span>
+<span class="co">#&gt; 0.5 - 2  0.001032891 3.219700e-03</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; log-coefficient for dependence parameter (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.685 (0.068)  0.827 (0.090)</span>
-<span class="co">#&gt; 0.5 - 2  0.758 (0.094)  0.652 (0.062)</span>
+<span class="co">#&gt; 0 - 0.5  0.797 (0.065)  0.837 (0.093)</span>
+<span class="co">#&gt; 0.5 - 2  0.703 (0.095)  0.724 (0.057)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Kendall's tau (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.498 (0.017)  0.533 (0.022)</span>
-<span class="co">#&gt; 0.5 - 2  0.516 (0.024)  0.49  (0.015)</span>
+<span class="co">#&gt; 0 - 0.5  0.526 (0.016)  0.536 (0.023)</span>
+<span class="co">#&gt; 0.5 - 2  0.502 (0.024)  0.508 (0.014)</span>
 </pre></div>
 </div>
 <div id="multivariate-gamma-twostage-models" class="section level1">
@@ -399,24 +399,24 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.721875 0.1890743 9.106872     0   0.4626365 0.02729850</span>
-<span class="co">#&gt; dependence2 1.279926 0.1526633 8.383980     0   0.3902301 0.02838158</span>
+<span class="co">#&gt;                Coef.        SE         z        P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 1.938885 0.1938846 10.000198 0.000000e+00   0.4922421 0.02499349</span>
+<span class="co">#&gt; dependence2 1.034037 0.1551126  6.666367 2.622147e-11   0.3408123 0.03370041</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.5736 0.05084 0.4740 0.6733 1.584e-29</span>
-<span class="co">#&gt; dependence2   0.4264 0.05084 0.3267 0.5260 4.972e-17</span>
+<span class="co">#&gt; dependence1   0.6522 0.05268 0.5489 0.7554 3.358e-35</span>
+<span class="co">#&gt; dependence2   0.3478 0.05268 0.2446 0.4511 4.046e-11</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%  P-value</span>
-<span class="co">#&gt; p1    3.002  0.1475 2.713 3.291 5.11e-92</span>
+<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%    P-value</span>
+<span class="co">#&gt; p1    2.973  0.1367 2.705 3.241 6.828e-105</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
@@ -426,10 +426,10 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span>(<span class="kw">ts</span><span class="op">$</span><span class="kw">theta</span>[<span class="fl">1</span>],<span class="kw">ts</span><span class="op">$</span><span class="kw">theta</span>[<span class="fl">2</span>],K=<span class="fl">10000</span>) 
 <span class="co">#&gt; $mz.kendall</span>
-<span class="co">#&gt; [1] 0.5928055</span>
+<span class="co">#&gt; [1] 0.5944889</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $dz.kendall</span>
-<span class="co">#&gt; [1] 0.3587227</span>
+<span class="co">#&gt; [1] 0.3416014</span>
 </pre></div>
 </div>
 <div id="family-data" class="section level1">
@@ -1104,11 +1104,11 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.8.1    timereg_1.9.8   survival_3.1-12</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.5          cpp11_0.2.1         knitr_1.30         </span>
+<span class="co">#&gt;  [1] Rcpp_1.0.6          cpp11_0.2.1         knitr_1.30         </span>
 <span class="co">#&gt;  [4] magrittr_2.0.1      splines_4.0.2       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.5.0            ragg_0.3.1          rlang_0.4.9        </span>
+<span class="co">#&gt;  [7] R6_2.5.0            ragg_0.3.1          rlang_0.4.10       </span>
 <span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
-<span class="co">#&gt; [13] xfun_0.19           htmltools_0.5.0     systemfonts_0.3.1  </span>
+<span class="co">#&gt; [13] xfun_0.20           htmltools_0.5.1     systemfonts_0.3.1  </span>
 <span class="co">#&gt; [16] yaml_2.2.1          assertthat_0.2.1    rprojroot_2.0.2    </span>
 <span class="co">#&gt; [19] digest_0.6.27       numDeriv_2016.8-1.1 pkgdown_1.6.1      </span>
 <span class="co">#&gt; [22] crayon_1.3.4        Matrix_1.2-18       fs_1.5.0           </span>
