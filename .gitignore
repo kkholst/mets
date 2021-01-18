@@ -5,6 +5,7 @@ docs
 *.gcno
 TAGS
 man/survival.twostageCC.Rd
+R/old-bicomprisksim.R
 src/minimake
 inst/doc
 inst/misc/workshop*.org
