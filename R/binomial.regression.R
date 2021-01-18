@@ -134,7 +134,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; }
+   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
   ### id from call coded as numeric 1 -> 
   id.orig <- id; 
 
