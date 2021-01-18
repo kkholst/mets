@@ -21,7 +21,8 @@ casewise.test(conc, marg, test = "no-test", p = 0.01)
 Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
 }
 \details{
-Uses cluster based conservative standard errors for marginal
+Uses cluster based conservative standard errors for marginal and sometimes only the uncertainty of the concordance estimates. This works prettey well, alternatively one can use also the 
+         funcions Casewise for a specific time point
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings

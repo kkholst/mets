@@ -2,6 +2,7 @@
 % Please edit documentation in R/bicomprisk.R
 \name{bicomprisk}
 \alias{bicomprisk}
+\alias{bicompriskData}
 \title{Estimation of concordance in bivariate competing risks data}
 \usage{
 bicomprisk(
