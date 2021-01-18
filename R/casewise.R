@@ -1,7 +1,8 @@
 ##' Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
 ##'
 ##' @title Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
-##' @details Uses cluster based conservative standard errors for marginal
+##' @details Uses cluster based conservative standard errors for marginal and sometimes only the uncertainty of the concordance estimates. This works prettey well, alternatively one can use also the 
+##'          funcions Casewise for a specific time point 
 ##' @param conc Concordance 
 ##' @param marg Marginal estimate
 ##' @param test Type of test for independence assumption. "conc" makes test on concordance scale and "case" means a test on the casewise concordance
@@ -388,4 +389,66 @@ back2timereg <- function(obj)
   attr(out,"class") <- rev(attr(out,"class")) 
   return(out)
 } ## }}}
+
+
+##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
+##'
+##' @title Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
+##' @details Uses cluster iid for the two binomial-regression estimates 
+##' @param concbreg Concordance 
+##' @param margbreg Marginal estimate
+##' @param zygs order of zygosity for estimation of concordance and casewise.
+##' @param newdata to give instead of zygs.
+##' @param ... to pass to estimate function
+##' @author Thomas Scheike
+##' @examples
+##' data(prt)
+##' dd <- bicompriskData(Event(time,cause)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
+##' newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
+##' 
+##' ## concordance 
+##' bcif1 <- binreg(Event(time,cause)~-1+factor(zyg)+cluster(id),dd,time=80,cause=1,cens.model=~strata(zyg))
+##' pconc <- predict(bcif1,newdata)
+##' pconc
+##' 
+##' ## marginal estimates 
+##' mbcif1 <- binreg(Event(time,cause)~cluster(id),prt,time=80,cause=2)
+##' mc <- predict(mbcif1,newdata)
+##' mc
+##' 
+##' cse <- Casewise(bcif1,mbcif1)
+##' cse
+##' @export
+Casewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
+{# {{{
+  if (is.null(newdata)) newdata <- data.frame(zyg=zygs,id=1)
+
+  pconc <- predict(concbreg,newdata)
+  pmarg <- predict(margbreg,newdata)
+
+  f <- function(p) {concbreg$coef <- p; return(log(predict(concbreg,newdata)[,1]))} 
+  fcase <- function(p) {
+      concbreg$coef <- p[1:2];  
+      margbreg$coef <- p[3]; 
+     res <- (log(predict(concbreg,newdata)[,1]) - log(predict(margbreg,newdata)[,1]))
+     return(res)
+  } 
+
+  margiid <- margbreg$iid
+  conciid <- matrix(0,nrow(margiid),nrow(pconc))
+###  rownames(margiid) <- margbreg$iid.origid
+  wiid <- which(concbreg$iid.origid %in% margbreg$iid.origid)
+  conciid[wiid,] <- concbreg$iid
+  iids <- cbind(conciid,margiid)
+  vcov <- crossprod(iids)
+
+###  dd <- estimate(coef=c(concbreg$coef,margbreg$coef),vcov=vcov,f=fcase,null=0)
+  dd <- estimate(coef=c(concbreg$coef,margbreg$coef),vcov=vcov,f=fcase,...)
+  expcoef <- exp(dd$coefma[,c(1,3:4)])
+
+  res <- list(coef=expcoef,logcoef=dd)
+  return(res)
+}# }}}
+
+
 
