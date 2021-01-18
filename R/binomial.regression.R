@@ -269,6 +269,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$MGciid <- MGCiid
     val$MGtid <- id
     val$orig.id <- orig.id
+    val$iid.origid <- ids 
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
