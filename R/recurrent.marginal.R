@@ -333,7 +333,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
        Aterms <- c("Count1","Count1s","eCount1","CeCount1")[terms]
        modP <- paste(Aterms,collapse="+")
        form <- as.formula(paste("Surv(",start,",",stop,",cens)~Hst+",modP,"+cluster(id)"))
-       print(form)
        nterms <- length(terms)
 
   for (i in seq_along(times)) {
