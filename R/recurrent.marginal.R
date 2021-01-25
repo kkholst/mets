@@ -216,9 +216,10 @@ summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {#
 
 ##' @export
 recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,
-   id="id",start="start",stop="stop",status="status",death="death",
-   cause=1,...)
+   id="id",start="start",stop="stop",status="status",death="death",cause=1,...)
 {# {{{
+
+###	browser()
 
  if (missing(times)) stop("times of estimation must be given")
 
@@ -229,7 +230,7 @@ recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,
  dsort(rr) <- as.formula(formsort) 
  rr$revnr <- NULL
  rr$cens <- 0
- rr <- count.history(rr)
+ rr <- count.history(rr,status=status,id=id)
 
  nid <- max(rr[,id])
  rr$revnr2 <-  c(revcumsumstrata(rep(1,nrow(rr)),rr[,id]-1,nid))
@@ -249,7 +250,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
  dr <- phreg(formD,data=rr,no.opt=TRUE)
 
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
- rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr$time)[,2])
+ rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr[,stop])[,2])
 
 ### mean(rr$Hst[rr$lbnr__id==1])
 ### summary(rr$Hst[rr$lbnr__id==1])
@@ -331,12 +332,13 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
        semuP.times <- clgl$se.mu[ww]
        Aterms <- c("Count1","Count1s","eCount1","CeCount1")[terms]
        modP <- paste(Aterms,collapse="+")
-       form <- as.formula(paste("Surv(entry,time,cens)~Hst+",modP,"+cluster(id)"))
+       form <- as.formula(paste("Surv(",start,",",stop,",cens)~Hst+",modP,"+cluster(id)"))
+       print(form)
        nterms <- length(terms)
 
   for (i in seq_along(times)) {
      timel <- times[i]
-     rr$Hst <- revcumsumstrata((rr$time<timel)*(rr$status==1)/rr$Gctrr,rr$id-1,nid)
+     rr$Hst <- revcumsumstrata((rr[,stop]<timel)*(rr[,status]==1)/rr$Gctrr,rr$id-1,nid)
      cr2 <- phreg(form,data=rr,no.opt=TRUE)
 
      dhessian <- cr2$hessianttime
