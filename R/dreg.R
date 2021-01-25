@@ -175,7 +175,6 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
  if (z.arg[1]=="group")  levell <- levels(group) else levell <-1
 
 
-
  res <- sum <- list()
  if (test==1) {
  if (is.null(summary)) sum <- NULL
@@ -202,6 +201,8 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 		     if (equal==TRUE) nn <- paste(nn,"|",g)  else nn <- paste(nn,"| not",g);
 	     }
 	     names(val) <- nn
+	     ## to avoid call stuff
+	     val[[1]]$call <- nn
              res <- c(res, val)
 	     if (doSummary) {
 	        sval <- list(do.call(summary.,list(val[[1]])))
@@ -223,6 +224,8 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 ###	     val$call <- nn
              val <- list(val)
 	     names(val) <- paste(y,"~",basel)
+	     ## to avoid call stuff
+	     val[[1]]$call <- nn
              res <- c(res, val)
 	     if (doSummary) {
 	       sval <- list(do.call(summary.,list(val[[1]])))
