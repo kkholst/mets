@@ -219,8 +219,6 @@ recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,
    id="id",start="start",stop="stop",status="status",death="death",cause=1,...)
 {# {{{
 
-###	browser()
-
  if (missing(times)) stop("times of estimation must be given")
 
  # to avoid R check warning 
@@ -335,6 +333,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
        form <- as.formula(paste("Surv(",start,",",stop,",cens)~Hst+",modP,"+cluster(id)"))
        nterms <- length(terms)
 
+###       browser()
   for (i in seq_along(times)) {
      timel <- times[i]
      rr$Hst <- revcumsumstrata((rr[,stop]<timel)*(rr[,status]==1)/rr$Gctrr,rr$id-1,nid)
@@ -350,6 +349,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
      ###  matrix(apply(dhessian[,c(5,6,8,9)],2,sum),2,2)
      gammahat <- .Call("CubeVec",Pt,covts,1,PACKAGE="mets")$XXbeta
      gammahat[is.na(gammahat)] <- 0
+     gammahat[gammahat==Inf] <- 0
      Gctb <- Gc[cr$jumps][timeb]
      augment.times <- sum(apply(gammahat*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum)/Gctb)/nid
      mterms <- length(terms)
@@ -358,22 +358,23 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
      gamma <- .Call("CubeVec",matrix(c(varZ),nrow=1),matrix(apply(covts/Gctb^2,2,sum),nrow=1),1,PACKAGE="mets")$XXbeta
      gamma <- c(gamma)
      gamma[is.na(gamma)] <- 0
+     gamma[gamma=Inf] <- 0
      augment <- sum(apply(gamma*t(cr2$U[timeb,1+1:nterms,drop=FALSE]),2,sum)/Gctb)/nid
      ###
      muPA[i] <- muP.times[i]+augment
      semuPA[i] <- (semuP.times[i]^2 +(gamma %*% varZ %*% gamma)/nid^2)^.5
      muPA.times[i] <- muP.times[i]+augment.times
-     semuPA.times[i] <- (semuP.times[i]^2 +
-			 sum(gammahat * .Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)/nid^2)^.5
+     semuPA.times[i] <- (semuP.times[i]^2 + sum(gammahat * .Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)/nid^2)^.5
   }
   }
 # }}}
 
   return(list(censoring.weights=Gctb,
-  gamma=gamma,gamma.time=gammahat, 
+  gamma=gamma,gamma.time=gammahat, times=times,
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA
 	      ))
 }# }}}
+
 
 ##' @export
 recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
