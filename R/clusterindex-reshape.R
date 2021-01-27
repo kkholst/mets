@@ -86,7 +86,7 @@ out <- data[,id,drop=FALSE]
 out[,name1] <- c(cumsumstrata(rep(1,nrow(data)),clusters,max.clust))
 out[,name2] <- clusters 
 out[,name3] <- nclust[clusters+1]
-out[,name4] <- out[,name3]-out[,name1]
+out[,name4] <- 1+out[,name3]-out[,name1]
 
 attr(out,"max.clust") <- max.clust
 
