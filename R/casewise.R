@@ -394,7 +394,7 @@ back2timereg <- function(obj)
 ##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
 ##'
 ##' @title Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
-##' @details Uses cluster iid for the two binomial-regression estimates 
+##' @details Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
 ##' @param concbreg Concordance 
 ##' @param margbreg Marginal estimate
 ##' @param zygs order of zygosity for estimation of concordance and casewise.
@@ -449,6 +449,5 @@ Casewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
   res <- list(coef=expcoef,logcoef=dd)
   return(res)
 }# }}}
-
 
 
