@@ -13,6 +13,7 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
 ##' data("prt",package="mets");
+##' prt <- force.same.cens(prt,cause="status")
 ##' 
 ##' prt <- prt[which(prt$id %in% sample(unique(prt$id),7500)),]
 ##' ### marginal cumulative incidence of prostate cancer
@@ -173,6 +174,7 @@ return(out)
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library(prodlim)
 ##' data(prt);
+##' prt <- force.same.cens(prt,cause="status")
 ##' 
 ##' ### marginal cumulative incidence of prostate cancer##' 
 ##' outm <- prodlim(Hist(time,status)~+1,data=prt)
@@ -403,6 +405,8 @@ back2timereg <- function(obj)
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(prt)
+##' prt <- force.same.cens(prt,cause="status")
+##' 
 ##' dd <- bicompriskData(Event(time,status)~strata(zyg)+id(id),data=prt,cause=c(2,2))
 ##' newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
 ##' 

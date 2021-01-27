@@ -20,6 +20,7 @@ casewise(conc, marg, cause.marg)
 \donttest{ ## Reduce Ex.Timings
 library(prodlim)
 data(prt);
+prt <- force.same.cens(prt,cause="status")
 
 ### marginal cumulative incidence of prostate cancer##' 
 outm <- prodlim(Hist(time,status)~+1,data=prt)

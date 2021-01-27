@@ -28,6 +28,7 @@ Uses cluster based conservative standard errors for marginal and sometimes only 
 \donttest{ ## Reduce Ex.Timings
 library("timereg")
 data("prt",package="mets");
+prt <- force.same.cens(prt,cause="status")
 
 prt <- prt[which(prt$id \%in\% sample(unique(prt$id),7500)),]
 ### marginal cumulative incidence of prostate cancer
