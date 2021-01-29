@@ -141,8 +141,7 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 
  yxzf <- procform(y,x=x,z=z,data=data,do.filter=FALSE,regex=regex)
  yxz <- procformdata(y,x=x,z=z,data=data,do.filter=FALSE,regex=regex)
-### print(yxz)
-### print(yxzf)
+### print(yxz); print(yxzf)
 
  ## remove blank, to able to use also 	+1 on right hand side
  if (any(yxzf$predictor==""))
@@ -163,7 +162,6 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
   }
   }# }}}
 ### print(z.arg)
-
 
  basen <- NULL
  if (z.arg[1]=="base")
@@ -189,12 +187,8 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 		     else basel <- c(x,basen)
 	             form <- as.formula(paste(y,"~",basel))
 		     if (!is.null(special)) form <- timereg::timereg.formula(form,special=special)
-###		     val <- with(data,do.call(fun,c(list(formula=form),list(...))))
-	     capture.output(
-             val <- do.call(fun.,c(list(formula=form),list(data=datal),list(...))))
-###	     print(y)
-###	     print(basel)
-###	     val$call <- paste(y,"~",basel)
+###	     capture.output()
+             val <- do.call(fun.,c(list(formula=form),list(data=datal),list(...)))
              val <- list(val)
 	     nn <- paste(y,"~",basel)
 	     if (z.arg[1]=="group") {
@@ -207,7 +201,6 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
 	     if (doSummary) {
 	        sval <- list(do.call(summary.,list(val[[1]])))
                 names(sval) <- nn
-###	        sval$call <- NULL
 	        sum <- c(sum, sval)
 	    }
 	 }
@@ -215,13 +208,12 @@ dreg <- function(data,y,x=NULL,z=NULL,x.oneatatime=TRUE,
              basel <- paste(c(yxzf$predictor,basen),collapse="+")
              form <- as.formula(paste(y,"~",basel))
 	     if (!is.null(special)) form <- timereg::timereg.formula(form,special=special)
-	     capture.output(
-             val <- do.call(fun.,c(list(formula=form),list(data=datal),list(...))))
+###	     capture.output()
+             val <- do.call(fun.,c(list(formula=form),list(data=datal),list(...)))
 	     nn <- paste(y,"~",basel)
 	     if (z.arg[1]=="group") {
 		     if (equal==TRUE) nn <- paste(nn,"|",g)  else nn <- paste(nn,"| not",g);
 	     }
-###	     val$call <- nn
              val <- list(val)
 	     names(val) <- paste(y,"~",basel)
 	     ## to avoid call stuff
