@@ -172,6 +172,16 @@ ddrop(melanoma) <- ~thick+sex
 names(melanoma)
 ```
 
+The dkeep function can also be used to re-ordering the variables in the data-frame
+
+```{r}
+data(melanoma)
+names(melanoma)
+melanoma=dkeep(melanoma,~days+status+.)
+names(melanoma)
+```
+
+
 Looking at the data 
 ===================
 
