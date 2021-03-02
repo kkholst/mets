@@ -521,15 +521,14 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     return(out)
 }# }}}
 
-S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2)
+S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2,Gcstart)
 {# {{{
     if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
     if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n");
     if (length(S0)!=length(strata))  stop("length of x and strata must be same\n");
     if (length(S0)!=length(strata2)) stop("length of x and strata2 must be same\n");
     if (length(Gct)!=length(S0)) stop("length of S0 and Gct must be same\n");
-    res <- .Call("S0_FG_GcR",as.double(S0),as.double(Gct),
-                 strata,nstrata,strata2,nstrata2,PACKAGE="mets")$res
+    res <- .Call("S0_FG_GcR",as.double(S0),as.double(Gct),strata,nstrata,strata2,nstrata2,as.double(Gcstart),PACKAGE="mets")$S0
     return(res)
 }# }}}
 

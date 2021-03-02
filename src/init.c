@@ -81,7 +81,7 @@ extern SEXP revcumsumstrataR(SEXP,SEXP, SEXP);
 extern SEXP revcumsum2strataR(SEXP,SEXP, SEXP,SEXP,SEXP);
 extern SEXP cumsum2strataR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP revcumsum2stratafdNR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-extern SEXP S0_FG_GcR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+extern SEXP S0_FG_GcR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP vecAllStrataR(SEXP,SEXP, SEXP);
 extern SEXP tailstrataR(SEXP,SEXP, SEXP);
 extern SEXP headstrataR(SEXP,SEXP, SEXP);
@@ -159,7 +159,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"revcumsum2strataR",                 (DL_FUNC) &revcumsum2strataR,                  5},
     {"revcumsum2stratafdNR",              (DL_FUNC) &revcumsum2stratafdNR,               7},
     {"cumsum2strataR",                    (DL_FUNC) &cumsum2strataR,                     7},
-    {"S0_FG_GcR",                         (DL_FUNC) &S0_FG_GcR,                          6},
+    {"S0_FG_GcR",                         (DL_FUNC) &S0_FG_GcR,                          7},
     {"vecAllStrataR",                     (DL_FUNC) &vecAllStrataR,                      3},
     {"riskstrataR",                       (DL_FUNC) &riskstrataR,                        3},
     {"revcumsumstratasumR",               (DL_FUNC) &revcumsumstratasumR,                3},

@@ -54,6 +54,7 @@ on self-reported BMI-values from a random sample of 11,411 same-sex
 twins. First, we will load data
 
 ```{r  twinbmi }
+library(mets)
 data("twinbmi")
 head(twinbmi)
 ```
@@ -222,12 +223,45 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 
 ```{r   }
 dd <- na.omit(twinbmi)
-l0 <- twinlm(bmi ~ age+gender, data=dd,
-            DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
+l0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
 
+# different marginals (but within pair)
+lf <- twinlm(bmi ~ age+gender, data=dd,DZ="DZ", zyg="zyg", id="tvparnr", type="flex")
+
+# same marginals but free correlation with MZ, DZ 
+lu <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="u")
+estimate(lu,contr(5:6,6))
+estimate(lu)
+
+lf <- twinlm(bmi ~ zyg, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="flex")
+coef(lf)
+
+
+lu <- twinlm(bmi ~ zyg, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="u")
+summary(lu)
+mets:::summary.twinlm(lu)
+estimate(lu)
+vcov(lu)
+
+estimate(lu)
+dd$id
+lu$id
+lu$hessian
+dim(iid(lu))
+crossprod(iid(lu))^.5
+
+estimate(lu,contr(4:5,5))
+
+estimate(coef=coef(lu),vcov=vcov(lu),contr(4:5,5))
+
+wald.test(coef=coef(lu),vcov=vcov(lu),contrast=c(0,0,0,1,-1))
+
+lava:::estimate.default
 ```
 
+
 ```{r   }
+
 l <- twinlm(bmi ~ ns(age,1)+gender, data=twinbmi,
            DZ="DZ", zyg="zyg", id="tvparnr", type="cor", missing=TRUE)
 summary(l)

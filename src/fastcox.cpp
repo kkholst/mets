@@ -620,32 +620,67 @@ RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata, SEXP instr
 }/*}}}*/
 
 
-RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2) {/*{{{*/
+RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	colvec Gc = Rcpp::as<colvec>(iGc);
+	colvec Gcstart = Rcpp::as<colvec>(iGcstart);
 	IntegerVector strata(istrata);
         IntegerVector strata2(istrata2);
-	int nstrata = Rcpp::as<int>(instrata);
-	int nstrata2 = Rcpp::as<int>(instrata2);
 
+	unsigned nstrata = Rcpp::as<int>(instrata);
+	unsigned nstrata2 = Rcpp::as<int>(instrata2);
 	unsigned n = a.n_rows;
 
-	vec Gct(nstrata2); for (int i=0; i<nstrata2; i++) Gct(i)=1;
-	vec S0t(nstrata); S0t.zeros();
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros();
-	mat dS0last(nstrata,nstrata2); dS0last.zeros();
-	colvec res = a;
 
+	// first computing S0(strata,strataC), in res and tmpsum(strata,strataC)
+	colvec res = a;
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1); int ss2=strata2(n-i-1);
+//		at(ss)=a(n-i-1);
+//		lagres(n-i-1)=tmpsum(ss,ss2);
+	        tmpsum(ss,ss2)+=a(n-i-1);
+//		printf(" %lf %lf \n",at(ss),dN(n-i-1));
+//		tmpsum.print("tmpsum");
+		res(n-i-1)=tmpsum(ss,ss2);
+	}
+
+	tmpsum.print(); 
+	res.print(); 
+
+	vec S0t(nstrata); S0t.zeros();
+
+	printf("hej %d %d \n",nstrata,nstrata2); 
+
+	vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
+	printf("hej\n"); 
+	// then computing first \sum Gct(strataC) S0(strata,strataC) going forward in time
+	for (unsigned  i=0; i<nstrata; i++) for (unsigned j=0; j<nstrata2; j++) S0t(i) += Gct(j)*tmpsum(i,j); 
+
+	printf("hej\n"); 
+
+	mat dS0last=tmpsum; //(nstrata,nstrata2); dS0last.zeros();
+        dS0last.print(); 
+        S0t.print(); 
+
+	colvec S0res = a;
+
+	printf("heJJJJj\n"); 
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(i); int ss2=strata2(i);
 		Gct(ss2)=Gc(i);
-		S0t(ss) += a(i)*Gct(ss2)-dS0last(ss,ss2);
-		dS0last(ss,ss2)=a(i)*Gct(ss2);
-		res(i)= S0t(ss);
+		// update S0(ss,ss2)
+		tmpsum(ss,ss2)=res(i);
+		printf(" %lf %lf \n",Gc(i),res(i)); 
+		// update all components where Gct(strataC) is changing 
+		for (unsigned j=0; j<nstrata; j++) S0t(j) += tmpsum(j,ss2)*Gct(ss2)-dS0last(j,ss2);
+		printf(" %lf %lf %lf \n",Gc(i),res(i),S0t(ss)); 
+		for (unsigned j=0; j<nstrata; j++) dS0last(j,ss2)=tmpsum(j,ss2)*Gct(ss2);
+		S0res(i)= S0t(ss);
 	}
 
 	List rres;
-	rres["res"]=res;
+	rres["S0"]=S0res;
 	return(rres);
 }/*}}}*/
 
