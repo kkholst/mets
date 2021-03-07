@@ -23,6 +23,7 @@
 ##' @param resample.iid to return iid residual processes for further computations such as tests.
 ##' @param ... Additional arguments to comp.risk function
 ##' @author Thomas Scheike, Klaus K. Holst
+##' @aliases bicompriskData
 ##' @export
 ##' @references
 ##' Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B.
@@ -275,6 +276,137 @@ bicomprisk <- function(formula, data, cause=c(1,1), cens=0, causes, indiv,
   }
 ## }}}
 }
+
+
+##' @export
+bicompriskData <- function(formula, data, cause=c(1,1), cens=0, causes, indiv,
+ strata=NULL, id,num, se.clusters=NULL,wname=NULL, ...) {
+## {{{
+
+  mycall <- match.call()
+  formulaId <- unlist(Specials(formula,"id"))
+  formulaIndiv <- Specials(formula,"indiv")
+  formulaStrata <- unlist(Specials(formula,"strata"))
+  formulaSt <- paste("~.-id(",formulaId,")",
+                     "-strata(",paste(formulaStrata,collapse="+"),")",
+                     "-indiv(",paste(formulaIndiv,collapse="+"),")")
+  formula <- update(formula,formulaSt)
+
+  if (!is.null(formulaId)) {
+    id <- formulaId
+    mycall$id <- id
+  }
+  if (!is.null(formulaStrata)) {
+    strata <- formulaStrata
+    mycall$strata <- strata
+  }
+  indiv <- formulaIndiv
+  if (!is.null(formulaIndiv)) {
+    mycall$indiv <- indiv
+  }
+  if (missing(id)) stop("Missing 'id' variable")
+
+  ### setting up cluster level for iid decomposition
+  if (is.null(se.clusters))  lse.clusters <- data[,c(id)]
+  if (length(lse.clusters)!=nrow(data)) stop("'se.clusters' and 'data' does not match!")
+  se.clusters.call <- se.clusters
+
+
+  data <- data.frame(cbind(data,lse.clusters))
+
+  timevar <- terms(formula)[[2]]
+  ##  hh <- with(data,eval(timevar))
+  if (is.call(timevar)) {
+    causes <- timevar[[3]]
+    timevar <- timevar[[2]]
+  }
+  timevar <- as.character(timevar)
+  causes <- as.character(causes)
+
+  covars <- as.character(attributes(terms(formula))$variables)[-(1:2)]
+  covars <- c(covars,strata)
+  ### adds weights,
+  if (!is.null(wname)) covars <- c(covars,wname,strata)
+
+  indiv2 <- covars2 <- NULL
+
+  data <- data[order(data[,id]),]
+  idtab <- table(data[,id])
+  ##which(data[,id]%in%names(idtab==2))
+  data <- data[which(data[,id]%in%names(idtab==2)),]
+  if (missing(num)) {
+    idtab <- table(data[,id])
+    num <- "num"
+    while (num%in%names(data)) num <- paste(num,"_",sep="")
+    data[,num] <- unlist(lapply(idtab,seq_len))
+  }
+
+  sep <- ""
+  timevar2 <- paste(timevar,1:2,sep=sep)
+  causes2 <- paste(causes,1:2,sep=sep)
+  if (length(covars)>0)
+    covars2 <- paste(covars,1,sep=sep)
+  for (i in seq_len(length(indiv)))
+  indiv2 <- c(indiv2, paste(indiv[i],1:2,sep=sep))
+
+  ww0 <- fast.reshape(data[,c(timevar,causes,covars,indiv,id,num,"lse.clusters")],id=id,num=data$num,labelnum=TRUE)[,c(id,"lse.clusters1",timevar2,causes2,indiv2,covars2)]
+  ww0 <- na.omit(ww0)
+
+  status <- rep(0,nrow(ww0))
+  time <- ww0[,timevar2[1]]
+
+  ## {{{ (i,j) causes
+  idx2 <- which(ww0[,causes2[1]]==cause[1] & ww0[,causes2[2]]==cause[2])
+  if (length(idx2)>0) {
+      status[idx2] <- 1
+      time[idx2] <- apply(ww0[idx2,timevar2[1:2],drop=FALSE],1,max)
+  }
+
+  ##(0,0), (0,j)
+  idx2 <- which(ww0[,causes2[1]]==cens & (ww0[,causes2[2]]==cens | ww0[,causes2[2]]==cause[2]))
+  if (length(idx2)>0) {
+      status[idx2] <- 0
+      time[idx2] <- ww0[idx2,timevar2[1]]
+  }
+
+  ##(ic,0), (ic,j)
+  idx2 <- which(ww0[,causes2[1]]!=cens & ww0[,causes2[1]]!=cause[1] & (ww0[,causes2[2]]==cens | ww0[,causes2[2]]==cause[2]))
+  if (length(idx2)>0) {
+      status[idx2] <- 2
+      time[idx2] <- ww0[idx2,timevar2[1]]
+  }
+
+  ##(i,0)
+  idx2 <- which(ww0[,causes2[1]]==cause[1] & ww0[,causes2[2]]==cens)
+  if (length(idx2)>0) {
+      status[idx2] <- 0
+      time[idx2] <- ww0[idx2,timevar2[2]]
+  }
+
+  ##(ic,jc)
+  idx2 <- which(ww0[,causes2[1]]!=cens & ww0[,causes2[1]]!=cause[1] & (ww0[,causes2[2]]!=cens & ww0[,causes2[2]]!=cause[2]))
+  if (length(idx2)>0) {
+      status[idx2] <- 2
+      time[idx2] <- apply(ww0[idx2,timevar2[1:2],drop=FALSE],1,min)
+  }
+
+  ##(0,jc),(i,jc)
+  idx2 <- which((ww0[,causes2[1]]==cens | ww0[,causes2[1]]==cause[1]) & (ww0[,causes2[2]]!=cens & ww0[,causes2[2]]!=cause[2]))
+  if (length(idx2)>0) {
+      status[idx2] <- 2
+      time[idx2] <- ww0[idx2,timevar2[2]]
+  }
+
+
+  mydata0 <- mydata <- data.frame(time,status,ww0[,covars2],ww0[,indiv2],ww0[,id])
+
+  names(mydata) <- c(timevar,causes,covars,indiv2,id)
+  ## }}}
+
+  return(mydata)
+} ## }}}
+
+
 
 ## plot.bicomprisk <- function(x,add=FALSE,...) {
 ##   if ("predict.timereg"%in%class(a)) {

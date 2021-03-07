@@ -78,7 +78,7 @@
 ##'   return(p[1]/p[2])
 ##' }
 ##' 
-##' estimate(coef=cifdob$coef,vcov=cifdob$var,f=riskratio)
+##' estimate(cifdob,f=riskratio)
 ##'
 ##' @export
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -128,12 +128,13 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   ### possible handling of id to code from 0:(antid-1)
   if (!is.null(id)) {
+          orig.id <- id
 	  ids <- sort(unique(id))
 	  nid <- length(ids)
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else { nid <- nrow(X); id <- as.integer(seq_along(exit))-1; }
+   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
   ### id from call coded as numeric 1 -> 
   id.orig <- id; 
 
@@ -267,6 +268,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
  
     val$MGciid <- MGCiid
     val$MGtid <- id
+    val$orig.id <- orig.id
+    val$iid.origid <- ids 
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
@@ -310,6 +313,12 @@ vcov.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
+coef.binreg <- function(object,...) {# {{{
+	return(object$coef)
+}# }}}
+
+
+##' @export
 predict.binreg <- function(object,newdata,se=TRUE,...)
 {# {{{
 
@@ -319,7 +328,12 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
   tt <- terms(upf)
   tt <- delete.response(tt)
   Z <- model.matrix(tt,data=newdata,xlev=xlev)
-  Z <- as.matrix(Z)
+  ## assuming that cluster comes after Z's 
+  Z <- as.matrix(Z)[,1:length(object$coef),drop=FALSE]
+  clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(object$model.frame),perl=TRUE)
+  if (length(clusterTerm)>=1) 
+	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
+
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% object$coef)
   p <- expit(lp)

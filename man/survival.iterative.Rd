@@ -7,7 +7,7 @@
 survival.iterative(
   margsurv,
   data = parent.frame(),
-  score.method = "nr",
+  method = "nr",
   Nit = 60,
   detail = 0,
   clusters = NULL,
@@ -44,7 +44,7 @@ survival.iterative(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
+\item{method}{Scoring method "nr", "nlminb", "optimize", "nlm"}
 
 \item{Nit}{Number of iterations}
 

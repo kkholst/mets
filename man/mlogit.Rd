@@ -37,6 +37,9 @@ dfactor(bmt) <- cause1f~cause
 drelevel(bmt,ref=3) <- cause3f~cause
 dlevels(bmt)
 
+mreg <- mlogit(cause1f~+1,bmt)
+summary(mreg)
+
 mreg <- mlogit(cause1f~tcell+platelet,bmt)
 summary(mreg)
 

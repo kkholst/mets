@@ -96,9 +96,7 @@ cluster covariates.
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
- library("timereg")
- d <- simnordic.random(4000,delayed=TRUE,
-       cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+ d <- simnordic.random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
  times <- seq(50,90,by=10)
  add1<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
  times=times,cause=1,max.clust=NULL)
@@ -117,7 +115,7 @@ cluster covariates.
 ##### 2 different causes
 #########################################
 
- add2<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+ add2<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
                   times=times,cause=2,max.clust=NULL)
  out3<-random.cif(add1,data=d,cause1=1,cause2=2,cif2=add2,sym=1,same.cens=TRUE)
  summary(out3) ## negative dependence

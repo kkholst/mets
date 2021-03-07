@@ -363,18 +363,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   return(ud);
 } ## }}}
 
-###mysolve <- function(A)
-###{
-###  ee <- eigen(A);
-###  threshold <- 1e-12
-###  idx <- ee$values>threshold
-###  ee$values[idx] <- 1/ee$values[idx];
-###  if (!all(idx))
-###    ee$values[!idx] <- 0
-###  V <- with(ee, vectors%*%diag(values)%*%t(vectors))
-###  return(V)
-###}
-
 ##' Fits a parametric model for the log-cross-odds-ratio for the 
 ##' predictive effect of for the cumulative incidence curves for \eqn{T_1} 
 ##' experiencing cause i given that \eqn{T_2} has experienced a cause k :
@@ -675,9 +663,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  library("timereg")
-##'  d <- simnordic.random(4000,delayed=TRUE,
-##'        cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+##'  d <- simnordic.random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  add1<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
@@ -696,7 +682,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' ##### 2 different causes
 ##' #########################################
 ##' 
-##'  add2<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+##'  add2<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'                   times=times,cause=2,max.clust=NULL)
 ##'  out3<-random.cif(add1,data=d,cause1=1,cause2=2,cif2=add2,sym=1,same.cens=TRUE)
 ##'  summary(out3) ## negative dependence

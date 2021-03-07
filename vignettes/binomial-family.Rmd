@@ -201,8 +201,8 @@ pair.types <-  matrix(dataid[c(t(pair.new)),"type"],byrow=T,ncol=2)
 head(pair.new,7)
 head(pair.types,7)
 ###
-theta.des  <- rbind( c(rbind(c(1,0),c(1,0),c(0,1),c(0,0))),
-		c(rbind(c(0.5,0),c(0.5,0),c(0.5,0),c(0,1))))
+theta.des  <- rbind( c(rbind(c(1,0),  c(1,0),  c(0,1),  c(0,0))),
+		     c(rbind(c(0.5,0),c(0.5,0),c(0.5,0),c(0,1))))
 random.des <- rbind( 
         c(1,0,1,0),c(0,1,1,0),
         c(1,1,0,1),c(1,0,1,1))
@@ -222,6 +222,13 @@ pairs.new is matrix with
  * columns 6 giving the number of random variables for this pair
 
 
+The length of all rows of theta.des
+are the maximum number of random effects $\times$ the number of parameters. 
+These two numbers are given in the call. In this case 4 $\times$ 2. 
+So theta.des has rows of length $8$, possibly including some 0's for rows
+not relevant due to fewer random effects, as is the case here for pairs 
+that do not share genetic effects.
+
 
 For pair 1 that is a mother/farther pair, we see that they share 
 1 environmental random effect of size 1. There are also two genetic
@@ -233,6 +240,9 @@ In contrast we also consider a mother/child pair that share half the genes, now
 with random effects with (1/2) gene variance.  We there need 4 random effects,
 2 non-shared half-gene, 1 shared half-gene, and one shared full environmental 
 effect. 
+
+
+
 
 ```{r}
 # 3 rvs here 
@@ -260,12 +270,8 @@ effects with full variance, in addition to a fully shared environmental
 effect.
 
 ```{r}
-kinship  <- c()
-for (i in 1:nrow(pair.new))
-{
-if (pair.types[i,1]=="mother" & pair.types[i,2]=="father") pk1 <- 0 else pk1 <- 0.5
-kinship <- c(kinship,pk1)
-}
+kinship  <- rep(0.5,nrow(pair.types))
+kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
 head(kinship,n=10)
 
 out <- make.pairwise.design(pair.new,kinship,type="ace") 
@@ -276,6 +282,45 @@ tsdid3 <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
              theta=c(2,1)/9,random.design=out$random.design,
              theta.des=out$theta.des,pairs=out$new.pairs,dim.theta=2)
 summary(tsdid3)
+```
+
+
+
+Pairwise dependence modelling 
+------------------------------
+
+
+```{r}
+library(mets)
+set.seed(1000)
+data <- simbinClaytonOakes.family.ace(10000,2,1,beta=NULL,alpha=NULL)
+head(data)
+data$number <- c(1,2,3,4)
+data$child <- 1*(data$number==3)
+
+mm <- familycluster.index(data$cluster)
+head(mm$familypairindex,n=20)
+pairs <- mm$pairs
+dim(pairs)
+head(pairs,12)
+```
+
+
+```{r}
+ dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
+ dtypes <- droplevels(dtypes)
+ table(dtypes)
+ dm <- model.matrix(~-1+factor(dtypes))
+```
+
+Now with the pairs we fit the model 
+
+```{r}
+aa <- margbin <- glm(ybin~x,data=data,family=binomial())
+
+tsp <- binomial.twostage(aa,data=data, clusters=data$cluster,
+		 theta.des=dm,pairs=cbind(pairs,1:nrow(dm)))
+summary(tsp)
 ```
 
 

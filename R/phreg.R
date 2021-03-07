@@ -195,12 +195,13 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
+  if (no.opt==FALSE & p!=0) {
+         II <- - tryCatch(solve(val$hessian),error=
+             function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
+  } else II <- matrix(0,p,p)
+
   ### computes Breslow estimator 
   if (cumhaz==TRUE) { # {{{
-	 if (no.opt==FALSE & p!=0) {
-               II <- - tryCatch(solve(val$hessian),error=
-	              function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
-	 } else II <- matrix(0,p,p)
 	 strata <- val$strata[val$jumps]
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
@@ -231,9 +232,10 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 		offsets=offset,
 		weights=weights,
                 id=id.orig, call.id=call.id,
-		opt=opt, 
+		no.opt=no.opt, 
 		cumhaz=cumhaz, se.cumhaz=se.cumhaz,
 		lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
+		ihessian=II,
 		II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
   res
@@ -383,8 +385,10 @@ readPhreg <- function (object, newdata, nr=TRUE, ...)
        ## remove strataTerm from design, and construct numeric version of strata
        if (length(strataTerm)>=1) { 
 	       strataNew <- X[,strataTerm,drop=FALSE]
+               whichstrata  <-  paste(object$strata.name,object$strata.level,sep="")
 	       if (length(strataTerm)>=1) { ## construct strata levels numeric
-                 strataNew <- c(strataNew %*% seq(1,length(strataTerm)))
+               mm <- match(colnames(X)[strataTerm], whichstrata)-1
+               strataNew <- c(strataNew %*% mm )
                }
 	       X <- X[,-strataTerm,drop=FALSE]
        } else strataNew <- rep(0,nrow(X))
@@ -788,7 +792,7 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
   if (!is.null(x$propodds))  stop("Only for Cox model") 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
-  if (is.null(x$opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
   xx <- x$cox.prep
   btimexx <- c(1*(xx$time < time))
@@ -966,7 +970,7 @@ robust.basehaz.phreg  <- function(x,type="robust",fixbeta=NULL,...) {# {{{
 robust.phreg  <- function(x,fixbeta=NULL,...) {
 
   if (is.null(fixbeta)) 
-  if (is.null(x$opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+  if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
  if (fixbeta==0)  {
     gamma.iid <- iid.phreg(x) 
@@ -987,7 +991,7 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
 summary.phreg <- function(object,type=c("robust","martingale"),...) {
   expC <- cc <- ncluster <- V <- NULL
 
-   if (length(object$p)>0 & object$p>0 & !is.null(object$opt)) {
+   if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
     I <- -solve(object$hessian)
     if ( (length(class(object))==2) && class(object)[2]=="cif.reg") {
 	    V <- object$var
@@ -1039,7 +1043,7 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
   print(nn,quote=FALSE)  
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
   if (!is.null(x$coef)) {
-    cat("log-coeffients:\n")
+    cat("coeffients:\n")
     printCoefmat(x$coef,...)
     cat("\n")
     cat("exp(coeffients):\n")
@@ -1618,7 +1622,7 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
 	   varbeta <- object$ihessian  
 	   Pt <- apply(object$E/c(object$S0),2,cumsumstrata,strata,nstrata)
    } else {
-          if (is.null(object$opt) | is.null(object$coef)) fixbeta<- 1 else fixbeta <- 0
+          if ((object$no.opt) | is.null(object$coef)) fixbeta<- 1 else fixbeta <- 0
           IsdM <- squareintHdM(object,ft=NULL,fixbeta=fixbeta,...)
           ###
           se.chaz <-   IsdM$varInt[object$jumps]^.5
@@ -1660,7 +1664,7 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
 		if (object$p>0) {
 			Ps <- Pt[strata==j,,drop=FALSE]
 			Ps <- rbind(0,Ps)[where,,drop=FALSE]
-                        ##  print(Xs); print(varbeta); print(dim(Ps)); print((Xs %*% varbeta))
+###                         print(Xs); print(varbeta); print(dim(Ps)); print((Xs %*% varbeta))
 			Xbeta <- Xs %*% varbeta
 			seXbeta <- rowSums(Xbeta*Xs)^.5
 			cov2 <- cov1 <- Xbeta %*% t(Ps*hazt[where])

@@ -24,6 +24,9 @@
 ##' drelevel(bmt,ref=3) <- cause3f~cause
 ##' dlevels(bmt)
 ##'
+##' mreg <- mlogit(cause1f~+1,bmt)
+##' summary(mreg)
+##'
 ##' mreg <- mlogit(cause1f~tcell+platelet,bmt)
 ##' summary(mreg)
 ##' 
@@ -64,17 +67,15 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,...)
 ###    X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-###  print(list(...))
   res <- mlogit01(X,Y,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,...) ###,
-### list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster))
   return(res)
 }# }}}
 
 
 mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
-             strata.name=NULL,cumhaz=FALSE,
-             beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
-	     case.weights=NULL,...) {# {{{
+       strata.name=NULL,cumhaz=FALSE,
+       beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,
+       propodds=NULL,AddGam=NULL,case.weights=NULL,...) {# {{{
 ###  print(list(...))
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
@@ -112,6 +113,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   nX <- nrow(X)
   idrow <- rep(1:nX,each=nlev)
   X <- X[idrow,,drop=FALSE]
+  px <- ncol(X)
   Y <- Y[idrow]
   id <- id[idrow]
   status <- rep(0,nrow(X))
@@ -123,7 +125,10 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   time <- id
   strat <- rep(1:nlev,nX)
   XX <- c()
-  for (i in nrefs) XX <- cbind(XX,X*(strat==i))
+  nn <- c()
+  for (i in nrefs) { XX <- cbind(XX,X*(strat==i)); 
+  nn<-c(nn, paste(colnames(X),i,sep=".")) }
+  colnames(XX) <- nn; 
   rownames(XX) <- NULL
 
   datph=data.frame(time=time,status=status,XX=XX,id=id,idrow=idrow)
@@ -133,6 +138,30 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 ###  print(list(...))
   res <- phreg(Surv(time,status)~XX+strata(idrow)+cluster(id),datph,weights=lweights,offset=loffset,...)
 
+  res$px <- px
+  res$nlev <- nlev
   return(res)
 }# }}}
+
+
+###predmlogit(mreg,bmt[1:2,])
+###X <- cbind(1,0,0)
+###predmlogit <- function(object,X)
+###{# {{{
+###
+###  expit  <- function(z) 1/(1+exp(-z)) ## expit
+###
+###  refg <- 1  ### else refg <- match(ref,types)
+###  nrefs <- (1:(object$nlev-1))
+###  px <- ncol(X)
+###  Xbeta <- c()
+###  k <- 1
+###  for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
+###  for (i in nrefs)  print(object$coef[(1:px)+px*(i-1)]); 
+###  head(X)
+###  Xbeta
+###
+###  return(res)
+###}# }}}
+
 
