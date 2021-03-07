@@ -39,7 +39,7 @@ or to get development version
 
 
 ```r
-devtools::install_github("kkholst/mets",ref="develop")
+remotes::install_github("kkholst/mets",ref="develop")
 ```
 
 
@@ -87,10 +87,6 @@ BibTeX:
 
 ```r
 library("mets")
-#> Loading required package: timereg
-#> Loading required package: survival
-#> Loading required package: lava
-#> mets version 1.2.8
 
 data(prt) ## Prostate data example (sim)
 

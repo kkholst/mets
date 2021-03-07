@@ -363,4 +363,7 @@ iid.twinlm <- function(x,...) {
     U%*%iI
 }
 
-     
+##' @export
+estimate.twinlm <- function(x,...) {
+  estimate(x$estimate, ...)
+}

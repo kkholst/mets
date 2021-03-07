@@ -50,7 +50,7 @@ remotes::install_github("kkholst/mets", dependencies="Suggests")
 #+END_SRC
 or to get development version
 #+BEGIN_SRC R :exports both :ravel eval=FALSE
-devtools::install_github("kkholst/mets",ref="develop")
+remotes::install_github("kkholst/mets",ref="develop")
 #+END_SRC
 
 ** Citation
