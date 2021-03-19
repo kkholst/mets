@@ -1117,8 +1117,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
 
 
 ##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,
-                depcens=0,rcZ=0.5,bin=1,
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,
                 type=c("cloglog","logistic"),rate=1) {# {{{
     p=length(beta)/2
     tt <- seq(0,6,by=0.1)

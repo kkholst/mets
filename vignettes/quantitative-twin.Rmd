@@ -237,18 +237,17 @@ lf <- twinlm(bmi ~ zyg, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="flex")
 coef(lf)
 
 
+###sink("lu-est-summary.txt")
 lu <- twinlm(bmi ~ zyg, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="u")
 summary(lu)
-mets:::summary.twinlm(lu)
 estimate(lu)
+crossprod(iid(lu))^.5
+###sink()
+
 vcov(lu)
 
 estimate(lu)
-dd$id
-lu$id
-lu$hessian
 dim(iid(lu))
-crossprod(iid(lu))^.5
 
 estimate(lu,contr(4:5,5))
 

@@ -187,7 +187,6 @@ summary.recurrent <- function(object,times=NULL,...) {
  return(out)
 }
 
-
 ##' @export
 summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {# {{{
  if (is.null(times)) times <- mutimes
@@ -366,8 +365,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
      muPA[i] <- muP.times[i]+augment
      semuPA[i] <- (semuP.times[i]^2 +(gamma %*% varZ %*% gamma)/nid^2)^.5
      muPA.times[i] <- muP.times[i]+augment.times
-     semuPA.times[i] <- (semuP.times[i]^2 + 
-	 sum(gammahat * .Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)/(nid^2))^.5
+     semuPA.times[i] <- (semuP.times[i]^2+sum(gammahat*.Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)/(nid^2))^.5
   }
   }
 # }}}
