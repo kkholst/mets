@@ -262,13 +262,18 @@ return(list(p.casewise=pud$fit,ci.casewise=exp(udci)))
 
 
 ##' @export
-plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",legend=FALSE,...)
+plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",
+                          legend=FALSE,add=FALSE, ...)
 { ## {{{
   if (is.null(col)) col <- 1:3
   if (is.null(lty)) lty <- 1:3
   if (is.null(ylim)) ylim=range(c(x$casewise[,2],x$marg[,2]))
 
-  plot(x$casewise[,1],x$casewise[,2],type="s",ylim=ylim,lty=lty[1],col=col[1],xlab=xlab,ylab=ylab,...)
+  if (add) {
+    lines(x$casewise[,1],x$casewise[,2],type="s",lty=lty[1],col=col[1],...)
+  } else {
+   plot(x$casewise[,1],x$casewise[,2],type="s",ylim=ylim,lty=lty[1],col=col[1],xlab=xlab,ylab=ylab,...)
+  }
   if (!is.null(ci)) {
      ul <- x$casewise[,2]+qnorm(1-(1-ci)/2)* x$casewise[,3]
      nl <- x$casewise[,2]-qnorm(1-(1-ci)/2)* x$casewise[,3]
