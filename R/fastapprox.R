@@ -66,7 +66,9 @@ indexstrata <- function(jump.times,jump.strata,eval.times,eval.strata,nstrata,eq
 	   whereJ <- which(jump.strata==i)
 	   if (!is.null(start.time)) iindex <- fast.approx(c(start.time,jump.times[whereJ]),eval.times[wherej],equal=equal,type=type,sorted=sorted) 
 	   else iindex <- fast.approx(jump.times[whereJ],eval.times[wherej],equal=equal,type=type,sorted=sorted) 
-	   index[wherej] <- whereJ[iindex]
+	iindexn0 <- which(iindex!=0)
+        if (length(iindexn0)>0)
+	   index[wherej[iindex0]] <- whereJ[iindex[iindexn0]]
 	}
 	return(index)
 }# }}}
