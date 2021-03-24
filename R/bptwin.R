@@ -17,7 +17,7 @@
 ##' @param group Optional. Variable name defining group for interaction analysis (e.g., gender)
 ##' @param num Optional twin number variable
 ##' @param weights Weight matrix if needed by the chosen estimator (IPCW)
-##' @param biweight Function defining the bivariate weight in each cluster
+##' @param weights.fun Function defining a single weight each individual/cluster
 ##' @param strata Strata
 ##' @param messages Control amount of messages shown 
 ##' @param control Control argument parsed on to the optimization routine. Starting values may be parsed as '\code{start}'.
@@ -34,7 +34,6 @@
 ##' @param constrain Development argument
 ##' @param samecens Same censoring
 ##' @param allmarg Should all marginal terms be included
-##' @param bound Development argument
 ##' @param varlink Link function for variance parameters
 ##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
@@ -48,7 +47,7 @@
 bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                    num=NULL,
                    weights=NULL,
-                   biweight=function(x) 1/min(x),
+                   weights.fun=function(x) ifelse(any(x<=0), 0, max(x)),
                    strata=NULL,
                    messages=1,
                    control=list(trace=0),
@@ -61,7 +60,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                    robustvar=TRUE,
                    p, indiv=FALSE,
                    constrain,
-                   bound=FALSE,
                    varlink,
                    ...) {
     
@@ -151,24 +149,13 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   data[,zyg] <- zyg2 ## MZ=0, DZ=1, OS=2
 
   
-  ## time <- "time"
-  ## while (time%in%names(data)) time <- paste(time,"_",sep="")
-  ## data[,time] <- unlist(lapply(idtab,seq))
-
-
-  ## ff <- paste(as.character(formula)[3],"+",
-  ##             paste(c(id,zyg,weights,num),collapse="+"))
-  ## ff <- paste("~",yvar,"+",ff)
-  ##formula0 <- as.formula(ff)
   opt <- options(na.action="na.pass")
-  ##  Data <- model.matrix(formula0,data)
   Data <- cbind(model.matrix(formula,data),data[,c(yvar,id,zyg,weights,num)])
   options(opt)
-  ## rnames1 <- setdiff(colnames(Data),c(yvar,time,id,weights,zyg))
+
   rnames1 <- setdiff(colnames(Data),c(yvar,id,weights,zyg,num))
   nx <- length(rnames1) 
   if (nx==0) stop("Zero design not allowed")
-  
 
   bidx0 <- seq(nx)
   midx0 <- bidx0; midx1 <- midx0+nx
@@ -297,17 +284,17 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   if (!OSon) N <- N[,-c(3,6,9),drop=FALSE]
   
   if (samecens & !is.null(weights)) {
-    MyData0$W0 <- cbind(apply(MyData0$W0,1,biweight))
+    MyData0$W0 <- cbind(apply(MyData0$W0,1,weights.fun))
     if (!is.null(MyData0$Y0_marg))
-      MyData0$W0_marg <- cbind(apply(MyData0$W0_marg,1,biweight))
+      MyData0$W0_marg <- cbind(apply(MyData0$W0_marg,1,weights.fun))
 
-    MyData1$W0 <- cbind(apply(MyData1$W0,1,biweight))
+    MyData1$W0 <- cbind(apply(MyData1$W0,1,weights.fun))
     if (!is.null(MyData1$Y0_marg))
-        MyData1$W0_marg <- cbind(apply(MyData1$W0_marg,1,biweight))
+        MyData1$W0_marg <- cbind(apply(MyData1$W0_marg,1,weights.fun))
 
-    MyData2$W0 <- cbind(apply(MyData2$W0,1,biweight))
+    MyData2$W0 <- cbind(apply(MyData2$W0,1,weights.fun))
     if (!is.null(MyData2$Y0_marg))
-        MyData2$W0_marg <- cbind(apply(MyData2$W0_marg,1,biweight))
+        MyData2$W0_marg <- cbind(apply(MyData2$W0_marg,1,weights.fun))
   }
 
   rm(Y0,XX0,W0,Y1,XX1,W1,Y2,XX2,W2)
@@ -371,7 +358,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
     b1 <- cbind(p[bidx1])
     b2 <- cbind(p[bidx2])
     b00 <- b0; b11 <- b1; b22 <- b2
-    if (bound) p[vidx] <- min(p[vidx],20)
+    ## if (bound) p[vidx] <- min(p[vidx],20)
     S <- Sigma(p)
     lambda <- eigen(S$Sigma0)$values
     if (any(lambda<1e-12 | lambda>1e9)) stop("Variance matrix out of bounds")

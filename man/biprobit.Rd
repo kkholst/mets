@@ -16,7 +16,7 @@ biprobit(
   eqmarg = TRUE,
   indep = FALSE,
   weights = NULL,
-  biweight,
+  weights.fun = function(x) ifelse(any(x <= 0), 0, max(x)),
   samecens = TRUE,
   randomeffect = FALSE,
   vcov = "robust",
@@ -49,7 +49,7 @@ biprobit(
 
 \item{weights}{Weights}
 
-\item{biweight}{Function defining the bivariate weight in each cluster}
+\item{weights.fun}{Function defining the bivariate weight in each cluster}
 
 \item{samecens}{Same censoring}
 
