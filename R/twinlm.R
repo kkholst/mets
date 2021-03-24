@@ -56,9 +56,19 @@
 ##' @param weights Weights matrix if needed by the chosen estimator. For use
 ##'     with Inverse Probability Weights
 ##' @param type Character defining the type of analysis to be
-##'     performed. Should be a subset of "aced" (additive genetic factors, common
+##'     performed. Can be a subset of "aced" (additive genetic factors, common
 ##'     environmental factors, unique environmental factors, dominant
-##'     genetic factors).
+##'     genetic factors). Other choices are:
+##'     \itemize{
+##'     \item {"0" (or "sat"): Saturated model where twin 1 and twin 2 within each twin
+##'            pair may have a different marginal distribution.}
+##'     \item {"1" (or "flex","zyg"): Within twin pairs the marginal distribution is
+##'            the same, but the marginal distribution may differ between MZ and DZ
+##'            twins. A free correlation structure within MZ and DZ twins. }
+##'     \item {"2" (or "u", "eqmarg"): All individuals have the same marginals
+##'            but a free correlation structure within MZ and DZ twins.}
+##'     }
+##'     The default value is an additive polygenic model \code{type="ace"}.
 ##' @param twinnum The name of the column in the dataset numbering the
 ##'     twins (1,2). If it does not exist in \code{data} it will
 ##'     automatically be created.
@@ -142,8 +152,14 @@ twinlm <- function(formula, data, id, zyg, DZ, group=NULL,
   }
   
   type <- tolower(type)
-  ## if ("u" %in% type) type <- c("ue")
-  
+  if (type%in%c("u", "samemarg", "eqmarg", "2"))
+    type <- c("u")
+  if (type%in%c("flex", "zyg", "1"))
+    type <- c("flex")
+  if (type%in%c("sat", "0")) {
+    type <- c("sat")
+  }
+
   varnames <- all.vars(formula)
   latentnames <- c("a1","a2","c1","c2","d1","d2","e1","e2")
   if (any(latentnames%in%varnames))

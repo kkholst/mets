@@ -56,9 +56,19 @@ the dyzogitic twins}
 with Inverse Probability Weights}
 
 \item{type}{Character defining the type of analysis to be
-performed. Should be a subset of "aced" (additive genetic factors, common
+performed. Can be a subset of "aced" (additive genetic factors, common
 environmental factors, unique environmental factors, dominant
-genetic factors).}
+genetic factors). Other choices are:
+\itemize{
+\item {"0" (or "sat"): Saturated model where twin 1 and twin 2 within each twin
+       pair may have a different marginal distribution.}
+\item {"1" (or "flex","zyg"): Within twin pairs the marginal distribution is
+       the same, but the marginal distribution may differ between MZ and DZ
+       twins. A free correlation structure within MZ and DZ twins. }
+\item {"2" (or "u", "eqmarg"): All individuals have the same marginals
+       but a free correlation structure within MZ and DZ twins.}
+}
+The default value is an additive polygenic model \code{type="ace"}.}
 
 \item{twinnum}{The name of the column in the dataset numbering the
 twins (1,2). If it does not exist in \code{data} it will
