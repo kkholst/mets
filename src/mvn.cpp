@@ -30,8 +30,6 @@ double mvtdst(int* n,
 	      double* value,  // result
 	      int* inform)    // Message (0 success)
 {
-  // *value = 1;
-  // return(*value);
   if (*n==1 && *nu==0) {
     // 0: right, 1: left, 2: interval
     switch (*infin) {
@@ -44,12 +42,7 @@ double mvtdst(int* n,
     return(*value);
   }
 
-  //  cerr << "fortran to be called...\n";
-  // mvtdst_(n, nu,
-  // 	  lower, upper, infin, correl, delta,
-  // 	  maxpts, abseps, releps,
-  // 	  error, value, inform);
-  int rnd=1;
+    int rnd=1;
   /* mvtnorm_C_mvtdst is defined in mvtnorm/inst/include/mvtnormAPI.h */
   mvtnorm_C_mvtdst(n, nu,
 		   lower, upper, infin, correl, delta,
@@ -268,7 +261,6 @@ mat scoremvn(mat &Y,
 	     // mat &Threshold, mat &dThreshold) {
 
   int n = Y.n_rows;
-  //int k = Yl.n_cols;
   int p = dMu.n_cols;
   double logdet = 0;
 
@@ -277,10 +269,10 @@ mat scoremvn(mat &Y,
   mat U(n,p);
   U.fill(0);
   colvec A = -0.5*trans(dS)*vectorise(iS);
-  //Rcpp::Rcout << "A" << std::endl;
-  for (int i=0; i<n; i++) {
+    for (int i=0; i<n; i++) {
     colvec zi = trans(z.row(i));
-    U.row(i) = trans( A+0.5*trans(dS)*vectorise(zi*trans(zi)) + trans(dMu)*zi ) ;
+    U.row(i) = trans( A+0.5*trans(dS)*vectorise(zi*trans(zi))
+                      + trans(dMu)*zi ) ;
   }
   return(U);
 }

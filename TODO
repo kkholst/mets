@@ -1,7 +1,7 @@
 
 - dreg kunne forbedres (hvad med "X*" * "Y*" to construct all interactions) 
-- cif call kan forbedres med formel set up
+- cif call kan forbedres med formel set up. predict?
 - predict for Cox models in recurrent 
 - predict for Cox model phreg optimize handling of strata
-
-
+- document twinlm, bptwin (type argument, and other things)
+-

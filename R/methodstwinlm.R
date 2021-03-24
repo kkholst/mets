@@ -362,8 +362,3 @@ iid.twinlm <- function(x,...) {
     iI <- vcov(x)
     U%*%iI
 }
-
-##' @export
-estimate.twinlm <- function(x,...) {
-  estimate(x$estimate, ...)
-}
