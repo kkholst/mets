@@ -9,7 +9,7 @@ ipw(
   data,
   cluster,
   same.cens = FALSE,
-  obs.only = TRUE,
+  obs.only = FALSE,
   weight.name = "w",
   trunc.prob = FALSE,
   weight.name2 = "wt",
