@@ -65,7 +65,7 @@
 ##' Biid <- mets:::iid.baseline.cifreg(fg,time=20)
 ##' FGprediid(Biid,bmt[1:5,])
 ##'
-##' @aliases vecAllStrata diffstrata iid.baseline.cifreg FGprediid 
+##' @aliases vecAllStrata diffstrata iid.baseline.cifreg FGprediid indexstratarightR
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
             weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
