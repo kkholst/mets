@@ -30,7 +30,6 @@ extern SEXP FastCoxPrep(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCoxPrepStrata(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP FastLong2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastPattern(SEXP, SEXP, SEXP);
-extern SEXP indexstrataR(SEXP, SEXP, SEXP,SEXP);
 extern SEXP MatxCube(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -85,7 +84,7 @@ extern SEXP revcumsum2stratafdNR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP vecAllStrataR(SEXP,SEXP, SEXP);
 extern SEXP tailstrataR(SEXP,SEXP, SEXP);
 extern SEXP headstrataR(SEXP,SEXP, SEXP);
-extern SEXP indexstrataR(SEXP, SEXP,SEXP, SEXP);
+extern SEXP indexstrataR(SEXP, SEXP,SEXP, SEXP,SEXP);
 extern SEXP revcumsumstratasumR(SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumR(SEXP,SEXP, SEXP,SEXP, SEXP);
 extern SEXP revcumsumidstratasumCovR(SEXP,SEXP,SEXP, SEXP,SEXP, SEXP);
@@ -140,7 +139,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"FastCoxPrepStrata",                 (DL_FUNC) &FastCoxPrepStrata,                 11},
     {"FastLong2",                         (DL_FUNC) &FastLong2,                          4},
     {"FastPattern",                       (DL_FUNC) &FastPattern,                        3},
-    {"indexstrataR",                      (DL_FUNC) &indexstrataR,                       4},
+    {"indexstrataR",                      (DL_FUNC) &indexstrataR,                       5},
     {"MatxCube",                          (DL_FUNC) &MatxCube,                           3},
     {"meanriskR",                         (DL_FUNC) &meanriskR,                          5},
     {"wherestrataR",                      (DL_FUNC) &wherestrataR,                       4},

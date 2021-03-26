@@ -529,13 +529,14 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 }# }}}
 
 ##' @export
-indexstratarightR <- function(timeo,stratao,jump,js,nstrata)# {{{
+indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 {
   mm <- cbind(timeo,stratao,1:length(timeo),0)
   mm <- rbind(mm,cbind(jump,js,1:length(jump),1))
   ord <- order(mm[,1],mm[,4])
   mm <- mm[ord,]
-  res <- .Call("indexstrataR",mm[,2],mm[,3],mm[,4],nstrata)$res
+  if (type=="right") right <- 1 else right <- 0
+  res <- .Call("indexstrataR",mm[,2],mm[,3],mm[,4],nstrata,right)$res
   return(res[,1])
 }# }}}
 

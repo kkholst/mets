@@ -726,23 +726,22 @@ RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	return(rres);
 }/*}}}*/
 
-RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata) {/*{{{*/
+RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata,SEXP iright) {/*{{{*/
 //	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector strata(istrata);
 	IntegerVector index(iindex);
 	IntegerVector type(itype);
 	int nstrata = Rcpp::as<int>(instrata);
+	int right= Rcpp::as<int>(iright);
 	unsigned n = strata.size();
 
 	colvec tmpsum(nstrata); tmpsum.zeros();
-//	colvec res = a;
-
 	int ntype=0; 
 	for (unsigned i=0; i<n; i++) ntype+=type(i); 
 	mat res(ntype,2); 
-//	res.print("mm"); 
-
 	int j=ntype; 
+
+	if (right==1)  {
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1);
 		int typel=type(n-i-1); 
@@ -752,6 +751,18 @@ RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata) 
 			res(j,0)=tmpsum(ss);
 			res(j,1)=index(n-i-1); 
 		}
+	}
+	} else {
+        for (unsigned i=0; i<n; i++) {
+		int ss=strata(i);
+		int typel=type(i); 
+		if (typel==0) tmpsum(ss)=index(i);
+		if (typel==1) { 
+			j=j-1; 
+			res(j,0)=tmpsum(ss);
+			res(j,1)=index(i); 
+		}
+	}
 	}
 
 	List rres;
