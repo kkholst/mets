@@ -185,7 +185,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     data$statusC <- statusC
     cens.strata <- cens.nstrata <- NULL
 
-    if (length(whereC)>0) {
+###	strataC <- model.matrix(cens.model,data)
+###	print(strataC)
+
+       if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
         kmt <- TRUE
         if (class(cens.model)[1]=="formula") {
@@ -211,7 +214,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         Pcens.model <- list(time=exit,surv=Gc,strata=0)
         nCstrata <- 1
 	cens.strata <- rep(0,length(exit))
-    }
+    }# }}}
 
 
     Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
@@ -242,6 +245,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         Gts <-   Gjumps <- rep(1,length(jumptimes))
     }
 
+
     ## computing terms for those experiencing another cause, need S0, S1, S2
     if (length(other)>=1) {# {{{
         trunc <- TRUE
@@ -268,7 +272,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         timeo  <- xx$time
         if (nCstrata>1) xxCstrata <- c(xx$Z) else xxCstrata <- rep(0,length(timeo))
         ## use right because we want S_0(T_jump)
-        where <- indexstrata(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata,type="right")
+	### gives index of timeo related to jumptimes and same strata
+	### the value 0 means that jumptime has no point in time0, thus S0other=0
+        where <- indexstratarightR(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata)
+###	print(cbind(where,strata1jumptimes, strata1jumptimes %in% xx$strata ))
     }# }}}
 
 
@@ -277,22 +284,22 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         if (length(other)>=1)  {
             if (nCstrata==1) {# {{{
                 rr <- c(xx$sign*exp(xx$X %*% pp + xx$offset)*xx$weights)
-                S0no <- revcumsumstrata(rr,xx$strata,xx$nstrata)
-                S1no  <- apply(xx$X*rr,2,revcumsumstrata,xx$strata,xx$nstrata);
-                S2no  <- apply(xx$XX*rr,2,revcumsumstrata,xx$strata,xx$nstrata);
+                S0no <- c(0,revcumsumstrata(rr,xx$strata,xx$nstrata))
+                S1no  <- rbind(0,apply(xx$X*rr,2,revcumsumstrata,xx$strata,xx$nstrata))
+                S2no  <- rbind(0,apply(xx$XX*rr,2,revcumsumstrata,xx$strata,xx$nstrata));
                 Gjumps <- c(Gjumps)
 
-                S0no <- Gjumps*S0no[where]
-                S1no <- Gjumps*S1no[where,,drop=FALSE]
-                S2no <- Gjumps*S2no[where,,drop=FALSE]
+                S0no <- Gjumps*S0no[where+1]
+                S1no <- Gjumps*S1no[where+1,,drop=FALSE]
+                S2no <- Gjumps*S2no[where+1,,drop=FALSE]
                 ## }}}
             }  else {# {{{
 
                 ff <- function(x,strata,nstrata,strata2,nstrata2)
                 {# {{{
-                    x <- revcumsum2strata(x,strata,nstrata,strata2,nstrata2)$mres
+                    x <- rbind(0,revcumsum2strata(x,strata,nstrata,strata2,nstrata2)$mres)
                     ### take relevant S0sc (s=strata,c=cstrata) at jumptimes so that strata=s also match
-                    x <- x[where,]
+                    x <- x[where+1,]
                     x <- apply(x*Gts,1,sum)
                     return(x)
                 }# }}}
@@ -521,16 +528,27 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     return(out)
 }# }}}
 
-S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2,Gcstart)
-{# {{{
-    if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
-    if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n");
-    if (length(S0)!=length(strata))  stop("length of x and strata must be same\n");
-    if (length(S0)!=length(strata2)) stop("length of x and strata2 must be same\n");
-    if (length(Gct)!=length(S0)) stop("length of S0 and Gct must be same\n");
-    res <- .Call("S0_FG_GcR",as.double(S0),as.double(Gct),strata,nstrata,strata2,nstrata2,as.double(Gcstart),PACKAGE="mets")$S0
-    return(res)
+##' @export
+indexstratarightR <- function(timeo,stratao,jump,js,nstrata)# {{{
+{
+  mm <- cbind(timeo,stratao,1:length(timeo),0)
+  mm <- rbind(mm,cbind(jump,js,1:length(jump),1))
+  ord <- order(mm[,1],mm[,4])
+  mm <- mm[ord,]
+  res <- .Call("indexstrataR",mm[,2],mm[,3],mm[,4],nstrata)$res
+  return(res[,1])
 }# }}}
+
+###S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2,Gcstart)
+###{# {{{
+###    if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
+###    if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n");
+###    if (length(S0)!=length(strata))  stop("length of x and strata must be same\n");
+###    if (length(S0)!=length(strata2)) stop("length of x and strata2 must be same\n");
+###    if (length(Gct)!=length(S0)) stop("length of S0 and Gct must be same\n");
+###    res <- .Call("S0_FG_GcR",as.double(S0),as.double(Gct),strata,nstrata,strata2,nstrata2,as.double(Gcstart),PACKAGE="mets")$S0
+###    return(res)
+###}# }}}
 
 ##' @export
 iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
@@ -780,7 +798,6 @@ colnames(preds) <- c("pred",paste("se",conf.type[1],sep="-"),"lower","upper")
 
 return(preds)
 }# }}}
-
 
 ##' @export
 strataC <- survival:::strata

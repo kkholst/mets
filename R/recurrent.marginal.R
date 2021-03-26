@@ -362,6 +362,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
      gamma[gamma=Inf] <- 0
      augment <- sum(apply(gamma*t(cr2$U[timeb,1+1:nterms,drop=FALSE])/Gctb,2,sum))/nid
      ###
+###     browser()
      muPA[i] <- muP.times[i]+augment
      semuPA[i] <- (semuP.times[i]^2 +(gamma %*% varZ %*% gamma)/nid^2)^.5
      muPA.times[i] <- muP.times[i]+augment.times

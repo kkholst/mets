@@ -620,69 +620,60 @@ RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata, SEXP instr
 }/*}}}*/
 
 
-RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
-	colvec a = Rcpp::as<colvec>(ia);
-	colvec Gc = Rcpp::as<colvec>(iGc);
-	colvec Gcstart = Rcpp::as<colvec>(iGcstart);
-	IntegerVector strata(istrata);
-        IntegerVector strata2(istrata2);
-
-	unsigned nstrata = Rcpp::as<int>(instrata);
-	unsigned nstrata2 = Rcpp::as<int>(instrata2);
-	unsigned n = a.n_rows;
-
-	mat tmpsum(nstrata,nstrata2); tmpsum.zeros();
-
-	// first computing S0(strata,strataC), in res and tmpsum(strata,strataC)
-	colvec res = a;
-	for (unsigned i=0; i<n; i++) {
-		int ss=strata(n-i-1); int ss2=strata2(n-i-1);
-//		at(ss)=a(n-i-1);
-//		lagres(n-i-1)=tmpsum(ss,ss2);
-	        tmpsum(ss,ss2)+=a(n-i-1);
-//		printf(" %lf %lf \n",at(ss),dN(n-i-1));
-//		tmpsum.print("tmpsum");
-		res(n-i-1)=tmpsum(ss,ss2);
-	}
-
-	tmpsum.print(); 
-	res.print(); 
-
-	vec S0t(nstrata); S0t.zeros();
-
-	printf("hej %d %d \n",nstrata,nstrata2); 
-
-	vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
-	printf("hej\n"); 
-	// then computing first \sum Gct(strataC) S0(strata,strataC) going forward in time
-	for (unsigned  i=0; i<nstrata; i++) for (unsigned j=0; j<nstrata2; j++) S0t(i) += Gct(j)*tmpsum(i,j); 
-
-	printf("hej\n"); 
-
-	mat dS0last=tmpsum; //(nstrata,nstrata2); dS0last.zeros();
-        dS0last.print(); 
-        S0t.print(); 
-
-	colvec S0res = a;
-
-	printf("heJJJJj\n"); 
-	for (unsigned i=0; i<n; i++) {
-		int ss=strata(i); int ss2=strata2(i);
-		Gct(ss2)=Gc(i);
-		// update S0(ss,ss2)
-		tmpsum(ss,ss2)=res(i);
-		printf(" %lf %lf \n",Gc(i),res(i)); 
-		// update all components where Gct(strataC) is changing 
-		for (unsigned j=0; j<nstrata; j++) S0t(j) += tmpsum(j,ss2)*Gct(ss2)-dS0last(j,ss2);
-		printf(" %lf %lf %lf \n",Gc(i),res(i),S0t(ss)); 
-		for (unsigned j=0; j<nstrata; j++) dS0last(j,ss2)=tmpsum(j,ss2)*Gct(ss2);
-		S0res(i)= S0t(ss);
-	}
-
-	List rres;
-	rres["S0"]=S0res;
-	return(rres);
-}/*}}}*/
+//RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus, 
+//	SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
+////	colvec a = Rcpp::as<colvec>(ia);
+////	colvec Gc = Rcpp::as<colvec>(iGc);
+////	colvec Gcstart = Rcpp::as<colvec>(iGcstart);
+////	IntegerVector status(istatus);
+////	IntegerVector type2(itype2);
+////	IntegerVector strata(istrata);
+////        IntegerVector strata2(istrata2);
+////
+////	unsigned nstrata = Rcpp::as<int>(instrata);
+////	unsigned nstrata2 = Rcpp::as<int>(instrata2);
+////	unsigned n = a.n_rows;
+////
+////	mat tmpsum(nstrata,nstrata2+1); tmpsum.zeros();
+////	colvec S0sc = a;
+////	for (unsigned i=0; i<n; i++) {
+////		int ss=strata(n-i-1); 
+////		// censureringstrata put to 0 for non type2
+////		int ss2=type2(n-i+1)*strata2(n-i-1)+type2(n-i-1);
+////		tmpsum(ss,ss2) += a(n-i-1);
+////		S0sc(n-i-1)=tmpsum(ss,ss2);
+////	}
+////
+//////	tmpsum har S0 til tid 0
+//////       tmpsum.print("S0(0,strata)"); S0sc.print("S0sc"); 
+////
+////       vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
+//////       vec Gclast(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gclast(i)=Gcstart(i);
+////       // now go forward in time to compute S0^2(j) =  \sum_s G_s(t) S0(j,s) by updating 
+////       // for censoring type 2 S0's 
+//////       mat S0tt(nstrata,nstrata2); S0tt.zeros();
+//////       vec S0(nstrata); dS0.zeros();
+//////       vec S0t2(nstrata); S0t2.zeros();
+////
+////       // first computing S0(strata,strataC), is given so we move forward in time 
+////       // whenever jump add \sum_c G_cj(t) S_ss,j(t) to S_ss(t)
+//////	colvec S0res = S0sc; 
+//////	for (unsigned i=0; i<n; i++) {
+//////		int ss=strata(i); 
+//////		int ss2=strata2(i);
+//////		S0tt(ss,ss2)=S0sc(i); 
+//////		Gct(ss2)=Gc(i); 
+//////
+//////	        if (status(i)==1) {
+//////	           for (unsigned k=0;k<nstrata2; k++) S0res(i)+=S0tt.col(ss,k)*Gct(k); 
+//////		}
+//////	}
+////
+//////	List rres;
+//////	rres["S0"]=S0res;
+//////	rres["S0sc"]=S0sc;
+//////	return(rres);
+//}/*}}}*/
 
 RcppExport SEXP cumsum2strataR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP istarta) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
@@ -714,7 +705,6 @@ RcppExport SEXP cumsum2strataR(SEXP ia,SEXP idN,SEXP istrata, SEXP instrata,SEXP
 	return(rres);
 }/*}}}*/
 
-
 RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector strata(istrata);
@@ -733,6 +723,39 @@ RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 
 	List rres;
 	rres["res"]=Ss;
+	return(rres);
+}/*}}}*/
+
+RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata) {/*{{{*/
+//	colvec a = Rcpp::as<colvec>(ia);
+	IntegerVector strata(istrata);
+	IntegerVector index(iindex);
+	IntegerVector type(itype);
+	int nstrata = Rcpp::as<int>(instrata);
+	unsigned n = strata.size();
+
+	colvec tmpsum(nstrata); tmpsum.zeros();
+//	colvec res = a;
+
+	int ntype=0; 
+	for (unsigned i=0; i<n; i++) ntype+=type(i); 
+	mat res(ntype,2); 
+//	res.print("mm"); 
+
+	int j=ntype; 
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1);
+		int typel=type(n-i-1); 
+		if (typel==0) tmpsum(ss)=index(n-i-1);
+		if (typel==1) { 
+			j=j-1; 
+			res(j,0)=tmpsum(ss);
+			res(j,1)=index(n-i-1); 
+		}
+	}
+
+	List rres;
+	rres["res"]=res;
 	return(rres);
 }/*}}}*/
 
