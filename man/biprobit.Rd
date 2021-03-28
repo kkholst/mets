@@ -17,11 +17,10 @@ biprobit(
   indep = FALSE,
   weights = NULL,
   weights.fun = function(x) ifelse(any(x <= 0), 0, max(x)),
-  samecens = TRUE,
   randomeffect = FALSE,
   vcov = "robust",
   pairs.only = FALSE,
-  allmarg = samecens & !is.null(weights),
+  allmarg = !is.null(weights),
   control = list(trace = 0),
   messages = 1,
   constrain = NULL,
@@ -50,8 +49,6 @@ biprobit(
 \item{weights}{Weights}
 
 \item{weights.fun}{Function defining the bivariate weight in each cluster}
-
-\item{samecens}{Same censoring}
 
 \item{randomeffect}{If TRUE a random effect model is used (otherwise correlation parameter is estimated allowing for both negative and positive dependence)}
 

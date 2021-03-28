@@ -539,9 +539,20 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   ucminfopt <- intersect(names(control),c("trace","grtol","xtol","stepmax","maxeval","grad","gradstep","invhessian.lt"))
   optimopt <- names(control) 
 
+  if (control$method=="optimx") {
+    if (is.null(control$lower)) control$lower <- -Inf
+    if (is.null(control$upper)) control$upper <- Inf
+    if (is.null(control$optimx.method)) control$optimx.method <- c("BFGS","Nelder-Mead")
+  }
+
   op <- switch(tolower(control$method),
                nlminb=nlminb(p0,f0,gradient=g0,control=control[nlminbopt]),
                optim=optim(p0,fn=f0,gr=g0,control=control[ucminfopt]),
+               optimx=optimx::optimx(p0, f0, g0, ...,
+                                     lower=control$lower,
+                                     upper=control$upper,
+                                     method=control$optimx.method,
+                                     control=control$optimx.control),
                ucminf=,
                quasi=,
                gradient=ucminf::ucminf(p0,fn=f0,gr=g0,control=control[ucminfopt],hessian=0),
@@ -564,6 +575,16 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                ##                optim=optim(p0,f,control=mycontrol[ucminfopt],...),
                  nlminb(p0,f,control=control[nlminbopt]))
 
+  if (inherits(op, "optimx")) {
+    val <- op$value
+    if (length(val)==1) {
+      pp <- as.numeric(coef(op))
+    } else {
+      idx <- which.min(op$value)
+      pp <- as.numeric(coef(op)[idx,])
+    }
+    op <- list(par=pp, opt=op)
+  }
   if (stderr) {
     UU <- U(op$par,indiv=TRUE)    
     I <- -numDeriv::jacobian(U,op$par)

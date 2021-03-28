@@ -1,7 +1,7 @@
 ##' @export
 biprobit.time <- function(formula,data,id,...,
                           breaks=NULL,n.times=20,
-                          pairs.only=TRUE,fix.cens.weights=FALSE,
+                          pairs.only=TRUE,fix.cens.weights=TRUE,
                           cens.formula,cens.model="aalen",
                           weights.fun=function(x) { u <- min(x); ifelse(u==0, 0, 1/min(u)) },
                           weights="w",messages=FALSE,

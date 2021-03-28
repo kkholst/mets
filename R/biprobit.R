@@ -18,7 +18,6 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     if (is.null(namX)) namX <- "(Intercept)"
     if (is.null(namZ)) namZ <- "(Intercept)"
     namZ <- paste("r:",namZ,sep="")
-
     resh <- function(x,...,nam,onecol=0,df=1) {
         x <- c(list(x),list(...))
         res <- mis <- c()
@@ -51,8 +50,7 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     }
     DD <- resh(data.frame(x),X,Z,weights,nam=c("y","x","z","w"),onecol=3)
     Y00 <- matrix(c(0,0, 1,0, 0,1, 1,1),ncol=2,byrow=TRUE)
-
-    if (is.null(X) && is.null(Z)) {
+  if (is.null(X) && is.null(Z)) {
         pos <- factor(interaction(DD$y))
         ipos <- unique(as.numeric(pos))
         Tab <- rbind(as.vector(table(DD$y))); colnames(Tab) <- c("00","10","01","11")
@@ -261,7 +259,6 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 ##' @param indep Independence
 ##' @param weights Weights
 ##' @param weights.fun Function defining the bivariate weight in each cluster
-##' @param samecens Same censoring
 ##' @param randomeffect If TRUE a random effect model is used (otherwise correlation parameter is estimated allowing for both negative and positive dependence)
 ##' @param vcov Type of standard errors to be calculated
 ##' @param pairs.only Include complete pairs only?
@@ -340,9 +337,9 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
                      indep=FALSE, weights=NULL, 
                      weights.fun=function(x) ifelse(any(x<=0), 0, max(x)),
-                     samecens=TRUE, randomeffect=FALSE, vcov="robust",
+                     randomeffect=FALSE, vcov="robust",
                      pairs.only=FALSE,                             
-                     allmarg=samecens&!is.null(weights),
+                     allmarg=!is.null(weights),
                      control=list(trace=0),
                      messages=1, constrain=NULL,
                      table=pairs.only,
@@ -385,7 +382,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
     rownames(res$vcov) <- colnames(res$vcov) <- names(res$coef)
     return(res)
   }
-  
+
   if (missing(id)) {    
     if (!is.null(weights)) {
       weights <- data[,weights]
@@ -396,6 +393,8 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
 
   yx <- getoutcome(formula)
 
+  ids <- table(data[,id])
+  if (all(ids==2)) pairs.only <- TRUE
   if (pairs.only) {
       X <- Z <- NULL
       zf <- getoutcome(rho); if (length(attr(zf,"x"))>0) Z <- model.matrix(rho,data);
@@ -444,7 +443,10 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
   model <- list(tr=vartr,name=trname,inv=itrname,invname=itrname,deriv=dvartr,varcompname=varcompname,dS=dS0,eqmarg=eqmarg,randomeffect=randomeffect,blen=blen,zlen=zlen)
 
   MyData <- with(DD,ExMarg(Y0,XX0,W0,dS0,midx1,midx2,eqmarg=eqmarg,allmarg=allmarg,Z0,id=id))
-  if (samecens & !is.null(weights)) {
+  if (pairs.only) {
+    MyData$Y0_marg <- NULL
+  }
+  if (!is.null(weights)) {
       MyData$W0 <- cbind(apply(MyData$W0,1,weights.fun))
       if (!is.null(MyData$Y0_marg)) {
           MyData$W0_marg <- cbind(apply(MyData$W0_marg,1,weights.fun))
@@ -579,7 +581,6 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
   }
 
   if (is.null(control$method)) {
-    ##    control$method <- ifelse(samecens & !is.null(weights), "bhhh","quasi")
     control$method <- "quasi"
   }
   control$method <- tolower(control$method)
