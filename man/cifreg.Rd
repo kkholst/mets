@@ -6,6 +6,7 @@
 \alias{diffstrata}
 \alias{iid.baseline.cifreg}
 \alias{FGprediid}
+\alias{indexstratarightR}
 \title{CIF regression}
 \usage{
 cifreg(

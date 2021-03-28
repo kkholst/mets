@@ -238,16 +238,17 @@ bplot(outX,add=TRUE,col=3)
 Improving efficiency 
 ======================
 
-We now simulate some data with censoring where we can improve the efficiency 
-
+We now simulate some data where there is strong heterogenity such that
+we can improve the efficiency for censored survival data.
 
 ```{r}
-rr <- simRecurrentII(5000,base1,base4,death.cumhaz=ddr,cens=3/5000)
+rr <- simRecurrentII(5000,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
 rr <-  count.history(rr)
 
 # cox case
 xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=rr)
 dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
+out <- recurrentMarginal(xr,dr)
 
 times <- 500*(1:10)
      

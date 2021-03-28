@@ -2020,14 +2020,14 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 }# }}}
 
 ##' @export
-plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,...)
+plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,type="s",...)
 {# {{{
 nl <- cbind(x,band[,1])
 ul <- cbind(x,band[,2])
 
   if (!polygon) {
-      lines(nl,type="s",...)
-      lines(ul,type="s",...)
+      lines(nl,type=type,...)
+      lines(ul,type=type,...)
       } else {
 	 ll <- length(nl[,1])
          timess <- nl[,1]
