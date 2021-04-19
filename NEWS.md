@@ -1,6 +1,7 @@
 # mets 1.2.9
   - Examples updated
   - dutility function no longer casts warnings when handling formulas
+  - Efficient estimation of recurrent events mean: recurrentMarginalAIPCW 
 
 # mets 1.2.8.1
   - Maintenance release
