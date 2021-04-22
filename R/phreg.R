@@ -1050,6 +1050,15 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
     printCoefmat(x$exp.coef,...)
   }
   cat("\n")
+
+ ## for binreg ATE
+ if (!is.null(x$ate)) {
+    cat("Average Treatment effects :\n")
+    printCoefmat(x$ate,...)
+    cat("\n")
+  }
+  cat("\n")
+
 }
 
 ###}}} print.summary
