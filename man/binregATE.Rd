@@ -63,6 +63,11 @@ binregATE(
 Under causal assumptions that T,cause are independent of Z given additional covariates
 we can estimate the average treatment effect.
 }
+\details{
+The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
+This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
+then IPCW censoring adjusted using binomial regression.
+}
 \examples{
 data(bmt)
 
