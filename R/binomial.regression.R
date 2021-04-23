@@ -287,8 +287,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
 ##' Average Treatment effect for censored competing risks data  using Binomial Regression 
 ##'
-##' Under causal assumptions that T,cause are independent of Z given additional covariates
-##' we can estimate the average treatment effect.
+##' Under the standard causal assumptions  we can estimate the average treatment effect.
 ##'
 ##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
 ##' This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are

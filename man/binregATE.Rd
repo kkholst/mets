@@ -60,8 +60,7 @@ binregATE(
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Under causal assumptions that T,cause are independent of Z given additional covariates
-we can estimate the average treatment effect.
+Under the standard causal assumptions  we can estimate the average treatment effect.
 }
 \details{
 The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
