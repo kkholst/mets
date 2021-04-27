@@ -4,7 +4,7 @@
 \alias{mlogit}
 \title{Multinomial regression based on phreg regression}
 \usage{
-mlogit(formula, data, offset = NULL, weights = NULL, ...)
+mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
 }
 \arguments{
 \item{formula}{formula with outcome (see \code{coxph})}
@@ -14,6 +14,8 @@ mlogit(formula, data, offset = NULL, weights = NULL, ...)
 \item{offset}{offsets for partial likelihood}
 
 \item{weights}{for score equations}
+
+\item{fix.X}{to have same coefficients for all categories}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -28,7 +30,9 @@ Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}
 Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
 Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.  
 
-Can also get influence functions (possibly robust) via iid() function, response should be a factor.
+Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
+
+Can fit cumulative odds model as a special case of interval.logitsurv.discrete
 }
 \examples{
 
@@ -48,6 +52,7 @@ summary(mreg3)
 
 ## inverse information standard errors 
 estimate(coef=mreg3$coef,vcov=mreg3$II)
+
 
 }
 \author{

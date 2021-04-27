@@ -425,10 +425,10 @@ back2timereg <- function(obj)
 ##' mc <- predict(mbcif1,newdata)
 ##' mc
 ##' 
-##' cse <- Casewise(bcif1,mbcif1)
+##' cse <- binregCasewise(bcif1,mbcif1)
 ##' cse
 ##' @export
-Casewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
+binregCasewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
 {# {{{
   if (is.null(newdata)) newdata <- data.frame(zyg=zygs,id=1)
 

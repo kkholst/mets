@@ -537,6 +537,14 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##'    P(T >t | x) =  \frac{1}{1 + G(t) exp( x \beta) }
 ##' }
 ##' 
+##' This is thus also the cumulative odds model, since 
+##' \deqn{
+##'    P(T \leq t | x) =  \frac{G(t) \exp(x \beta) }{1 + G(t) exp( x \beta) }
+##' }
+##' 
+##' The baseline \eqn{G(t)} is written as \eqn{cumsum(exp(\alpha))} and this is not the standard
+##' parametrization that takes log of \eqn{G(t)} as the parameters.
+##' 
 ##' Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
 ##' When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an observation at j+1
 ##' 
@@ -635,6 +643,16 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   X <- X[,-intpos,drop=FALSE]
   if (ncol(X)>0) X.names <- colnames(X) else X.names <- NULL
 ###  if (ncol(X)==0) X <- NULL 
+
+  if (!is.null(id)) {
+	  ids <- unique(id)
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+   } else { id <- as.integer(seq_along(time2))-1; nid <- length(time2) }
+   ## orginal id coding into integers 
+   id.orig <- id+1; 
 
   ## times 1 -> mutimes , 0 til start
   utimes <- sort(unique(c(time2,entrytime)))
@@ -782,9 +800,10 @@ hessian <- D2log
   if (all) {
       ihess <- solve(hessian)
       beta.iid <- Dlogliid %*% ihess ## %*% t(Dlogl) 
+      beta.iid <- apply(beta.iid,2,sumstrata,id,nid)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-		  iid=beta.iid,robvar=robvar,var=-ihess,
+		  iid=beta.iid,robvar=robvar,var=-ihess,id=id,
 		  se=diag(-ihess)^.5,se.robust=diag(robvar)^.5)
       return(val)
   }  

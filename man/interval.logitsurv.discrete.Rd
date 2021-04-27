@@ -54,6 +54,14 @@ interval.logitsurv.discrete(
 }
 }
 \details{
+This is thus also the cumulative odds model, since 
+\deqn{
+   P(T \leq t | x) =  \frac{G(t) \exp(x \beta) }{1 + G(t) exp( x \beta) }
+}
+
+The baseline \eqn{G(t)} is written as \eqn{cumsum(exp(\alpha))} and this is not the standard
+parametrization that takes log of \eqn{G(t)} as the parameters.
+
 Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
 When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an observation at j+1
 

@@ -729,9 +729,7 @@ return(preds)
 ##'
 ##' Standard errors computed under assumption of correct \deqn{G_c(s)} model.
 ##' 
-##' Augmentation term only computed for standard FG model, since strata is used to 
-##' specify working models for CIF's. 
-##'
+##' 
 ##' @param formula formula with 'Event', strata model for CIF given by strata, and strataC specifies censoring strata
 ##' @param data data frame
 ##' @param offset offsets for cox model
