@@ -623,6 +623,8 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
 	if (max(entrytime)==0) left <- 0
     }
 
+  if (any(entrytime==time2)) stop("left==right not possible for discrete data")
+
   id <- strata <- NULL
   if (!is.null(attributes(Terms)$specials$cluster)) {
     ts <- survival::untangle.specials(Terms, "cluster")
@@ -687,11 +689,16 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   ## weights/offets will follow id 
   if (is.null(weights))  weights <- rep(1,n); #  else wiid <- weights
   if (is.null(offsets))  offsets <- rep(0,n); # else offsets <- offsets
-  if (is.null(beta)) beta <- rep(0,ncol(X)+mutimes)
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   logit  <- function(p) log(p/(1-p))  ## logit
 
-  beta[1:mutimes] <- (1:mutimes)*exp(logit( (sum(time2<Inf)/(nrow(X)*mutimes))))
+  if (is.null(beta)) {
+     beta <- rep(0,ncol(X)+mutimes)
+     Set <- 1-cumsum(table(time2))/n
+     dHt <- log(diff(c(0,(1/Set-1))))
+     beta[1:mutimes] <- dHt[1:mutimes]
+  }
+
 
 obj <- function(pp,all=FALSE)
 { # {{{
