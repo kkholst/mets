@@ -571,30 +571,8 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##' out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' 
-##' n <- 100
-##' Z <- matrix(rbinom(n*4,1,0.5),n,4)
-##' outsim <- simlogitSurvd(out$coef,Z)
-##' outsim <- transform(outsim,left=time,right=time+1)
-##' outsim <- dtransform(outsim,right=Inf,status==0)
-##' 
-##' outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-##' 
-##' Z <- matrix(0,5,4)
-##' Z[2:5,1:4] <- diag(4)
 ##' pred <- predictlogitSurvd(out,se=FALSE)
 ##' plotSurvd(pred)
-##' 
-##' ## simulations 
-##' n <- 100
-##' Z <- matrix(rbinom(n*4,1,0.5),n,4)
-##' outsim <- simlogitSurvd(out$coef,Z)
-##' ###
-##' outsim <- transform(outsim,left=time,right=time+1)
-##' outsim <- dtransform(outsim,right=Inf,status==0)
-##' 
-##' out$coef
-##' outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-##' summary(outss)
 ##' 
 ##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd
 ##' @export
