@@ -1,0 +1,128 @@
+---
+title: "Discrete Interval Censored Survival Models"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Discrete Survival Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Discrete Inteval Censored survival times 
+========================================
+
+\begin{align*}
+   \mbox{logit}(P(T >t | x)) & = \log(G(t)) + x^T \beta              \\
+                P(T >t | x)  & =  \frac{1}{1 + G(t) exp( x^T \beta) }         
+\end{align*}
+ 
+
+Input are intervals given by $]t_l,t_r]$ where t_r can be infinity
+for right-censored intervals. When truly discrete $]0,1]$ will be an
+observation at 1, and $]j,j+1]$ will be an observation at j+1.
+
+Likelihood is maximized:
+\begin{align*}
+    \prod_i  P(T_i >t_{il} | x) - P(T_i> t_{ir}| x).            
+\end{align*}
+
+This model is also called the cumulative odds model 
+\begin{align*}
+     P(T \leq t | x)  & =  \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta) }.
+\end{align*}
+and $\beta$ says something about the OR of probability of being before $t$. 
+
+The baseline is parametrized as 
+\begin{align*}
+                G(t)  & =  \sum_{j \leq t} \exp( \alpha_j ) 
+\end{align*}
+
+A consequence is also that for all cut-points $t$ we have the same parameters, for the 
+OR of being early or later than $t$. 
+
+Discrete TTP 
+=============
+
+
+First we look at some time to pregnancy (discrete survival data) that is
+right-censored, and set it up to fit the cumulative odds model by constructing the intervals appropriately: 
+
+```{r}
+library(mets)
+
+data(ttpd) 
+dtable(ttpd,~entry+time2)
+out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+summary(out)
+```
+
+Now using this discrete survival model we simulate some data from this model 
+
+```{r}
+set.seed(1000) # to control output in simulatins for p-values below.
+n <- 10000
+Z <- matrix(rbinom(n*4,1,0.5),n,4)
+outsim <- simlogitSurvd(out$coef,Z)
+outsim <- transform(outsim,left=time,right=time+1)
+outsim <- dtransform(outsim,right=Inf,status==0)
+outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
+summary(outss)
+
+Z <- matrix(0,5,4)
+Z[2:5,1:4] <- diag(4)
+Z
+pred <- predictlogitSurvd(out,se=TRUE)
+plotSurvd(pred,se=TRUE)
+```
+
+And now taking some data and comparing with icenReg. We make the data fully interval censored by
+lettin also exact obsevations be in an interval by modifying the right slightly in this case. 
+
+```{r}
+test <- 0 
+if (test==1) {
+
+library(icenReg)
+data(IR_diabetes)
+IRdia <- IR_diabetes
+IRdia <- dtransform(IRdia,right=right+1,left==right)
+ints <- with(IRdia, dInterval(left,right,cuts=c(0,5,10,20,30,40,Inf),show=TRUE) )
+ints$Ileft <- ints$left
+ints$Iright <- ints$right
+IRdia <- cbind(IRdia,data.frame(Ileft=ints$Ileft,Iright=ints$Iright))
+dtable(IRdia,~Ileft+Iright)
+
+outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia)
+
+fit <- ic_sp(cbind(Ileft, Iright) ~ gender, data = IRdia, model = "po")
+summary(fit)
+summary(outss)
+outss$ploglik
+
+
+outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control(trace=TRUE,stepsize=0.5))
+}
+
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+
