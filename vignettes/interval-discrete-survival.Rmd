@@ -48,7 +48,7 @@ The baseline is parametrized as
                 G(t)  & =  \sum_{j \leq t} \exp( \alpha_j ) 
 \end{align*}
 
-A consequence is also that for all cut-points $t$ we have the same parameters, for the 
+An important consequence of the model is that for all cut-points $t$ we have the same OR parameters for the 
 OR of being early or later than $t$. 
 
 Discrete TTP 
@@ -81,13 +81,17 @@ summary(outss)
 
 Z <- matrix(0,5,4)
 Z[2:5,1:4] <- diag(4)
-Z
 pred <- predictlogitSurvd(out,se=TRUE)
 plotSurvd(pred,se=TRUE)
 ```
 
-And now taking some data and comparing with icenReg. We make the data fully interval censored by
-lettin also exact obsevations be in an interval by modifying the right slightly in this case. 
+And now taking some data and comparing with icenReg. We make the data fully interval censored/discrete by
+letting also exact obsevations be discrete (thus being in an interval) by modifying the intervals. 
+
+We consider the interval censored survival times for time from onset 
+of diabetes to to diabetic nephronpathy, and make it discrete by 
+fixing a nuber of fixed cutpoints.
+
 
 ```{r}
 test <- 0 
@@ -95,9 +99,13 @@ if (test==1) {
 
 library(icenReg)
 data(IR_diabetes)
+help(IR_diabetes)
 IRdia <- IR_diabetes
-IRdia <- dtransform(IRdia,right=right+1,left==right)
-ints <- with(IRdia, dInterval(left,right,cuts=c(0,5,10,20,30,40,Inf),show=TRUE) )
+## removing fully observed data in continuous version, here making it a discrete observation 
+IRdia <- dtransform(IRdia,left=left-1,left==right)
+dtable(IRdia,~left+right,level=1)
+
+ints <- with(IRdia,dInterval(left,right,cuts=c(0,5,10,20,30,40,Inf),show=TRUE) )
 ints$Ileft <- ints$left
 ints$Iright <- ints$right
 IRdia <- cbind(IRdia,data.frame(Ileft=ints$Ileft,Iright=ints$Iright))
@@ -110,8 +118,8 @@ summary(fit)
 summary(outss)
 outss$ploglik
 
-
-outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control(trace=TRUE,stepsize=0.5))
+## sometimes NR-algorithm needs modifications of stepsize to run 
+outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
 }
 
 ```
