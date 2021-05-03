@@ -471,9 +471,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 	  
 
-	  treat <- glm(treat.model,data,family="binomial")
-	  Xtreat <- cbind(1,treat$model[,-1])
-	  ytreat <- treat$y
+  treat <- glm(treat.model,data,family="binomial")
+  Xtreat <- model.matrix(treat$formula,data)
+  ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)

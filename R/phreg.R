@@ -1629,7 +1629,8 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
    if (!robust) { 
 	   se.chaz <- object$se.cumhaz[,2] 
 	   varbeta <- object$ihessian  
-	   Pt <- apply(object$E/c(object$S0),2,cumsumstrata,strata,nstrata)
+	   if (!object$no.opt) Pt <- apply(object$E/c(object$S0),2,cumsumstrata,strata,nstrata)
+           else Pt <- 0
    } else {
           if ((object$no.opt) | is.null(object$coef)) fixbeta<- 1 else fixbeta <- 0
           IsdM <- squareintHdM(object,ft=NULL,fixbeta=fixbeta,...)
@@ -1761,6 +1762,40 @@ if (!is.null(object$propodds)) pcumhaz <- -log(surv)
  class(out) <- c("predictphreg")
  if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[2])
  return(out)
+}# }}}
+
+
+##' @export
+print.predictphreg  <- function(x,se=TRUE,...) {# {{{
+
+   if (is.null(x$se.cumhaz) & se==TRUE)  {
+       warning("predict.phreg must be with se=TRUE\n"); 
+       se <- FALSE
+   }
+
+  type <- "surv"
+  if ((length(class(x))==2) && (substr(class(x)[2],1,3)=="cif")) type <- "cif"
+
+  if (type[1]=="surv") { 
+	  xx <- x$surv 
+  } else if (type[1]=="cif") {
+     xx <- x$cif 
+  } else { xx <- x$cumhaz; names(xx) <- "cumhaz"}
+  colnames(xx) <- type
+
+  if (se) {
+     if (type[1]=="surv") {
+	     upper <- x$surv.upper; lower <- x$surv.lower 
+	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
+     } else if (type[1]=="cif") {
+	     lower <- x$cif.lower; upper <- x$cif.upper
+     } else { upper <- cumhaz.upper; lower <- cumhaz.lower}
+     ci <- cbind(lower,upper)
+     colnames(ci) <- c("lower","upper")
+     xx <- cbind(xx,ci)
+  }
+
+return(xx)
 }# }}}
 
 
