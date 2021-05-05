@@ -447,30 +447,30 @@ hessian <- matrix(D2log,length(pp),length(pp))
  structure(-ploglik,gradient=-gradient,hessian=hessian)
 }# }}}
 
-	  p <- ncol(X)
-	  opt <- NULL
-	  if (p>0) {
-	  if (no.opt==FALSE) {
-	      if (tolower(method)=="nr") {
-		  tim <- system.time(opt <- lava::NR(beta,obj,...))
-		  opt$timing <- tim
-		  opt$estimate <- opt$par
-	      } else {
-		  opt <- nlm(obj,beta,...)
-		  opt$method <- "nlm"
-	      }
-	      cc <- opt$estimate; 
-	      if (!se) return(cc)
-	      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-	      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
-	  } else {
-	      val <- obj(0,all=TRUE)
-	  }
+  p <- ncol(X)
+  opt <- NULL
+  if (p>0) {
+  if (no.opt==FALSE) {
+      if (tolower(method)=="nr") {
+	  tim <- system.time(opt <- lava::NR(beta,obj,...))
+	  opt$timing <- tim
+	  opt$estimate <- opt$par
+      } else {
+	  opt <- nlm(obj,beta,...)
+	  opt$method <- "nlm"
+      }
+      cc <- opt$estimate; 
+###      if (!se) return(cc)
+      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
+      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
+  } else {
+      val <- obj(0,all=TRUE)
+  }
 
-	  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-	  val <- c(val,list(time=time,formula=formula,formC=formC,
-	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-	    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
+  val <- c(val,list(time=time,formula=formula,formC=formC,
+    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
+    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 	  
 # {{{ computation of ate, att, atc and their influence functions
 
@@ -517,6 +517,7 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
+
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -567,20 +568,37 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
     MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
  
+###    val$MGciid <- MGCiid
+###    val$MGciid10 <- MGCiid10
+###    val$MGtid <- id
+###    val$orig.id <- orig.id
+###    val$iid.origid <- ids 
+###    val$iid.naive <- val$iid 
+###    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+###    val$naive.var <- val$var
+###    robvar <- crossprod(val$iid)
+###    val$var <-  val$robvar <- robvar
+###### val$var  <- val$naive.var - val$varadjC
+###    val$se.robust <- diag(robvar)^.5
+###    val$se.coef <- diag(val$var)^.5
+  }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
+## }}}
+
+
     val$MGciid <- MGCiid
     val$MGciid10 <- MGCiid10
     val$MGtid <- id
     val$orig.id <- orig.id
     val$iid.origid <- ids 
     val$iid.naive <- val$iid 
-    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
 ### val$var  <- val$naive.var - val$varadjC
     val$se.robust <- diag(robvar)^.5
     val$se.coef <- diag(val$var)^.5
-  } ## }}}
+
 
 val$risk <- c(mean(risk1),mean(risk0))
 val$att <- sum(att)/ntreat
