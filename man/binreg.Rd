@@ -44,7 +44,7 @@ binreg(
 
 \item{se}{to compute se's  based on IPCW}
 
-\item{kaplan.meier}{uses Kaplan-Meier for baseline than standard Cox}
+\item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
 
 \item{cens.code}{gives censoring code}
 

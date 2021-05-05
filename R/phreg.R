@@ -1056,6 +1056,11 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
     cat("Average Treatment effects :\n")
     printCoefmat(x$ate,...)
     cat("\n")
+
+    cat("Average Treatment effects on Treated/Non-Treated :\n")
+    printCoefmat(x$attc,...)
+    cat("\n")
+
   }
   cat("\n")
 

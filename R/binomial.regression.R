@@ -22,7 +22,7 @@
 ##' @param cens.weights censoring weights 
 ##' @param cens.model only stratified cox model without covariates
 ##' @param se to compute se's  based on IPCW 
-##' @param kaplan.meier uses Kaplan-Meier for baseline than standard Cox 
+##' @param kaplan.meier uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
 ##' @param cens.code gives censoring code
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
@@ -285,13 +285,15 @@ hessian <- matrix(D2log,length(pp),length(pp))
 }# }}}
 
 
-##' Average Treatment effect for censored competing risks data  using Binomial Regression 
+##' Average Treatment effect for censored competing risks data using Binomial Regression 
 ##'
-##' Under the standard causal assumptions  we can estimate the average treatment effect.
+##' Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 ##'
 ##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
 ##' This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
 ##' then IPCW censoring adjusted using binomial regression. 
+##'
+##' Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
@@ -303,8 +305,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @param offset offsets for partial likelihood 
 ##' @param weights for score equations 
 ##' @param cens.weights censoring weights 
-##' @param se to compute se's  based on IPCW 
-##' @param kaplan.meier uses Kaplan-Meier for baseline than standard Cox 
+##' @param se to compute se's  with IPCW  adjustment, otherwise assumes that IPCW weights are known
+##' @param kaplan.meier uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
 ##' @param cens.code gives censoring code
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
@@ -321,7 +323,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
-	   offset=NULL,weights=NULL,cens.weights=NULL, se=TRUE,
+	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -470,10 +472,11 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
 	    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 	  
+# {{{ computation of ate, att, atc and their influence functions
 
-  treat <- glm(treat.model,data,family="binomial")
-  Xtreat <- model.matrix(treat$formula,data)
-  ytreat <- treat$y
+treat <- glm(treat.model,data,family="binomial")
+Xtreat <- model.matrix(treat$formula,data)
+ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)
@@ -482,7 +485,6 @@ iidalpha <- iid(treat)
 ### first covariate is treatment
 X1 <- X0 <- X
 X1[,2] <- 1; X0[,2] <- 0
-
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -495,18 +497,26 @@ Y <- 1*(exit<time & status==cause)/cens.weights
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
 
+ntreat <- sum(ytreat)
+att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
+atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
+
 Dp1 <- X * c(p1/(1+exp(p1lp)))
 Dp11 <- X1 * c(p11/(1+exp(p11lp)))
 Dp10 <- X0 * c(p10/(1+exp(p10lp)))
 Dpai <-  - Xtreat * exp(-lpa)
 D1mpai <-   Xtreat * exp(lpa)
 
-
 DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,mean)
 DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,mean)
-
 DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,mean)
 DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
+
+DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,mean)
+DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
+
+DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
+DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -532,6 +542,7 @@ DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
@@ -545,9 +556,16 @@ DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
     U10[xx$jumps+1,] <- h10[xx$jumps+1,] /c(resC$S0)
     MGt10 <- (U10[,drop=FALSE]-IhdLamh10)*c(xx$weights)
 
+    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    Uattc <- matrix(0,nrow(xx$X),2)
+    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
+    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
+
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-    MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,max(id)+1)
+    mid <- max(id)+1
+    MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
+    MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
+    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
  
     val$MGciid <- MGCiid
     val$MGciid10 <- MGCiid10
@@ -564,38 +582,63 @@ DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
     val$se.coef <- diag(val$var)^.5
   } ## }}}
 
+val$risk <- c(mean(risk1),mean(risk0))
+val$att <- sum(att)/ntreat
+val$atc <- sum(atc)/(n-ntreat)
+
+val$attc <- c(val$att,val$atc)
+names(val$attc) <- c("ATT","ATC")
+names(val$risk) <- c("treat-1","treat-0")
+
 ## iid's of marginal risk estimates 
 
-iidbase1 <- c(risk1-mean(risk1))
+iidbase1 <- c(risk1-val$risk[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
-iidGc1 <- MGCiid10[,1]
+if (se)  {
+iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
+iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
+}  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-mean(risk0))
+iidbase0 <- c(risk0-val$risk[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
-iidGc0 <- MGCiid10[,2]
 
 iidrisk1 <- iidbase1+iidcif1+iidpal1+iidGc1
 iidrisk0 <- iidbase0+iidcif0+iidpal0+iidGc0
 difriskiid <- (iidrisk1-iidrisk0)/n
 
 iidrisk <- cbind(iidrisk1,iidrisk0)/n
+iidatt <- att-ytreat*val$att
+iidatc <- atc-(1-ytreat)*val$atc
 
+iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
+iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
+iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
+iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
+
+iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
+iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
+
+# }}}
+
+# {{{ output ate, att, atc
 varrisk <- crossprod(iidrisk)
 sdrisk <- diag(varrisk)^.5
-
 vardifrisk  <-  sum(difriskiid^2)
 sddifrisk <- vardifrisk^.5
 
-val$risk <- c(mean(risk1),mean(risk0))
-names(val$risk) <- c("treat-1","treat-0")
 val$var.risk <- varrisk; val$sd.risk <- sdrisk
 val$risk.iid <- cbind(iidrisk1,iidrisk0)
 
 val$difrisk <- val$risk[1]-val$risk[2]
 val$var.difrisk <- vardifrisk
-val$sd.difrisk <- sddifrisk
+val$se.difrisk <- sddifrisk
+
+val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
+val$var.attc <- crossprod(val$attc.iid)
+val$se.attc <- diag(val$var.attc)^.5
+# }}}
 
   class(val) <- "binreg"
   return(val)
@@ -628,14 +671,15 @@ if (!is.null(object$risk))  {
 	difmarginal <- estimate(coef=object$difrisk,vcov=as.matrix(object$var.difrisk))$coefmat
 	rownames(difmarginal) <- "difference"
 	marginal <- rbind(marginal,difmarginal)
-	res <- c(res,list(ate=marginal))
+
+	attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
+	res <- c(res,list(ate=marginal,attc=attc))
+
 }
 
 class(res) <- "summary.phreg"
 return(res)
 }# }}}
-
-
 
 ##' @export
 vcov.binreg <- function(object,...) {# {{{
@@ -646,7 +690,6 @@ vcov.binreg <- function(object,...) {# {{{
 coef.binreg <- function(object,...) {# {{{
 	return(object$coef)
 }# }}}
-
 
 ##' @export
 predict.binreg <- function(object,newdata,se=TRUE,...)
@@ -712,7 +755,6 @@ return(preds)
 ###return(preds)
 ###} # }}}
 ###
-
 
 ##' Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) 
 ##'
