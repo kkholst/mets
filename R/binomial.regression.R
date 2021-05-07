@@ -646,7 +646,7 @@ sdrisk <- diag(varrisk)^.5
 vardifrisk  <-  sum(difriskiid^2)
 sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; val$sd.risk <- sdrisk
+val$var.risk <- varrisk; val$se.risk <- sdrisk
 val$risk.iid <- cbind(iidrisk1,iidrisk0)
 
 val$difrisk <- val$risk[1]-val$risk[2]
