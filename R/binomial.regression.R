@@ -788,19 +788,6 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
     MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
  
-###    val$MGciid <- MGCiid
-###    val$MGciid10 <- MGCiid10
-###    val$MGtid <- id
-###    val$orig.id <- orig.id
-###    val$iid.origid <- ids 
-###    val$iid.naive <- val$iid 
-###    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-###    val$naive.var <- val$var
-###    robvar <- crossprod(val$iid)
-###    val$var <-  val$robvar <- robvar
-###### val$var  <- val$naive.var - val$varadjC
-###    val$se.robust <- diag(robvar)^.5
-###    val$se.coef <- diag(val$var)^.5
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
 
@@ -815,7 +802,6 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
-### val$var  <- val$naive.var - val$varadjC
     val$se.robust <- diag(robvar)^.5
     val$se.coef <- diag(val$var)^.5
 
@@ -981,7 +967,6 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
 
-
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
 
@@ -1059,7 +1044,8 @@ p1lp <-   X %*% val$coef+offset
 p1 <- expit(p1lp)
 p10 <- expit(p10lp)
 p11 <- expit(p11lp)
-Y <- 1*(exit<time & status==cause)/cens.weights
+###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
+Y <- weights*c((status==cause)*(exit<=time) - p)
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
@@ -1099,7 +1085,6 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-###    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
     Y <- weights*c((status==cause)*(exit<=time) - p)
 
     xx <- resC$cox.prep
@@ -1135,10 +1120,9 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
     MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
- 
+
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
-
 
     val$MGciid <- MGCiid
     val$MGciid10 <- MGCiid10
