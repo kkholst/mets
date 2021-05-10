@@ -1085,7 +1085,7 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-###    Y <- weights*c((status==cause)*(exit<=time) - p)
+    Yglm <- weights*c((status==cause)*(exit<=time) - p)
     Y <- c((status==cause)*(exit<=time))/cens.weights
 
     xx <- resC$cox.prep
@@ -1095,7 +1095,7 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
-    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
     h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
