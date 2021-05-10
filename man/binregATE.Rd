@@ -2,6 +2,7 @@
 % Please edit documentation in R/binomial.regression.R
 \name{binregATE}
 \alias{binregATE}
+\alias{logitIPCWATE}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(
@@ -68,6 +69,9 @@ This is then model using a logistic regresssion using  the standard binary doubl
 then IPCW censoring adjusted using binomial regression. 
 
 Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
+
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic
+regression logitIPCWATE.
 }
 \examples{
 data(bmt)

@@ -2,6 +2,7 @@
 % Please edit documentation in R/binomial.regression.R
 \name{binreg}
 \alias{binreg}
+\alias{logitIPCW}
 \title{Binomial Regression for censored competing risks data}
 \usage{
 binreg(
@@ -65,6 +66,10 @@ Based on binomial regresion IPCW response estimating equation:
 \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
+logitIPCW instead considers 
+\deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
+a standard logistic regression with weights that adjust for IPCW. 
+
 variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 under known censoring model. 
 
@@ -80,6 +85,10 @@ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
 outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 summary(outs)
+
+## glm with IPCW weights 
+outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
+summary(outl)
 
 ##########################################
 ### risk-ratio of different causes #######
