@@ -1045,7 +1045,7 @@ p1 <- expit(p1lp)
 p10 <- expit(p10lp)
 p11 <- expit(p11lp)
 ###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
-Y <- weights*c((status==cause)*(exit<=time) - p)
+Y <- c((status==cause)*(exit<=time))*obs/cens.weights
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
@@ -1085,7 +1085,8 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- weights*c((status==cause)*(exit<=time) - p)
+###    Y <- weights*c((status==cause)*(exit<=time) - p)
+    Y <- c((status==cause)*(exit<=time))/cens.weights
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
