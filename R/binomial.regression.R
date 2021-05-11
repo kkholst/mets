@@ -1218,7 +1218,7 @@ summary.binreg <- function(object,...) {# {{{
 
 cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
 
-expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4)])
+expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
 ###expC <- estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p),null=1)$coefmat
 V=object$var
 
