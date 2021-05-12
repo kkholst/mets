@@ -456,7 +456,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- weights*c((status==cause)*(exit<=time) - p)
+    Y <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -1085,7 +1085,8 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Yglm <- weights*c((status==cause)*(exit<=time) - p)
+    ### only out to time for censoring martingales, also for Yglm
+    Yglm <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
     Y <- c((status==cause)*(exit<=time))/cens.weights
 
     xx <- resC$cox.prep
