@@ -1047,6 +1047,7 @@ p11 <- expit(p11lp)
 ###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
 Y <- c((status==cause)*(exit<=time))*obs/cens.weights
 
+
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
 
@@ -1071,6 +1072,8 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
+difriskG <- mean(p11)-mean(p10)
+DdifriskG <- apply(Dp11-Dp10,2,mean)
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -1197,6 +1200,12 @@ val$se.difrisk <- sddifrisk
 val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
 val$var.attc <- crossprod(val$attc.iid)
 val$se.attc <- diag(val$var.attc)^.5
+
+val$difriskG <- difriskG
+val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
+val$var.difriskG <- sum(val$difriskG.iid^2)
+val$se.difriskG <- val$var.difriskG^.5
+
 # }}}
 
   class(val) <- "binreg"
@@ -1231,7 +1240,11 @@ if (!is.null(object$risk))  {
 	difmarginal <- estimate(coef=object$difrisk,vcov=as.matrix(object$var.difrisk))$coefmat
 	rownames(difmarginal) <- "difference"
 	marginal <- rbind(marginal,difmarginal)
-
+	if (!is.null(object$difriskG))  {
+	difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
+	rownames(difG) <- "differenceG"
+	marginal <- rbind(marginal,difG) 
+	}
 	attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
 	res <- c(res,list(ate=marginal,attc=attc))
 
