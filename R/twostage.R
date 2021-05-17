@@ -566,8 +566,7 @@ if (dep.model==3 & pair.structure==0) {
 
 
 ##' @title Twostage survival model for multivariate survival data
-##'  older extended version of survival.twostage with  more options  and different maximizer. 
-##' @description
+##' @description older extended version of survival.twostage with  more options  and different maximizer.
 ##' @keywords survival
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model
