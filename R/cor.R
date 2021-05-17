@@ -1,5 +1,5 @@
 dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
-                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
+                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,tol=1e-6,detail=0,
                   clusters=NULL,theta=NULL,theta.des=NULL,step=1,sym=1,weights=NULL,
 		  same.cens=FALSE,censoring.weights=NULL,silent=1,entry=NULL,estimator=1,
 		  trunkp=1,admin.cens=NULL,control=list(),par.func=NULL,dpar.func=NULL,dimpar=NULL,
@@ -280,7 +280,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	## do not update last iteration 
 	if (i<Nit) p <- p-delta* step
 	if (is.nan(sum(out$score))) break; 
-        if (sum(abs(out$score))<0.00001) break; 
+        if (sum(abs(out$score))<tol) break;
         if (max(delta)>20) { cat("NR increment > 20, lower step zize, increment= \n"); cat(delta); break; }
     }
     if (!is.nan(sum(p))) { ## {{{ iid decomposition
