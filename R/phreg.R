@@ -1793,7 +1793,7 @@ print.predictphreg  <- function(x,se=TRUE,...) {# {{{
 	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
      } else if (type[1]=="cif") {
 	     lower <- x$cif.lower; upper <- x$cif.upper
-     } else { upper <- cumhaz.upper; lower <- cumhaz.lower}
+     } else { upper <- NA; lower <- NA;}
      ci <- cbind(lower,upper)
      colnames(ci) <- c("lower","upper")
      xx <- cbind(xx,ci)
