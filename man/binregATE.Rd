@@ -3,6 +3,7 @@
 \name{binregATE}
 \alias{binregATE}
 \alias{logitIPCWATE}
+\alias{logitATE}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(
