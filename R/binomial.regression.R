@@ -539,7 +539,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'	  treat.model=tcell~platelet+age)
 ##' summary(brs)
 ##'
-##' @aliases logitIPCWATE
+##' @aliases logitIPCWATE logitATE
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -1044,9 +1044,9 @@ p1lp <-   X %*% val$coef+offset
 p1 <- expit(p1lp)
 p10 <- expit(p10lp)
 p11 <- expit(p11lp)
-###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
-Y <- c((status==cause)*(exit<=time))*obs/cens.weights
 
+###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
+Y <- c((status==cause)*(exit<=time))/cens.weights
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
@@ -1212,6 +1212,20 @@ val$se.difriskG <- val$var.difriskG^.5
   return(val)
 }# }}}
 
+##' @export
+logitATE <- function(formula,data,...)
+{# {{{
+   ## use IPCW machine in no-censoring case
+   ## by setting up time and cut-point to construct outcome I(data$time< time,event=1)
+   response <- all.vars(formula)[1]
+   data$time <- as.numeric(data[,response])+0.1
+   time <- mean(data$time+0.1)
+   data$event <- 1
+   Survform <-  update.formula(formula,Event(time,event)~.)
+   n <- nrow(data)
+   out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,...)
+   return(out)
+}# }}}
 
 ##' @export
 iid.binreg  <- function(x,...) {# {{{
