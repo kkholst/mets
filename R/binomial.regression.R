@@ -296,7 +296,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @export
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -388,9 +388,11 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
+  Y <- c((status==cause)*(exit<=time))
+  if (!is.null(Ydirect)) Y <- Ydirect
 
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum(Y)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -398,7 +400,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time))
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -456,7 +457,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
+    Y <- weights*c(Y[ord]-p)*(exit<=time)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -872,7 +873,8 @@ val$se.attc <- diag(val$var.attc)^.5
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
+	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -967,8 +969,11 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
 
+  Y <- c((status==cause)*(exit<=time))
+  if (!is.null(Ydirect)) Y <- Ydirect
+
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum(Y)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -976,7 +981,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time))
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -1046,7 +1050,7 @@ p10 <- expit(p10lp)
 p11 <- expit(p11lp)
 
 ###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
-Y <- c((status==cause)*(exit<=time))/cens.weights
+Y <- c(Y/cens.weights)
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
@@ -1228,14 +1232,13 @@ logitATE <- function(formula,data,...)
       out <- logitIPCWATE(formula,data,...)
     } else {
       response <- all.vars(formula)[1]
-      data$time <-  as.numeric(data[,response]) 
-      mtime <- max(data$time)
-      data$time <- -data$time +max(data$time)+0.1
-      time <- mean(data$time)
+      Ydirect <-  as.numeric(data[,response]) 
+      data$time <- 2
       data$event <- 1
+      time <- 2
       Survform <-  update.formula(formula,Event(time,event)~.)
       n <- nrow(data)
-      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,...)
+      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
     }
 
    return(out)
