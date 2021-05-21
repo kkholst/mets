@@ -1216,14 +1216,26 @@ val$se.difriskG <- val$var.difriskG^.5
 logitATE <- function(formula,data,...)
 {# {{{
    ## use IPCW machine in no-censoring case
-   ## by setting up time and cut-point to construct outcome I(data$time< time,event=1)
-   response <- all.vars(formula)[1]
-   data$time <- as.numeric(data[,response])+0.1
-   time <- mean(data$time+0.1)
-   data$event <- 1
-   Survform <-  update.formula(formula,Event(time,event)~.)
-   n <- nrow(data)
-   out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,...)
+    cl <- match.call()
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster", "offset")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (class(Y) == "Event") {
+      out <- logitIPCWATE(formula,data,...)
+    } else {
+      response <- all.vars(formula)[1]
+      data$time <- data[,response]+0.1
+      time <- mean(data$time+0.1)
+      data$event <- 1
+      Survform <-  update.formula(formula,Event(time,event)~.)
+      n <- nrow(data)
+      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,...)
+    }
+
    return(out)
 }# }}}
 
