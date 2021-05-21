@@ -1228,8 +1228,10 @@ logitATE <- function(formula,data,...)
       out <- logitIPCWATE(formula,data,...)
     } else {
       response <- all.vars(formula)[1]
-      data$time <- data[,response]+0.1
-      time <- mean(data$time+0.1)
+      data$time <-  as.numeric(data[,response]) 
+      mtime <- max(data$time)
+      data$time <- -data$time +max(data$time)+0.1
+      time <- mean(data$time)
       data$event <- 1
       Survform <-  update.formula(formula,Event(time,event)~.)
       n <- nrow(data)
