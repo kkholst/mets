@@ -92,7 +92,7 @@ fixing a nuber of fixed cutpoints.
 
 
 ```{r}
-test <- 1 
+test <- 0 
 if (test==1) {
 
 library(icenReg)

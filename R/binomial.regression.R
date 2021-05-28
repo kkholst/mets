@@ -635,6 +635,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
+  Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -645,7 +646,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time)/cens.weights)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -666,7 +666,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
-}# }}}
+}  # }}}
 
   p <- ncol(X)
   opt <- NULL
@@ -703,9 +703,15 @@ lpa <- treat$linear.predictors
 pal <- expit(lpa)
 iidalpha <- iid(treat)
 
-### first covariate is treatment
-X1 <- X0 <- X
-X1[,2] <- 1; X0[,2] <- 0
+### treatment is rhs of treat.model 
+treat.name <-  all.vars(treat.model)[1]
+dat1 <- data
+dat1[,treat.name] <- 1 ## treat.contrast[2]
+dat0 <- data
+dat0[,treat.name] <- 0 ## treat.contrast[1]
+
+X1 <- model.matrix(formula[-2],dat1)
+X0 <- model.matrix(formula[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -813,7 +819,7 @@ val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- c("treat-1","treat-0")
+names(val$risk) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
 
@@ -1038,9 +1044,15 @@ lpa <- treat$linear.predictors
 pal <- expit(lpa)
 iidalpha <- iid(treat)
 
-### first covariate is treatment
-X1 <- X0 <- X
-X1[,2] <- 1; X0[,2] <- 0
+### treatment is rhs of treat.model 
+treat.name <-  all.vars(treat.model)[1]
+dat0 <- data
+dat0[,treat.name] <- 0 ## treat.contrast[1]
+dat1 <- data
+dat1[,treat.name] <- 1 ## treat.contrast[2]
+
+X1 <- model.matrix(formula[-2],dat1)
+X0 <- model.matrix(formula[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -1154,11 +1166,11 @@ val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- c("treat-1","treat-0")
+names(val$risk) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
 
-iidbase1 <- c(risk1-val$risk[1])
+iidbase1 <- c(risk1-val$risk[2])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -1166,7 +1178,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[2])
+iidbase0 <- c(risk0-val$risk[1])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
