@@ -29,13 +29,24 @@ P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta)
 \end{align*}
 the estimation is based on IPCW weighted EE
 \begin{align*}
- U(\beta) = &  X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - \mbox{expit}( X^T beta)) = 0 
+ U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T beta)) = 0 
 \end{align*}
 for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
-distribution. 
+distribution. With $\Delta(t) = I( C_i > T_i \wedge t)$. 
+
+The function logitIPCW instead considers 
+\begin{align*}
+ U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta)) = 0.
+\end{align*}
+The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
+
+Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
+the average effect on non-treated (ATC). We demonstrate their use below. 
+
+The function logitATE also works when there is no censoring and we thus have simple binary outcome. 
 
 Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
-under known censoring model. 
+under known censoring model. The influence functions are stored in the output. 
 
 
 ```{r}
@@ -146,6 +157,57 @@ related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,
      strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
  summary(out2)
 ```
+
+Average treatment effect 
+=========================
+
+First we simulate some data that mimics that Kumar et al 2012. 
+This is data from multiple myeloma patients treated with allogeneic stem cell
+transplantation from the Center for International Blood and Marrow Transplant Research
+(CIBMTR) Kumar et al (2012), "Trends in allogeneic stem cell transplantation for multiple myeloma: a CIBMTR
+analysis".  The data used in this paper consist of patients transplanted from 1995 to
+2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
+versus 1995-2000 (N=375). The two competing events were
+relapse and treatment-related mortality (TRM) defined as death without relapse.
+\cite{kumar-2012} considered the following risk covariates: 
+transplant time period (gp (main interest of the study): 1 for transplanted in
+2001-2005 versus 0 for transplanted in 1995-2000), donor type (dnr: 1 for Unrelated or
+other related donor (N=280) versus 0 for HLA-identical sibling (N=584)), prior
+autologous transplant (preauto: 1 for Auto+Allo transplant (N=399) versus 0 for
+allogeneic transplant alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months (N=289) versus 0 for less than or
+equal to 24 months (N=575))). 
+
+
+We here generate similar data by assuming that the two cumlative incidence curves are logistic and we
+have censoring that depends on the covariates via a Cox model. All this is wrapped in the kumarsim function. 
+The simulation does not deal with possible violations of the bound that $F_1+F_2 < 1$. But as we increase the 
+sample size we still see that we recover the parameters of cause 2. 
+
+
+```{r}
+library(mets) 
+
+kumar <- kumarsim(1000,depcens=1)
+kumar$cause <- kumar$status
+kumar$ttt24 <- kumar[,6]
+
+c2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+		treat.model=gp~dnr+preauto+ttt24,time=60,
+                 cens.model=~strata(gp,dnr,preauto,ttt24))
+summary(c2)
+
+c1 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+		treat.model=gp~dnr+preauto+ttt24,time=60)
+summary(c1)
+```
+
+We note that correct estimates that found using the large censoring model are very different from those
+using the simple Kaplan-Meier weights that are severely biased for these data.  This is due to a stong 
+censoring dependence. 
+
+The average treatment is around $0.17 = E(Y(1) - Y(0))$ at time 60 for the 
+transplant period, under the standard causal assumptions. We here use the logistic model and a treat model
+that is also logistic. The 1/0 variable used for the causal computation is found as the rhs of the treat.model. 
 
 
 SessionInfo

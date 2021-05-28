@@ -540,7 +540,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'	  treat.model=tcell~platelet+age)
 ##' summary(brs)
 ##'
-##' @aliases logitIPCWATE logitATE
+##' @aliases logitIPCWATE logitATE kumarsim
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -1229,6 +1229,55 @@ val$se.difriskG <- val$var.difriskG^.5
 }# }}}
 
 ##' @export
+kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
+		      beta=c(-0.67,0.59,-0.55,0.25,0.68,0.18,0.45,0.31),
+		      labels= c("gp","dnr","preauto","ttt24(24,300]"),
+		      depcens=0,type = c("logistic", "cloglog") )
+{# {{{
+    p = length(beta)/2
+    tt <- seq(0, 150, by = 1)
+    if (length(rate) == 1)
+    rate <- rep(rate, 2)
+    Lam1 <- rho1 * (1 - exp(-tt/rate[1]))
+    Lam2 <- rho2 * (1 - exp(-tt/rate[2]))
+    
+    ## kumar dist
+    Zdist <- c(0.21064815,0.02083333,0.05555556,0.01504630,
+	       0.13888889,0.15393519, 0.02662037, 0.04398148, 
+	       0.04745370, 0.02430556, 0.02199074, 0.03935185,
+               0.02430556, 0.05555556, 0.01273148, 0.10879630)
+    Zs <- expand.grid(gp=c(0,1),dnr=c(0,1),preauto=c(0,1),ttt24=c(0,1))
+    Zs <- dsort(Zs,~ttt24+gp+dnr+preauto)
+
+    samn <- sample(1:16,n,replace=TRUE,prob=c(Zdist))
+    Z <- Zs[samn,]
+
+    colnames(Z) <- labels
+    cif1 <- setup.cif(cbind(tt, Lam1), beta[1:4], Znames = colnames(Z),
+        type = type[1])
+    cif2 <- setup.cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z),
+        type = type[1])
+    data <- timereg::sim.cifs(list(cif1, cif2), n, Z = Z)
+
+    ## kumar censoring, cox model 
+    c0 <- list()     
+    c0$cumhaz <- cbind(c(0,20,60,90,160),
+		       c(0, 0.07797931, 0.28512764, 0.76116180, 1.95720759))
+    c0$coef <- c(1.8503113,-0.6976226,0.5828763,-0.2000003)
+
+    if (depcens == 0)
+        censor  <- rchaz(c0$cumhaz,n=n)
+    else {
+        rrc <- exp(as.matrix(Z) %*% c0$coef)
+        censor  <- rchaz(c0$cumhaz,rrc)
+    }
+    status = data$status * (data$time <= censor$time)
+    time = pmin(data$time, censor$time)
+    data <- data.frame(time = time, status = status)
+    return(cbind(data, Z))
+}# }}}
+
+##' @export
 logitATE <- function(formula,data,...)
 {# {{{
    ## use IPCW machine in no-censoring case
@@ -1621,4 +1670,5 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
  return(bra)
 }# }}})
+
 
