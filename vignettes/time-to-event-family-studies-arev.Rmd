@@ -297,8 +297,8 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
  logitregconc <- cifreg(Event(time,status)~country+zyg,data=dd)
  summary(logitregconc)
 
- library(Publish)
- publish(round(summary(logitregconc)$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
+### library(Publish)
+### publish(round(summary(logitregconc)$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
 
 ```
 
