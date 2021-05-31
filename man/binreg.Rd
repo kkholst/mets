@@ -117,7 +117,7 @@ summary(cifs2)
 
 cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
-	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
+	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 summary(cifdob)
 
 riskratio <- function(p) {
