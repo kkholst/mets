@@ -95,7 +95,7 @@ fixing a nuber of fixed cutpoints.
 test <- 0 
 if (test==1) {
 
-library(icenReg)
+require(icenReg)
 data(IR_diabetes)
 IRdia <- IR_diabetes
 ## removing fully observed data in continuous version, here making it a discrete observation 

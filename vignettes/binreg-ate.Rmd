@@ -62,12 +62,30 @@ The average treatment effect is
 \end{align*}
 using counterfactual outcomes. 
 
- The esimator uses the estimating equations that are double robust wrt 
+
+The esimator uses the estimating equations that are double robust wrt 
+
    - Using a working logistic model for the resonse
    - Using a working logistic model for treatment given covariates
 
-but assumes that the censoring model is correct, so it can be important to use
-a sufficiently large censoring model as we also illustrate below. 
+This is estimated using the estimator 
+\begin{align*}
+\sum \left[ \frac{A_i Y_i}{\pi_A(X_i)}-\frac{A_i - \pi_A(X_i)}{\pi_A(X_i)} m_1(X_i) \right]
+   - \left[ \frac{(1-A_i) Y_i}{1-\pi_A(X_i)}+\frac{A_i - \pi_A(X_i)}{1-\pi_A(X_i)} m_0(X_i) \right]
+\end{align*}
+where
+
+ - $A_i$ is treatment indicator
+ - $\pi_A(X_i) = P(A_i=1|X_i)$ is treatment model 
+ - $Y_i$ outcome, that in case of censoring is censoring adjusted $\tilde Y_i \Delta(t) /G_c(T_i- \wedge t)$
+ - $\tilde Y_i = I(T_i \leq t, \epsilon_i=1)$ oucome before censoring.
+ - $m_j(X_i)=P(Y_i=1| A_i=j,X_i)$ is outcome model, using binomial regression to estimate.
+
+ The standard errors are then based on an iid decomposition using taylor-expansion for the
+ parameters of the treatment-model and the outcome-model, and the censoring probability. 
+
+ Needs that the censoring model is correct, so it can be important to use a sufficiently 
+large censorng model as we also illustrate below. 
 
 
 Average treatment effect 

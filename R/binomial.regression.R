@@ -1170,7 +1170,7 @@ names(val$risk) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
 
-iidbase1 <- c(risk1-val$risk[2])
+iidbase1 <- c(risk1-val$risk[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -1178,7 +1178,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[1])
+iidbase0 <- c(risk0-val$risk[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
@@ -1206,7 +1206,8 @@ sdrisk <- diag(varrisk)^.5
 vardifrisk  <-  sum(difriskiid^2)
 sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; val$se.risk <- sdrisk
+val$var.risk <- varrisk; 
+val$se.risk <- sdrisk
 val$risk.iid <- cbind(iidrisk1,iidrisk0)
 
 val$difrisk <- val$risk[1]-val$risk[2]
