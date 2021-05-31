@@ -1233,7 +1233,7 @@ val$se.difriskG <- val$var.difriskG^.5
 kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 		      beta=c(-0.67,0.59,-0.55,0.25,0.68,0.18,0.45,0.31),
 		      labels= c("gp","dnr","preauto","ttt24(24,300]"),
-		      depcens=0,type = c("logistic", "cloglog") )
+		      depcens=0,type = c("logistic", "cloglog"),restrict=0 )
 {# {{{
     p = length(beta)/2
     tt <- seq(0, 150, by = 1)
@@ -1242,7 +1242,7 @@ kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     Lam1 <- rho1 * (1 - exp(-tt/rate[1]))
     Lam2 <- rho2 * (1 - exp(-tt/rate[2]))
     
-    ## kumar dist
+    ## fully saturated model for kumar covariates 
     Zdist <- c(0.21064815,0.02083333,0.05555556,0.01504630,
 	       0.13888889,0.15393519, 0.02662037, 0.04398148, 
 	       0.04745370, 0.02430556, 0.02199074, 0.03935185,
@@ -1258,7 +1258,16 @@ kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
         type = type[1])
     cif2 <- setup.cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z),
         type = type[1])
+    if (restrict==0) 
     data <- timereg::sim.cifs(list(cif1, cif2), n, Z = Z)
+    else {
+    ## keep model 2 on logistic form
+    data <- timereg::sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
+    data$status21 <- data$status
+    data$status21[data$status==1] <- 2
+    data$status21[data$status==2] <- 1
+    data$status <- data$status21
+    }
 
     ## kumar censoring, cox model 
     c0 <- list()     
