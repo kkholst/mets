@@ -75,7 +75,7 @@
 ##' 
 ##' cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 ##' 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
-##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
+##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 ##' summary(cifdob)
 ##' 
 ##' riskratio <- function(p) {
@@ -695,6 +695,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  
 # {{{ computation of ate, att, atc and their influence functions
 
+## dropping cluster here 
+treat.model <- drop.specials(treat.model,"cluster")
 treat <- glm(treat.model,data,family="binomial")
 Xtreat <- model.matrix(treat$formula,data)
 ytreat <- treat$y
@@ -1039,6 +1041,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 # {{{ computation of ate, att, atc and their influence functions
 
 
+## dropping cluster here 
+treat.model <- drop.specials(treat.model,"cluster")
 treat <- glm(treat.model,data,family="binomial")
 Xtreat <- model.matrix(treat$formula,data)
 ytreat <- treat$y
