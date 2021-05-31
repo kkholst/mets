@@ -701,7 +701,7 @@ ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)
-iidalpha <- iid(treat)
+iidalpha <- iid(treat,id=id)
 
 ### treatment is rhs of treat.model 
 treat.name <-  all.vars(treat.model)[1]
@@ -710,8 +710,10 @@ dat1[,treat.name] <- 1 ## treat.contrast[2]
 dat0 <- data
 dat0[,treat.name] <- 0 ## treat.contrast[1]
 
-X1 <- model.matrix(formula[-2],dat1)
-X0 <- model.matrix(formula[-2],dat0)
+formulanc <- drop.specials(formula,"cluster")
+
+X1 <- model.matrix(formulanc[-2],dat1)
+X0 <- model.matrix(formulanc[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -1036,13 +1038,14 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  
 # {{{ computation of ate, att, atc and their influence functions
 
+
 treat <- glm(treat.model,data,family="binomial")
 Xtreat <- model.matrix(treat$formula,data)
 ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)
-iidalpha <- iid(treat)
+iidalpha <- iid(treat,id=id)
 
 ### treatment is rhs of treat.model 
 treat.name <-  all.vars(treat.model)[1]
@@ -1051,8 +1054,10 @@ dat0[,treat.name] <- 0 ## treat.contrast[1]
 dat1 <- data
 dat1[,treat.name] <- 1 ## treat.contrast[2]
 
-X1 <- model.matrix(formula[-2],dat1)
-X0 <- model.matrix(formula[-2],dat0)
+formulanc <- drop.specials(formula,"cluster")
+
+X1 <- model.matrix(formulanc[-2],dat1)
+X0 <- model.matrix(formulanc[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
