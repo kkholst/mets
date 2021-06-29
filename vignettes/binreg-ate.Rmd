@@ -30,16 +30,16 @@ P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta)
 \end{align*}
 the estimation is based on IPCW weighted EE
 \begin{align*}
- U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T beta)) = 0 
+ U(\beta) = &  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T- \wedge t) - \mbox{expit}( X^T beta) \right) = 0 
 \end{align*}
 for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
-distribution. With $\Delta(t) = I( C_i > T_i \wedge t)$. 
+distribution. With $\Delta(t) = I( C > T- \wedge t)$. 
 
 The function logitIPCW instead considers 
 \begin{align*}
- U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta)) = 0.
+ U(\beta) = &  X  \frac{\Delta(t)}{G_c(T- \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
 \end{align*}
-The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
+The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric given $X$.
 
 Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
 the average effect on non-treated (ATC). We demonstrate their use below. 
@@ -65,8 +65,8 @@ using counterfactual outcomes.
 
 The esimator uses the estimating equations that are double robust wrt 
 
-   - Using a working logistic model for the resonse
-   - Using a working logistic model for treatment given covariates
+   - A working logistic model for the resonse
+   - A working logistic model for treatment given covariates
 
 This is estimated using the estimator 
 \begin{align*}
@@ -86,6 +86,15 @@ where
 
  Needs that the censoring model is correct, so it can be important to use a sufficiently 
 large censorng model as we also illustrate below. 
+
+   - Censoring model by strata used for phreg 
+
+
+Also compute standard marginalization for average treatment effect  (called differenceG) 
+\begin{align*}
+\sum \left[  m_1(X_i) - m_0(X_i) \right]
+\end{align*}
+and again standard errors are based on the related influcence functions and are also returned. 
 
 
 Average treatment effect 
