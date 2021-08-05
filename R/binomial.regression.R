@@ -168,7 +168,8 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
-      cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      exittime <- pmin(exit,time)
+      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -207,8 +208,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
+	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
@@ -415,8 +415,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
+	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
@@ -622,7 +621,8 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
-      cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      exittime <- pmin(exit,time)
+      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -728,6 +728,9 @@ Y <- 1*(exit<time & status==cause)/cens.weights
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
 
+riskG1 <- p11
+riskG0 <- p10
+
 ntreat <- sum(ytreat)
 att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
 atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
@@ -749,6 +752,9 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
+DriskG1 <- apply(Dp11,2,mean)
+DriskG0 <- apply(Dp10,2,mean)
+DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -802,32 +808,32 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
 
+val$MGciid <- MGCiid
+val$MGciid10 <- MGCiid10
+val$MGtid <- id
+val$orig.id <- orig.id
+val$iid.origid <- ids 
+val$iid.naive <- val$iid 
+if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+val$naive.var <- val$var
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
 
-    val$MGciid <- MGCiid
-    val$MGciid10 <- MGCiid10
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
-
-
-val$risk <- c(mean(risk1),mean(risk0))
+### estimates risk, att, atc
+val$riskDR <- c(mean(risk1),mean(risk0))
+val$riskG<- c(mean(riskG1),mean(riskG0))
 val$att <- sum(att)/ntreat
 val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- paste("treat",1:0,sep="-")
+names(val$riskDR) <- paste("treat",1:0,sep="-")
+names(val$riskG) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
-
-iidbase1 <- c(risk1-val$risk[1])
+iidbase1 <- c(risk1-val$riskDR[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -835,7 +841,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[2])
+iidbase0 <- c(risk0-val$riskDR[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
@@ -858,17 +864,24 @@ iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 # }}}
 
 # {{{ output ate, att, atc
-varrisk <- crossprod(iidrisk)
-sdrisk <- diag(varrisk)^.5
-vardifrisk  <-  sum(difriskiid^2)
-sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; val$se.risk <- sdrisk
-val$risk.iid <- cbind(iidrisk1,iidrisk0)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+val$difriskDR <- val$riskDR[1]-val$riskDR[2]
+val$var.difriskDR <- sum(difriskiid^2)
+val$se.difriskDR <- val$var.difriskDR^.5
 
-val$difrisk <- val$risk[1]-val$risk[2]
-val$var.difrisk <- vardifrisk
-val$se.difrisk <- sddifrisk
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+
+val$difriskG <- mean(p11)-mean(p10)
+###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
+val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
+val$var.difriskG <- sum(val$difriskG.iid^2)
+val$se.difriskG <- val$var.difriskG^.5
 
 val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
 val$var.attc <- crossprod(val$attc.iid)
@@ -878,6 +891,7 @@ val$se.attc <- diag(val$var.attc)^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -1075,6 +1089,8 @@ Y <- c(Y/cens.weights)
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
+riskG1 <- p11
+riskG0 <- p10
 
 ntreat <- sum(ytreat)
 att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
@@ -1097,8 +1113,9 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
-difriskG <- mean(p11)-mean(p10)
-DdifriskG <- apply(Dp11-Dp10,2,mean)
+DriskG1 <- apply(Dp11,2,mean)
+DriskG0 <- apply(Dp10,2,mean)
+DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -1154,32 +1171,32 @@ DdifriskG <- apply(Dp11-Dp10,2,mean)
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
 
-    val$MGciid <- MGCiid
-    val$MGciid10 <- MGCiid10
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
-### val$var  <- val$naive.var - val$varadjC
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
+val$MGciid <- MGCiid
+val$MGciid10 <- MGCiid10
+val$MGtid <- id
+val$orig.id <- orig.id
+val$iid.origid <- ids 
+val$iid.naive <- val$iid 
+if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+val$naive.var <- val$var
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
 
-
-val$risk <- c(mean(risk1),mean(risk0))
+### estimates risk, att, atc
+val$riskDR <- c(mean(risk1),mean(risk0))
+val$riskG<- c(mean(riskG1),mean(riskG0))
 val$att <- sum(att)/ntreat
 val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- paste("treat",1:0,sep="-")
+names(val$riskDR) <- paste("treat",1:0,sep="-")
+names(val$riskG) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
-
-iidbase1 <- c(risk1-val$risk[1])
+iidbase1 <- c(risk1-val$riskDR[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -1187,7 +1204,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[2])
+iidbase0 <- c(risk0-val$riskDR[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
@@ -1209,30 +1226,32 @@ iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 
 # }}}
 
+
 # {{{ output ate, att, atc
-varrisk <- crossprod(iidrisk)
-sdrisk <- diag(varrisk)^.5
-vardifrisk  <-  sum(difriskiid^2)
-sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; 
-val$se.risk <- sdrisk
-val$risk.iid <- cbind(iidrisk1,iidrisk0)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+val$difriskDR <- val$riskDR[1]-val$riskDR[2]
+val$var.difriskDR <- sum(difriskiid^2)
+val$se.difriskDR <- val$var.difriskDR^.5
 
-val$difrisk <- val$risk[1]-val$risk[2]
-val$var.difrisk <- vardifrisk
-val$se.difrisk <- sddifrisk
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+
+val$difriskG <- mean(p11)-mean(p10)
+###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
+val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
+val$var.difriskG <- sum(val$difriskG.iid^2)
+val$se.difriskG <- val$var.difriskG^.5
 
 val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
 val$var.attc <- crossprod(val$attc.iid)
 val$se.attc <- diag(val$var.attc)^.5
-
-val$difriskG <- difriskG
-val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
-val$var.difriskG <- sum(val$difriskG.iid^2)
-val$se.difriskG <- val$var.difriskG^.5
-
 # }}}
+
 
   class(val) <- "binreg"
   return(val)
@@ -1346,18 +1365,19 @@ V=object$var
 res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
 
 ## to add marginal estimates for binregATE 
-if (!is.null(object$risk))  {
-	marginal <- estimate(coef=object$risk,vcov=object$var.risk)$coefmat
-	difmarginal <- estimate(coef=object$difrisk,vcov=as.matrix(object$var.difrisk))$coefmat
-	rownames(difmarginal) <- "difference"
-	marginal <- rbind(marginal,difmarginal)
-	if (!is.null(object$difriskG))  {
-	difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
-	rownames(difG) <- "differenceG"
-	marginal <- rbind(marginal,difG) 
-	}
-	attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
-	res <- c(res,list(ate=marginal,attc=attc))
+if (!is.null(object$riskDR))  {
+    marginalDR <- estimate(coef=object$riskDR,vcov=object$var.riskDR)$coefmat
+    difmarginalDR <- estimate(coef=object$difriskDR,vcov=as.matrix(object$var.difriskDR))$coefmat
+    rownames(difmarginalDR) <- "differenceDR"
+    marginalDR <- rbind(marginalDR,difmarginalDR)
+
+    marginalG <- estimate(coef=object$riskG,vcov=object$var.riskG)$coefmat
+    difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
+    rownames(difG) <- "differenceG"
+    marginalG <- rbind(marginalG,difG) 
+
+    attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
+    res <- c(res,list(ateG=marginalG,ateDR=marginalDR,attc=attc))
 
 }
 

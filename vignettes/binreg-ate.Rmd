@@ -62,8 +62,13 @@ The average treatment effect is
 \end{align*}
 using counterfactual outcomes. 
 
+We compute the simple G-estimator 
+\begin{align*}
+\sum  m_a(X_i) 
+\end{align*}
+to estimate the risk $E(Y(a))$. 
 
-The esimator uses the estimating equations that are double robust wrt 
+The DR-estimator instead uses the estimating equations that are double robust wrt 
 
    - A working logistic model for the resonse
    - A working logistic model for treatment given covariates
@@ -131,12 +136,12 @@ kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
 
-c2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+c2 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
 		treat.model=gp~dnr+preauto+ttt24,time=60,
                  cens.model=~strata(gp,dnr,preauto,ttt24))
 summary(c2)
 
-c1 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+c1 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
 		treat.model=gp~dnr+preauto+ttt24,time=60)
 summary(c1)
 ```
