@@ -182,6 +182,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
+ Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -192,7 +193,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time)/cens.weights)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -275,19 +275,23 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
  
-    val$MGciid <- MGCiid
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
+   }  else {
+	  MGCiid <- 0
+  }## }}}
+
+  val$MGciid <- MGCiid
+  val$MGtid <- id
+  val$orig.id <- orig.id
+  val$iid.origid <- ids 
+  val$iid.naive <- val$iid 
+  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  val$naive.var <- val$var
+  robvar <- crossprod(val$iid)
+  val$var <-  val$robvar <- robvar
 ### val$var  <- val$naive.var - val$varadjC
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
-  } ## }}}
+  val$se.robust <- diag(robvar)^.5
+  val$se.coef <- diag(val$var)^.5
+
 
   class(val) <- "binreg"
   return(val)
@@ -456,7 +460,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- weights*c(Y[ord]-p)*(exit<=time)
+###    Y <- weights*c(Y[ord]-p)  *(exit<=time)
+    Yglm <- weights*c(Y[ord]-p) # *(exit<=time)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -465,14 +470,14 @@ hessian <- matrix(D2log,length(pp),length(pp))
     ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
-    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
 ###    hX  <-  apply(X,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*h[xx$jumps+1,] /c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
@@ -489,7 +494,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$orig.id <- orig.id
     val$iid.origid <- ids 
     val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
@@ -1131,7 +1136,7 @@ DdifriskG <- DriskG1-DriskG0
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
     ### only out to time for censoring martingales, also for Yglm
-    Yglm <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
+    Yglm <- weights*c((status==cause)*(exit<=time)-p) ## *(exit<=time)
     Y <- c((status==cause)*(exit<=time))/cens.weights
 
     xx <- resC$cox.prep
@@ -1147,9 +1152,9 @@ DdifriskG <- DriskG1-DriskG0
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*h[xx$jumps+1,] /c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     IhdLamh10 <- apply(h10*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
