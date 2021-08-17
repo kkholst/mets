@@ -371,7 +371,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
   }
 # }}}
 
-  return(list(censoring.weights=Gctb,
+  return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],
   gamma=gamma,gamma.time=gammahat, times=times,
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA
 	      ))
