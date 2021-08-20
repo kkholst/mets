@@ -122,7 +122,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
                   cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
 
-    class(res) <- c("phreg","cif.reg")
+    class(res) <- c("phreg","recreg")
     return(res)
 }# }}}
 
