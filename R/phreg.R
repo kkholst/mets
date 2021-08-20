@@ -993,7 +993,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
     I <- -solve(object$hessian)
-    if ( (length(class(object))==2) && class(object)[2]=="cif.reg") {
+    if ( (length(class(object))==2) && ( class(object)[2]=="cif.reg" | class(object)[2]=="recreg")) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
     } else  { 
