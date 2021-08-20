@@ -3,6 +3,7 @@
   - dutility function no longer casts warnings when handling formulas
   - Efficient estimation of recurrent events mean: recurrentMarginalAIPCW 
   - Average treatment effect for competing risks and binary data: logitATE, binregATE
+  - Recurrent events regression with IPCW adjustment : recreg
 
 # mets 1.2.8.1
   - Maintenance release

@@ -107,7 +107,6 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 	//  }
 	//  catch(...) {}
 
-
 	colvec weights = Rcpp::as<colvec>(weightsSEXP);
 	colvec offsets = Rcpp::as<colvec>(offsetsSEXP);
 	colvec caseweights = Rcpp::as<arma::vec>(caseweightsSEXP);
