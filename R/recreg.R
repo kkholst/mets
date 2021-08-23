@@ -21,7 +21,7 @@
 ##' and returned as iid.
 ##'
 ##' To have stop start structure, the events or terminal events are given via the Event indicator, 
-##* and a second censoring indicator specifies where the censorings are. See example. 
+##' and a second censoring indicator specifies where the censorings are. See example. 
 ##'
 ##' @param formula formula with 'EventCens' outcome
 ##' @param data data frame

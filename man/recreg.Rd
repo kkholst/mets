@@ -64,7 +64,8 @@ The iid decomposition of the beta's are on the form
 }
 and returned as iid.
 
-To have stop start structure, the events or terminal events are given via the Event indicator,
+To have stop start structure, the events or terminal events are given via the Event indicator, 
+and a second censoring indicator specifies where the censorings are. See example.
 }
 \examples{
 ## data with no ties
