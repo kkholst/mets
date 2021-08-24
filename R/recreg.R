@@ -115,7 +115,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 
     res <- c(recreg01(data,X,entry,exit,status,cens,id,strata,offset,weights,
 		      strata.name, cens.model=cens.model, cause=cause,
-		      death.code=death.code,cens.code=cens.code,Gc=Gc,propodds=propodds,...),
+		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
              list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
                   cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
