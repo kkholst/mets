@@ -285,7 +285,7 @@ then Ghost-Lin suggested IPCW score equations that are implemented in the recreg
 
 First we generate data that from a cox model with $\beta=(-0.3,0.3)$
 ```{r}
-rr <- mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1=base1,Lam2=base4,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
+ rr <- mets:::simMarginalMeanCox(10000,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
 
  out  <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2)
  outs <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2,cens.model=~strata(X1g,X2g))
@@ -351,7 +351,7 @@ number of previous events of type "1" by the  count.history function
 
 ```{r}
 ###cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
-###rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=ddr)
+rr <- simRecurrentII(5000,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
 rr <-  count.history(rr)
 dtable(rr,~death+status)
 
