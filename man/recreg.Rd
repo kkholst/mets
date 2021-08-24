@@ -15,7 +15,6 @@ recreg(
   weights = NULL,
   offset = NULL,
   Gc = NULL,
-  propodds = NULL,
   ...
 )
 }
@@ -28,17 +27,15 @@ recreg(
 
 \item{death.code}{codes for death (terminating event)}
 
-\item{cens.code}{code of censoring}
+\item{cens.code}{code of censoring (1 default)}
 
 \item{cens.model}{for stratified Cox model without covariates}
 
-\item{weights}{weights for FG score equations}
+\item{weights}{weights for score equations}
 
-\item{offset}{offsets for FG  model}
+\item{offset}{offsets for model}
 
 \item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
-
-\item{propodds}{1 is logistic model, NULL is fine-gray model}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -64,8 +61,8 @@ The iid decomposition of the beta's are on the form
 }
 and returned as iid.
 
-To have stop start structure, the events or terminal events are given via the Event indicator, 
-and a second censoring indicator specifies where the censorings are. See example.
+Events, deaths and censorings are specified via stop start structure and the EventCens  call, that via a status vector 
+and cause (code) and death.code(s) indentifies these, a second censoring indicator specifies where the censorings.  See example.
 }
 \examples{
 ## data with no ties
@@ -89,12 +86,11 @@ rr <- dtransform(rr,statusG=status)
 rr <- dtransform(rr,statusG=0,status==2)
 rr <- dtransform(rr,statusG=2,death==1)
 
-ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,propodds=NULL)
+ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1)
 summary(ll)
 
 ## censoring stratified after quartiles of x
-lls <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,propodds=NULL,
-cens.model=~strata(gx))
+lls <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,cens.model=~strata(gx))
 summary(lls)
 
 }
