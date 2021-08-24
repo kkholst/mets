@@ -29,6 +29,7 @@ studied. We here demonstrate how one can compute
  * the marginal mean 
  * the variance 
  * the probability of exceeding k events
+ * do a Cox type regression for the  marginal mean 
 
 In addition several tools can be used for simulating recurrent events and
 bivariate recurrent events data, in the case with a possible terminating event. 
@@ -272,6 +273,28 @@ with( recEFF14, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
 ```
+
+Regression models for the marginal mean 
+========================================
+
+One can also do regression model, using the model
+\begin{align*}
+E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
+
+First we generate data that from a cox model with $\beta=(-0.3,0.3)$
+```{r}
+mets:::simMarginalMeanCox(1,1000,cens=3/5000,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
+
+ out  <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2)
+ outs <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2,cens.model=~strata(X1g,X2g))
+
+ summary(out)$coef
+ summary(outs)$coef
+```
+
+We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
 
 

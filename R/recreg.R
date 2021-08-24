@@ -555,4 +555,90 @@ EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {
     return(out)
 }# }}}
 
+simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,...)
+{# {{{
+  if (is.null(r1)) r1 <- rep(1,n)
+  if (is.null(r2)) r2 <- rep(1,n)
+  if (is.null(rd)) rd <- rep(1,n)
+  if (is.null(rc)) rc <- rep(1,n)
+
+ ################################################################
+ ### approximate hazards to make marginals fit (approximately)
+ ################################################################
+
+ ## addapt to make recurrent mean on cox form with this baseline
+ base1 <- cumhaz
+ if (is.null(death.cumhaz)) stop("Modification for death, otherwise use simRecurrentII\n")
+ if (is.null(X)) stop("X must be given to link with simulated data\n"); 
+
+ St <- exp(-Cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2])
+ rds <- unique(rd)
+ dtt <- diff(c(0,base1[,1]))
+ dbase1 <- diff(c(0,base1[,2]))
+ data <- c()
+ XX <- c()
+
+ nks <- 0
+ for (rdss in rds) {
+    lam1ms <- (dbase1)/St^rdss
+    where <- which(rd==rdss)
+    nk <- length(where)
+    cumhaz1 <- cbind(base1[,1],cumsum(lam1ms))
+
+    datss <- simRecurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=t(t(death.cumhaz)*c(1,rdss)),
+		   r1=r1[where],r2=NULL,rd=NULL,rc=rc[where],...)
+    Xs <- X[where,,drop=FALSE][datss$id,,drop=FALSE]
+    XX <- rbind(XX,Xs)
+    datss$id <- datss$id+nks
+    nks <- nks+nk
+    data <- rbind(data,as.matrix(datss))
+ }
+
+ rownames(XX) <- NULL
+ rownames(data) <- NULL
+
+ return(list(data=data,X=XX))
+
+### data <- cbind(data,XX)
+### data <- as.data.frame(data)
+###
+### return(data)
+}# }}}
+
+simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
+{# {{{
+###
+ if (i%%500==0) print(i)
+
+ if (bin==1) X <- matrix(rbinom(n*2,1,0.5),n,2) else  X <- matrix(rnorm(n*2),n,2)
+ colnames(X) <- paste("X",1:2,sep="")
+ r1 <- exp( X %*% beta1)
+ rd <- exp( X %*% betad)
+ rc <- exp( X %*% betac)
+
+ rr <- simRecurrentCox(n,t(t(Lam1)*c(1,k1)),cumhaz2=t(t(Lam2)*c(1,k2)),
+		       death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
+ rr <- as.data.frame(cbind(rr$data,rr$X))
+ dsort(rr) <- ~id+start
+ nid <- max(rr$id)
+ rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
+ rr$cens <- 0
+ rr <- dtransform(rr,cens=1,revnr==1 & death==0)
+ ###
+ rr <- dtransform(rr,statusG=status)
+ rr <- dtransform(rr,statusG=0,status==2)
+ rr <- dtransform(rr,statusG=2,death==1)
+
+### oxr <- phreg(Surv(entry,time,status==1)~X1+X2+cluster(id),data=rr)
+### odr <- phreg(Surv(entry,time,death)~X1+X2+cluster(id),data=rr)
+### ocr <- phreg(Surv(entry,time,cens)~X1+X2+cluster(id),data=rr)
+### print(summary(oxr))
+### print(summary(odr))
+### print(summary(ocr))
+
+ if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
+ if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2
+ return(rr)
+}# }}}
+
 
