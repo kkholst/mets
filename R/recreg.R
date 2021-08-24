@@ -605,7 +605,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 ### return(data)
 }# }}}
 
-simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,Lam1,Lam2,LamD,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
+simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
 {# {{{
 ###
 

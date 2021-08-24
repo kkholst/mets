@@ -285,7 +285,7 @@ then Ghost-Lin suggested IPCW score equations that are implemented in the recreg
 
 First we generate data that from a cox model with $\beta=(-0.3,0.3)$
 ```{r}
-mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1,Lam2,LamD,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
+rr <- mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1=base1,Lam2=base4,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
 
  out  <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2)
  outs <- recreg(EventCens(start,stop,statusG,cens)~X1+X2+cluster(id),data=rr,cause=1,death.code=2,cens.model=~strata(X1g,X2g))
