@@ -608,7 +608,6 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
 {# {{{
 ###
- if (i%%500==0) print(i)
 
  if (bin==1) X <- matrix(rbinom(n*2,1,0.5),n,2) else  X <- matrix(rnorm(n*2),n,2)
  colnames(X) <- paste("X",1:2,sep="")
