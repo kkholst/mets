@@ -20,19 +20,18 @@
 ##' }
 ##' and returned as iid.
 ##'
-##' To have stop start structure, the events or terminal events are given via the Event indicator, 
-##' and a second censoring indicator specifies where the censorings are. See example. 
+##' Events, deaths and censorings are specified via stop start structure and the EventCens  call, that via a status vector 
+##' and cause (code) and death.code(s) indentifies these, a second censoring indicator specifies where the censorings.  See example. 
 ##'
 ##' @param formula formula with 'EventCens' outcome
 ##' @param data data frame
 ##' @param cause of interest
 ##' @param death.code codes for death (terminating event)
-##' @param cens.code code of censoring
+##' @param cens.code code of censoring (1 default)
 ##' @param cens.model for stratified Cox model without covariates
-##' @param offset offsets for FG  model
-##' @param weights weights for FG score equations
+##' @param weights weights for score equations
+##' @param offset offsets for model
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
-##' @param propodds 1 is logistic model, NULL is fine-gray model
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -57,18 +56,17 @@
 ##' rr <- dtransform(rr,statusG=0,status==2)
 ##' rr <- dtransform(rr,statusG=2,death==1)
 ##'
-##' ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,propodds=NULL)
+##' ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1)
 ##' summary(ll)
 ##' 
 ##' ## censoring stratified after quartiles of x
-##' lls <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,propodds=NULL,
-##' cens.model=~strata(gx))
+##' lls <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
 ##' @aliases EventCens 
 ##' @export
 recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.model=~1,
-            weights=NULL,offset=NULL,Gc=NULL,propodds=NULL,...)
+            weights=NULL,offset=NULL,Gc=NULL,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -127,7 +125,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 }# }}}
 
 recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NULL,weights=NULL,
-          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=1,profile=0,
+          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=1,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {# {{{ setting up weights, strata, beta and so forth before the action starts# {{{ p <- ncol(X)
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
