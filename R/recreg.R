@@ -605,7 +605,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 ### return(data)
 }# }}}
 
-simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
+simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
 {# {{{
 ###
 
@@ -615,7 +615,9 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=1,bin=1,Lam1=NULL,Lam2=NU
  rd <- exp( X %*% betad)
  rc <- exp( X %*% betac)
 
- rr <- simRecurrentCox(n,t(t(Lam1)*c(1,k1)),cumhaz2=t(t(Lam2)*c(1,k2)),
+ if (is.null(Lam2)) Lam2 <- Lam1; 
+
+ rr <- simRecurrentCox(n,t(t(Lam1)*c(1,k1)),cumhaz2=t(t(Lam1)*c(1,k2)),
 		       death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
  rr <- as.data.frame(cbind(rr$data,rr$X))
  dsort(rr) <- ~id+start
