@@ -1375,8 +1375,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
-          tt2 <- timereg::rchaz(cumhaz2,z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=still$time)
+          tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=still$time)
 	  tt <- tt1
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
