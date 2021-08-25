@@ -995,7 +995,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
     I <- -solve(object$hessian)
-    if ( (length(class(object))==2) && class(object)[2]=="cif.reg") {
+    if ( (length(class(object))==2) && ( class(object)[2]=="cif.reg" | class(object)[2]=="recreg")) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
     } else  { 
@@ -1028,7 +1028,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 ##' @export
 print.summary.phreg  <- function(x,max.strata=5,...) {
 
-  if (length(class(x))==2 & class(x)[2]=="cifreg") cat("Competing risks regression \n"); 
+  if (length(class(x))==2 & class(x)[2]=="cif.reg") cat("Competing risks regression \n"); 
   if (!is.null(x$propodds)) { 
        cat("Proportional odds model, log-OR regression \n"); 
   } else cat("\n")
@@ -1053,12 +1053,16 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
   cat("\n")
 
  ## for binreg ATE
- if (!is.null(x$ate)) {
-    cat("Average Treatment effects :\n")
-    printCoefmat(x$ate,...)
+ if (!is.null(x$ateDR)) {
+    cat("Average Treatment effects (G-formula) :\n")
+    printCoefmat(x$ateG,...)
     cat("\n")
 
-    cat("Average Treatment effects on Treated/Non-Treated :\n")
+    cat("Average Treatment effects (double robust) :\n")
+    printCoefmat(x$ateDR,...)
+    cat("\n")
+
+    cat("Average Treatment effects on Treated/Non-Treated (DR) :\n")
     printCoefmat(x$attc,...)
     cat("\n")
 
@@ -1795,7 +1799,7 @@ print.predictphreg  <- function(x,se=TRUE,...) {# {{{
 	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
      } else if (type[1]=="cif") {
 	     lower <- x$cif.lower; upper <- x$cif.upper
-     } else { upper <- cumhaz.upper; lower <- cumhaz.lower}
+     } else { upper <- NA; lower <- NA;}
      ci <- cbind(lower,upper)
      colnames(ci) <- c("lower","upper")
      xx <- cbind(xx,ci)

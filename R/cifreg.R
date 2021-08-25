@@ -188,7 +188,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 ###	strataC <- model.matrix(cens.model,data)
 ###	print(strataC)
 
-       if (length(whereC)>0) {# {{{
+    if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
         kmt <- TRUE
         if (class(cens.model)[1]=="formula") {

@@ -38,7 +38,8 @@ Suggests:
     bookdown,
     rmarkdown,
     ggplot2,
-    cowplot
+    cowplot,
+    icenReg
 VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm

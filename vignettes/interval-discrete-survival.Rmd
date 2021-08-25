@@ -6,7 +6,7 @@ output:
   knitr:::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Discrete Survival Models}
+  %\VignetteIndexEntry{Discrete Interval Censored Survival Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -92,10 +92,10 @@ fixing a nuber of fixed cutpoints.
 
 
 ```{r}
-test <- 1 
+test <- 0 
 if (test==1) {
 
-library(icenReg)
+require(icenReg)
 data(IR_diabetes)
 IRdia <- IR_diabetes
 ## removing fully observed data in continuous version, here making it a discrete observation 

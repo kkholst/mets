@@ -1,0 +1,213 @@
+---
+title: "Average treatment effect (ATE) for Competing risks and binary outcomes"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{ATE for Binomial Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+Average treatment for Competing risks data 
+==========================================
+
+The binreg function does direct binomial regression for one time-point, $t$, 
+fitting the model 
+\begin{align*}
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta) 
+\end{align*}
+the estimation is based on IPCW weighted EE
+\begin{align*}
+ U(\beta) = &  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T- \wedge t) - \mbox{expit}( X^T beta) \right) = 0 
+\end{align*}
+for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
+distribution. With $\Delta(t) = I( C > T- \wedge t)$. 
+
+The function logitIPCW instead considers 
+\begin{align*}
+ U(\beta) = &  X  \frac{\Delta(t)}{G_c(T- \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
+\end{align*}
+The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric given $X$.
+
+Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
+the average effect on non-treated (ATC). We demonstrate their use below. 
+
+The function logitATE also works when there is no censoring and we thus have simple binary outcome. 
+
+Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
+under known censoring model. The influence functions are stored in the output. 
+
+ - We estimate the average treatment effect of our binary response $I(T \leq t, \epsilon=1)$
+   - Using a working logistic model for the resonse
+   - Using a working logistic model for treatment given covariates
+   - Using a working model for censoring given covariates, here  a stratified Kaplan-Meier.
+
+If there are no censoring then the censoring weights are simply put to 1.
+
+The average treatment effect is 
+\begin{align*}
+ E(Y(1) - Y(0)) 
+\end{align*}
+using counterfactual outcomes. 
+
+We compute the simple G-estimator 
+\begin{align*}
+\sum  m_a(X_i) 
+\end{align*}
+to estimate the risk $E(Y(a))$. 
+
+The DR-estimator instead uses the estimating equations that are double robust wrt 
+
+   - A working logistic model for the resonse
+   - A working logistic model for treatment given covariates
+
+This is estimated using the estimator 
+\begin{align*}
+\sum \left[ \frac{A_i Y_i}{\pi_A(X_i)}-\frac{A_i - \pi_A(X_i)}{\pi_A(X_i)} m_1(X_i) \right]
+   - \left[ \frac{(1-A_i) Y_i}{1-\pi_A(X_i)}+\frac{A_i - \pi_A(X_i)}{1-\pi_A(X_i)} m_0(X_i) \right]
+\end{align*}
+where
+
+ - $A_i$ is treatment indicator
+ - $\pi_A(X_i) = P(A_i=1|X_i)$ is treatment model 
+ - $Y_i$ outcome, that in case of censoring is censoring adjusted $\tilde Y_i \Delta(t) /G_c(T_i- \wedge t)$
+ - $\tilde Y_i = I(T_i \leq t, \epsilon_i=1)$ oucome before censoring.
+ - $m_j(X_i)=P(Y_i=1| A_i=j,X_i)$ is outcome model, using binomial regression to estimate.
+
+ The standard errors are then based on an iid decomposition using taylor-expansion for the
+ parameters of the treatment-model and the outcome-model, and the censoring probability. 
+
+ Needs that the censoring model is correct, so it can be important to use a sufficiently 
+large censorng model as we also illustrate below. 
+
+   - Censoring model by strata used for phreg 
+
+
+Also compute standard marginalization for average treatment effect  (called differenceG) 
+\begin{align*}
+\sum \left[  m_1(X_i) - m_0(X_i) \right]
+\end{align*}
+and again standard errors are based on the related influcence functions and are also returned. 
+
+
+Average treatment effect 
+=========================
+
+First we simulate some data that mimics that Kumar et al 2012. 
+This is data from multiple myeloma patients treated with allogeneic stem cell
+transplantation from the Center for International Blood and Marrow Transplant Research
+(CIBMTR) Kumar et al (2012), "Trends in allogeneic stem cell transplantation for multiple myeloma: a CIBMTR
+analysis".  The data used in this paper consist of patients transplanted from 1995 to
+2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
+versus 1995-2000 (N=375). The two competing events were
+relapse and treatment-related mortality (TRM) defined as death without relapse.
+\cite{kumar-2012} considered the following risk covariates: 
+transplant time period (gp (main interest of the study): 1 for transplanted in
+2001-2005 versus 0 for transplanted in 1995-2000), donor type (dnr: 1 for Unrelated or
+other related donor (N=280) versus 0 for HLA-identical sibling (N=584)), prior
+autologous transplant (preauto: 1 for Auto+Allo transplant (N=399) versus 0 for
+allogeneic transplant alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months (N=289) versus 0 for less than or
+equal to 24 months (N=575))). 
+
+
+We here generate similar data by assuming that the two cumlative incidence curves are logistic and we
+have censoring that depends on the covariates via a Cox model. All this is wrapped in the kumarsim function. 
+The simulation does not deal with possible violations of the bound that $F_1+F_2 < 1$. But as we increase the 
+sample size we still see that we recover the parameters of cause 2. 
+
+
+```{r}
+library(mets) 
+
+n <- 1000
+kumar <- kumarsim(n,depcens=1)
+kumar$cause <- kumar$status
+kumar$ttt24 <- kumar[,6]
+
+c2 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+		treat.model=gp~dnr+preauto+ttt24,time=60,
+                 cens.model=~strata(gp,dnr,preauto,ttt24))
+summary(c2)
+
+c1 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
+		treat.model=gp~dnr+preauto+ttt24,time=60)
+summary(c1)
+```
+
+We note that correct estimates that found using the large censoring model are very different from those
+using the simple Kaplan-Meier weights that are severely biased for these data.  This is due to a stong 
+censoring dependence. 
+
+The average treatment is around $0.17 = E(Y(1) - Y(0))$ at time 60 for the 
+transplant period, under the standard causal assumptions. We here use the logistic model and a treat model
+that is also logistic. The 1/0 variable used for the causal computation is found as the rhs of the treat.model. 
+
+
+Average treatment effect for binary data
+========================================
+
+In the binary case a binary outcome is specified instead of the survival outcome, and as a
+consequence no-censoring adjustment is done 
+
+ - the binary outcome must be a variable in the data-frame 
+
+
+```{r}
+
+kumar$cause2 <- 1*(kumar$cause==2)
+
+c3 <- logitATE(cause2~gp+dnr+preauto+ttt24,kumar,
+	       treat.model=gp~dnr+preauto+ttt24)
+summary(c3)
+
+## quite similar to binregATE
+c2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,time=60,
+	       treat.model=gp~dnr+preauto+ttt24)
+summary(c2)
+
+
+```
+
+Cluster corrected standard errors 
+====================================
+
+  - Clusters should be specified in outcome modela and censoring model 
+  - Clusters should not be specified in treatment model
+
+```{r}
+
+kumar$id <- sample(1:100,n/100)
+
+c3id <- logitATE(cause2~gp+dnr+preauto+ttt24+cluster(id),kumar,
+		treat.model=gp~dnr+preauto+ttt24)
+summary(c3id)
+
+c4id <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24+cluster(id),kumar,
+	  cause=2,treat.model=gp~dnr+preauto+ttt24,time=60,
+                cens.model=~strata(gp,dnr,preauto,ttt24)+cluster(id))
+summary(c4id)
+```
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

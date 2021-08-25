@@ -371,7 +371,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
   }
 # }}}
 
-  return(list(censoring.weights=Gctb,
+  return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],
   gamma=gamma,gamma.time=gammahat, times=times,
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA
 	      ))
@@ -1282,7 +1282,7 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
 ##' showfitsim(causes=2,rr,dr,base1,base4)
 ##'
 ##' @export
-simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
+simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,
 		    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
 		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
   {# {{{
@@ -1292,7 +1292,6 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
      } else if (dependence==1) {
 	      z <- rgamma(n,1/var.z[1])*var.z[1]
-###	      z <- exp(rnorm(n,1)*var.z[1]^.5)
 	      z1 <- z; z2 <- z; zd <- z
 	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
       } else if (dependence==2) {
@@ -1301,8 +1300,6 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
               covv  <- b * cor.mat  
 	      z <- matrix(rnorm(3*n),n,3)
 	      z <- exp(z%*% chol(covv))
-###	      print(summary(z))
-###	      print(cor(z))
 	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
       } else if (dependence==3) {
 	      z <- matrix(rgamma(3*n,1),n,3)
@@ -1310,14 +1307,16 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
               z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
               zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
 	      z <- cbind(z1,z2,zd)
-###	      print(summary(z))
-###	      print(cor(z))
       } else if (dependence==4) {
 	      zz <- rgamma(n,1/var.z[1])*var.z[1]
 	      z1 <- zz; z2 <- zz; zd <- rep(1,n) 
 	      z <- z1
       }      else stop("dependence 0-4"); # }}}
 
+   if (is.null(r1)) r1 <- rep(1,n)
+   if (is.null(r2)) r2 <- rep(1,n)
+   if (is.null(rd)) rd <- rep(1,n)
+   if (is.null(rc)) rc <- rep(1,n)
 
   cumhaz <- rbind(c(0,0),cumhaz)
 
@@ -1335,8 +1334,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   max.time <- tail(cumhaz[,1],1)
 
 ### recurrent first time
-  tall1 <- timereg::rchaz(cumhaz,z1)
-  tall2 <- timereg::rchaz(cumhaz2,z2)
+  tall1 <- timereg::rchaz(cumhaz,z1*r1)
+  tall2 <- timereg::rchaz(cumhaz2,z2*r2)
   tall <- tall1 
   tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
   tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -1344,11 +1343,11 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::rchaz(cumhazd,zd)
+	  timed   <- timereg::rchaz(cumhazd,zd*rd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
-             ctime <- rexp(n)/cens
+             ctime <- rexp(n)/(rc*cens)
 	     tall$fdeath[tall$dtime>ctime] <- 0; 
 	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
 	  }
@@ -1357,7 +1356,7 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 	  tall$fdeath <- 0; 
 	  cumhazd <- NULL 
 	  if (!is.null(cens)) { 
-             ctime <- rexp(n)/cens
+             ctime <- rexp(n)/(rc*cens)
 	     tall$fdeath[tall$dtime>ctime] <- 0; 
 	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
 	  }
@@ -1371,33 +1370,25 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
   tt <- tall
   ### setting aside memory 
   tt1 <- tt2 <- tt
-###  gemsim <- as.data.frame(matrix(0,max.recurrent*n,ncol(tall)))
-###  names(gemsim) <- names(tall)
-###  gemsim[1:n,] <- tall; nrr <- n
   i <- 1; 
   while (any(tt$time<tt$dtime) & i < max.recurrent) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
-          tt2 <- timereg::rchaz(cumhaz2,z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=still$time)
+          tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=still$time)
 	  tt <- tt1
-###          drename(tt1,paste(names(tt1),"1",sep="")) <- ~.
-###          drename(tt2,paste(names(tt2),"2",sep="")) <- ~.
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
 	  tt$rr2 <- tt2$rr
-###
+          ###
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=fdeath,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
 	  tt <- dtransform(tt,time=dtime,time>dtime)
 	  nt <- nrow(tt)
-###	  gemsim[(nrr+1):(nrr+nt),] <- tt
 	  tall <- rbind(tall,tt[1:nn,],row.names=NULL)
-###	  nrr <- nrr+nt
   }
-###  tall <- gemsim[1:nrr,]
   dsort(tall) <- ~id+entry+time
   tall$start <- tall$entry
   tall$stop  <- tall$time
@@ -1409,6 +1400,7 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 
   return(tall)
   }# }}}
+
 
 ##' @export
 showfitsim <- function(causes=2,rr,dr,base1,base4,which=1:3) 

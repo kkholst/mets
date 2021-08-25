@@ -107,7 +107,6 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 	//  }
 	//  catch(...) {}
 
-
 	colvec weights = Rcpp::as<colvec>(weightsSEXP);
 	colvec offsets = Rcpp::as<colvec>(offsetsSEXP);
 	colvec caseweights = Rcpp::as<arma::vec>(caseweightsSEXP);
@@ -135,22 +134,14 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 		if (Truncation) XX.row(i+n/2) = XX.row(i);
 	}
 
-	unsigned nZ = Z.n_rows;
-	if (Truncation) nZ = 2*Z.n_rows;
-	mat ZX(nZ , Z.n_cols * X.n_cols);
+//	unsigned nZ = Z.n_rows;
+//	if (Truncation) nZ = 2*Z.n_rows;
+	mat ZX(n , Z.n_cols * X.n_cols);
 	if (Z.n_rows==X.n_rows)
 		for (unsigned i=0; i<X.n_rows; i++) {
 			rowvec Xi = X.row(i);
 			rowvec Zi = Z.row(i);
 			ZX.row(i) = vectorise((Xi.t()*Zi),1); // to get back to right form with reshape
-			//    if (i==-1) {
-			//       rowvec zx=ZX.row(i) ;
-			//       Xi.print("xi");
-			//       Zi.print("zi");
-			//       zx.print("zx");
-			//       mat mm=reshape(zx,Z.n_cols,X.n_cols);
-			//       mm.print("mm");
-			//    }
 			if (Truncation) ZX.row(i+n/2) = ZX.row(i);
 		}
 

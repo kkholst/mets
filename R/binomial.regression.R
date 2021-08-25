@@ -75,7 +75,7 @@
 ##' 
 ##' cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 ##' 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
-##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
+##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 ##' summary(cifdob)
 ##' 
 ##' riskratio <- function(p) {
@@ -168,7 +168,9 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
-      cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      exittime <- pmin(exit,time)
+###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -181,6 +183,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
+ Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -191,7 +194,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time)/cens.weights)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -207,8 +209,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
+	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
@@ -275,19 +276,23 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
  
-    val$MGciid <- MGCiid
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
+   }  else {
+	  MGCiid <- 0
+  }## }}}
+
+  val$MGciid <- MGCiid
+  val$MGtid <- id
+  val$orig.id <- orig.id
+  val$iid.origid <- ids 
+  val$iid.naive <- val$iid 
+  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  val$naive.var <- val$var
+  robvar <- crossprod(val$iid)
+  val$var <-  val$robvar <- robvar
 ### val$var  <- val$naive.var - val$varadjC
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
-  } ## }}}
+  val$se.robust <- diag(robvar)^.5
+  val$se.coef <- diag(val$var)^.5
+
 
   class(val) <- "binreg"
   return(val)
@@ -296,7 +301,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @export
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -373,7 +378,8 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -388,9 +394,11 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
+  Y <- c((status==cause)*(exit<=time))
+  if (!is.null(Ydirect)) Y <- Ydirect
 
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum(Y)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -398,7 +406,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time))
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -414,8 +421,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
+	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
@@ -456,7 +462,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
+###    Y <- weights*c(Y[ord]-p)  *(exit<=time)
+    Yglm <- weights*c(Y[ord]-p) # *(exit<=time)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -465,14 +472,14 @@ hessian <- matrix(D2log,length(pp),length(pp))
     ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
-    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
 ###    hX  <-  apply(X,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*h[xx$jumps+1,] /c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
@@ -489,7 +496,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$orig.id <- orig.id
     val$iid.origid <- ids 
     val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+    val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
@@ -539,7 +546,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'	  treat.model=tcell~platelet+age)
 ##' summary(brs)
 ##'
-##' @aliases logitIPCWATE
+##' @aliases logitIPCWATE logitATE kumarsim
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -621,7 +628,9 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
-      cens.weights <- predict(resC,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      exittime <- pmin(exit,time)
+###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -634,6 +643,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
 ###mm <-  .Call("CubeVec",D2logl,Dlogl)
+  Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -644,7 +654,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time)/cens.weights)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -665,7 +674,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
-}# }}}
+}  # }}}
 
   p <- ncol(X)
   opt <- NULL
@@ -694,17 +703,27 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  
 # {{{ computation of ate, att, atc and their influence functions
 
+## dropping cluster here 
+treat.model <- drop.specials(treat.model,"cluster")
 treat <- glm(treat.model,data,family="binomial")
 Xtreat <- model.matrix(treat$formula,data)
 ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)
-iidalpha <- iid(treat)
+iidalpha <- iid(treat,id=id)
 
-### first covariate is treatment
-X1 <- X0 <- X
-X1[,2] <- 1; X0[,2] <- 0
+### treatment is rhs of treat.model 
+treat.name <-  all.vars(treat.model)[1]
+dat1 <- data
+dat1[,treat.name] <- 1 ## treat.contrast[2]
+dat0 <- data
+dat0[,treat.name] <- 0 ## treat.contrast[1]
+
+formulanc <- drop.specials(formula,"cluster")
+
+X1 <- model.matrix(formulanc[-2],dat1)
+X0 <- model.matrix(formulanc[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -716,6 +735,9 @@ Y <- 1*(exit<time & status==cause)/cens.weights
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
+
+riskG1 <- p11
+riskG0 <- p10
 
 ntreat <- sum(ytreat)
 att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
@@ -738,6 +760,9 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
+DriskG1 <- apply(Dp11,2,mean)
+DriskG0 <- apply(Dp10,2,mean)
+DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -791,32 +816,32 @@ DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
 
+val$MGciid <- MGCiid
+val$MGciid10 <- MGCiid10
+val$MGtid <- id
+val$orig.id <- orig.id
+val$iid.origid <- ids 
+val$iid.naive <- val$iid 
+if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+val$naive.var <- val$var
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
 
-    val$MGciid <- MGCiid
-    val$MGciid10 <- MGCiid10
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
-
-
-val$risk <- c(mean(risk1),mean(risk0))
+### estimates risk, att, atc
+val$riskDR <- c(mean(risk1),mean(risk0))
+val$riskG<- c(mean(riskG1),mean(riskG0))
 val$att <- sum(att)/ntreat
 val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- c("treat-1","treat-0")
+names(val$riskDR) <- paste("treat",1:0,sep="-")
+names(val$riskG) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
-
-iidbase1 <- c(risk1-val$risk[1])
+iidbase1 <- c(risk1-val$riskDR[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -824,7 +849,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[2])
+iidbase0 <- c(risk0-val$riskDR[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
@@ -847,17 +872,24 @@ iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 # }}}
 
 # {{{ output ate, att, atc
-varrisk <- crossprod(iidrisk)
-sdrisk <- diag(varrisk)^.5
-vardifrisk  <-  sum(difriskiid^2)
-sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; val$se.risk <- sdrisk
-val$risk.iid <- cbind(iidrisk1,iidrisk0)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+val$difriskDR <- val$riskDR[1]-val$riskDR[2]
+val$var.difriskDR <- sum(difriskiid^2)
+val$se.difriskDR <- val$var.difriskDR^.5
 
-val$difrisk <- val$risk[1]-val$risk[2]
-val$var.difrisk <- vardifrisk
-val$se.difrisk <- sddifrisk
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+
+val$difriskG <- mean(p11)-mean(p10)
+###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
+val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
+val$var.difriskG <- sum(val$difriskG.iid^2)
+val$se.difriskG <- val$var.difriskG^.5
 
 val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
 val$var.attc <- crossprod(val$attc.iid)
@@ -868,11 +900,13 @@ val$se.attc <- diag(val$var.attc)^.5
   return(val)
 }# }}}
 
+
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
+	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -950,7 +984,8 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -967,8 +1002,11 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
 
+  Y <- c((status==cause)*(exit<=time))
+  if (!is.null(Ydirect)) Y <- Ydirect
+
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum(Y)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -976,7 +1014,6 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ###
-Y <- c((status==cause)*(exit<=time))
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -1026,17 +1063,28 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  
 # {{{ computation of ate, att, atc and their influence functions
 
+
+## dropping cluster here 
+treat.model <- drop.specials(treat.model,"cluster")
 treat <- glm(treat.model,data,family="binomial")
 Xtreat <- model.matrix(treat$formula,data)
 ytreat <- treat$y
 
 lpa <- treat$linear.predictors 
 pal <- expit(lpa)
-iidalpha <- iid(treat)
+iidalpha <- iid(treat,id=id)
 
-### first covariate is treatment
-X1 <- X0 <- X
-X1[,2] <- 1; X0[,2] <- 0
+### treatment is rhs of treat.model 
+treat.name <-  all.vars(treat.model)[1]
+dat0 <- data
+dat0[,treat.name] <- 0 ## treat.contrast[1]
+dat1 <- data
+dat1[,treat.name] <- 1 ## treat.contrast[2]
+
+formulanc <- drop.specials(formula,"cluster")
+
+X1 <- model.matrix(formulanc[-2],dat1)
+X0 <- model.matrix(formulanc[-2],dat0)
 
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
@@ -1044,12 +1092,14 @@ p1lp <-   X %*% val$coef+offset
 p1 <- expit(p1lp)
 p10 <- expit(p10lp)
 p11 <- expit(p11lp)
-###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
-Y <- c((status==cause)*(exit<=time))*obs/cens.weights
 
+###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
+Y <- c(Y/cens.weights)
 
 risk1 <- ytreat*(Y-p11)/pal+p11
 risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
+riskG1 <- p11
+riskG0 <- p10
 
 ntreat <- sum(ytreat)
 att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
@@ -1072,8 +1122,9 @@ DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
 DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
 DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
 
-difriskG <- mean(p11)-mean(p10)
-DdifriskG <- apply(Dp11-Dp10,2,mean)
+DriskG1 <- apply(Dp11,2,mean)
+DriskG0 <- apply(Dp10,2,mean)
+DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -1089,7 +1140,7 @@ DdifriskG <- apply(Dp11-Dp10,2,mean)
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
     ### only out to time for censoring martingales, also for Yglm
-    Yglm <- weights*c((status==cause)*(exit<=time) - p)*(exit<=time)
+    Yglm <- weights*c((status==cause)*(exit<=time)-p) ## *(exit<=time)
     Y <- c((status==cause)*(exit<=time))/cens.weights
 
     xx <- resC$cox.prep
@@ -1105,9 +1156,9 @@ DdifriskG <- apply(Dp11-Dp10,2,mean)
     ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*h[xx$jumps+1,] /c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     IhdLamh10 <- apply(h10*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -1129,32 +1180,32 @@ DdifriskG <- apply(Dp11-Dp10,2,mean)
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
 
-    val$MGciid <- MGCiid
-    val$MGciid10 <- MGCiid10
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
-    val$iid.naive <- val$iid 
-    if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <-  val$robvar <- robvar
-### val$var  <- val$naive.var - val$varadjC
-    val$se.robust <- diag(robvar)^.5
-    val$se.coef <- diag(val$var)^.5
+val$MGciid <- MGCiid
+val$MGciid10 <- MGCiid10
+val$MGtid <- id
+val$orig.id <- orig.id
+val$iid.origid <- ids 
+val$iid.naive <- val$iid 
+if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+val$naive.var <- val$var
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
 
-
-val$risk <- c(mean(risk1),mean(risk0))
+### estimates risk, att, atc
+val$riskDR <- c(mean(risk1),mean(risk0))
+val$riskG<- c(mean(riskG1),mean(riskG0))
 val$att <- sum(att)/ntreat
 val$atc <- sum(atc)/(n-ntreat)
 
 val$attc <- c(val$att,val$atc)
 names(val$attc) <- c("ATT","ATC")
-names(val$risk) <- c("treat-1","treat-0")
+names(val$riskDR) <- paste("treat",1:0,sep="-")
+names(val$riskG) <- paste("treat",1:0,sep="-")
 
 ## iid's of marginal risk estimates 
-
-iidbase1 <- c(risk1-val$risk[1])
+iidbase1 <- c(risk1-val$riskDR[1])
 iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
@@ -1162,7 +1213,7 @@ iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
 iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
-iidbase0 <- c(risk0-val$risk[2])
+iidbase0 <- c(risk0-val$riskDR[2])
 iidcif0 <- c(c(DePsi0) %*% t(val$iid))
 iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
 
@@ -1184,34 +1235,122 @@ iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 
 # }}}
 
+
 # {{{ output ate, att, atc
-varrisk <- crossprod(iidrisk)
-sdrisk <- diag(varrisk)^.5
-vardifrisk  <-  sum(difriskiid^2)
-sddifrisk <- vardifrisk^.5
 
-val$var.risk <- varrisk; val$se.risk <- sdrisk
-val$risk.iid <- cbind(iidrisk1,iidrisk0)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+val$difriskDR <- val$riskDR[1]-val$riskDR[2]
+val$var.difriskDR <- sum(difriskiid^2)
+val$se.difriskDR <- val$var.difriskDR^.5
 
-val$difrisk <- val$risk[1]-val$risk[2]
-val$var.difrisk <- vardifrisk
-val$se.difrisk <- sddifrisk
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+
+val$difriskG <- mean(p11)-mean(p10)
+###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
+val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
+val$var.difriskG <- sum(val$difriskG.iid^2)
+val$se.difriskG <- val$var.difriskG^.5
 
 val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
 val$var.attc <- crossprod(val$attc.iid)
 val$se.attc <- diag(val$var.attc)^.5
-
-val$difriskG <- difriskG
-val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
-val$var.difriskG <- sum(val$difriskG.iid^2)
-val$se.difriskG <- val$var.difriskG^.5
-
 # }}}
+
 
   class(val) <- "binreg"
   return(val)
 }# }}}
 
+##' @export
+kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
+		      beta=c(-0.67,0.59,-0.55,0.25,0.68,0.18,0.45,0.31),
+		      labels= c("gp","dnr","preauto","ttt24(24,300]"),
+		      depcens=0,type = c("logistic", "cloglog"),restrict=0 )
+{# {{{
+    p = length(beta)/2
+    tt <- seq(0, 150, by = 1)
+    if (length(rate) == 1)
+    rate <- rep(rate, 2)
+    Lam1 <- rho1 * (1 - exp(-tt/rate[1]))
+    Lam2 <- rho2 * (1 - exp(-tt/rate[2]))
+    
+    ## fully saturated model for kumar covariates 
+    Zdist <- c(0.21064815,0.02083333,0.05555556,0.01504630,
+	       0.13888889,0.15393519, 0.02662037, 0.04398148, 
+	       0.04745370, 0.02430556, 0.02199074, 0.03935185,
+               0.02430556, 0.05555556, 0.01273148, 0.10879630)
+    Zs <- expand.grid(gp=c(0,1),dnr=c(0,1),preauto=c(0,1),ttt24=c(0,1))
+    Zs <- dsort(Zs,~ttt24+gp+dnr+preauto)
+
+    samn <- sample(1:16,n,replace=TRUE,prob=c(Zdist))
+    Z <- Zs[samn,]
+
+    colnames(Z) <- labels
+    cif1 <- setup.cif(cbind(tt, Lam1), beta[1:4], Znames = colnames(Z),
+        type = type[1])
+    cif2 <- setup.cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z),
+        type = type[1])
+    if (restrict==0) 
+    data <- timereg::sim.cifs(list(cif1, cif2), n, Z = Z)
+    else {
+    ## keep model 2 on logistic form
+    data <- timereg::sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
+    data$status21 <- data$status
+    data$status21[data$status==1] <- 2
+    data$status21[data$status==2] <- 1
+    data$status <- data$status21
+    }
+
+    ## kumar censoring, cox model 
+    c0 <- list()     
+    c0$cumhaz <- cbind(c(0,20,60,90,160),
+		       c(0, 0.07797931, 0.28512764, 0.76116180, 1.95720759))
+    c0$coef <- c(1.8503113,-0.6976226,0.5828763,-0.2000003)
+
+    if (depcens == 0)
+        censor  <- rchaz(c0$cumhaz,n=n)
+    else {
+        rrc <- exp(as.matrix(Z) %*% c0$coef)
+        censor  <- rchaz(c0$cumhaz,rrc)
+    }
+    status = data$status * (data$time <= censor$time)
+    time = pmin(data$time, censor$time)
+    data <- data.frame(time = time, status = status)
+    return(cbind(data, Z))
+}# }}}
+
+##' @export
+logitATE <- function(formula,data,...)
+{# {{{
+   ## use IPCW machine in no-censoring case
+    cl <- match.call()
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster", "offset")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (class(Y) == "Event") {
+      out <- logitIPCWATE(formula,data,...)
+    } else {
+      response <- all.vars(formula)[1]
+      Ydirect <-  as.numeric(data[,response]) 
+      data$time <- 2
+      data$event <- 1
+      time <- 2
+      Survform <-  update.formula(formula,Event(time,event)~.)
+      n <- nrow(data)
+      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
+    }
+
+   return(out)
+}# }}}
 
 ##' @export
 iid.binreg  <- function(x,...) {# {{{
@@ -1235,18 +1374,19 @@ V=object$var
 res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
 
 ## to add marginal estimates for binregATE 
-if (!is.null(object$risk))  {
-	marginal <- estimate(coef=object$risk,vcov=object$var.risk)$coefmat
-	difmarginal <- estimate(coef=object$difrisk,vcov=as.matrix(object$var.difrisk))$coefmat
-	rownames(difmarginal) <- "difference"
-	marginal <- rbind(marginal,difmarginal)
-	if (!is.null(object$difriskG))  {
-	difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
-	rownames(difG) <- "differenceG"
-	marginal <- rbind(marginal,difG) 
-	}
-	attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
-	res <- c(res,list(ate=marginal,attc=attc))
+if (!is.null(object$riskDR))  {
+    marginalDR <- estimate(coef=object$riskDR,vcov=object$var.riskDR)$coefmat
+    difmarginalDR <- estimate(coef=object$difriskDR,vcov=as.matrix(object$var.difriskDR))$coefmat
+    rownames(difmarginalDR) <- "differenceDR"
+    marginalDR <- rbind(marginalDR,difmarginalDR)
+
+    marginalG <- estimate(coef=object$riskG,vcov=object$var.riskG)$coefmat
+    difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
+    rownames(difG) <- "differenceG"
+    marginalG <- rbind(marginalG,difG) 
+
+    attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
+    res <- c(res,list(ateG=marginalG,ateDR=marginalDR,attc=attc))
 
 }
 
@@ -1578,4 +1718,5 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
  return(bra)
 }# }}})
+
 
