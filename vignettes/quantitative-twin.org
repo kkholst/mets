@@ -72,7 +72,7 @@ head(twinwide)
 Next we plot the association within each zygosity group
 
 #+NAME: scatterdens
-#+BEGIN_SRC R :exports code :ravel echo=FALSE,message=FALSE,warning=FALSE
+#+BEGIN_SRC R :exports code :ravel echo=TRUE,message=FALSE,warning=FALSE
   library("cowplot")
 
   scatterdens <- function(x) {
@@ -186,7 +186,7 @@ independence)
 #+BEGIN_SRC R :exports both :results output graphics :file marg1.jpg :ravel include=FALSE,fig=TRUE
 	  dm <- Expand(twinbmi,
 		      bmi=0,
-		      gender=c("male"),
+		      \gls{label}ender=c("male"),
 		      age=seq(33,61,length.out=50))
 	  df <- Expand(twinbmi,
 		      bmi=0,

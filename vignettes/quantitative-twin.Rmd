@@ -291,7 +291,6 @@ ace0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type
 # Twin analysis,  binary traits
 
 
-# Time to event
 
 # Bibliography
 <a id="korkeila_bmi_1991"></a>[korkeila_bmi_1991] Korkeila, Kaprio, Rissanen & Koskenvuo, Effects of gender and age on the heritability of body mass index, <i>Int J Obes</i>, <b>15(10)</b>, 647-654 (1991). [↩](#b71edfd9bc946c317f4a732845bcaf93)

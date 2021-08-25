@@ -170,8 +170,9 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	      val$strata <- dd$strata
 	      val$strata.jumps <- val$strata[val$jumps]
 	      return(val)
-	  } 
-	 with(val,structure(-ploglik,gradient=-gradient,hessian=-hessian))
+	  }
+     n <- length(dd$time)
+	 with(val,structure(-ploglik/n,gradient=-gradient/n,hessian=-hessian/n))
 	}# }}}
 
   opt <- NULL
@@ -187,8 +188,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
       }
       cc <- opt$estimate;  names(cc) <- colnames(X)
       if (!stderr) return(cc)
-      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
+      val <- c(list(coef=cc), obj(opt$estimate,all=TRUE))
+      } else val <- c(list(coef=beta), obj(beta,all=TRUE))
   } else {
       val <- obj(0,all=TRUE)
   }
@@ -223,20 +224,21 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   res <- c(val,
            list(cox.prep=dd,
-		strata.call=strata.call, strata.level=strata.level,
+                strata.call=strata.call, strata.level=strata.level,
                 entry=entry,
                 exit=exit,
                 status=status,                
                 p=p,
                 X=X,
-		offsets=offset,
-		weights=weights,
+                offsets=offset,
+                weights=weights,
                 id=id.orig, call.id=call.id,
-		no.opt=no.opt, 
-		cumhaz=cumhaz, se.cumhaz=se.cumhaz,
-		lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
-		ihessian=II,
-		II=II,strata.name=strata.name,propodds=propodds))
+                opt=opt,
+                no.opt=no.opt,
+                cumhaz=cumhaz, se.cumhaz=se.cumhaz,
+                lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
+                ihessian=II,
+                II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
   res
 }
