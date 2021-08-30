@@ -131,7 +131,7 @@ sample size we still see that we recover the parameters of cause 2.
 ```{r}
 library(mets) 
 
-n <- 2000
+n <- 3000
 kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
