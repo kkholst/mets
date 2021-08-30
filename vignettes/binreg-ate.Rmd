@@ -181,20 +181,14 @@ summary(c2)
 Cluster corrected standard errors 
 ====================================
 
-  - Clusters should be specified in outcome modela and censoring model 
+  - Clusters should be specified in outcome model and censoring model 
   - Clusters should not be specified in treatment model
 
 ```{r}
 
 kumar$id <- sample(1:100,n/100)
 
-c3id <- logitATE(cause2~gp+dnr+preauto+ttt24+cluster(id),kumar,treat.model=gp~dnr+preauto+ttt24)
-summary(c3id)
 
-c4id <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24+cluster(id),kumar,
-	  cause=2,treat.model=gp~dnr+preauto+ttt24,time=60,
-	  cens.model=~strata(gp,dnr,preauto,ttt24)+cluster(id))
-summary(c4id)
 ```
 
 
