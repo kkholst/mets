@@ -30,6 +30,7 @@ Imports:
     splines,
     survival (>= 2.43-1),
 Suggests:
+    optimx,
     prodlim,
     cmprsk,
     testthat (>= 0.11),

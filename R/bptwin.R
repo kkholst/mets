@@ -520,7 +520,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
       p1 <- constrain; p1[freeidx] <- p
       -as.numeric(U(p1)[freeidx])
     }
-    p0 <- p0[is.na(constrain)]    
+    p0 <- p0[is.na(constrain)]
   }
 
 
@@ -540,6 +540,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   optimopt <- names(control) 
 
   if (control$method=="optimx") {
+    if (!requireNamespace("optimx")) stop("Package `optimx` required.")
     if (is.null(control$lower)) control$lower <- -Inf
     if (is.null(control$upper)) control$upper <- Inf
     if (is.null(control$optimx.method)) control$optimx.method <- c("BFGS","Nelder-Mead")
