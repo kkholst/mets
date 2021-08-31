@@ -1776,13 +1776,12 @@ if (!is.null(object$propodds)) pcumhaz <- -log(surv)
 
 
 ##' @export
-print.predictphreg  <- function(x,se=TRUE,...) {# {{{
+print.predictphreg  <- function(x,se=FALSE,...) {# {{{
 
    if (is.null(x$se.cumhaz) & se==TRUE)  {
        warning("predict.phreg must be with se=TRUE\n"); 
        se <- FALSE
    }
-
   type <- "surv"
   if ((length(class(x))==2) && (substr(class(x)[2],1,3)=="cif")) type <- "cif"
 
@@ -1791,21 +1790,21 @@ print.predictphreg  <- function(x,se=TRUE,...) {# {{{
   } else if (type[1]=="cif") {
      xx <- x$cif 
   } else { xx <- x$cumhaz; names(xx) <- "cumhaz"}
-  colnames(xx) <- type
+  ## colnames(xx) <- type
 
   if (se) {
      if (type[1]=="surv") {
-	     upper <- x$surv.upper; lower <- x$surv.lower 
-	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
+	     upper <- x$surv.upper; lower <- x$surv.lower
      } else if (type[1]=="cif") {
 	     lower <- x$cif.lower; upper <- x$cif.upper
      } else { upper <- NA; lower <- NA;}
      ci <- cbind(lower,upper)
-     colnames(ci) <- c("lower","upper")
+     ## colnames(ci) <- c("lower","upper")
      xx <- cbind(xx,ci)
   }
 
-return(xx)
+  print(xx)
+  invisible(xx)
 }# }}}
 
 
