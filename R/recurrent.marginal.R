@@ -1247,6 +1247,10 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
 ##' @param cumhaz  cumulative hazard of recurrent events 
 ##' @param cumhaz2  cumulative hazard of recurrent events  of type 2
 ##' @param death.cumhaz cumulative hazard of death 
+##' @param r1 potential relative risk adjustment of rate 
+##' @param r2 potential relative risk adjustment of rate
+##' @param rd potential relative risk adjustment of rate
+##' @param rc potential relative risk adjustment of rate
 ##' @param gap.time if true simulates gap-times with specified cumulative hazard
 ##' @param max.recurrent limits number recurrent events to 100
 ##' @param dhaz rate for death hazard if it is extended to time-range of first event 

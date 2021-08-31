@@ -364,9 +364,9 @@ use the parmetrization with log-odd-ratio regression.
 
 
 ```{r}
-porpair <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
-           theta.des=tdp,pairs=pair.new,model="or",var.link=1)
-summary(porpair)
+###porpair <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
+###           theta.des=tdp,pairs=pair.new,model="or",var.link=1)
+###summary(porpair)
 ```
 
 

@@ -226,7 +226,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
     stat1 <- 1*(status==cause)
 ###    trunc <- FALSE
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
-    lapply(xx2,mydim)
     xx2$nstrata <- nstrata
     jumps <- xx2$jumps+1
     jumptimes <- xx2$time[jumps]
@@ -608,6 +607,9 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
 {# {{{
 ###
+
+### to avoid R-check error
+ revnr <- death <- status <- NULL
 
  if (bin==1) X <- matrix(rbinom(n*2,1,0.5),n,2) else  X <- matrix(rnorm(n*2),n,2)
  colnames(X) <- paste("X",1:2,sep="")

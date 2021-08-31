@@ -604,7 +604,6 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
      }
    } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
   ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -808,7 +807,7 @@ DdifriskG <- DriskG1-DriskG0
     MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-    mid <- max(id)+1
+    mid <- max(xx$id)+1
     MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
     MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)

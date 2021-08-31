@@ -33,6 +33,14 @@ simRecurrentII(
 
 \item{death.cumhaz}{cumulative hazard of death}
 
+\item{r1}{potential relative risk adjustment of rate}
+
+\item{r2}{potential relative risk adjustment of rate}
+
+\item{rd}{potential relative risk adjustment of rate}
+
+\item{rc}{potential relative risk adjustment of rate}
+
 \item{gap.time}{if true simulates gap-times with specified cumulative hazard}
 
 \item{max.recurrent}{limits number recurrent events to 100}

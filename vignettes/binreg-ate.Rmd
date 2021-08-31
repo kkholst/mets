@@ -131,14 +131,14 @@ sample size we still see that we recover the parameters of cause 2.
 ```{r}
 library(mets) 
 
-n <- 1000
+n <- 3000
 kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
+dtable(kumar,~cause)
 
 c2 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
-		treat.model=gp~dnr+preauto+ttt24,time=60,
-                 cens.model=~strata(gp,dnr,preauto,ttt24))
+	treat.model=gp~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr,preauto,ttt24))
 summary(c2)
 
 c1 <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,
@@ -168,37 +168,15 @@ consequence no-censoring adjustment is done
 
 kumar$cause2 <- 1*(kumar$cause==2)
 
-c3 <- logitATE(cause2~gp+dnr+preauto+ttt24,kumar,
-	       treat.model=gp~dnr+preauto+ttt24)
-summary(c3)
+b3 <- logitATE(cause2~gp+dnr+preauto+ttt24,kumar,treat.model=gp~dnr+preauto+ttt24)
+summary(b3)
 
 ## quite similar to binregATE
-c2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,time=60,
-	       treat.model=gp~dnr+preauto+ttt24)
-summary(c2)
-
+b2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,time=60,treat.model=gp~dnr+preauto+ttt24)
+summary(b2)
 
 ```
 
-Cluster corrected standard errors 
-====================================
-
-  - Clusters should be specified in outcome modela and censoring model 
-  - Clusters should not be specified in treatment model
-
-```{r}
-
-kumar$id <- sample(1:100,n/100)
-
-c3id <- logitATE(cause2~gp+dnr+preauto+ttt24+cluster(id),kumar,
-		treat.model=gp~dnr+preauto+ttt24)
-summary(c3id)
-
-c4id <- binregATE(Event(time,cause)~gp+dnr+preauto+ttt24+cluster(id),kumar,
-	  cause=2,treat.model=gp~dnr+preauto+ttt24,time=60,
-                cens.model=~strata(gp,dnr,preauto,ttt24)+cluster(id))
-summary(c4id)
-```
 
 
 
