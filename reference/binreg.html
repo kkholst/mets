@@ -73,7 +73,7 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -105,10 +105,19 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -118,6 +127,9 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -158,24 +170,24 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$" />
 $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>binreg</span>(
-  <span class='kw'>formula</span>,
-  <span class='kw'>data</span>,
-  cause = <span class='fl'>1</span>,
-  time = <span class='kw'>NULL</span>,
-  beta = <span class='kw'>NULL</span>,
-  offset = <span class='kw'>NULL</span>,
-  weights = <span class='kw'>NULL</span>,
-  cens.weights = <span class='kw'>NULL</span>,
-  cens.model = <span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,
-  se = <span class='fl'>TRUE</span>,
-  kaplan.meier = <span class='fl'>TRUE</span>,
-  cens.code = <span class='fl'>0</span>,
-  no.opt = <span class='fl'>FALSE</span>,
-  method = <span class='st'>"nr"</span>,
-  augmentation = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>binreg</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  <span class='va'>data</span>,
+  cause <span class='op'>=</span> <span class='fl'>1</span>,
+  time <span class='op'>=</span> <span class='cn'>NULL</span>,
+  beta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  offset <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.model <span class='op'>=</span> <span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,
+  se <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  kaplan.meier <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cens.code <span class='op'>=</span> <span class='fl'>0</span>,
+  no.opt <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method <span class='op'>=</span> <span class='st'>"nr"</span>,
+  augmentation <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -222,7 +234,7 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
     </tr>
     <tr>
       <th>kaplan.meier</th>
-      <td><p>uses Kaplan-Meier for baseline than standard Cox</p></td>
+      <td><p>uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)</p></td>
     </tr>
     <tr>
       <th>cens.code</th>
@@ -251,6 +263,9 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
     <p>Based on binomial regresion IPCW response estimating equation: 
 $$ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 $$
 for IPCW adjusted responses.</p>
+<p>logitIPCW instead considers 
+$$ X  I(min(T_i,t) &lt; G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 $$
+a standard logistic regression with weights that adjust for IPCW.</p>
 <p>variance is based on  $$ \sum w_i^2 $$ also with IPCW adjustment, and naive.var is variance 
 under known censoring model.</p>
 <p>Censoring model may depend on strata.</p>
@@ -260,63 +275,86 @@ under known censoring model.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
 <span class='co'># logistic regresion with IPCW binomial regression </span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>,time=<span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span>,<span class='va'>bmt</span>,time<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;              Estimate   Std.Err      2.5%     97.5% P-value
-#&gt; (Intercept) -0.178145  0.127205 -0.427462  0.071173  0.1614
-#&gt; tcell       -0.426717  0.348029 -1.108841  0.255407  0.2202
-#&gt; platelet    -0.442046  0.242375 -0.917092  0.033001  0.0682
+#&gt; (Intercept) -0.178043  0.127210 -0.427370  0.071285  0.1616
+#&gt; tcell       -0.426984  0.348033 -1.109116  0.255147  0.2199
+#&gt; platelet    -0.441698  0.242422 -0.916837  0.033440  0.0685
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;               Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]  0.83682 0.10645 0.62819 1.04546  0.1253
-#&gt; [tcell]        0.65265 0.22714 0.20746 1.09784  0.1262
-#&gt; [platelet]     0.64272 0.15578 0.33740 0.94804  0.0218
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(tcell=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>),platelet=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>)),se=<span class='fl'>TRUE</span>)
+#&gt;             Estimate    2.5%  97.5%
+#&gt; (Intercept)  0.83691 0.65222 1.0739
+#&gt; tcell        0.65247 0.32985 1.2907
+#&gt; platelet     0.64294 0.39978 1.0340
+#&gt; 
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>out</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>tcell<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>1</span><span class='op'>)</span>,platelet<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,se<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        pred         se     lower     upper
-#&gt; 1 0.3497382 0.04857251 0.2545361 0.4449403
-#&gt; 2 0.2598194 0.07038970 0.1218556 0.3977833</div><div class='input'>
-<span class='kw'>outs</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>,time=<span class='fl'>50</span>,cens.model=<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>tcell</span>,<span class='kw'>platelet</span>))
-</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>outs</span>)
+#&gt; 1 0.3498404 0.04859196 0.2546001 0.4450806
+#&gt; 2 0.2598545 0.07039433 0.1218816 0.3978273</div><div class='input'>
+<span class='va'>outs</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span>,<span class='va'>bmt</span>,time<span class='op'>=</span><span class='fl'>50</span>,cens.model<span class='op'>=</span><span class='op'>~</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>tcell</span>,<span class='va'>platelet</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>outs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;              Estimate   Std.Err      2.5%     97.5% P-value
-#&gt; (Intercept) -0.180709  0.127413 -0.430434  0.069016  0.1561
-#&gt; tcell       -0.365862  0.350626 -1.053077  0.321353  0.2967
-#&gt; platelet    -0.433605  0.240229 -0.904446  0.037236  0.0711
+#&gt; (Intercept) -0.180650  0.127412 -0.430373  0.069073  0.1562
+#&gt; tcell       -0.366536  0.350628 -1.053754  0.320682  0.2959
+#&gt; platelet    -0.432322  0.240356 -0.903411  0.038767  0.0721
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;               Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]  0.83468 0.10635 0.62624 1.04312  0.1201
-#&gt; [tcell]        0.69360 0.24319 0.21695 1.17025  0.2077
-#&gt; [platelet]     0.64817 0.15571 0.34298 0.95335  0.0238
+#&gt;             Estimate    2.5%  97.5%
+#&gt; (Intercept)  0.83473 0.65027 1.0715
+#&gt; tcell        0.69313 0.34863 1.3781
+#&gt; platelet     0.64900 0.40519 1.0395
+#&gt; 
+#&gt; </div><div class='input'>
+<span class='co'>## glm with IPCW weights </span>
+<span class='va'>outl</span> <span class='op'>&lt;-</span> <span class='fu'>logitIPCW</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span>,<span class='va'>bmt</span>,time<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>outl</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt;    n events
+#&gt;  408    160
+#&gt; 
+#&gt;  408 clusters
+#&gt; coeffients:
+#&gt;              Estimate   Std.Err      2.5%     97.5% P-value
+#&gt; (Intercept) -0.241439  0.131459 -0.499094  0.016215  0.0663
+#&gt; tcell       -0.344923  0.368352 -1.066880  0.377034  0.3491
+#&gt; platelet    -0.292677  0.262667 -0.807495  0.222141  0.2652
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;             Estimate    2.5%  97.5%
+#&gt; (Intercept)  0.78550 0.60708 1.0163
+#&gt; tcell        0.70827 0.34408 1.4580
+#&gt; platelet     0.74626 0.44597 1.2487
+#&gt; 
 #&gt; </div><div class='input'>
 <span class='co'>##########################################</span>
 <span class='co'>### risk-ratio of different causes #######</span>
 <span class='co'>##########################################</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
-<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>bmt</span>)
-<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>status</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>cause</span>
-<span class='kw'>bmt</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='kw'>bmt</span>
-<span class='kw'>bmtdob</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span><span class='fl'>2</span>
-<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>bmtdob</span>,status=<span class='fl'>1</span>,<span class='kw'>cause</span><span class='op'>==</span><span class='fl'>2</span>)
-<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>bmtdob</span>,status=<span class='fl'>2</span>,<span class='kw'>cause</span><span class='op'>==</span><span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
+<span class='va'>bmt</span><span class='op'>$</span><span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
+<span class='va'>bmt</span><span class='op'>$</span><span class='va'>status</span> <span class='op'>&lt;-</span> <span class='va'>bmt</span><span class='op'>$</span><span class='va'>cause</span>
+<span class='va'>bmt</span><span class='op'>$</span><span class='va'>strata</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='va'>bmtdob</span> <span class='op'>&lt;-</span> <span class='va'>bmt</span>
+<span class='va'>bmtdob</span><span class='op'>$</span><span class='va'>strata</span> <span class='op'>&lt;-</span><span class='fl'>2</span>
+<span class='va'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span><span class='op'>(</span><span class='va'>bmtdob</span>,status<span class='op'>=</span><span class='fl'>1</span>,<span class='va'>cause</span><span class='op'>==</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span><span class='op'>(</span><span class='va'>bmtdob</span>,status<span class='op'>=</span><span class='fl'>2</span>,<span class='va'>cause</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span>
 <span class='co'>###</span>
-<span class='kw'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='kw'>bmt</span>,<span class='kw'>bmtdob</span>)
-<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>bmtdob</span>,<span class='kw'>cause</span><span class='op'>+</span><span class='kw'>status</span><span class='op'>~</span><span class='kw'>strata</span>)
+<span class='va'>bmtdob</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='va'>bmt</span>,<span class='va'>bmtdob</span><span class='op'>)</span>
+<span class='fu'><a href='dtable.html'>dtable</a></span><span class='op'>(</span><span class='va'>bmtdob</span>,<span class='va'>cause</span><span class='op'>+</span><span class='va'>status</span><span class='op'>~</span><span class='va'>strata</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; strata: 1
 #&gt; 
 #&gt;       status   0   1   2
@@ -332,94 +370,97 @@ under known censoring model.</p>
 #&gt; 0            160   0   0
 #&gt; 1              0   0 161
 #&gt; 2              0  87   0</div><div class='input'>
-<span class='kw'>cif1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>)
-<span class='kw'>cif2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>2</span>)
-<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>cif1</span>)
-</div><div class='input'><span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>cif2</span>,add=<span class='fl'>TRUE</span>,col=<span class='fl'>2</span>)
+<span class='va'>cif1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>cif2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cif.html'>cif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span><span class='op'>(</span><span class='va'>cif1</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span><span class='op'>(</span><span class='va'>cif2</span>,add<span class='op'>=</span><span class='cn'>TRUE</span>,col<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </div><div class='img'><img src='binreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>cifs1</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>50</span>)
-<span class='kw'>cifs2</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>age</span>,<span class='kw'>bmt</span>,cause=<span class='fl'>2</span>,time=<span class='fl'>50</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifs1</span>)
+<span class='va'>cifs1</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span><span class='op'>+</span><span class='va'>age</span>,<span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>1</span>,time<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
+<span class='va'>cifs2</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span><span class='op'>+</span><span class='va'>age</span>,<span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>2</span>,time<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cifs1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    160
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;              Estimate   Std.Err      2.5%     97.5% P-value
-#&gt; (Intercept) -0.195401  0.131030 -0.452216  0.061413  0.1359
-#&gt; tcell       -0.637058  0.359000 -1.340685  0.066569  0.0760
-#&gt; platelet    -0.352264  0.247108 -0.836588  0.132059  0.1540
-#&gt; age          0.419772  0.106900  0.210253  0.629292  0.0001
+#&gt; (Intercept) -0.195296  0.131037 -0.452123  0.061532  0.1361
+#&gt; tcell       -0.637346  0.359010 -1.340993  0.066301  0.0759
+#&gt; platelet    -0.351900  0.247162 -0.836329  0.132530  0.1545
+#&gt; age          0.419785  0.106904  0.210258  0.629312  0.0001
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;               Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]  0.82250 0.10777 0.61127 1.03374  0.0996
-#&gt; [tcell]        0.52885 0.18986 0.15674 0.90096  0.0131
-#&gt; [platelet]     0.70309 0.17374 0.36257 1.04362  0.0875
-#&gt; [age]          1.52161 0.16266 1.20281 1.84042  0.0013
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifs2</span>)
+#&gt;             Estimate    2.5%  97.5%
+#&gt; (Intercept)  0.82259 0.63628 1.0635
+#&gt; tcell        0.52869 0.26159 1.0685
+#&gt; platelet     0.70335 0.43330 1.1417
+#&gt; age          1.52163 1.23400 1.8763
+#&gt; 
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cifs2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408     85
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;              Estimate   Std.Err      2.5%     97.5% P-value
-#&gt; (Intercept) -1.318339  0.158459 -1.628914 -1.007764  0.0000
-#&gt; tcell        0.742321  0.359124  0.038451  1.446191  0.0387
-#&gt; platelet    -0.030930  0.279381 -0.578507  0.516647  0.9118
-#&gt; age         -0.093271  0.142475 -0.372518  0.185976  0.5127
+#&gt; (Intercept) -1.318070  0.158501 -1.628726 -1.007414  0.0000
+#&gt; tcell        0.743576  0.359235  0.039488  1.447664  0.0385
+#&gt; platelet    -0.031141  0.279411 -0.578776  0.516494  0.9113
+#&gt; age         -0.093557  0.142466 -0.372786  0.185672  0.5114
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;               Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]  0.26758 0.04240 0.18448 0.35068  0.0000
-#&gt; [tcell]        2.10081 0.75445 0.62211 3.57950  0.1445
-#&gt; [platelet]     0.96954 0.27087 0.43864 1.50044  0.9105
-#&gt; [age]          0.91095 0.12979 0.65657 1.16533  0.4926
+#&gt;             Estimate    2.5%  97.5%
+#&gt; (Intercept)  0.26765 0.19618 0.3652
+#&gt; tcell        2.10344 1.04028 4.2532
+#&gt; platelet     0.96934 0.56058 1.6761
+#&gt; age          0.91069 0.68881 1.2040
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='kw'>cifdob</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span>
-   <span class='kw'>tcell</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='kw'>platelet</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)<span class='op'>+</span><span class='kw'>age</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>strata</span>)
-   <span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),<span class='kw'>bmtdob</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>50</span>,cens.model=<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>strata</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cifdob</span>)
+<span class='va'>cifdob</span> <span class='op'>&lt;-</span> <span class='fu'>binreg</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>strata</span><span class='op'>)</span><span class='op'>+</span>
+   <span class='va'>tcell</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>strata</span><span class='op'>)</span><span class='op'>+</span><span class='va'>platelet</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>strata</span><span class='op'>)</span><span class='op'>+</span><span class='va'>age</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>strata</span><span class='op'>)</span>
+   <span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,<span class='va'>bmtdob</span>,cause<span class='op'>=</span><span class='fl'>1</span>,time<span class='op'>=</span><span class='fl'>50</span>,cens.model<span class='op'>=</span><span class='op'>~</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>strata</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cifdob</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  816    245
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;                           Estimate   Std.Err      2.5%     97.5% P-value
-#&gt; factor(strata)1          -0.195401  0.131030 -0.452216  0.061413  0.1359
-#&gt; factor(strata)2          -1.318339  0.158459 -1.628914 -1.007764  0.0000
-#&gt; tcell                    -0.637058  0.359000 -1.340685  0.066569  0.0760
-#&gt; platelet                 -0.352264  0.247108 -0.836588  0.132059  0.1540
-#&gt; age                       0.419772  0.106900  0.210253  0.629292  0.0001
-#&gt; factor(strata)2:tcell     1.379379  0.602993  0.197534  2.561224  0.0222
-#&gt; factor(strata)2:platelet  0.321334  0.431926 -0.525225  1.167893  0.4569
-#&gt; factor(strata)2:age      -0.513043  0.207027 -0.918808 -0.107278  0.0132
+#&gt; factor(strata)1          -0.195296  0.131037 -0.452123  0.061532  0.1361
+#&gt; factor(strata)2          -1.318070  0.158501 -1.628726 -1.007414  0.0000
+#&gt; tcell                    -0.637346  0.359010 -1.340993  0.066301  0.0759
+#&gt; platelet                 -0.351900  0.247162 -0.836329  0.132530  0.1545
+#&gt; age                       0.419785  0.106904  0.210258  0.629312  0.0001
+#&gt; factor(strata)2:tcell     1.380922  0.603084  0.198898  2.562946  0.0220
+#&gt; factor(strata)2:platelet  0.320759  0.431984 -0.525915  1.167433  0.4578
+#&gt; factor(strata)2:age      -0.513342  0.207020 -0.919095 -0.107590  0.0132
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;                            Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; [factor(strata)1]           0.82251  0.10777  0.61127  1.03374  0.0996
-#&gt; [factor(strata)2]           0.26758  0.04240  0.18448  0.35068  0.0000
-#&gt; [tcell]                     0.52885  0.18986  0.15674  0.90096  0.0131
-#&gt; [platelet]                  0.70309  0.17374  0.36257  1.04362  0.0875
-#&gt; [age]                       1.52161  0.16266  1.20281  1.84042  0.0013
-#&gt; [factor(strata)2:tcell]     3.97243  2.39535 -0.72237  8.66724  0.2146
-#&gt; [factor(strata)2:platelet]  1.37897  0.59561  0.21159  2.54634  0.5246
-#&gt; [factor(strata)2:age]       0.59867  0.12394  0.35575  0.84159  0.0012
+#&gt;                          Estimate    2.5%   97.5%
+#&gt; factor(strata)1           0.82259 0.63628  1.0635
+#&gt; factor(strata)2           0.26765 0.19618  0.3652
+#&gt; tcell                     0.52869 0.26159  1.0685
+#&gt; platelet                  0.70335 0.43330  1.1417
+#&gt; age                       1.52163 1.23400  1.8763
+#&gt; factor(strata)2:tcell     3.97857 1.22006 12.9740
+#&gt; factor(strata)2:platelet  1.37817 0.59101  3.2137
+#&gt; factor(strata)2:age       0.59849 0.39888  0.8980
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='kw'>riskratio</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>p</span>) {
-  <span class='kw'>expit</span>  <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fl'>1</span><span class='op'>/</span>(<span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='op'>-</span><span class='kw'>z</span>)) <span class='co'>## expit</span>
-  <span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>))
-  <span class='kw'>lp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Z</span> <span class='op'>%*%</span> <span class='kw'>p</span>)
-  <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>expit</span>(<span class='kw'>lp</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>p</span>[<span class='fl'>1</span>]<span class='op'>/</span><span class='kw'>p</span>[<span class='fl'>2</span>])
-}
+<span class='va'>riskratio</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>expit</span>  <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span> <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>z</span><span class='op'>)</span><span class='op'>)</span> <span class='co'>## expit</span>
+  <span class='va'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='va'>lp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>Z</span> <span class='op'>%*%</span> <span class='va'>p</span><span class='op'>)</span>
+  <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>expit</span><span class='op'>(</span><span class='va'>lp</span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>/</span><span class='va'>p</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span>
+<span class='op'>}</span>
 
-<span class='fu'>estimate</span>(coef=<span class='kw'>cifdob</span><span class='op'>$</span><span class='kw'>coef</span>,vcov=<span class='kw'>cifdob</span><span class='op'>$</span><span class='kw'>var</span>,f=<span class='kw'>riskratio</span>)
+<span class='fu'>estimate</span><span class='op'>(</span><span class='va'>cifdob</span>,f<span class='op'>=</span><span class='va'>riskratio</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    Estimate Std.Err   2.5% 97.5% P-value
-#&gt; p1   0.6639  0.2764 0.1221 1.206 0.01631</div><div class='input'>
+#&gt; p1   0.6635  0.2762 0.1221 1.205 0.01631</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -83,7 +83,7 @@ $$E(\beta^p,t)$$ is given. Assumes that no strata for baseline of ine-Gay model 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -115,10 +115,19 @@ $$E(\beta^p,t)$$ is given. Assumes that no strata for baseline of ine-Gay model 
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -128,6 +137,9 @@ $$E(\beta^p,t)$$ is given. Assumes that no strata for baseline of ine-Gay model 
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -178,18 +190,18 @@ $$S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$$, and
 $$E(\beta^p,t)$$ is given. Assumes that no strata for baseline of ine-Gay model that is augmented.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>FG_AugmentCifstrata</span>(
-  <span class='kw'>formula</span>,
-  data = <span class='kw'>data</span>,
-  E = <span class='kw'>NULL</span>,
-  cause = <span class='kw'>NULL</span>,
-  cens.code = <span class='fl'>0</span>,
-  km = <span class='fl'>TRUE</span>,
-  case.weights = <span class='kw'>NULL</span>,
-  weights = <span class='kw'>NULL</span>,
-  offset = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>FG_AugmentCifstrata</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  data <span class='op'>=</span> <span class='va'>data</span>,
+  E <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cause <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.code <span class='op'>=</span> <span class='fl'>0</span>,
+  km <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  case.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  offset <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -249,66 +261,69 @@ the augmented FG-score.</p>
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>100</span>)
-<span class='kw'>rho1</span> <span class='op'>&lt;-</span> <span class='fl'>0.2</span>; <span class='kw'>rho2</span> <span class='op'>&lt;-</span> <span class='fl'>10</span>
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>400</span>
-<span class='kw'>beta</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.0</span>,<span class='op'>-</span><span class='fl'>0.1</span>,<span class='op'>-</span><span class='fl'>0.5</span>,<span class='fl'>0.3</span>)
-<span class='kw'>dats</span> <span class='op'>&lt;-</span> <span class='fu'>simul.cifs</span>(<span class='kw'>n</span>,<span class='kw'>rho1</span>,<span class='kw'>rho2</span>,<span class='kw'>beta</span>,rc=<span class='fl'>0.2</span>)
-<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>dats</span>,<span class='op'>~</span><span class='kw'>status</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>rho1</span> <span class='op'>&lt;-</span> <span class='fl'>0.2</span>; <span class='va'>rho2</span> <span class='op'>&lt;-</span> <span class='fl'>10</span>
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>400</span>
+<span class='va'>beta</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.0</span>,<span class='op'>-</span><span class='fl'>0.1</span>,<span class='op'>-</span><span class='fl'>0.5</span>,<span class='fl'>0.3</span><span class='op'>)</span>
+<span class='va'>dats</span> <span class='op'>&lt;-</span> <span class='fu'>simul.cifs</span><span class='op'>(</span><span class='va'>n</span>,<span class='va'>rho1</span>,<span class='va'>rho2</span>,<span class='va'>beta</span>,rc<span class='op'>=</span><span class='fl'>0.2</span><span class='op'>)</span>
+<span class='fu'><a href='dtable.html'>dtable</a></span><span class='op'>(</span><span class='va'>dats</span>,<span class='op'>~</span><span class='va'>status</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; status
 #&gt;   0   1   2 
 #&gt;  14  54 332 
-#&gt; </div><div class='input'><span class='fu'><a href='dsort.html'>dsort</a></span>(<span class='kw'>dats</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>time</span>
-<span class='kw'>fg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cifreg.html'>cifreg</a></span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>Z1</span><span class='op'>+</span><span class='kw'>Z2</span>,data=<span class='kw'>dats</span>,cause=<span class='fl'>1</span>,propodds=<span class='kw'>NULL</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fg</span>)
+#&gt; </div><div class='input'><span class='fu'><a href='dsort.html'>dsort</a></span><span class='op'>(</span><span class='va'>dats</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>time</span>
+<span class='va'>fg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cifreg.html'>cifreg</a></span><span class='op'>(</span><span class='fu'>Event</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>Z1</span><span class='op'>+</span><span class='va'>Z2</span>,data<span class='op'>=</span><span class='va'>dats</span>,cause<span class='op'>=</span><span class='fl'>1</span>,propodds<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fg</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  400     54
 #&gt; 
 #&gt;  400 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;     Estimate      S.E.   dU^-1/2 P-value
 #&gt; Z1  0.028262  0.135312  0.136188  0.8346
 #&gt; Z2 -0.149224  0.271222  0.272379  0.5822
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;      Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [Z1]  1.02866 0.13919 0.75586 1.30147  0.8368
-#&gt; [Z2]  0.86138 0.23362 0.40348 1.31927  0.5529
+#&gt;    Estimate    2.5%  97.5%
+#&gt; Z1  1.02866 0.78903 1.3411
+#&gt; Z2  0.86138 0.50621 1.4657
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='kw'>fgaugS</span> <span class='op'>&lt;-</span> <span class='fu'>FG_AugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>Z1</span><span class='op'>+</span><span class='kw'>Z2</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>Z1</span>,<span class='kw'>Z2</span>),data=<span class='kw'>dats</span>,cause=<span class='fl'>1</span>,E=<span class='kw'>fg</span><span class='op'>$</span><span class='kw'>E</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fgaugS</span>)
+<span class='va'>fgaugS</span> <span class='op'>&lt;-</span> <span class='fu'>FG_AugmentCifstrata</span><span class='op'>(</span><span class='fu'>Event</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>Z1</span><span class='op'>+</span><span class='va'>Z2</span><span class='op'>+</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>Z1</span>,<span class='va'>Z2</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>dats</span>,cause<span class='op'>=</span><span class='fl'>1</span>,E<span class='op'>=</span><span class='va'>fg</span><span class='op'>$</span><span class='va'>E</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fgaugS</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  400     54
 #&gt; 
 #&gt;  400 clusters
-#&gt; log-coeffients:
-#&gt;      Estimate       S.E.    dU^-1/2 P-value
-#&gt; Z1  0.0088234  0.1294262  0.1361155  0.9456
-#&gt; Z2 -0.1738500  0.2600082  0.2725267  0.5037
+#&gt; coeffients:
+#&gt;     Estimate      S.E.   dU^-1/2 P-value
+#&gt; Z1  0.011964  0.130065  0.136124  0.9267
+#&gt; Z2 -0.159372  0.261106  0.272436  0.5416
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;      Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [Z1]  1.00886 0.13057 0.75294 1.26478  0.9459
-#&gt; [Z2]  0.84042 0.21852 0.41214 1.26871  0.4652
-#&gt; </div><div class='input'><span class='kw'>fgaugS2</span> <span class='op'>&lt;-</span> <span class='fu'>FG_AugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>Z1</span><span class='op'>+</span><span class='kw'>Z2</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>Z1</span>,<span class='kw'>Z2</span>),data=<span class='kw'>dats</span>,cause=<span class='fl'>1</span>,E=<span class='kw'>fgaugS</span><span class='op'>$</span><span class='kw'>E</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fgaugS2</span>)
+#&gt;    Estimate    2.5%  97.5%
+#&gt; Z1  1.01204 0.78430 1.3059
+#&gt; Z2  0.85268 0.51113 1.4225
+#&gt; 
+#&gt; </div><div class='input'><span class='va'>fgaugS2</span> <span class='op'>&lt;-</span> <span class='fu'>FG_AugmentCifstrata</span><span class='op'>(</span><span class='fu'>Event</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>Z1</span><span class='op'>+</span><span class='va'>Z2</span><span class='op'>+</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>Z1</span>,<span class='va'>Z2</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>dats</span>,cause<span class='op'>=</span><span class='fl'>1</span>,E<span class='op'>=</span><span class='va'>fgaugS</span><span class='op'>$</span><span class='va'>E</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fgaugS2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  400     54
 #&gt; 
 #&gt;  400 clusters
-#&gt; log-coeffients:
-#&gt;      Estimate       S.E.    dU^-1/2 P-value
-#&gt; Z1  0.0081681  0.1294146  0.1361139  0.9497
-#&gt; Z2 -0.1746999  0.2600322  0.2725326  0.5017
+#&gt; coeffients:
+#&gt;     Estimate      S.E.   dU^-1/2 P-value
+#&gt; Z1  0.011671  0.130043  0.136123  0.9285
+#&gt; Z2 -0.159569  0.261106  0.272437  0.5411
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;      Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [Z1]  1.00820 0.13048 0.75247 1.26393  0.9499
-#&gt; [Z2]  0.83971 0.21835 0.41175 1.26767  0.4629
+#&gt;    Estimate    2.5%  97.5%
+#&gt; Z1  1.01174 0.78411 1.3055
+#&gt; Z2  0.85251 0.51103 1.4222
+#&gt; 
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

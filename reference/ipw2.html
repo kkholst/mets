@@ -74,7 +74,7 @@ Weights and adds them to a data.frame" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -106,10 +106,19 @@ Weights and adds them to a data.frame" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -119,6 +128,9 @@ Weights and adds them to a data.frame" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -160,28 +172,28 @@ Calculates Inverse Probability of Censoring and Truncation
 Weights and adds them to a data.frame</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ipw2</span>(
-  <span class='kw'>data</span>,
-  times = <span class='kw'>NULL</span>,
-  entrytime = <span class='kw'>NULL</span>,
-  time = <span class='st'>"time"</span>,
-  cause = <span class='st'>"cause"</span>,
-  same.cens = <span class='fl'>FALSE</span>,
-  cluster = <span class='kw'>NULL</span>,
-  pairs = <span class='fl'>FALSE</span>,
-  strata = <span class='kw'>NULL</span>,
-  obs.only = <span class='fl'>TRUE</span>,
-  cens.formula = <span class='kw'>NULL</span>,
-  cens.code = <span class='fl'>0</span>,
-  pair.cweight = <span class='st'>"pcw"</span>,
-  pair.tweight = <span class='st'>"ptw"</span>,
-  pair.weight = <span class='st'>"weights"</span>,
-  cname = <span class='st'>"cweights"</span>,
-  tname = <span class='st'>"tweights"</span>,
-  weight.name = <span class='st'>"indi.weights"</span>,
-  prec.factor = <span class='fl'>100</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ipw2</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  times <span class='op'>=</span> <span class='cn'>NULL</span>,
+  entrytime <span class='op'>=</span> <span class='cn'>NULL</span>,
+  time <span class='op'>=</span> <span class='st'>"time"</span>,
+  cause <span class='op'>=</span> <span class='st'>"cause"</span>,
+  same.cens <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  cluster <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pairs <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  obs.only <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cens.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.code <span class='op'>=</span> <span class='fl'>0</span>,
+  pair.cweight <span class='op'>=</span> <span class='st'>"pcw"</span>,
+  pair.tweight <span class='op'>=</span> <span class='st'>"ptw"</span>,
+  pair.weight <span class='op'>=</span> <span class='st'>"weights"</span>,
+  cname <span class='op'>=</span> <span class='st'>"cweights"</span>,
+  tname <span class='op'>=</span> <span class='st'>"tweights"</span>,
+  weight.name <span class='op'>=</span> <span class='st'>"indi.weights"</span>,
+  prec.factor <span class='op'>=</span> <span class='fl'>100</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -273,40 +285,40 @@ Weights and adds them to a data.frame</p>
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simnordic.random</a></span>(<span class='fl'>5000</span>,delayed=<span class='fl'>TRUE</span>,ptrunc=<span class='fl'>0.7</span>,
-      cordz=<span class='fl'>0.5</span>,cormz=<span class='fl'>2</span>,lam0=<span class='fl'>0.3</span>,country=<span class='fl'>FALSE</span>)
-<span class='kw'>d</span><span class='op'>$</span><span class='kw'>strata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>country</span>)<span class='op'>+</span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>zyg</span><span class='op'>==</span><span class='st'>"MZ"</span>)<span class='op'>*</span><span class='fl'>4</span>
-<span class='kw'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>60</span>,<span class='fl'>100</span>,by=<span class='fl'>10</span>)
-<span class='kw'>c1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>d</span>,cause=<span class='fl'>1</span>,
-  model=<span class='st'>"fg"</span>,times=<span class='kw'>times</span>,max.clust=<span class='kw'>NULL</span>,n.sim=<span class='fl'>0</span>)
-<span class='kw'>mm</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>,data=<span class='kw'>d</span>)
-<span class='kw'>out1</span><span class='op'>&lt;-</span><span class='fu'><a href='random.cif.html'>random.cif</a></span>(<span class='kw'>c1</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,same.cens=<span class='fl'>TRUE</span>,theta.des=<span class='kw'>mm</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simnordic.random</a></span><span class='op'>(</span><span class='fl'>5000</span>,delayed<span class='op'>=</span><span class='cn'>TRUE</span>,ptrunc<span class='op'>=</span><span class='fl'>0.7</span>,
+      cordz<span class='op'>=</span><span class='fl'>0.5</span>,cormz<span class='op'>=</span><span class='fl'>2</span>,lam0<span class='op'>=</span><span class='fl'>0.3</span>,country<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>d</span><span class='op'>$</span><span class='va'>strata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>country</span><span class='op'>)</span><span class='op'>+</span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>zyg</span><span class='op'>==</span><span class='st'>"MZ"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>4</span>
+<span class='va'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>60</span>,<span class='fl'>100</span>,by<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>c1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>d</span>,cause<span class='op'>=</span><span class='fl'>1</span>,
+  model<span class='op'>=</span><span class='st'>"fg"</span>,times<span class='op'>=</span><span class='va'>times</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span>,n.sim<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>mm</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>,data<span class='op'>=</span><span class='va'>d</span><span class='op'>)</span>
+<span class='va'>out1</span><span class='op'>&lt;-</span><span class='fu'><a href='random.cif.html'>random.cif</a></span><span class='op'>(</span><span class='va'>c1</span>,data<span class='op'>=</span><span class='va'>d</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span>,theta.des<span class='op'>=</span><span class='va'>mm</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
 #&gt; </div><div class='output co'>#&gt;           Coef.        SE        z        P-val Cross odds ratio        SE
 #&gt; zygMZ 1.8051405 0.2489286 7.251639 4.116707e-13         2.805141 0.2489286
-#&gt; zygDZ 0.2970522 0.1152042 2.578483 9.923512e-03         1.297052 0.1152042</div><div class='input'><span class='kw'>pc1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>c1</span>,X=<span class='fl'>1</span>,se=<span class='fl'>0</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pc1</span>)
+#&gt; zygDZ 0.2970522 0.1152042 2.578483 9.923512e-03         1.297052 0.1152042</div><div class='input'><span class='va'>pc1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>c1</span>,X<span class='op'>=</span><span class='fl'>1</span>,se<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pc1</span><span class='op'>)</span>
 </div><div class='input'>
-<span class='kw'>dl</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>[<span class='op'>!</span><span class='kw'>d</span><span class='op'>$</span><span class='kw'>truncated</span>,]
-<span class='kw'>dl</span> <span class='op'>&lt;-</span> <span class='fu'>ipw2</span>(<span class='kw'>dl</span>,cluster=<span class='st'>"id"</span>,same.cens=<span class='fl'>TRUE</span>,time=<span class='st'>"time"</span>,entrytime=<span class='st'>"entry"</span>,cause=<span class='st'>"cause"</span>,
-           strata=<span class='st'>"strata"</span>,prec.factor=<span class='fl'>100</span>)
-<span class='kw'>cl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span>
-    <span class='fu'>cluster</span>(<span class='kw'>id</span>),
-    data=<span class='kw'>dl</span>,cause=<span class='fl'>1</span>,model=<span class='st'>"fg"</span>,
-    weights=<span class='kw'>dl</span><span class='op'>$</span><span class='kw'>indi.weights</span>,cens.weights=<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>dl</span>)),
-            times=<span class='kw'>times</span>,max.clust=<span class='kw'>NULL</span>,n.sim=<span class='fl'>0</span>)
-<span class='kw'>pcl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>cl</span>,X=<span class='fl'>1</span>,se=<span class='fl'>0</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>pcl</span><span class='op'>$</span><span class='kw'>time</span>,<span class='kw'>pcl</span><span class='op'>$</span><span class='kw'>P1</span>,col=<span class='fl'>2</span>)
-</div><div class='img'><img src='ipw2-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>mm</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),data=<span class='kw'>dl</span>)
-<span class='kw'>out2</span><span class='op'>&lt;-</span><span class='fu'><a href='random.cif.html'>random.cif</a></span>(<span class='kw'>cl</span>,data=<span class='kw'>dl</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta.des=<span class='kw'>mm</span>,
-                 weights=<span class='kw'>dl</span><span class='op'>$</span><span class='kw'>weights</span>,censoring.weights=<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>dl</span>)))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2</span>)
+<span class='va'>dl</span> <span class='op'>&lt;-</span> <span class='va'>d</span><span class='op'>[</span><span class='op'>!</span><span class='va'>d</span><span class='op'>$</span><span class='va'>truncated</span>,<span class='op'>]</span>
+<span class='va'>dl</span> <span class='op'>&lt;-</span> <span class='fu'>ipw2</span><span class='op'>(</span><span class='va'>dl</span>,cluster<span class='op'>=</span><span class='st'>"id"</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span>,time<span class='op'>=</span><span class='st'>"time"</span>,entrytime<span class='op'>=</span><span class='st'>"entry"</span>,cause<span class='op'>=</span><span class='st'>"cause"</span>,
+           strata<span class='op'>=</span><span class='st'>"strata"</span>,prec.factor<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>cl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span>
+    <span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,
+    data<span class='op'>=</span><span class='va'>dl</span>,cause<span class='op'>=</span><span class='fl'>1</span>,model<span class='op'>=</span><span class='st'>"fg"</span>,
+    weights<span class='op'>=</span><span class='va'>dl</span><span class='op'>$</span><span class='va'>indi.weights</span>,cens.weights<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dl</span><span class='op'>)</span><span class='op'>)</span>,
+            times<span class='op'>=</span><span class='va'>times</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span>,n.sim<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>pcl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>cl</span>,X<span class='op'>=</span><span class='fl'>1</span>,se<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>pcl</span><span class='op'>$</span><span class='va'>time</span>,<span class='va'>pcl</span><span class='op'>$</span><span class='va'>P1</span>,col<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</div><div class='img'><img src='ipw2-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='va'>mm</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>dl</span><span class='op'>)</span>
+<span class='va'>out2</span><span class='op'>&lt;-</span><span class='fu'><a href='random.cif.html'>random.cif</a></span><span class='op'>(</span><span class='va'>cl</span>,data<span class='op'>=</span><span class='va'>dl</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta.des<span class='op'>=</span><span class='va'>mm</span>,
+                 weights<span class='op'>=</span><span class='va'>dl</span><span class='op'>$</span><span class='va'>weights</span>,censoring.weights<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dl</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 1

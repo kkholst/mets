@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,18 +168,18 @@
     <p>Clayton-Oakes frailty model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ClaytonOakes</span>(
-  <span class='kw'>formula</span>,
-  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  <span class='kw'>cluster</span>,
-  var.formula = <span class='op'>~</span><span class='fl'>1</span>,
-  cuts = <span class='kw'>NULL</span>,
-  type = <span class='st'>"piecewise"</span>,
-  <span class='kw'>start</span>,
-  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  var.invlink = <span class='kw'>exp</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ClaytonOakes</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  <span class='va'>cluster</span>,
+  var.formula <span class='op'>=</span> <span class='op'>~</span><span class='fl'>1</span>,
+  cuts <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='st'>"piecewise"</span>,
+  <span class='va'>start</span>,
+  control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  var.invlink <span class='op'>=</span> <span class='va'>exp</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -219,34 +231,34 @@
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='fu'><a href='simClaytonOakes.html'>simClaytonOakes</a></span>(<span class='fl'>500</span>,<span class='fl'>4</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,stoptime=<span class='fl'>2</span>,left=<span class='fl'>2</span>),<span class='kw'>truncated</span>)
-<span class='kw'>e</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw'>survival</span>::<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>lefttime</span>,<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='op'>~</span><span class='fl'>1</span>,<span class='kw'>cluster</span>),
-                  cuts=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),data=<span class='kw'>d</span>)
-<span class='kw'>e</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='fu'><a href='simClaytonOakes.html'>simClaytonOakes</a></span><span class='op'>(</span><span class='fl'>500</span>,<span class='fl'>4</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,stoptime<span class='op'>=</span><span class='fl'>2</span>,left<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>,<span class='va'>truncated</span><span class='op'>)</span>
+<span class='va'>e</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span><span class='op'>(</span><span class='fu'>survival</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>lefttime</span>,<span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='op'>~</span><span class='fl'>1</span>,<span class='va'>cluster</span><span class='op'>)</span>,
+                  cuts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>d</span><span class='op'>)</span>
+<span class='va'>e</span>
 </div><div class='output co'>#&gt;                     Estimate     2.5%   97.5%
-#&gt; log-Var:(Intercept) -0.92226 -1.16926 -0.6753
-#&gt; x                    2.88805  2.58174  3.2307
-#&gt; (0,0.5]              1.07891  0.95529  1.2185
-#&gt; (0.5,1]              1.21696  1.06966  1.3845
+#&gt; log-Var:(Intercept) -0.92225 -1.16925 -0.6753
+#&gt; x                    2.88803  2.58173  3.2307
+#&gt; (0,0.5]              1.07892  0.95530  1.2185
+#&gt; (0.5,1]              1.21697  1.06967  1.3846
 #&gt; (1,2]                1.16268  1.01451  1.3325
 #&gt; 
 #&gt; Dependence parameters:
 #&gt;             Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%
-#&gt; (Intercept)  0.39762 0.31060 0.50902       0.16584 0.13442 0.2029</div><div class='input'>
+#&gt; (Intercept)  0.39762 0.31060 0.50903       0.16584 0.13442 0.2029</div><div class='input'>
 
-<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simClaytonOakes.html'>simClaytonOakes</a></span>(<span class='fl'>500</span>,<span class='fl'>4</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,stoptime=<span class='fl'>2</span>,left=<span class='fl'>0</span>)
-<span class='kw'>d2</span><span class='op'>$</span><span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d2</span>)); <span class='kw'>d2</span><span class='op'>$</span><span class='kw'>z</span>[<span class='kw'>d2</span><span class='op'>$</span><span class='kw'>cluster</span><span class='op'>%in%</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='kw'>d2</span><span class='op'>$</span><span class='kw'>cluster</span>,<span class='fl'>100</span>)] <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simClaytonOakes.html'>simClaytonOakes</a></span><span class='op'>(</span><span class='fl'>500</span>,<span class='fl'>4</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,stoptime<span class='op'>=</span><span class='fl'>2</span>,left<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>d2</span><span class='op'>$</span><span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>d2</span><span class='op'>)</span><span class='op'>)</span>; <span class='va'>d2</span><span class='op'>$</span><span class='va'>z</span><span class='op'>[</span><span class='va'>d2</span><span class='op'>$</span><span class='va'>cluster</span><span class='op'>%in%</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>d2</span><span class='op'>$</span><span class='va'>cluster</span>,<span class='fl'>100</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
 <span class='co'>## Marginal=Cox Proportional Hazards model:</span>
-<span class='kw'>ts</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw'>survival</span>::<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>timereg</span>::<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span>(<span class='kw'>x</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='op'>~</span><span class='fl'>1</span>,<span class='kw'>cluster</span>),
-                   data=<span class='kw'>d2</span>,type=<span class='st'>"two.stage"</span>)
+<span class='va'>ts</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span><span class='op'>(</span><span class='fu'>survival</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='fu'>timereg</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/prop.html'>prop</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='op'>~</span><span class='fl'>1</span>,<span class='va'>cluster</span><span class='op'>)</span>,
+                   data<span class='op'>=</span><span class='va'>d2</span>,type<span class='op'>=</span><span class='st'>"two.stage"</span><span class='op'>)</span>
 <span class='co'>## Marginal=Aalens additive model:</span>
-<span class='kw'>ts2</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw'>survival</span>::<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='op'>~</span><span class='fl'>1</span>,<span class='kw'>cluster</span>),
-                    data=<span class='kw'>d2</span>,type=<span class='st'>"two.stage"</span>)
+<span class='va'>ts2</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span><span class='op'>(</span><span class='fu'>survival</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='op'>~</span><span class='fl'>1</span>,<span class='va'>cluster</span><span class='op'>)</span>,
+                    data<span class='op'>=</span><span class='va'>d2</span>,type<span class='op'>=</span><span class='st'>"two.stage"</span><span class='op'>)</span>
 <span class='co'>## Marginal=Piecewise constant:</span>
-<span class='kw'>e2</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw'>survival</span>::<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>z</span>),<span class='kw'>cluster</span>),
-                   cuts=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),data=<span class='kw'>d2</span>)
-<span class='kw'>e2</span>
+<span class='va'>e2</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span><span class='op'>(</span><span class='fu'>survival</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span>,<span class='va'>cluster</span><span class='op'>)</span>,
+                   cuts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>d2</span><span class='op'>)</span>
+<span class='va'>e2</span>
 </div><div class='output co'>#&gt;                    Estimate     2.5%   97.5%
 #&gt; log-Var:factor(z)0 -0.58294 -0.95495 -0.2109
 #&gt; log-Var:factor(z)1 -0.52286 -0.71031 -0.3354
@@ -258,12 +270,12 @@
 #&gt; Dependence parameters:
 #&gt;            Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%
 #&gt; factor(z)0  0.55826 0.38483 0.80983       0.21822 0.16137 0.2882
-#&gt; factor(z)1  0.59282 0.49149 0.71505       0.22864 0.19727 0.2634</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>ts</span>)
-</div><div class='img'><img src='ClaytonOakes-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>e2</span>,add=<span class='fl'>TRUE</span>)
+#&gt; factor(z)1  0.59282 0.49149 0.71505       0.22864 0.19727 0.2634</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>ts</span><span class='op'>)</span>
+</div><div class='img'><img src='ClaytonOakes-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>e2</span>,add<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='img'><img src='ClaytonOakes-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>e3</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span>(<span class='kw'>survival</span>::<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='op'>~</span><span class='fl'>1</span>,<span class='kw'>cluster</span>),cuts=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),
-                   data=<span class='kw'>d</span>,var.invlink=<span class='kw'>identity</span>)
-<span class='kw'>e3</span>
+<span class='va'>e3</span> <span class='op'>&lt;-</span> <span class='fu'>ClaytonOakes</span><span class='op'>(</span><span class='fu'>survival</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='op'>~</span><span class='fl'>1</span>,<span class='va'>cluster</span><span class='op'>)</span>,cuts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span>,
+                   data<span class='op'>=</span><span class='va'>d</span>,var.invlink<span class='op'>=</span><span class='va'>identity</span><span class='op'>)</span>
+<span class='va'>e3</span>
 </div><div class='output co'>#&gt;                 Estimate    2.5%  97.5%
 #&gt; Var:(Intercept)  0.50280 0.37659 0.6290
 #&gt; x                3.07849 2.75254 3.4430

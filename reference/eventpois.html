@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,17 +168,17 @@
     <p>Summary for survival analyses via the 'lifetable' function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>eventpois</span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>...</span>,
-  <span class='kw'>timevar</span>,
-  <span class='kw'>time</span>,
-  <span class='kw'>int.len</span>,
-  confint = <span class='fl'>FALSE</span>,
-  level = <span class='fl'>0.95</span>,
-  individual = <span class='fl'>FALSE</span>,
-  length.out = <span class='fl'>25</span>
-)</pre>
+    <pre class="usage"><span class='fu'>eventpois</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>...</span>,
+  <span class='va'>timevar</span>,
+  <span class='va'>time</span>,
+  <span class='va'>int.len</span>,
+  confint <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  level <span class='op'>=</span> <span class='fl'>0.95</span>,
+  individual <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  length.out <span class='op'>=</span> <span class='fl'>25</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

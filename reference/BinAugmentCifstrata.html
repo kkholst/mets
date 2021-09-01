@@ -81,7 +81,7 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -113,10 +113,19 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -126,6 +135,9 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -174,17 +186,17 @@ using a KM for $$G_c(t)$$ and a working model for cumulative baseline
 related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$$.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BinAugmentCifstrata</span>(
-  <span class='kw'>formula</span>,
-  data = <span class='kw'>data</span>,
-  cause = <span class='fl'>1</span>,
-  cens.code = <span class='fl'>0</span>,
-  km = <span class='fl'>TRUE</span>,
-  time = <span class='kw'>NULL</span>,
-  weights = <span class='kw'>NULL</span>,
-  offset = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>BinAugmentCifstrata</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  data <span class='op'>=</span> <span class='va'>data</span>,
+  cause <span class='op'>=</span> <span class='fl'>1</span>,
+  cens.code <span class='op'>=</span> <span class='fl'>0</span>,
+  km <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  time <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  offset <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -230,54 +242,54 @@ related to $$F_1^*(t,s)$$ and $$s$$ is strata, $$S^*(t,s) = 1 - F_1^*(t,s) - F_2
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Standard errors computed under assumption of correct $$G_c(s)$$ model.</p>
-<p>Augmentation term only computed for standard FG model, since strata is used to 
-specify working models for CIF's.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
-<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>bmt</span>,breaks=<span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>age</span> 
-<span class='kw'>out1</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>agecat.2</span><span class='op'>+</span>
-      <span class='fu'>strata</span>(<span class='kw'>platelet</span>,<span class='kw'>agecat.2</span>),data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>40</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
+<span class='fu'><a href='dcut.html'>dcut</a></span><span class='op'>(</span><span class='va'>bmt</span>,breaks<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>age</span> 
+<span class='va'>out1</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span><span class='op'>(</span><span class='fu'>Event</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>platelet</span><span class='op'>+</span><span class='va'>agecat.2</span><span class='op'>+</span>
+      <span class='fu'>strata</span><span class='op'>(</span><span class='va'>platelet</span>,<span class='va'>agecat.2</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>1</span>,time<span class='op'>=</span><span class='fl'>40</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    157
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; (Intercept)          -0.50047  0.17067 -0.83497 -0.16596  0.0034
-#&gt; platelet             -0.63482  0.23592 -1.09722 -0.17242  0.0071
-#&gt; agecat.2(0.203,1.94]  0.53812  0.21190  0.12280  0.95344  0.0111
+#&gt; (Intercept)          -0.50044  0.17069 -0.83498 -0.16590  0.0034
+#&gt; platelet             -0.63447  0.23596 -1.09695 -0.17200  0.0072
+#&gt; agecat.2(0.203,1.94]  0.53823  0.21192  0.12287  0.95358  0.0111
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;                        Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]           0.60625 0.10347 0.40345 0.80904  0.0001
-#&gt; [platelet]              0.53003 0.12505 0.28495 0.77511  0.0002
-#&gt; [agecat.2(0.203,1.94]]  1.71279 0.36294 1.00143 2.42414  0.0495
+#&gt;                      Estimate    2.5%  97.5%
+#&gt; (Intercept)           0.60626 0.43388 0.8471
+#&gt; platelet              0.53021 0.33389 0.8420
+#&gt; agecat.2(0.203,1.94]  1.71297 1.13074 2.5950
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='kw'>out2</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span>(<span class='fu'>Event</span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='kw'>platelet</span><span class='op'>+</span><span class='kw'>agecat.2</span><span class='op'>+</span>
-    <span class='fu'>strata</span>(<span class='kw'>platelet</span>,<span class='kw'>agecat.2</span>)<span class='op'>+</span><span class='fu'><a href='FG_AugmentCifstrata.html'>strataC</a></span>(<span class='kw'>platelet</span>),data=<span class='kw'>bmt</span>,cause=<span class='fl'>1</span>,time=<span class='fl'>40</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2</span>)
+<span class='va'>out2</span><span class='op'>&lt;-</span><span class='fu'>BinAugmentCifstrata</span><span class='op'>(</span><span class='fu'>Event</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='va'>platelet</span><span class='op'>+</span><span class='va'>agecat.2</span><span class='op'>+</span>
+    <span class='fu'>strata</span><span class='op'>(</span><span class='va'>platelet</span>,<span class='va'>agecat.2</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='FG_AugmentCifstrata.html'>strataC</a></span><span class='op'>(</span><span class='va'>platelet</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>bmt</span>,cause<span class='op'>=</span><span class='fl'>1</span>,time<span class='op'>=</span><span class='fl'>40</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    n events
 #&gt;  408    157
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;                      Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; (Intercept)          -0.49984  0.17116 -0.83531 -0.16437  0.0035
-#&gt; platelet             -0.63650  0.23730 -1.10161 -0.17139  0.0073
-#&gt; agecat.2(0.203,1.94]  0.53709  0.21223  0.12112  0.95307  0.0114
+#&gt; (Intercept)          -0.50015  0.17118 -0.83566 -0.16463  0.0035
+#&gt; platelet             -0.63540  0.23741 -1.10071 -0.17010  0.0074
+#&gt; agecat.2(0.203,1.94]  0.53768  0.21227  0.12163  0.95372  0.0113
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;                        Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [(Intercept)]           0.60663 0.10383 0.40312 0.81014  0.0002
-#&gt; [platelet]              0.52914 0.12557 0.28303 0.77525  0.0002
-#&gt; [agecat.2(0.203,1.94]]  1.71103 0.36314 0.99929 2.42277  0.0502
+#&gt;                      Estimate    2.5%  97.5%
+#&gt; (Intercept)           0.60644 0.43359 0.8482
+#&gt; platelet              0.52972 0.33264 0.8436
+#&gt; agecat.2(0.203,1.94]  1.71203 1.12934 2.5953
+#&gt; 
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

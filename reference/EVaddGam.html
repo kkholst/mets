@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,7 +168,7 @@
     <p>Computes the relative risk for additive gamma model at time 0</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EVaddGam</span>(<span class='kw'>theta</span>, <span class='kw'>x1</span>, <span class='kw'>x2</span>, <span class='kw'>thetades</span>, <span class='kw'>ags</span>)</pre>
+    <pre class="usage"><span class='fu'>EVaddGam</span><span class='op'>(</span><span class='va'>theta</span>, <span class='va'>x1</span>, <span class='va'>x2</span>, <span class='va'>thetades</span>, <span class='va'>ags</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,22 +203,22 @@
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>lam0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>0.3</span>)
-<span class='kw'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
+    <pre class="examples"><div class='input'><span class='va'>lam0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>,<span class='fl'>0.3</span><span class='op'>)</span>
+<span class='va'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span><span class='op'>)</span>
 <span class='co'>## genetic random effects, cause1, cause2 and overall</span>
-<span class='kw'>parg</span> <span class='op'>&lt;-</span> <span class='kw'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>)]
+<span class='va'>parg</span> <span class='op'>&lt;-</span> <span class='va'>pars</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span><span class='op'>)</span><span class='op'>]</span>
 <span class='co'>## environmental random effects, cause1, cause2 and overall</span>
-<span class='kw'>parc</span> <span class='op'>&lt;-</span> <span class='kw'>pars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>)]
+<span class='va'>parc</span> <span class='op'>&lt;-</span> <span class='va'>pars</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span><span class='op'>)</span><span class='op'>]</span>
 
 <span class='co'>## simulate competing risks with two causes with hazards 0.5 and 0.3</span>
 <span class='co'>## ace for each cause, and overall ace</span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simCompete.twin.ace</a></span>(<span class='fl'>10000</span>,<span class='kw'>parg</span>,<span class='kw'>parc</span>,<span class='fl'>0</span>,<span class='fl'>2</span>,lam0=<span class='kw'>lam0</span>,overall=<span class='fl'>1</span>,all.sum=<span class='fl'>1</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simCompete.twin.ace</a></span><span class='op'>(</span><span class='fl'>10000</span>,<span class='va'>parg</span>,<span class='va'>parc</span>,<span class='fl'>0</span>,<span class='fl'>2</span>,lam0<span class='op'>=</span><span class='va'>lam0</span>,overall<span class='op'>=</span><span class='fl'>1</span>,all.sum<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 
 <span class='co'>## setting up design for running the model</span>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='familycluster.index.html'>familycluster.index</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>cluster</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span><span class='op'>$</span><span class='kw'>familypairindex</span>,n=<span class='fl'>10</span>)
-</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='kw'>pairs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='kw'>mm</span><span class='op'>$</span><span class='kw'>familypairindex</span>,ncol=<span class='fl'>2</span>,byrow=<span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='kw'>pairs</span>,n=<span class='fl'>12</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='familycluster.index.html'>familycluster.index</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>$</span><span class='va'>cluster</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>$</span><span class='va'>familypairindex</span>,n<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='va'>pairs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>$</span><span class='va'>familypairindex</span>,ncol<span class='op'>=</span><span class='fl'>2</span>,byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='va'>pairs</span>,n<span class='op'>=</span><span class='fl'>12</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;           [,1]  [,2]
 #&gt;  [9989,] 19977 19978
 #&gt;  [9990,] 19979 19980
@@ -220,7 +232,7 @@
 #&gt;  [9998,] 19995 19996
 #&gt;  [9999,] 19997 19998
 #&gt; [10000,] 19999 20000</div><div class='input'><span class='co'>#</span>
-<span class='kw'>kinship</span> <span class='op'>&lt;-</span> (<span class='kw'>out</span>[<span class='kw'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='op'>==</span><span class='st'>"MZ"</span>)<span class='op'>+</span> (<span class='kw'>out</span>[<span class='kw'>pairs</span>[,<span class='fl'>1</span>],<span class='st'>"zyg"</span>]<span class='op'>==</span><span class='st'>"DZ"</span>)<span class='op'>*</span><span class='fl'>0.5</span>
+<span class='va'>kinship</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>out</span><span class='op'>[</span><span class='va'>pairs</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span>,<span class='st'>"zyg"</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"MZ"</span><span class='op'>)</span><span class='op'>+</span> <span class='op'>(</span><span class='va'>out</span><span class='op'>[</span><span class='va'>pairs</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span>,<span class='st'>"zyg"</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"DZ"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>0.5</span>
 
 <span class='co'># dout &lt;- make.pairwise.design.competing(pairs,kinship,</span>
 <span class='co'>#          type="ace",compete=length(lam0),overall=1)</span>

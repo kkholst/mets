@@ -76,7 +76,7 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -108,10 +108,19 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -121,6 +130,9 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -164,7 +176,7 @@ where $$\beta_1 = 0$$, such that $$\sum_j P_j = 1$$ using phreg function.
 Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mlogit</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, offset = <span class='kw'>NULL</span>, weights = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>mlogit</span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, offset <span class='op'>=</span> <span class='cn'>NULL</span>, weights <span class='op'>=</span> <span class='cn'>NULL</span>, fix.X <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,6 +198,10 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$</p>
       <td><p>for score equations</p></td>
     </tr>
     <tr>
+      <th>fix.X</th>
+      <td><p>to have same coefficients for all categories</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments to lower level funtions</p></td>
     </tr>
@@ -196,81 +212,103 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$</p>
     <p>Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
 Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</p>
 <p>Can also get influence functions (possibly robust) via iid() function, response should be a factor.</p>
+<p>Can fit cumulative odds model as a special case of interval.logitsurv.discrete</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>bmt</span>)
-<span class='fu'><a href='drelevel.html'>dfactor</a></span>(<span class='kw'>bmt</span>) <span class='op'>&lt;-</span> <span class='kw'>cause1f</span><span class='op'>~</span><span class='kw'>cause</span>
-<span class='fu'><a href='drelevel.html'>drelevel</a></span>(<span class='kw'>bmt</span>,ref=<span class='fl'>3</span>) <span class='op'>&lt;-</span> <span class='kw'>cause3f</span><span class='op'>~</span><span class='kw'>cause</span>
-<span class='fu'><a href='drelevel.html'>dlevels</a></span>(<span class='kw'>bmt</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
+<span class='fu'><a href='drelevel.html'>dfactor</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>cause1f</span><span class='op'>~</span><span class='va'>cause</span>
+<span class='fu'><a href='drelevel.html'>drelevel</a></span><span class='op'>(</span><span class='va'>bmt</span>,ref<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>cause3f</span><span class='op'>~</span><span class='va'>cause</span>
+<span class='fu'><a href='drelevel.html'>dlevels</a></span><span class='op'>(</span><span class='va'>bmt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; cause1f #levels=:3 
 #&gt; [1] "0" "1" "2"
 #&gt; -----------------------------------------
 #&gt; cause3f #levels=:3 
 #&gt; [1] "2" "0" "1"
 #&gt; -----------------------------------------</div><div class='input'>
-<span class='kw'>mreg</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='kw'>cause1f</span><span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>mreg</span>)
+<span class='va'>mreg</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span><span class='op'>(</span><span class='va'>cause1f</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span>,<span class='va'>bmt</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mreg</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1224    408
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
-#&gt;               Estimate     S.E.  dU^-1/2 P-value
-#&gt; XX(Intercept)  0.25002  0.13906  0.13858  0.0722
-#&gt; XXtcell       -0.28389  0.36431  0.36285  0.4358
-#&gt; XXplatelet    -0.68611  0.24797  0.24956  0.0057
-#&gt; XX(Intercept) -0.56565  0.16921  0.17078  0.0008
-#&gt; XXtcell        0.50505  0.36481  0.36226  0.1662
-#&gt; XXplatelet    -0.35890  0.29130  0.28727  0.2179
+#&gt; coeffients:
+#&gt;                   Estimate       S.E.    dU^-1/2 P-value
+#&gt; XX(Intercept).2  0.0062305  0.1116297  0.1116297  0.9555
+#&gt; XX(Intercept).3 -0.6092657  0.1332076  0.1332076  0.0000
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;                 Estimate  Std.Err     2.5%    97.5% P-value
-#&gt; [XX(Intercept)] 1.284056 0.178555 0.934095 1.634018  0.1116
-#&gt; [XXtcell]       0.752850 0.274272 0.215286 1.290414  0.3675
-#&gt; [XXplatelet]    0.503530 0.124863 0.258804 0.748256  0.0001
-#&gt; [XX(Intercept)] 0.567990 0.096112 0.379615 0.756366  0.0000
-#&gt; [XXtcell]       1.657072 0.604514 0.472246 2.841899  0.2771
-#&gt; [XXplatelet]    0.698444 0.203458 0.299674 1.097214  0.1383
+#&gt;                 Estimate    2.5%  97.5%
+#&gt; XX(Intercept).2  1.00625 0.80851 1.2523
+#&gt; XX(Intercept).3  0.54375 0.41881 0.7060
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='kw'>mreg3</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span>(<span class='kw'>cause3f</span><span class='op'>~</span><span class='kw'>tcell</span><span class='op'>+</span><span class='kw'>platelet</span>,<span class='kw'>bmt</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>mreg3</span>)
+<span class='va'>mreg</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span><span class='op'>(</span><span class='va'>cause1f</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span>,<span class='va'>bmt</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mreg</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1224    408
 #&gt; 
 #&gt;  408 clusters
-#&gt; log-coeffients:
-#&gt;               Estimate     S.E.  dU^-1/2 P-value
-#&gt; XX(Intercept)  0.56565  0.16921  0.17078  0.0008
-#&gt; XXtcell       -0.50505  0.36481  0.36226  0.1662
-#&gt; XXplatelet     0.35890  0.29130  0.28727  0.2179
-#&gt; XX(Intercept)  0.81567  0.16346  0.16467  0.0000
-#&gt; XXtcell       -0.78894  0.39244  0.38890  0.0444
-#&gt; XXplatelet    -0.32721  0.30423  0.30139  0.2821
+#&gt; coeffients:
+#&gt;                 Estimate     S.E.  dU^-1/2 P-value
+#&gt; XX(Intercept).2  0.25002  0.13906  0.13858  0.0722
+#&gt; XXtcell.2       -0.28389  0.36431  0.36285  0.4358
+#&gt; XXplatelet.2    -0.68611  0.24797  0.24956  0.0057
+#&gt; XX(Intercept).3 -0.56565  0.16921  0.17078  0.0008
+#&gt; XXtcell.3        0.50505  0.36481  0.36226  0.1662
+#&gt; XXplatelet.3    -0.35890  0.29130  0.28727  0.2179
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;                 Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [XX(Intercept)]  1.76059 0.29792 1.17669 2.34450  0.0107
-#&gt; [XXtcell]        0.60347 0.22015 0.17198 1.03497  0.0717
-#&gt; [XXplatelet]     1.43175 0.41707 0.61431 2.24920  0.3006
-#&gt; [XX(Intercept)]  2.26070 0.36953 1.53644 2.98496  0.0006
-#&gt; [XXtcell]        0.45433 0.17829 0.10488 0.80378  0.0022
-#&gt; [XXplatelet]     0.72093 0.21933 0.29106 1.15080  0.2032
+#&gt;                 Estimate    2.5%  97.5%
+#&gt; XX(Intercept).2  1.28406 0.97773 1.6864
+#&gt; XXtcell.2        0.75285 0.36864 1.5375
+#&gt; XXplatelet.2     0.50353 0.30971 0.8187
+#&gt; XX(Intercept).3  0.56799 0.40767 0.7914
+#&gt; XXtcell.3        1.65707 0.81062 3.3874
+#&gt; XXplatelet.3     0.69844 0.39462 1.2362
+#&gt; 
+#&gt; </div><div class='input'>
+<span class='va'>mreg3</span> <span class='op'>&lt;-</span> <span class='fu'>mlogit</span><span class='op'>(</span><span class='va'>cause3f</span><span class='op'>~</span><span class='va'>tcell</span><span class='op'>+</span><span class='va'>platelet</span>,<span class='va'>bmt</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mreg3</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt;     n events
+#&gt;  1224    408
+#&gt; 
+#&gt;  408 clusters
+#&gt; coeffients:
+#&gt;                 Estimate     S.E.  dU^-1/2 P-value
+#&gt; XX(Intercept).2  0.56565  0.16921  0.17078  0.0008
+#&gt; XXtcell.2       -0.50505  0.36481  0.36226  0.1662
+#&gt; XXplatelet.2     0.35890  0.29130  0.28727  0.2179
+#&gt; XX(Intercept).3  0.81567  0.16346  0.16467  0.0000
+#&gt; XXtcell.3       -0.78894  0.39244  0.38890  0.0444
+#&gt; XXplatelet.3    -0.32721  0.30423  0.30139  0.2821
+#&gt; 
+#&gt; exp(coeffients):
+#&gt;                 Estimate    2.5%  97.5%
+#&gt; XX(Intercept).2  1.76059 1.26364 2.4530
+#&gt; XXtcell.2        0.60347 0.29521 1.2336
+#&gt; XXplatelet.2     1.43175 0.80893 2.5341
+#&gt; XX(Intercept).3  2.26070 1.64100 3.1144
+#&gt; XXtcell.3        0.45433 0.21053 0.9804
+#&gt; XXplatelet.3     0.72093 0.39713 1.3087
+#&gt; 
 #&gt; </div><div class='input'>
 <span class='co'>## inverse information standard errors </span>
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/estimate.default.html'>estimate</a></span>(coef=<span class='kw'>mreg3</span><span class='op'>$</span><span class='kw'>coef</span>,vcov=<span class='kw'>mreg3</span><span class='op'>$</span><span class='kw'>II</span>)
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/estimate.default.html'>estimate</a></span><span class='op'>(</span>coef<span class='op'>=</span><span class='va'>mreg3</span><span class='op'>$</span><span class='va'>coef</span>,vcov<span class='op'>=</span><span class='va'>mreg3</span><span class='op'>$</span><span class='va'>II</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                 Estimate Std.Err    2.5%    97.5%   P-value
-#&gt; XX(Intercept)     0.5657  0.1708  0.2309  0.90038 9.259e-04
-#&gt; XXtcell          -0.5051  0.3623 -1.2151  0.20497 1.633e-01
-#&gt; XXplatelet        0.3589  0.2873 -0.2041  0.92194 2.115e-01
-#&gt; XX(Intercept).1   0.8157  0.1647  0.4929  1.13842 7.294e-07
-#&gt; XXtcell.1        -0.7889  0.3889 -1.5512 -0.02672 4.249e-02
-#&gt; XXplatelet.1     -0.3272  0.3014 -0.9179  0.26350 2.776e-01</div><div class='input'>
+#&gt; XX(Intercept).2   0.5657  0.1708  0.2309  0.90038 9.259e-04
+#&gt; XXtcell.2        -0.5051  0.3623 -1.2151  0.20497 1.633e-01
+#&gt; XXplatelet.2      0.3589  0.2873 -0.2041  0.92194 2.115e-01
+#&gt; XX(Intercept).3   0.8157  0.1647  0.4929  1.13842 7.294e-07
+#&gt; XXtcell.3        -0.7889  0.3889 -1.5512 -0.02672 4.249e-02
+#&gt; XXplatelet.3     -0.3272  0.3014 -0.9179  0.26350 2.776e-01</div><div class='input'>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

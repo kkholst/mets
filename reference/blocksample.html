@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,7 +168,7 @@
     <p>Sample blockwise from clustered data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>blocksample</span>(<span class='kw'>data</span>, <span class='kw'>size</span>, idvar = <span class='kw'>NULL</span>, replace = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>blocksample</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>size</span>, idvar <span class='op'>=</span> <span class='cn'>NULL</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,8 +207,8 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>5</span>), z=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>5</span>), id=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>5</span>,<span class='fl'>5</span>), v=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>5</span>))
-(<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>blocksample</span>(<span class='kw'>d</span>,size=<span class='fl'>20</span>,<span class='op'>~</span><span class='kw'>id</span>))
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, z<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, id<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>5</span>,<span class='fl'>5</span><span class='op'>)</span>, v<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>(</span><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>blocksample</span><span class='op'>(</span><span class='va'>d</span>,size<span class='op'>=</span><span class='fl'>20</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              x           z id          v
 #&gt; 2   -1.0321595 -0.04901873  1 -1.1506845
 #&gt; 3    0.5149712  0.63459006  1 -0.6053220
@@ -231,20 +243,20 @@
 #&gt; 2.6 -1.0321595 -0.04901873 19 -1.1506845
 #&gt; 3.6  0.5149712  0.63459006 19 -0.6053220
 #&gt; 2.7 -1.0321595 -0.04901873 20 -1.1506845
-#&gt; 3.7  0.5149712  0.63459006 20 -0.6053220</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span>(<span class='kw'>dd</span>)<span class='op'>$</span><span class='kw'>id</span>
+#&gt; 3.7  0.5149712  0.63459006 20 -0.6053220</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span><span class='op'>$</span><span class='va'>id</span>
 </div><div class='output co'>#&gt;  [1] 10 10 10 10  5  5  5  5 10 10  4  5  5  4  4  4 10 10 10 10 10 10  5  5  4
 #&gt; [26]  4  5  5  5  5 10 10 10 10</div><div class='input'>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>blocksample</span>(<span class='kw'>data.table</span>::<span class='fu'>data.table</span>(<span class='kw'>d</span>),<span class='fl'>1e6</span>,<span class='op'>~</span><span class='kw'>id</span>)
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>blocksample</span><span class='op'>(</span><span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'>data.table</span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>,<span class='fl'>1e6</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>9</span>)),
-               z=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>10</span>),
-               id=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>,<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>5</span>,<span class='fl'>5</span>,<span class='fl'>4</span>,<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>10</span>,<span class='fl'>5</span>),
-               id2=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),
-               v=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>10</span>))
-<span class='fu'>dsample</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>id</span>, size=<span class='fl'>2</span>)
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>)</span>,
+               z<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>,
+               id<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>5</span>,<span class='fl'>5</span>,<span class='fl'>4</span>,<span class='fl'>4</span>,<span class='fl'>5</span>,<span class='fl'>10</span>,<span class='fl'>5</span><span class='op'>)</span>,
+               id2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span>,
+               v<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>id</span>, size<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             x           z id id2           v id.1
 #&gt; 4   0.5383981  0.35085134  5   1  0.84199016    1
 #&gt; 5  -1.8557853  0.03474158  5   2  0.28918199    1
@@ -252,7 +264,7 @@
 #&gt; 10 -1.7971401 -2.12939825  5   2 -0.03095564    1
 #&gt; 2  -0.3644972  0.42461394 10   1 -0.37032679    2
 #&gt; 3   0.6323714 -0.05921897 10   2 -0.92598597    2
-#&gt; 9   0.5427125 -0.30557685 10   1  1.03277856    2</div><div class='input'><span class='fu'>dsample</span>(<span class='kw'>d</span>,<span class='kw'>.</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>+</span><span class='kw'>id2</span>)
+#&gt; 9   0.5427125 -0.30557685 10   1  1.03277856    2</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>.</span><span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='va'>id2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;               x           z            v id
 #&gt; 2    -0.3644972  0.42461394 -0.370326787  1
 #&gt; 9     0.5427125 -0.30557685  1.032778561  1
@@ -272,7 +284,7 @@
 #&gt; 6     1.3384853 -1.39307917 -2.242901780  9
 #&gt; 7     0.8358386 -1.42105295  0.001546776  9
 #&gt; 5.1  -1.8557853  0.03474158  0.289181994 10
-#&gt; 10.1 -1.7971401 -2.12939825 -0.030955636 10</div><div class='input'><span class='fu'>dsample</span>(<span class='kw'>d</span>,<span class='kw'>x</span><span class='op'>+</span><span class='kw'>z</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>,size=<span class='fl'>5</span>)
+#&gt; 10.1 -1.7971401 -2.12939825 -0.030955636 10</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>x</span><span class='op'>+</span><span class='va'>z</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>,size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             x           z id
 #&gt; 1   1.0000000  0.11136988  1
 #&gt; 6   1.3384853 -1.39307917  1

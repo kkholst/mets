@@ -80,7 +80,7 @@ cluster covariates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -112,10 +112,19 @@ cluster covariates." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -125,6 +134,9 @@ cluster covariates." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -172,29 +184,29 @@ We allow a regression structure for the random effects variances that may depend
 cluster covariates.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>random.cif</span>(
-  <span class='kw'>cif</span>,
-  <span class='kw'>data</span>,
-  cause = <span class='kw'>NULL</span>,
-  cif2 = <span class='kw'>NULL</span>,
-  cause1 = <span class='fl'>1</span>,
-  cause2 = <span class='fl'>1</span>,
-  cens.code = <span class='kw'>NULL</span>,
-  cens.model = <span class='st'>"KM"</span>,
-  Nit = <span class='fl'>40</span>,
-  detail = <span class='fl'>0</span>,
-  clusters = <span class='kw'>NULL</span>,
-  theta = <span class='kw'>NULL</span>,
-  theta.des = <span class='kw'>NULL</span>,
-  sym = <span class='fl'>1</span>,
-  step = <span class='fl'>1</span>,
-  same.cens = <span class='fl'>FALSE</span>,
-  var.link = <span class='fl'>0</span>,
-  score.method = <span class='st'>"nr"</span>,
-  entry = <span class='kw'>NULL</span>,
-  trunkp = <span class='fl'>1</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>random.cif</span><span class='op'>(</span>
+  <span class='va'>cif</span>,
+  <span class='va'>data</span>,
+  cause <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cif2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cause1 <span class='op'>=</span> <span class='fl'>1</span>,
+  cause2 <span class='op'>=</span> <span class='fl'>1</span>,
+  cens.code <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.model <span class='op'>=</span> <span class='st'>"KM"</span>,
+  Nit <span class='op'>=</span> <span class='fl'>40</span>,
+  detail <span class='op'>=</span> <span class='fl'>0</span>,
+  clusters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta.des <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sym <span class='op'>=</span> <span class='fl'>1</span>,
+  step <span class='op'>=</span> <span class='fl'>1</span>,
+  same.cens <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  var.link <span class='op'>=</span> <span class='fl'>0</span>,
+  score.method <span class='op'>=</span> <span class='st'>"nr"</span>,
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trunkp <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -310,60 +322,61 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='co'>## Reduce Ex.Timings</span>
- <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
- <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simnordic.random</a></span>(<span class='fl'>4000</span>,delayed=<span class='fl'>TRUE</span>,
-       cordz=<span class='fl'>0.5</span>,cormz=<span class='fl'>2</span>,lam0=<span class='fl'>0.3</span>,country=<span class='fl'>TRUE</span>)
- <span class='kw'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>50</span>,<span class='fl'>90</span>,by=<span class='fl'>10</span>)
- <span class='kw'>add1</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>country</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>d</span>,
- times=<span class='kw'>times</span>,cause=<span class='fl'>1</span>,max.clust=<span class='kw'>NULL</span>)
+ <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simnordic.random</a></span><span class='op'>(</span><span class='fl'>5000</span>,delayed<span class='op'>=</span><span class='cn'>TRUE</span>,cordz<span class='op'>=</span><span class='fl'>0.5</span>,cormz<span class='op'>=</span><span class='fl'>2</span>,lam0<span class='op'>=</span><span class='fl'>0.3</span>,country<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+ <span class='va'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>50</span>,<span class='fl'>90</span>,by<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+ <span class='va'>add1</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>country</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>d</span>,
+ times<span class='op'>=</span><span class='va'>times</span>,cause<span class='op'>=</span><span class='fl'>1</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
 
  <span class='co'>### making group indidcator </span>
- <span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),<span class='kw'>d</span>)
+ <span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span>,<span class='va'>d</span><span class='op'>)</span>
 
- <span class='kw'>out1</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span>(<span class='kw'>add1</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta=<span class='fl'>1</span>,same.cens=<span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+ <span class='va'>out1</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span><span class='op'>(</span><span class='va'>add1</span>,data<span class='op'>=</span><span class='va'>d</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta<span class='op'>=</span><span class='fl'>1</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
 #&gt; </div><div class='output co'>#&gt;              Coef.        SE        z        P-val Cross odds ratio        SE
-#&gt; intercept 1.259378 0.1714172 7.346861 2.029488e-13         2.259378 0.1714172</div><div class='input'>
- <span class='kw'>out2</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span>(<span class='kw'>add1</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta=<span class='fl'>1</span>,
-       theta.des=<span class='kw'>mm</span>,same.cens=<span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2</span>)
+#&gt; intercept 1.270717 0.1532895 8.289654 2.220446e-16         2.270717 0.1532895</div><div class='input'>
+ <span class='va'>out2</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span><span class='op'>(</span><span class='va'>add1</span>,data<span class='op'>=</span><span class='va'>d</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta<span class='op'>=</span><span class='fl'>1</span>,
+       theta.des<span class='op'>=</span><span class='va'>mm</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 1
 #&gt; 
-#&gt; </div><div class='output co'>#&gt;                   Coef.        SE        z        P-val Cross odds ratio
-#&gt; factor(zyg)MZ 2.4794325 0.3803617 6.518618 7.095791e-11         3.479433
-#&gt; factor(zyg)DZ 0.3603747 0.1517979 2.374043 1.759449e-02         1.360375
+#&gt; </div><div class='output co'>#&gt;                  Coef.        SE        z        P-val Cross odds ratio
+#&gt; factor(zyg)MZ 2.030787 0.2918220 6.958990 3.427258e-12         3.030787
+#&gt; factor(zyg)DZ 0.650122 0.1601499 4.059459 4.918646e-05         1.650122
 #&gt;                      SE
-#&gt; factor(zyg)MZ 0.3803617
-#&gt; factor(zyg)DZ 0.1517979</div><div class='input'>
+#&gt; factor(zyg)MZ 0.2918220
+#&gt; factor(zyg)DZ 0.1601499</div><div class='input'>
 <span class='co'>#########################################</span>
 <span class='co'>##### 2 different causes</span>
 <span class='co'>#########################################</span>
 
- <span class='kw'>add2</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/const.html'>const</a></span>(<span class='kw'>country</span>)<span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>d</span>,
-                  times=<span class='kw'>times</span>,cause=<span class='fl'>2</span>,max.clust=<span class='kw'>NULL</span>)
- <span class='kw'>out3</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span>(<span class='kw'>add1</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>2</span>,cif2=<span class='kw'>add2</span>,sym=<span class='fl'>1</span>,same.cens=<span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out3</span>) <span class='co'>## negative dependence</span>
+ <span class='va'>add2</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>country</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>d</span>,
+                  times<span class='op'>=</span><span class='va'>times</span>,cause<span class='op'>=</span><span class='fl'>2</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
+ <span class='va'>out3</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span><span class='op'>(</span><span class='va'>add1</span>,data<span class='op'>=</span><span class='va'>d</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>2</span>,cif2<span class='op'>=</span><span class='va'>add2</span>,sym<span class='op'>=</span><span class='fl'>1</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out3</span><span class='op'>)</span> <span class='co'>## negative dependence</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 2
 #&gt; 
-#&gt; </div><div class='output co'>#&gt;                Coef.         SE         z P-val Cross odds ratio         SE
-#&gt; intercept -0.4638739 0.02347862 -19.75729     0        0.5361261 0.02347862</div><div class='input'>
- <span class='kw'>out4</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span>(<span class='kw'>add1</span>,data=<span class='kw'>d</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>2</span>,cif2=<span class='kw'>add2</span>,theta.des=<span class='kw'>mm</span>,sym=<span class='fl'>1</span>,same.cens=<span class='fl'>TRUE</span>)
- <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out4</span>) <span class='co'>## negative dependence</span>
+#&gt; </div><div class='output co'>#&gt;               Coef.         SE         z P-val Cross odds ratio         SE
+#&gt; intercept -0.390365 0.02359473 -16.54459     0         0.609635 0.02359473</div><div class='input'>
+ <span class='va'>out4</span><span class='op'>&lt;-</span><span class='fu'>random.cif</span><span class='op'>(</span><span class='va'>add1</span>,data<span class='op'>=</span><span class='va'>d</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>2</span>,cif2<span class='op'>=</span><span class='va'>add2</span>,theta.des<span class='op'>=</span><span class='va'>mm</span>,sym<span class='op'>=</span><span class='fl'>1</span>,same.cens<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out4</span><span class='op'>)</span> <span class='co'>## negative dependence</span>
 </div><div class='output co'>#&gt; Random effect variance for variation due to clusters
 #&gt; 
 #&gt; Cause 1 and cause 2
 #&gt; 
-#&gt; </div><div class='output co'>#&gt;                    Coef.         SE         z P-val Cross odds ratio         SE
-#&gt; factor(zyg)MZ -0.5327211 0.02910629 -18.30261     0        0.4672789 0.02910629
-#&gt; factor(zyg)DZ -0.3878893 0.03793549 -10.22497     0        0.6121107 0.03793549</div><div class='input'>
+#&gt; </div><div class='output co'>#&gt;                    Coef.         SE          z        P-val Cross odds ratio
+#&gt; factor(zyg)MZ -0.5377646 0.02557966 -21.023136 0.000000e+00        0.4622354
+#&gt; factor(zyg)DZ -0.2114849 0.04364630  -4.845425 1.263407e-06        0.7885151
+#&gt;                       SE
+#&gt; factor(zyg)MZ 0.02557966
+#&gt; factor(zyg)DZ 0.04364630</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

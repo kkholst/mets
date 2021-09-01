@@ -73,7 +73,7 @@ p-values based on Lin, Wei, Ying resampling." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -105,10 +105,19 @@ p-values based on Lin, Wei, Ying resampling." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -118,6 +127,9 @@ p-values based on Lin, Wei, Ying resampling." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -159,7 +171,7 @@ p-values based on Lin, Wei, Ying resampling.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for phreg</span>
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>object</span>, n.sim = <span class='fl'>1000</span>, silent = <span class='fl'>1</span>, robust = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>object</span>, n.sim <span class='op'>=</span> <span class='fl'>1000</span>, silent <span class='op'>=</span> <span class='fl'>1</span>, robust <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,40 +203,40 @@ p-values based on Lin, Wei, Ying resampling.</p>
     <p>Thomas Scheike and Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/mets'>mets</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>sTRACE</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://kkholst.github.io/mets/'>mets</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>sTRACE</span><span class='op'>)</span>
 
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>diabetes</span>,data=<span class='kw'>sTRACE</span>) 
-<span class='kw'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>m1</span>)
-<span class='kw'>gg</span>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='va'>vf</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='va'>diabetes</span>,data<span class='op'>=</span><span class='va'>sTRACE</span><span class='op'>)</span> 
+<span class='va'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
+<span class='va'>gg</span>
 </div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
 #&gt;          Sup|U(t)|  pval
 #&gt; vf        7.276731 0.010
 #&gt; chf       8.971263 0.079
-#&gt; diabetes  3.044404 0.788</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>gg</span>)
+#&gt; diabetes  3.044404 0.788</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>gg</span><span class='op'>)</span>
 </div><div class='img'><img src='gof.phreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>)<span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>diabetes</span>,data=<span class='kw'>sTRACE</span>) 
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>vf</span><span class='op'>)</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='va'>diabetes</span>,data<span class='op'>=</span><span class='va'>sTRACE</span><span class='op'>)</span> 
 <span class='co'>## to get Martingale ~ dN based simulations</span>
-<span class='kw'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>m1</span>)
-<span class='kw'>gg</span>
+<span class='va'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
+<span class='va'>gg</span>
 </div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
 #&gt;          Sup|U(t)|  pval
 #&gt; chf       8.036132 0.153
 #&gt; diabetes  3.441389 0.667</div><div class='input'>
 <span class='co'>## to get Martingale robust simulations, specify cluster in  call </span>
-<span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>500</span>
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>diabetes</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>sTRACE</span>) 
-<span class='kw'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>m1</span>)
-<span class='kw'>gg</span>
+<span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>500</span>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='va'>vf</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='va'>diabetes</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>sTRACE</span><span class='op'>)</span> 
+<span class='va'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
+<span class='va'>gg</span>
 </div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
 #&gt;          Sup|U(t)|  pval
 #&gt; vf        7.276731 0.001
 #&gt; chf       8.971263 0.066
 #&gt; diabetes  3.044404 0.796</div><div class='input'>
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='fu'>strata</span>(<span class='kw'>vf</span>)<span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='kw'>diabetes</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>sTRACE</span>) 
-<span class='kw'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>m1</span>)
-<span class='kw'>gg</span>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='phreg.html'>phreg</a></span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>vf</span><span class='op'>)</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='va'>diabetes</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>sTRACE</span><span class='op'>)</span> 
+<span class='va'>gg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
+<span class='va'>gg</span>
 </div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
 #&gt;          Sup|U(t)|  pval
 #&gt; chf       8.036132 0.155

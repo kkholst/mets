@@ -1,15 +1,19 @@
-pandoc: '2.2'
+pandoc: '2.5'
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
   binomial-family: binomial-family.html
   binomial-twin: binomial-twin.html
+  binreg-ate: binreg-ate.html
+  binreg: binreg.html
   cifreg: cifreg.html
   haplo-discrete-ttp: haplo-discrete-ttp.html
+  interval-discrete-survival: interval-discrete-survival.html
   marginal-cox: marginal-cox.html
   quantitative-twin: quantitative-twin.html
   recurrent-events: recurrent-events.html
+  time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
-last_built: 2021-05-17T23:34Z
+last_built: 2021-09-01T20:19Z
 

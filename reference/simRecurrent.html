@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,20 +168,20 @@
     <p>Simulation of recurrent events data based on cumulative hazards</p>
     </div>
 
-    <pre class="usage"><span class='fu'>simRecurrent</span>(
-  <span class='kw'>n</span>,
-  <span class='kw'>cumhaz</span>,
-  death.cumhaz = <span class='kw'>NULL</span>,
-  cumhaz2 = <span class='kw'>NULL</span>,
-  gap.time = <span class='fl'>FALSE</span>,
-  max.recurrent = <span class='fl'>100</span>,
-  dhaz = <span class='kw'>NULL</span>,
-  haz2 = <span class='kw'>NULL</span>,
-  dependence = <span class='fl'>0</span>,
-  var.z = <span class='fl'>2</span>,
-  cor.mat = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>simRecurrent</span><span class='op'>(</span>
+  <span class='va'>n</span>,
+  <span class='va'>cumhaz</span>,
+  death.cumhaz <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cumhaz2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gap.time <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  max.recurrent <span class='op'>=</span> <span class='fl'>100</span>,
+  dhaz <span class='op'>=</span> <span class='cn'>NULL</span>,
+  haz2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dependence <span class='op'>=</span> <span class='fl'>0</span>,
+  var.z <span class='op'>=</span> <span class='fl'>2</span>,
+  cor.mat <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -240,72 +252,75 @@ to have the same random effect,  simRecurrentII more flexible !</p>
 <span class='co'>## getting some rates to mimick </span>
 <span class='co'>########################################</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
-<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
-<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
-<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>base1cumhaz</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>base4cumhaz</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>drcumhaz</span><span class='op'>)</span>
+<span class='va'>dr</span> <span class='op'>&lt;-</span> <span class='va'>drcumhaz</span>
+<span class='va'>base1</span> <span class='op'>&lt;-</span> <span class='va'>base1cumhaz</span>
+<span class='va'>base4</span> <span class='op'>&lt;-</span> <span class='va'>base4cumhaz</span>
 
  <span class='co'>######################################################################</span>
  <span class='co'>### simulating simple model that mimicks data </span>
  <span class='co'>######################################################################</span>
- <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>5</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>)
- <span class='fu'><a href='dprint.html'>dlist</a></span>(<span class='kw'>rr</span>,<span class='kw'>.</span><span class='op'>~</span><span class='kw'>id</span>,n=<span class='fl'>0</span>)
+ <span class='va'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span><span class='op'>(</span><span class='fl'>5</span>,<span class='va'>base1</span>,death.cumhaz<span class='op'>=</span><span class='va'>dr</span><span class='op'>)</span>
+ <span class='fu'><a href='dprint.html'>dlist</a></span><span class='op'>(</span><span class='va'>rr</span>,<span class='va'>.</span><span class='op'>~</span><span class='va'>id</span>,n<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; id: 1
-#&gt;   entry     time status rr    dtime fdeath death start     stop
-#&gt; 1     0 94.74704      0  1 94.74704      1     1     0 94.74704
+#&gt;       entry     time status rr    dtime fdeath death    start     stop
+#&gt; 1    0.0000 258.8925      1  1 993.7701      1     0   0.0000 258.8925
+#&gt; 6  258.8925 279.4397      1  1 993.7701      1     0 258.8925 279.4397
+#&gt; 10 279.4397 329.1969      1  1 993.7701      1     0 279.4397 329.1969
+#&gt; 13 329.1969 854.5010      1  1 993.7701      1     0 329.1969 854.5010
+#&gt; 15 854.5010 993.7701      0  1 993.7701      1     1 854.5010 993.7701
 #&gt; ------------------------------------------------------------ 
 #&gt; id: 2
 #&gt;        entry      time status rr    dtime fdeath death     start      stop
-#&gt; 2     0.0000  201.7002      1  1 3546.747      1     0    0.0000  201.7002
-#&gt; 6   201.7002  336.5105      1  1 3546.747      1     0  201.7002  336.5105
-#&gt; 8   336.5105  397.4030      1  1 3546.747      1     0  336.5105  397.4030
-#&gt; 9   397.4030  957.6868      1  1 3546.747      1     0  397.4030  957.6868
-#&gt; 10  957.6868 1302.8361      1  1 3546.747      1     0  957.6868 1302.8361
-#&gt; 11 1302.8361 1781.8055      1  1 3546.747      1     0 1302.8361 1781.8055
-#&gt; 12 1781.8055 2534.4932      1  1 3546.747      1     0 1781.8055 2534.4932
-#&gt; 13 2534.4932 3546.7473      0  1 3546.747      1     1 2534.4932 3546.7473
+#&gt; 2     0.0000  429.2894      1  1 3537.906      1     0    0.0000  429.2894
+#&gt; 7   429.2894  442.5034      1  1 3537.906      1     0  429.2894  442.5034
+#&gt; 11  442.5034 1489.4541      1  1 3537.906      1     0  442.5034 1489.4541
+#&gt; 14 1489.4541 2920.9537      1  1 3537.906      1     0 1489.4541 2920.9537
+#&gt; 16 2920.9537 3537.9057      0  1 3537.906      1     1 2920.9537 3537.9057
 #&gt; ------------------------------------------------------------ 
 #&gt; id: 3
-#&gt;      entry      time status rr    dtime fdeath death    start      stop
-#&gt; 3 0.000000  3.794492      1  1 62.38468      1     0 0.000000  3.794492
-#&gt; 7 3.794492 62.384684      0  1 62.38468      1     1 3.794492 62.384684
+#&gt;   entry     time status rr    dtime fdeath death start     stop
+#&gt; 3     0 58.05421      0  1 58.05421      1     1     0 58.05421
 #&gt; ------------------------------------------------------------ 
 #&gt; id: 4
-#&gt;   entry     time status rr    dtime fdeath death start     stop
-#&gt; 4     0 1115.675      0  1 1115.675      1     1     0 1115.675
+#&gt;       entry      time status rr    dtime fdeath death    start      stop
+#&gt; 4    0.0000  201.2586      1  1 1196.455      1     0   0.0000  201.2586
+#&gt; 8  201.2586  459.4113      1  1 1196.455      1     0 201.2586  459.4113
+#&gt; 12 459.4113 1196.4548      0  1 1196.455      1     1 459.4113 1196.4548
 #&gt; ------------------------------------------------------------ 
 #&gt; id: 5
-#&gt;   entry     time status rr    dtime fdeath death start     stop
-#&gt; 5     0 154.8258      0  1 154.8258      1     1     0 154.8258</div><div class='input'>
- <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>)
- <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>))
- <span class='fu'>showfitsim</span>(causes=<span class='fl'>1</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base1</span>)
+#&gt;      entry      time status rr    dtime fdeath death    start      stop
+#&gt; 5   0.0000  786.6433      1  1 1066.173      1     0   0.0000  786.6433
+#&gt; 9 786.6433 1066.1732      0  1 1066.173      1     1 786.6433 1066.1732</div><div class='input'>
+ <span class='va'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span><span class='op'>(</span><span class='fl'>1000</span>,<span class='va'>base1</span>,death.cumhaz<span class='op'>=</span><span class='va'>dr</span><span class='op'>)</span>
+ <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='fu'>showfitsim</span><span class='op'>(</span>causes<span class='op'>=</span><span class='fl'>1</span>,<span class='va'>rr</span>,<span class='va'>dr</span>,<span class='va'>base1</span>,<span class='va'>base1</span><span class='op'>)</span>
 
 <span class='co'>######################################################################</span>
 <span class='co'>### simulating simple model that mimicks data </span>
 <span class='co'>### now with two event types and second type has same rate as death rate</span>
 <span class='co'>######################################################################</span>
 
- <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>,cumhaz2=<span class='kw'>base4</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>rr</span>,<span class='op'>~</span><span class='kw'>death</span><span class='op'>+</span><span class='kw'>status</span>)
+ <span class='va'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span><span class='op'>(</span><span class='fl'>1000</span>,<span class='va'>base1</span>,death.cumhaz<span class='op'>=</span><span class='va'>dr</span>,cumhaz2<span class='op'>=</span><span class='va'>base4</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'> <span class='fu'><a href='dtable.html'>dtable</a></span><span class='op'>(</span><span class='va'>rr</span>,<span class='op'>~</span><span class='va'>death</span><span class='op'>+</span><span class='va'>status</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
-#&gt; 0             120 2887  413
-#&gt; 1             880    0    0</div><div class='input'> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
-</div><div class='img'><img src='simRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(causes=<span class='fl'>2</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base4</span>)
+#&gt; 0             108 2768  365
+#&gt; 1             892    0    0</div><div class='input'> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='simRecurrent-1.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span><span class='op'>(</span>causes<span class='op'>=</span><span class='fl'>2</span>,<span class='va'>rr</span>,<span class='va'>dr</span>,<span class='va'>base1</span>,<span class='va'>base4</span><span class='op'>)</span>
 
 <span class='co'>######################################################################</span>
 <span class='co'>### simulating simple model </span>
 <span class='co'>### random effect for all causes (Z shared for death and recurrent) </span>
 <span class='co'>######################################################################</span>
 
- <span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,death.cumhaz=<span class='kw'>dr</span>,dependence=<span class='fl'>1</span>,var.gamma=<span class='fl'>0.4</span>)
+ <span class='va'>rr</span> <span class='op'>&lt;-</span> <span class='fu'>simRecurrent</span><span class='op'>(</span><span class='fl'>1000</span>,<span class='va'>base1</span>,death.cumhaz<span class='op'>=</span><span class='va'>dr</span>,dependence<span class='op'>=</span><span class='fl'>1</span>,var.gamma<span class='op'>=</span><span class='fl'>0.4</span><span class='op'>)</span>
  <span class='co'>### marginals do fit after input after integrating out</span>
- <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))
-</div><div class='img'><img src='simRecurrent-2.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span>(causes=<span class='fl'>1</span>,<span class='kw'>rr</span>,<span class='kw'>dr</span>,<span class='kw'>base1</span>,<span class='kw'>base1</span>)
+ <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='simRecurrent-2.png' alt='' width='700' height='433' /></div><div class='input'> <span class='fu'>showfitsim</span><span class='op'>(</span>causes<span class='op'>=</span><span class='fl'>1</span>,<span class='va'>rr</span>,<span class='va'>dr</span>,<span class='va'>base1</span>,<span class='va'>base1</span><span class='op'>)</span>
 
 </div><div class='img'><img src='simRecurrent-3.png' alt='' width='700' height='433' /></div></pre>
   </div>

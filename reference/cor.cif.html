@@ -101,7 +101,7 @@ Here \(B^c\) is the complement event of \(B\),
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -133,10 +133,19 @@ Here \(B^c\) is the complement event of \(B\),
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -146,6 +155,9 @@ Here \(B^c\) is the complement event of \(B\),
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -214,32 +226,32 @@ Here \(B^c\) is the complement event of \(B\),
 \(\theta^T z\) by default.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cor.cif</span>(
-  <span class='kw'>cif</span>,
-  <span class='kw'>data</span>,
-  cause = <span class='kw'>NULL</span>,
-  times = <span class='kw'>NULL</span>,
-  cause1 = <span class='fl'>1</span>,
-  cause2 = <span class='fl'>1</span>,
-  cens.code = <span class='kw'>NULL</span>,
-  cens.model = <span class='st'>"KM"</span>,
-  Nit = <span class='fl'>40</span>,
-  detail = <span class='fl'>0</span>,
-  clusters = <span class='kw'>NULL</span>,
-  theta = <span class='kw'>NULL</span>,
-  theta.des = <span class='kw'>NULL</span>,
-  step = <span class='fl'>1</span>,
-  sym = <span class='fl'>0</span>,
-  weights = <span class='kw'>NULL</span>,
-  par.func = <span class='kw'>NULL</span>,
-  dpar.func = <span class='kw'>NULL</span>,
-  dimpar = <span class='kw'>NULL</span>,
-  score.method = <span class='st'>"nlminb"</span>,
-  same.cens = <span class='fl'>FALSE</span>,
-  censoring.weights = <span class='kw'>NULL</span>,
-  silent = <span class='fl'>1</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>cor.cif</span><span class='op'>(</span>
+  <span class='va'>cif</span>,
+  <span class='va'>data</span>,
+  cause <span class='op'>=</span> <span class='cn'>NULL</span>,
+  times <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cause1 <span class='op'>=</span> <span class='fl'>1</span>,
+  cause2 <span class='op'>=</span> <span class='fl'>1</span>,
+  cens.code <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cens.model <span class='op'>=</span> <span class='st'>"KM"</span>,
+  Nit <span class='op'>=</span> <span class='fl'>40</span>,
+  detail <span class='op'>=</span> <span class='fl'>0</span>,
+  clusters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta.des <span class='op'>=</span> <span class='cn'>NULL</span>,
+  step <span class='op'>=</span> <span class='fl'>1</span>,
+  sym <span class='op'>=</span> <span class='fl'>0</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  par.func <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dpar.func <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dimpar <span class='op'>=</span> <span class='cn'>NULL</span>,
+  score.method <span class='op'>=</span> <span class='st'>"nlminb"</span>,
+  same.cens <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  censoring.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  silent <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -392,20 +404,20 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>multcif</span>);
-<span class='kw'>multcif</span><span class='op'>$</span><span class='kw'>cause</span>[<span class='kw'>multcif</span><span class='op'>$</span><span class='kw'>cause</span><span class='op'>==</span><span class='fl'>0</span>] <span class='op'>&lt;-</span> <span class='fl'>2</span>
-<span class='kw'>zyg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fl'>200</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),each=<span class='fl'>2</span>)
-<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>))
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>multcif</span><span class='op'>)</span>;
+<span class='va'>multcif</span><span class='op'>$</span><span class='va'>cause</span><span class='op'>[</span><span class='va'>multcif</span><span class='op'>$</span><span class='va'>cause</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>2</span>
+<span class='va'>zyg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='fl'>200</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span><span class='op'>)</span>,each<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>times</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0.05</span>,<span class='fl'>1</span>,by=<span class='fl'>0.05</span>) <span class='co'># to speed up computations use only these time-points</span>
-<span class='kw'>add</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>multcif</span>,cause=<span class='fl'>1</span>,
-               n.sim=<span class='fl'>0</span>,times=<span class='kw'>times</span>,model=<span class='st'>"fg"</span>,max.clust=<span class='kw'>NULL</span>)
-<span class='kw'>add2</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>multcif</span>,cause=<span class='fl'>2</span>,
-               n.sim=<span class='fl'>0</span>,times=<span class='kw'>times</span>,model=<span class='st'>"fg"</span>,max.clust=<span class='kw'>NULL</span>)
+<span class='va'>times</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0.05</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>0.05</span><span class='op'>)</span> <span class='co'># to speed up computations use only these time-points</span>
+<span class='va'>add</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>multcif</span>,cause<span class='op'>=</span><span class='fl'>1</span>,
+               n.sim<span class='op'>=</span><span class='fl'>0</span>,times<span class='op'>=</span><span class='va'>times</span>,model<span class='op'>=</span><span class='st'>"fg"</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
+<span class='va'>add2</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>multcif</span>,cause<span class='op'>=</span><span class='fl'>2</span>,
+               n.sim<span class='op'>=</span><span class='fl'>0</span>,times<span class='op'>=</span><span class='va'>times</span>,model<span class='op'>=</span><span class='st'>"fg"</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='kw'>out1</span><span class='op'>&lt;-</span><span class='fu'>cor.cif</span>(<span class='kw'>add</span>,data=<span class='kw'>multcif</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+<span class='va'>out1</span><span class='op'>&lt;-</span><span class='fu'>cor.cif</span><span class='op'>(</span><span class='va'>add</span>,data<span class='op'>=</span><span class='va'>multcif</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Cross odds ratio dependence for competing risks
 #&gt; 
 #&gt; Effect of cause1=1 on cause2=1 under symmetry=0
@@ -413,8 +425,8 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt;           log-Coef.   SE     z P-val Cross odds ratio   SE
 #&gt; intercept      1.04 9.33 0.111 0.911             2.82 26.4
 #&gt; </div><div class='input'>
-<span class='kw'>out2</span><span class='op'>&lt;-</span><span class='fu'>cor.cif</span>(<span class='kw'>add</span>,data=<span class='kw'>multcif</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta.des=<span class='kw'>theta.des</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out2</span>)
+<span class='va'>out2</span><span class='op'>&lt;-</span><span class='fu'>cor.cif</span><span class='op'>(</span><span class='va'>add</span>,data<span class='op'>=</span><span class='va'>multcif</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Cross odds ratio dependence for competing risks
 #&gt; 
 #&gt; Effect of cause1=1 on cause2=1 under symmetry=0
@@ -429,26 +441,26 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class='co'># investigating further models using parfunc and dparfunc</span>
 <span class='co'>###########################################################</span>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>100</span>)
-<span class='kw'>prt</span><span class='op'>&lt;-</span><span class='fu'><a href='npc.html'>simnordic.random</a></span>(<span class='fl'>2000</span>,cordz=<span class='fl'>2</span>,cormz=<span class='fl'>5</span>)
-<span class='kw'>prt</span><span class='op'>$</span><span class='kw'>status</span> <span class='op'>&lt;-</span><span class='kw'>prt</span><span class='op'>$</span><span class='kw'>cause</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='kw'>prt</span><span class='op'>$</span><span class='kw'>status</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>prt</span><span class='op'>&lt;-</span><span class='fu'><a href='npc.html'>simnordic.random</a></span><span class='op'>(</span><span class='fl'>2000</span>,cordz<span class='op'>=</span><span class='fl'>2</span>,cormz<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>prt</span><span class='op'>$</span><span class='va'>status</span> <span class='op'>&lt;-</span><span class='va'>prt</span><span class='op'>$</span><span class='va'>cause</span>
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>prt</span><span class='op'>$</span><span class='va'>status</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;    0    1    2 
 #&gt; 2102  597 5301 </div><div class='input'>
-<span class='kw'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>40</span>,<span class='fl'>100</span>,by=<span class='fl'>10</span>)
-<span class='kw'>cifmod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span>(<span class='kw'>time</span>,<span class='kw'>cause</span>)<span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span>(<span class='kw'>id</span>),data=<span class='kw'>prt</span>,
-                    cause=<span class='fl'>1</span>,n.sim=<span class='fl'>0</span>,
-                    times=<span class='kw'>times</span>,conservative=<span class='fl'>1</span>,max.clust=<span class='kw'>NULL</span>,model=<span class='st'>"fg"</span>)
-<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),data=<span class='kw'>prt</span>)
+<span class='va'>times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>40</span>,<span class='fl'>100</span>,by<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>cifmod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/timereg/man/comp.risk.html'>comp.risk</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/Event.html'>Event</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>cause</span><span class='op'>)</span><span class='op'>~</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'>cluster</span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>prt</span>,
+                    cause<span class='op'>=</span><span class='fl'>1</span>,n.sim<span class='op'>=</span><span class='fl'>0</span>,
+                    times<span class='op'>=</span><span class='va'>times</span>,conservative<span class='op'>=</span><span class='fl'>1</span>,max.clust<span class='op'>=</span><span class='cn'>NULL</span>,model<span class='op'>=</span><span class='st'>"fg"</span><span class='op'>)</span>
+<span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>prt</span><span class='op'>)</span>
 
-<span class='kw'>parfunc</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>par</span>,<span class='kw'>t</span>,<span class='kw'>pardes</span>)
-{
-<span class='kw'>par</span> <span class='op'>&lt;-</span> <span class='kw'>pardes</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>par</span>[<span class='fl'>1</span>],<span class='kw'>par</span>[<span class='fl'>2</span>]) <span class='op'>+</span>
-       <span class='kw'>pardes</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( <span class='kw'>par</span>[<span class='fl'>3</span>]<span class='op'>*</span>(<span class='kw'>t</span><span class='op'>-</span><span class='fl'>60</span>)<span class='op'>/</span><span class='fl'>12</span>,<span class='kw'>par</span>[<span class='fl'>4</span>]<span class='op'>*</span>(<span class='kw'>t</span><span class='op'>-</span><span class='fl'>60</span>)<span class='op'>/</span><span class='fl'>12</span>)
-<span class='kw'>par</span>
-}
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>parfunc</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>,<span class='fl'>1</span>,<span class='fl'>0.1</span>,<span class='fl'>1</span>),<span class='fl'>50</span>,<span class='kw'>theta.des</span>))
+<span class='va'>parfunc</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>par</span>,<span class='va'>t</span>,<span class='va'>pardes</span><span class='op'>)</span>
+<span class='op'>{</span>
+<span class='va'>par</span> <span class='op'>&lt;-</span> <span class='va'>pardes</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>par</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,<span class='va'>par</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>+</span>
+       <span class='va'>pardes</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> <span class='va'>par</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>*</span><span class='op'>(</span><span class='va'>t</span><span class='op'>-</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>12</span>,<span class='va'>par</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span><span class='op'>*</span><span class='op'>(</span><span class='va'>t</span><span class='op'>-</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>12</span><span class='op'>)</span>
+<span class='va'>par</span>
+<span class='op'>}</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>parfunc</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>,<span class='fl'>1</span>,<span class='fl'>0.1</span>,<span class='fl'>1</span><span class='op'>)</span>,<span class='fl'>50</span>,<span class='va'>theta.des</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        [,1]
 #&gt; 1 0.1666667
 #&gt; 2 0.1666667
@@ -456,12 +468,12 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; 4 0.1666667
 #&gt; 5 0.1666667
 #&gt; 6 0.1666667</div><div class='input'>
-<span class='kw'>dparfunc</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>par</span>,<span class='kw'>t</span>,<span class='kw'>pardes</span>)
-{
-<span class='kw'>dpar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>pardes</span>, <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span>(<span class='kw'>pardes</span>) <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( (<span class='kw'>t</span><span class='op'>-</span><span class='fl'>60</span>)<span class='op'>/</span><span class='fl'>12</span>,(<span class='kw'>t</span><span class='op'>-</span><span class='fl'>60</span>)<span class='op'>/</span><span class='fl'>12</span>)) )
-<span class='kw'>dpar</span>
-}
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>dparfunc</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>,<span class='fl'>1</span>,<span class='fl'>0.1</span>,<span class='fl'>1</span>),<span class='fl'>50</span>,<span class='kw'>theta.des</span>))
+<span class='va'>dparfunc</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>par</span>,<span class='va'>t</span>,<span class='va'>pardes</span><span class='op'>)</span>
+<span class='op'>{</span>
+<span class='va'>dpar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>pardes</span>, <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='va'>pardes</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> <span class='op'>(</span><span class='va'>t</span><span class='op'>-</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>12</span>,<span class='op'>(</span><span class='va'>t</span><span class='op'>-</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>12</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>)</span>
+<span class='va'>dpar</span>
+<span class='op'>}</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>dparfunc</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>,<span class='fl'>1</span>,<span class='fl'>0.1</span>,<span class='fl'>1</span><span class='op'>)</span>,<span class='fl'>50</span>,<span class='va'>theta.des</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   factor(zyg)MZ factor(zyg)DZ factor(zyg)MZ factor(zyg)DZ
 #&gt; 1             0             1             0    -0.8333333
 #&gt; 2             0             1             0    -0.8333333
@@ -469,52 +481,60 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; 4             0             1             0    -0.8333333
 #&gt; 5             0             1             0    -0.8333333
 #&gt; 6             0             1             0    -0.8333333</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>prt</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>prt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  [1] "time"      "cause"     "x"         "country"   "id"        "cens"     
-#&gt;  [7] "stime"     "entry"     "truncated" "zyg"       "status"   </div><div class='input'><span class='kw'>or1</span> <span class='op'>&lt;-</span> <span class='fu'>or.cif</span>(<span class='kw'>cifmod</span>,data=<span class='kw'>prt</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta.des=<span class='kw'>theta.des</span>,
-              same.cens=<span class='fl'>TRUE</span>,theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.6</span>,<span class='fl'>1.1</span>,<span class='fl'>0.1</span>,<span class='fl'>0.1</span>),
-              par.func=<span class='kw'>parfunc</span>,dpar.func=<span class='kw'>dparfunc</span>,dimpar=<span class='fl'>4</span>,
-              score.method=<span class='st'>"nr"</span>,detail=<span class='fl'>1</span>)
+#&gt;  [7] "stime"     "entry"     "truncated" "zyg"       "status"   </div><div class='input'><span class='va'>or1</span> <span class='op'>&lt;-</span> <span class='fu'>or.cif</span><span class='op'>(</span><span class='va'>cifmod</span>,data<span class='op'>=</span><span class='va'>prt</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span>,
+              same.cens<span class='op'>=</span><span class='cn'>TRUE</span>,theta<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>,<span class='fl'>1.1</span>,<span class='fl'>0.1</span>,<span class='fl'>0.1</span><span class='op'>)</span>,
+              par.func<span class='op'>=</span><span class='va'>parfunc</span>,dpar.func<span class='op'>=</span><span class='va'>dparfunc</span>,dimpar<span class='op'>=</span><span class='fl'>4</span>,
+              score.method<span class='op'>=</span><span class='st'>"nr"</span>,detail<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "Fisher-Scoring ===================: it= 1"
 #&gt; theta:[1] 0.6 1.1 0.1 0.1
-#&gt; score:[1]  4.4038139 -0.5697823 11.6772976 -1.6949449
+#&gt; score:[1]  4.4038139 -0.5697823 11.6772977 -1.6949449
 #&gt; hess:          [,1]      [,2]       [,3]       [,4]
 #&gt; [1,] -2.380951  0.000000  -6.184041   0.000000
-#&gt; [2,]  0.000000 -3.262648   0.000000  -8.285153
+#&gt; [2,]  0.000000 -3.262648   0.000000  -8.285154
 #&gt; [3,] -6.184041  0.000000 -17.409502   0.000000
-#&gt; [4,]  0.000000 -8.285153   0.000000 -23.052048
+#&gt; [4,]  0.000000 -8.285154   0.000000 -23.052048
 #&gt; [1] "Fisher-Scoring ===================: it= 2"
-#&gt; theta:[1]  1.98846481  1.23830300  0.27754528 -0.02323445
-#&gt; score:[1] -1.25603529 -0.01146765 -2.79344759 -0.04626781
+#&gt; theta:[1]  1.98846483  1.23830300  0.27754527 -0.02323445
+#&gt; score:[1] -1.25603525 -0.01146766 -2.79344744 -0.04626783
 #&gt; hess:          [,1]      [,2]       [,3]       [,4]
 #&gt; [1,] -3.955147  0.000000  -9.393342   0.000000
 #&gt; [2,]  0.000000 -3.009163   0.000000  -7.530575
 #&gt; [3,] -9.393342  0.000000 -25.237970   0.000000
 #&gt; [4,]  0.000000 -7.530575   0.000000 -20.789841
 #&gt; [1] "Fisher-Scoring ===================: it= 3"
-#&gt; theta:[1]  1.51716906  1.25710704  0.34227293 -0.03227122
-#&gt; score:[1]  0.0084015577  0.0001720138  0.0266070641 -0.0006890471
+#&gt; theta:[1]  1.51716907  1.25710704  0.34227293 -0.03227122
+#&gt; score:[1]  0.0084015704  0.0001720174  0.0266071031 -0.0006890359
 #&gt; hess:          [,1]      [,2]       [,3]       [,4]
 #&gt; [1,] -3.976728  0.000000  -9.711857   0.000000
 #&gt; [2,]  0.000000 -3.004696   0.000000  -7.507249
-#&gt; [3,] -9.711857  0.000000 -26.396637   0.000000
+#&gt; [3,] -9.711857  0.000000 -26.396636   0.000000
 #&gt; [4,]  0.000000 -7.507249   0.000000 -20.707731
 #&gt; [1] "Fisher-Scoring ===================: it= 4"
-#&gt; theta:[1]  1.51373019  1.25859721  0.34454613 -0.03284474
-#&gt; score:[1]  1.000615e-04  1.638158e-05  2.676517e-04 -3.827292e-05
-#&gt; hess:          [,1]      [,2]      [,3]       [,4]
-#&gt; [1,] -3.974979  0.000000  -9.70733   0.000000
-#&gt; [2,]  0.000000 -3.004947   0.00000  -7.507026
-#&gt; [3,] -9.707330  0.000000 -26.38239   0.000000
-#&gt; [4,]  0.000000 -7.507026   0.00000 -20.705898
+#&gt; theta:[1]  1.51373019  1.25859721  0.34454613 -0.03284473
+#&gt; score:[1]  1.000423e-04  1.638102e-05  2.675999e-04 -3.827783e-05
+#&gt; hess:          [,1]      [,2]       [,3]       [,4]
+#&gt; [1,] -3.974979  0.000000  -9.707329   0.000000
+#&gt; [2,]  0.000000 -3.004947   0.000000  -7.507026
+#&gt; [3,] -9.707329  0.000000 -26.382387   0.000000
+#&gt; [4,]  0.000000 -7.507026   0.000000 -20.705898
 #&gt; [1] "Fisher-Scoring ===================: it= 5"
-#&gt; theta:[1]  1.51373411  1.25870404  0.34455483 -0.03288531
-#&gt; score:[1]  7.061280e-08  1.183464e-06  1.291720e-06 -2.693329e-06
+#&gt; theta:[1]  1.51373411  1.25870404  0.34455484 -0.03288532
+#&gt; score:[1]  8.055071e-08  1.179946e-06  1.314044e-06 -2.699063e-06
 #&gt; hess:          [,1]      [,2]       [,3]       [,4]
 #&gt; [1,] -3.974972  0.000000  -9.707299   0.000000
 #&gt; [2,]  0.000000 -3.004967   0.000000  -7.507016
 #&gt; [3,] -9.707299  0.000000 -26.382278   0.000000
-#&gt; [4,]  0.000000 -7.507016   0.000000 -20.705785</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>or1</span>)
+#&gt; [4,]  0.000000 -7.507016   0.000000 -20.705785
+#&gt; [1] "Fisher-Scoring ===================: it= 6"
+#&gt; theta:[1]  1.51373311  1.25871166  0.34455525 -0.03288821
+#&gt; score:[1]  1.926553e-08  8.694846e-08  3.069134e-08 -1.875468e-07
+#&gt; hess:          [,1]      [,2]       [,3]       [,4]
+#&gt; [1,] -3.974972  0.000000  -9.707298   0.000000
+#&gt; [2,]  0.000000 -3.004969   0.000000  -7.507015
+#&gt; [3,] -9.707298  0.000000 -26.382277   0.000000
+#&gt; [4,]  0.000000 -7.507015   0.000000 -20.705777</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>or1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; OR for dependence for competing risks
 #&gt; 
 #&gt; OR of cumulative incidence for cause1= 1  and cause2= 1
@@ -524,26 +544,26 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; R-func          0.3450 0.129  2.680 7.43e-03 1.410 0.182
 #&gt; R-func         -0.0329 0.111 -0.296 7.67e-01 0.968 0.107
 #&gt; </div><div class='input'>
- <span class='kw'>cor1</span> <span class='op'>&lt;-</span> <span class='fu'>cor.cif</span>(<span class='kw'>cifmod</span>,data=<span class='kw'>prt</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,theta.des=<span class='kw'>theta.des</span>,
-                 same.cens=<span class='fl'>TRUE</span>,theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>,<span class='fl'>1.0</span>,<span class='fl'>0.1</span>,<span class='fl'>0.1</span>),
-                 par.func=<span class='kw'>parfunc</span>,dpar.func=<span class='kw'>dparfunc</span>,dimpar=<span class='fl'>4</span>,
-                 control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace=<span class='fl'>TRUE</span>),detail=<span class='fl'>1</span>)
+ <span class='va'>cor1</span> <span class='op'>&lt;-</span> <span class='fu'>cor.cif</span><span class='op'>(</span><span class='va'>cifmod</span>,data<span class='op'>=</span><span class='va'>prt</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span>,
+                 same.cens<span class='op'>=</span><span class='cn'>TRUE</span>,theta<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>,<span class='fl'>1.0</span>,<span class='fl'>0.1</span>,<span class='fl'>0.1</span><span class='op'>)</span>,
+                 par.func<span class='op'>=</span><span class='va'>parfunc</span>,dpar.func<span class='op'>=</span><span class='va'>dparfunc</span>,dimpar<span class='op'>=</span><span class='fl'>4</span>,
+                 control<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trace<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>,detail<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   0:     764.39429: 0.500000  1.00000 0.100000 0.100000
 #&gt;   1:     760.41547: 0.638110 0.960514 0.467772 -0.0132205
-#&gt;   2:     760.40387: 0.653394 0.974160 0.451035 0.0181984
-#&gt;   3:     760.38389: 0.690757 0.972239 0.448591 0.00142152
-#&gt;   4:     760.37606: 0.718635 0.978903 0.420006 0.00837761
-#&gt;   5:     760.25923:  1.06302  1.01086 0.300325 -0.0208226
-#&gt;   6:     760.25074:  1.17117  1.03359 0.291034 0.00480685
-#&gt;   7:     760.21950:  1.27004  1.04554 0.238147 -0.0108041
-#&gt;   8:     760.20998:  1.37486  1.06362 0.202831 -0.0306896
-#&gt;   9:     760.20957:  1.45490  1.09158 0.167676 -0.0343349
-#&gt;  10:     760.20850:  1.41961  1.09023 0.182575 -0.0388101
-#&gt;  11:     760.20845:  1.41809  1.09720 0.183351 -0.0412561
-#&gt;  12:     760.20842:  1.41724  1.11066 0.183663 -0.0460526
-#&gt;  13:     760.20842:  1.41733  1.11052 0.183624 -0.0459859
+#&gt;   2:     760.40387: 0.653395 0.974160 0.451036 0.0181985
+#&gt;   3:     760.38389: 0.690757 0.972238 0.448591 0.00142104
+#&gt;   4:     760.37606: 0.718637 0.978903 0.420008 0.00837748
+#&gt;   5:     760.25920:  1.06308  1.01089 0.300306 -0.0207997
+#&gt;   6:     760.25068:  1.17095  1.03357 0.291057 0.00476415
+#&gt;   7:     760.21955:  1.26957  1.04549 0.238342 -0.0108132
+#&gt;   8:     760.21001:  1.37413  1.06352 0.203103 -0.0305819
+#&gt;   9:     760.20960:  1.45522  1.09168 0.167526 -0.0343140
+#&gt;  10:     760.20850:  1.41964  1.09024 0.182566 -0.0388281
+#&gt;  11:     760.20845:  1.41813  1.09721 0.183339 -0.0412570
+#&gt;  12:     760.20842:  1.41722  1.11055 0.183672 -0.0460117
+#&gt;  13:     760.20842:  1.41733  1.11051 0.183623 -0.0459848
 #&gt; $par
-#&gt; [1]  1.4173313  1.1105171  0.1836238 -0.0459859
+#&gt; [1]  1.41733324  1.11051386  0.18362322 -0.04598481
 #&gt; 
 #&gt; $objective
 #&gt; [1] 760.2084
@@ -561,51 +581,51 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; $message
 #&gt; [1] "relative convergence (4)"
 #&gt; 
-#&gt; iid decomposition</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>cor1</span>)
+#&gt; iid decomposition</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cor1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Cross odds ratio dependence for competing risks
 #&gt; 
 #&gt; Effect of cause1=1 on cause2=1 under symmetry=0
 #&gt; 
 #&gt;        log-Coef.   SE        z P-val Cross odds ratio  SE
 #&gt; R-func     1.420 66.5  0.02130 0.983            4.130 274
-#&gt; R-func     1.110 71.3  0.01560 0.988            3.040 217
+#&gt; R-func     1.110 71.4  0.01560 0.988            3.040 217
 #&gt; R-func     0.184 23.3  0.00789 0.994            1.200  28
 #&gt; R-func    -0.046 22.0 -0.00209 0.998            0.955  21
 #&gt; </div><div class='input'>
 <span class='co'>### piecewise contant OR model</span>
-<span class='kw'>gparfunc</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>par</span>,<span class='kw'>t</span>,<span class='kw'>pardes</span>)
-{
-  <span class='kw'>cuts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>80</span>,<span class='fl'>90</span>,<span class='fl'>120</span>)
-  <span class='kw'>grop</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='kw'>t</span><span class='op'>&lt;</span><span class='kw'>cuts</span>)
-<span class='kw'>paru</span>  <span class='op'>&lt;-</span> (<span class='kw'>pardes</span>[,<span class='fl'>1</span>]<span class='op'>==</span><span class='fl'>1</span>) <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='kw'>grop</span><span class='op'>*</span><span class='kw'>par</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>]) <span class='op'>+</span>
-    (<span class='kw'>pardes</span>[,<span class='fl'>2</span>]<span class='op'>==</span><span class='fl'>1</span>) <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='kw'>grop</span><span class='op'>*</span><span class='kw'>par</span>[<span class='fl'>4</span><span class='op'>:</span><span class='fl'>6</span>])
-<span class='kw'>paru</span>
-}
+<span class='va'>gparfunc</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>par</span>,<span class='va'>t</span>,<span class='va'>pardes</span><span class='op'>)</span>
+<span class='op'>{</span>
+  <span class='va'>cuts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>80</span>,<span class='fl'>90</span>,<span class='fl'>120</span><span class='op'>)</span>
+  <span class='va'>grop</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span><span class='op'>(</span><span class='va'>t</span><span class='op'>&lt;</span><span class='va'>cuts</span><span class='op'>)</span>
+<span class='va'>paru</span>  <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>pardes</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>grop</span><span class='op'>*</span><span class='va'>par</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>+</span>
+    <span class='op'>(</span><span class='va'>pardes</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>grop</span><span class='op'>*</span><span class='va'>par</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>]</span><span class='op'>)</span>
+<span class='va'>paru</span>
+<span class='op'>}</span>
 
-<span class='kw'>dgparfunc</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>par</span>,<span class='kw'>t</span>,<span class='kw'>pardes</span>)
-{
-  <span class='kw'>cuts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>80</span>,<span class='fl'>90</span>,<span class='fl'>120</span>)
-  <span class='kw'>grop</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='kw'>t</span><span class='op'>&lt;</span><span class='kw'>cuts</span>)
-<span class='kw'>par1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>grop</span>),<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pardes</span>),<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>grop</span>),byrow=<span class='fl'>TRUE</span>)
-<span class='kw'>parmz</span> <span class='op'>&lt;-</span> <span class='kw'>par1</span><span class='op'>*</span> (<span class='kw'>pardes</span>[,<span class='fl'>1</span>]<span class='op'>==</span><span class='fl'>1</span>)
-<span class='kw'>pardz</span> <span class='op'>&lt;-</span> (<span class='kw'>pardes</span>[,<span class='fl'>2</span>]<span class='op'>==</span><span class='fl'>1</span>) <span class='op'>*</span> <span class='kw'>par1</span>
-<span class='kw'>dpar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>( <span class='kw'>parmz</span>,<span class='kw'>pardz</span>)
-<span class='kw'>dpar</span>
-}
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>dgparfunc</span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.1</span>,<span class='fl'>6</span>),<span class='fl'>50</span>,<span class='kw'>theta.des</span>))
+<span class='va'>dgparfunc</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>par</span>,<span class='va'>t</span>,<span class='va'>pardes</span><span class='op'>)</span>
+<span class='op'>{</span>
+  <span class='va'>cuts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>80</span>,<span class='fl'>90</span>,<span class='fl'>120</span><span class='op'>)</span>
+  <span class='va'>grop</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span><span class='op'>(</span><span class='va'>t</span><span class='op'>&lt;</span><span class='va'>cuts</span><span class='op'>)</span>
+<span class='va'>par1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>grop</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pardes</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>grop</span><span class='op'>)</span>,byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>parmz</span> <span class='op'>&lt;-</span> <span class='va'>par1</span><span class='op'>*</span> <span class='op'>(</span><span class='va'>pardes</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>pardz</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>pardes</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='op'>*</span> <span class='va'>par1</span>
+<span class='va'>dpar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span> <span class='va'>parmz</span>,<span class='va'>pardz</span><span class='op'>)</span>
+<span class='va'>dpar</span>
+<span class='op'>}</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>dgparfunc</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.1</span>,<span class='fl'>6</span><span class='op'>)</span>,<span class='fl'>50</span>,<span class='va'>theta.des</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      [,1] [,2] [,3] [,4] [,5] [,6]
 #&gt; [1,]    0    0    0    1    0    0
 #&gt; [2,]    0    0    0    1    0    0
 #&gt; [3,]    0    0    0    1    0    0
 #&gt; [4,]    0    0    0    1    0    0
 #&gt; [5,]    0    0    0    1    0    0
-#&gt; [6,]    0    0    0    1    0    0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>gparfunc</span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.1</span>,<span class='fl'>6</span>),<span class='fl'>50</span>,<span class='kw'>theta.des</span>))
+#&gt; [6,]    0    0    0    1    0    0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>gparfunc</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.1</span>,<span class='fl'>6</span><span class='op'>)</span>,<span class='fl'>50</span>,<span class='va'>theta.des</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   1   2   3   4   5   6 
 #&gt; 0.1 0.1 0.1 0.1 0.1 0.1 </div><div class='input'>
-<span class='kw'>or1g</span> <span class='op'>&lt;-</span> <span class='fu'>or.cif</span>(<span class='kw'>cifmod</span>,data=<span class='kw'>prt</span>,cause1=<span class='fl'>1</span>,cause2=<span class='fl'>1</span>,
-               theta.des=<span class='kw'>theta.des</span>, same.cens=<span class='fl'>TRUE</span>,
-               par.func=<span class='kw'>gparfunc</span>,dpar.func=<span class='kw'>dgparfunc</span>,
-               dimpar=<span class='fl'>6</span>,score.method=<span class='st'>"nr"</span>,detail=<span class='fl'>1</span>)
+<span class='va'>or1g</span> <span class='op'>&lt;-</span> <span class='fu'>or.cif</span><span class='op'>(</span><span class='va'>cifmod</span>,data<span class='op'>=</span><span class='va'>prt</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,
+               theta.des<span class='op'>=</span><span class='va'>theta.des</span>, same.cens<span class='op'>=</span><span class='cn'>TRUE</span>,
+               par.func<span class='op'>=</span><span class='va'>gparfunc</span>,dpar.func<span class='op'>=</span><span class='va'>dgparfunc</span>,
+               dimpar<span class='op'>=</span><span class='fl'>6</span>,score.method<span class='op'>=</span><span class='st'>"nr"</span>,detail<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "Fisher-Scoring ===================: it= 1"
 #&gt; theta:[1] 0.1 0.1 0.1 0.1 0.1 0.1
 #&gt; score:[1] 0.1272695 0.6721568 3.2995329 0.1193734 0.3414362 1.1416387
@@ -618,17 +638,17 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; [6,]  0.00000000  0.0000000  0.0000000  0.00000000  0.0000000 -0.8603209
 #&gt; [1] "Fisher-Scoring ===================: it= 2"
 #&gt; theta:[1] 2.517359 3.152333 3.935235 2.367380 1.650497 1.426992
-#&gt; score:[1] -0.4338385 -1.0147952 -2.5460332 -0.3722739 -0.3313216 -0.7014266
+#&gt; score:[1] -0.4338385 -1.0147952 -2.5460328 -0.3722739 -0.3313216 -0.7014266
 #&gt; hess:           [,1]       [,2]      [,3]       [,4]       [,5]      [,6]
 #&gt; [1,] -0.4976024  0.0000000  0.000000  0.0000000  0.0000000  0.000000
-#&gt; [2,]  0.0000000 -0.8549109  0.000000  0.0000000  0.0000000  0.000000
+#&gt; [2,]  0.0000000 -0.8549108  0.000000  0.0000000  0.0000000  0.000000
 #&gt; [3,]  0.0000000  0.0000000 -1.600519  0.0000000  0.0000000  0.000000
 #&gt; [4,]  0.0000000  0.0000000  0.000000 -0.4751796  0.0000000  0.000000
 #&gt; [5,]  0.0000000  0.0000000  0.000000  0.0000000 -0.8248922  0.000000
 #&gt; [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.408282
 #&gt; [1] "Fisher-Scoring ===================: it= 3"
 #&gt; theta:[1] 1.645501 1.965314 2.344480 1.583942 1.248842 1.135736
-#&gt; score:[1] -0.02982302  0.04411753  0.63062461 -0.02738202 -0.01381585 -0.01990217
+#&gt; score:[1] -0.02982301  0.04411757  0.63062528 -0.02738202 -0.01381586 -0.01990217
 #&gt; hess:           [,1]       [,2]      [,3]      [,4]       [,5]      [,6]
 #&gt; [1,] -0.3202401  0.0000000  0.000000  0.000000  0.0000000  0.000000
 #&gt; [2,]  0.0000000 -0.9097494  0.000000  0.000000  0.0000000  0.000000
@@ -638,8 +658,8 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; [6,]  0.0000000  0.0000000  0.000000  0.000000  0.0000000 -2.098342
 #&gt; [1] "Fisher-Scoring ===================: it= 4"
 #&gt; theta:[1] 1.552374 2.013808 2.572392 1.494288 1.228243 1.126251
-#&gt; score:[1] -4.297262e-04 -1.168380e-04  3.731020e-03 -5.158185e-04 -4.497370e-05
-#&gt; [6]  2.252054e-06
+#&gt; score:[1] -4.297265e-04 -1.168387e-04  3.731022e-03 -5.158182e-04 -4.497369e-05
+#&gt; [6]  2.253821e-06
 #&gt; hess:           [,1]       [,2]      [,3]       [,4]       [,5]      [,6]
 #&gt; [1,] -0.2978324  0.0000000  0.000000  0.0000000  0.0000000  0.000000
 #&gt; [2,]  0.0000000 -0.9191812  0.000000  0.0000000  0.0000000  0.000000
@@ -649,15 +669,26 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.087228
 #&gt; [1] "Fisher-Scoring ===================: it= 5"
 #&gt; theta:[1] 1.550931 2.013681 2.573776 1.492471 1.228175 1.126252
-#&gt; score:[1]  1.115720e-06 -7.362229e-10  1.590683e-06 -1.109555e-06 -4.887707e-10
-#&gt; [6] -2.862365e-09
+#&gt; score:[1]  1.116180e-06 -7.347215e-10  1.587856e-06 -1.109826e-06 -4.893145e-10
+#&gt; [6] -4.601634e-09
 #&gt; hess:           [,1]       [,2]      [,3]       [,4]       [,5]     [,6]
 #&gt; [1,] -0.2974862  0.0000000  0.000000  0.0000000  0.0000000  0.00000
-#&gt; [2,]  0.0000000 -0.9191579  0.000000  0.0000000  0.0000000  0.00000
+#&gt; [2,]  0.0000000 -0.9191578  0.000000  0.0000000  0.0000000  0.00000
 #&gt; [3,]  0.0000000  0.0000000 -2.695165  0.0000000  0.0000000  0.00000
 #&gt; [4,]  0.0000000  0.0000000  0.000000 -0.2835044  0.0000000  0.00000
 #&gt; [5,]  0.0000000  0.0000000  0.000000  0.0000000 -0.6618966  0.00000
-#&gt; [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.08723</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>or1g</span>)
+#&gt; [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.08723
+#&gt; [1] "Fisher-Scoring ===================: it= 6"
+#&gt; theta:[1] 1.550935 2.013681 2.573776 1.492467 1.228175 1.126252
+#&gt; score:[1] -2.846686e-09 -3.398974e-15 -1.035387e-10 -1.750221e-09 -1.311451e-15
+#&gt; [6]  3.469968e-09
+#&gt; hess:           [,1]       [,2]      [,3]       [,4]       [,5]     [,6]
+#&gt; [1,] -0.2974871  0.0000000  0.000000  0.0000000  0.0000000  0.00000
+#&gt; [2,]  0.0000000 -0.9191578  0.000000  0.0000000  0.0000000  0.00000
+#&gt; [3,]  0.0000000  0.0000000 -2.695165  0.0000000  0.0000000  0.00000
+#&gt; [4,]  0.0000000  0.0000000  0.000000 -0.2835035  0.0000000  0.00000
+#&gt; [5,]  0.0000000  0.0000000  0.000000  0.0000000 -0.6618966  0.00000
+#&gt; [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.08723</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>or1g</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; OR for dependence for competing risks
 #&gt; 
 #&gt; OR of cumulative incidence for cause1= 1  and cause2= 1
@@ -668,10 +699,10 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; R-func            1.49 0.369 4.05 5.12e-05  4.45 1.640
 #&gt; R-func            1.23 0.307 3.99 6.49e-05  3.41 1.050
 #&gt; R-func            1.13 0.274 4.11 4.01e-05  3.08 0.846
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>or1g</span>)
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>or1g</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  [1] "theta"      "score"      "hess"       "hessi"      "var.theta" 
 #&gt;  [6] "theta.iid"  "score1"     "thetanames" "brierscore" "p11"       
-#&gt; [11] "call"      </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>or1g</span><span class='op'>$</span><span class='kw'>theta.iid</span>)
+#&gt; [11] "call"      </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>or1g</span><span class='op'>$</span><span class='va'>theta.iid</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      [,1] [,2] [,3]         [,4]         [,5]         [,6]
 #&gt; [1,]    0    0    0 0.0007341431 0.0008025713 0.0008395676
 #&gt; [2,]    0    0    0 0.0007341431 0.0008025713 0.0008395676

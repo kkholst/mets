@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -103,10 +103,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -116,6 +125,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -150,17 +162,29 @@
       <small>Source: <a href='https://github.com/kkholst/mets/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="mets-1-2-8-1" class="section level1">
+    <div id="mets-129" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.9">
+<a href="#mets-129" class="anchor"></a>mets 1.2.9<small> Unreleased </small>
+</h1>
+<ul>
+<li>Examples updated</li>
+<li>dutility function no longer casts warnings when handling formulas</li>
+<li>Efficient estimation of recurrent events mean: recurrentMarginalAIPCW</li>
+<li>Average treatment effect for competing risks and binary data: logitATE, binregATE</li>
+<li>Recurrent events regression with IPCW adjustment : recreg</li>
+</ul>
+</div>
+    <div id="mets-1281" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.8.1">
-<a href="#mets-1-2-8-1" class="anchor"></a>mets 1.2.8.1<small> 2020-09-28 </small>
+<a href="#mets-1281" class="anchor"></a>mets 1.2.8.1<small> 2020-09-28 </small>
 </h1>
 <ul>
 <li>Maintenance release</li>
 </ul>
 </div>
-    <div id="mets-1-2-8" class="section level1">
+    <div id="mets-128" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.8">
-<a href="#mets-1-2-8" class="anchor"></a>mets 1.2.8<small> 2020-08-27 </small>
+<a href="#mets-128" class="anchor"></a>mets 1.2.8<small> 2020-08-27 </small>
 </h1>
 <ul>
 <li>Augmentation of binomial regression model: BinAugmentCifstrata</li>
@@ -170,17 +194,17 @@
 <li>Vignette updates</li>
 </ul>
 </div>
-    <div id="mets-1-2-7-1" class="section level1">
+    <div id="mets-1271" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.7.1">
-<a href="#mets-1-2-7-1" class="anchor"></a>mets 1.2.7.1<small> 2020-03-04 </small>
+<a href="#mets-1271" class="anchor"></a>mets 1.2.7.1<small> 2020-03-04 </small>
 </h1>
 <ul>
 <li>Maintenance release</li>
 </ul>
 </div>
-    <div id="mets-1-2-6" class="section level1">
+    <div id="mets-126" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.6">
-<a href="#mets-1-2-6" class="anchor"></a>mets 1.2.6<small> 2019-08-05 </small>
+<a href="#mets-126" class="anchor"></a>mets 1.2.6<small> 2019-08-05 </small>
 </h1>
 <ul>
 <li>Cumulative incidence regression cifreg function
@@ -203,9 +227,9 @@
 <li>Binomial Regression for competing risks data with censoring and one time point only: binreg</li>
 </ul>
 </div>
-    <div id="mets-1-2-5" class="section level1">
+    <div id="mets-125" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.5">
-<a href="#mets-1-2-5" class="anchor"></a>mets 1.2.5<small> 2018-11-20 </small>
+<a href="#mets-125" class="anchor"></a>mets 1.2.5<small> 2018-11-20 </small>
 </h1>
 <ul>
 <li>Updated predict function for phreg
@@ -233,9 +257,9 @@
 <li>cumulative score process test gof now also for marginal Cox models</li>
 </ul>
 </div>
-    <div id="mets-1-2-4" class="section level1">
+    <div id="mets-124" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.4">
-<a href="#mets-1-2-4" class="anchor"></a>mets 1.2.4<small> 2018-08-13 </small>
+<a href="#mets-124" class="anchor"></a>mets 1.2.4<small> 2018-08-13 </small>
 </h1>
 <ul>
 <li>functions km (Kaplan-Meier) and cif (cumulative incidence probability) with robust standard errors.</li>
@@ -245,17 +269,17 @@
 <li>rmvn, dmvn: RNG and density for multivariate normal distribution with varying correlation coefficients.</li>
 </ul>
 </div>
-    <div id="mets-1-2-3-1" class="section level1">
+    <div id="mets-1231" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.3.1">
-<a href="#mets-1-2-3-1" class="anchor"></a>mets 1.2.3.1<small> 2018-04-30 </small>
+<a href="#mets-1231" class="anchor"></a>mets 1.2.3.1<small> 2018-04-30 </small>
 </h1>
 <ul>
 <li>starting values updated for twinlm method</li>
 </ul>
 </div>
-    <div id="mets-1-2-3" class="section level1">
+    <div id="mets-123" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.3">
-<a href="#mets-1-2-3" class="anchor"></a>mets 1.2.3<small> 2018-02-09 </small>
+<a href="#mets-123" class="anchor"></a>mets 1.2.3<small> 2018-02-09 </small>
 </h1>
 <ul>
 <li>twinlm now supports ordinal outcomes</li>
@@ -270,18 +294,18 @@
 <li>covariance calculation for recurrent events data and related bootstrap</li>
 </ul>
 </div>
-    <div id="mets-1-2-2" class="section level1">
+    <div id="mets-122" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.2">
-<a href="#mets-1-2-2" class="anchor"></a>mets 1.2.2<small> 2017-03-30 </small>
+<a href="#mets-122" class="anchor"></a>mets 1.2.2<small> 2017-03-30 </small>
 </h1>
 <ul>
 <li>Vignettes updated</li>
 <li>Compatibility with lava version 1.5</li>
 </ul>
 </div>
-    <div id="mets-1-2-1" class="section level1">
+    <div id="mets-121" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.1">
-<a href="#mets-1-2-1" class="anchor"></a>mets 1.2.1<small> 2017-02-26 </small>
+<a href="#mets-121" class="anchor"></a>mets 1.2.1<small> 2017-02-26 </small>
 </h1>
 <ul>
 <li>New documentation/vignettes</li>
@@ -290,9 +314,9 @@
 <li>block sampling function: dsample</li>
 </ul>
 </div>
-    <div id="mets-1-2-0" class="section level1">
+    <div id="mets-120" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0">
-<a href="#mets-1-2-0" class="anchor"></a>mets 1.2.0<small> Unreleased </small>
+<a href="#mets-120" class="anchor"></a>mets 1.2.0<small> Unreleased </small>
 </h1>
 <ul>
 <li>Namespace cleaning (twostage)…</li>
@@ -323,17 +347,17 @@
 </li>
 </ul>
 </div>
-    <div id="mets-1-1-1" class="section level1">
+    <div id="mets-111" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.1">
-<a href="#mets-1-1-1" class="anchor"></a>mets 1.1.1<small> 2015-05-29 </small>
+<a href="#mets-111" class="anchor"></a>mets 1.1.1<small> 2015-05-29 </small>
 </h1>
 <ul>
 <li>Support for left-truncation</li>
 </ul>
 </div>
-    <div id="mets-1-1-0" class="section level1">
+    <div id="mets-110" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.0">
-<a href="#mets-1-1-0" class="anchor"></a>mets 1.1.0<small> 2015-02-16 </small>
+<a href="#mets-110" class="anchor"></a>mets 1.1.0<small> 2015-02-16 </small>
 </h1>
 <ul>
 <li>fast.approx with ‘type’ argument</li>
@@ -341,9 +365,9 @@
 <li>lifetable updated and new survpois function (piecewise constant hazard)</li>
 </ul>
 </div>
-    <div id="mets-1-0" class="section level1">
+    <div id="mets-10" class="section level1">
 <h1 class="page-header" data-toc-text="1.0">
-<a href="#mets-1-0" class="anchor"></a>mets 1.0<small> 2014-11-18 </small>
+<a href="#mets-10" class="anchor"></a>mets 1.0<small> 2014-11-18 </small>
 </h1>
 <ul>
 <li>New functions biprobit.time, binomial.twostage.time. Automatically samples time points (approximately equidistant) up to last double jump time. Intial support for left truncation. contrast argument added to biprobit.time.</li>
@@ -360,9 +384,9 @@
 <li>divide.conquer function, folds function</li>
 </ul>
 </div>
-    <div id="mets-0-2-8" class="section level1">
+    <div id="mets-028" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.8">
-<a href="#mets-0-2-8" class="anchor"></a>mets 0.2.8<small> 2014-05-13 </small>
+<a href="#mets-028" class="anchor"></a>mets 0.2.8<small> 2014-05-13 </small>
 </h1>
 <ul>
 <li>Normal orthant probabilities via ‘pmvn’ (vectorized)</li>
@@ -372,9 +396,9 @@
 <li>Grandom.cif more stable</li>
 </ul>
 </div>
-    <div id="mets-0-2-7" class="section level1">
+    <div id="mets-027" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.7">
-<a href="#mets-0-2-7" class="anchor"></a>mets 0.2.7<small> 2014-02-20 </small>
+<a href="#mets-027" class="anchor"></a>mets 0.2.7<small> 2014-02-20 </small>
 </h1>
 <ul>
 <li>Adapted to changes in ‘timereg::comp.risk’</li>
@@ -383,18 +407,18 @@
 <li>fast.reshape more robust. Now also supports ‘varying arguments of the type ’varying=-c(…)’ choosing everything except ‘…’.</li>
 </ul>
 </div>
-    <div id="mets-0-2-6" class="section level1">
+    <div id="mets-026" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.6">
-<a href="#mets-0-2-6" class="anchor"></a>mets 0.2.6<small> 2013-12-17 </small>
+<a href="#mets-026" class="anchor"></a>mets 0.2.6<small> 2013-12-17 </small>
 </h1>
 <ul>
 <li>C++ source code cleanup</li>
 <li>Optimization of fast.reshape</li>
 </ul>
 </div>
-    <div id="mets-0-2-5" class="section level1">
+    <div id="mets-025" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.5">
-<a href="#mets-0-2-5" class="anchor"></a>mets 0.2.5<small> 2013-12-16 </small>
+<a href="#mets-025" class="anchor"></a>mets 0.2.5<small> 2013-12-16 </small>
 </h1>
 <ul>
 <li>New datasets: dermalridges, dermalridgesMZ</li>
@@ -403,26 +427,26 @@
 <li>Improved output in twinlm</li>
 </ul>
 </div>
-    <div id="mets-0-2-4" class="section level1">
+    <div id="mets-024" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.4">
-<a href="#mets-0-2-4" class="anchor"></a>mets 0.2.4<small> 2013-07-13 </small>
+<a href="#mets-024" class="anchor"></a>mets 0.2.4<small> 2013-07-13 </small>
 </h1>
 <ul>
 <li>fast.reshape :labelnum option for both wide and long format (see example)</li>
 <li>Compilation flags removed from Makevars files</li>
 </ul>
 </div>
-    <div id="mets-0-2-3" class="section level1">
+    <div id="mets-023" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.3">
-<a href="#mets-0-2-3" class="anchor"></a>mets 0.2.3<small> 2013-05-22 </small>
+<a href="#mets-023" class="anchor"></a>mets 0.2.3<small> 2013-05-22 </small>
 </h1>
 <ul>
 <li>fast.reshape bug-fix (column names)</li>
 </ul>
 </div>
-    <div id="mets-0-2-2" class="section level1">
+    <div id="mets-022" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.2">
-<a href="#mets-0-2-2" class="anchor"></a>mets 0.2.2<small> 2013-05-21 </small>
+<a href="#mets-022" class="anchor"></a>mets 0.2.2<small> 2013-05-21 </small>
 </h1>
 <ul>
 <li>Updated twinlm. bptwin: OS analysis
@@ -436,43 +460,43 @@
 <li>Improved fast.reshape</li>
 </ul>
 </div>
-    <div id="mets-0-2-1" class="section level1">
+    <div id="mets-021" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.1">
-<a href="#mets-0-2-1" class="anchor"></a>mets 0.2.1<small> 2013-04-24 </small>
+<a href="#mets-021" class="anchor"></a>mets 0.2.1<small> 2013-04-24 </small>
 </h1>
 <ul>
 <li>fast.reshape</li>
 <li>easy.binomial.twostage</li>
 </ul>
 </div>
-    <div id="mets-0-1-4" class="section level1">
+    <div id="mets-014" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.4">
-<a href="#mets-0-1-4" class="anchor"></a>mets 0.1.4<small> Unreleased </small>
+<a href="#mets-014" class="anchor"></a>mets 0.1.4<small> Unreleased </small>
 </h1>
 <ul>
 <li>Fixed cor.cpp</li>
 <li>New datasets: twinstut, twinbmi, prtsim</li>
 </ul>
 </div>
-    <div id="mets-0-1-3" class="section level1">
+    <div id="mets-013" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.3">
-<a href="#mets-0-1-3" class="anchor"></a>mets 0.1.3<small> Unreleased </small>
+<a href="#mets-013" class="anchor"></a>mets 0.1.3<small> Unreleased </small>
 </h1>
 <ul>
 <li>twinlm moved to mets package, and wraps the bptwin function</li>
 </ul>
 </div>
-    <div id="mets-0-1-2" class="section level1">
+    <div id="mets-012" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.2">
-<a href="#mets-0-1-2" class="anchor"></a>mets 0.1.2<small> Unreleased </small>
+<a href="#mets-012" class="anchor"></a>mets 0.1.2<small> Unreleased </small>
 </h1>
 <ul>
 <li>code clean-up and minor bug-fixes</li>
 </ul>
 </div>
-    <div id="mets-0-1-1" class="section level1">
+    <div id="mets-011" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.1">
-<a href="#mets-0-1-1" class="anchor"></a>mets 0.1.1<small> Unreleased </small>
+<a href="#mets-011" class="anchor"></a>mets 0.1.1<small> Unreleased </small>
 </h1>
 <ul>
 <li>Random effects CIF models moved from MultiComp to mets</li>
@@ -481,9 +505,9 @@
 <li>bug fixes</li>
 </ul>
 </div>
-    <div id="mets-0-1-0" class="section level1">
+    <div id="mets-010" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.0">
-<a href="#mets-0-1-0" class="anchor"></a>mets 0.1.0<small> Unreleased </small>
+<a href="#mets-010" class="anchor"></a>mets 0.1.0<small> Unreleased </small>
 </h1>
 <ul>
 <li>Initialization of the new package ‘mets’ with implementation of the Clayton-Oakes model with piecewise constant marginal hazards, and the bivariate probit random effects model (Liability model) for twin-data.</li>

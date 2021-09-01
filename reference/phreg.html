@@ -73,7 +73,7 @@ Robust variance is default variance with the summary." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -105,10 +105,19 @@ Robust variance is default variance with the summary." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -118,6 +127,9 @@ Robust variance is default variance with the summary." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -158,7 +170,7 @@ Robust variance is default variance with the summary." />
 Robust variance is default variance with the summary.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>phreg</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, offset = <span class='kw'>NULL</span>, weights = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>phreg</span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, offset <span class='op'>=</span> <span class='cn'>NULL</span>, weights <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -194,41 +206,42 @@ so ordering after $id will give iid in order of data-set.</p>
     <p>Klaus K. Holst, Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
-<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>TRACE</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='kw'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>phreg</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>wmicat.4</span>),data=<span class='kw'>TRACE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>TRACE</span><span class='op'>)</span>
+<span class='fu'><a href='dcut.html'>dcut</a></span><span class='op'>(</span><span class='va'>TRACE</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='va'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>phreg</span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='va'>vf</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>wmicat.4</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>TRACE</span><span class='op'>)</span>
 <span class='co'>## tracesim &lt;- timereg::sim.cox(out1,1000)</span>
 <span class='co'>## sout1 &lt;- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)</span>
 <span class='co'>## robust standard errors default </span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1878    958
 #&gt; 
 #&gt;  1878 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;     Estimate     S.E.  dU^-1/2 P-value
 #&gt; vf  0.452306 0.136473 0.111038   9e-04
 #&gt; chf 0.931822 0.074226 0.074650   0e+00
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;       Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [vf]   1.57193 0.21453 1.15147 1.99240  0.0077
-#&gt; [chf]  2.53913 0.18847 2.16974 2.90852  0.0000
+#&gt;     Estimate   2.5%  97.5%
+#&gt; vf    1.5719 1.2030 2.0540
+#&gt; chf   2.5391 2.1954 2.9367
+#&gt; 
 #&gt; </div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>out1</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 <span class='co'>## bplot(sout1,se=TRUE)</span>
 
 <span class='co'>## computing robust variance for baseline</span>
-<span class='kw'>rob1</span> <span class='op'>&lt;-</span> <span class='fu'>robust.phreg</span>(<span class='kw'>out1</span>)
-<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>rob1</span>,se=<span class='fl'>TRUE</span>,robust=<span class='fl'>TRUE</span>)
+<span class='va'>rob1</span> <span class='op'>&lt;-</span> <span class='fu'>robust.phreg</span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span><span class='op'>(</span><span class='va'>rob1</span>,se<span class='op'>=</span><span class='cn'>TRUE</span>,robust<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='img'><img src='phreg-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## making iid decomposition of regression parameters</span>
-<span class='kw'>betaiiid</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/iid.html'>iid</a></span>(<span class='kw'>out1</span>)
+<span class='va'>betaiiid</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/iid.html'>iid</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 
 <span class='co'>## making iid decomposition of baseline at a specific time-point</span>
-<span class='kw'>Aiiid</span> <span class='op'>&lt;-</span> <span class='kw'>mets</span>:::<span class='fu'>iid.baseline.phreg</span>(<span class='kw'>out1</span>,time=<span class='fl'>30</span>)
+<span class='va'>Aiiid</span> <span class='op'>&lt;-</span> <span class='fu'>mets</span><span class='fu'>:::</span><span class='fu'>iid.baseline.phreg</span><span class='op'>(</span><span class='va'>out1</span>,time<span class='op'>=</span><span class='fl'>30</span><span class='op'>)</span>
 
 </div></pre>
   </div>

@@ -75,7 +75,7 @@ counting process integral, and this is implemented in prob.exceedRecurrent" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -107,10 +107,19 @@ counting process integral, and this is implemented in prob.exceedRecurrent" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -120,6 +129,9 @@ counting process integral, and this is implemented in prob.exceedRecurrent" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -162,21 +174,21 @@ In contrast the probability of exceeding k events can also be computed as a
 counting process integral, and this is implemented in prob.exceedRecurrent</p>
     </div>
 
-    <pre class="usage"><span class='fu'>prob.exceed.recurrent</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>type</span>,
-  status = <span class='st'>"status"</span>,
-  death = <span class='st'>"death"</span>,
-  start = <span class='st'>"start"</span>,
-  stop = <span class='st'>"stop"</span>,
-  id = <span class='st'>"id"</span>,
-  times = <span class='kw'>NULL</span>,
-  exceed = <span class='kw'>NULL</span>,
-  cifmets = <span class='fl'>TRUE</span>,
-  strata = <span class='kw'>NULL</span>,
-  all.cifs = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>prob.exceed.recurrent</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>type</span>,
+  status <span class='op'>=</span> <span class='st'>"status"</span>,
+  death <span class='op'>=</span> <span class='st'>"death"</span>,
+  start <span class='op'>=</span> <span class='st'>"start"</span>,
+  stop <span class='op'>=</span> <span class='st'>"stop"</span>,
+  id <span class='op'>=</span> <span class='st'>"id"</span>,
+  times <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exceed <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cifmets <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  all.cifs <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -250,47 +262,47 @@ counting process integral, and this is implemented in prob.exceedRecurrent</p>
 <span class='co'>## getting some rates to mimick </span>
 <span class='co'>########################################</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base1cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>base4cumhaz</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>drcumhaz</span>)
-<span class='kw'>dr</span> <span class='op'>&lt;-</span> <span class='kw'>drcumhaz</span>
-<span class='kw'>base1</span> <span class='op'>&lt;-</span> <span class='kw'>base1cumhaz</span>
-<span class='kw'>base4</span> <span class='op'>&lt;-</span> <span class='kw'>base4cumhaz</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>base1cumhaz</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>base4cumhaz</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>drcumhaz</span><span class='op'>)</span>
+<span class='va'>dr</span> <span class='op'>&lt;-</span> <span class='va'>drcumhaz</span>
+<span class='va'>base1</span> <span class='op'>&lt;-</span> <span class='va'>base1cumhaz</span>
+<span class='va'>base4</span> <span class='op'>&lt;-</span> <span class='va'>base4cumhaz</span>
 
-<span class='kw'>cor.mat</span> <span class='op'>&lt;-</span> <span class='kw'>corM</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1.0</span>, <span class='fl'>0.6</span>, <span class='fl'>0.9</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.6</span>, <span class='fl'>1.0</span>, <span class='fl'>0.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.9</span>, <span class='fl'>0.5</span>, <span class='fl'>1.0</span>))
-<span class='kw'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simRecurrent.html'>simRecurrent</a></span>(<span class='fl'>1000</span>,<span class='kw'>base1</span>,cumhaz2=<span class='kw'>base4</span>,death.cumhaz=<span class='kw'>dr</span>)
-</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'><span class='kw'>rr</span> <span class='op'>&lt;-</span>  <span class='fu'><a href='count.history.html'>count.history</a></span>(<span class='kw'>rr</span>)
-<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>rr</span>,<span class='op'>~</span><span class='kw'>death</span><span class='op'>+</span><span class='kw'>status</span>)
+<span class='va'>cor.mat</span> <span class='op'>&lt;-</span> <span class='va'>corM</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.0</span>, <span class='fl'>0.6</span>, <span class='fl'>0.9</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>, <span class='fl'>1.0</span>, <span class='fl'>0.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.9</span>, <span class='fl'>0.5</span>, <span class='fl'>1.0</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>rr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simRecurrent.html'>simRecurrent</a></span><span class='op'>(</span><span class='fl'>1000</span>,<span class='va'>base1</span>,cumhaz2<span class='op'>=</span><span class='va'>base4</span>,death.cumhaz<span class='op'>=</span><span class='va'>dr</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: collapsing to unique 'x' values</span></div><div class='input'><span class='va'>rr</span> <span class='op'>&lt;-</span>  <span class='fu'><a href='count.history.html'>count.history</a></span><span class='op'>(</span><span class='va'>rr</span><span class='op'>)</span>
+<span class='fu'><a href='dtable.html'>dtable</a></span><span class='op'>(</span><span class='va'>rr</span>,<span class='op'>~</span><span class='va'>death</span><span class='op'>+</span><span class='va'>status</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;       status    0    1    2
 #&gt; death                      
 #&gt; 0             134 3019  388
 #&gt; 1             866    0    0</div><div class='input'>
-<span class='kw'>oo</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceedRecurrent</span>(<span class='kw'>rr</span>,<span class='fl'>1</span>)
-<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span>(<span class='kw'>oo</span>)
+<span class='va'>oo</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceedRecurrent</span><span class='op'>(</span><span class='va'>rr</span>,<span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='basehazplot.phreg.html'>bplot</a></span><span class='op'>(</span><span class='va'>oo</span><span class='op'>)</span>
 </div><div class='img'><img src='prob.exceed.recurrent-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>oo</span>,<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>time</span>,<span class='kw'>mu</span>,col=<span class='fl'>2</span>,type=<span class='st'>"l"</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>oo</span>,<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>mu</span>,col<span class='op'>=</span><span class='fl'>2</span>,type<span class='op'>=</span><span class='st'>"l"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>###</span>
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>oo</span>,<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>time</span>,<span class='kw'>varN</span>,type=<span class='st'>"l"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>oo</span>,<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>varN</span>,type<span class='op'>=</span><span class='st'>"l"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='prob.exceed.recurrent-2.png' alt='' width='700' height='433' /></div><div class='input'>
 
 <span class='co'>### Bivariate probability of exceeding </span>
-<span class='kw'>oo</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceedBiRecurrent</span>(<span class='kw'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,exceed1=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>5</span>,<span class='fl'>10</span>),exceed2=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>oo</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matplot</a></span>(<span class='kw'>time</span>,<span class='kw'>pe1e2</span>,type=<span class='st'>"s"</span>))
-<span class='kw'>nc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>oo</span><span class='op'>$</span><span class='kw'>pe1e2</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>,legend=<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>oo</span><span class='op'>$</span><span class='kw'>pe1e2</span>),lty=<span class='fl'>1</span><span class='op'>:</span><span class='kw'>nc</span>,col=<span class='fl'>1</span><span class='op'>:</span><span class='kw'>nc</span>)
+<span class='va'>oo</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceedBiRecurrent</span><span class='op'>(</span><span class='va'>rr</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,exceed1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>5</span>,<span class='fl'>10</span><span class='op'>)</span>,exceed2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>oo</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matplot</a></span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>pe1e2</span>,type<span class='op'>=</span><span class='st'>"s"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>nc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>oo</span><span class='op'>$</span><span class='va'>pe1e2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span><span class='op'>(</span><span class='st'>"topleft"</span>,legend<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>oo</span><span class='op'>$</span><span class='va'>pe1e2</span><span class='op'>)</span>,lty<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>nc</span>,col<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>nc</span><span class='op'>)</span>
 
 
 <span class='co'># \donttest{</span>
 <span class='co'>### do not test to avoid dependence on prodlim </span>
 <span class='co'>### now estimation based on cumualative incidence, but do not test to avoid dependence on prodlim </span>
 <span class='co'>### library(prodlim)</span>
-<span class='kw'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceed.recurrent</span>(<span class='kw'>rr</span>,<span class='fl'>1</span>,status=<span class='st'>"status"</span>,death=<span class='st'>"death"</span>,start=<span class='st'>"entry"</span>,stop=<span class='st'>"time"</span>,id=<span class='st'>"id"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matplot</a></span>(<span class='kw'>times</span>,<span class='kw'>prob</span>,type=<span class='st'>"s"</span>))
+<span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>prob.exceed.recurrent</span><span class='op'>(</span><span class='va'>rr</span>,<span class='fl'>1</span>,status<span class='op'>=</span><span class='st'>"status"</span>,death<span class='op'>=</span><span class='st'>"death"</span>,start<span class='op'>=</span><span class='st'>"entry"</span>,stop<span class='op'>=</span><span class='st'>"time"</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matplot</a></span><span class='op'>(</span><span class='va'>times</span>,<span class='va'>prob</span>,type<span class='op'>=</span><span class='st'>"s"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='input'><span class='co'>###</span>
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matlines</a></span>(<span class='kw'>times</span>,<span class='kw'>se.lower</span>,type=<span class='st'>"s"</span>))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matlines</a></span>(<span class='kw'>times</span>,<span class='kw'>se.upper</span>,type=<span class='st'>"s"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matlines</a></span><span class='op'>(</span><span class='va'>times</span>,<span class='va'>se.lower</span>,type<span class='op'>=</span><span class='st'>"s"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/matplot.html'>matlines</a></span><span class='op'>(</span><span class='va'>times</span>,<span class='va'>se.upper</span>,type<span class='op'>=</span><span class='st'>"s"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='prob.exceed.recurrent-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>

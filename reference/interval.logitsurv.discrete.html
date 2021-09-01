@@ -77,7 +77,7 @@ $$" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -109,10 +109,19 @@ $$" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -122,6 +131,9 @@ $$" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -166,19 +178,19 @@ $$
 $$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>interval.logitsurv.discrete</span>(
-  <span class='kw'>formula</span>,
-  <span class='kw'>data</span>,
-  beta = <span class='kw'>NULL</span>,
-  no.opt = <span class='fl'>FALSE</span>,
-  method = <span class='st'>"NR"</span>,
-  stderr = <span class='fl'>TRUE</span>,
-  weights = <span class='kw'>NULL</span>,
-  offsets = <span class='kw'>NULL</span>,
-  exp.link = <span class='fl'>1</span>,
-  increment = <span class='fl'>1</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>interval.logitsurv.discrete</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  <span class='va'>data</span>,
+  beta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  no.opt <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method <span class='op'>=</span> <span class='st'>"NR"</span>,
+  stderr <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  offsets <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exp.link <span class='op'>=</span> <span class='fl'>1</span>,
+  increment <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -231,7 +243,13 @@ $$</p>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
+    <p>This is thus also the cumulative odds model, since 
+$$
+   P(T \leq t | x) =  \frac{G(t) \exp(x \beta) }{1 + G(t) exp( x \beta) }
+$$</p>
+<p>The baseline \(G(t)\) is written as \(cumsum(exp(\alpha))\) and this is not the standard
+parametrization that takes log of \(G(t)\) as the parameters.</p>
+<p>Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
 When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an observation at j+1</p>
 <p>Likelihood is maximized:
 $$
@@ -242,8 +260,8 @@ $$</p>
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ttpd</span>) 
-<span class='fu'><a href='dtable.html'>dtable</a></span>(<span class='kw'>ttpd</span>,<span class='op'>~</span><span class='kw'>entry</span><span class='op'>+</span><span class='kw'>time2</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ttpd</span><span class='op'>)</span> 
+<span class='fu'><a href='dtable.html'>dtable</a></span><span class='op'>(</span><span class='va'>ttpd</span>,<span class='op'>~</span><span class='va'>entry</span><span class='op'>+</span><span class='va'>time2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;       time2   1   2   3   4   5   6 Inf
 #&gt; entry                                  
@@ -253,8 +271,8 @@ $$</p>
 #&gt; 3             0   0   0  23   0   0   0
 #&gt; 4             0   0   0   0  90   0   0
 #&gt; 5             0   0   0   0   0  68   0
-#&gt; 6             0   0   0   0   0   0 220</div><div class='input'><span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>entry</span>,<span class='kw'>time2</span>)<span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>ttpd</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+#&gt; 6             0   0   0   0   0   0 220</div><div class='input'><span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span><span class='op'>(</span><span class='fu'>Interval</span><span class='op'>(</span><span class='va'>entry</span>,<span class='va'>time2</span><span class='op'>)</span><span class='op'>~</span><span class='va'>X1</span><span class='op'>+</span><span class='va'>X2</span><span class='op'>+</span><span class='va'>X3</span><span class='op'>+</span><span class='va'>X4</span>,<span class='va'>ttpd</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;       Estimate Std.Err     2.5%   97.5%   P-value
 #&gt; time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43
 #&gt; time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45
@@ -266,44 +284,9 @@ $$</p>
 #&gt; X2      0.6962  0.1156  0.46953  0.9228 1.739e-09
 #&gt; X3      0.3466  0.1150  0.12110  0.5721 2.590e-03
 #&gt; X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</div><div class='input'>
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='kw'>n</span>,<span class='fl'>4</span>)
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>,<span class='kw'>Z</span>)
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>outsim</span>,left=<span class='kw'>time</span>,right=<span class='kw'>time</span><span class='op'>+</span><span class='fl'>1</span>)
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>outsim</span>,right=<span class='fl'>Inf</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)
-
-<span class='kw'>outss</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>left</span>,<span class='kw'>right</span>)<span class='op'>~</span><span class='op'>+</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>outsim</span>)
-
-<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>0</span>,<span class='fl'>5</span>,<span class='fl'>4</span>)
-<span class='kw'>Z</span>[<span class='fl'>2</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>] <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>4</span>)
-<span class='kw'>pred</span> <span class='op'>&lt;-</span> <span class='fu'>predictlogitSurvd</span>(<span class='kw'>out</span>,se=<span class='fl'>FALSE</span>)
-<span class='fu'><a href='haplo.surv.discrete.html'>plotSurvd</a></span>(<span class='kw'>pred</span>)
+<span class='va'>pred</span> <span class='op'>&lt;-</span> <span class='fu'>predictlogitSurvd</span><span class='op'>(</span><span class='va'>out</span>,se<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='haplo.surv.discrete.html'>plotSurvd</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span>
 </div><div class='img'><img src='interval.logitsurv.discrete-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## simulations </span>
-<span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='kw'>Z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span>),<span class='kw'>n</span>,<span class='fl'>4</span>)
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'>simlogitSurvd</span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>,<span class='kw'>Z</span>)
-<span class='co'>###</span>
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>outsim</span>,left=<span class='kw'>time</span>,right=<span class='kw'>time</span><span class='op'>+</span><span class='fl'>1</span>)
-<span class='kw'>outsim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dtransform.html'>dtransform</a></span>(<span class='kw'>outsim</span>,right=<span class='fl'>Inf</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)
-
-<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>
-</div><div class='output co'>#&gt;      time1      time2      time3      time4      time5      time6         X1 
-#&gt; -2.0064097 -2.1748971 -1.4580661 -2.9260102 -1.2050516 -0.9102138  0.9912536 
-#&gt;         X2         X3         X4 
-#&gt;  0.6961586  0.3465918  0.3222509 </div><div class='input'><span class='kw'>outss</span> <span class='op'>&lt;-</span> <span class='fu'>interval.logitsurv.discrete</span>(<span class='fu'>Interval</span>(<span class='kw'>left</span>,<span class='kw'>right</span>)<span class='op'>~</span><span class='op'>+</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>X3</span><span class='op'>+</span><span class='kw'>X4</span>,<span class='kw'>outsim</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>outss</span>)
-</div><div class='output co'>#&gt;       Estimate   Std.Err       2.5%     97.5%   P-value
-#&gt; time1  -2.1388    0.4625    -3.0453   -1.2323 3.757e-06
-#&gt; time2  -2.0336    0.4658    -2.9467   -1.1206 1.268e-05
-#&gt; time3  -1.8649    0.4896    -2.8246   -0.9052 1.397e-04
-#&gt; time4 -17.9939 1084.6146 -2143.7994 2107.8116 9.868e-01
-#&gt; time5  -1.4220    0.4996    -2.4011   -0.4429 4.420e-03
-#&gt; time6  -1.2522    0.5499    -2.3299   -0.1745 2.277e-02
-#&gt; X1      0.8515    0.3808     0.1050    1.5979 2.536e-02
-#&gt; X2      0.4139    0.3775    -0.3261    1.1538 2.730e-01
-#&gt; X3      0.5676    0.3825    -0.1820    1.3172 1.378e-01
-#&gt; X4      0.5436    0.3635    -0.1689    1.2561 1.348e-01</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,7 +168,7 @@
     <p>Additive hazards model with (gamma) frailty</p>
     </div>
 
-    <pre class="usage"><span class='fu'>aalenfrailty</span>(<span class='kw'>time</span>, <span class='kw'>status</span>, <span class='kw'>X</span>, <span class='kw'>id</span>, <span class='kw'>theta</span>, B = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>aalenfrailty</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>status</span>, <span class='va'>X</span>, <span class='va'>id</span>, <span class='va'>theta</span>, B <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,30 +215,30 @@ starting point for optimization (defaults to magic number 0.1)</p></td>
     <p>Klaus K. Holst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simAalenFrailty.html'>simAalenFrailty</a></span>(<span class='fl'>5000</span>)
-<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='fl'>1</span><span class='co'>##+x</span>
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='kw'>f</span>,<span class='kw'>dd</span>) <span class='co'>## design matrix for non-parametric terms</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='kw'>out</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/aalen.html'>aalen</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/update.html'>update</a></span>(<span class='kw'>f</span>,<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span>)<span class='op'>~</span><span class='kw'>.</span>),<span class='kw'>dd</span>,n.sim=<span class='fl'>0</span>,robust=<span class='fl'>0</span>))
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span><span class='op'>)</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='simAalenFrailty.html'>simAalenFrailty</a></span><span class='op'>(</span><span class='fl'>5000</span><span class='op'>)</span>
+<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='fl'>1</span><span class='co'>##+x</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='va'>f</span>,<span class='va'>dd</span><span class='op'>)</span> <span class='co'>## design matrix for non-parametric terms</span>
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/timereg/man/aalen.html'>aalen</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/update.html'>update</a></span><span class='op'>(</span><span class='va'>f</span>,<span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>)</span><span class='op'>~</span><span class='va'>.</span><span class='op'>)</span>,<span class='va'>dd</span>,n.sim<span class='op'>=</span><span class='fl'>0</span>,robust<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.012   0.000   0.012 </div><div class='input'><span class='kw'>dix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>status</span><span class='op'>==</span><span class='fl'>1</span>)
-<span class='kw'>t1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='kw'>bb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/CallExternal.html'>.Call</a></span>(<span class='st'>"Bhat"</span>,<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>status</span>),
-                              <span class='kw'>X</span>,<span class='fl'>0.2</span>,<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>id</span>),<span class='kw'>NULL</span>,<span class='kw'>NULL</span>,
-                              PACKAGE=<span class='st'>"mets"</span>))
-<span class='kw'>spec</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+#&gt;   0.016   0.000   0.016 </div><div class='input'><span class='va'>dix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>status</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>t1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>bb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/CallExternal.html'>.Call</a></span><span class='op'>(</span><span class='st'>"Bhat"</span>,<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>status</span><span class='op'>)</span>,
+                              <span class='va'>X</span>,<span class='fl'>0.2</span>,<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>id</span><span class='op'>)</span>,<span class='cn'>NULL</span>,<span class='cn'>NULL</span>,
+                              PACKAGE<span class='op'>=</span><span class='st'>"mets"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>spec</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
 <span class='co'>##plot(out,spec=spec)</span>
 <span class='co'>## plot(dd$time[dix],bb$B2[,spec],col="red",type="s",</span>
 <span class='co'>##      ylim=c(0,max(dd$time)*c(beta0,beta)[spec]))</span>
 <span class='co'>## abline(a=0,b=c(beta0,beta)[spec])</span>
 <span class='co'>##'</span>
 
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>thetas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0.1</span>,<span class='fl'>2</span>,length.out=<span class='fl'>10</span>)
-<span class='kw'>Us</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'>aalenfrailty</span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>time</span>,<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>status</span>,<span class='kw'>X</span>,<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>id</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span>(<span class='kw'>thetas</span>)))
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>thetas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0.1</span>,<span class='fl'>2</span>,length.out<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>Us</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'>aalenfrailty</span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>time</span>,<span class='va'>dd</span><span class='op'>$</span><span class='va'>status</span>,<span class='va'>X</span>,<span class='va'>dd</span><span class='op'>$</span><span class='va'>id</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span><span class='op'>(</span><span class='va'>thetas</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>##plot(thetas,Us,type="l",ylim=c(-.5,1)); abline(h=0,lty=2); abline(v=theta,lty=2)</span>
-<span class='kw'>op</span> <span class='op'>&lt;-</span> <span class='fu'>aalenfrailty</span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>time</span>,<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>status</span>,<span class='kw'>X</span>,<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>id</span>)
-<span class='kw'>op</span>
-}
+<span class='va'>op</span> <span class='op'>&lt;-</span> <span class='fu'>aalenfrailty</span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>time</span>,<span class='va'>dd</span><span class='op'>$</span><span class='va'>status</span>,<span class='va'>X</span>,<span class='va'>dd</span><span class='op'>$</span><span class='va'>id</span><span class='op'>)</span>
+<span class='va'>op</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

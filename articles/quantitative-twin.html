@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -63,10 +63,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -76,6 +85,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -119,25 +131,24 @@
     
 <p>This document provides a brief tutorial to analyzing twin data using the <strong><code>mets</code></strong> package:</p>
 <p><span class="math inline">\(\newcommand{\cov}{\mathbb{C}\text{ov}} \newcommand{\cor}{\mathbb{C}\text{or}} \newcommand{\var}{\mathbb{V}\text{ar}} \newcommand{\E}{\mathbb{E}} \newcommand{\unitfrac}[2]{#1/#2} \newcommand{\n}{}\)</span> ’ The development version may be installed from <em>github</em>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># install.packages("remotes")</span>
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"kkholst/mets"</span>, dependencies=<span class="st">"Suggests"</span>)
-</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>, dependencies<span class="op">=</span><span class="st">"Suggests"</span><span class="op">)</span></code></pre></div>
 <div id="twin-analysis-continuous-traits" class="section level1">
 <h1 class="hasAnchor">
 <a href="#twin-analysis-continuous-traits" class="anchor"></a>Twin analysis, continuous traits</h1>
 <p>In the following we examine the heritability of Body Mass Index<sup id="b71edfd9bc946c317f4a732845bcaf93"><a href="#korkeila_bmi_1991" title="Korkeila, Kaprio, Rissanen \&amp; Koskenvuo, {{E}ffects of gender and age on the heritability of body mass index}, {Int J Obes}, v(10), 647--654 (1991).">korkeila_bmi_1991</a></sup><sup id="718839fcb6ade82ebb2d7de853582b80"><a href="#hjelmborg_bmi_2008" title="Hjelmborg, Fagnani, Silventoinen, McGue, Korkeila, Christensen, Rissanen \&amp; Kaprio, {{G}enetic influences on growth traits of {B}{M}{I}: a longitudinal study of adult twins}, {Obesity (Silver Spring)}, v(4), 847--852 (2008).">hjelmborg_bmi_2008</a></sup>, based on data on self-reported BMI-values from a random sample of 11,411 same-sex twins. First, we will load data</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"twinbmi"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">twinbmi</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"twinbmi"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">twinbmi</span><span class="op">)</span>
 <span class="co">#&gt;   tvparnr      bmi      age gender zyg id num</span>
 <span class="co">#&gt; 1       1 26.33289 57.51212   male  DZ  1   1</span>
 <span class="co">#&gt; 2       1 25.46939 57.51212   male  DZ  1   2</span>
 <span class="co">#&gt; 3       2 28.65014 56.62696   male  MZ  2   1</span>
 <span class="co">#&gt; 5       3 28.40909 57.73097   male  DZ  3   1</span>
 <span class="co">#&gt; 7       4 27.25089 53.68683   male  DZ  4   1</span>
-<span class="co">#&gt; 8       4 28.07504 53.68683   male  DZ  4   2</span>
-</pre></div>
+<span class="co">#&gt; 8       4 28.07504 53.68683   male  DZ  4   2</span></code></pre></div>
 <p>The data is on <em>long</em> format with one subject per row.</p>
 <ul>
 <li>
@@ -152,40 +163,37 @@
 <strong><code>zyg</code>:</strong> zygosity (MZ, DZ)</li>
 </ul>
 <p>We transpose the data allowing us to do pairwise analyses</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">twinwide</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast.reshape.html">fast.reshape</a></span>(<span class="kw">twinbmi</span>, id=<span class="st">"tvparnr"</span>,varying=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"bmi"</span>))
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">twinwide</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">twinwide</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast.reshape.html">fast.reshape</a></span><span class="op">(</span><span class="va">twinbmi</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>,varying<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bmi"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">twinwide</span><span class="op">)</span>
 <span class="co">#&gt;    tvparnr     bmi1      age gender zyg id num     bmi2</span>
 <span class="co">#&gt; 1        1 26.33289 57.51212   male  DZ  1   1 25.46939</span>
 <span class="co">#&gt; 3        2 28.65014 56.62696   male  MZ  2   1       NA</span>
 <span class="co">#&gt; 5        3 28.40909 57.73097   male  DZ  3   1       NA</span>
 <span class="co">#&gt; 7        4 27.25089 53.68683   male  DZ  4   1 28.07504</span>
 <span class="co">#&gt; 9        5 27.77778 52.55838   male  DZ  5   1       NA</span>
-<span class="co">#&gt; 11       6 28.04282 52.52231   male  DZ  6   1 22.30936</span>
-</pre></div>
+<span class="co">#&gt; 11       6 28.04282 52.52231   male  DZ  6   1 22.30936</span></code></pre></div>
 <p>Next we plot the association within each zygosity group</p>
 <p>We here show the log-transformed data which is slightly more symmetric and more appropiate for the twin analysis (see Figure @ref(fig:scatter1) and @ref(fig:scatter2))</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">twinwide</span>, <span class="kw">zyg</span><span class="op">==</span><span class="st">"MZ"</span>)[,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"bmi1"</span>,<span class="st">"bmi2"</span>)])
-<span class="fu">scatterdens</span>(<span class="kw">mz</span>)
-</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="fu">scatterdens</span><span class="op">(</span><span class="va">mz</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="quantitative-twin_files/figure-html/scatter1-1.png" alt="Scatter plot of logarithmic BMI measurements in MZ twins" width="70%"><p class="caption">
 Scatter plot of logarithmic BMI measurements in MZ twins
 </p>
 </div>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">twinwide</span>, <span class="kw">zyg</span><span class="op">==</span><span class="st">"DZ"</span>)[,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"bmi1"</span>,<span class="st">"bmi2"</span>)])
-<span class="fu">scatterdens</span>(<span class="kw">dz</span>)
-</pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="fu">scatterdens</span><span class="op">(</span><span class="va">dz</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="quantitative-twin_files/figure-html/scatter2-1.png" alt="Scatter plot of logarithmic BMI measurements in DZ twins" width="70%"><p class="caption">
 Scatter plot of logarithmic BMI measurements in DZ twins
 </p>
 </div>
 <p>The plots and raw association measures shows considerable stronger dependence in the MZ twins, thus indicating genetic influence of the trait</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span>(<span class="kw">mz</span>[,<span class="fl">1</span>],<span class="kw">mz</span>[,<span class="fl">2</span>], method=<span class="st">"spearman"</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span><span class="va">mz</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">mz</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, method<span class="op">=</span><span class="st">"spearman"</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Spearman's rank correlation rho</span>
 <span class="co">#&gt; </span>
@@ -194,10 +202,9 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <span class="co">#&gt; alternative hypothesis: true rho is not equal to 0</span>
 <span class="co">#&gt; sample estimates:</span>
 <span class="co">#&gt;       rho </span>
-<span class="co">#&gt; 0.6956209</span>
-</pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span>(<span class="kw">dz</span>[,<span class="fl">1</span>],<span class="kw">dz</span>[,<span class="fl">2</span>], method=<span class="st">"spearman"</span>)
+<span class="co">#&gt; 0.6956209</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span><span class="va">dz</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">dz</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, method<span class="op">=</span><span class="st">"spearman"</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Spearman's rank correlation rho</span>
 <span class="co">#&gt; </span>
@@ -206,40 +213,36 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <span class="co">#&gt; alternative hypothesis: true rho is not equal to 0</span>
 <span class="co">#&gt; sample estimates:</span>
 <span class="co">#&gt;       rho </span>
-<span class="co">#&gt; 0.4012686</span>
-</pre></div>
+<span class="co">#&gt; 0.4012686</span></code></pre></div>
 <p>Ńext we examine the marginal distribution (GEE model with working independence)</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="kw">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="kw">bmi</span> <span class="op">~</span> <span class="kw">gender</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">age</span><span class="op">-</span><span class="fl">40</span>), data=<span class="kw">twinbmi</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/lava/man/estimate.default.html">estimate</a></span>(<span class="kw">l0</span>, id=<span class="kw">twinbmi</span><span class="op">$</span><span class="kw">tvparnr</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">-</span><span class="fl">40</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span>
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">l0</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span>
 <span class="co">#&gt;             Estimate  Std.Err    2.5%   97.5%    P-value</span>
 <span class="co">#&gt; (Intercept)  23.3687 0.054534 23.2618 23.4756  0.000e+00</span>
 <span class="co">#&gt; gendermale    1.4077 0.073216  1.2642  1.5512  2.230e-82</span>
-<span class="co">#&gt; I(age - 40)   0.1177 0.004787  0.1083  0.1271 1.499e-133</span>
-</pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"splines"</span>)
-<span class="kw">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="kw">bmi</span> <span class="op">~</span> <span class="kw">gender</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span>(<span class="kw">age</span>,<span class="fl">3</span>), data=<span class="kw">twinbmi</span>)
-<span class="kw">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/estimate.default.html">estimate</a></span>(<span class="kw">l1</span>, id=<span class="kw">twinbmi</span><span class="op">$</span><span class="kw">tvparnr</span>)
-</pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/Expand.html">Expand</a></span>(<span class="kw">twinbmi</span>,
-        bmi=<span class="fl">0</span>,
-        gender=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"male"</span>),
-        age=<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">33</span>,<span class="fl">61</span>,length.out=<span class="fl">50</span>))
-<span class="kw">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/Expand.html">Expand</a></span>(<span class="kw">twinbmi</span>,
-        bmi=<span class="fl">0</span>,
-        gender=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"female"</span>),
-        age=<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">33</span>,<span class="fl">61</span>,length.out=<span class="fl">50</span>))
+<span class="co">#&gt; I(age - 40)   0.1177 0.004787  0.1083  0.1271 1.499e-133</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"splines"</span><span class="op">)</span>
+<span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">3</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span>
+<span class="va">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">l1</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,
+        bmi<span class="op">=</span><span class="fl">0</span>,
+        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"male"</span><span class="op">)</span>,
+        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,
+        bmi<span class="op">=</span><span class="fl">0</span>,
+        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"female"</span><span class="op">)</span>,
+        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">marg1</span>, <span class="fu">function</span>(<span class="kw">p</span>) <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="kw">l1</span>,data=<span class="kw">dm</span>)<span class="op">%*%</span><span class="kw">p</span>,
-     data=<span class="kw">dm</span>[<span class="st">"age"</span>], ylab=<span class="st">"BMI"</span>, xlab=<span class="st">"Age"</span>,
-     ylim=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">22</span>,<span class="fl">26.5</span>))
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">marg1</span>, <span class="fu">function</span>(<span class="kw">p</span>) <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="kw">l1</span>,data=<span class="kw">df</span>)<span class="op">%*%</span><span class="kw">p</span>,
-     data=<span class="kw">df</span>[<span class="st">"age"</span>], col=<span class="st">"red"</span>, add=<span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Male"</span>,<span class="st">"Female"</span>),
-       col=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"black"</span>,<span class="st">"red"</span>), lty=<span class="fl">1</span>, bty=<span class="st">"n"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">marg1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">l1</span>,data<span class="op">=</span><span class="va">dm</span><span class="op">)</span><span class="op">%*%</span><span class="va">p</span>,
+     data<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="st">"age"</span><span class="op">]</span>, ylab<span class="op">=</span><span class="st">"BMI"</span>, xlab<span class="op">=</span><span class="st">"Age"</span>,
+     ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">22</span>,<span class="fl">26.5</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">marg1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">l1</span>,data<span class="op">=</span><span class="va">df</span><span class="op">)</span><span class="op">%*%</span><span class="va">p</span>,
+     data<span class="op">=</span><span class="va">df</span><span class="op">[</span><span class="st">"age"</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"red"</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Male"</span>,<span class="st">"Female"</span><span class="op">)</span>,
+       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="st">"red"</span><span class="op">)</span>, lty<span class="op">=</span><span class="fl">1</span>, bty<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="quantitative-twin_files/figure-html/marg1-1.png" alt="Marginal association between BMI and Age for males and females." width="70%"><p class="caption">
 Marginal association between BMI and Age for males and females.
@@ -249,7 +252,9 @@ Marginal association between BMI and Age for males and females.
 <h2 class="hasAnchor">
 <a href="#polygenic-model" class="anchor"></a>Polygenic model</h2>
 <p>We can decompose the trait into the following variance components</p>
-
+<p><span class="math display">\[\begin{align*}
+Y_i = A_i + D_i + C + E_i, \quad i=1,2
+ \end{align*}\]</span></p>
 <ul>
 <li>
 <strong><span class="math inline">\(A\)</span>:</strong> Additive genetic effects of alleles</li>
@@ -261,20 +266,639 @@ Marginal association between BMI and Age for males and females.
 <strong><span class="math inline">\(E\)</span>:</strong> Unique environmental genetic effects</li>
 </ul>
 <p>Dissimilarity of MZ twins arises from unshared environmental effects only, <span class="math inline">\(\cor(E_1,E_2)=0\)</span> and</p>
+<p><span class="math display">\[\begin{align*}
+\cor(A_1^{MZ},A_2^{MZ}) = 1, \quad
+\cor(D_1^{MZ},D_2^{MZ}) = 1,
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}
+\cor(A_1^{DZ},A_2^{DZ}) = 0.5, \quad
+\cor(D_1^{DZ},D_2^{DZ}) = 0.25,
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}
+Y_i = A_i + C_i + D_i + E_i
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}
+A_i \sim\mathcal{N}(0,\sigma_A^2), C_i
+\sim\mathcal{N}(0,\sigma_C^2), D_i
+\sim\mathcal{N}(0,\sigma_D^2),
+E_i \sim\mathcal{N}(0,\sigma_E^2)
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{gather*}
+    \cov(Y_{1},Y_{2}) = \\
+    \begin{pmatrix}
+      \sigma_A^2 &amp; 2\Phi\sigma_A^2 \\
+      2\Phi\sigma_A^2 &amp; \sigma_A^2
+    \end{pmatrix} +
+    \begin{pmatrix}
+      \sigma_C^2 &amp; \sigma_C^2 \\
+      \sigma_C^2 &amp; \sigma_C^2
+  \end{pmatrix} +
+    \begin{pmatrix}
+      \sigma_D^2 &amp; \Delta_{7}\sigma_D^2 \\
+      \Delta_{7}\sigma_D^2 &amp; \sigma_D^2
+  \end{pmatrix} +
+  \begin{pmatrix}
+    \sigma_E^2 &amp; 0 \\
+    0 &amp; \sigma_E^2
+  \end{pmatrix}
+\end{gather*}\]</span></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">twinbmi</span><span class="op">)</span>
+<span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"sat"</span><span class="op">)</span>
+
+<span class="co"># different marginals (but within pair)</span>
+<span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>,DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"flex"</span><span class="op">)</span>
+
+<span class="co"># same marginals but free correlation with MZ, DZ </span>
+<span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"u"</span><span class="op">)</span>
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Null Hypothesis: </span>
+<span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0</span>
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>
+<span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%    P-value</span>
+<span class="co">#&gt; bmi.1@1               18.6037 0.251036 18.1116 19.0957  0.000e+00</span>
+<span class="co">#&gt; bmi.1~age.1@1          0.1189 0.005635  0.1078  0.1299  9.177e-99</span>
+<span class="co">#&gt; bmi.1~gendermale.1@1   1.3848 0.086573  1.2151  1.5544  1.376e-57</span>
+<span class="co">#&gt; log(var)@1             2.4424 0.022095  2.3991  2.4857  0.000e+00</span>
+<span class="co">#&gt; atanh(rhoMZ)@1         0.7803 0.036249  0.7092  0.8513 9.008e-103</span>
+<span class="co">#&gt; atanh(rhoDZ)@2         0.2987 0.020953  0.2576  0.3397  4.288e-46</span>
+
+<span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">zyg</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"flex"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span>
+<span class="co">#&gt;         bmi.1@1         bmi.1@2 bmi.1~zygMZ.1@1  log(var(MZ))@1  atanh(rhoMZ)@1 </span>
+<span class="co">#&gt;      24.5832961      24.6575702      -0.3968697       2.5289387       0.8362321 </span>
+<span class="co">#&gt; bmi.1~zygMZ.1@2  log(var(DZ))@2  atanh(rhoDZ)@2 </span>
+<span class="co">#&gt;      -0.3968692       2.5659593       0.3860756</span>
 
 
+<span class="co">###sink("lu-est-summary.txt")</span>
+<span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">zyg</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"u"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>
+<span class="co">#&gt; ____________________________________________________</span>
+<span class="co">#&gt; Group 1: MZ (n=1483)</span>
+<span class="co">#&gt;                         Estimate Std. Error   Z value  Pr(&gt;|z|)</span>
+<span class="co">#&gt; Regressions:                                                   </span>
+<span class="co">#&gt;    bmi.1~zygMZ.1        -0.47114    0.10242  -4.60001 4.225e-06</span>
+<span class="co">#&gt; Intercepts:                                                    </span>
+<span class="co">#&gt;    bmi.1                24.65757    0.05614 439.18694    &lt;1e-12</span>
+<span class="co">#&gt; Additional Parameters:                                         </span>
+<span class="co">#&gt;    log(var)              2.55537    0.01699 150.37316    &lt;1e-12</span>
+<span class="co">#&gt;    atanh(rhoMZ)          0.84865    0.02296  36.96325    &lt;1e-12</span>
+<span class="co">#&gt; ____________________________________________________</span>
+<span class="co">#&gt; Group 2: DZ (n=2788)</span>
+<span class="co">#&gt;                         Estimate Std. Error   Z value  Pr(&gt;|z|)</span>
+<span class="co">#&gt; Regressions:                                                   </span>
+<span class="co">#&gt;    bmi.1~zygMZ.1        -0.47114    0.10242  -4.60001 4.225e-06</span>
+<span class="co">#&gt; Intercepts:                                                    </span>
+<span class="co">#&gt;    bmi.1                24.65757    0.05614 439.18694    &lt;1e-12</span>
+<span class="co">#&gt; Additional Parameters:                                         </span>
+<span class="co">#&gt;    log(var)              2.55537    0.01699 150.37316    &lt;1e-12</span>
+<span class="co">#&gt;    atanh(rhoDZ)          0.38268    0.01847  20.71970    &lt;1e-12</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;                        Estimate 2.5%    97.5%  </span>
+<span class="co">#&gt; Correlation within MZ: 0.69036  0.66607 0.71319</span>
+<span class="co">#&gt; Correlation within DZ: 0.36503  0.33325 0.39598</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; 'log Lik.' -22355.15 (df=5)</span>
+<span class="co">#&gt; AIC: 44720.3 </span>
+<span class="co">#&gt; BIC: 44752.1</span>
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>
+<span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span>
+<span class="co">#&gt; bmi.1@1          24.6576 0.05650 24.5468 24.7683  0.000e+00</span>
+<span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10155 -0.6702 -0.2721  3.489e-06</span>
+<span class="co">#&gt; log(var)@1        2.5554 0.02019  2.5158  2.5949  0.000e+00</span>
+<span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.03554  0.7790  0.9183 5.146e-126</span>
+<span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.02095  0.3416  0.4237  1.545e-74</span>
+<span class="fu"><a href="https://rdrr.io/r/base/crossprod.html">crossprod</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html">iid</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span>
+<span class="co">#&gt;            [,1]       [,2]        [,3]       [,4]        [,5]</span>
+<span class="co">#&gt; [1,] 0.05650271        NaN 0.019575810 0.01346928         NaN</span>
+<span class="co">#&gt; [2,]        NaN 0.10154621 0.004344490        NaN 0.015803415</span>
+<span class="co">#&gt; [3,] 0.01957581 0.00434449 0.020190842 0.01053796 0.006669272</span>
+<span class="co">#&gt; [4,] 0.01346928        NaN 0.010537960 0.03554047         NaN</span>
+<span class="co">#&gt; [5,]        NaN 0.01580342 0.006669272        NaN 0.020950321</span>
+<span class="co">###sink()</span>
 
+<span class="fu"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>
+<span class="co">#&gt;               [,1]          [,2]          [,3]         [,4]          [,5]</span>
+<span class="co">#&gt; [1,]  3.152113e-03 -3.152113e-03  8.675207e-09 4.107098e-09  7.707495e-09</span>
+<span class="co">#&gt; [2,] -3.152113e-03  1.049033e-02 -3.974292e-10 3.391259e-09 -5.078859e-09</span>
+<span class="co">#&gt; [3,]  8.675207e-09 -3.974292e-10  2.887794e-04 1.367167e-04  9.170282e-05</span>
+<span class="co">#&gt; [4,]  4.107098e-09  3.391259e-09  1.367167e-04 5.271249e-04  4.341482e-05</span>
+<span class="co">#&gt; [5,]  7.707495e-09 -5.078859e-09  9.170282e-05 4.341482e-05  3.411139e-04</span>
+<span class="co">#&gt; attr(,"det")</span>
+<span class="co">#&gt; [1] 1.037717e+15</span>
+<span class="co">#&gt; attr(,"pseudo")</span>
+<span class="co">#&gt; [1] FALSE</span>
+<span class="co">#&gt; attr(,"minSV")</span>
+<span class="co">#&gt; [1] 85.77516</span>
 
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>
+<span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span>
+<span class="co">#&gt; bmi.1@1          24.6576 0.05650 24.5468 24.7683  0.000e+00</span>
+<span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10155 -0.6702 -0.2721  3.489e-06</span>
+<span class="co">#&gt; log(var)@1        2.5554 0.02019  2.5158  2.5949  0.000e+00</span>
+<span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.03554  0.7790  0.9183 5.146e-126</span>
+<span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.02095  0.3416  0.4237  1.545e-74</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html">iid</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 4271    5</span>
 
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="kw">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span>(<span class="kw">twinbmi</span>)
-<span class="kw">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span>(<span class="kw">bmi</span> <span class="op">~</span> <span class="kw">age</span><span class="op">+</span><span class="kw">gender</span>, data=<span class="kw">dd</span>,
-            DZ=<span class="st">"DZ"</span>, zyg=<span class="st">"zyg"</span>, id=<span class="st">"tvparnr"</span>, type=<span class="st">"sat"</span>)
-</pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span>(<span class="kw">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span>(<span class="kw">age</span>,<span class="fl">1</span>)<span class="op">+</span><span class="kw">gender</span>, data=<span class="kw">twinbmi</span>,
-           DZ=<span class="st">"DZ"</span>, zyg=<span class="st">"zyg"</span>, id=<span class="st">"tvparnr"</span>, type=<span class="st">"cor"</span>, missing=<span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">l</span>)
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html">contr</a></span><span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [atanh(rhoMZ)@1] - [a....    0.466 0.04138 0.3849 0.5471 2.026e-29</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Null Hypothesis: </span>
+<span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0</span>
+
+<span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html">contr</a></span><span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span>
+<span class="co">#&gt; bmi.1@1          24.6576 0.05614 24.5475 24.7676  0.000e+00</span>
+<span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10242 -0.6719 -0.2704  4.225e-06</span>
+<span class="co">#&gt; log(var)@1        2.5554 0.01699  2.5221  2.5887  0.000e+00</span>
+<span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.02296  0.8036  0.8936 4.462e-299</span>
+<span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.01847  0.3465  0.4189  2.301e-95</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/timereg/man/wald.test.html">wald.test</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;   lin.comb        se     lower     upper pval</span>
+<span class="co">#&gt; B 0.465969 0.0279537 0.4111807 0.5207572    0</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Wald test</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; data:  </span>
+<span class="co">#&gt; chisq = 277.87, df = 1, p-value &lt; 2.2e-16</span>
+
+<span class="fu">lava</span><span class="fu">:::</span><span class="va"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate.default</a></span>
+<span class="co">#&gt; function (x = NULL, f = NULL, ..., data, id, iddata, stack = TRUE, </span>
+<span class="co">#&gt;     average = FALSE, subset, score.deriv, level = 0.95, iid = robust, </span>
+<span class="co">#&gt;     type = c("robust", "df", "mbn"), keep, use, regex = FALSE, </span>
+<span class="co">#&gt;     contrast, null, vcov, coef, robust = TRUE, df = NULL, print = NULL, </span>
+<span class="co">#&gt;     labels, label.width, only.coef = FALSE, back.transform = NULL, </span>
+<span class="co">#&gt;     folds = 0, cluster, R = 0, null.sim) </span>
+<span class="co">#&gt; {</span>
+<span class="co">#&gt;     cl &lt;- match.call(expand.dots = TRUE)</span>
+<span class="co">#&gt;     if (!missing(use)) {</span>
+<span class="co">#&gt;         p0 &lt;- c("f", "contrast", "only.coef", "subset", "average", </span>
+<span class="co">#&gt;             "keep", "labels")</span>
+<span class="co">#&gt;         cl0 &lt;- cl</span>
+<span class="co">#&gt;         cl0[c("use", p0)] &lt;- NULL</span>
+<span class="co">#&gt;         cl0$keep &lt;- use</span>
+<span class="co">#&gt;         cl$x &lt;- eval(cl0, parent.frame())</span>
+<span class="co">#&gt;         cl[c("vcov", "use")] &lt;- NULL</span>
+<span class="co">#&gt;         return(eval(cl, parent.frame()))</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     expr &lt;- suppressWarnings(inherits(try(f, silent = TRUE), </span>
+<span class="co">#&gt;         "try-error"))</span>
+<span class="co">#&gt;     if (!missing(coef)) {</span>
+<span class="co">#&gt;         pp &lt;- coef</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         pp &lt;- suppressWarnings(try(stats::coef(x), "try-error"))</span>
+<span class="co">#&gt;         if (inherits(x, "survreg") &amp;&amp; length(pp) &lt; NROW(x$var)) {</span>
+<span class="co">#&gt;             pp &lt;- c(pp, scale = x$scale)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!missing(cluster)) </span>
+<span class="co">#&gt;         id &lt;- cluster</span>
+<span class="co">#&gt;     if (expr || is.character(f) || (is.numeric(f) &amp;&amp; !is.matrix(f))) {</span>
+<span class="co">#&gt;         dots &lt;- lapply(substitute(placeholder(...))[-1], function(x) x)</span>
+<span class="co">#&gt;         args &lt;- c(list(coef = names(pp), x = substitute(f), regex = regex), </span>
+<span class="co">#&gt;             dots)</span>
+<span class="co">#&gt;         f &lt;- do.call(parsedesign, args)</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!is.null(f) &amp;&amp; !is.function(f)) {</span>
+<span class="co">#&gt;         if (!(is.matrix(f) | is.vector(f))) </span>
+<span class="co">#&gt;             return(compare(x, f, ...))</span>
+<span class="co">#&gt;         contrast &lt;- f</span>
+<span class="co">#&gt;         f &lt;- NULL</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (lava.options()$cluster.index) {</span>
+<span class="co">#&gt;         if (!requireNamespace("mets", quietly = TRUE)) </span>
+<span class="co">#&gt;             stop("'mets' package required")</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (missing(data)) </span>
+<span class="co">#&gt;         data &lt;- tryCatch(model.frame(x), error = function(...) NULL)</span>
+<span class="co">#&gt;     alpha &lt;- 1 - level</span>
+<span class="co">#&gt;     alpha.str &lt;- paste(c(alpha/2, 1 - alpha/2) * 100, "", sep = "%")</span>
+<span class="co">#&gt;     nn &lt;- NULL</span>
+<span class="co">#&gt;     if ((((is.logical(iid) &amp;&amp; iid) || length(iid) &gt; 0) &amp;&amp; robust) &amp;&amp; </span>
+<span class="co">#&gt;         (missing(vcov) || is.null(vcov) || (is.logical(vcov) &amp;&amp; </span>
+<span class="co">#&gt;             vcov[1] == FALSE &amp;&amp; !is.na(vcov[1])))) {</span>
+<span class="co">#&gt;         if (missing(score.deriv)) {</span>
+<span class="co">#&gt;             if (!is.logical(iid)) {</span>
+<span class="co">#&gt;                 iidtheta &lt;- iid</span>
+<span class="co">#&gt;                 iid &lt;- TRUE</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;             else {</span>
+<span class="co">#&gt;                 suppressWarnings(iidtheta &lt;- iid(x, folds = folds))</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             suppressWarnings(iidtheta &lt;- iid(x, score.deriv = score.deriv, </span>
+<span class="co">#&gt;                 folds = folds))</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         if (missing(vcov) || (is.logical(vcov) &amp;&amp; !is.na(vcov)[1])) </span>
+<span class="co">#&gt;             suppressWarnings(vcov &lt;- stats::vcov(x))</span>
+<span class="co">#&gt;         iidtheta &lt;- NULL</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!missing(subset)) {</span>
+<span class="co">#&gt;         e &lt;- substitute(subset)</span>
+<span class="co">#&gt;         expr &lt;- suppressWarnings(inherits(try(subset, silent = TRUE), </span>
+<span class="co">#&gt;             "try-error"))</span>
+<span class="co">#&gt;         if (expr) </span>
+<span class="co">#&gt;             subset &lt;- eval(e, envir = data)</span>
+<span class="co">#&gt;         if (is.character(subset)) </span>
+<span class="co">#&gt;             subset &lt;- data[, subset]</span>
+<span class="co">#&gt;         if (is.numeric(subset)) </span>
+<span class="co">#&gt;             subset &lt;- subset &gt; 0</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     idstack &lt;- NULL</span>
+<span class="co">#&gt;     if (missing(id) &amp;&amp; inherits(x, "estimate") &amp;&amp; !is.null(x$id)) </span>
+<span class="co">#&gt;         id &lt;- x$id</span>
+<span class="co">#&gt;     if (!missing(id) &amp;&amp; iid) {</span>
+<span class="co">#&gt;         if (is.null(iidtheta)) </span>
+<span class="co">#&gt;             stop("'iid' method needed")</span>
+<span class="co">#&gt;         nprev &lt;- nrow(iidtheta)</span>
+<span class="co">#&gt;         if (inherits(id, "formula")) {</span>
+<span class="co">#&gt;             id &lt;- interaction(get_all_vars(id, data))</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (is.logical(id) &amp;&amp; length(id) == 1) {</span>
+<span class="co">#&gt;             id &lt;- if (is.null(iidtheta)) </span>
+<span class="co">#&gt;                 seq(nrow(data))</span>
+<span class="co">#&gt;             else seq(nprev)</span>
+<span class="co">#&gt;             stack &lt;- FALSE</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (is.character(id) &amp;&amp; length(id) == 1) </span>
+<span class="co">#&gt;             id &lt;- data[, id, drop = TRUE]</span>
+<span class="co">#&gt;         if (!is.null(iidtheta)) {</span>
+<span class="co">#&gt;             if (length(id) != nprev) {</span>
+<span class="co">#&gt;                 if (!is.null(x$na.action) &amp;&amp; (length(id) == length(x$na.action) + </span>
+<span class="co">#&gt;                   nprev)) {</span>
+<span class="co">#&gt;                   warning("Applying na.action")</span>
+<span class="co">#&gt;                   id &lt;- id[-x$na.action]</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 else stop("Dimensions of i.i.d decomposition and 'id' does not agree")</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             if (length(id) != nrow(data)) {</span>
+<span class="co">#&gt;                 if (!is.null(x$na.action) &amp;&amp; (length(id) == length(x$na.action) + </span>
+<span class="co">#&gt;                   nrow(data))) {</span>
+<span class="co">#&gt;                   warning("Applying na.action")</span>
+<span class="co">#&gt;                   id &lt;- id[-x$na.action]</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 else stop("Dimensions of i.i.d decomposition and 'id' does not agree")</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (stack) {</span>
+<span class="co">#&gt;             N &lt;- nrow(iidtheta)</span>
+<span class="co">#&gt;             clidx &lt;- NULL</span>
+<span class="co">#&gt;             atr &lt;- attributes(iidtheta)</span>
+<span class="co">#&gt;             atr$dimnames &lt;- NULL</span>
+<span class="co">#&gt;             atr$dim &lt;- NULL</span>
+<span class="co">#&gt;             if (!lava.options()$cluster.index) {</span>
+<span class="co">#&gt;                 iidtheta &lt;- matrix(unlist(by(iidtheta, id, colSums)), </span>
+<span class="co">#&gt;                   byrow = TRUE, ncol = ncol(iidtheta))</span>
+<span class="co">#&gt;                 attributes(iidtheta)[names(atr)] &lt;- atr</span>
+<span class="co">#&gt;                 idstack &lt;- sort(unique(id))</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;             else {</span>
+<span class="co">#&gt;                 clidx &lt;- mets::cluster.index(id, mat = iidtheta, </span>
+<span class="co">#&gt;                   return.all = TRUE)</span>
+<span class="co">#&gt;                 iidtheta &lt;- clidx$X</span>
+<span class="co">#&gt;                 attributes(iidtheta)[names(atr)] &lt;- atr</span>
+<span class="co">#&gt;                 idstack &lt;- id[as.vector(clidx$firstclustid) + </span>
+<span class="co">#&gt;                   1]</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;             if (is.null(attributes(iidtheta)$N)) {</span>
+<span class="co">#&gt;                 attributes(iidtheta)$N &lt;- N</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else idstack &lt;- id</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         if (!is.null(data)) </span>
+<span class="co">#&gt;             idstack &lt;- rownames(data)</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!is.null(iidtheta) &amp;&amp; (length(idstack) == nrow(iidtheta))) </span>
+<span class="co">#&gt;         rownames(iidtheta) &lt;- idstack</span>
+<span class="co">#&gt;     if (!robust) {</span>
+<span class="co">#&gt;         if (inherits(x, "lm") &amp;&amp; family(x)$family == "gaussian" &amp;&amp; </span>
+<span class="co">#&gt;             is.null(df)) </span>
+<span class="co">#&gt;             df &lt;- x$df.residual</span>
+<span class="co">#&gt;         if (missing(vcov)) </span>
+<span class="co">#&gt;             suppressWarnings(vcov &lt;- stats::vcov(x))</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!is.null(iidtheta) &amp;&amp; robust &amp;&amp; (missing(vcov) || is.null(vcov))) {</span>
+<span class="co">#&gt;         V &lt;- crossprod(iidtheta)</span>
+<span class="co">#&gt;         K &lt;- NROW(iidtheta)</span>
+<span class="co">#&gt;         N &lt;- attributes(iidtheta)$N</span>
+<span class="co">#&gt;         if (is.null(N)) </span>
+<span class="co">#&gt;             N &lt;- K</span>
+<span class="co">#&gt;         p &lt;- NCOL(iidtheta)</span>
+<span class="co">#&gt;         adj0 &lt;- K/(K - p)</span>
+<span class="co">#&gt;         adj1 &lt;- K/(K - 1)</span>
+<span class="co">#&gt;         adj2 &lt;- (N - 1)/(N - p) * (K/(K - 1))</span>
+<span class="co">#&gt;         if (tolower(type[1]) == "mbn" &amp;&amp; !is.null(attributes(iidtheta)$bread)) {</span>
+<span class="co">#&gt;             V0 &lt;- V</span>
+<span class="co">#&gt;             iI0 &lt;- attributes(iidtheta)$bread</span>
+<span class="co">#&gt;             I0 &lt;- Inverse(iI0)</span>
+<span class="co">#&gt;             delta &lt;- min(0.5, p/(K - p))</span>
+<span class="co">#&gt;             phi &lt;- max(1, tr(I0 %*% V0) * adj2/p)</span>
+<span class="co">#&gt;             V &lt;- adj2 * V0 + delta * phi * iI0</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (tolower(type[1]) == "df") {</span>
+<span class="co">#&gt;             V &lt;- adj0 * V</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (tolower(type[1]) == "df1") {</span>
+<span class="co">#&gt;             V &lt;- adj1 * V</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (tolower(type[1]) == "df2") {</span>
+<span class="co">#&gt;             V &lt;- adj2 * V</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         if (!missing(vcov)) {</span>
+<span class="co">#&gt;             if (length(vcov) == 1 &amp;&amp; is.na(vcov)) </span>
+<span class="co">#&gt;                 vcov &lt;- matrix(NA, length(pp), length(pp))</span>
+<span class="co">#&gt;             V &lt;- vcov</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             suppressWarnings(V &lt;- stats::vcov(x))</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (R &gt; 0) {</span>
+<span class="co">#&gt;         if (is.null(f)) </span>
+<span class="co">#&gt;             stop("Supply function 'f'")</span>
+<span class="co">#&gt;         if (missing(null.sim)) </span>
+<span class="co">#&gt;             null.sim &lt;- rep(0, length(pp))</span>
+<span class="co">#&gt;         est &lt;- f(pp)</span>
+<span class="co">#&gt;         if (is.list(est)) {</span>
+<span class="co">#&gt;             nn &lt;- names(est)</span>
+<span class="co">#&gt;             est &lt;- unlist(est)</span>
+<span class="co">#&gt;             names(est) &lt;- nn</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (missing(labels)) {</span>
+<span class="co">#&gt;             labels &lt;- colnames(rbind(est))</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         res &lt;- simnull(R, f, mu = null.sim, sigma = V, labels = labels)</span>
+<span class="co">#&gt;         return(structure(res, class = c("estimate.sim", "sim"), </span>
+<span class="co">#&gt;             coef = pp, vcov = V, f = f, estimate = est))</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!is.null(f)) {</span>
+<span class="co">#&gt;         form &lt;- names(formals(f))</span>
+<span class="co">#&gt;         dots &lt;- ("..." %in% names(form))</span>
+<span class="co">#&gt;         form0 &lt;- setdiff(form, "...")</span>
+<span class="co">#&gt;         parname &lt;- "p"</span>
+<span class="co">#&gt;         if (!is.null(form)) </span>
+<span class="co">#&gt;             parname &lt;- form[1]</span>
+<span class="co">#&gt;         if (length(form0) == 1 &amp;&amp; !(form0 %in% c("object", "data"))) {</span>
+<span class="co">#&gt;             parname &lt;- form0</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (!is.null(iidtheta)) {</span>
+<span class="co">#&gt;             arglist &lt;- c(list(object = x, data = data, p = vec(pp)), </span>
+<span class="co">#&gt;                 list(...))</span>
+<span class="co">#&gt;             names(arglist)[3] &lt;- parname</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             arglist &lt;- c(list(object = x, p = vec(pp)), list(...))</span>
+<span class="co">#&gt;             names(arglist)[2] &lt;- parname</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (!dots) {</span>
+<span class="co">#&gt;             arglist &lt;- arglist[intersect(form0, names(arglist))]</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         newf &lt;- NULL</span>
+<span class="co">#&gt;         if (length(form) == 0) {</span>
+<span class="co">#&gt;             arglist &lt;- list(vec(pp))</span>
+<span class="co">#&gt;             newf &lt;- function(...) do.call("f", list(...))</span>
+<span class="co">#&gt;             val &lt;- do.call("f", arglist)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             val &lt;- do.call("f", arglist)</span>
+<span class="co">#&gt;             if (is.list(val)) {</span>
+<span class="co">#&gt;                 nn &lt;- names(val)</span>
+<span class="co">#&gt;                 val &lt;- do.call("cbind", val)</span>
+<span class="co">#&gt;                 newf &lt;- function(...) do.call("cbind", f(...))</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         k &lt;- NCOL(val)</span>
+<span class="co">#&gt;         N &lt;- NROW(val)</span>
+<span class="co">#&gt;         D &lt;- attributes(val)$grad</span>
+<span class="co">#&gt;         if (is.null(D)) {</span>
+<span class="co">#&gt;             D &lt;- numDeriv::jacobian(function(p, ...) {</span>
+<span class="co">#&gt;                 if (length(form) == 0) </span>
+<span class="co">#&gt;                   arglist[[1]] &lt;- p</span>
+<span class="co">#&gt;                 else arglist[[parname]] &lt;- p</span>
+<span class="co">#&gt;                 if (is.null(newf)) </span>
+<span class="co">#&gt;                   return(do.call("f", arglist))</span>
+<span class="co">#&gt;                 return(do.call("newf", arglist))</span>
+<span class="co">#&gt;             }, pp)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         if (is.null(iidtheta)) {</span>
+<span class="co">#&gt;             pp &lt;- structure(as.vector(val), names = names(val))</span>
+<span class="co">#&gt;             V &lt;- D %*% V %*% t(D)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             if (!average || (N &lt; NROW(data))) {</span>
+<span class="co">#&gt;                 pp &lt;- structure(as.vector(val), names = names(val))</span>
+<span class="co">#&gt;                 iidtheta &lt;- iidtheta %*% t(D)</span>
+<span class="co">#&gt;                 V &lt;- D %*% V %*% t(D)</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;             else {</span>
+<span class="co">#&gt;                 if (k &gt; 1) {</span>
+<span class="co">#&gt;                   if (!missing(subset)) {</span>
+<span class="co">#&gt;                     val &lt;- apply(val, 2, function(x) x * subset)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                   D0 &lt;- matrix(nrow = k, ncol = length(pp))</span>
+<span class="co">#&gt;                   for (i in seq_len(k)) {</span>
+<span class="co">#&gt;                     D1 &lt;- D[seq(N) + (i - 1) * N, , drop = FALSE]</span>
+<span class="co">#&gt;                     if (!missing(subset)) </span>
+<span class="co">#&gt;                       D1 &lt;- apply(D1, 2, function(x) x * subset)</span>
+<span class="co">#&gt;                     D0[i, ] &lt;- colMeans(D1)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                   D &lt;- D0</span>
+<span class="co">#&gt;                   iid2 &lt;- iidtheta %*% t(D)</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 else {</span>
+<span class="co">#&gt;                   if (!missing(subset)) {</span>
+<span class="co">#&gt;                     val &lt;- val * subset</span>
+<span class="co">#&gt;                     D &lt;- apply(rbind(D), 2, function(x) x * subset)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                   D &lt;- colMeans(rbind(D))</span>
+<span class="co">#&gt;                   iid2 &lt;- iidtheta %*% D</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 pp &lt;- vec(colMeans(cbind(val)))</span>
+<span class="co">#&gt;                 iid1 &lt;- (cbind(val) - rbind(pp) %x% cbind(rep(1, </span>
+<span class="co">#&gt;                   N)))/N</span>
+<span class="co">#&gt;                 if (!missing(id)) {</span>
+<span class="co">#&gt;                   if (!lava.options()$cluster.index) </span>
+<span class="co">#&gt;                     iid1 &lt;- matrix(unlist(by(iid1, id, colSums)), </span>
+<span class="co">#&gt;                       byrow = TRUE, ncol = ncol(iid1))</span>
+<span class="co">#&gt;                   else {</span>
+<span class="co">#&gt;                     iid1 &lt;- mets::cluster.index(id, mat = iid1, </span>
+<span class="co">#&gt;                       return.all = FALSE)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 if (!missing(subset)) {</span>
+<span class="co">#&gt;                   phat &lt;- mean(subset)</span>
+<span class="co">#&gt;                   iid3 &lt;- cbind(-1/phat^2 * (subset - phat)/N)</span>
+<span class="co">#&gt;                   if (!missing(id)) {</span>
+<span class="co">#&gt;                     if (!lava.options()$cluster.index) {</span>
+<span class="co">#&gt;                       iid3 &lt;- matrix(unlist(by(iid3, id, colSums)), </span>
+<span class="co">#&gt;                         byrow = TRUE, ncol = ncol(iid3))</span>
+<span class="co">#&gt;                     }</span>
+<span class="co">#&gt;                     else {</span>
+<span class="co">#&gt;                       iid3 &lt;- mets::cluster.index(id, mat = iid3, </span>
+<span class="co">#&gt;                         return.all = FALSE)</span>
+<span class="co">#&gt;                     }</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                   iidtheta &lt;- (iid1 + iid2)/phat + rbind(pp) %x% </span>
+<span class="co">#&gt;                     iid3</span>
+<span class="co">#&gt;                   pp &lt;- pp/phat</span>
+<span class="co">#&gt;                   V &lt;- crossprod(iidtheta)</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;                 else {</span>
+<span class="co">#&gt;                   if (nrow(iid1) != nrow(iid2)) {</span>
+<span class="co">#&gt;                     message("Assuming independence between model iid decomposition and new data frame")</span>
+<span class="co">#&gt;                     V &lt;- crossprod(iid1) + crossprod(iid2)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                   else {</span>
+<span class="co">#&gt;                     iidtheta &lt;- iid1 + iid2</span>
+<span class="co">#&gt;                     V &lt;- crossprod(iidtheta)</span>
+<span class="co">#&gt;                   }</span>
+<span class="co">#&gt;                 }</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (is.null(V)) {</span>
+<span class="co">#&gt;         res &lt;- cbind(pp, NA, NA, NA, NA)</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         if (length(pp) == 1) </span>
+<span class="co">#&gt;             res &lt;- rbind(c(pp, diag(V)^0.5))</span>
+<span class="co">#&gt;         else res &lt;- cbind(pp, diag(V)^0.5)</span>
+<span class="co">#&gt;         beta0 &lt;- res[, 1]</span>
+<span class="co">#&gt;         if (!missing(null) &amp;&amp; missing(contrast)) </span>
+<span class="co">#&gt;             beta0 &lt;- beta0 - null</span>
+<span class="co">#&gt;         if (!is.null(df)) {</span>
+<span class="co">#&gt;             za &lt;- qt(1 - alpha/2, df = df)</span>
+<span class="co">#&gt;             pval &lt;- 2 * pt(abs(res[, 1]/res[, 2]), df = df, lower.tail = FALSE)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             za &lt;- qnorm(1 - alpha/2)</span>
+<span class="co">#&gt;             pval &lt;- 2 * pnorm(abs(res[, 1]/res[, 2]), lower.tail = FALSE)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         res &lt;- cbind(res, res[, 1] - za * res[, 2], res[, 1] + </span>
+<span class="co">#&gt;             za * res[, 2], pval)</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     colnames(res) &lt;- c("Estimate", "Std.Err", alpha.str, "P-value")</span>
+<span class="co">#&gt;     if (nrow(res) &gt; 0) </span>
+<span class="co">#&gt;         if (!is.null(nn)) {</span>
+<span class="co">#&gt;             rownames(res) &lt;- nn</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             nn &lt;- attributes(res)$varnames</span>
+<span class="co">#&gt;             if (!is.null(nn)) </span>
+<span class="co">#&gt;                 rownames(res) &lt;- nn</span>
+<span class="co">#&gt;             if (is.null(rownames(res))) </span>
+<span class="co">#&gt;                 rownames(res) &lt;- paste0("p", seq(nrow(res)))</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;     if (NROW(res) == 0L) {</span>
+<span class="co">#&gt;         coefs &lt;- NULL</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     else {</span>
+<span class="co">#&gt;         coefs &lt;- res[, 1, drop = TRUE]</span>
+<span class="co">#&gt;         names(coefs) &lt;- rownames(res)</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     res &lt;- structure(list(coef = coefs, coefmat = res, vcov = V, </span>
+<span class="co">#&gt;         iid = NULL, print = print, id = idstack), class = "estimate")</span>
+<span class="co">#&gt;     if (iid) </span>
+<span class="co">#&gt;         res$iid &lt;- iidtheta</span>
+<span class="co">#&gt;     if (length(coefs) == 0L) </span>
+<span class="co">#&gt;         return(res)</span>
+<span class="co">#&gt;     if (!missing(contrast) | !missing(null)) {</span>
+<span class="co">#&gt;         p &lt;- length(res$coef)</span>
+<span class="co">#&gt;         if (missing(contrast)) </span>
+<span class="co">#&gt;             contrast &lt;- diag(nrow = p)</span>
+<span class="co">#&gt;         if (missing(null)) </span>
+<span class="co">#&gt;             null &lt;- 0</span>
+<span class="co">#&gt;         if (is.vector(contrast) || is.list(contrast)) {</span>
+<span class="co">#&gt;             contrast &lt;- contr(contrast, names(res$coef), ...)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         cc &lt;- compare(res, contrast = contrast, null = null, </span>
+<span class="co">#&gt;             vcov = V, level = level, df = df)</span>
+<span class="co">#&gt;         res &lt;- structure(c(res, list(compare = cc)), class = "estimate")</span>
+<span class="co">#&gt;         if (!is.null(df)) {</span>
+<span class="co">#&gt;             pval &lt;- with(cc, pt(abs(estimate[, 1] - null)/estimate[, </span>
+<span class="co">#&gt;                 2], df = df, lower.tail = FALSE) * 2)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         else {</span>
+<span class="co">#&gt;             pval &lt;- with(cc, pnorm(abs(estimate[, 1] - null)/estimate[, </span>
+<span class="co">#&gt;                 2], lower.tail = FALSE) * 2)</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         res$coefmat &lt;- with(cc, cbind(estimate, pval))</span>
+<span class="co">#&gt;         colnames(res$coefmat)[5] &lt;- "P-value"</span>
+<span class="co">#&gt;         rownames(res$coefmat) &lt;- cc$cnames</span>
+<span class="co">#&gt;         if (!is.null(res$iid)) {</span>
+<span class="co">#&gt;             res$iid &lt;- res$iid %*% t(contrast)</span>
+<span class="co">#&gt;             colnames(res$iid) &lt;- cc$cnames</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         res$compare$estimate &lt;- NULL</span>
+<span class="co">#&gt;         res$coef &lt;- res$compare$coef</span>
+<span class="co">#&gt;         res$vcov &lt;- res$compare$vcov</span>
+<span class="co">#&gt;         names(res$coef) &lt;- gsub("(^\\[)|(\\]$)", "", rownames(res$coefmat))</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!is.null(back.transform)) {</span>
+<span class="co">#&gt;         res$coefmat[, c(1, 3, 4)] &lt;- do.call(back.transform, </span>
+<span class="co">#&gt;             list(res$coefmat[, c(1, 3, 4)]))</span>
+<span class="co">#&gt;         res$coefmat[, 2] &lt;- NA</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!missing(keep) &amp;&amp; !is.null(keep)) {</span>
+<span class="co">#&gt;         if (is.character(keep)) {</span>
+<span class="co">#&gt;             if (regex) {</span>
+<span class="co">#&gt;                 nn &lt;- rownames(res$coefmat)</span>
+<span class="co">#&gt;                 keep &lt;- unlist(lapply(keep, function(x) grep(x, </span>
+<span class="co">#&gt;                   nn, perl = TRUE)))</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;             else {</span>
+<span class="co">#&gt;                 keep &lt;- match(keep, rownames(res$coefmat))</span>
+<span class="co">#&gt;             }</span>
+<span class="co">#&gt;         }</span>
+<span class="co">#&gt;         res$coef &lt;- res$coef[keep]</span>
+<span class="co">#&gt;         res$coefmat &lt;- res$coefmat[keep, , drop = FALSE]</span>
+<span class="co">#&gt;         if (!is.null(res$iid)) </span>
+<span class="co">#&gt;             res$iid &lt;- res$iid[, keep, drop = FALSE]</span>
+<span class="co">#&gt;         res$vcov &lt;- res$vcov[keep, keep, drop = FALSE]</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!missing(labels)) {</span>
+<span class="co">#&gt;         names(res$coef) &lt;- labels</span>
+<span class="co">#&gt;         if (!is.null(res$iid)) </span>
+<span class="co">#&gt;             colnames(res$iid) &lt;- labels</span>
+<span class="co">#&gt;         colnames(res$vcov) &lt;- rownames(res$vcov) &lt;- labels</span>
+<span class="co">#&gt;         rownames(res$coefmat) &lt;- labels</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (!missing(label.width)) {</span>
+<span class="co">#&gt;         rownames(res$coefmat) &lt;- make.unique(unlist(lapply(rownames(res$coefmat), </span>
+<span class="co">#&gt;             function(x) toString(x, width = label.width))))</span>
+<span class="co">#&gt;     }</span>
+<span class="co">#&gt;     if (only.coef) </span>
+<span class="co">#&gt;         return(res$coefmat)</span>
+<span class="co">#&gt;     res$call &lt;- cl</span>
+<span class="co">#&gt;     res$back.transform &lt;- back.transform</span>
+<span class="co">#&gt;     res$n &lt;- nrow(data)</span>
+<span class="co">#&gt;     res$ncluster &lt;- nrow(res$iid)</span>
+<span class="co">#&gt;     return(res)</span>
+<span class="co">#&gt; }</span>
+<span class="co">#&gt; &lt;bytecode: 0x555c321dc4e8&gt;</span>
+<span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">twinbmi</span>,
+           DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"cor"</span>, missing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span>
 <span class="co">#&gt; ____________________________________________________</span>
 <span class="co">#&gt; Group 1</span>
 <span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span>
@@ -304,21 +928,19 @@ Marginal association between BMI and Age for males and females.
 <span class="co">#&gt; </span>
 <span class="co">#&gt; 'log Lik.' -29020.12 (df=6)</span>
 <span class="co">#&gt; AIC: 58052.24 </span>
-<span class="co">#&gt; BIC: 58093.29</span>
-</pre></div>
+<span class="co">#&gt; BIC: 58093.29</span></code></pre></div>
 <p>A formal test of genetic effects can be obtained by comparing the MZ and DZ correlation:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/lava/man/estimate.default.html">estimate</a></span>(<span class="kw">l</span>,<span class="fu"><a href="https://rdrr.io/pkg/lava/man/contr.html">contr</a></span>(<span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span>))
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">l</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span>
 <span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4829 0.04176 0.4011 0.5648 6.325e-31</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;  Null Hypothesis: </span>
-<span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@3] = 0</span>
-</pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span>(<span class="kw">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span>(<span class="kw">age</span>,<span class="fl">1</span>)<span class="op">+</span><span class="kw">gender</span>, data=<span class="kw">twinbmi</span>,
-           DZ=<span class="st">"DZ"</span>, zyg=<span class="st">"zyg"</span>, id=<span class="st">"tvparnr"</span>, type=<span class="st">"cor"</span>, missing=<span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">l</span>)
+<span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@3] = 0</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">twinbmi</span>,
+           DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"cor"</span>, missing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span>
 <span class="co">#&gt; ____________________________________________________</span>
 <span class="co">#&gt; Group 1</span>
 <span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span>
@@ -348,8 +970,10 @@ Marginal association between BMI and Age for males and females.
 <span class="co">#&gt; </span>
 <span class="co">#&gt; 'log Lik.' -29020.12 (df=6)</span>
 <span class="co">#&gt; AIC: 58052.24 </span>
-<span class="co">#&gt; BIC: 58093.29</span>
-</pre></div>
+<span class="co">#&gt; BIC: 58093.29</span></code></pre></div>
+<p>We also consider the ACE model</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="twin-analysis-censored-outcomes" class="section level1">
@@ -359,10 +983,6 @@ Marginal association between BMI and Age for males and females.
 <div id="twin-analysis-binary-traits" class="section level1">
 <h1 class="hasAnchor">
 <a href="#twin-analysis-binary-traits" class="anchor"></a>Twin analysis, binary traits</h1>
-</div>
-<div id="time-to-event" class="section level1">
-<h1 class="hasAnchor">
-<a href="#time-to-event" class="anchor"></a>Time to event</h1>
 </div>
 <div id="bibliography" class="section level1">
 <h1 class="hasAnchor">

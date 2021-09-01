@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,21 +168,21 @@
     <p>aggregating for for data frames</p>
     </div>
 
-    <pre class="usage"><span class='fu'>daggregate</span>(
-  <span class='kw'>data</span>,
-  y = <span class='kw'>NULL</span>,
-  x = <span class='kw'>NULL</span>,
-  <span class='kw'>subset</span>,
-  <span class='kw'>...</span>,
-  fun = <span class='st'>"summary"</span>,
-  regex = <span class='fu'><a href='mets.options.html'>mets.options</a></span>()<span class='op'>$</span><span class='kw'>regex</span>,
-  missing = <span class='fl'>FALSE</span>,
-  remove.empty = <span class='fl'>FALSE</span>,
-  matrix = <span class='fl'>FALSE</span>,
-  silent = <span class='fl'>FALSE</span>,
-  na.action = <span class='kw'>na.pass</span>,
-  convert = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>daggregate</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  y <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>subset</span>,
+  <span class='va'>...</span>,
+  fun <span class='op'>=</span> <span class='st'>"summary"</span>,
+  regex <span class='op'>=</span> <span class='fu'><a href='mets.options.html'>mets.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>regex</span>,
+  missing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  remove.empty <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  matrix <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  silent <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  na.action <span class='op'>=</span> <span class='va'>na.pass</span>,
+  convert <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -231,8 +243,8 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sTRACE"</span>,package=<span class='st'>"timereg"</span>)
-<span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='st'>"^.e.al"</span>, x=<span class='st'>"Species"</span>, fun=<span class='kw'>cor</span>, regex=<span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sTRACE"</span>,package<span class='op'>=</span><span class='st'>"timereg"</span><span class='op'>)</span>
+<span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='st'>"^.e.al"</span>, x<span class='op'>=</span><span class='st'>"Species"</span>, fun<span class='op'>=</span><span class='va'>cor</span>, regex<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;              Sepal.Length Sepal.Width Petal.Length Petal.Width
 #&gt; Sepal.Length    1.0000000   0.7425467    0.2671758   0.2780984
@@ -252,7 +264,7 @@
 #&gt; Sepal.Length    1.0000000   0.4572278    0.8642247   0.2811077
 #&gt; Sepal.Width     0.4572278   1.0000000    0.4010446   0.5377280
 #&gt; Petal.Length    0.8642247   0.4010446    1.0000000   0.3221082
-#&gt; Petal.Width     0.2811077   0.5377280    0.3221082   1.0000000</div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='kw'>Sepal.Length</span><span class='op'>+</span><span class='kw'>Petal.Length</span> <span class='op'>~</span><span class='kw'>Species</span>, fun=<span class='kw'>summary</span>)
+#&gt; Petal.Width     0.2811077   0.5377280    0.3221082   1.0000000</div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span><span class='op'>+</span><span class='va'>Petal.Length</span> <span class='op'>~</span><span class='va'>Species</span>, fun<span class='op'>=</span><span class='va'>summary</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;   Sepal.Length    Petal.Length  
 #&gt;  Min.   :4.300   Min.   :1.000  
@@ -278,8 +290,8 @@
 #&gt;  Median :6.500   Median :5.550  
 #&gt;  Mean   :6.588   Mean   :5.552  
 #&gt;  3rd Qu.:6.900   3rd Qu.:5.875  
-#&gt;  Max.   :7.900   Max.   :6.900  </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='kw'>Sepal.Length</span>)<span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span>) <span class='op'>~</span> <span class='kw'>Species</span>,
-                 fun=<span class='kw'>summary</span>)
+#&gt;  Max.   :7.900   Max.   :6.900  </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>Sepal.Length</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>Species</span>,
+                 fun<span class='op'>=</span><span class='va'>summary</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;  log(Sepal.Length) I(Petal.Length &gt; 1.5)
 #&gt;  Min.   :1.459     Mode :logical        
@@ -305,7 +317,7 @@
 #&gt;  Median :1.872                          
 #&gt;  Mean   :1.881                          
 #&gt;  3rd Qu.:1.932                          
-#&gt;  Max.   :2.067                          </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='st'>"*Length*"</span>, x=<span class='st'>"Species"</span>, fun=<span class='kw'>head</span>)
+#&gt;  Max.   :2.067                          </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='st'>"*Length*"</span>, x<span class='op'>=</span><span class='st'>"Species"</span>, fun<span class='op'>=</span><span class='va'>head</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;   Sepal.Length Petal.Length
 #&gt; 1          5.1          1.4
@@ -331,7 +343,7 @@
 #&gt; 103          7.1          5.9
 #&gt; 104          6.3          5.6
 #&gt; 105          6.5          5.8
-#&gt; 106          7.6          6.6</div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='st'>"^.e.al"</span>, x=<span class='st'>"Species"</span>, fun=<span class='kw'>tail</span>, regex=<span class='fl'>TRUE</span>)
+#&gt; 106          7.6          6.6</div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='st'>"^.e.al"</span>, x<span class='op'>=</span><span class='st'>"Species"</span>, fun<span class='op'>=</span><span class='va'>tail</span>, regex<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width
 #&gt; 45          5.1         3.8          1.9         0.4
@@ -357,7 +369,7 @@
 #&gt; 147          6.3         2.5          5.0         1.9
 #&gt; 148          6.5         3.0          5.2         2.0
 #&gt; 149          6.2         3.4          5.4         2.3
-#&gt; 150          5.9         3.0          5.1         1.8</div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>sTRACE</span>, <span class='kw'>status</span><span class='op'>~</span> <span class='kw'>diabetes</span>, fun=<span class='kw'>table</span>)
+#&gt; 150          5.9         3.0          5.1         1.8</div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>sTRACE</span>, <span class='va'>status</span><span class='op'>~</span> <span class='va'>diabetes</span>, fun<span class='op'>=</span><span class='va'>table</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; diabetes: 0
 #&gt; 
 #&gt;   0   7   9 
@@ -366,7 +378,7 @@
 #&gt; diabetes: 1
 #&gt; 
 #&gt;  0  9 
-#&gt; 16 31 </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>sTRACE</span>, <span class='kw'>status</span><span class='op'>~</span> <span class='kw'>diabetes</span><span class='op'>+</span><span class='kw'>sex</span>, fun=<span class='kw'>table</span>)
+#&gt; 16 31 </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>sTRACE</span>, <span class='va'>status</span><span class='op'>~</span> <span class='va'>diabetes</span><span class='op'>+</span><span class='va'>sex</span>, fun<span class='op'>=</span><span class='va'>table</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; diabetes: 0
 #&gt; sex: 0
 #&gt; 
@@ -389,7 +401,7 @@
 #&gt; sex: 1
 #&gt; 
 #&gt;  0  9 
-#&gt; 10 18 </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>sTRACE</span>, <span class='kw'>status</span> <span class='op'>+</span> <span class='kw'>diabetes</span><span class='op'>+</span><span class='kw'>sex</span> <span class='op'>~</span> <span class='kw'>vf</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>wmi</span><span class='op'>&gt;</span><span class='fl'>1.4</span>), fun=<span class='kw'>table</span>)
+#&gt; 10 18 </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>sTRACE</span>, <span class='va'>status</span> <span class='op'>+</span> <span class='va'>diabetes</span><span class='op'>+</span><span class='va'>sex</span> <span class='op'>~</span> <span class='va'>vf</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>wmi</span><span class='op'>&gt;</span><span class='fl'>1.4</span><span class='op'>)</span>, fun<span class='op'>=</span><span class='va'>table</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; vf: 0
 #&gt; I(wmi &gt; 1.4): FALSE
 #&gt; , , sex = 0
@@ -460,7 +472,7 @@
 #&gt; status 0
 #&gt;      0 3
 #&gt;      9 2
-#&gt; </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='st'>"^.e.al"</span>, x=<span class='st'>"Species"</span>,regex=<span class='fl'>TRUE</span>)
+#&gt; </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='st'>"^.e.al"</span>, x<span class='op'>=</span><span class='st'>"Species"</span>,regex<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;   Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
 #&gt;  Min.   :4.300   Min.   :2.300   Min.   :1.000   Min.   :0.100  
@@ -486,8 +498,8 @@
 #&gt;  Median :6.500   Median :3.000   Median :5.550   Median :2.000  
 #&gt;  Mean   :6.588   Mean   :2.974   Mean   :5.552   Mean   :2.026  
 #&gt;  3rd Qu.:6.900   3rd Qu.:3.175   3rd Qu.:5.875   3rd Qu.:2.300  
-#&gt;  Max.   :7.900   Max.   :3.800   Max.   :6.900   Max.   :2.500  </div><div class='input'><span class='fu'><a href='dprint.html'>dlist</a></span>(<span class='kw'>iris</span>,<span class='kw'>Petal.Length</span><span class='op'>+</span><span class='kw'>Sepal.Length</span> <span class='op'>~</span> <span class='kw'>Species</span> <span class='op'>|</span><span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.3</span> <span class='op'>&amp;</span> <span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>5</span>,
-            n=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,<span class='op'>-</span>(<span class='fl'>3</span><span class='op'>:</span><span class='fl'>1</span>)))
+#&gt;  Max.   :7.900   Max.   :3.800   Max.   :6.900   Max.   :2.500  </div><div class='input'><span class='fu'><a href='dprint.html'>dlist</a></span><span class='op'>(</span><span class='va'>iris</span>,<span class='va'>Petal.Length</span><span class='op'>+</span><span class='va'>Sepal.Length</span> <span class='op'>~</span> <span class='va'>Species</span> <span class='op'>|</span><span class='va'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.3</span> <span class='op'>&amp;</span> <span class='va'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>5</span>,
+            n<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,<span class='op'>-</span><span class='op'>(</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;     Petal.Length Sepal.Length
 #&gt; 1   1.4          5.1         
@@ -522,7 +534,7 @@
 #&gt; 149 5.4          6.2         
 #&gt; 150 5.1          5.9         
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span>)<span class='op'>~</span><span class='kw'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span>))
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>~</span><span class='va'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt;  I(Sepal.Length &gt; 7)
 #&gt;  Mode :logical      
@@ -537,8 +549,8 @@
 #&gt;  I(Sepal.Length &gt; 7)
 #&gt;  Mode :logical      
 #&gt;  FALSE:38           
-#&gt;  TRUE :12           </div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span>)<span class='op'>~</span><span class='kw'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span>),
-                 fun=<span class='kw'>table</span>)
+#&gt;  TRUE :12           </div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>, <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>Sepal.Length</span><span class='op'>&gt;</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>~</span><span class='va'>Species</span> <span class='op'>|</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>Petal.Length</span><span class='op'>&gt;</span><span class='fl'>1.5</span><span class='op'>)</span>,
+                 fun<span class='op'>=</span><span class='va'>table</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Species: setosa
 #&gt; 
 #&gt; FALSE 
@@ -553,15 +565,15 @@
 #&gt; 
 #&gt; FALSE  TRUE 
 #&gt;    38    12 </div><div class='input'>
-<span class='fu'><a href='dcor.html'>dsum</a></span>(<span class='kw'>iris</span>, <span class='kw'>.</span><span class='op'>~</span><span class='kw'>Species</span>, matrix=<span class='fl'>TRUE</span>, missing=<span class='fl'>TRUE</span>)
+<span class='fu'><a href='dcor.html'>dsum</a></span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>.</span><span class='op'>~</span><span class='va'>Species</span>, matrix<span class='op'>=</span><span class='cn'>TRUE</span>, missing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      Species Sepal.Length Sepal.Width Petal.Length Petal.Width
 #&gt; 1     setosa        250.3       171.4         73.1        12.3
 #&gt; 2 versicolor        296.8       138.5        213.0        66.3
 #&gt; 3  virginica        329.4       148.7        277.6       101.3</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>iris</span>)
-<span class='fu'><a href='dcut.html'>drename</a></span>(<span class='kw'>iris</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='kw'>species</span><span class='op'>|</span><span class='kw'>species</span>!=<span class='st'>"virginica"</span>,fun=<span class='kw'>plot</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span>
+<span class='fu'><a href='dcut.html'>drename</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='va'>species</span><span class='op'>|</span><span class='va'>species</span><span class='op'>!=</span><span class='st'>"virginica"</span>,fun<span class='op'>=</span><span class='va'>plot</span><span class='op'>)</span>
 </div><div class='img'><img src='daggregate-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; species: setosa
 #&gt; NULL
 #&gt; ------------------------------------------------------------ 
@@ -569,7 +581,7 @@
 #&gt; NULL
 #&gt; ------------------------------------------------------------ 
 #&gt; species: virginica
-#&gt; NULL</div><div class='input'><span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>species</span>))<span class='op'>|</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span>(<span class='kw'>species</span>))!=<span class='fl'>1</span>,fun=<span class='kw'>summary</span>)
+#&gt; NULL</div><div class='input'><span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>species</span><span class='op'>)</span><span class='op'>)</span><span class='op'>|</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>species</span><span class='op'>)</span><span class='op'>)</span><span class='op'>!=</span><span class='fl'>1</span>,fun<span class='op'>=</span><span class='va'>summary</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; I(as.numeric(species)): 2
 #&gt;   sepal.length    sepal.width   
 #&gt;  Min.   :4.900   Min.   :2.000  
@@ -587,8 +599,8 @@
 #&gt;  Mean   :6.588   Mean   :2.974  
 #&gt;  3rd Qu.:6.900   3rd Qu.:3.175  
 #&gt;  Max.   :7.900   Max.   :3.800  </div><div class='input'>
-<span class='fu'><a href='drelevel.html'>dnumeric</a></span>(<span class='kw'>iris</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>species</span>
-<span class='fu'>daggregate</span>(<span class='kw'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='kw'>species.n</span><span class='op'>|</span><span class='kw'>species.n</span>!=<span class='fl'>1</span>,fun=<span class='kw'>summary</span>)
+<span class='fu'><a href='drelevel.html'>dnumeric</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>species</span>
+<span class='fu'>daggregate</span><span class='op'>(</span><span class='va'>iris</span>,<span class='st'>'sepal*'</span><span class='op'>~</span><span class='va'>species.n</span><span class='op'>|</span><span class='va'>species.n</span><span class='op'>!=</span><span class='fl'>1</span>,fun<span class='op'>=</span><span class='va'>summary</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; species.n: 2
 #&gt;   sepal.length    sepal.width   
 #&gt;  Min.   :4.900   Min.   :2.000  

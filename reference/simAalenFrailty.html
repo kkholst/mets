@@ -73,7 +73,7 @@ distributed frailty and constant intensity." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -105,10 +105,19 @@ distributed frailty and constant intensity." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -118,6 +127,9 @@ distributed frailty and constant intensity." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -158,16 +170,16 @@ distributed frailty and constant intensity." />
 distributed frailty and constant intensity.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>simAalenFrailty</span>(
-  n = <span class='fl'>5000</span>,
-  theta = <span class='fl'>0.3</span>,
-  K = <span class='fl'>2</span>,
-  beta0 = <span class='fl'>1.5</span>,
-  beta = <span class='fl'>1</span>,
-  cens = <span class='fl'>1.5</span>,
-  cuts = <span class='fl'>0</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>simAalenFrailty</span><span class='op'>(</span>
+  n <span class='op'>=</span> <span class='fl'>5000</span>,
+  theta <span class='op'>=</span> <span class='fl'>0.3</span>,
+  K <span class='op'>=</span> <span class='fl'>2</span>,
+  beta0 <span class='op'>=</span> <span class='fl'>1.5</span>,
+  beta <span class='op'>=</span> <span class='fl'>1</span>,
+  cens <span class='op'>=</span> <span class='fl'>1.5</span>,
+  cuts <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

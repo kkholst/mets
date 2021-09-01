@@ -79,7 +79,7 @@ regression (ALR)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -111,10 +111,19 @@ regression (ALR)." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -124,6 +133,9 @@ regression (ALR)." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -167,41 +179,40 @@ based on all pairwise bivariate models.</h1>
 regression (ALR).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>binomial.twostage</span>(
-  <span class='kw'>margbin</span>,
-  data = <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(),
-  method = <span class='st'>"nr"</span>,
-  Nit = <span class='fl'>60</span>,
-  detail = <span class='fl'>0</span>,
-  clusters = <span class='kw'>NULL</span>,
-  silent = <span class='fl'>1</span>,
-  weights = <span class='kw'>NULL</span>,
-  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  theta = <span class='kw'>NULL</span>,
-  theta.des = <span class='kw'>NULL</span>,
-  var.link = <span class='fl'>0</span>,
-  var.par = <span class='fl'>1</span>,
-  var.func = <span class='kw'>NULL</span>,
-  iid = <span class='fl'>1</span>,
-  step = <span class='fl'>1</span>,
-  notaylor = <span class='fl'>1</span>,
-  model = <span class='st'>"plackett"</span>,
-  marginal.p = <span class='kw'>NULL</span>,
-  beta.iid = <span class='kw'>NULL</span>,
-  Dbeta.iid = <span class='kw'>NULL</span>,
-  strata = <span class='kw'>NULL</span>,
-  max.clust = <span class='kw'>NULL</span>,
-  se.clusters = <span class='kw'>NULL</span>,
-  numDeriv = <span class='fl'>0</span>,
-  random.design = <span class='kw'>NULL</span>,
-  pairs = <span class='kw'>NULL</span>,
-  dim.theta = <span class='kw'>NULL</span>,
-  additive.gamma.sum = <span class='kw'>NULL</span>,
-  pair.ascertained = <span class='fl'>0</span>,
-  case.control = <span class='fl'>0</span>,
-  twostage = <span class='fl'>1</span>,
-  beta = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>binomial.twostage</span><span class='op'>(</span>
+  <span class='va'>margbin</span>,
+  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='st'>"nr"</span>,
+  detail <span class='op'>=</span> <span class='fl'>0</span>,
+  clusters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  silent <span class='op'>=</span> <span class='fl'>1</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  theta.des <span class='op'>=</span> <span class='cn'>NULL</span>,
+  var.link <span class='op'>=</span> <span class='fl'>0</span>,
+  var.par <span class='op'>=</span> <span class='fl'>1</span>,
+  var.func <span class='op'>=</span> <span class='cn'>NULL</span>,
+  iid <span class='op'>=</span> <span class='fl'>1</span>,
+  notaylor <span class='op'>=</span> <span class='fl'>1</span>,
+  model <span class='op'>=</span> <span class='st'>"plackett"</span>,
+  marginal.p <span class='op'>=</span> <span class='cn'>NULL</span>,
+  beta.iid <span class='op'>=</span> <span class='cn'>NULL</span>,
+  Dbeta.iid <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  max.clust <span class='op'>=</span> <span class='cn'>NULL</span>,
+  se.clusters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  numDeriv <span class='op'>=</span> <span class='fl'>0</span>,
+  random.design <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pairs <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dim.theta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  additive.gamma.sum <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pair.ascertained <span class='op'>=</span> <span class='fl'>0</span>,
+  case.control <span class='op'>=</span> <span class='fl'>0</span>,
+  no.opt <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  twostage <span class='op'>=</span> <span class='fl'>1</span>,
+  beta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -216,11 +227,7 @@ regression (ALR).</p>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>Scoring method default is  "nr"</p></td>
-    </tr>
-    <tr>
-      <th>Nit</th>
-      <td><p>Number of iterations</p></td>
+      <td><p>Scoring method "nr", for lava NR optimizer</p></td>
     </tr>
     <tr>
       <th>detail</th>
@@ -237,10 +244,6 @@ regression (ALR).</p>
     <tr>
       <th>weights</th>
       <td><p>Weights for log-likelihood, can be used for each type of outcome in 2x2 tables.</p></td>
-    </tr>
-    <tr>
-      <th>control</th>
-      <td><p>Optimization arguments</p></td>
     </tr>
     <tr>
       <th>theta</th>
@@ -266,10 +269,6 @@ theta-design for this pair, is given in pairs as column 5</p></td>
     <tr>
       <th>iid</th>
       <td><p>Calculate i.i.d. decomposition when iid&gt;=1, when iid=2 then avoids adding the uncertainty for marginal paramters for additive gamma model (default).</p></td>
-    </tr>
-    <tr>
-      <th>step</th>
-      <td><p>Step size</p></td>
     </tr>
     <tr>
       <th>notaylor</th>
@@ -333,12 +332,20 @@ indeces of the pairs random.design rows are given as columns 3:4</p></td>
       <td><p>if data is case control data for pair call, and here 2nd column of pairs are probands (cases or controls)</p></td>
     </tr>
     <tr>
+      <th>no.opt</th>
+      <td><p>for not optimizing</p></td>
+    </tr>
+    <tr>
       <th>twostage</th>
       <td><p>default twostage=1, to fit MLE use twostage=0</p></td>
     </tr>
     <tr>
       <th>beta</th>
       <td><p>is starting value for beta for MLE version</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>for NR of lava</p></td>
     </tr>
     </table>
 
@@ -407,17 +414,15 @@ here using theta.des to specify these low-dimension association. Default is a di
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://github.com/scheike/timereg'>"timereg"</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"twinstut"</span>,package=<span class='st'>"mets"</span>)
-<span class='kw'>twinstut0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>twinstut</span>, <span class='kw'>tvparnr</span><span class='op'>&lt;</span><span class='fl'>11000</span>)
-<span class='kw'>twinstut</span> <span class='op'>&lt;-</span> <span class='kw'>twinstut0</span>
-<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>binstut</span> <span class='op'>&lt;-</span> (<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>stutter</span><span class='op'>==</span><span class='st'>"yes"</span>)<span class='op'>*</span><span class='fl'>1</span>
-<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>( <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>),data=<span class='kw'>twinstut</span>)
-<span class='kw'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>binstut</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>sex</span>)<span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>twinstut</span>,family=<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
-<span class='kw'>bin</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span>(<span class='kw'>margbin</span>,data=<span class='kw'>twinstut</span>,var.link=<span class='fl'>1</span>,
-             clusters=<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>tvparnr</span>,theta.des=<span class='kw'>theta.des</span>,detail=<span class='fl'>0</span>,
-                   method=<span class='st'>"nr"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>bin</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>twinstut</span><span class='op'>)</span>
+<span class='va'>twinstut0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>twinstut</span>, <span class='va'>tvparnr</span><span class='op'>&lt;</span><span class='fl'>11000</span><span class='op'>)</span>
+<span class='va'>twinstut</span> <span class='op'>&lt;-</span> <span class='va'>twinstut0</span>
+<span class='va'>twinstut</span><span class='op'>$</span><span class='va'>binstut</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>stutter</span><span class='op'>==</span><span class='st'>"yes"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1</span>
+<span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span> <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>)</span>
+<span class='va'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>binstut</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>age</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,family<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>bin</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
+         clusters<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>tvparnr</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span>,detail<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bin</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                   theta        se
@@ -436,18 +441,18 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>cage</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/scale.html'>scale</a></span>(<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>age</span>)
-<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>( <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>)<span class='op'>+</span><span class='kw'>cage</span>,data=<span class='kw'>twinstut</span>)
-<span class='kw'>bina</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span>(<span class='kw'>margbin</span>,data=<span class='kw'>twinstut</span>,var.link=<span class='fl'>1</span>,
-             clusters=<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>tvparnr</span>,theta.des=<span class='kw'>theta.des</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>bina</span>)
+<span class='va'>twinstut</span><span class='op'>$</span><span class='va'>cage</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/scale.html'>scale</a></span><span class='op'>(</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>age</span><span class='op'>)</span>
+<span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span> <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span><span class='op'>+</span><span class='va'>cage</span>,data<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>)</span>
+<span class='va'>bina</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
+             clusters<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>tvparnr</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bina</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                     theta        se
-#&gt; factor(zyg)dz  0.57700482 0.3629335
+#&gt; factor(zyg)dz  0.57700488 0.3629335
 #&gt; factor(zyg)mz  3.56844450 0.3124284
-#&gt; factor(zyg)os  0.43186302 0.4825553
-#&gt; cage          -0.09986369 0.2488807
+#&gt; factor(zyg)os  0.43186294 0.4825554
+#&gt; cage          -0.09986363 0.2488807
 #&gt; 
 #&gt; $or
 #&gt;               Estimate Std.Err     2.5%  97.5%   P-value
@@ -461,19 +466,19 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='kw'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>( <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>)<span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg</span>)<span class='op'>*</span><span class='kw'>cage</span>,data=<span class='kw'>twinstut</span>)
-<span class='kw'>bina</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span>(<span class='kw'>margbin</span>,data=<span class='kw'>twinstut</span>,var.link=<span class='fl'>1</span>,
-             clusters=<span class='kw'>twinstut</span><span class='op'>$</span><span class='kw'>tvparnr</span>,theta.des=<span class='kw'>theta.des</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>bina</span>)
+<span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span> <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span><span class='op'>*</span><span class='va'>cage</span>,data<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>)</span>
+<span class='va'>bina</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
+             clusters<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>tvparnr</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bina</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                         theta        se
 #&gt; factor(zyg)dz       0.3899611 0.4159563
 #&gt; factor(zyg)mz       3.5643574 0.3134147
-#&gt; factor(zyg)os       0.3565611 0.5423941
+#&gt; factor(zyg)os       0.3565616 0.5423941
 #&gt; cage               -0.5343521 0.4718928
 #&gt; factor(zyg)mz:cage  0.4113993 0.5858546
-#&gt; factor(zyg)os:cage  0.9516641 0.7822908
+#&gt; factor(zyg)os:cage  0.9516629 0.7822908
 #&gt; 
 #&gt; $or
 #&gt;                    Estimate Std.Err     2.5%  97.5%  P-value
@@ -482,7 +487,7 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; factor(zyg)os         1.428  0.7748 -0.09009  2.947 0.065230
 #&gt; cage                  0.586  0.2766  0.04402  1.128 0.034080
 #&gt; factor(zyg)mz:cage    1.509  0.8840 -0.22370  3.242 0.087839
-#&gt; factor(zyg)os:cage    2.590  2.0261 -1.38116  6.561 0.201145
+#&gt; factor(zyg)os:cage    2.590  2.0261 -1.38115  6.561 0.201145
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -491,10 +496,10 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>## refers to zygosity of first subject in eash pair : zyg1</span>
 <span class='co'>## could also use zyg2 (since zyg2=zyg1 within twinpair's))</span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='easy.binomial.twostage.html'>easy.binomial.twostage</a></span>(<span class='kw'>stutter</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>sex</span>)<span class='op'>+</span><span class='kw'>age</span>,data=<span class='kw'>twinstut</span>,
-                          response=<span class='st'>"binstut"</span>,id=<span class='st'>"tvparnr"</span>,var.link=<span class='fl'>1</span>,
-                       theta.formula=<span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>zyg1</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='easy.binomial.twostage.html'>easy.binomial.twostage</a></span><span class='op'>(</span><span class='va'>stutter</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>age</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,
+                          response<span class='op'>=</span><span class='st'>"binstut"</span>,id<span class='op'>=</span><span class='st'>"tvparnr"</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
+                       theta.formula<span class='op'>=</span><span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                    theta        se
@@ -515,13 +520,13 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
 <span class='co'>## refers to zygosity of first subject in eash pair : zyg1</span>
 <span class='co'>## could also use zyg2 (since zyg2=zyg1 within twinpair's))</span>
-<span class='kw'>desfs</span><span class='op'>&lt;-</span><span class='fu'>function</span>(<span class='kw'>x</span>,<span class='kw'>num1</span>=<span class='st'>"zyg1"</span>,<span class='kw'>num2</span>=<span class='st'>"zyg2"</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"dz"</span>,<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"mz"</span>,<span class='kw'>x</span>[<span class='kw'>num1</span>]<span class='op'>==</span><span class='st'>"os"</span>)<span class='op'>*</span><span class='fl'>1</span>
+<span class='va'>desfs</span><span class='op'>&lt;-</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>,<span class='va'>num1</span><span class='op'>=</span><span class='st'>"zyg1"</span>,<span class='va'>num2</span><span class='op'>=</span><span class='st'>"zyg2"</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>num1</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"dz"</span>,<span class='va'>x</span><span class='op'>[</span><span class='va'>num1</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"mz"</span>,<span class='va'>x</span><span class='op'>[</span><span class='va'>num1</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"os"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1</span>
 
-<span class='kw'>out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='easy.binomial.twostage.html'>easy.binomial.twostage</a></span>(<span class='kw'>binstut</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>sex</span>)<span class='op'>+</span><span class='kw'>age</span>,
-      data=<span class='kw'>twinstut</span>,response=<span class='st'>"binstut"</span>,id=<span class='st'>"tvparnr"</span>,var.link=<span class='fl'>1</span>,
-      theta.formula=<span class='kw'>desfs</span>,desnames=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mz"</span>,<span class='st'>"dz"</span>,<span class='st'>"os"</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out3</span>)
+<span class='va'>out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='easy.binomial.twostage.html'>easy.binomial.twostage</a></span><span class='op'>(</span><span class='va'>binstut</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>age</span>,
+      data<span class='op'>=</span><span class='va'>twinstut</span>,response<span class='op'>=</span><span class='st'>"binstut"</span>,id<span class='op'>=</span><span class='st'>"tvparnr"</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
+      theta.formula<span class='op'>=</span><span class='va'>desfs</span>,desnames<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mz"</span>,<span class='st'>"dz"</span>,<span class='st'>"os"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out3</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;        theta        se
@@ -543,9 +548,9 @@ here using theta.des to specify these low-dimension association. Default is a di
 <span class='co'>### use of clayton oakes binomial additive gamma model</span>
 <span class='co'>###########################################################</span>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simbinClaytonOakes.family.ace</a></span>(<span class='fl'>10000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,beta=<span class='kw'>NULL</span>,alpha=<span class='kw'>NULL</span>)
-<span class='kw'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>ybin</span><span class='op'>~</span><span class='kw'>x</span>,data=<span class='kw'>data</span>,family=<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
-<span class='kw'>margbin</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simbinClaytonOakes.family.ace</a></span><span class='op'>(</span><span class='fl'>10000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,beta<span class='op'>=</span><span class='cn'>NULL</span>,alpha<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
+<span class='va'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>ybin</span><span class='op'>~</span><span class='va'>x</span>,data<span class='op'>=</span><span class='va'>data</span>,family<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>margbin</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:  glm(formula = ybin ~ x, family = binomial(), data = data)
 #&gt; 
@@ -556,19 +561,19 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; Degrees of Freedom: 39999 Total (i.e. Null);  39998 Residual
 #&gt; Null Deviance:	    51470 
 #&gt; Residual Deviance: 51290 	AIC: 51300</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>data</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   ybin x   type cluster
 #&gt; 1    1 0 mother       1
 #&gt; 2    1 0 father       1
 #&gt; 3    0 0  child       1
 #&gt; 4    1 0  child       1
 #&gt; 5    1 0 mother       2
-#&gt; 6    1 0 father       2</div><div class='input'><span class='kw'>data</span><span class='op'>$</span><span class='kw'>number</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>)
-<span class='kw'>data</span><span class='op'>$</span><span class='kw'>child</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span>(<span class='kw'>data</span><span class='op'>$</span><span class='kw'>number</span><span class='op'>==</span><span class='fl'>3</span>)
+#&gt; 6    1 0 father       2</div><div class='input'><span class='va'>data</span><span class='op'>$</span><span class='va'>number</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span><span class='op'>)</span>
+<span class='va'>data</span><span class='op'>$</span><span class='va'>child</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>number</span><span class='op'>==</span><span class='fl'>3</span><span class='op'>)</span>
 
 <span class='co'>### make ace random effects design</span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>ace.family.design</a></span>(<span class='kw'>data</span>,member=<span class='st'>"type"</span>,id=<span class='st'>"cluster"</span>)
-<span class='kw'>out</span><span class='op'>$</span><span class='kw'>pardes</span>
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>ace.family.design</a></span><span class='op'>(</span><span class='va'>data</span>,member<span class='op'>=</span><span class='st'>"type"</span>,id<span class='op'>=</span><span class='st'>"cluster"</span><span class='op'>)</span>
+<span class='va'>out</span><span class='op'>$</span><span class='va'>pardes</span>
 </div><div class='output co'>#&gt;       [,1] [,2]
 #&gt;  [1,] 0.25    0
 #&gt;  [2,] 0.25    0
@@ -578,7 +583,7 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt;  [6,] 0.25    0
 #&gt;  [7,] 0.25    0
 #&gt;  [8,] 0.25    0
-#&gt;  [9,] 0.00    1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>des.rv</span>)
+#&gt;  [9,] 0.00    1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>$</span><span class='va'>des.rv</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      m1 m2 m3 m4 f1 f2 f3 f4 env
 #&gt; [1,]  1  1  1  1  0  0  0  0   1
 #&gt; [2,]  0  0  0  0  1  1  1  1   1
@@ -586,11 +591,11 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; [4,]  1  0  1  0  1  0  1  0   1
 #&gt; [5,]  1  1  1  1  0  0  0  0   1
 #&gt; [6,]  0  0  0  0  1  1  1  1   1</div><div class='input'>
-<span class='kw'>bints</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span>(<span class='kw'>margbin</span>,data=<span class='kw'>data</span>,
-     clusters=<span class='kw'>data</span><span class='op'>$</span><span class='kw'>cluster</span>,detail=<span class='fl'>0</span>,var.par=<span class='fl'>1</span>,
-     theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>),var.link=<span class='fl'>0</span>,
-     random.design=<span class='kw'>out</span><span class='op'>$</span><span class='kw'>des.rv</span>,theta.des=<span class='kw'>out</span><span class='op'>$</span><span class='kw'>pardes</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>bints</span>)
+<span class='va'>bints</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>data</span>,
+     clusters<span class='op'>=</span><span class='va'>data</span><span class='op'>$</span><span class='va'>cluster</span>,detail<span class='op'>=</span><span class='fl'>0</span>,var.par<span class='op'>=</span><span class='fl'>1</span>,
+     theta<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>1</span><span class='op'>)</span>,var.link<span class='op'>=</span><span class='fl'>0</span>,
+     random.design<span class='op'>=</span><span class='va'>out</span><span class='op'>$</span><span class='va'>des.rv</span>,theta.des<span class='op'>=</span><span class='va'>out</span><span class='op'>$</span><span class='va'>pardes</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bints</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                theta         se
@@ -614,27 +619,27 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
-<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simbinClaytonOakes.twin.ace</a></span>(<span class='fl'>10000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,beta=<span class='kw'>NULL</span>,alpha=<span class='kw'>NULL</span>)
-<span class='kw'>out</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>twin.polygen.design</a></span>(<span class='kw'>data</span>,id=<span class='st'>"cluster"</span>,zygname=<span class='st'>"zygosity"</span>)
-<span class='kw'>out</span><span class='op'>$</span><span class='kw'>pardes</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simbinClaytonOakes.twin.ace</a></span><span class='op'>(</span><span class='fl'>10000</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,beta<span class='op'>=</span><span class='cn'>NULL</span>,alpha<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
+<span class='va'>out</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>twin.polygen.design</a></span><span class='op'>(</span><span class='va'>data</span>,id<span class='op'>=</span><span class='st'>"cluster"</span>,zygname<span class='op'>=</span><span class='st'>"zygosity"</span><span class='op'>)</span>
+<span class='va'>out</span><span class='op'>$</span><span class='va'>pardes</span>
 </div><div class='output co'>#&gt;      [,1] [,2]
 #&gt; [1,]  1.0    0
 #&gt; [2,]  0.5    0
 #&gt; [3,]  0.5    0
 #&gt; [4,]  0.5    0
-#&gt; [5,]  0.0    1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>des.rv</span>)
+#&gt; [5,]  0.0    1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>$</span><span class='va'>des.rv</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   MZ DZ DZns1 DZns2 env
 #&gt; 1  1  0     0     0   1
 #&gt; 2  1  0     0     0   1
 #&gt; 3  1  0     0     0   1
 #&gt; 4  1  0     0     0   1
 #&gt; 5  1  0     0     0   1
-#&gt; 6  1  0     0     0   1</div><div class='input'><span class='kw'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>ybin</span><span class='op'>~</span><span class='kw'>x</span>,data=<span class='kw'>data</span>,family=<span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span>())
+#&gt; 6  1  0     0     0   1</div><div class='input'><span class='va'>margbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>ybin</span><span class='op'>~</span><span class='va'>x</span>,data<span class='op'>=</span><span class='va'>data</span>,family<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/family.html'>binomial</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>bintwin</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span>(<span class='kw'>margbin</span>,data=<span class='kw'>data</span>,
-     clusters=<span class='kw'>data</span><span class='op'>$</span><span class='kw'>cluster</span>,var.par=<span class='fl'>1</span>,
-     theta=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>1</span>),random.design=<span class='kw'>out</span><span class='op'>$</span><span class='kw'>des.rv</span>,theta.des=<span class='kw'>out</span><span class='op'>$</span><span class='kw'>pardes</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>bintwin</span>)
+<span class='va'>bintwin</span> <span class='op'>&lt;-</span> <span class='fu'>binomial.twostage</span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>data</span>,
+     clusters<span class='op'>=</span><span class='va'>data</span><span class='op'>$</span><span class='va'>cluster</span>,var.par<span class='op'>=</span><span class='fl'>1</span>,
+     theta<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>1</span><span class='op'>)</span>,random.design<span class='op'>=</span><span class='va'>out</span><span class='op'>$</span><span class='va'>des.rv</span>,theta.des<span class='op'>=</span><span class='va'>out</span><span class='op'>$</span><span class='va'>pardes</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bintwin</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects </div><div class='output co'>#&gt; $estimates
 #&gt;                theta        se
@@ -657,7 +662,7 @@ here using theta.des to specify these low-dimension association. Default is a di
 #&gt; p1    3.095  0.1485 2.804 3.387 1.753e-96
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='npc.html'>concordanceTwinACE</a></span>(<span class='kw'>bintwin</span>)
+#&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'><a href='npc.html'>concordanceTwinACE</a></span><span class='op'>(</span><span class='va'>bintwin</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $MZ
 #&gt;                      Estimate  Std.Err   2.5%  97.5% P-value
 #&gt; concordance            0.5222 0.005581 0.5112 0.5331       0

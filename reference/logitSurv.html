@@ -76,7 +76,7 @@ so covariate effects give OR of survival." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -108,10 +108,19 @@ so covariate effects give OR of survival." />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -121,6 +130,9 @@ so covariate effects give OR of survival." />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -164,7 +176,7 @@ $$
 so covariate effects give OR of survival.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>logitSurv</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, offset = <span class='kw'>NULL</span>, weights = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>logitSurv</span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, offset <span class='op'>=</span> <span class='cn'>NULL</span>, weights <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,29 +220,30 @@ Biometrics, 2015, 3, 687--695, 71,</p>
     <p>Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>TRACE</span>)
-<span class='fu'><a href='dcut.html'>dcut</a></span>(<span class='kw'>TRACE</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='kw'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>logitSurv</span>(<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>9</span>)<span class='op'>~</span><span class='kw'>vf</span><span class='op'>+</span><span class='kw'>chf</span><span class='op'>+</span><span class='fu'>strata</span>(<span class='kw'>wmicat.4</span>),data=<span class='kw'>TRACE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out1</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>TRACE</span><span class='op'>)</span>
+<span class='fu'><a href='dcut.html'>dcut</a></span><span class='op'>(</span><span class='va'>TRACE</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='va'>out1</span> <span class='op'>&lt;-</span> <span class='fu'>logitSurv</span><span class='op'>(</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>~</span><span class='va'>vf</span><span class='op'>+</span><span class='va'>chf</span><span class='op'>+</span><span class='fu'>strata</span><span class='op'>(</span><span class='va'>wmicat.4</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>TRACE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;     n events
 #&gt;  1878    958
 #&gt; 
 #&gt;  1878 clusters
-#&gt; log-coeffients:
+#&gt; coeffients:
 #&gt;     Estimate    S.E. dU^-1/2 P-value
 #&gt; vf   0.30049 0.22633 0.11154  0.1843
 #&gt; chf  1.26008 0.10095 0.07316  0.0000
 #&gt; 
 #&gt; exp(coeffients):
-#&gt;       Estimate Std.Err    2.5%   97.5% P-value
-#&gt; [vf]   1.35052 0.30566 0.75144 1.94959  0.2515
-#&gt; [chf]  3.52570 0.35593 2.82809 4.22330  0.0000
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/lava/man/gof.html'>gof</a></span>(<span class='kw'>out1</span>)
+#&gt;     Estimate    2.5%  97.5%
+#&gt; vf   1.35052 0.86667 2.1045
+#&gt; chf  3.52570 2.89277 4.2971
+#&gt; 
+#&gt; </div><div class='input'><span class='fu'><a href='https://kkholst.github.io/lava/reference/gof.html'>gof</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Cumulative score process test for Proportionality:
 #&gt;     Sup|U(t)|  pval
 #&gt; vf   42.28659 0.000
-#&gt; chf  20.75308 0.184</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>out1</span>)
+#&gt; chf  20.75308 0.184</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>out1</span><span class='op'>)</span>
 </div><div class='img'><img src='logitSurv-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

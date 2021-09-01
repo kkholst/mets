@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,7 +168,7 @@
     <p>listing for data frames</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dprint</span>(<span class='kw'>data</span>, y = <span class='kw'>NULL</span>, n = <span class='fl'>0</span>, <span class='kw'>...</span>, x = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>dprint</span><span class='op'>(</span><span class='va'>data</span>, y <span class='op'>=</span> <span class='cn'>NULL</span>, n <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span>, x <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -188,11 +200,11 @@
     <p>Klaus K. Holst and Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>20</span>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='kw'>lava</span>::<span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='kw'>letters</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='kw'>lava</span>::<span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>sim</a></span>(<span class='kw'>m</span>,<span class='kw'>n</span>)
+    <pre class="examples"><div class='input'><span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>20</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/lvm.html'>lvm</a></span><span class='op'>(</span><span class='va'>letters</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/sim.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>n</span><span class='op'>)</span>
 
-<span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span>)
+<span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     a        b       c       
 #&gt; 1   -1.84383 -0.4530 -0.7494 
 #&gt; 2    0.05678  0.3284 -0.2295 
@@ -206,18 +218,18 @@
 #&gt; 19   1.72061  1.598   1.03400
 #&gt; 20  -0.98638 -1.690   0.42084
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>)
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
 #&gt; [1] matrix array </div><div class='input'><span class='co'>## listing all : </span>
-<span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>,n=<span class='fl'>0</span>)
+<span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>,n<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             a         b          c
 #&gt; 8  -2.5005946 0.2945457 -0.6720881
 #&gt; 15 -0.2635549 0.6685403 -0.4457079
-#&gt; 18 -0.8449837 0.9860376 -2.1087776</div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>d</span><span class='op'>&gt;</span><span class='fl'>0</span>)<span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>)
+#&gt; 18 -0.8449837 0.9860376 -2.1087776</div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
@@ -229,7 +241,7 @@
 #&gt;    a      b     c     
 #&gt; 18 -0.845 0.986 -2.109
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='kw'>.</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>d</span><span class='op'>&gt;</span><span class='fl'>0</span>)<span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>)
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>.</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;    a       b      c       d       e       f        g      h       i     
 #&gt; 8  -2.5006 0.2945 -0.6721 -0.3044  0.2865 -1.21571 1.5568 0.04573 0.5221
@@ -251,31 +263,31 @@
 #&gt;    v      w      x       y       z      
 #&gt; 18 0.2771 0.4051 -0.9893 -0.8414 -0.5754
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, nlast=<span class='fl'>0</span>)
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, nlast<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, nfirst=<span class='fl'>3</span>, nlast=<span class='fl'>3</span>)
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, nfirst<span class='op'>=</span><span class='fl'>3</span>, nlast<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>)
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='op'>-</span>(<span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span>))
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='op'>-</span><span class='op'>(</span><span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    a       b      c      
 #&gt; 8  -2.5006 0.2945 -0.6721
 #&gt; 15 -0.2636 0.6685 -0.4457
 #&gt; 18 -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span>(<span class='kw'>d</span>,<span class='op'>~</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span><span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>50</span><span class='op'>:</span><span class='fl'>55</span>,<span class='op'>-</span>(<span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span>)))
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dlist</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span><span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>50</span><span class='op'>:</span><span class='fl'>55</span>,<span class='op'>-</span><span class='op'>(</span><span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     a       b      c      
 #&gt; 8   -2.5006 0.2945 -0.6721
 #&gt; 15  -0.2636 0.6685 -0.4457
@@ -286,7 +298,7 @@
 #&gt; 15  -0.2636 0.6685 -0.4457
 #&gt; 18  -0.8450 0.9860 -2.1088
 #&gt; attr(,"class")
-#&gt; [1] matrix array </div><div class='input'><span class='fu'>dprint</span>(<span class='kw'>d</span>,<span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span><span class='op'>+</span><span class='kw'>c</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>d</span><span class='op'>&gt;</span><span class='fl'>0</span>) <span class='op'>|</span><span class='kw'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='kw'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>50</span><span class='op'>:</span><span class='fl'>55</span>,<span class='op'>-</span>(<span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span>)))
+#&gt; [1] matrix array </div><div class='input'><span class='fu'>dprint</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>+</span><span class='va'>c</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>&gt;</span><span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span><span class='va'>a</span><span class='op'>&lt;</span><span class='fl'>0</span> <span class='op'>&amp;</span> <span class='va'>b</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,<span class='fl'>50</span><span class='op'>:</span><span class='fl'>55</span>,<span class='op'>-</span><span class='op'>(</span><span class='fl'>5</span><span class='op'>:</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; I(d &gt; 0): FALSE
 #&gt;     a       b      c      
 #&gt; 8   -2.5006 0.2945 -0.6721

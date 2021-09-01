@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,23 +168,23 @@
     <p>Calculate summary statistics grouped by variable</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dby</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>INPUT</span>,
-  <span class='kw'>...</span>,
-  ID = <span class='kw'>NULL</span>,
-  ORDER = <span class='kw'>NULL</span>,
-  SUBSET = <span class='kw'>NULL</span>,
-  SORT = <span class='fl'>0</span>,
-  COMBINE = <span class='op'>!</span><span class='kw'>REDUCE</span>,
-  NOCHECK = <span class='fl'>FALSE</span>,
-  ARGS = <span class='kw'>NULL</span>,
-  <span class='kw'>NAMES</span>,
-  COLUMN = <span class='fl'>FALSE</span>,
-  REDUCE = <span class='fl'>FALSE</span>,
-  REGEX = <span class='fu'><a href='mets.options.html'>mets.options</a></span>()<span class='op'>$</span><span class='kw'>regex</span>,
-  ALL = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>dby</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>INPUT</span>,
+  <span class='va'>...</span>,
+  ID <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ORDER <span class='op'>=</span> <span class='cn'>NULL</span>,
+  SUBSET <span class='op'>=</span> <span class='cn'>NULL</span>,
+  SORT <span class='op'>=</span> <span class='fl'>0</span>,
+  COMBINE <span class='op'>=</span> <span class='op'>!</span><span class='va'>REDUCE</span>,
+  NOCHECK <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ARGS <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>NAMES</span>,
+  COLUMN <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  REDUCE <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  REGEX <span class='op'>=</span> <span class='fu'><a href='mets.options.html'>mets.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>regex</span>,
+  ALL <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -249,13 +261,13 @@
     <p>Klaus K. Holst and Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
-<span class='kw'>k</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>0.5</span>)<span class='op'>+</span><span class='fl'>1</span>)
-<span class='kw'>N</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='kw'>k</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>N</span>),x=<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>N</span>),id=<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>n</span>),<span class='kw'>k</span>),num=<span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='kw'>k</span>,<span class='kw'>seq</span>)))
-<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>d</span>)),]
+    <pre class="examples"><div class='input'><span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
+<span class='va'>k</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>0.5</span><span class='op'>)</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>N</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>k</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>N</span><span class='op'>)</span>,x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>N</span><span class='op'>)</span>,id<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='va'>k</span><span class='op'>)</span>,num<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='va'>k</span>,<span class='va'>seq</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='va'>d</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span><span class='op'>)</span>,<span class='op'>]</span>
 
-<span class='fu'>dby</span>(<span class='kw'>d2</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span>, <span class='kw'>mean</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d2</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span>, <span class='va'>mean</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num        mean
 #&gt; 3  -1.55336807 -2.03545050  1   3 -1.06455561
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.06455561
@@ -267,7 +279,7 @@
 #&gt; 7   0.36620380 -1.21157397  3   1 -0.03992063
 #&gt; 8  -0.20842081  1.16618593  3   2 -0.03992063
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.03992063
-#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d2</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), <span class='kw'>cumsum</span>)
+#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d2</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, <span class='va'>cumsum</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num     cumsum
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.7954354
 #&gt; 2   0.15513661  0.03833857  1   2 -1.6402988
@@ -280,7 +292,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  0.1445201
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1596825
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203</div><div class='input'>
-<span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), <span class='kw'>dlag</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>y</span> <span class='op'>~</span> <span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, <span class='va'>dlag</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num        dlag
 #&gt; 1  -1.79543538  0.55634005  1   1          NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538
@@ -292,7 +304,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  0.36620380
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291
-#&gt; 11 -0.24722026 -0.18616474  4   1          NA</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), <span class='kw'>dlag</span>, ARGS=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(k=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>))
+#&gt; 11 -0.24722026 -0.18616474  4   1          NA</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>y</span> <span class='op'>~</span> <span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, <span class='va'>dlag</span>, ARGS<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num       dlag1      dlag2
 #&gt; 1  -1.79543538  0.55634005  1   1          NA         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538         NA
@@ -304,7 +316,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  0.36620380         NA
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081  0.3662038
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291 -0.2084208
-#&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), <span class='kw'>dlag</span>, ARGS=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(k=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>), NAMES=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l1"</span>,<span class='st'>"l2"</span>))
+#&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>y</span> <span class='op'>~</span> <span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, <span class='va'>dlag</span>, ARGS<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>, NAMES<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"l1"</span>,<span class='st'>"l2"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num          l1         l2
 #&gt; 1  -1.79543538  0.55634005  1   1          NA         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.79543538         NA
@@ -317,7 +329,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.20842081  0.3662038
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.01326291 -0.2084208
 #&gt; 11 -0.24722026 -0.18616474  4   1          NA         NA</div><div class='input'>
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), mean=<span class='kw'>mean</span>, csum=<span class='kw'>cumsum</span>, n=<span class='kw'>length</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, mean<span class='op'>=</span><span class='va'>mean</span>, csum<span class='op'>=</span><span class='va'>cumsum</span>, n<span class='op'>=</span><span class='va'>length</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num        mean       csum n
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.06455561 -1.7954354 3
 #&gt; 2   0.15513661  0.03833857  1   2 -1.06455561 -1.6402988 3
@@ -329,7 +341,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2 -0.03992063  0.1577830 4
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.03992063  0.1445201 4
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.03992063 -0.1596825 4
-#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026 -0.2472203 1</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d2</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), a=<span class='kw'>cumsum</span>, b=<span class='kw'>mean</span>, N=<span class='kw'>length</span>, l1=<span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>,<span class='kw'>x</span>)[<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>x</span>)])
+#&gt; 11 -0.24722026 -0.18616474  4   1 -0.24722026 -0.2472203 1</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d2</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, a<span class='op'>=</span><span class='va'>cumsum</span>, b<span class='op'>=</span><span class='va'>mean</span>, N<span class='op'>=</span><span class='va'>length</span>, l1<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>,<span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num          a           b N         l1
 #&gt; 1  -1.79543538  0.55634005  1   1 -1.7954354 -1.06455561 3         NA
 #&gt; 2   0.15513661  0.03833857  1   2 -1.6402988 -1.06455561 3 -1.7954354
@@ -342,7 +354,7 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  0.1445201 -0.03992063 4 -0.2084208
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1596825 -0.03992063 4 -0.3042026
 #&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203 -0.24722026 1 -0.2472203</div><div class='input'>
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), nn=<span class='kw'>seq_along</span>, n=<span class='kw'>length</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, nn<span class='op'>=</span><span class='va'>seq_along</span>, n<span class='op'>=</span><span class='va'>length</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num nn n
 #&gt; 1  -1.79543538  0.55634005  1   1  1 3
 #&gt; 2   0.15513661  0.03833857  1   2  2 3
@@ -354,7 +366,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  2 4
 #&gt; 9  -0.01326291  0.46188895  3   3  3 4
 #&gt; 10 -0.30420261  0.19521967  3   4  4 4
-#&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), nn=<span class='kw'>seq_along</span>, n=<span class='kw'>length</span>)
+#&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, nn<span class='op'>=</span><span class='va'>seq_along</span>, n<span class='op'>=</span><span class='va'>length</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num nn n
 #&gt; 1  -1.79543538  0.55634005  1   1  1 3
 #&gt; 2   0.15513661  0.03833857  1   2  2 3
@@ -367,14 +379,14 @@
 #&gt; 9  -0.01326291  0.46188895  3   3  3 4
 #&gt; 10 -0.30420261  0.19521967  3   4  4 4
 #&gt; 11 -0.24722026 -0.18616474  4   1  1 1</div><div class='input'>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>[,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>]
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(z=<span class='kw'>mean</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>z</span>), z=<span class='fl'>1</span>)
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='va'>d</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>x</span><span class='op'>&lt;</span><span class='fl'>0</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>z<span class='op'>=</span><span class='va'>mean</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span>, z<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 
-<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='kw'>x</span>,<span class='fl'>1</span>,<span class='kw'>min</span>)
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span>, min=<span class='kw'>f</span>)
+<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>x</span>,<span class='fl'>1</span>,<span class='va'>min</span><span class='op'>)</span>
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>+</span><span class='va'>x</span><span class='op'>~</span><span class='va'>id</span>, min<span class='op'>=</span><span class='va'>f</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
-<span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>num</span>), <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>y</span><span class='op'>+</span><span class='va'>x</span><span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>num</span><span class='op'>)</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='va'>x</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num         z         _11         _12
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.79543538  0.55634005
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000  0.15513661  0.03833857
@@ -387,13 +399,13 @@
 #&gt; 9  -0.01326291  0.46188895  3   3 1.0000000 -0.01326291  0.46188895
 #&gt; 10 -0.30420261  0.19521967  3   4 1.0000000 -0.30420261  0.19521967
 #&gt; 11 -0.24722026 -0.18616474  4   1 0.8011568 -0.24722026 -0.18616474</div><div class='input'>
-<span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) { <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='kw'>x</span>[,<span class='fl'>1</span>]),<span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='kw'>x</span>[,<span class='fl'>2</span>]))<span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='kw'>x</span>)}
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span>, <span class='kw'>f</span>)
+<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>}</span>
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>+</span><span class='va'>x</span><span class='op'>~</span><span class='va'>id</span>, <span class='va'>f</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN): object 'f' not found</span></div><div class='input'>
 <span class='co'>## column-wise</span>
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>
-<span class='fu'>dby2</span>(<span class='kw'>a</span>, <span class='kw'>mean</span>, <span class='kw'>median</span>, REGEX=<span class='fl'>TRUE</span>) <span class='op'>&lt;-</span> <span class='st'>'^[y|x]'</span><span class='op'>~</span><span class='kw'>id</span>
-<span class='kw'>a</span>
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='va'>d</span>
+<span class='fu'>dby2</span><span class='op'>(</span><span class='va'>a</span>, <span class='va'>mean</span>, <span class='va'>median</span>, REGEX<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>'^[y|x]'</span><span class='op'>~</span><span class='va'>id</span>
+<span class='va'>a</span>
 </div><div class='output co'>#&gt;              y           x id num         z      mean.y     mean.x   median.y
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.06455561 -0.4802573 -1.5533681
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000 -1.06455561 -0.4802573 -1.5533681
@@ -418,7 +430,7 @@
 #&gt; 9   0.32855431
 #&gt; 10  0.32855431
 #&gt; 11 -0.18616474</div><div class='input'><span class='co'>## wildcards </span>
-<span class='fu'>dby2</span>(<span class='kw'>a</span>,<span class='st'>'y*'</span><span class='op'>+</span><span class='st'>'x*'</span><span class='op'>~</span><span class='kw'>id</span>,<span class='kw'>mean</span>) 
+<span class='fu'>dby2</span><span class='op'>(</span><span class='va'>a</span>,<span class='st'>'y*'</span><span class='op'>+</span><span class='st'>'x*'</span><span class='op'>~</span><span class='va'>id</span>,<span class='va'>mean</span><span class='op'>)</span> 
 </div><div class='output co'>#&gt;              y           x id num         z   median.y    median.x      mean.y
 #&gt; 1  -1.79543538  0.55634005  1   1 1.0000000 -1.5533681  0.03833857 -1.06455561
 #&gt; 2   0.15513661  0.03833857  1   2 1.0000000 -1.5533681  0.03833857 -1.06455561
@@ -445,8 +457,8 @@
 #&gt; 11 -0.1861647</div><div class='input'>
 
 <span class='co'>## subset</span>
-<span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(z=<span class='fl'>NA</span>)
-<span class='kw'>d</span>
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>x</span><span class='op'>&lt;</span><span class='fl'>0</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>z<span class='op'>=</span><span class='cn'>NA</span><span class='op'>)</span>
+<span class='va'>d</span>
 </div><div class='output co'>#&gt;              y           x id num  z
 #&gt; 1  -1.79543538  0.55634005  1   1  1
 #&gt; 2   0.15513661  0.03833857  1   2  1
@@ -458,7 +470,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2  1
 #&gt; 9  -0.01326291  0.46188895  3   3  1
 #&gt; 10 -0.30420261  0.19521967  3   4  1
-#&gt; 11 -0.24722026 -0.18616474  4   1 NA</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, v=<span class='kw'>mean</span>,z=<span class='fl'>1</span>)
+#&gt; 11 -0.24722026 -0.18616474  4   1 NA</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, v<span class='op'>=</span><span class='va'>mean</span>,z<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num          v  z
 #&gt; 1  -1.79543538  0.55634005  1   1 -0.8201494  1
 #&gt; 2   0.15513661  0.03833857  1   2 -0.8201494  1
@@ -470,7 +482,7 @@
 #&gt; 8  -0.20842081  1.16618593  3   2 -0.1752954  1
 #&gt; 9  -0.01326291  0.46188895  3   3 -0.1752954  1
 #&gt; 10 -0.30420261  0.19521967  3   4 -0.1752954  1
-#&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203  1</div><div class='input'><span class='fu'>dby</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, <span class='kw'>mean</span>, <span class='kw'>median</span>, COLUMN=<span class='fl'>TRUE</span>)
+#&gt; 11 -0.24722026 -0.18616474  4   1 -0.2472203  1</div><div class='input'><span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>+</span><span class='va'>x</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='op'>-</span><span class='fl'>1</span>, <span class='va'>mean</span>, <span class='va'>median</span>, COLUMN<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y           x id num  z     mean.y     mean.x   median.y
 #&gt; 1  -1.79543538  0.55634005  1   1  1 -0.8201494  0.2973393 -0.8201494
 #&gt; 2   0.15513661  0.03833857  1   2  1 -0.8201494  0.2973393 -0.8201494
@@ -495,21 +507,21 @@
 #&gt; 9   0.46188895
 #&gt; 10  0.46188895
 #&gt; 11 -0.18616474</div><div class='input'>
-<span class='fu'>dby2</span>(<span class='kw'>d</span>, <span class='kw'>y</span><span class='op'>+</span><span class='kw'>x</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='kw'>mean</span>, REDUCE=<span class='fl'>TRUE</span>)
+<span class='fu'>dby2</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>y</span><span class='op'>+</span><span class='va'>x</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>, <span class='va'>mean</span>, REDUCE<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   id     mean.y    mean.x
 #&gt; 1  1 -0.8201494 0.2973393
 #&gt; 2  2 -0.8780987 1.0514008
 #&gt; 3  3 -0.1752954 0.6077648</div><div class='input'>
-<span class='fu'>dby</span>(<span class='kw'>d</span>,<span class='kw'>y</span><span class='op'>~</span><span class='kw'>id</span><span class='op'>|</span><span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>,<span class='kw'>mean</span>,ALL=<span class='fl'>FALSE</span>)
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>y</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&lt;</span><span class='fl'>0</span>,<span class='va'>mean</span>,ALL<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             y           x id num  z        mean
 #&gt; 3  -1.5533681 -2.03545050  1   3 NA -1.55336807
 #&gt; 4  -0.7160315 -0.06096876  2   1 NA  0.03436654
 #&gt; 6   0.7847646 -0.11705507  2   3 NA  0.03436654
 #&gt; 7   0.3662038 -1.21157397  3   1 NA  0.36620380
 #&gt; 11 -0.2472203 -0.18616474  4   1 NA -0.24722026</div><div class='input'>
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='kw'>iris</span>
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span>(<span class='kw'>a</span>,y=<span class='fl'>1</span>)
-<span class='fu'>dby</span>(<span class='kw'>a</span>,<span class='kw'>Species</span><span class='op'>==</span><span class='st'>"versicolor"</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(y=<span class='fl'>2</span>)
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='va'>iris</span>
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>dby</span><span class='op'>(</span><span class='va'>a</span>,y<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'>dby</span><span class='op'>(</span><span class='va'>a</span>,<span class='va'>Species</span><span class='op'>==</span><span class='st'>"versicolor"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>y<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

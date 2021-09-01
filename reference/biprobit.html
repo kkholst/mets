@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,29 +168,28 @@
     <p>Bivariate Probit model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>biprobit</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>data</span>,
-  <span class='kw'>id</span>,
-  rho = <span class='op'>~</span><span class='fl'>1</span>,
-  num = <span class='kw'>NULL</span>,
-  strata = <span class='kw'>NULL</span>,
-  eqmarg = <span class='fl'>TRUE</span>,
-  indep = <span class='fl'>FALSE</span>,
-  weights = <span class='kw'>NULL</span>,
-  <span class='kw'>biweight</span>,
-  samecens = <span class='fl'>TRUE</span>,
-  randomeffect = <span class='fl'>FALSE</span>,
-  vcov = <span class='st'>"robust"</span>,
-  pairs.only = <span class='fl'>FALSE</span>,
-  allmarg = <span class='kw'>samecens</span> <span class='op'>&amp;</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>weights</span>),
-  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>0</span>),
-  messages = <span class='fl'>1</span>,
-  constrain = <span class='kw'>NULL</span>,
-  table = <span class='kw'>pairs.only</span>,
-  p = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>biprobit</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>data</span>,
+  <span class='va'>id</span>,
+  rho <span class='op'>=</span> <span class='op'>~</span><span class='fl'>1</span>,
+  num <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  eqmarg <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  indep <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weights.fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='va'>x</span> <span class='op'>&lt;=</span> <span class='fl'>0</span><span class='op'>)</span>, <span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
+  randomeffect <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  vcov <span class='op'>=</span> <span class='st'>"robust"</span>,
+  pairs.only <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  allmarg <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>weights</span><span class='op'>)</span>,
+  control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trace <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>,
+  messages <span class='op'>=</span> <span class='fl'>1</span>,
+  constrain <span class='op'>=</span> <span class='cn'>NULL</span>,
+  table <span class='op'>=</span> <span class='va'>pairs.only</span>,
+  p <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -220,12 +231,8 @@
       <td><p>Weights</p></td>
     </tr>
     <tr>
-      <th>biweight</th>
+      <th>weights.fun</th>
       <td><p>Function defining the bivariate weight in each cluster</p></td>
-    </tr>
-    <tr>
-      <th>samecens</th>
-      <td><p>Same censoring</p></td>
     </tr>
     <tr>
       <th>randomeffect</th>
@@ -271,15 +278,15 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>prt</span>)
-<span class='kw'>prt0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>prt</span>,<span class='kw'>country</span><span class='op'>==</span><span class='st'>"Denmark"</span>)
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, <span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, data=<span class='kw'>prt0</span>, id=<span class='st'>"id"</span>)
-<span class='kw'>b</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, <span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, data=<span class='kw'>prt0</span>, id=<span class='st'>"id"</span>,pairs.only=<span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>b</span>,newdata=<span class='kw'>lava</span>::<span class='fu'><a href='https://rdrr.io/pkg/lava/man/Expand.html'>Expand</a></span>(<span class='kw'>prt</span>,zyg=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MZ"</span>)))
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>prt</span><span class='op'>)</span>
+<span class='va'>prt0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt</span>,<span class='va'>country</span><span class='op'>==</span><span class='st'>"Denmark"</span><span class='op'>)</span>
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, <span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, data<span class='op'>=</span><span class='va'>prt0</span>, id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+<span class='va'>b</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, <span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, data<span class='op'>=</span><span class='va'>prt0</span>, id<span class='op'>=</span><span class='st'>"id"</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>b</span>,newdata<span class='op'>=</span><span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/Expand.html'>Expand</a></span><span class='op'>(</span><span class='va'>prt</span>,zyg<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MZ"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;           p11        p10        p01       p00         p1         p2       mu1
 #&gt; 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152
 #&gt;         mu2       rho parameter zyg
-#&gt; 1 -2.135152 0.7568562         1  MZ</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>b</span>,newdata=<span class='kw'>lava</span>::<span class='fu'><a href='https://rdrr.io/pkg/lava/man/Expand.html'>Expand</a></span>(<span class='kw'>prt</span>,zyg=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MZ"</span>,<span class='st'>"DZ"</span>)))
+#&gt; 1 -2.135152 0.7568562         1  MZ</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>b</span>,newdata<span class='op'>=</span><span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/Expand.html'>Expand</a></span><span class='op'>(</span><span class='va'>prt</span>,zyg<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MZ"</span>,<span class='st'>"DZ"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;           p11        p10        p01       p00         p1         p2       mu1
 #&gt; 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152
 #&gt; 2 0.000655527 0.01425761 0.01425761 0.9708293 0.01491313 0.01491313 -2.172390
@@ -287,17 +294,17 @@
 #&gt; 1 -2.135152 0.7568562         1  MZ
 #&gt; 2 -2.172390 0.1960491         2  DZ</div><div class='input'>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://kkholst.github.io/lava'>lava</a></span>)
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/lvm.html'>lvm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>y1</span>,<span class='kw'>y2</span>)<span class='op'>~</span><span class='kw'>x</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/covariance.html'>covariance</a></span>(<span class='kw'>m</span>,<span class='kw'>y1</span><span class='op'>~</span><span class='kw'>y2</span>) <span class='op'>&lt;-</span> <span class='st'>"r"</span>
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/constrain-set.html'>constrain</a></span>(<span class='kw'>m</span>,<span class='kw'>r</span><span class='op'>~</span><span class='kw'>x</span><span class='op'>+</span><span class='kw'>a</span><span class='op'>+</span><span class='kw'>b</span>) <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span>(<span class='kw'>x</span>[<span class='fl'>2</span>]<span class='op'>+</span><span class='kw'>x</span>[<span class='fl'>3</span>]<span class='op'>*</span><span class='kw'>x</span>[<span class='fl'>1</span>])
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>distribution</a></span>(<span class='kw'>m</span>,<span class='op'>~</span><span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lava/man/sim.html'>uniform.lvm</a></span>(a=<span class='op'>-</span><span class='fl'>1</span>,b=<span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/ordinal-set.html'>ordinal</a></span>(<span class='kw'>m</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>y1</span><span class='op'>+</span><span class='kw'>y2</span>
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span>(<span class='kw'>m</span>,<span class='fl'>1000</span>,p=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a=<span class='fl'>0</span>,b=<span class='op'>-</span><span class='fl'>1</span>)); <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='kw'>d</span>[<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>d</span><span class='op'>$</span><span class='kw'>x</span>),]
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span>(<span class='kw'>d</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://kkholst.github.io/lava/'>lava</a></span><span class='op'>)</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/covariance.html'>covariance</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>y1</span><span class='op'>~</span><span class='va'>y2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"r"</span>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/constrain-set.html'>constrain</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='va'>r</span><span class='op'>~</span><span class='va'>x</span><span class='op'>+</span><span class='va'>a</span><span class='op'>+</span><span class='va'>b</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>+</span><span class='va'>x</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>*</span><span class='va'>x</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/sim.html'>distribution</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='op'>~</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/sim.html'>uniform.lvm</a></span><span class='op'>(</span>a<span class='op'>=</span><span class='op'>-</span><span class='fl'>1</span>,b<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/ordinal-set.html'>ordinal</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>1000</span>,p<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>a<span class='op'>=</span><span class='fl'>0</span>,b<span class='op'>=</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>; <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='va'>d</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>x</span><span class='op'>)</span>,<span class='op'>]</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>
 
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>x</span>,rho=<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>x</span>,data=<span class='kw'>dd</span>,id=<span class='st'>"id"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>a</span>, mean.contrast=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>.5</span>), cor.contrast=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>.5</span>))
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>x</span>,rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>x</span>,data<span class='op'>=</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>a</span>, mean.contrast<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.5</span><span class='op'>)</span>, cor.contrast<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.5</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;                Estimate   Std.Err       Z   p-value    
 #&gt; (Intercept)    0.044025  0.029354  1.4998   0.13367    
@@ -307,7 +314,7 @@
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #&gt; 
-#&gt; logLik: -1165.921  mean(score^2): 4.427e-06 
+#&gt; logLik: -1165.921  mean(score^2): 4.429e-06 
 #&gt;     n pairs 
 #&gt;  2000  1000 
 #&gt; 
@@ -322,50 +329,50 @@
 #&gt;                                                   
 #&gt; Concordance              0.43700  0.39341  0.48158
 #&gt; Casewise Concordance     0.61940  0.57550  0.66144
-#&gt; Marginal                 0.70552  0.68108  0.72882</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by=<span class='fl'>.1</span>))), <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>p00</span><span class='op'>~</span><span class='kw'>x</span>,type=<span class='st'>"l"</span>))
+#&gt; Marginal                 0.70552  0.68108  0.72882</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>p00</span><span class='op'>~</span><span class='va'>x</span>,type<span class='op'>=</span><span class='st'>"l"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='biprobit-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>pp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by=<span class='fl'>.1</span>)),which=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp</span>[,<span class='fl'>1</span>]<span class='op'>~</span><span class='kw'>pp</span><span class='op'>$</span><span class='kw'>x</span>, type=<span class='st'>"l"</span>, xlab=<span class='st'>"x"</span>, ylab=<span class='st'>"Concordance"</span>, lwd=<span class='fl'>2</span>, xaxs=<span class='st'>"i"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/lava/man/confband.html'>confband</a></span>(<span class='kw'>pp</span><span class='op'>$</span><span class='kw'>x</span>,<span class='kw'>pp</span>[,<span class='fl'>2</span>],<span class='kw'>pp</span>[,<span class='fl'>3</span>],polygon=<span class='fl'>TRUE</span>,lty=<span class='fl'>0</span>,col=<span class='fu'><a href='https://rdrr.io/pkg/lava/man/Col.html'>Col</a></span>(<span class='fl'>1</span>))
+<span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span>,which<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>~</span><span class='va'>pp</span><span class='op'>$</span><span class='va'>x</span>, type<span class='op'>=</span><span class='st'>"l"</span>, xlab<span class='op'>=</span><span class='st'>"x"</span>, ylab<span class='op'>=</span><span class='st'>"Concordance"</span>, lwd<span class='op'>=</span><span class='fl'>2</span>, xaxs<span class='op'>=</span><span class='st'>"i"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://kkholst.github.io/lava/reference/confband.html'>confband</a></span><span class='op'>(</span><span class='va'>pp</span><span class='op'>$</span><span class='va'>x</span>,<span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span>,<span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>]</span>,polygon<span class='op'>=</span><span class='cn'>TRUE</span>,lty<span class='op'>=</span><span class='fl'>0</span>,col<span class='op'>=</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/Col.html'>Col</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='biprobit-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>pp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by=<span class='fl'>.1</span>)),which=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>9</span>)) <span class='co'>## rho</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp</span>[,<span class='fl'>1</span>]<span class='op'>~</span><span class='kw'>pp</span><span class='op'>$</span><span class='kw'>x</span>, type=<span class='st'>"l"</span>, xlab=<span class='st'>"x"</span>, ylab=<span class='st'>"Correlation"</span>, lwd=<span class='fl'>2</span>, xaxs=<span class='st'>"i"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/lava/man/confband.html'>confband</a></span>(<span class='kw'>pp</span><span class='op'>$</span><span class='kw'>x</span>,<span class='kw'>pp</span>[,<span class='fl'>2</span>],<span class='kw'>pp</span>[,<span class='fl'>3</span>],polygon=<span class='fl'>TRUE</span>,lty=<span class='fl'>0</span>,col=<span class='fu'><a href='https://rdrr.io/pkg/lava/man/Col.html'>Col</a></span>(<span class='fl'>1</span>))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>x</span>,<span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span>(<span class='op'>-</span><span class='kw'>x</span>),lwd=<span class='fl'>2</span>,lty=<span class='fl'>2</span>))
+<span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span>,which<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>)</span> <span class='co'>## rho</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>~</span><span class='va'>pp</span><span class='op'>$</span><span class='va'>x</span>, type<span class='op'>=</span><span class='st'>"l"</span>, xlab<span class='op'>=</span><span class='st'>"x"</span>, ylab<span class='op'>=</span><span class='st'>"Correlation"</span>, lwd<span class='op'>=</span><span class='fl'>2</span>, xaxs<span class='op'>=</span><span class='st'>"i"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://kkholst.github.io/lava/reference/confband.html'>confband</a></span><span class='op'>(</span><span class='va'>pp</span><span class='op'>$</span><span class='va'>x</span>,<span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span>,<span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>]</span>,polygon<span class='op'>=</span><span class='cn'>TRUE</span>,lty<span class='op'>=</span><span class='fl'>0</span>,col<span class='op'>=</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/Col.html'>Col</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='va'>pp</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>x</span>,<span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>x</span><span class='op'>)</span>,lwd<span class='op'>=</span><span class='fl'>2</span>,lty<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='input'>
-<span class='kw'>xp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,length.out=<span class='fl'>6</span>); <span class='kw'>delta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='kw'>xp</span>))
-<span class='kw'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span>(<span class='kw'>y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>x</span>,rho=<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>x</span>,breaks=<span class='kw'>xp</span>)),data=<span class='kw'>dd</span>,id=<span class='st'>"id"</span>)
-<span class='kw'>pp2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>a2</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x=<span class='kw'>xp</span>[<span class='op'>-</span><span class='fl'>1</span>]<span class='op'>-</span><span class='kw'>delta</span><span class='op'>/</span><span class='fl'>2</span>),which=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>9</span>)) <span class='co'>## rho</span>
-<span class='fu'><a href='https://rdrr.io/pkg/lava/man/confband.html'>confband</a></span>(<span class='kw'>pp2</span><span class='op'>$</span><span class='kw'>x</span>,<span class='kw'>pp2</span>[,<span class='fl'>2</span>],<span class='kw'>pp2</span>[,<span class='fl'>3</span>],center=<span class='kw'>pp2</span>[,<span class='fl'>1</span>])
+<span class='va'>xp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,length.out<span class='op'>=</span><span class='fl'>6</span><span class='op'>)</span>; <span class='va'>delta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span><span class='op'>(</span><span class='va'>xp</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>x</span>,rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>x</span>,breaks<span class='op'>=</span><span class='va'>xp</span><span class='op'>)</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+<span class='va'>pp2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a2</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>xp</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>-</span><span class='va'>delta</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span>,which<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9</span><span class='op'>)</span><span class='op'>)</span> <span class='co'>## rho</span>
+<span class='fu'><a href='https://kkholst.github.io/lava/reference/confband.html'>confband</a></span><span class='op'>(</span><span class='va'>pp2</span><span class='op'>$</span><span class='va'>x</span>,<span class='va'>pp2</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span>,<span class='va'>pp2</span><span class='op'>[</span>,<span class='fl'>3</span><span class='op'>]</span>,center<span class='op'>=</span><span class='va'>pp2</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='img'><img src='biprobit-3.png' alt='' width='700' height='433' /></div><div class='input'>
 
 
 
 <span class='co'>## Time</span>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-    <span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho=<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, id=<span class='st'>"id"</span>, data=<span class='kw'>prt</span>, eqmarg=<span class='fl'>TRUE</span>,
-                       cens.formula=<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='fl'>1</span>,
-                       breaks=<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>75</span>,<span class='fl'>100</span>,by=<span class='fl'>3</span>),fix.censweights=<span class='fl'>TRUE</span>)
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='va'>prt</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
+                       cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
+                       breaks<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>75</span>,<span class='fl'>100</span>,by<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>,fix.censweights<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 
-    <span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, rho=<span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='kw'>zyg</span>, id=<span class='st'>"id"</span>, data=<span class='kw'>prt0</span>, eqmarg=<span class='fl'>TRUE</span>,
-                       cens.formula=<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='kw'>zyg</span>,
-                       breaks=<span class='fl'>100</span>)
+    <span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>zyg</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='va'>prt0</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
+                       cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='va'>zyg</span>,
+                       breaks<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
 
-    <span class='kw'>a1</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho=<span class='op'>~</span><span class='fl'>1</span>, id=<span class='st'>"id"</span>, data=<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>prt0</span>,<span class='kw'>zyg</span><span class='op'>==</span><span class='st'>"MZ"</span>), eqmarg=<span class='fl'>TRUE</span>,
-                       cens.formula=<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='fl'>1</span>,
-                       breaks=<span class='fl'>100</span>,pairs.only=<span class='fl'>TRUE</span>)
+    <span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"MZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
+                       cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
+                       breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 
-    <span class='kw'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho=<span class='op'>~</span><span class='fl'>1</span>, id=<span class='st'>"id"</span>, data=<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>prt0</span>,<span class='kw'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span>), eqmarg=<span class='fl'>TRUE</span>,
-                        cens.formula=<span class='fu'>Surv</span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='fl'>1</span>,
-                        breaks=<span class='fl'>100</span>,pairs.only=<span class='fl'>TRUE</span>)
+    <span class='va'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
+                        cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
+                        breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 
-    <span class='kw'>prt0</span><span class='op'>$</span><span class='kw'>trunc</span> <span class='op'>&lt;-</span> <span class='kw'>prt0</span><span class='op'>$</span><span class='kw'>time</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>prt0</span>))<span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>prt0</span>),<span class='fl'>1</span>,<span class='fl'>0.5</span>)
-    <span class='kw'>a3</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time</span>(<span class='kw'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho=<span class='op'>~</span><span class='fl'>1</span>, id=<span class='st'>"id"</span>, data=<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>prt0</span>,<span class='kw'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span>), eqmarg=<span class='fl'>TRUE</span>,
-                        cens.formula=<span class='fu'>Surv</span>(<span class='kw'>trunc</span>,<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>==</span><span class='fl'>0</span>)<span class='op'>~</span><span class='fl'>1</span>,
-                        breaks=<span class='fl'>100</span>,pairs.only=<span class='fl'>TRUE</span>)
+    <span class='va'>prt0</span><span class='op'>$</span><span class='va'>trunc</span> <span class='op'>&lt;-</span> <span class='va'>prt0</span><span class='op'>$</span><span class='va'>time</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>prt0</span><span class='op'>)</span><span class='op'>)</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>prt0</span><span class='op'>)</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span><span class='op'>)</span>
+    <span class='va'>a3</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
+                        cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>trunc</span>,<span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
+                        breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 
-    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>a</span>,which=<span class='fl'>3</span>,ylim=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>0.1</span>))
-} 
+    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>a</span>,which<span class='op'>=</span><span class='fl'>3</span>,ylim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0.1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span> 
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

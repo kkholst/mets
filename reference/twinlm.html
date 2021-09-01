@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,27 +168,27 @@
     <p>Fits a classical twin model for quantitative traits.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>twinlm</span>(
-  <span class='kw'>formula</span>,
-  <span class='kw'>data</span>,
-  <span class='kw'>id</span>,
-  <span class='kw'>zyg</span>,
-  <span class='kw'>DZ</span>,
-  group = <span class='kw'>NULL</span>,
-  group.equal = <span class='fl'>FALSE</span>,
-  strata = <span class='kw'>NULL</span>,
-  weights = <span class='kw'>NULL</span>,
-  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ace"</span>),
-  twinnum = <span class='st'>"twinnum"</span>,
-  binary = <span class='fl'>FALSE</span>,
-  ordinal = <span class='fl'>0</span>,
-  keep = <span class='kw'>weights</span>,
-  estimator = <span class='kw'>NULL</span>,
-  constrain = <span class='fl'>TRUE</span>,
-  control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  messages = <span class='fl'>1</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>twinlm</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  <span class='va'>data</span>,
+  <span class='va'>id</span>,
+  <span class='va'>zyg</span>,
+  <span class='va'>DZ</span>,
+  group <span class='op'>=</span> <span class='cn'>NULL</span>,
+  group.equal <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ace"</span><span class='op'>)</span>,
+  twinnum <span class='op'>=</span> <span class='st'>"twinnum"</span>,
+  binary <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ordinal <span class='op'>=</span> <span class='fl'>0</span>,
+  keep <span class='op'>=</span> <span class='va'>weights</span>,
+  estimator <span class='op'>=</span> <span class='cn'>NULL</span>,
+  constrain <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  messages <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -229,9 +241,17 @@ with Inverse Probability Weights</p></td>
     <tr>
       <th>type</th>
       <td><p>Character defining the type of analysis to be
-performed. Should be a subset of "aced" (additive genetic factors, common
+performed. Can be a subset of "aced" (additive genetic factors, common
 environmental factors, unique environmental factors, dominant
-genetic factors).</p></td>
+genetic factors). Other choices are:</p><ul>
+<li><p>"0" (or "sat"): Saturated model where twin 1 and twin 2 within each twin
+       pair may have a different marginal distribution.</p></li>
+<li><p>"1" (or "flex","zyg"): Within twin pairs the marginal distribution is
+       the same, but the marginal distribution may differ between MZ and DZ
+       twins. A free correlation structure within MZ and DZ twins.</p></li>
+<li><p>"2" (or "u", "eqmarg"): All individuals have the same marginals
+       but a free correlation structure within MZ and DZ twins.</p></li>
+</ul><p>The default value is an additive polygenic model <code>type="ace"</code>.</p></td>
     </tr>
     <tr>
       <th>twinnum</th>
@@ -286,13 +306,13 @@ specified in <code>formula</code>, to be added to data.frame of the SEM</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Simulate data</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='twinsim.html'>twinsim</a></span>(<span class='fl'>1000</span>,b1=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='op'>-</span><span class='fl'>1</span>),b2=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(),acde=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='twinsim.html'>twinsim</a></span><span class='op'>(</span><span class='fl'>1000</span>,b1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>,b2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span>,acde<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>## E(y|z1,z2) = z1 - z2. var(A) = var(C) = var(E) = 1</span>
 
 <span class='co'>## E.g to fit the data to an ACE-model without any confounders we simply write</span>
-<span class='kw'>ace</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fl'>1</span>, data=<span class='kw'>d</span>, DZ=<span class='st'>"DZ"</span>, zyg=<span class='st'>"zyg"</span>, id=<span class='st'>"id"</span>)
-<span class='kw'>ace</span>
+<span class='va'>ace</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='fl'>1</span>, data<span class='op'>=</span><span class='va'>d</span>, DZ<span class='op'>=</span><span class='st'>"DZ"</span>, zyg<span class='op'>=</span><span class='st'>"zyg"</span>, id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+<span class='va'>ace</span>
 </div><div class='output co'>#&gt;        Estimate Std. Error Z value  Pr(&gt;|z|)
 #&gt; y     -0.019439   0.041817 -0.4649     0.642
 #&gt; sd(A)  0.902004   0.203739  4.4273 9.544e-06
@@ -319,9 +339,9 @@ specified in <code>formula</code>, to be added to data.frame of the SEM</p></td>
 #&gt; 'log Lik.' -8779.953 (df=4)
 #&gt; AIC: 17567.91 
 #&gt; BIC: 17590.31 </div><div class='input'><span class='co'>## An AE-model could be fitted as</span>
-<span class='kw'>ae</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='fl'>1</span>, data=<span class='kw'>d</span>, DZ=<span class='st'>"DZ"</span>, zyg=<span class='st'>"zyg"</span>, id=<span class='st'>"id"</span>, type=<span class='st'>"ae"</span>)
+<span class='va'>ae</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='fl'>1</span>, data<span class='op'>=</span><span class='va'>d</span>, DZ<span class='op'>=</span><span class='st'>"DZ"</span>, zyg<span class='op'>=</span><span class='st'>"zyg"</span>, id<span class='op'>=</span><span class='st'>"id"</span>, type<span class='op'>=</span><span class='st'>"ae"</span><span class='op'>)</span>
 <span class='co'>## LRT:</span>
-<span class='kw'>lava</span>::<span class='fu'><a href='https://rdrr.io/pkg/lava/man/compare.html'>compare</a></span>(<span class='kw'>ae</span>,<span class='kw'>ace</span>)
+<span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/compare.html'>compare</a></span><span class='op'>(</span><span class='va'>ae</span>,<span class='va'>ace</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	- Likelihood ratio test -
 #&gt; 
@@ -331,11 +351,11 @@ specified in <code>formula</code>, to be added to data.frame of the SEM</p></td>
 #&gt; log likelihood (model 1) log likelihood (model 2) 
 #&gt;                -8788.556                -8779.953 
 #&gt; </div><div class='input'><span class='co'>## AIC</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/AIC.html'>AIC</a></span>(<span class='kw'>ae</span>)<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/stats/AIC.html'>AIC</a></span>(<span class='kw'>ace</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/AIC.html'>AIC</a></span><span class='op'>(</span><span class='va'>ae</span><span class='op'>)</span><span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/stats/AIC.html'>AIC</a></span><span class='op'>(</span><span class='va'>ace</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 15.20656</div><div class='input'><span class='co'>## To adjust for the covariates we simply alter the formula statement</span>
-<span class='kw'>ace2</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span>, data=<span class='kw'>d</span>, DZ=<span class='st'>"DZ"</span>, zyg=<span class='st'>"zyg"</span>, id=<span class='st'>"id"</span>, type=<span class='st'>"ace"</span>)
+<span class='va'>ace2</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>x1</span><span class='op'>+</span><span class='va'>x2</span>, data<span class='op'>=</span><span class='va'>d</span>, DZ<span class='op'>=</span><span class='st'>"DZ"</span>, zyg<span class='op'>=</span><span class='st'>"zyg"</span>, id<span class='op'>=</span><span class='st'>"id"</span>, type<span class='op'>=</span><span class='st'>"ace"</span><span class='op'>)</span>
 <span class='co'>## Summary/GOF</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>ace2</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>ace2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        Estimate Std. Error  Z value Pr(&gt;|z|)
 #&gt; y     -0.026049   0.034844  -0.7476   0.4547
 #&gt; sd(A)  1.066060   0.072890  14.6256   &lt;2e-16
@@ -365,8 +385,8 @@ specified in <code>formula</code>, to be added to data.frame of the SEM</p></td>
 #&gt; AIC: 14911.39 
 #&gt; BIC: 14945 </div><div class='input'> <span class='co'>## Reduce Ex.Timings</span>
 <span class='co'>## An interaction could be analyzed as:</span>
-<span class='kw'>ace3</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2</span> <span class='op'>+</span> <span class='kw'>x1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='kw'>x2</span><span class='op'>&lt;</span><span class='fl'>0</span>), data=<span class='kw'>d</span>, DZ=<span class='st'>"DZ"</span>, zyg=<span class='st'>"zyg"</span>, id=<span class='st'>"id"</span>, type=<span class='st'>"ace"</span>)
-<span class='kw'>ace3</span>
+<span class='va'>ace3</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>x1</span><span class='op'>+</span><span class='va'>x2</span> <span class='op'>+</span> <span class='va'>x1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>x2</span><span class='op'>&lt;</span><span class='fl'>0</span><span class='op'>)</span>, data<span class='op'>=</span><span class='va'>d</span>, DZ<span class='op'>=</span><span class='st'>"DZ"</span>, zyg<span class='op'>=</span><span class='st'>"zyg"</span>, id<span class='op'>=</span><span class='st'>"id"</span>, type<span class='op'>=</span><span class='st'>"ace"</span><span class='op'>)</span>
+<span class='va'>ace3</span>
 </div><div class='output co'>#&gt;                     Estimate Std. Error  Z value Pr(&gt;|z|)
 #&gt; y                  -0.026089   0.034847  -0.7487   0.4541
 #&gt; sd(A)               1.065529   0.072975  14.6012   &lt;2e-16
@@ -396,8 +416,8 @@ specified in <code>formula</code>, to be added to data.frame of the SEM</p></td>
 #&gt; 'log Lik.' -7449.682 (df=7)
 #&gt; AIC: 14913.36 
 #&gt; BIC: 14952.57 </div><div class='input'><span class='co'>## Categorical variables are also supported </span>
-<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span>(<span class='kw'>d</span>,x2cat=<span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>x2</span>,<span class='fl'>3</span>,labels=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Low"</span>,<span class='st'>"Med"</span>,<span class='st'>"High"</span>)))
-<span class='kw'>ace4</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x1</span><span class='op'>+</span><span class='kw'>x2cat</span>, data=<span class='kw'>d2</span>, DZ=<span class='st'>"DZ"</span>, zyg=<span class='st'>"zyg"</span>, id=<span class='st'>"id"</span>, type=<span class='st'>"ace"</span>)
+<span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/transform.html'>transform</a></span><span class='op'>(</span><span class='va'>d</span>,x2cat<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>x2</span>,<span class='fl'>3</span>,labels<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Low"</span>,<span class='st'>"Med"</span>,<span class='st'>"High"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ace4</span> <span class='op'>&lt;-</span> <span class='fu'>twinlm</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>x1</span><span class='op'>+</span><span class='va'>x2cat</span>, data<span class='op'>=</span><span class='va'>d2</span>, DZ<span class='op'>=</span><span class='st'>"DZ"</span>, zyg<span class='op'>=</span><span class='st'>"zyg"</span>, id<span class='op'>=</span><span class='st'>"id"</span>, type<span class='op'>=</span><span class='st'>"ace"</span><span class='op'>)</span>
 
 </div></pre>
   </div>

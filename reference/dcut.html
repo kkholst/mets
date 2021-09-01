@@ -74,7 +74,7 @@ is equally sized groups if possible" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -106,10 +106,19 @@ is equally sized groups if possible" />
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -119,6 +128,9 @@ is equally sized groups if possible" />
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -160,20 +172,20 @@ using group size given by probs, or equispace groups on range. Default
 is equally sized groups if possible</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dcut</span>(
-  <span class='kw'>data</span>,
-  y = <span class='kw'>NULL</span>,
-  x = <span class='kw'>NULL</span>,
-  breaks = <span class='fl'>4</span>,
-  probs = <span class='kw'>NULL</span>,
-  equi = <span class='fl'>FALSE</span>,
-  regex = <span class='fu'><a href='mets.options.html'>mets.options</a></span>()<span class='op'>$</span><span class='kw'>regex</span>,
-  sep = <span class='kw'>NULL</span>,
-  na.rm = <span class='fl'>TRUE</span>,
-  labels = <span class='kw'>NULL</span>,
-  all = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>dcut</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  y <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  breaks <span class='op'>=</span> <span class='fl'>4</span>,
+  probs <span class='op'>=</span> <span class='cn'>NULL</span>,
+  equi <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  regex <span class='op'>=</span> <span class='fu'><a href='mets.options.html'>mets.options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>regex</span>,
+  sep <span class='op'>=</span> <span class='cn'>NULL</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  labels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  all <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,12 +245,12 @@ is equally sized groups if possible</p>
     <p>Klaus K. Holst and Thomas Scheike</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sTRACE"</span>,package=<span class='st'>"timereg"</span>)
-<span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>age2</span> <span class='op'>&lt;-</span> <span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>age</span><span class='op'>^</span><span class='fl'>2</span>
-<span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>age3</span> <span class='op'>&lt;-</span> <span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>age</span><span class='op'>^</span><span class='fl'>3</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sTRACE"</span>,package<span class='op'>=</span><span class='st'>"timereg"</span><span class='op'>)</span>
+<span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>age2</span> <span class='op'>&lt;-</span> <span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>age</span><span class='op'>^</span><span class='fl'>2</span>
+<span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>age3</span> <span class='op'>&lt;-</span> <span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>age</span><span class='op'>^</span><span class='fl'>3</span>
 
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>wmi</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='op'>~</span><span class='va'>age</span><span class='op'>+</span><span class='va'>wmi</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -253,8 +265,8 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]
 #&gt; X4511 (60,68.7] [0.4,1.1]</div><div class='input'>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='kw'>catage4</span><span class='op'>+</span><span class='kw'>wmi4</span><span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>wmi</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='va'>catage4</span><span class='op'>+</span><span class='va'>wmi4</span><span class='op'>~</span><span class='va'>age</span><span class='op'>+</span><span class='va'>wmi</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -269,8 +281,8 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]
 #&gt; X4511 (60,68.7] [0.4,1.1]</div><div class='input'>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>wmi</span>,breaks=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='op'>~</span><span class='va'>age</span><span class='op'>+</span><span class='va'>wmi</span>,breaks<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -285,8 +297,8 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,68.7] [0.4,1.4]
 #&gt; X2927 [28.1,68.7] (1.4,2.7]
 #&gt; X4511 [28.1,68.7] [0.4,1.4]</div><div class='input'>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"age"</span>,<span class='st'>"wmi"</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>,<span class='st'>"wmi"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -301,8 +313,8 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]
 #&gt; X4511 (60,68.7] [0.4,1.1]</div><div class='input'>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='op'>~</span><span class='kw'>.</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='op'>~</span><span class='va'>.</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -324,8 +336,8 @@ is equally sized groups if possible</p>
 #&gt; X3763       [788,3.6e+03] [2.21e+04,2.16e+05]
 #&gt; X2927  (3.6e+03,4.71e+03] (2.16e+05,3.24e+05]
 #&gt; X4511  (3.6e+03,4.71e+03] (2.16e+05,3.24e+05]</div><div class='input'>
-<span class='kw'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"age"</span>,<span class='st'>"wmi"</span>),breaks=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='va'>mm</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>,<span class='st'>"wmi"</span><span class='op'>)</span>,breaks<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -340,14 +352,14 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,68.7] [0.4,1.4]
 #&gt; X2927 [28.1,68.7] (1.4,2.7]
 #&gt; X4511 [28.1,68.7] [0.4,1.4]</div><div class='input'>
-<span class='kw'>gx</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span>(<span class='kw'>sTRACE</span><span class='op'>$</span><span class='kw'>age</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>gx</span>)
+<span class='va'>gx</span> <span class='op'>&lt;-</span> <span class='fu'>dcut</span><span class='op'>(</span><span class='va'>sTRACE</span><span class='op'>$</span><span class='va'>age</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>gx</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] (76,92.1] (68.7,76] (76,92.1] [28.1,60] (60,68.7] (60,68.7]
 #&gt; Levels: [28.1,60] (60,68.7] (68.7,76] (76,92.1]</div><div class='input'>
 
 <span class='co'>## Removes all cuts variables with these names wildcards</span>
-<span class='kw'>mm1</span> <span class='op'>&lt;-</span> <span class='fu'>drm</span>(<span class='kw'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"*.2"</span>,<span class='st'>"*.4"</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm1</span>)
+<span class='va'>mm1</span> <span class='op'>&lt;-</span> <span class='fu'>drm</span><span class='op'>(</span><span class='va'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"*.2"</span>,<span class='st'>"*.4"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -356,7 +368,7 @@ is equally sized groups if possible</p>
 #&gt; X2927 2927 1.6      0   1 62.997   0        0 7.126000  0 3968.622 250011.3
 #&gt; X4511 4511 1.0      9   1 67.644   1        0 4.532606  0 4575.711 309519.4</div><div class='input'>
 <span class='co'>## wildcards, for age, age2, age4 and wmi</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>dcut</span>(<span class='kw'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a*"</span>,<span class='st'>"?m*"</span>)))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>dcut</span><span class='op'>(</span><span class='va'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a*"</span>,<span class='st'>"?m*"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -372,8 +384,8 @@ is equally sized groups if possible</p>
 #&gt; X2927 [28.1,68.7] (1.4,1.8] (60,68.7]  (3.6e+03,4.71e+03] (2.16e+05,3.24e+05]
 #&gt; X4511 [28.1,68.7] [0.4,1.1] (60,68.7]  (3.6e+03,4.71e+03] (2.16e+05,3.24e+05]</div><div class='input'>
 <span class='co'>## with direct asignment</span>
-<span class='fu'>drm</span>(<span class='kw'>mm</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"*.2"</span>,<span class='st'>"*.4"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='fu'>drm</span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"*.2"</span>,<span class='st'>"*.4"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -381,9 +393,9 @@ is equally sized groups if possible</p>
 #&gt; X3763 3763 1.3      0   0 55.479   1        0 7.543000  0 3077.919 170759.9
 #&gt; X2927 2927 1.6      0   1 62.997   0        0 7.126000  0 3968.622 250011.3
 #&gt; X4511 4511 1.0      9   1 67.644   1        0 4.532606  0 4575.711 309519.4</div><div class='input'>
-<span class='fu'>dcut</span>(<span class='kw'>mm</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"age"</span>,<span class='st'>"*m*"</span>)
-<span class='fu'>dcut</span>(<span class='kw'>mm</span>) <span class='op'>&lt;-</span> <span class='kw'>ageg1</span><span class='op'>+</span><span class='kw'>wmig1</span><span class='op'>~</span><span class='kw'>age</span><span class='op'>+</span><span class='kw'>wmi</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='fu'>dcut</span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>,<span class='st'>"*m*"</span><span class='op'>)</span>
+<span class='fu'>dcut</span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>ageg1</span><span class='op'>+</span><span class='va'>wmig1</span><span class='op'>~</span><span class='va'>age</span><span class='op'>+</span><span class='va'>wmi</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -402,7 +414,7 @@ is equally sized groups if possible</p>
 <span class='co'>## renaming</span>
 <span class='co'>############################</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no wmi status chf    age sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -416,8 +428,8 @@ is equally sized groups if possible</p>
 #&gt; X784  (76,92.1] [0.4,1.1] [0.000687,1.47] (76,92.1] [0.4,1.1]
 #&gt; X3763 [28.1,60] (1.1,1.4]     (6.81,8.16] [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]     (6.81,8.16] (60,68.7] (1.4,1.8]
-#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='fu'>drename</span>(<span class='kw'>mm</span>, <span class='op'>~</span><span class='kw'>Age</span><span class='op'>+</span><span class='kw'>Wmi</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"wmi"</span>,<span class='st'>"age"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='fu'>drename</span><span class='op'>(</span><span class='va'>mm</span>, <span class='op'>~</span><span class='va'>Age</span><span class='op'>+</span><span class='va'>Wmi</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"wmi"</span>,<span class='st'>"age"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no Age status chf    Wmi sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -431,11 +443,11 @@ is equally sized groups if possible</p>
 #&gt; X784  (76,92.1] [0.4,1.1] [0.000687,1.47] (76,92.1] [0.4,1.1]
 #&gt; X3763 [28.1,60] (1.1,1.4]     (6.81,8.16] [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]     (6.81,8.16] (60,68.7] (1.4,1.8]
-#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='kw'>mm1</span> <span class='op'>&lt;-</span> <span class='kw'>mm</span>
+#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='va'>mm1</span> <span class='op'>&lt;-</span> <span class='va'>mm</span>
 
 <span class='co'>## all names to lower</span>
-<span class='fu'>drename</span>(<span class='kw'>mm1</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm1</span>)
+<span class='fu'>drename</span><span class='op'>(</span><span class='va'>mm1</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no age status chf    wmi sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -451,8 +463,8 @@ is equally sized groups if possible</p>
 #&gt; X2927 (60,68.7] (1.4,1.8]     (6.81,8.16] (60,68.7] (1.4,1.8]
 #&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'>
 <span class='co'>## A* to lower</span>
-<span class='kw'>mm2</span> <span class='op'>&lt;-</span>  <span class='fu'>drename</span>(<span class='kw'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A*"</span>,<span class='st'>"W*"</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm2</span>)
+<span class='va'>mm2</span> <span class='op'>&lt;-</span>  <span class='fu'>drename</span><span class='op'>(</span><span class='va'>mm</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A*"</span>,<span class='st'>"W*"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no age status chf    wmi sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -466,8 +478,8 @@ is equally sized groups if possible</p>
 #&gt; X784  (76,92.1] [0.4,1.1] [0.000687,1.47] (76,92.1] [0.4,1.1]
 #&gt; X3763 [28.1,60] (1.1,1.4]     (6.81,8.16] [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]     (6.81,8.16] (60,68.7] (1.4,1.8]
-#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='fu'>drename</span>(<span class='kw'>mm</span>) <span class='op'>&lt;-</span> <span class='st'>"A*"</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mm</span>)
+#&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'><span class='fu'>drename</span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"A*"</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         no age status chf    Wmi sex diabetes     time vf     age2     age3
 #&gt; X1944 1944 1.5      9   0 84.924   1        1 1.345000  0 7212.086 612479.2
 #&gt; X5783 5783 1.9      0   1 74.193   0        0 6.910000  0 5504.601 408402.9
@@ -482,11 +494,11 @@ is equally sized groups if possible</p>
 #&gt; X3763 [28.1,60] (1.1,1.4]     (6.81,8.16] [28.1,60] (1.1,1.4]
 #&gt; X2927 (60,68.7] (1.4,1.8]     (6.81,8.16] (60,68.7] (1.4,1.8]
 #&gt; X4511 (60,68.7] [0.4,1.1]     (1.47,6.05] (60,68.7] [0.4,1.1]</div><div class='input'>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(A_1=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,B_1=<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
-<span class='kw'>funn</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span>(<span class='st'>"_"</span>,<span class='st'>"."</span>,<span class='kw'>x</span>)
-<span class='fu'>drename</span>(<span class='kw'>dd</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='fu'>drename</span>(<span class='kw'>dd</span>,fun=<span class='kw'>funn</span>) <span class='op'>&lt;-</span> <span class='op'>~</span><span class='kw'>.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>dd</span>)
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>A_1<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,B_1<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>funn</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>"_"</span>,<span class='st'>"."</span>,<span class='va'>x</span><span class='op'>)</span>
+<span class='fu'>drename</span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='fu'>drename</span><span class='op'>(</span><span class='va'>dd</span>,fun<span class='op'>=</span><span class='va'>funn</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='op'>~</span><span class='va'>.</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "a.1" "b.1"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -104,10 +104,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -117,6 +126,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -156,29 +168,29 @@
     <p>Can be used for logistic regression when time variable is "1" for all id.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>haplo.surv.discrete</span>(
-  X = <span class='kw'>NULL</span>,
-  y = <span class='st'>"y"</span>,
-  time.name = <span class='st'>"time"</span>,
-  Haplos = <span class='kw'>NULL</span>,
-  id = <span class='st'>"id"</span>,
-  desnames = <span class='kw'>NULL</span>,
-  designfunc = <span class='kw'>NULL</span>,
-  beta = <span class='kw'>NULL</span>,
-  no.opt = <span class='fl'>FALSE</span>,
-  method = <span class='st'>"NR"</span>,
-  stderr = <span class='fl'>TRUE</span>,
-  designMatrix = <span class='kw'>NULL</span>,
-  response = <span class='kw'>NULL</span>,
-  idhap = <span class='kw'>NULL</span>,
-  design.only = <span class='fl'>FALSE</span>,
-  covnames = <span class='kw'>NULL</span>,
-  fam = <span class='kw'>binomial</span>,
-  weights = <span class='kw'>NULL</span>,
-  offsets = <span class='kw'>NULL</span>,
-  idhapweights = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>haplo.surv.discrete</span><span class='op'>(</span>
+  X <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y <span class='op'>=</span> <span class='st'>"y"</span>,
+  time.name <span class='op'>=</span> <span class='st'>"time"</span>,
+  Haplos <span class='op'>=</span> <span class='cn'>NULL</span>,
+  id <span class='op'>=</span> <span class='st'>"id"</span>,
+  desnames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  designfunc <span class='op'>=</span> <span class='cn'>NULL</span>,
+  beta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  no.opt <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method <span class='op'>=</span> <span class='st'>"NR"</span>,
+  stderr <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  designMatrix <span class='op'>=</span> <span class='cn'>NULL</span>,
+  response <span class='op'>=</span> <span class='cn'>NULL</span>,
+  idhap <span class='op'>=</span> <span class='cn'>NULL</span>,
+  design.only <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  covnames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  fam <span class='op'>=</span> <span class='va'>binomial</span>,
+  weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  offsets <span class='op'>=</span> <span class='cn'>NULL</span>,
+  idhapweights <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -293,46 +305,46 @@ can be viewed by design.only=TRUE</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## some haplotypes of interest</span>
-<span class='kw'>types</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"DCGCGCTCACG"</span>,<span class='st'>"DTCCGCTGACG"</span>,<span class='st'>"ITCAGTTGACG"</span>,<span class='st'>"ITCCGCTGAGG"</span>)
+<span class='va'>types</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"DCGCGCTCACG"</span>,<span class='st'>"DTCCGCTGACG"</span>,<span class='st'>"ITCAGTTGACG"</span>,<span class='st'>"ITCCGCTGAGG"</span><span class='op'>)</span>
 
 <span class='co'>## some haplotypes frequencies for simulations </span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>hapfreqs</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>hapfreqs</span><span class='op'>)</span>
 
-<span class='kw'>www</span> <span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='kw'>hapfreqs</span><span class='op'>$</span><span class='kw'>haplotype</span> <span class='op'>%in%</span> <span class='kw'>types</span>)
-<span class='kw'>hapfreqs</span><span class='op'>$</span><span class='kw'>freq</span>[<span class='kw'>www</span>]
+<span class='va'>www</span> <span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>hapfreqs</span><span class='op'>$</span><span class='va'>haplotype</span> <span class='op'>%in%</span> <span class='va'>types</span><span class='op'>)</span>
+<span class='va'>hapfreqs</span><span class='op'>$</span><span class='va'>freq</span><span class='op'>[</span><span class='va'>www</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; [1] 0.138387 0.103394 0.048124 0.291273</div><div class='input'>
-<span class='kw'>baseline</span><span class='op'>=</span><span class='kw'>hapfreqs</span><span class='op'>$</span><span class='kw'>haplotype</span>[<span class='fl'>9</span>]
-<span class='kw'>baseline</span>
+<span class='va'>baseline</span><span class='op'>=</span><span class='va'>hapfreqs</span><span class='op'>$</span><span class='va'>haplotype</span><span class='op'>[</span><span class='fl'>9</span><span class='op'>]</span>
+<span class='va'>baseline</span>
 </div><div class='output co'>#&gt; [1] "DTGCGCTCGCG"</div><div class='input'>
-<span class='kw'>designftypes</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>,<span class='kw'>sm</span>=<span class='fl'>0</span>) {<span class='co'># {{{</span>
-<span class='kw'>hap1</span><span class='op'>=</span><span class='kw'>x</span>[<span class='fl'>1</span>]
-<span class='kw'>hap2</span><span class='op'>=</span><span class='kw'>x</span>[<span class='fl'>2</span>]
-<span class='co'>if</span> (<span class='kw'>sm</span><span class='op'>==</span><span class='fl'>0</span>) <span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span>( (<span class='kw'>hap1</span><span class='op'>==</span><span class='kw'>types</span>) <span class='op'>|</span> (<span class='kw'>hap2</span><span class='op'>==</span><span class='kw'>types</span>))
-<span class='co'>if</span> (<span class='kw'>sm</span><span class='op'>==</span><span class='fl'>1</span>) <span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span>(<span class='kw'>hap1</span><span class='op'>==</span><span class='kw'>types</span>) <span class='op'>+</span> <span class='fl'>1</span><span class='op'>*</span>(<span class='kw'>hap2</span><span class='op'>==</span><span class='kw'>types</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>y</span>)
-}<span class='co'># }}}</span>
+<span class='va'>designftypes</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>,<span class='va'>sm</span><span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span><span class='co'># {{{</span>
+<span class='va'>hap1</span><span class='op'>=</span><span class='va'>x</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>hap2</span><span class='op'>=</span><span class='va'>x</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='va'>sm</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span> <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span> <span class='op'>(</span><span class='va'>hap1</span><span class='op'>==</span><span class='va'>types</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>hap2</span><span class='op'>==</span><span class='va'>types</span><span class='op'>)</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='va'>sm</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>hap1</span><span class='op'>==</span><span class='va'>types</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>hap2</span><span class='op'>==</span><span class='va'>types</span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+<span class='op'>}</span><span class='co'># }}}</span>
 
-<span class='kw'>tcoef</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>1.93110204</span>,<span class='op'>-</span><span class='fl'>0.47531630</span>,<span class='op'>-</span><span class='fl'>0.04118204</span>,<span class='op'>-</span><span class='fl'>1.57872602</span>,<span class='op'>-</span><span class='fl'>0.22176426</span>,<span class='op'>-</span><span class='fl'>0.13836416</span>,
-<span class='fl'>0.88830288</span>,<span class='fl'>0.60756224</span>,<span class='fl'>0.39802821</span>,<span class='fl'>0.32706859</span>)
+<span class='va'>tcoef</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1.93110204</span>,<span class='op'>-</span><span class='fl'>0.47531630</span>,<span class='op'>-</span><span class='fl'>0.04118204</span>,<span class='op'>-</span><span class='fl'>1.57872602</span>,<span class='op'>-</span><span class='fl'>0.22176426</span>,<span class='op'>-</span><span class='fl'>0.13836416</span>,
+<span class='fl'>0.88830288</span>,<span class='fl'>0.60756224</span>,<span class='fl'>0.39802821</span>,<span class='fl'>0.32706859</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>hHaplos</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>haploX</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>hHaplos</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>haploX</span><span class='op'>)</span>
 
-<span class='kw'>haploX</span><span class='op'>$</span><span class='kw'>time</span> <span class='op'>&lt;-</span> <span class='kw'>haploX</span><span class='op'>$</span><span class='kw'>times</span>
-<span class='kw'>Xdes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>time</span>),<span class='kw'>haploX</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>Xdes</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"X"</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>Xdes</span>),sep=<span class='st'>""</span>)
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dcut.html'>dkeep</a></span>(<span class='kw'>haploX</span>,<span class='op'>~</span><span class='kw'>id</span><span class='op'>+</span><span class='kw'>y</span><span class='op'>+</span><span class='kw'>time</span>)
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>X</span>,<span class='kw'>Xdes</span>)
-<span class='kw'>Haplos</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dcut.html'>dkeep</a></span>(<span class='kw'>ghaplos</span>,<span class='op'>~</span><span class='kw'>id</span><span class='op'>+</span><span class='st'>"haplo*"</span><span class='op'>+</span><span class='kw'>p</span>)
-<span class='kw'>desnames</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"X"</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>,sep=<span class='st'>""</span>)   <span class='co'># six X's related to 6 cycles </span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'>haplo.surv.discrete</span>(X=<span class='kw'>X</span>,y=<span class='st'>"y"</span>,time.name=<span class='st'>"time"</span>,
-         Haplos=<span class='kw'>Haplos</span>,desnames=<span class='kw'>desnames</span>,designfunc=<span class='kw'>designftypes</span>) 
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>desnames</span>,<span class='kw'>types</span>)
-<span class='kw'>out</span><span class='op'>$</span><span class='kw'>coef</span>
+<span class='va'>haploX</span><span class='op'>$</span><span class='va'>time</span> <span class='op'>&lt;-</span> <span class='va'>haploX</span><span class='op'>$</span><span class='va'>times</span>
+<span class='va'>Xdes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>time</span><span class='op'>)</span>,<span class='va'>haploX</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>Xdes</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"X"</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>Xdes</span><span class='op'>)</span>,sep<span class='op'>=</span><span class='st'>""</span><span class='op'>)</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dcut.html'>dkeep</a></span><span class='op'>(</span><span class='va'>haploX</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='va'>y</span><span class='op'>+</span><span class='va'>time</span><span class='op'>)</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>X</span>,<span class='va'>Xdes</span><span class='op'>)</span>
+<span class='va'>Haplos</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dcut.html'>dkeep</a></span><span class='op'>(</span><span class='va'>ghaplos</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='st'>"haplo*"</span><span class='op'>+</span><span class='va'>p</span><span class='op'>)</span>
+<span class='va'>desnames</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"X"</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>,sep<span class='op'>=</span><span class='st'>""</span><span class='op'>)</span>   <span class='co'># six X's related to 6 cycles </span>
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>haplo.surv.discrete</span><span class='op'>(</span>X<span class='op'>=</span><span class='va'>X</span>,y<span class='op'>=</span><span class='st'>"y"</span>,time.name<span class='op'>=</span><span class='st'>"time"</span>,
+         Haplos<span class='op'>=</span><span class='va'>Haplos</span>,desnames<span class='op'>=</span><span class='va'>desnames</span>,designfunc<span class='op'>=</span><span class='va'>designftypes</span><span class='op'>)</span> 
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>$</span><span class='va'>coef</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>desnames</span>,<span class='va'>types</span><span class='op'>)</span>
+<span class='va'>out</span><span class='op'>$</span><span class='va'>coef</span>
 </div><div class='output co'>#&gt;          X1          X2          X3          X4          X5          X6 
 #&gt; -1.82153345 -0.61608261 -0.17143057 -1.27152045 -0.28635976 -0.19349091 
 #&gt; DCGCGCTCACG DTCCGCTGACG ITCAGTTGACG ITCCGCTGAGG 
-#&gt;  0.79753613  0.65747412  0.06119231  0.31666905 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>out</span>)
+#&gt;  0.79753613  0.65747412  0.06119231  0.31666905 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             Estimate Std.Err     2.5%   97.5%   P-value
 #&gt; X1          -1.82153  0.1619 -2.13892 -1.5041 2.355e-29
 #&gt; X2          -0.61608  0.1895 -0.98748 -0.2447 1.149e-03

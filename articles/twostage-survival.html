@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
       </span>
     </div>
 
@@ -63,10 +63,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+    </li>
+    <li>
+      <a href="../articles/binreg.html">Binomial Regression</a>
+    </li>
+    <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
+    </li>
+    <li>
+      <a href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a>
     </li>
     <li>
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
@@ -76,6 +85,9 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
@@ -109,7 +121,7 @@
       <h1 data-toc-skip>Analysis of multivariate survival data</h1>
                         <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2021-05-17</h4>
+            <h4 class="date">2021-09-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/twostage-survival.Rmd"><code>vignettes/twostage-survival.Rmd</code></a></small>
       <div class="hidden name"><code>twostage-survival.Rmd</code></div>
@@ -147,6 +159,13 @@
 <p>The basic models assumes that each subject has a marginal on Cox-form <span class="math display">\[ 
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
 \]</span> where <span class="math inline">\(s(k,i)\)</span> is a strata variable.</p>
+<p>The constructed likelihood is a composite likehood based on</p>
+<ul>
+<li><p>all pairs within each cluster (when the pairs argument is not used)</p></li>
+<li><p>the specified pairs when the pairs argument is used.</p></li>
+</ul>
+<p>In addition to the clusters specified for the construction of the composite likelihood these can be added further summed using the se.clusters argument that sums the influence functions over the se.clusters. When se.clusters are not specified it is the same as the cluster argument.</p>
+<p>When the clusters of the dependence parametaters are the same as those of the marginal model and the phreg function is used then the standard errors are corrected for the uncertainty from the marginal models, otherwise the returned standard errors are computed as if the marginals are known.</p>
 </div>
 <div id="gamma-distributed-frailties" class="section level1">
 <h1 class="hasAnchor">
@@ -211,15 +230,15 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <a href="#univariate-gamma-clayton-oakes-model-twostage-models" class="anchor"></a>Univariate gamma (clayton-oakes) model twostage models</h1>
 <p>We start by fitting simple Clayton-Oakes models for the data, that is with an overall random effect that is Gamma distrubuted with variance <span class="math inline">\(\theta\)</span>. We can fit the model by a pseudo-MLE (twostageMLE) and a pairwise composite likelihood approach (twostage).</p>
 <p>The pseudo-liklihood and the composite pairwise likelhood should give the same for this model since we have paired data. In addition the log-parametrization is illustrated with the var.link=1 option. In addition it is specified that we want a “clayton.oakes” model. We note that the standard errors differs because the twostage does not include the variance due to the baseline parameters for this type of modelling, so here it is better to use the twostageMLE.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
- <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
- <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">diabetes</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">diabetes</span><span class="op">)</span>
  
  <span class="co"># Marginal Cox model  with treat as covariate</span>
- <span class="kw">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">treat</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">diabetes</span>)
+ <span class="va">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treat</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span>
  <span class="co"># Clayton-Oakes, MLE </span>
- <span class="kw">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span>(<span class="kw">margph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitco1</span>)
+ <span class="va">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco1</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -233,64 +252,72 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
  
  <span class="co"># Clayton-Oakes</span>
- <span class="kw">fitco2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">margph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">0.0</span>,detail=<span class="fl">0</span>,
-                  clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,var.link=<span class="fl">1</span>,model=<span class="st">"clayton.oakes"</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitco2</span>)
+ <span class="va">fitco2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">0.0</span>,
+                  clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco2</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;               log-Coef.       SE          z     P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 -0.04849523 0.328524 -0.1476155 0.8826462   0.3226451 0.07179736</span>
+<span class="co">#&gt;              log-Coef.        SE          z     P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 -0.0484957 0.3718487 -0.1304178 0.8962359    0.322645 0.08126576</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vargam</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5% 97.5%  P-value</span>
-<span class="co">#&gt; dependence1   0.9527   0.313 0.3392 1.566 0.002335</span>
+<span class="co">#&gt; dependence1   0.9527  0.3542 0.2584 1.647 0.007161</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
- <span class="kw">fitco3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">margph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>,detail=<span class="fl">0</span>,
-                  clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,var.link=<span class="fl">0</span>,model=<span class="st">"clayton.oakes"</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitco3</span>)
+ <span class="va">fitco3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,
+                  clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">0</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco3</span><span class="op">)</span>
+<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
+<span class="co">#&gt; Variance of Gamma distributed random effects</span>
+<span class="co">#&gt; $estimates</span>
+<span class="co">#&gt;                 Coef.     SE        z       P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 0.9526614 0.3543 2.688855 0.007169754    0.322645 0.08127816</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $type</span>
+<span class="co">#&gt; [1] "clayton.oakes"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attr(,"class")</span>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
+<p>Note, the standard errors are slightly different when comparing fitco1 with fitco3 since the survival.twostage uses numerical derivatives for the hessian and the derivative in the direction of the marginal model.</p>
+<p>The marginal models can be either structured Cox model or as here with a baseline for each strata. This gives quite similar results to those before.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R">  <span class="co"># without covariates but marginal model stratified </span>
+  <span class="va">marg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fu">strata</span><span class="op">(</span><span class="va">treat</span><span class="op">)</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span>
+ <span class="va">fitco</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                 Coef.        SE        z       P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 0.9526619 0.3129723 3.043917 0.002335193   0.3226451 0.07179736</span>
+<span class="co">#&gt; dependence1 0.9447446 0.3516204 2.686831 0.007213349    0.320824 0.08109776</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
-<span class="co">#&gt; [1] "clayton.oakes"</span>
+<span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
-<p>The marginal models can be either structured Cox model or as here with a baseline for each strata. This gives quite similar results to those before.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-  <span class="co"># without covariates but marginal model stratified </span>
-  <span class="kw">marg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="op">+</span><span class="fu">strata</span>(<span class="kw">treat</span>)<span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">diabetes</span>)
-  <span class="kw">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">marg</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>,clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,
-           model=<span class="st">"clayton.oakes"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitcoa</span>)
+
+  <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,
+           model<span class="op">=</span><span class="st">"clayton.oakes"</span>,var.link<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitcoa</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
-<span class="co">#&gt; Variance of Gamma distributed random effects </span>
-<span class="co">#&gt; With log-link</span>
+<span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;               log-Coef.        SE          z     P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 -0.05683996 0.3279956 -0.1732949 0.8624196   0.3208241 0.07146893</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $vargam</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5% 97.5%  P-value</span>
-<span class="co">#&gt; dependence1   0.9447  0.3099 0.3374 1.552 0.002297</span>
+<span class="co">#&gt;                 Coef.        SE        z       P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 0.9447446 0.3516129 2.686889 0.007212097    0.320824 0.08109601</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 </div>
 <div id="piecewise-constant-clayton-oakes-model" class="section level1">
 <h1 class="hasAnchor">
@@ -306,142 +333,158 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <p>The model lets the CHR by constant in different part of the plane. This can be thought of also as having a separate Clayton-Oakes model for each of the regions specified in the plane here by the cut-points <span class="math inline">\(c(0,0.5,2)\)</span> thus defining 9 regions.</p>
 <p>This provides a constructive goodness of fit test for the whether the Clayton-Oakes model is valid. Indeed if valid the parameter should be the same in all regions.</p>
 <p>First we generate some data from the Clayton-Oakes model with variance <span class="math inline">\(0.5\)</span> and 2000 pairs. And fit the related model.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
- <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span>(<span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,<span class="fl">3</span>)
-  <span class="kw">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">x</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">cluster</span>),data=<span class="kw">d</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span>
+  <span class="va">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span>
  <span class="co"># Clayton-Oakes, MLE </span>
- <span class="kw">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span>(<span class="kw">margph</span>,data=<span class="kw">d</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitco1</span>)
+ <span class="va">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco1</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.         SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.163498 0.09843769 21.97835     0   0.5196346 0.01135729</span>
+<span class="co">#&gt; dependence1 2.112667 0.09436741 22.38768     0   0.5136976 0.01115847</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 <p>Now we cut the region at the cut-points <span class="math inline">\(c(0,0.5,2)\)</span> thus defining 9 regions and fit a separate model for each region.<br>
 We see that the parameter is indeed rather constant over the 9 regions. A formal test can be constructed.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
- <span class="kw">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span>),data=<span class="kw">d</span>,score.method=<span class="st">"optimize"</span>,
- id=<span class="st">"cluster"</span>,timevar=<span class="st">"time"</span>,status=<span class="st">"status"</span>,model=<span class="st">"clayton.oakes"</span>,silent=<span class="fl">0</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
 <span class="co">#&gt; Data-set  1 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 463 of  2000</span>
+<span class="co">#&gt;   Number of joint events: 541 of  2000</span>
 <span class="co">#&gt; Data-set  2 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 253 of  1263</span>
+<span class="co">#&gt;   Number of joint events: 248 of  1213</span>
 <span class="co">#&gt; Data-set  3 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 265 of  1283</span>
+<span class="co">#&gt;   Number of joint events: 241 of  1208</span>
 <span class="co">#&gt; Data-set  4 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 646 of  1009</span>
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">udp</span>)
+<span class="co">#&gt;   Number of joint events: 621 of  962</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">udp</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model </span>
 <span class="co">#&gt; Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="co">#&gt;             0 - 0.5       0.5 - 2</span>
-<span class="co">#&gt; 0 - 0.5 0.001494457 -0.0004216705</span>
-<span class="co">#&gt; 0.5 - 2 0.001669698  0.0023391315</span>
+<span class="co">#&gt;              0 - 0.5      0.5 - 2</span>
+<span class="co">#&gt; 0 - 0.5 -0.002444972 -0.001416037</span>
+<span class="co">#&gt; 0.5 - 2 -0.001847436  0.002335795</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; log-coefficient for dependence parameter (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.698 (0.071)  0.816 (0.095)</span>
-<span class="co">#&gt; 0.5 - 2  0.653 (0.086)  0.762 (0.057)</span>
+<span class="co">#&gt; 0 - 0.5  0.755 (0.065)  0.774 (0.093)</span>
+<span class="co">#&gt; 0.5 - 2  0.597 (0.103)  0.755 (0.056)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Kendall's tau (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.501 (0.018)  0.531 (0.024)</span>
-<span class="co">#&gt; 0.5 - 2  0.49  (0.021)  0.517 (0.014)</span>
-</pre></div>
+<span class="co">#&gt; 0 - 0.5  0.515 (0.016)  0.52  (0.023)</span>
+<span class="co">#&gt; 0.5 - 2  0.476 (0.026)  0.516 (0.014)</span></code></pre></div>
 </div>
 <div id="multivariate-gamma-twostage-models" class="section level1">
 <h1 class="hasAnchor">
 <a href="#multivariate-gamma-twostage-models" class="anchor"></a>Multivariate gamma twostage models</h1>
 <p>To illustrate how the multivariate models can be used, we first set up some twin data with ACE structure. That is two shared random effects, one being the genes <span class="math inline">\(\sigma_g^2\)</span> and one the environmental effect <span class="math inline">\(\sigma_e^2\)</span>. Monozygotic twins share all genes whereas the dizygotic twins only share half the genes. This can be expressed via 5 random effect for each twin pair (for example). We start by setting this up.</p>
 <p>The pardes matrix tells how the the parameters of the 5 random effects are related, and the matrix her first has one random effect with parameter <span class="math inline">\(\theta_1\)</span> (here the <span class="math inline">\(\sigma_g^2\)</span> ), then the next 3 random effects have parameters <span class="math inline">\(0.5 \theta_1\)</span> (here <span class="math inline">\(0.5 \sigma_g^2\)</span> ), and the last random effect that is given by its own parameter <span class="math inline">\(\theta_2\)</span> (here <span class="math inline">\(\sigma_e^2\)</span> ).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
- <span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.twin.ace</a></span>(<span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span>
 
- <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">twin.polygen.design</a></span>(<span class="kw">data</span>,id=<span class="st">"cluster"</span>)
- <span class="kw">pardes</span> <span class="op">&lt;-</span> <span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>
- <span class="kw">pardes</span> 
+ <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span>
+ <span class="va">pardes</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">pardes</span>
+ <span class="va">pardes</span> 
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]  1.0    0</span>
 <span class="co">#&gt; [2,]  0.5    0</span>
 <span class="co">#&gt; [3,]  0.5    0</span>
 <span class="co">#&gt; [4,]  0.5    0</span>
-<span class="co">#&gt; [5,]  0.0    1</span>
-</pre></div>
+<span class="co">#&gt; [5,]  0.0    1</span></code></pre></div>
 <p>The last part of the model structure is to decide how the random effects are shared for the different pairs (MZ and DZ), this is specfied by the random effects design (<span class="math inline">\(V_1\)</span> and <span class="math inline">\(V_2\)</span>) for each pair. This is here specified by an overall designmatrix for each subject (since they enter all pairs with the same random effects design).</p>
 <p>For an MZ pair the two share the full gene random effect and the full environmental random effect. In contrast the DZ pairs share the 2nd random effect with half the gene-variance and have both a non-shared gene-random effect with half the variance, and finally a fully shared environmental random effect.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
- <span class="kw">des.rv</span> <span class="op">&lt;-</span> <span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">des.rv</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>
  <span class="co"># MZ</span>
- <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">des.rv</span>,<span class="fl">2</span>)
+ <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">des.rv</span>,<span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;   MZ DZ DZns1 DZns2 env</span>
 <span class="co">#&gt; 1  1  0     0     0   1</span>
 <span class="co">#&gt; 2  1  0     0     0   1</span>
  <span class="co"># DZ </span>
- <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span>(<span class="kw">des.rv</span>,<span class="fl">2</span>)
+ <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">des.rv</span>,<span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;      MZ DZ DZns1 DZns2 env</span>
 <span class="co">#&gt; 3999  0  1     1     0   1</span>
-<span class="co">#&gt; 4000  0  1     0     1   1</span>
-</pre></div>
+<span class="co">#&gt; 4000  0  1     0     1   1</span></code></pre></div>
 <p>Now we call the twostage function. We see that we essentially recover the true values, and note that the output also compares the sizes of the genetic and environmental random effect. This number is sometimes called the heritability. In addition the total variance for each subject is also computed and is here around <span class="math inline">\(3\)</span>, as we indeed constructed.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
- <span class="kw">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">x</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">cluster</span>),data=<span class="kw">data</span>)
- <span class="kw">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">aa</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,detail=<span class="fl">0</span>,
-      theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),var.link=<span class="fl">0</span>,step=<span class="fl">0.5</span>,random.design=<span class="kw">des.rv</span>,theta.des=<span class="kw">pardes</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">ts</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### data &lt;- simClaytonOakes.twin.ace(2000,2,1,0,3)</span>
+<span class="co">### out &lt;- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")</span>
+ <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span>
+ <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,
+      theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.066651 0.2199163 9.397441 0.000000e+00   0.5081948 0.02659584</span>
-<span class="co">#&gt; dependence2 1.061652 0.1715617 6.188163 6.086953e-10   0.3467578 0.03660486</span>
+<span class="co">#&gt; dependence1 2.048087 0.2024228 10.11787 0.000000e+00   0.5059395 0.02470528</span>
+<span class="co">#&gt; dependence2 1.085986 0.1621310  6.69820 2.110023e-11   0.3519089 0.03404930</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.6606 0.05587 0.5511 0.7701 2.931e-32</span>
-<span class="co">#&gt; dependence2   0.3394 0.05587 0.2299 0.4489 1.247e-09</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.6535 0.05253 0.5505 0.7564 1.578e-35</span>
+<span class="co">#&gt; [2,]   0.3465 0.05253 0.2436 0.4495 4.212e-11</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    3.128  0.1539 2.827  3.43 6.953e-92</span>
+<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%    P-value</span>
+<span class="co">#&gt; p1    3.134  0.1374 2.865 3.403 3.122e-115</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
+<ul>
+<li>A nice feature of the procdure is that it scales linearly in the number of observations
+<ul>
+<li>1 mill pairs had a running time of around 100 seconds.</li>
+</ul>
+</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">run</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="kw">if</span> <span class="op">(</span><span class="va">run</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
+ <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="fl">1000000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span>
+
+ <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span>
+ <span class="va">pardes</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">pardes</span>
+ <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span>
+ <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,
+      theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span>
+ <span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
 <p>The estimates can be transformed into Kendall’s tau estimates for MZ and DZ twins. The Kendall’s tau in the above output reflects how a gamma distributed random effect in the normal Clayton-Oakes model is related to the Kendall’s tau. In this setting the Kendall’s of MZ and DZ, however, should reflect both random effects.</p>
 <p>We do this based on simulations. The Kendall’s tau of the MZ is around 0.60, and for DZ around 0.33. Both are quite high and this is due to a large shared environmental effect and large genetic effect.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span>(<span class="kw">ts</span><span class="op">$</span><span class="kw">theta</span>[<span class="fl">1</span>],<span class="kw">ts</span><span class="op">$</span><span class="kw">theta</span>[<span class="fl">2</span>],K=<span class="fl">10000</span>) 
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span> 
 <span class="co">#&gt; $mz.kendall</span>
-<span class="co">#&gt; [1] 0.609728</span>
+<span class="co">#&gt; [1] 0.6165808</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $dz.kendall</span>
-<span class="co">#&gt; [1] 0.3470759</span>
-</pre></div>
+<span class="co">#&gt; [1] 0.3516054</span></code></pre></div>
 </div>
 <div id="family-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#family-data" class="anchor"></a>Family data</h1>
 <p>For family data, things are quite similar since we use only the pairwise structure. We show how the designs are specified.</p>
 <p>First we simulate data from an ACE model. 2000 families with two-parents that share only the environment, and two-children that share genes with their parents.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1000</span>)
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.family.ace</a></span>(<span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">data</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
 <span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated</span>
 <span class="co">#&gt; 1 0.2474705      1 1       1 mother 0.2474705        0         0</span>
 <span class="co">#&gt; 2 0.9687073      1 0       1 father 0.2474705        0         0</span>
@@ -449,15 +492,14 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <span class="co">#&gt; 4 0.6995364      1 0       1  child 0.2474705        0         0</span>
 <span class="co">#&gt; 5 2.4438829      1 0       2 mother 0.6631202        0         0</span>
 <span class="co">#&gt; 6 3.0000000      0 0       2 father 0.6631202        0         0</span>
-<span class="kw">data</span><span class="op">$</span><span class="kw">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>)
-<span class="kw">data</span><span class="op">$</span><span class="kw">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">data</span><span class="op">$</span><span class="kw">number</span><span class="op">==</span><span class="fl">3</span>)
-</pre></div>
+<span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>
+<span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
 <p>To set up the random effects some functions can be used. We here set up the ACE model that has 9 random effects with one shared environmental effect (the last random effect) and 4 genetic random effects for each parent, with variance <span class="math inline">\(\sigma_g^2/4\)</span>.</p>
 <p>The random effect is again set-up with an overall designmatrix because it is again the same for each subject for all comparisons across family members. We below demonstrate how the model can be specified in various other ways.</p>
 <p>Each child share 2 genetic random effects with each parent, and also share 2 genetic random effects with his/her sibling.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span>(<span class="kw">data</span>,member=<span class="st">"type"</span>,id=<span class="st">"cluster"</span>)
-<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span><span class="op">(</span><span class="va">data</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span>
+<span class="va">out</span><span class="op">$</span><span class="va">pardes</span>
 <span class="co">#&gt;       [,1] [,2]</span>
 <span class="co">#&gt;  [1,] 0.25    0</span>
 <span class="co">#&gt;  [2,] 0.25    0</span>
@@ -468,136 +510,130 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <span class="co">#&gt;  [7,] 0.25    0</span>
 <span class="co">#&gt;  [8,] 0.25    0</span>
 <span class="co">#&gt;  [9,] 0.00    1</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,<span class="fl">4</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,<span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt;      m1 m2 m3 m4 f1 f2 f3 f4 env</span>
 <span class="co">#&gt; [1,]  1  1  1  1  0  0  0  0   1</span>
 <span class="co">#&gt; [2,]  0  0  0  0  1  1  1  1   1</span>
 <span class="co">#&gt; [3,]  1  1  0  0  1  1  0  0   1</span>
-<span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span>
-</pre></div>
+<span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span></code></pre></div>
 <p>Then we fit the model</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="kw">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">cluster</span>),data=<span class="kw">data</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span>
 
 <span class="co"># make ace random effects design</span>
-<span class="kw">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,
-    var.par=<span class="fl">1</span>,var.link=<span class="fl">0</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),
-        random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">ts</span>)
+<span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,var.par<span class="op">=</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,
+        random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.054484 0.2546601 8.067555 6.661338e-16   0.5067190 0.03098273</span>
-<span class="co">#&gt; dependence2 1.097735 0.1129562 9.718236 0.000000e+00   0.3543669 0.02354244</span>
+<span class="co">#&gt;                Coef.        SE         z        P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 2.054484 0.2479573  8.285637 2.220446e-16   0.5067190 0.03016725</span>
+<span class="co">#&gt; dependence2 1.097735 0.1078665 10.176787 0.000000e+00   0.3543669 0.02248165</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.6518 0.04206 0.5693 0.7342 3.710e-54</span>
-<span class="co">#&gt; dependence2   0.3482 0.04206 0.2658 0.4307 1.237e-16</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.6518 0.04124 0.5709 0.7326 2.922e-56</span>
+<span class="co">#&gt; [2,]   0.3482 0.04124 0.2674 0.4291 3.060e-17</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    3.152  0.2423 2.677 3.627 1.053e-38</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    3.152  0.2308  2.7 3.605 1.877e-42</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 <p>The model can also be fitted by specifying the pairs that one wants for the pairwise likelhood. This is done by specifying the pairs argument. We start by considering all pairs as we also did before.</p>
 <p>All pairs can be written up by calling the familycluster.index function.</p>
 <p>There are 6000 pairs to consider, and the first 6 pairs for the first family is written out here.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="co"># now specify fitting via specific pairs </span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># now specify fitting via specific pairs </span>
 <span class="co"># first all pairs </span>
-<span class="kw">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span>(<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">mm</span><span class="op">$</span><span class="kw">familypairindex</span>,n=<span class="fl">12</span>)
+<span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">12</span><span class="op">)</span>
 <span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4</span>
-<span class="kw">pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">mm</span><span class="op">$</span><span class="kw">familypairindex</span>,ncol=<span class="fl">2</span>,byrow=<span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pairs</span>,n=<span class="fl">6</span>)
+<span class="va">pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,ncol<span class="op">=</span><span class="fl">2</span>,byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pairs</span>,n<span class="op">=</span><span class="fl">6</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    1    3</span>
 <span class="co">#&gt; [3,]    1    4</span>
 <span class="co">#&gt; [4,]    2    3</span>
 <span class="co">#&gt; [5,]    2    4</span>
-<span class="co">#&gt; [6,]    3    4</span>
-</pre></div>
+<span class="co">#&gt; [6,]    3    4</span></code></pre></div>
 <p>Then fitting the model using only specified pairs</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="kw">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>, theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>),var.link=<span class="fl">0</span>,step=<span class="fl">1.0</span>,
-        random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>, theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pairs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">ts</span>)
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,
+        random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>, theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE         z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.054484 0.2565939  8.006755 1.110223e-15   0.5067190 0.03121800</span>
-<span class="co">#&gt; dependence2 1.097735 0.1083008 10.135980 0.000000e+00   0.3543669 0.02257216</span>
+<span class="co">#&gt; dependence1 2.054484 0.2479573  8.285637 2.220446e-16   0.5067190 0.03016725</span>
+<span class="co">#&gt; dependence2 1.097735 0.1078665 10.176787 0.000000e+00   0.3543669 0.02248165</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.6518 0.04171 0.5700 0.7335 4.729e-55</span>
-<span class="co">#&gt; dependence2   0.3482 0.04171 0.2665 0.4300 6.828e-17</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.6518 0.04124 0.5709 0.7326 2.922e-56</span>
+<span class="co">#&gt; [2,]   0.3482 0.04124 0.2674 0.4291 3.060e-17</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    3.152   0.242 2.678 3.626 8.595e-39</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    3.152  0.2308  2.7 3.605 1.877e-42</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 <p>Now we only use a random sample of the pairs by sampling these. The pairs picked still refers to the data given in the data argument, and clusters (families) are also specified as before.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">ssid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">pairs</span>),<span class="fl">2000</span>))
-<span class="kw">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">data</span>,clusters=<span class="kw">data</span><span class="op">$</span><span class="kw">cluster</span>,
-    theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,var.link=<span class="fl">0</span>,step=<span class="fl">1.0</span>, random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">des.rv</span>,
-   theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pairs</span>[<span class="kw">ssid</span>,])
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsd</span>)
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ssid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">)</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
+<span class="va">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,
+    theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,
+   theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsd</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.772343 0.3410861 5.196176 2.034297e-07   0.4698255 0.04793708</span>
-<span class="co">#&gt; dependence2 1.195634 0.1374651 8.697726 0.000000e+00   0.3741461 0.02692207</span>
+<span class="co">#&gt; dependence1 1.772343 0.2940521 6.027309 1.667121e-09   0.4698255 0.04132682</span>
+<span class="co">#&gt; dependence2 1.195634 0.1360597 8.787567 0.000000e+00   0.3741461 0.02664683</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.5972 0.05703 0.4854 0.7089 1.164e-25</span>
-<span class="co">#&gt; dependence2   0.4028 0.05703 0.2911 0.5146 1.614e-12</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.5972 0.05343 0.4924 0.7019 5.263e-29</span>
+<span class="co">#&gt; [2,]   0.4028 0.05343 0.2981 0.5076 4.688e-14</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
 <span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.968  0.3502 2.282 3.654 2.359e-17</span>
+<span class="co">#&gt; p1    2.968  0.2937 2.392 3.544 5.142e-24</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 <p>Sometimes one only has the data from the pairs in addition to for example a cohort estimate of the marginal surival models. We now demonstrate how this is dealt with. Everything is essentially as before but need to organize the design differently compared to before we specified the design<br>
 for everybody in the cohort. In addition we do not here bring in the uncertainty from the baseline in the estimates, even though this is formally possible, but when the data of the marginal model and twostage data are not the same, we have to specify that we do not want the decomposition for the uncertainty due to the baseline (baseline.iid=0).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])))
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-<span class="kw">pairsids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])
-<span class="kw">pair.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="../reference/fast.approx.html">fast.approx</a></span>(<span class="kw">ids</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pairs</span>[<span class="kw">ssid</span>,])),ncol=<span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.new</span>)
+<span class="va">pairsids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span>
+<span class="va">pair.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="../reference/fast.approx.html">fast.approx</a></span><span class="op">(</span><span class="va">ids</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pair.new</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    1    3</span>
@@ -608,9 +644,9 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 
 <span class="co"># this requires that pair.new refers to id's in dataid (survival, status and so forth)</span>
 <span class="co"># random.design and theta.des are constructed to be the array 3 dims via individual specfication from ace.family.design</span>
-<span class="kw">dataid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span>(<span class="kw">data</span>[<span class="kw">ids</span>,],<span class="st">"cluster"</span>)
-<span class="kw">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span>(<span class="kw">dataid</span>,member=<span class="st">"type"</span>,id=<span class="st">"cluster"</span>)
-<span class="kw">outid</span><span class="op">$</span><span class="kw">pardes</span>
+<span class="va">dataid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">ids</span>,<span class="op">]</span>,<span class="st">"cluster"</span><span class="op">)</span>
+<span class="va">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">ace.family.design</a></span><span class="op">(</span><span class="va">dataid</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span>
+<span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>
 <span class="co">#&gt;       [,1] [,2]</span>
 <span class="co">#&gt;  [1,] 0.25    0</span>
 <span class="co">#&gt;  [2,] 0.25    0</span>
@@ -621,87 +657,84 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt;  [7,] 0.25    0</span>
 <span class="co">#&gt;  [8,] 0.25    0</span>
 <span class="co">#&gt;  [9,] 0.00    1</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">outid</span><span class="op">$</span><span class="kw">des.rv</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span><span class="op">)</span>
 <span class="co">#&gt;      m1 m2 m3 m4 f1 f2 f3 f4 env</span>
 <span class="co">#&gt; [1,]  1  1  1  1  0  0  0  0   1</span>
 <span class="co">#&gt; [2,]  0  0  0  0  1  1  1  1   1</span>
 <span class="co">#&gt; [3,]  1  1  0  0  1  1  0  0   1</span>
 <span class="co">#&gt; [4,]  1  0  1  0  1  0  1  0   1</span>
 <span class="co">#&gt; [5,]  1  1  1  1  0  0  0  0   1</span>
-<span class="co">#&gt; [6,]  1  1  0  0  1  1  0  0   1</span>
-</pre></div>
+<span class="co">#&gt; [6,]  1  1  0  0  1  1  0  0   1</span></code></pre></div>
 <p>Now fitting the model using only the pair data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,
-      var.link=<span class="fl">0</span>,baseline.iid=<span class="fl">0</span>,
-          random.design=<span class="kw">outid</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">outid</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pair.new</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid</span>)
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,baseline.iid<span class="op">=</span><span class="fl">0</span>,
+          random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsdid</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.772343 0.3304783 5.362964 8.186736e-08   0.4698255 0.04644624</span>
-<span class="co">#&gt; dependence2 1.195634 0.1336389 8.946747 0.000000e+00   0.3741460 0.02617273</span>
+<span class="co">#&gt; dependence1 1.772343 0.2858788 6.199630 5.659591e-10   0.4698255 0.04017812</span>
+<span class="co">#&gt; dependence2 1.195634 0.1325528 9.020058 0.000000e+00   0.3741461 0.02596001</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.5972 0.05633 0.4868 0.7076 2.943e-26</span>
-<span class="co">#&gt; dependence2   0.4028 0.05633 0.2924 0.5132 8.576e-13</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.5972 0.05286 0.4936 0.7008 1.359e-29</span>
+<span class="co">#&gt; [2,]   0.4028 0.05286 0.2992 0.5064 2.518e-14</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.968  0.3332 2.315 3.621 5.251e-19</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    2.968  0.2796 2.42 3.516 2.503e-26</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
 
-<span class="kw">paid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">cluster</span>),data=<span class="kw">dataid</span>)
-<span class="kw">tsdidb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">paid</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,
-  var.link=<span class="fl">0</span>,random.design=<span class="kw">outid</span><span class="op">$</span><span class="kw">des.rv</span>,theta.des=<span class="kw">outid</span><span class="op">$</span><span class="kw">pardes</span>,pairs=<span class="kw">pair.new</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdidb</span>)
+<span class="va">paid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dataid</span><span class="op">)</span>
+<span class="va">tsdidb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">paid</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,
+  var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsdidb</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.804711 0.3493009 5.166638 2.383419e-07   0.4743359 0.04825988</span>
-<span class="co">#&gt; dependence2 1.186006 0.1395368 8.499590 0.000000e+00   0.3722548 0.02749323</span>
+<span class="co">#&gt; dependence1 1.804711 0.3010047 5.995624 2.027053e-09   0.4743359 0.04158722</span>
+<span class="co">#&gt; dependence2 1.186006 0.1380256 8.592653 0.000000e+00   0.3722548 0.02719546</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.6034 0.05716 0.4914 0.7155 4.690e-26</span>
-<span class="co">#&gt; dependence2   0.3966 0.05716 0.2845 0.5086 3.974e-12</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.6034 0.05359 0.4984 0.7085 2.067e-29</span>
+<span class="co">#&gt; [2,]   0.3966 0.05359 0.2915 0.5016 1.364e-13</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.991  0.3594 2.286 3.695 8.724e-17</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%  P-value</span>
+<span class="co">#&gt; p1    2.991  0.3014  2.4 3.581 3.31e-23</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(<span class="kw">tsdidb</span>)
+<span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">tsdid</span><span class="op">)</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.804711 0.3493009 5.166638 2.383419e-07   0.4743359 0.04825988</span>
-<span class="co">#&gt; dependence2 1.186006 0.1395368 8.499590 0.000000e+00   0.3722548 0.02749323</span>
-</pre></div>
+<span class="co">#&gt; dependence1 1.772343 0.2858788 6.199630 5.659591e-10   0.4698255 0.04017812</span>
+<span class="co">#&gt; dependence2 1.195634 0.1325528 9.020058 0.000000e+00   0.3741461 0.02596001</span></code></pre></div>
 <p>Estimates changed because we used either the marginal from the full-data, in which case the standard errors did not reflect the uncertainty from the baseline, or the marginal estimated from only the sub-sample in which case the marginals were slightly different.</p>
 <div id="pairwise-specification-of-random-effects-and-variances" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pairwise-specification-of-random-effects-and-variances" class="anchor"></a>Pairwise specification of random effects and variances</h2>
 <p>Now we illustrate how one can also directly specify the random.design and theta.design for each pair, rather than taking an overall specification that can be used for the whole family via the rows of the des.rv for the relevant pairs. This can be much simpler in some situations.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="kw">pair.types</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">dataid</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw">pair.new</span>)),<span class="st">"type"</span>],byrow=<span class="kw">T</span>,ncol=<span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.new</span>)
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pair.types</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">dataid</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">pair.new</span><span class="op">)</span><span class="op">)</span>,<span class="st">"type"</span><span class="op">]</span>,byrow<span class="op">=</span><span class="cn">T</span>,ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pair.new</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    2</span>
 <span class="co">#&gt; [2,]    1    3</span>
@@ -709,7 +742,7 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; [4,]    5    6</span>
 <span class="co">#&gt; [5,]    5    7</span>
 <span class="co">#&gt; [6,]    8    9</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pair.types</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pair.types</span><span class="op">)</span>
 <span class="co">#&gt;      [,1]     [,2]    </span>
 <span class="co">#&gt; [1,] "mother" "father"</span>
 <span class="co">#&gt; [2,] "mother" "child" </span>
@@ -718,15 +751,14 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; [5,] "mother" "child" </span>
 <span class="co">#&gt; [6,] "mother" "child"</span>
 
-<span class="kw">theta.des</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0</span>))),
-        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>))))
-<span class="kw">random.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( 
-        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>),
-        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>))
-<span class="kw">mf</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span>(<span class="kw">pair.types</span>[,<span class="fl">1</span>]<span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="kw">pair.types</span>[,<span class="fl">2</span>]<span class="op">==</span><span class="st">"father"</span>)
+<span class="va">theta.des</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">random.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span> 
+        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,
+        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">mf</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">pair.types</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="va">pair.types</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">==</span><span class="st">"father"</span><span class="op">)</span>
 <span class="co">##          pair, rv related to pairs,  theta.des related to pair </span>
-<span class="kw">pairs.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">pair.new</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">1</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">3</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">2</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">4</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">1</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">2</span>,(<span class="kw">mf</span><span class="op">==</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">3</span><span class="op">+</span>(<span class="kw">mf</span><span class="op">==</span><span class="fl">0</span>)<span class="op">*</span><span class="fl">4</span>)
-</pre></div>
+<span class="va">pairs.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span><span class="op">)</span></code></pre></div>
 <p>pairs.new is matix with</p>
 <ul>
 <li><p>columns 1:2 giving the indeces of the data points</p></li>
@@ -735,38 +767,37 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <li><p>columns 6 giving the number of random variables for this pair</p></li>
 </ul>
 <p>Looking at the first three rows. We see that the composite likehood is based on data-points (1,2), (3,4) and (5,6), these are (mother, father), (mother, child), and (father, child), respectively.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">pairs.new</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,])
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pairs.new</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6]</span>
 <span class="co">#&gt; [1,]    1    2    1    2    1    3</span>
 <span class="co">#&gt; [2,]    1    3    3    4    2    4</span>
 <span class="co">#&gt; [3,]    2    4    3    4    2    4</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">dataid</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dataid</span><span class="op">)</span>
 <span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated number child</span>
 <span class="co">#&gt; 1 0.2474705      1 1       1 mother 0.2474705        0         0      1     0</span>
 <span class="co">#&gt; 2 0.9687073      1 0       1 father 0.2474705        0         0      2     0</span>
 <span class="co">#&gt; 3 1.2621224      1 0       1  child 0.2474705        0         0      3     1</span>
 <span class="co">#&gt; 4 0.6995364      1 0       1  child 0.2474705        0         0      4     0</span>
 <span class="co">#&gt; 5 2.4438829      1 0       2 mother 0.6631202        0         0      1     0</span>
-<span class="co">#&gt; 7 0.6631202      1 1       2  child 0.6631202        0         0      3     1</span>
-</pre></div>
+<span class="co">#&gt; 7 0.6631202      1 1       2  child 0.6631202        0         0      3     1</span></code></pre></div>
 <p>The random effects for these are specified from random effects with design read from the random.design, using the rows (1,2), (3,4) and (3,4), respecively, and with random effects that have variances given by theta.des rows, 1,2, and 2 respectively in the three cases. For the first pair (1,2), the random vectors and their variances are given by, (mother, father) pair,</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="kw">random.des</span>[<span class="fl">1</span>,]
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">random.des</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>
 <span class="co">#&gt; [1] 1 0 1 0</span>
-<span class="kw">random.des</span>[<span class="fl">2</span>,]
+<span class="va">random.des</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>
 <span class="co">#&gt; [1] 0 1 1 0</span>
-<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">theta.des</span>[<span class="fl">1</span>,],<span class="fl">4</span>,<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">theta.des</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>,<span class="fl">4</span>,<span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    0</span>
 <span class="co">#&gt; [2,]    1    0</span>
 <span class="co">#&gt; [3,]    0    1</span>
-<span class="co">#&gt; [4,]    0    0</span>
-</pre></div>
+<span class="co">#&gt; [4,]    0    0</span></code></pre></div>
 <p>thus sharing only the third random effect with variance <span class="math inline">\(\sigma_e^2\)</span> and having two non-shared random effects with variances <span class="math inline">\(\sigma_g^2\)</span>, and finally a last 4th random effect with variance <span class="math inline">\(0\)</span> that thus could have been omitted.</p>
-<p>now considering the parent and their child, they are thus sharing the first random effect with variance <span class="math inline">\(0.5 \sigma_g^2\)</span> then there are two non-shared random effects with variances <span class="math inline">\(0.5 \sigma_g^2\)</span>, and finally a shared environment with variance <span class="math inline">\(\sigma_e^2\)</span>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">dataid</span>)
+<p>The length of all rows of theta.des are the maximum number of random effects <span class="math inline">\(\times\)</span> the number of parameters. These two numbers are given in the call. In this case 4 <span class="math inline">\(\times\)</span> 2. So theta.des has rows of length <span class="math inline">\(8\)</span>, possibly including some 0’s for rows not relevant due to fewer random effects, as is the case here for pairs that do not share genetic effects.</p>
+<p>Now considering the parent and their child, they are thus sharing the first random effect with variance <span class="math inline">\(0.5 \sigma_g^2\)</span> then there are two non-shared random effects with variances <span class="math inline">\(0.5 \sigma_g^2\)</span>, and finally a shared environment with variance <span class="math inline">\(\sigma_e^2\)</span>.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dataid</span><span class="op">)</span>
 <span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated number child</span>
 <span class="co">#&gt; 1 0.2474705      1 1       1 mother 0.2474705        0         0      1     0</span>
 <span class="co">#&gt; 2 0.9687073      1 0       1 father 0.2474705        0         0      2     0</span>
@@ -774,142 +805,232 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; 4 0.6995364      1 0       1  child 0.2474705        0         0      4     0</span>
 <span class="co">#&gt; 5 2.4438829      1 0       2 mother 0.6631202        0         0      1     0</span>
 <span class="co">#&gt; 7 0.6631202      1 1       2  child 0.6631202        0         0      3     1</span>
-<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw">theta.des</span>[<span class="fl">2</span>,],<span class="fl">4</span>,<span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">theta.des</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>,<span class="fl">4</span>,<span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]  0.5    0</span>
 <span class="co">#&gt; [2,]  0.5    0</span>
 <span class="co">#&gt; [3,]  0.5    0</span>
 <span class="co">#&gt; [4,]  0.0    1</span>
-<span class="kw">random.des</span>[<span class="fl">3</span>,]
+<span class="va">random.des</span><span class="op">[</span><span class="fl">3</span>,<span class="op">]</span>
 <span class="co">#&gt; [1] 1 1 0 1</span>
-<span class="kw">random.des</span>[<span class="fl">4</span>,]
-<span class="co">#&gt; [1] 1 0 1 1</span>
-</pre></div>
+<span class="va">random.des</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span>
+<span class="co">#&gt; [1] 1 0 1 1</span></code></pre></div>
 <p>And fitting again the same model as before</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
-       theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,var.link=<span class="fl">0</span>,step=<span class="fl">1.0</span>,random.design=<span class="kw">random.des</span>,
-       baseline.iid=<span class="fl">0</span>, theta.des=<span class="kw">theta.des</span>,pairs=<span class="kw">pairs.new</span>,dim.theta=<span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid2</span>)
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,
+       theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,random.design<span class="op">=</span><span class="va">random.des</span>,
+       baseline.iid<span class="op">=</span><span class="fl">0</span>, theta.des<span class="op">=</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">pairs.new</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsdid2</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.772343 0.3304783 5.362964 8.186733e-08   0.4698255 0.04644624</span>
-<span class="co">#&gt; dependence2 1.195634 0.1336389 8.946747 0.000000e+00   0.3741461 0.02617273</span>
+<span class="co">#&gt; dependence1 1.772343 0.2858788 6.199630 5.659591e-10   0.4698255 0.04017812</span>
+<span class="co">#&gt; dependence2 1.195634 0.1325528 9.020058 0.000000e+00   0.3741461 0.02596001</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.5972 0.05633 0.4868 0.7076 2.943e-26</span>
-<span class="co">#&gt; dependence2   0.4028 0.05633 0.2924 0.5132 8.576e-13</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $vare</span>
-<span class="co">#&gt; NULL</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.968  0.3332 2.315 3.621 5.251e-19</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-<span class="kw">tsd</span><span class="op">$</span><span class="kw">theta</span>
-<span class="co">#&gt;                 [,1]</span>
-<span class="co">#&gt; dependence1 1.772343</span>
-<span class="co">#&gt; dependence2 1.195634</span>
-<span class="kw">tsdid2</span><span class="op">$</span><span class="kw">theta</span>
-<span class="co">#&gt;                 [,1]</span>
-<span class="co">#&gt; dependence1 1.772343</span>
-<span class="co">#&gt; dependence2 1.195634</span>
-<span class="kw">tsdid</span><span class="op">$</span><span class="kw">theta</span>
-<span class="co">#&gt;                 [,1]</span>
-<span class="co">#&gt; dependence1 1.772343</span>
-<span class="co">#&gt; dependence2 1.195634</span>
-</pre></div>
-<p>Finally the same model structure can be setup based on a Kinship coefficient.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="kw">kinship</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>()
-<span class="co">for</span> (<span class="kw">i</span> <span class="co">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">pair.new</span>))
-{
-<span class="co">if</span> (<span class="kw">pair.types</span>[<span class="kw">i</span>,<span class="fl">1</span>]<span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="kw">pair.types</span>[<span class="kw">i</span>,<span class="fl">2</span>]<span class="op">==</span><span class="st">"father"</span>) <span class="kw">pk1</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co">else</span> <span class="kw">pk1</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
-<span class="kw">kinship</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">kinship</span>,<span class="kw">pk1</span>)
-}
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">kinship</span>,n=<span class="fl">10</span>)
-<span class="co">#&gt;  [1] 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.0 0.5 0.5</span>
-
-<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">make.pairwise.design</a></span>(<span class="kw">pair.new</span>,<span class="kw">kinship</span>,type=<span class="st">"ace"</span>) 
-</pre></div>
-<p>Same same</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="kw">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
-   theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,var.link=<span class="fl">0</span>,step=<span class="fl">1.0</span>,random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">random.design</span>,
-   baseline.iid=<span class="fl">0</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">theta.des</span>,pairs=<span class="kw">out</span><span class="op">$</span><span class="kw">new.pairs</span>,dim.theta=<span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid3</span>)
-<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
-<span class="co">#&gt; Variance of Gamma distributed random effects</span>
-<span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 1.772343 0.3304783 5.362964 8.186733e-08   0.4698255 0.04644624</span>
-<span class="co">#&gt; dependence2 1.195634 0.1336389 8.946747 0.000000e+00   0.3741461 0.02617273</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $type</span>
-<span class="co">#&gt; [1] "clayton.oakes"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; dependence1   0.5972 0.05633 0.4868 0.7076 2.943e-26</span>
-<span class="co">#&gt; dependence2   0.4028 0.05633 0.2924 0.5132 8.576e-13</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $vare</span>
-<span class="co">#&gt; NULL</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    2.968  0.3332 2.315 3.621 5.251e-19</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-<span class="kw">tsdid2</span><span class="op">$</span><span class="kw">theta</span>
-<span class="co">#&gt;                 [,1]</span>
-<span class="co">#&gt; dependence1 1.772343</span>
-<span class="co">#&gt; dependence2 1.195634</span>
-<span class="kw">tsdid</span><span class="op">$</span><span class="kw">theta</span>
-<span class="co">#&gt;                 [,1]</span>
-<span class="co">#&gt; dependence1 1.772343</span>
-<span class="co">#&gt; dependence2 1.195634</span>
-</pre></div>
-<p>Now fitting the AE model without the “C” component for shared environment:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">make.pairwise.design</a></span>(<span class="kw">pair.new</span>,<span class="kw">kinship</span>,type=<span class="st">"ae"</span>) 
-<span class="kw">tsdid4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lava/man/twostage.html">twostage</a></span>(<span class="kw">pa</span>,data=<span class="kw">dataid</span>,clusters=<span class="kw">dataid</span><span class="op">$</span><span class="kw">cluster</span>,
-   theta=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>)<span class="op">/</span><span class="fl">10</span>,var.link=<span class="fl">0</span>,step=<span class="fl">1.0</span>,random.design=<span class="kw">out</span><span class="op">$</span><span class="kw">random.design</span>,
-   baseline.iid=<span class="fl">0</span>,theta.des=<span class="kw">out</span><span class="op">$</span><span class="kw">theta.des</span>,pairs=<span class="kw">out</span><span class="op">$</span><span class="kw">new.pairs</span>,dim.theta=<span class="fl">1</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">tsdid4</span>)
-<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
-<span class="co">#&gt; Variance of Gamma distributed random effects</span>
-<span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 4.259319 0.4792785 8.886939     0   0.6804764 0.02446605</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $type</span>
-<span class="co">#&gt; [1] "clayton.oakes"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $h</span>
-<span class="co">#&gt;             Estimate Std.Err 2.5% 97.5% P-value</span>
-<span class="co">#&gt; dependence1        1       0    1     1       0</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.5972 0.05286 0.4936 0.7008 1.359e-29</span>
+<span class="co">#&gt; [2,]   0.4028 0.05286 0.2992 0.5064 2.518e-14</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
 <span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
-<span class="co">#&gt; p1    4.259  0.4793 3.32 5.199 6.282e-19</span>
+<span class="co">#&gt; p1    2.968  0.2796 2.42 3.516 2.503e-26</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="va">tsd</span><span class="op">$</span><span class="va">theta</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.772343</span>
+<span class="co">#&gt; [2,] 1.195634</span>
+<span class="va">tsdid2</span><span class="op">$</span><span class="va">theta</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.772343</span>
+<span class="co">#&gt; [2,] 1.195634</span>
+<span class="va">tsdid</span><span class="op">$</span><span class="va">theta</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.772343</span>
+<span class="co">#&gt; [2,] 1.195634</span></code></pre></div>
+<p>Finally the same model structure can be setup based on a Kinship coefficient.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">kinship</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pair.types</span><span class="op">)</span><span class="op">)</span>
+<span class="va">kinship</span><span class="op">[</span><span class="va">pair.types</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="va">pair.types</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">==</span><span class="st">"father"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">kinship</span>,n<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
+<span class="co">#&gt;  [1] 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.0 0.5 0.5</span>
+
+<span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">make.pairwise.design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span> </code></pre></div>
+<p>Same output as before</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,
+   theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">random.design</span>,
+   baseline.iid<span class="op">=</span><span class="fl">0</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">new.pairs</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsdid3</span><span class="op">)</span>
+<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
+<span class="co">#&gt; Variance of Gamma distributed random effects</span>
+<span class="co">#&gt; $estimates</span>
+<span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 1.772343 0.2858788 6.199630 5.659591e-10   0.4698255 0.04017812</span>
+<span class="co">#&gt; dependence2 1.195634 0.1325528 9.020058 0.000000e+00   0.3741461 0.02596001</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $type</span>
+<span class="co">#&gt; [1] "clayton.oakes"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $h</span>
+<span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; [1,]   0.5972 0.05286 0.4936 0.7008 1.359e-29</span>
+<span class="co">#&gt; [2,]   0.4028 0.05286 0.2992 0.5064 2.518e-14</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $vare</span>
+<span class="co">#&gt; NULL</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $vartot</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    2.968  0.2796 2.42 3.516 2.503e-26</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attr(,"class")</span>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span>
+<span class="va">tsdid2</span><span class="op">$</span><span class="va">theta</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.772343</span>
+<span class="co">#&gt; [2,] 1.195634</span>
+<span class="va">tsdid</span><span class="op">$</span><span class="va">theta</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.772343</span>
+<span class="co">#&gt; [2,] 1.195634</span></code></pre></div>
+<p>Now fitting the AE model without the “C” component for shared environment:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">outae</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">make.pairwise.design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span> 
+<span class="va">tsdid4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,
+   theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">random.design</span>,
+   baseline.iid<span class="op">=</span><span class="fl">0</span>,theta.des<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">new.pairs</span>,dim.theta<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsdid4</span><span class="op">)</span>
+<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
+<span class="co">#&gt; Variance of Gamma distributed random effects</span>
+<span class="co">#&gt; $estimates</span>
+<span class="co">#&gt;                Coef.        SE       z P-val Kendall tau        SE</span>
+<span class="co">#&gt; dependence1 4.259319 0.2937725 14.4987     0   0.6804764 0.0149964</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $type</span>
+<span class="co">#&gt; [1] "clayton.oakes"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $h</span>
+<span class="co">#&gt;      Estimate Std.Err 2.5% 97.5% P-value</span>
+<span class="co">#&gt; [1,]        1       0    1     1       0</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $vare</span>
+<span class="co">#&gt; NULL</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $vartot</span>
+<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="co">#&gt; p1    4.259  0.2938 3.684 4.835 1.235e-47</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attr(,"class")</span>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
+</div>
+<div id="pairwise-dependence-modelling" class="section level2">
+<h2 class="hasAnchor">
+<a href="#pairwise-dependence-modelling" class="anchor"></a>Pairwise dependence modelling</h2>
+<p>We now illustate how to estimate all pairwise associations between different family-members using the twostage function. They key is specify the pairs for the composite likelihood directly and then the associated design-matrix directly. This needs to be done looking at both subjects in the pairs, and the design therefore follows the pairs and is a matrix where its row is given as the third column in the pairs argument.</p>
+<p>First we get the pairs to be considered</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">simClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+<span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated</span>
+<span class="co">#&gt; 1 0.2474705      1 1       1 mother 0.2474705        0         0</span>
+<span class="co">#&gt; 2 0.9687073      1 0       1 father 0.2474705        0         0</span>
+<span class="co">#&gt; 3 1.2621224      1 0       1  child 0.2474705        0         0</span>
+<span class="co">#&gt; 4 0.6995364      1 0       1  child 0.2474705        0         0</span>
+<span class="co">#&gt; 5 2.4438829      1 0       2 mother 0.6631202        0         0</span>
+<span class="co">#&gt; 6 3.0000000      0 0       2 father 0.6631202        0         0</span>
+<span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>
+<span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span>
+
+<span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">20</span><span class="op">)</span>
+<span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7</span>
+<span class="va">pairs</span> <span class="op">&lt;-</span> <span class="va">mm</span><span class="op">$</span><span class="va">pairs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">)</span>
+<span class="co">#&gt; [1] 6000    2</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">12</span><span class="op">)</span>
+<span class="co">#&gt;       [,1] [,2]</span>
+<span class="co">#&gt;  [1,]    1    2</span>
+<span class="co">#&gt;  [2,]    1    3</span>
+<span class="co">#&gt;  [3,]    1    4</span>
+<span class="co">#&gt;  [4,]    2    3</span>
+<span class="co">#&gt;  [5,]    2    4</span>
+<span class="co">#&gt;  [6,]    3    4</span>
+<span class="co">#&gt;  [7,]    5    6</span>
+<span class="co">#&gt;  [8,]    5    7</span>
+<span class="co">#&gt;  [9,]    5    8</span>
+<span class="co">#&gt; [10,]    6    7</span>
+<span class="co">#&gt; [11,]    6    8</span>
+<span class="co">#&gt; [12,]    7    8</span></code></pre></div>
+<p>Now we construct the design matrix related to the pairs</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">dtypes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span><span class="op">(</span> <span class="va">data</span><span class="op">[</span><span class="va">pairs</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="st">"type"</span><span class="op">]</span>, <span class="va">data</span><span class="op">[</span><span class="va">pairs</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">"type"</span><span class="op">]</span><span class="op">)</span>
+ <span class="va">dtypes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/droplevels.html">droplevels</a></span><span class="op">(</span><span class="va">dtypes</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">dtypes</span><span class="op">)</span>
+<span class="co">#&gt; dtypes</span>
+<span class="co">#&gt;   child.child  father.child  mother.child mother.father </span>
+<span class="co">#&gt;          1000          2000          2000          1000</span>
+ <span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">dtypes</span><span class="op">)</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span>
+<span class="co">#&gt;   factor(dtypes)child.child factor(dtypes)father.child</span>
+<span class="co">#&gt; 1                         0                          0</span>
+<span class="co">#&gt; 2                         0                          0</span>
+<span class="co">#&gt; 3                         0                          0</span>
+<span class="co">#&gt; 4                         0                          1</span>
+<span class="co">#&gt; 5                         0                          1</span>
+<span class="co">#&gt; 6                         1                          0</span>
+<span class="co">#&gt;   factor(dtypes)mother.child factor(dtypes)mother.father</span>
+<span class="co">#&gt; 1                          0                           1</span>
+<span class="co">#&gt; 2                          1                           0</span>
+<span class="co">#&gt; 3                          1                           0</span>
+<span class="co">#&gt; 4                          0                           0</span>
+<span class="co">#&gt; 5                          0                           0</span>
+<span class="co">#&gt; 6                          0                           0</span></code></pre></div>
+<p>Then we fit the model:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu">cluster</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,<span class="va">data</span><span class="op">)</span>
+
+<span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,theta.des<span class="op">=</span><span class="va">dm</span>,pairs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span><span class="op">)</span>,se.clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">clust</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tsp</span><span class="op">)</span>
+<span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
+<span class="co">#&gt; Variance of Gamma distributed random effects </span>
+<span class="co">#&gt; With log-link</span>
+<span class="co">#&gt; $estimates</span>
+<span class="co">#&gt;                               log-Coef.         SE          z        P-val</span>
+<span class="co">#&gt; factor(dtypes)child.child    0.17464886 0.09156372  1.9074024 5.646850e-02</span>
+<span class="co">#&gt; factor(dtypes)father.child   0.11418226 0.07647446  1.4930770 1.354170e-01</span>
+<span class="co">#&gt; factor(dtypes)mother.child   0.03112893 0.08228883  0.3782887 7.052162e-01</span>
+<span class="co">#&gt; factor(dtypes)mother.father -1.06363912 0.17648814 -6.0266888 1.673528e-09</span>
+<span class="co">#&gt;                             Kendall tau         SE</span>
+<span class="co">#&gt; factor(dtypes)child.child     0.3732034 0.02141883</span>
+<span class="co">#&gt; factor(dtypes)father.child    0.3591708 0.01760191</span>
+<span class="co">#&gt; factor(dtypes)mother.child    0.3402864 0.01847315</span>
+<span class="co">#&gt; factor(dtypes)mother.father   0.1471933 0.02215410</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $vargam</span>
+<span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="co">#&gt; dependence1   1.1908 0.10904 0.9771 1.4045 9.112e-28</span>
+<span class="co">#&gt; dependence2   1.1210 0.08572 0.9529 1.2890 4.500e-39</span>
+<span class="co">#&gt; dependence3   1.0316 0.08489 0.8652 1.1980 5.576e-34</span>
+<span class="co">#&gt; dependence4   0.3452 0.06092 0.2258 0.4646 1.461e-08</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $type</span>
+<span class="co">#&gt; [1] "clayton.oakes"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attr(,"class")</span>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
+<p>We note that mother-father have the smallest correlation since they only share the environmental random effect, whereas other pairs have a similar correlation (in fact the same due to the way the data was simulated) consisting of half the genetic effect and the environmental effect that was also shared.</p>
 </div>
 </div>
 <div id="univariate-plackett-model-twostage-models" class="section level1">
@@ -929,15 +1050,15 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
   \frac{\theta+1}{\theta -1} - \frac{2 \theta}{(\theta-1)^2} \log(\theta)
 \end{align}\]</span> when <span class="math inline">\(\theta \ne 1\)</span>, if <span class="math inline">\(\theta=1\)</span> then <span class="math inline">\(\rho=0\)</span>.</p>
 <p>This model has a more free parameter than the Clayton-Oakes model.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
- <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://kkholst.github.io/mets">mets</a></span>)
- <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">diabetes</span>)
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">diabetes</span><span class="op">)</span>
  
  <span class="co"># Marginal Cox model  with treat as covariate</span>
- <span class="kw">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">treat</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">diabetes</span>)
+ <span class="va">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treat</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span>
  <span class="co"># Clayton-Oakes, MLE </span>
- <span class="kw">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span>(<span class="kw">margph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitco1</span>)
+ <span class="va">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitco1</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
@@ -951,19 +1072,19 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
  
  <span class="co"># Plackett model</span>
- <span class="kw">mph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="kw">treat</span><span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">diabetes</span>)
- <span class="kw">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">mph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">3.0</span>,Nit=<span class="fl">40</span>,
-                clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,var.link=<span class="fl">1</span>,model=<span class="st">"plackett"</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitp</span>)
+ <span class="va">mph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treat</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span>
+ <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,
+                clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"plackett"</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitp</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;             log-Coef.        SE        z        P-val Spearman Corr.         SE</span>
-<span class="co">#&gt; dependence1   1.14188 0.2754994 4.144764 3.401635e-05      0.3648217 0.08073474</span>
+<span class="co">#&gt; dependence1   1.14188 0.3026537 3.772891 0.0001613666      0.3648216 0.08869229</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $or</span>
 <span class="co">#&gt;             Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="co">#&gt; dependence1    3.133   0.863 1.441 4.824 0.0002837</span>
+<span class="co">#&gt; dependence1    3.133  0.9481 1.274 4.991 0.0009528</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "plackett"</span>
@@ -972,20 +1093,20 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
  
  <span class="co"># without covariates but with stratafied </span>
- <span class="kw">marg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span>(<span class="fu">Surv</span>(<span class="kw">time</span>,<span class="kw">status</span>)<span class="op">~</span><span class="op">+</span><span class="fu">strata</span>(<span class="kw">treat</span>)<span class="op">+</span><span class="fu">cluster</span>(<span class="kw">id</span>),data=<span class="kw">diabetes</span>)
- <span class="kw">fitpa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">marg</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>,
-                 clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,score.method=<span class="st">"optimize"</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitpa</span>)
+ <span class="va">marg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fu">strata</span><span class="op">(</span><span class="va">treat</span><span class="op">)</span><span class="op">+</span><span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span>
+ <span class="va">fitpa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,
+                 clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitpa</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;               log-Coef.        SE          z     P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 -0.05683487 0.3239422 -0.1754476 0.8607279   0.3208252 0.07058583</span>
+<span class="co">#&gt; dependence1 -0.05684062 0.3721207 -0.1527478 0.8785971    0.320824 0.08108359</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vargam</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5% 97.5%  P-value</span>
-<span class="co">#&gt; dependence1   0.9448   0.306 0.3449 1.545 0.002022</span>
+<span class="co">#&gt; dependence1   0.9447  0.3516 0.2557 1.634 0.007203</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
@@ -993,128 +1114,116 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span>
  
- <span class="kw">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">marg</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">1.0</span>,clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,
-                  model=<span class="st">"clayton.oakes"</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitcoa</span>)
+ <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,
+                  model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitcoa</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;               log-Coef.        SE          z     P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 -0.05683996 0.3279956 -0.1732949 0.8624196   0.3208241 0.07146893</span>
+<span class="co">#&gt; dependence1 -0.05684062 0.3721207 -0.1527478 0.8785971    0.320824 0.08108359</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vargam</span>
 <span class="co">#&gt;             Estimate Std.Err   2.5% 97.5%  P-value</span>
-<span class="co">#&gt; dependence1   0.9447  0.3099 0.3374 1.552 0.002297</span>
+<span class="co">#&gt; dependence1   0.9447  0.3516 0.2557 1.634 0.007203</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
 <p>With a regression design</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
- <span class="kw">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">adult</span>),<span class="kw">diabetes</span>)
- <span class="kw">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span>(<span class="kw">mph</span>,data=<span class="kw">diabetes</span>,theta=<span class="fl">3.0</span>,Nit=<span class="fl">40</span>,
-                clusters=<span class="kw">diabetes</span><span class="op">$</span><span class="kw">id</span>,var.link=<span class="fl">1</span>,model=<span class="st">"plackett"</span>,
-        theta.des=<span class="kw">mm</span>)
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fitp</span>)
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">adult</span><span class="op">)</span>,<span class="va">diabetes</span><span class="op">)</span>
+ <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,Nit<span class="op">=</span><span class="fl">40</span>,
+                clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"plackett"</span>,
+        theta.des<span class="op">=</span><span class="va">mm</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fitp</span><span class="op">)</span>
 <span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="co">#&gt; With log-link</span>
 <span class="co">#&gt; $estimates</span>
 <span class="co">#&gt;                log-Coef.        SE        z       P-val Spearman Corr.</span>
-<span class="co">#&gt; factor(adult)1  1.098333 0.3356654 3.272106 0.001067497      0.3519988</span>
-<span class="co">#&gt; factor(adult)2  1.231962 0.4708683 2.616363 0.008887198      0.3909505</span>
-<span class="co">#&gt;                        SE</span>
-<span class="co">#&gt; factor(adult)1 0.09930816</span>
-<span class="co">#&gt; factor(adult)2 0.13514292</span>
+<span class="co">#&gt; factor(adult)1  1.098332 0.3630524 3.025272 0.002484097      0.3519987</span>
+<span class="co">#&gt; factor(adult)2  1.231962 0.5233261 2.354100 0.018567607      0.3909504</span>
+<span class="co">#&gt;                       SE</span>
+<span class="co">#&gt; factor(adult)1 0.1074107</span>
+<span class="co">#&gt; factor(adult)2 0.1501987</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $or</span>
-<span class="co">#&gt;                Estimate Std.Err   2.5% 97.5% P-value</span>
-<span class="co">#&gt; factor(adult)1    2.999   1.007 1.0260 4.972 0.00289</span>
-<span class="co">#&gt; factor(adult)2    3.428   1.614 0.2643 6.592 0.03369</span>
+<span class="co">#&gt;             Estimate Std.Err    2.5% 97.5% P-value</span>
+<span class="co">#&gt; dependence1    2.999   1.089  0.8650 5.133 0.00588</span>
+<span class="co">#&gt; dependence2    3.428   1.794 -0.0881 6.944 0.05602</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "plackett"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
-<span class="co">#&gt; [1] "summary.mets.twostage"</span>
-</pre></div>
-<div class="sourceCode" id="cb27"><pre class="downlit">
- <span class="co"># Piecewise constant cross hazards ratio modelling</span>
+<span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"> <span class="co"># Piecewise constant cross hazards ratio modelling</span>
 
- <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span>(<span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,stoptime=<span class="fl">2</span>,left=<span class="fl">0</span>),<span class="op">!</span><span class="kw">truncated</span>)
- <span class="kw">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span>),data=<span class="kw">d</span>,score.method=<span class="st">"optimize"</span>,
-                           id=<span class="st">"cluster"</span>,timevar=<span class="st">"time"</span>,
-                           status=<span class="st">"status"</span>,model=<span class="st">"plackett"</span>,silent=<span class="fl">0</span>)
+ <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="fl">2000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,stoptime<span class="op">=</span><span class="fl">2</span>,left<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="op">!</span><span class="va">truncated</span><span class="op">)</span>
+ <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,
+                           status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"plackett"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
 <span class="co">#&gt; Data-set  1 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 522 of  2000</span>
+<span class="co">#&gt;   Number of joint events: 531 of  2000</span>
 <span class="co">#&gt; Data-set  2 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 263 of  1194</span>
+<span class="co">#&gt;   Number of joint events: 251 of  1201</span>
 <span class="co">#&gt; Data-set  3 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 278 of  1209</span>
+<span class="co">#&gt;   Number of joint events: 264 of  1216</span>
 <span class="co">#&gt; Data-set  4 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 579 of  925</span>
- <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">udp</span>)
+<span class="co">#&gt;   Number of joint events: 621 of  948</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">udp</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1</span>
 <span class="co">#&gt; Dependence parameter for Plackett model </span>
-<span class="co">#&gt; Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="co">#&gt;               0 - 0.5       0.5 - 2</span>
-<span class="co">#&gt; 0 - 0.5 -0.0005197763 -0.0004069175</span>
-<span class="co">#&gt; 0.5 - 2 -0.0002803075  0.0010056645</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
 <span class="co">#&gt; log-coefficient for dependence parameter (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  1.589 (0.081)  1.75  (0.124)</span>
-<span class="co">#&gt; 0.5 - 2  1.584 (0.124)  2.025 (0.099)</span>
+<span class="co">#&gt; 0 - 0.5  1.772 (0.082)  1.56  (0.136)</span>
+<span class="co">#&gt; 0.5 - 2  1.592 (0.128)  1.957 (0.092)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Spearman Correlation (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.489 (0.021)  0.53  (0.031)</span>
-<span class="co">#&gt; 0.5 - 2  0.488 (0.032)  0.595 (0.022)</span>
-</pre></div>
+<span class="co">#&gt; 0 - 0.5  0.535 (0.020)  0.481 (0.036)</span>
+<span class="co">#&gt; 0.5 - 2  0.49  (0.033)  0.579 (0.021)</span></code></pre></div>
 </div>
 <div id="sessioninfo" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
-<span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">#&gt; Running under: Ubuntu 16.04.6 LTS</span>
+<span class="co">#&gt; Running under: Ubuntu 20.04.2 LTS</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /usr/lib/openblas-base/libblas.so.3</span>
-<span class="co">#&gt; LAPACK: /usr/lib/libopenblasp-r0.2.18.so</span>
+<span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span>
+<span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; locale:</span>
-<span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
-<span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
-<span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
-<span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
-<span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
-<span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
+<span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span>
+<span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span>
+<span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span>
+<span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attached base packages:</span>
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] mets_1.2.8.1    lava_1.6.9      timereg_1.9.9   survival_3.1-12</span>
+<span class="co">#&gt; [1] mets_1.2.9      lava_1.6.9      timereg_2.0.0   survival_3.2-11</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.6          cpp11_0.2.1         knitr_1.33         </span>
-<span class="co">#&gt;  [4] magrittr_2.0.1      splines_4.0.2       lattice_0.20-41    </span>
-<span class="co">#&gt;  [7] R6_2.5.0            ragg_0.3.1          rlang_0.4.11       </span>
-<span class="co">#&gt; [10] stringr_1.4.0       tools_4.0.2         grid_4.0.2         </span>
-<span class="co">#&gt; [13] xfun_0.23           htmltools_0.5.1.1   systemfonts_0.3.1  </span>
-<span class="co">#&gt; [16] yaml_2.2.1          rprojroot_2.0.2     digest_0.6.27      </span>
+<span class="co">#&gt;  [1] Rcpp_1.0.7          knitr_1.33          magrittr_2.0.1     </span>
+<span class="co">#&gt;  [4] splines_4.1.1       lattice_0.20-44     R6_2.5.1           </span>
+<span class="co">#&gt;  [7] ragg_1.1.3          rlang_0.4.11        fastmap_1.1.0      </span>
+<span class="co">#&gt; [10] stringr_1.4.0       tools_4.1.1         grid_4.1.1         </span>
+<span class="co">#&gt; [13] xfun_0.25           htmltools_0.5.2     systemfonts_1.0.2  </span>
+<span class="co">#&gt; [16] yaml_2.2.1          digest_0.6.27       rprojroot_2.0.2    </span>
 <span class="co">#&gt; [19] numDeriv_2016.8-1.1 pkgdown_1.6.1       crayon_1.4.1       </span>
-<span class="co">#&gt; [22] Matrix_1.2-18       fs_1.5.0            memoise_1.1.0      </span>
-<span class="co">#&gt; [25] evaluate_0.14       rmarkdown_2.8       stringi_1.6.2      </span>
-<span class="co">#&gt; [28] compiler_4.0.2      desc_1.3.0          mvtnorm_1.1-1</span>
-</pre></div>
+<span class="co">#&gt; [22] textshaping_0.3.5   Matrix_1.3-4        fs_1.5.0           </span>
+<span class="co">#&gt; [25] memoise_2.0.0       cachem_1.0.6        evaluate_0.14      </span>
+<span class="co">#&gt; [28] rmarkdown_2.10      stringi_1.7.4       compiler_4.1.1     </span>
+<span class="co">#&gt; [31] desc_1.3.0          mvtnorm_1.1-2</span></code></pre></div>
 </div>
   </div>
 
