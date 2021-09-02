@@ -90,7 +90,8 @@ ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1)
 summary(ll)
 
 ## censoring stratified after quartiles of x
-lls <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1,cens.model=~strata(gx))
+lls <- recreg(EventCens(start, stop, statusG, cens) ~ x+cluster(id), data=rr,
+              cause=1, cens.model=~strata(gx))
 summary(lls)
 
 }

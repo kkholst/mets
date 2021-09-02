@@ -82,13 +82,10 @@ predict(b,newdata=lava::Expand(prt,zyg=c("MZ")))
 predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 
 \donttest{ ## Reduce Ex.Timings
-library(lava)
-m <- lvm(c(y1,y2)~x)
-covariance(m,y1~y2) <- "r"
-constrain(m,r~x+a+b) <- function(x) tanh(x[2]+x[3]*x[1])
-distribution(m,~x) <- uniform.lvm(a=-1,b=1)
-ordinal(m) <- ~y1+y2
-d <- sim(m,1000,p=c(a=0,b=-1)); d <- d[order(d$x),]
+n <- 1e4
+x <- sort(runif(n, -1, 1))
+y <- rmvn(n, c(0,0), rho=cbind(tanh(x)))>0
+d <- data.frame(y1=y[,1], y2=y[,2], x=x)
 dd <- fast.reshape(d)
 
 a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")

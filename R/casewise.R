@@ -412,16 +412,17 @@ back2timereg <- function(obj)
 ##' data(prt)
 ##' prt <- force.same.cens(prt,cause="status")
 ##' 
-##' dd <- bicompriskData(Event(time,status)~strata(zyg)+id(id),data=prt,cause=c(2,2))
+##' dd <- bicompriskData(Event(time, status)~strata(zyg)+id(id), data=prt, cause=c(2, 2))
 ##' newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
 ##' 
 ##' ## concordance 
-##' bcif1 <- binreg(Event(time,status)~-1+factor(zyg)+cluster(id),dd,time=80,cause=1,cens.model=~strata(zyg))
+##' bcif1 <- binreg(Event(time,status)~-1+factor(zyg)+cluster(id), data=dd,
+##'                 time=80, cause=1, cens.model=~strata(zyg))
 ##' pconc <- predict(bcif1,newdata)
 ##' pconc
 ##' 
 ##' ## marginal estimates 
-##' mbcif1 <- binreg(Event(time,status)~cluster(id),prt,time=80,cause=2)
+##' mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
 ##' mc <- predict(mbcif1,newdata)
 ##' mc
 ##' 
