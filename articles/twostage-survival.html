@@ -342,8 +342,8 @@ E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                Coef.        SE        z P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.011474 0.0857089 23.46867     0   0.5014302 0.01065241</span>
+<span class="co">#&gt;                Coef.         SE       z P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 2.009488 0.08818804 22.7864     0   0.5011832 0.01097139</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; NULL</span>
@@ -355,31 +355,31 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/npc.html">piecewise.twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
 <span class="co">#&gt; Data-set  1 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 525 of  2000</span>
+<span class="co">#&gt;   Number of joint events: 511 of  2000</span>
 <span class="co">#&gt; Data-set  2 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 287 of  1210</span>
+<span class="co">#&gt;   Number of joint events: 246 of  1226</span>
 <span class="co">#&gt; Data-set  3 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 260 of  1186</span>
+<span class="co">#&gt;   Number of joint events: 260 of  1238</span>
 <span class="co">#&gt; Data-set  4 out of  4</span>
-<span class="co">#&gt;   Number of joint events: 575 of  921</span>
+<span class="co">#&gt;   Number of joint events: 634 of  975</span>
  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">udp</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1</span>
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model </span>
 <span class="co">#&gt; Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="co">#&gt;             0 - 0.5      0.5 - 2</span>
-<span class="co">#&gt; 0 - 0.5 0.003674454 -0.002289316</span>
-<span class="co">#&gt; 0.5 - 2 0.000140504  0.002096230</span>
+<span class="co">#&gt;               0 - 0.5      0.5 - 2</span>
+<span class="co">#&gt; 0 - 0.5 -0.0042602146 0.0009236363</span>
+<span class="co">#&gt; 0.5 - 2  0.0009453273 0.0043799207</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; log-coefficient for dependence parameter (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.608 (0.071)  0.826 (0.089)</span>
-<span class="co">#&gt; 0.5 - 2  0.74  (0.096)  0.76  (0.062)</span>
+<span class="co">#&gt; 0 - 0.5  0.729 (0.069)  0.714 (0.093)</span>
+<span class="co">#&gt; 0.5 - 2  0.717 (0.096)  0.688 (0.060)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Kendall's tau (SE) </span>
 <span class="co">#&gt;          0 - 0.5        0.5 - 2      </span>
-<span class="co">#&gt; 0 - 0.5  0.479 (0.018)  0.533 (0.022)</span>
-<span class="co">#&gt; 0.5 - 2  0.512 (0.024)  0.517 (0.015)</span></code></pre></div>
+<span class="co">#&gt; 0 - 0.5  0.509 (0.017)  0.505 (0.023)</span>
+<span class="co">#&gt; 0.5 - 2  0.506 (0.024)  0.499 (0.015)</span></code></pre></div>
 </div>
 <div id="multivariate-gamma-twostage-models" class="section level1">
 <h1 class="hasAnchor">
@@ -423,24 +423,24 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span>
 <span class="co">#&gt; Variance of Gamma distributed random effects</span>
 <span class="co">#&gt; $estimates</span>
-<span class="co">#&gt;                 Coef.        SE        z        P-val Kendall tau         SE</span>
-<span class="co">#&gt; dependence1 2.0227609 0.2053418 9.850701 0.000000e+00   0.5028290 0.02537809</span>
-<span class="co">#&gt; dependence2 0.8589921 0.1593157 5.391762 6.977014e-08   0.3004528 0.03898186</span>
+<span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau         SE</span>
+<span class="co">#&gt; dependence1 2.092976 0.2128228 9.834362 0.000000e+00   0.5113580 0.02540795</span>
+<span class="co">#&gt; dependence2 1.064948 0.1681993 6.331465 2.428449e-10   0.3474603 0.03581030</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $type</span>
 <span class="co">#&gt; [1] "clayton.oakes"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $h</span>
 <span class="co">#&gt;      Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="co">#&gt; [1,]   0.7019 0.05671 0.5908 0.8131 3.431e-35</span>
-<span class="co">#&gt; [2,]   0.2981 0.05671 0.1869 0.4092 1.468e-07</span>
+<span class="co">#&gt; [1,]   0.6628 0.05442 0.5561 0.7694 4.052e-34</span>
+<span class="co">#&gt; [2,]   0.3372 0.05442 0.2306 0.4439 5.770e-10</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vare</span>
 <span class="co">#&gt; NULL</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $vartot</span>
-<span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%    P-value</span>
-<span class="co">#&gt; p1    2.882  0.1326 2.622 3.142 1.117e-104</span>
+<span class="co">#&gt;    Estimate Std.Err 2.5% 97.5%    P-value</span>
+<span class="co">#&gt; p1    3.158  0.1417 2.88 3.436 5.388e-110</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attr(,"class")</span>
 <span class="co">#&gt; [1] "summary.mets.twostage"</span></code></pre></div>
@@ -470,10 +470,10 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span> 
 <span class="co">#&gt; $mz.kendall</span>
-<span class="co">#&gt; [1] 0.5929472</span>
+<span class="co">#&gt; [1] 0.6057388</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $dz.kendall</span>
-<span class="co">#&gt; [1] 0.3123939</span></code></pre></div>
+<span class="co">#&gt; [1] 0.3498864</span></code></pre></div>
 </div>
 <div id="family-data" class="section level1">
 <h1 class="hasAnchor">
@@ -1194,7 +1194,7 @@ for everybody in the cohort. In addition we do not here bring in the uncertainty
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">#&gt; Running under: Ubuntu 20.04.2 LTS</span>
+<span class="co">#&gt; Running under: Ubuntu 20.04.3 LTS</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Matrix products: default</span>
 <span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span>

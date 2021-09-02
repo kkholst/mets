@@ -209,43 +209,44 @@
     <pre class="examples"><div class='input'>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, z<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, id<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>,<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>5</span>,<span class='fl'>5</span><span class='op'>)</span>, v<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>(</span><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>blocksample</span><span class='op'>(</span><span class='va'>d</span>,size<span class='op'>=</span><span class='fl'>20</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;              x           z id          v
-#&gt; 2   -1.0321595 -0.04901873  1 -1.1506845
-#&gt; 3    0.5149712  0.63459006  1 -0.6053220
-#&gt; 2.1 -1.0321595 -0.04901873  2 -1.1506845
-#&gt; 3.1  0.5149712  0.63459006  2 -0.6053220
-#&gt; 4    0.1080476  0.56561183  3  0.1192853
-#&gt; 5    0.4063668  0.52202607  3 -1.1569711
-#&gt; 4.1  0.1080476  0.56561183  4  0.1192853
-#&gt; 5.1  0.4063668  0.52202607  4 -1.1569711
-#&gt; 2.2 -1.0321595 -0.04901873  5 -1.1506845
-#&gt; 3.2  0.5149712  0.63459006  5 -0.6053220
-#&gt; 1   -0.7440888  0.97881342  6  0.6472508
-#&gt; 4.2  0.1080476  0.56561183  7  0.1192853
-#&gt; 5.2  0.4063668  0.52202607  7 -1.1569711
-#&gt; 1.1 -0.7440888  0.97881342  8  0.6472508
-#&gt; 1.2 -0.7440888  0.97881342  9  0.6472508
-#&gt; 1.3 -0.7440888  0.97881342 10  0.6472508
-#&gt; 2.3 -1.0321595 -0.04901873 11 -1.1506845
-#&gt; 3.3  0.5149712  0.63459006 11 -0.6053220
-#&gt; 2.4 -1.0321595 -0.04901873 12 -1.1506845
-#&gt; 3.4  0.5149712  0.63459006 12 -0.6053220
-#&gt; 2.5 -1.0321595 -0.04901873 13 -1.1506845
-#&gt; 3.5  0.5149712  0.63459006 13 -0.6053220
-#&gt; 4.3  0.1080476  0.56561183 14  0.1192853
-#&gt; 5.3  0.4063668  0.52202607 14 -1.1569711
-#&gt; 1.4 -0.7440888  0.97881342 15  0.6472508
-#&gt; 1.5 -0.7440888  0.97881342 16  0.6472508
-#&gt; 4.4  0.1080476  0.56561183 17  0.1192853
-#&gt; 5.4  0.4063668  0.52202607 17 -1.1569711
-#&gt; 4.5  0.1080476  0.56561183 18  0.1192853
-#&gt; 5.5  0.4063668  0.52202607 18 -1.1569711
-#&gt; 2.6 -1.0321595 -0.04901873 19 -1.1506845
-#&gt; 3.6  0.5149712  0.63459006 19 -0.6053220
-#&gt; 2.7 -1.0321595 -0.04901873 20 -1.1506845
-#&gt; 3.7  0.5149712  0.63459006 20 -0.6053220</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span><span class='op'>$</span><span class='va'>id</span>
-</div><div class='output co'>#&gt;  [1] 10 10 10 10  5  5  5  5 10 10  4  5  5  4  4  4 10 10 10 10 10 10  5  5  4
-#&gt; [26]  4  5  5  5  5 10 10 10 10</div><div class='input'>
+</div><div class='output co'>#&gt;               x          z id          v
+#&gt; 2   -1.25573676  0.3938945  1 -1.1375924
+#&gt; 3   -0.49252292  0.2099505  1  0.5129430
+#&gt; 1   -0.02882035 -0.2475642  2 -2.6195739
+#&gt; 1.1 -0.02882035 -0.2475642  3 -2.6195739
+#&gt; 4   -0.14789077 -0.7623607  4 -0.1471243
+#&gt; 5    0.10763540 -0.2593931  4  0.4236510
+#&gt; 2.1 -1.25573676  0.3938945  5 -1.1375924
+#&gt; 3.1 -0.49252292  0.2099505  5  0.5129430
+#&gt; 2.2 -1.25573676  0.3938945  6 -1.1375924
+#&gt; 3.2 -0.49252292  0.2099505  6  0.5129430
+#&gt; 1.2 -0.02882035 -0.2475642  7 -2.6195739
+#&gt; 4.1 -0.14789077 -0.7623607  8 -0.1471243
+#&gt; 5.1  0.10763540 -0.2593931  8  0.4236510
+#&gt; 2.3 -1.25573676  0.3938945  9 -1.1375924
+#&gt; 3.3 -0.49252292  0.2099505  9  0.5129430
+#&gt; 1.3 -0.02882035 -0.2475642 10 -2.6195739
+#&gt; 2.4 -1.25573676  0.3938945 11 -1.1375924
+#&gt; 3.4 -0.49252292  0.2099505 11  0.5129430
+#&gt; 4.2 -0.14789077 -0.7623607 12 -0.1471243
+#&gt; 5.2  0.10763540 -0.2593931 12  0.4236510
+#&gt; 4.3 -0.14789077 -0.7623607 13 -0.1471243
+#&gt; 5.3  0.10763540 -0.2593931 13  0.4236510
+#&gt; 2.5 -1.25573676  0.3938945 14 -1.1375924
+#&gt; 3.5 -0.49252292  0.2099505 14  0.5129430
+#&gt; 4.4 -0.14789077 -0.7623607 15 -0.1471243
+#&gt; 5.4  0.10763540 -0.2593931 15  0.4236510
+#&gt; 1.4 -0.02882035 -0.2475642 16 -2.6195739
+#&gt; 4.5 -0.14789077 -0.7623607 17 -0.1471243
+#&gt; 5.5  0.10763540 -0.2593931 17  0.4236510
+#&gt; 2.6 -1.25573676  0.3938945 18 -1.1375924
+#&gt; 3.6 -0.49252292  0.2099505 18  0.5129430
+#&gt; 4.6 -0.14789077 -0.7623607 19 -0.1471243
+#&gt; 5.6  0.10763540 -0.2593931 19  0.4236510
+#&gt; 4.7 -0.14789077 -0.7623607 20 -0.1471243
+#&gt; 5.7  0.10763540 -0.2593931 20  0.4236510</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span><span class='op'>$</span><span class='va'>id</span>
+</div><div class='output co'>#&gt;  [1] 10 10  4  4  5  5 10 10 10 10  4  5  5 10 10  4 10 10  5  5  5  5 10 10  5
+#&gt; [26]  5  4  5  5 10 10  5  5  5  5</div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>blocksample</span><span class='op'>(</span><span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'>data.table</span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>,<span class='fl'>1e6</span>,<span class='op'>~</span><span class='va'>id</span><span class='op'>)</span>
 <span class='op'>}</span>
@@ -257,47 +258,47 @@
                id2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span>,
                v<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>~</span><span class='va'>id</span>, size<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x           z id id2           v id.1
-#&gt; 4   0.5383981  0.35085134  5   1  0.84199016    1
-#&gt; 5  -1.8557853  0.03474158  5   2  0.28918199    1
-#&gt; 8  -1.1608163 -0.24747530  5   1  0.30002893    1
-#&gt; 10 -1.7971401 -2.12939825  5   2 -0.03095564    1
-#&gt; 2  -0.3644972  0.42461394 10   1 -0.37032679    2
-#&gt; 3   0.6323714 -0.05921897 10   2 -0.92598597    2
-#&gt; 9   0.5427125 -0.30557685 10   1  1.03277856    2</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>.</span><span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='va'>id2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;               x           z            v id
-#&gt; 2    -0.3644972  0.42461394 -0.370326787  1
-#&gt; 9     0.5427125 -0.30557685  1.032778561  1
-#&gt; 4     0.5383981  0.35085134  0.841990156  2
-#&gt; 8    -1.1608163 -0.24747530  0.300028933  2
-#&gt; 3     0.6323714 -0.05921897 -0.925985971  3
-#&gt; 3.1   0.6323714 -0.05921897 -0.925985971  4
-#&gt; 5    -1.8557853  0.03474158  0.289181994  5
-#&gt; 10   -1.7971401 -2.12939825 -0.030955636  5
-#&gt; 2.1  -0.3644972  0.42461394 -0.370326787  6
-#&gt; 9.1   0.5427125 -0.30557685  1.032778561  6
-#&gt; 4.1   0.5383981  0.35085134  0.841990156  7
-#&gt; 8.1  -1.1608163 -0.24747530  0.300028933  7
-#&gt; 2.2  -0.3644972  0.42461394 -0.370326787  8
-#&gt; 9.2   0.5427125 -0.30557685  1.032778561  8
-#&gt; 1     1.0000000  0.11136988  1.207034985  9
-#&gt; 6     1.3384853 -1.39307917 -2.242901780  9
-#&gt; 7     0.8358386 -1.42105295  0.001546776  9
-#&gt; 5.1  -1.8557853  0.03474158  0.289181994 10
-#&gt; 10.1 -1.7971401 -2.12939825 -0.030955636 10</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>x</span><span class='op'>+</span><span class='va'>z</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>,size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x           z id
-#&gt; 1   1.0000000  0.11136988  1
-#&gt; 6   1.3384853 -1.39307917  1
-#&gt; 7   0.8358386 -1.42105295  1
-#&gt; 3   0.6323714 -0.05921897  2
-#&gt; 9   0.5427125 -0.30557685  2
-#&gt; 3.1 0.6323714 -0.05921897  3
-#&gt; 9.1 0.5427125 -0.30557685  3
-#&gt; 1.1 1.0000000  0.11136988  4
-#&gt; 6.1 1.3384853 -1.39307917  4
-#&gt; 7.1 0.8358386 -1.42105295  4
-#&gt; 3.2 0.6323714 -0.05921897  5
-#&gt; 9.2 0.5427125 -0.30557685  5</div><div class='input'>
+</div><div class='output co'>#&gt;               x           z id id2          v id.1
+#&gt; 1   1.000000000  0.10526891  4   1 -0.8483827    1
+#&gt; 6   0.003648433  1.08377904  4   1  0.8052531    1
+#&gt; 7  -1.035092803 -0.39904560  4   1  0.4090882    1
+#&gt; 4  -0.168768919 -0.08928209  5   1  0.8438576    2
+#&gt; 5   1.553607870  0.76674164  5   2 -0.5404667    2
+#&gt; 8  -0.989788733  0.15209792  5   1  1.4787449    2
+#&gt; 10 -0.068817605 -0.44783705  5   2 -0.7509356    2</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>.</span><span class='op'>~</span><span class='va'>id</span><span class='op'>+</span><span class='va'>id2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                x           z          v id
+#&gt; 3    0.010530214 -0.90195642 -0.8011430  1
+#&gt; 3.1  0.010530214 -0.90195642 -0.8011430  2
+#&gt; 2    1.380224683  1.07421912 -0.6107055  3
+#&gt; 9   -0.986256408  0.75409124 -0.5541288  3
+#&gt; 1    1.000000000  0.10526891 -0.8483827  4
+#&gt; 6    0.003648433  1.08377904  0.8052531  4
+#&gt; 7   -1.035092803 -0.39904560  0.4090882  4
+#&gt; 1.1  1.000000000  0.10526891 -0.8483827  5
+#&gt; 6.1  0.003648433  1.08377904  0.8052531  5
+#&gt; 7.1 -1.035092803 -0.39904560  0.4090882  5
+#&gt; 5    1.553607870  0.76674164 -0.5404667  6
+#&gt; 10  -0.068817605 -0.44783705 -0.7509356  6
+#&gt; 2.1  1.380224683  1.07421912 -0.6107055  7
+#&gt; 9.1 -0.986256408  0.75409124 -0.5541288  7
+#&gt; 4   -0.168768919 -0.08928209  0.8438576  8
+#&gt; 8   -0.989788733  0.15209792  1.4787449  8
+#&gt; 1.2  1.000000000  0.10526891 -0.8483827  9
+#&gt; 6.2  0.003648433  1.08377904  0.8052531  9
+#&gt; 7.2 -1.035092803 -0.39904560  0.4090882  9
+#&gt; 2.2  1.380224683  1.07421912 -0.6107055 10
+#&gt; 9.2 -0.986256408  0.75409124 -0.5541288 10</div><div class='input'><span class='fu'>dsample</span><span class='op'>(</span><span class='va'>d</span>,<span class='va'>x</span><span class='op'>+</span><span class='va'>z</span><span class='op'>~</span><span class='va'>id</span><span class='op'>|</span><span class='va'>x</span><span class='op'>&gt;</span><span class='fl'>0</span>,size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;               x          z id
+#&gt; 1   1.000000000  0.1052689  1
+#&gt; 6   0.003648433  1.0837790  1
+#&gt; 2   1.380224683  1.0742191  2
+#&gt; 3   0.010530214 -0.9019564  2
+#&gt; 2.1 1.380224683  1.0742191  3
+#&gt; 3.1 0.010530214 -0.9019564  3
+#&gt; 2.2 1.380224683  1.0742191  4
+#&gt; 3.2 0.010530214 -0.9019564  4
+#&gt; 1.1 1.000000000  0.1052689  5
+#&gt; 6.1 0.003648433  1.0837790  5</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
