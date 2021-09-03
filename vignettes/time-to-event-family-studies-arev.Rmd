@@ -15,6 +15,7 @@ vignette: >
 ```{r, include = FALSE, label=setup}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  dev="png",
   comment = "#>"
 )
 library(mets)

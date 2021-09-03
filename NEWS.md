@@ -1,5 +1,3 @@
-# mets 1.2.10
-  - Development version
 
 # mets 1.2.9
   - Examples updated

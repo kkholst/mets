@@ -25,6 +25,7 @@ options(warn=-1, family="Times")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  dev="png",
   out.width = "70%")
 library("mets")
 ```
