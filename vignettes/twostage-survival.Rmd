@@ -3,8 +3,17 @@ title: "Analysis of multivariate survival data"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
-    fig_caption: yes
+  rmdformats::robobook:
+    self_contained: false
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    lib_dir: libs
+    highlight: tango
+    number_sections: true
+    fig_width: 7
+    fig_caption: true
+    toc_depth: 2  
 vignette: >
   %\VignetteIndexEntry{Analysis of multivariate survival data} 
   %\VignetteEngine{knitr::rmarkdown}
