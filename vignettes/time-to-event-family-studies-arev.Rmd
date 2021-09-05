@@ -4,7 +4,7 @@ author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 #output: pdf_document
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{A practical guide to Human Genetics with Lifetime Data} 
@@ -15,7 +15,7 @@ vignette: >
 ```{r, include = FALSE, label=setup}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  dev="png",
+  #dev="png",
   comment = "#>"
 )
 library(mets)

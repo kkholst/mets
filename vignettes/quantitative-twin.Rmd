@@ -3,19 +3,33 @@
 title: Twin models
 author: Klaus Holst & Thomas Scheike
 output:
-  bookdown::html_document2:
-    toc: yes
-    toc_float: true
-    number_sections: true
-    fig_width: 7
-    fig_caption: true
-    theme: spacelab
-    highlight: pygments
+  rmarkdown::html_vignette:
+    fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Twin models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<!-- output: -->
+  <!-- tufte::tufte_html: default -->
+
+  <!-- prettydoc::html_pretty: -->
+  <!--   theme: leonids -->
+  <!--   toc: true -->
+  <!--   toc_depth: 2     -->
+  <!--   highlight: github -->
+
+<!-- output: -->
+<!--   bookdown::html_document2: -->
+<!--     toc: yes -->
+<!--     toc_float: true -->
+<!--     number_sections: true -->
+<!--     fig_width: 7 -->
+<!--     fig_caption: true -->
+<!--     theme: spacelab -->
+<!--     highlight: pygments -->
+
 
 This document provides a brief tutorial to analyzing twin data using
 the **`mets`** package:
@@ -25,7 +39,8 @@ options(warn=-1, family="Times")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev="png",
+  #dev="png",
+  #dpi=72,
   out.width = "70%")
 library("mets")
 ```
@@ -38,7 +53,7 @@ library("mets")
 \newcommand{\unitfrac}[2]{#1/#2}
 \newcommand{\n}{}
 \)
-'
+
 The development version may be installed from *github*:
 
 ```{r  install, eval=FALSE }
@@ -255,8 +270,6 @@ estimate(lu,contr(4:5,5))
 estimate(coef=coef(lu),vcov=vcov(lu),contr(4:5,5))
 
 wald.test(coef=coef(lu),vcov=vcov(lu),contrast=c(0,0,0,1,-1))
-
-lava:::estimate.default
 ```
 
 

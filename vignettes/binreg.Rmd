@@ -3,7 +3,7 @@ title: "Binomial Regression"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Binomial Regression}
@@ -25,18 +25,18 @@ Binomial Regression for censored data
 The binreg function does direct binomial regression for one time-point, $t$, 
 fitting the model 
 \begin{align*}
-P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta) 
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta) 
 \end{align*}
 the estimation is based on IPCW weighted EE
 \begin{align*}
- U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T beta)) = 0 
+ U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T \beta)) = 0 
 \end{align*}
 for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
 distribution. With $\Delta(t) = I( C_i > T_i \wedge t)$. 
 
 The function logitIPCW instead considers 
 \begin{align*}
- U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta)) = 0.
+ U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T \beta)) = 0.
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
 

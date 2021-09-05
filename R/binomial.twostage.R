@@ -735,7 +735,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##' summary(out3)
 ##'
 ##' \donttest{ ## Reduce Ex.Timings
-##' n <- 10000
+##' n <- 5000
 ##' set.seed(100)
 ##' dd <- simBinFam(n,beta=0.3)
 ##' binfam <- fast.reshape(dd,varying=c("age","x","y"))

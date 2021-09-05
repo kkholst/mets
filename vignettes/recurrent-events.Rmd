@@ -3,7 +3,7 @@ title: "Recurrent events"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Recurrent events}
@@ -15,7 +15,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev="png"
+  #dev="png"
 )
 library(mets)
 ```

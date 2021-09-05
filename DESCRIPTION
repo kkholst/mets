@@ -36,8 +36,8 @@ Suggests:
     testthat (>= 0.11),
     ucminf,
     knitr,
-    bookdown,
     rmarkdown,
+    rmdformats,
     ggplot2,
     cowplot,
     icenReg

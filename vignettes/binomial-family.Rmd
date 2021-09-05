@@ -3,7 +3,7 @@ title: "Analysis of multivariate binomial data: family analysis"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Analysis of multivariate binomial data: family analysis} 

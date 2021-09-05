@@ -3,7 +3,7 @@ title: "Average treatment effect (ATE) for Competing risks and binary outcomes"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{ATE for Binomial Regression}

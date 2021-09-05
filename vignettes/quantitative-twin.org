@@ -9,8 +9,8 @@
 
 #+BEGIN_EXPORT yaml
 output:
-    bookdown::html_document2:
-      base_format: rmarkdown::html_vignette
+  rmarkdown::html_vignette:
+    fig_caption: yes
 #+END_EXPORT
 
 
