@@ -18,10 +18,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y pandoc libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
-
       - uses: r-lib/actions/setup-r@v1
         with:
           use-public-rspm: true
