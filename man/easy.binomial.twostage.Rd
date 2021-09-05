@@ -91,7 +91,7 @@ fast.
 }
 \examples{
 data(twinstut)
-twinstut0 <- subset(twinstut, tvparnr<2300000)
+twinstut0 <- subset(twinstut, tvparnr<10000)
 twinstut <- twinstut0
 twinstut$binstut <- (twinstut$stutter=="yes")*1
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
