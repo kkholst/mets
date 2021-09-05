@@ -82,7 +82,7 @@ predict(b,newdata=lava::Expand(prt,zyg=c("MZ")))
 predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 
 \donttest{ ## Reduce Ex.Timings
-n <- 1e4
+n <- 2e3
 x <- sort(runif(n, -1, 1))
 y <- rmvn(n, c(0,0), rho=cbind(tanh(x)))>0
 d <- data.frame(y1=y[,1], y2=y[,2], x=x)
@@ -119,19 +119,12 @@ confband(pp2$x,pp2[,2],pp2[,3],center=pp2[,1])
                        cens.formula=Surv(time,status==0)~zyg,
                        breaks=100)
 
-    a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
-                       cens.formula=Surv(time,status==0)~1,
-                       breaks=100,pairs.only=TRUE)
+    #a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
+    #                   cens.formula=Surv(time,status==0)~1,
+    #                   breaks=100,pairs.only=TRUE)
 
-    a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-                        cens.formula=Surv(time,status==0)~1,
-                        breaks=100,pairs.only=TRUE)
-
-    prt0$trunc <- prt0$time*runif(nrow(prt0))*rbinom(nrow(prt0),1,0.5)
-    a3 <- biprobit.time(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-                        cens.formula=Surv(trunc,time,status==0)~1,
-                        breaks=100,pairs.only=TRUE)
-
-    plot(a,which=3,ylim=c(0,0.1))
-} 
+    #a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
+    #                    cens.formula=Surv(time,status==0)~1,
+    #                    breaks=100,pairs.only=TRUE)
+}
 }
