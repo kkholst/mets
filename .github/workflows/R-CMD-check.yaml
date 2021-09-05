@@ -37,7 +37,6 @@ jobs:
           #remotes::install_github("kkholst/lava.tobit")
           remotes::install_deps(".", dep=T, upgrade=T)
           remotes::install_cran(c("pkgdown","covr","rcmdcheck"))
-          #remotes::install_bioc("Rgraphviz", upgrade="always")
         shell: Rscript {0}
 
       - name: Check

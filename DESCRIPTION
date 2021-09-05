@@ -2,7 +2,7 @@ Package: mets
 Type: Package
 Title: Analysis of Multivariate Event Times
 Version: 1.2.9
-Date: 2021-09-03
+Date: 2021-09-05
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Thomas Scheike", role=c("aut")))
 Author: Klaus K. Holst [aut, cre], Thomas Scheike [aut]
@@ -37,7 +37,6 @@ Suggests:
     ucminf,
     knitr,
     rmarkdown,
-    rmdformats,
     ggplot2,
     cowplot,
     icenReg
