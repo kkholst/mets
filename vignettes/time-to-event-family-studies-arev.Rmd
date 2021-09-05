@@ -45,7 +45,7 @@ association with the risk of death for the other twin, and vice-versa.
 
 First looking at the data
 
-```{r, label=data-prt, cache=TRUE}
+```{r, label=data-prt}
  library(mets)
  data(prt)
  
@@ -71,7 +71,7 @@ model with death and cancer.
 
 First estimating the marginal hazards for each country. 
 
-```{r, label=survival-marginal, cache=TRUE}
+```{r, label=survival-marginal}
  library(mets)
  data(prt)
  
@@ -85,7 +85,7 @@ We see that the marginal of Denmark in particular is quite different.
 Then we fit a two-stage random effects models with country specific 
 marginals and random-effects variances that differ for MZ and DZ twins. 
 
-```{r, label=survival-pairwise, cache=TRUE}
+```{r, label=survival-pairwise}
  # Clayton-Oakes, MLE , overall variance
  fitco1<-twostageMLE(margph,data=prt,theta=2.7)
  summary(fitco1)
@@ -114,7 +114,7 @@ variance at $5.4$ in contrast to the $DZ$ variance at $1.3$.
 Now we look at the polygenic modelling for survival data, here applied to
 the cause specific hazards. 
 
-```{r, label=survival-polygenic, cache=TRUE}
+```{r, label=survival-polygenic}
 
  ### setting up design for random effects and parameters of random effects
  desace <- twin.polygen.design(prt,type="ace")
@@ -163,7 +163,7 @@ and DZ twins.
 For simplicity we do not do this for each country even though as we show there are big
 differences between the countries. 
 
-```{r, label=concordance, cache=TRUE}
+```{r, label=concordance}
 
  library(mets)
  data(prt)
@@ -194,7 +194,7 @@ Now we compare the concordance to the marginals to get a measure
 that takes the marginals into account when evaluating the strength 
 of the association. 
      
-```{r, label=concordance2, cache=TRUE}
+```{r, label=concordance2}
  library(prodlim)
  outm <- prodlim(Hist(time,status)~+1,data=prt)
 
@@ -236,7 +236,7 @@ of the association.
 ```
 
 
-```{r, label=concordance3, cache=TRUE}
+```{r, label=concordance3}
 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  conczyg <- cif(Event(time,status)~strata(zyg)+cluster(id),data=dd,cause=1)
@@ -262,7 +262,7 @@ concordance as well as the marginal, and combine the iid decompositions
 when estimating the standard error.  We also do this ignoring country differences. 
 
 
-```{r, label=concordance4, cache=TRUE}
+```{r, label=concordance4}
  ### new version of Casewise for specific time-point based on binreg 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
@@ -286,7 +286,7 @@ this case we might find it important to adjust for country, or to see if the
 differences between MZ and DZ are comparable across contries even though
 clearly DK has a much lower cumulative incidence of prostate cancer. 
 
-```{r, label=semiparconc, cache=TRUE}
+```{r, label=semiparconc}
  ### semi-parametric modelling of concordance 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  regconc <- cifreg(Event(time,status)~country*zyg,data=dd,prop=NULL)
@@ -313,7 +313,7 @@ Competing risk using additive Gamma
 Here we do the cumulative incidence random effects modelling 
 
 
-```{r, label=additive_gamma, cache=TRUE}
+```{r, label=additive_gamma}
   times <- seq(50,90,by=10)
   cif1 <- comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
 		   cause=2,times=times,max.clust=NULL)
@@ -376,7 +376,7 @@ Competing risk modeling using the Liabilty Threshold model
 
 
 First we fit the bivariate probit model (same marginals in MZ and DZ twins but different correlation parameter). Here we evaluate the risk of getting cancer before the last double cancer event (97 years)
-```{r, label=probit1, cache=TRUE}
+```{r, label=probit1}
 rm(prt)
 data(prt)
 prt0 <-  force.same.cens(prt, cause="status", cens.code=0, time="time", id="id")
@@ -392,7 +392,7 @@ summary(b0)
 ```
 
 Liability threshold model with ACE random effects structure
-```{r, cache=TRUE, label=liability_ace1}
+```{r, label=liability_ace1}
 b1 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
 summary(b1)
@@ -404,13 +404,13 @@ AIC(b0, b1)
 ```
 
 ACE model with marginal adjusted for country
-```{r, cache=TRUE, label=liability_ace_country}
+```{r, label=liability_ace_country}
 b2 <- bptwin.time(cancer ~ country, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg+country, breaks=95)
 summary(b2)
 ```
 
-```{r, cache=TRUE, label=bptime1}
+```{r, label=bptime1}
 bt0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace", 
               cens.formula=Surv(time,status==0)~zyg,
               summary.function=function(x) x, breaks=tt)
@@ -425,7 +425,7 @@ confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=Col(cols[1], 0.
 ```
 
 Bivariate probit model at time different time points
-```{r, label=biprobittime1, cache=TRUE}
+```{r, label=biprobittime1}
 system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
@@ -448,7 +448,7 @@ plot(a.dz, col=cols[2], lty=ltys[2], add=TRUE)
 
 
 Bivariate probit model adjusting for country
-```{r, label=biprobittime2, cache=TRUE}
+```{r, label=biprobittime2}
 system.time(a.mz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~country, pairs.only=TRUE,
                                 breaks=tt))
@@ -461,7 +461,7 @@ a.dz_country
 ```
 
 ACE model (time-varying) with and without adjustment for country
-```{r, cache=TRUE, label=liability_ace_time1}
+```{r, label=liability_ace_time1}
 system.time(a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
                               zyg="zyg", DZ="DZ", 
                               cens.formula=Surv(time,status==0)~zyg,
