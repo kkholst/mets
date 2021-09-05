@@ -261,140 +261,140 @@ Otherwise the first variable is only used as identifier.</p></td>
 <span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span>,<span class='va'>y4</span><span class='op'>)</span><span class='op'>~</span><span class='va'>x</span><span class='op'>)</span>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>d</span>
-</div><div class='output co'>#&gt;           y1         y2        y3         y4          x
-#&gt; 1  2.2363835  0.4946415  1.230584  0.3874222  0.9621697
-#&gt; 2  2.2162689  1.7399893  2.007292  2.4714479  1.3152824
-#&gt; 3 -0.9677689 -1.8707039 -0.905182 -2.2929790 -1.9867900
-#&gt; 4 -0.7195039 -2.5031543 -2.188153 -1.2104840 -0.4562290
-#&gt; 5 -0.7458861  0.5135096 -2.062469 -0.1541229 -0.2447923</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x          y id num
-#&gt; 1   0.9621697  2.2363835  1   1
-#&gt; 2   0.9621697  0.4946415  1   2
-#&gt; 3   0.9621697  1.2305837  1   3
-#&gt; 4   0.9621697  0.3874222  1   4
-#&gt; 5   1.3152824  2.2162689  2   1
-#&gt; 6   1.3152824  1.7399893  2   2
-#&gt; 7   1.3152824  2.0072921  2   3
-#&gt; 8   1.3152824  2.4714479  2   4
-#&gt; 9  -1.9867900 -0.9677689  3   1
-#&gt; 10 -1.9867900 -1.8707039  3   2
-#&gt; 11 -1.9867900 -0.9051820  3   3
-#&gt; 12 -1.9867900 -2.2929790  3   4
-#&gt; 13 -0.4562290 -0.7195039  4   1
-#&gt; 14 -0.4562290 -2.5031543  4   2
-#&gt; 15 -0.4562290 -2.1881526  4   3
-#&gt; 16 -0.4562290 -1.2104840  4   4
-#&gt; 17 -0.2447923 -0.7458861  5   1
-#&gt; 18 -0.2447923  0.5135096  5   2
-#&gt; 19 -0.2447923 -2.0624691  5   3
-#&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
-#&gt; 1  0.9621697  2.2363835  1    1  0.9621697  0.4946415    2  0.9621697  1.230584
-#&gt; 2  1.3152824  2.2162689  2    1  1.3152824  1.7399893    2  1.3152824  2.007292
-#&gt; 3 -1.9867900 -0.9677689  3    1 -1.9867900 -1.8707039    2 -1.9867900 -0.905182
-#&gt; 4 -0.4562290 -0.7195039  4    1 -0.4562290 -2.5031543    2 -0.4562290 -2.188153
-#&gt; 5 -0.2447923 -0.7458861  5    1 -0.2447923  0.5135096    2 -0.2447923 -2.062469
-#&gt;   num3         x4         y4 num4
-#&gt; 1    3  0.9621697  0.3874222    4
-#&gt; 2    3  1.3152824  2.4714479    4
-#&gt; 3    3 -1.9867900 -2.2929790    4
-#&gt; 4    3 -0.4562290 -1.2104840    4
-#&gt; 5    3 -0.2447923 -0.1541229    4</div><div class='input'>
+</div><div class='output co'>#&gt;           y1         y2         y3           y4           x
+#&gt; 1  0.2831227 -2.1182123 -1.4250463  0.071372698 -0.02381443
+#&gt; 2  1.5331086 -1.8251924 -0.1559777  0.989453671  0.68849861
+#&gt; 3 -0.8615187  1.6376094 -0.1752069 -0.553247876  0.97964789
+#&gt; 4  2.3227427  0.2381912  0.5568031  2.301990157  1.25501206
+#&gt; 5 -2.2193572 -0.8322391 -0.2814669  0.007107947 -0.75306422</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;              x            y id num
+#&gt; 1  -0.02381443  0.283122682  1   1
+#&gt; 2  -0.02381443 -2.118212338  1   2
+#&gt; 3  -0.02381443 -1.425046293  1   3
+#&gt; 4  -0.02381443  0.071372698  1   4
+#&gt; 5   0.68849861  1.533108608  2   1
+#&gt; 6   0.68849861 -1.825192368  2   2
+#&gt; 7   0.68849861 -0.155977699  2   3
+#&gt; 8   0.68849861  0.989453671  2   4
+#&gt; 9   0.97964789 -0.861518733  3   1
+#&gt; 10  0.97964789  1.637609422  3   2
+#&gt; 11  0.97964789 -0.175206928  3   3
+#&gt; 12  0.97964789 -0.553247876  3   4
+#&gt; 13  1.25501206  2.322742718  4   1
+#&gt; 14  1.25501206  0.238191204  4   2
+#&gt; 15  1.25501206  0.556803097  4   3
+#&gt; 16  1.25501206  2.301990157  4   4
+#&gt; 17 -0.75306422 -2.219357160  5   1
+#&gt; 18 -0.75306422 -0.832239130  5   2
+#&gt; 19 -0.75306422 -0.281466913  5   3
+#&gt; 20 -0.75306422  0.007107947  5   4</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;            x1         y1 id num1          x2         y2 num2          x3
+#&gt; 1 -0.02381443  0.2831227  1    1 -0.02381443 -2.1182123    2 -0.02381443
+#&gt; 2  0.68849861  1.5331086  2    1  0.68849861 -1.8251924    2  0.68849861
+#&gt; 3  0.97964789 -0.8615187  3    1  0.97964789  1.6376094    2  0.97964789
+#&gt; 4  1.25501206  2.3227427  4    1  1.25501206  0.2381912    2  1.25501206
+#&gt; 5 -0.75306422 -2.2193572  5    1 -0.75306422 -0.8322391    2 -0.75306422
+#&gt;           y3 num3          x4           y4 num4
+#&gt; 1 -1.4250463    3 -0.02381443  0.071372698    4
+#&gt; 2 -0.1559777    3  0.68849861  0.989453671    4
+#&gt; 3 -0.1752069    3  0.97964789 -0.553247876    4
+#&gt; 4  0.5568031    3  1.25501206  2.301990157    4
+#&gt; 5 -0.2814669    3 -0.75306422  0.007107947    4</div><div class='input'>
 <span class='co'>##### From wide-format</span>
 <span class='op'>(</span><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x          y id num
-#&gt; 1   0.9621697  2.2363835  1   1
-#&gt; 2   0.9621697  0.4946415  1   2
-#&gt; 3   0.9621697  1.2305837  1   3
-#&gt; 4   0.9621697  0.3874222  1   4
-#&gt; 5   1.3152824  2.2162689  2   1
-#&gt; 6   1.3152824  1.7399893  2   2
-#&gt; 7   1.3152824  2.0072921  2   3
-#&gt; 8   1.3152824  2.4714479  2   4
-#&gt; 9  -1.9867900 -0.9677689  3   1
-#&gt; 10 -1.9867900 -1.8707039  3   2
-#&gt; 11 -1.9867900 -0.9051820  3   3
-#&gt; 12 -1.9867900 -2.2929790  3   4
-#&gt; 13 -0.4562290 -0.7195039  4   1
-#&gt; 14 -0.4562290 -2.5031543  4   2
-#&gt; 15 -0.4562290 -2.1881526  4   3
-#&gt; 16 -0.4562290 -1.2104840  4   4
-#&gt; 17 -0.2447923 -0.7458861  5   1
-#&gt; 18 -0.2447923  0.5135096  5   2
-#&gt; 19 -0.2447923 -2.0624691  5   3
-#&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'><span class='co'>## Same with explicit setting new id and number variable/column names</span>
+</div><div class='output co'>#&gt;              x            y id num
+#&gt; 1  -0.02381443  0.283122682  1   1
+#&gt; 2  -0.02381443 -2.118212338  1   2
+#&gt; 3  -0.02381443 -1.425046293  1   3
+#&gt; 4  -0.02381443  0.071372698  1   4
+#&gt; 5   0.68849861  1.533108608  2   1
+#&gt; 6   0.68849861 -1.825192368  2   2
+#&gt; 7   0.68849861 -0.155977699  2   3
+#&gt; 8   0.68849861  0.989453671  2   4
+#&gt; 9   0.97964789 -0.861518733  3   1
+#&gt; 10  0.97964789  1.637609422  3   2
+#&gt; 11  0.97964789 -0.175206928  3   3
+#&gt; 12  0.97964789 -0.553247876  3   4
+#&gt; 13  1.25501206  2.322742718  4   1
+#&gt; 14  1.25501206  0.238191204  4   2
+#&gt; 15  1.25501206  0.556803097  4   3
+#&gt; 16  1.25501206  2.301990157  4   4
+#&gt; 17 -0.75306422 -2.219357160  5   1
+#&gt; 18 -0.75306422 -0.832239130  5   2
+#&gt; 19 -0.75306422 -0.281466913  5   3
+#&gt; 20 -0.75306422  0.007107947  5   4</div><div class='input'><span class='co'>## Same with explicit setting new id and number variable/column names</span>
 <span class='co'>## and seperator "" (default) and dropping x</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span>,idname<span class='op'>=</span><span class='st'>"a"</span>,timevar<span class='op'>=</span><span class='st'>"b"</span>,sep<span class='op'>=</span><span class='st'>""</span>,keep<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             y a num
-#&gt; 1   2.2363835 1   1
-#&gt; 2   0.4946415 1   2
-#&gt; 3   1.2305837 1   3
-#&gt; 4   0.3874222 1   4
-#&gt; 5   2.2162689 2   1
-#&gt; 6   1.7399893 2   2
-#&gt; 7   2.0072921 2   3
-#&gt; 8   2.4714479 2   4
-#&gt; 9  -0.9677689 3   1
-#&gt; 10 -1.8707039 3   2
-#&gt; 11 -0.9051820 3   3
-#&gt; 12 -2.2929790 3   4
-#&gt; 13 -0.7195039 4   1
-#&gt; 14 -2.5031543 4   2
-#&gt; 15 -2.1881526 4   3
-#&gt; 16 -1.2104840 4   4
-#&gt; 17 -0.7458861 5   1
-#&gt; 18  0.5135096 5   2
-#&gt; 19 -2.0624691 5   3
-#&gt; 20 -0.1541229 5   4</div><div class='input'><span class='co'>## Same with 'reshape' list-syntax</span>
+</div><div class='output co'>#&gt;               y a num
+#&gt; 1   0.283122682 1   1
+#&gt; 2  -2.118212338 1   2
+#&gt; 3  -1.425046293 1   3
+#&gt; 4   0.071372698 1   4
+#&gt; 5   1.533108608 2   1
+#&gt; 6  -1.825192368 2   2
+#&gt; 7  -0.155977699 2   3
+#&gt; 8   0.989453671 2   4
+#&gt; 9  -0.861518733 3   1
+#&gt; 10  1.637609422 3   2
+#&gt; 11 -0.175206928 3   3
+#&gt; 12 -0.553247876 3   4
+#&gt; 13  2.322742718 4   1
+#&gt; 14  0.238191204 4   2
+#&gt; 15  0.556803097 4   3
+#&gt; 16  2.301990157 4   4
+#&gt; 17 -2.219357160 5   1
+#&gt; 18 -0.832239130 5   2
+#&gt; 19 -0.281466913 5   3
+#&gt; 20  0.007107947 5   4</div><div class='input'><span class='co'>## Same with 'reshape' list-syntax</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y1"</span>,<span class='st'>"y2"</span>,<span class='st'>"y3"</span>,<span class='st'>"y4"</span><span class='op'>)</span><span class='op'>)</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x         y1 id num
-#&gt; 1   0.9621697  2.2363835  1   1
-#&gt; 2   0.9621697  0.4946415  1   2
-#&gt; 3   0.9621697  1.2305837  1   3
-#&gt; 4   0.9621697  0.3874222  1   4
-#&gt; 5   1.3152824  2.2162689  2   1
-#&gt; 6   1.3152824  1.7399893  2   2
-#&gt; 7   1.3152824  2.0072921  2   3
-#&gt; 8   1.3152824  2.4714479  2   4
-#&gt; 9  -1.9867900 -0.9677689  3   1
-#&gt; 10 -1.9867900 -1.8707039  3   2
-#&gt; 11 -1.9867900 -0.9051820  3   3
-#&gt; 12 -1.9867900 -2.2929790  3   4
-#&gt; 13 -0.4562290 -0.7195039  4   1
-#&gt; 14 -0.4562290 -2.5031543  4   2
-#&gt; 15 -0.4562290 -2.1881526  4   3
-#&gt; 16 -0.4562290 -1.2104840  4   4
-#&gt; 17 -0.2447923 -0.7458861  5   1
-#&gt; 18 -0.2447923  0.5135096  5   2
-#&gt; 19 -0.2447923 -2.0624691  5   3
-#&gt; 20 -0.2447923 -0.1541229  5   4</div><div class='input'>
+</div><div class='output co'>#&gt;              x           y1 id num
+#&gt; 1  -0.02381443  0.283122682  1   1
+#&gt; 2  -0.02381443 -2.118212338  1   2
+#&gt; 3  -0.02381443 -1.425046293  1   3
+#&gt; 4  -0.02381443  0.071372698  1   4
+#&gt; 5   0.68849861  1.533108608  2   1
+#&gt; 6   0.68849861 -1.825192368  2   2
+#&gt; 7   0.68849861 -0.155977699  2   3
+#&gt; 8   0.68849861  0.989453671  2   4
+#&gt; 9   0.97964789 -0.861518733  3   1
+#&gt; 10  0.97964789  1.637609422  3   2
+#&gt; 11  0.97964789 -0.175206928  3   3
+#&gt; 12  0.97964789 -0.553247876  3   4
+#&gt; 13  1.25501206  2.322742718  4   1
+#&gt; 14  1.25501206  0.238191204  4   2
+#&gt; 15  1.25501206  0.556803097  4   3
+#&gt; 16  1.25501206  2.301990157  4   4
+#&gt; 17 -0.75306422 -2.219357160  5   1
+#&gt; 18 -0.75306422 -0.832239130  5   2
+#&gt; 19 -0.75306422 -0.281466913  5   3
+#&gt; 20 -0.75306422  0.007107947  5   4</div><div class='input'>
 <span class='co'>##### From long-format</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;           x1         y1 id num1         x2         y2 num2         x3        y3
-#&gt; 1  0.9621697  2.2363835  1    1  0.9621697  0.4946415    2  0.9621697  1.230584
-#&gt; 2  1.3152824  2.2162689  2    1  1.3152824  1.7399893    2  1.3152824  2.007292
-#&gt; 3 -1.9867900 -0.9677689  3    1 -1.9867900 -1.8707039    2 -1.9867900 -0.905182
-#&gt; 4 -0.4562290 -0.7195039  4    1 -0.4562290 -2.5031543    2 -0.4562290 -2.188153
-#&gt; 5 -0.2447923 -0.7458861  5    1 -0.2447923  0.5135096    2 -0.2447923 -2.062469
-#&gt;   num3         x4         y4 num4
-#&gt; 1    3  0.9621697  0.3874222    4
-#&gt; 2    3  1.3152824  2.4714479    4
-#&gt; 3    3 -1.9867900 -2.2929790    4
-#&gt; 4    3 -0.4562290 -1.2104840    4
-#&gt; 5    3 -0.2447923 -0.1541229    4</div><div class='input'><span class='co'>## Restrict set up within-cluster varying variables</span>
+</div><div class='output co'>#&gt;            x1         y1 id num1          x2         y2 num2          x3
+#&gt; 1 -0.02381443  0.2831227  1    1 -0.02381443 -2.1182123    2 -0.02381443
+#&gt; 2  0.68849861  1.5331086  2    1  0.68849861 -1.8251924    2  0.68849861
+#&gt; 3  0.97964789 -0.8615187  3    1  0.97964789  1.6376094    2  0.97964789
+#&gt; 4  1.25501206  2.3227427  4    1  1.25501206  0.2381912    2  1.25501206
+#&gt; 5 -0.75306422 -2.2193572  5    1 -0.75306422 -0.8322391    2 -0.75306422
+#&gt;           y3 num3          x4           y4 num4
+#&gt; 1 -1.4250463    3 -0.02381443  0.071372698    4
+#&gt; 2 -0.1559777    3  0.68849861  0.989453671    4
+#&gt; 3 -0.1752069    3  0.97964789 -0.553247876    4
+#&gt; 4  0.5568031    3  1.25501206  2.301990157    4
+#&gt; 5 -0.2814669    3 -0.75306422  0.007107947    4</div><div class='input'><span class='co'>## Restrict set up within-cluster varying variables</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,<span class='st'>"y"</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            x         y1 id num         y2        y3         y4
-#&gt; 1  0.9621697  2.2363835  1   1  0.4946415  1.230584  0.3874222
-#&gt; 2  1.3152824  2.2162689  2   1  1.7399893  2.007292  2.4714479
-#&gt; 3 -1.9867900 -0.9677689  3   1 -1.8707039 -0.905182 -2.2929790
-#&gt; 4 -0.4562290 -0.7195039  4   1 -2.5031543 -2.188153 -1.2104840
-#&gt; 5 -0.2447923 -0.7458861  5   1  0.5135096 -2.062469 -0.1541229</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,<span class='st'>"y"</span>,id<span class='op'>=</span><span class='st'>"id"</span>,keep<span class='op'>=</span><span class='st'>"x"</span>,sep<span class='op'>=</span><span class='st'>"."</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            x        y.1 id        y.2       y.3        y.4
-#&gt; 1  0.9621697  2.2363835  1  0.4946415  1.230584  0.3874222
-#&gt; 2  1.3152824  2.2162689  2  1.7399893  2.007292  2.4714479
-#&gt; 3 -1.9867900 -0.9677689  3 -1.8707039 -0.905182 -2.2929790
-#&gt; 4 -0.4562290 -0.7195039  4 -2.5031543 -2.188153 -1.2104840
-#&gt; 5 -0.2447923 -0.7458861  5  0.5135096 -2.062469 -0.1541229</div><div class='input'>
+</div><div class='output co'>#&gt;             x         y1 id num         y2         y3           y4
+#&gt; 1 -0.02381443  0.2831227  1   1 -2.1182123 -1.4250463  0.071372698
+#&gt; 2  0.68849861  1.5331086  2   1 -1.8251924 -0.1559777  0.989453671
+#&gt; 3  0.97964789 -0.8615187  3   1  1.6376094 -0.1752069 -0.553247876
+#&gt; 4  1.25501206  2.3227427  4   1  0.2381912  0.5568031  2.301990157
+#&gt; 5 -0.75306422 -2.2193572  5   1 -0.8322391 -0.2814669  0.007107947</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,<span class='st'>"y"</span>,id<span class='op'>=</span><span class='st'>"id"</span>,keep<span class='op'>=</span><span class='st'>"x"</span>,sep<span class='op'>=</span><span class='st'>"."</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;             x        y.1 id        y.2        y.3          y.4
+#&gt; 1 -0.02381443  0.2831227  1 -2.1182123 -1.4250463  0.071372698
+#&gt; 2  0.68849861  1.5331086  2 -1.8251924 -0.1559777  0.989453671
+#&gt; 3  0.97964789 -0.8615187  3  1.6376094 -0.1752069 -0.553247876
+#&gt; 4  1.25501206  2.3227427  4  0.2381912  0.5568031  2.301990157
+#&gt; 5 -0.75306422 -2.2193572  5 -0.8322391 -0.2814669  0.007107947</div><div class='input'>
 <span class='co'>#####</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>id<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>,<span class='fl'>5</span>,<span class='fl'>6</span>,<span class='fl'>6</span>,<span class='fl'>7</span><span class='op'>)</span>,y<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,x<span class='op'>=</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,tv<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>x</span>
@@ -440,209 +440,209 @@ Otherwise the first variable is only used as identifier.</p></td>
 <span class='co'>##### Family cluster example</span>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'>mets</span><span class='fu'>:::</span><span class='fu'><a href='npc.html'>simBinFam</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>d</span>
-</div><div class='output co'>#&gt;       agem     agef     ageb1    ageb2 xm xf xb1 xb2 ym yf yb1 yb2 id
-#&gt; 1 26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1   1   1  1
-#&gt; 2 29.41234 32.91351 14.899234 16.33437  1  1   1   1  1  1   1   1  2
-#&gt; 3 23.75109 24.91365 13.758275 15.12345  1  1   1   0  1  1   0   0  3</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,var<span class='op'>=</span><span class='st'>"y"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id y num
-#&gt; 1  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1   m
-#&gt; 2  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1   f
-#&gt; 3  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1  b1
-#&gt; 4  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1 1  b2
-#&gt; 5  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2 1   m
-#&gt; 6  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2 1   f
-#&gt; 7  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2 1  b1
-#&gt; 8  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2 1  b2
-#&gt; 9  23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 1   m
-#&gt; 10 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 1   f
-#&gt; 11 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 0  b1
-#&gt; 12 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3 0  b2</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,varying<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ym"</span>,<span class='st'>"yf"</span>,<span class='st'>"yb1"</span>,<span class='st'>"yb2"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;        agem     agef     ageb1    ageb2 xm xf xb1 xb2 id ym num
-#&gt; 1  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1  ym
-#&gt; 2  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1  yf
-#&gt; 3  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1 yb1
-#&gt; 4  26.09384 27.36191  9.096248 10.66697  1  1   1   1  1  1 yb2
-#&gt; 5  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2  1  ym
-#&gt; 6  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2  1  yf
-#&gt; 7  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2  1 yb1
-#&gt; 8  29.41234 32.91351 14.899234 16.33437  1  1   1   1  2  1 yb2
-#&gt; 9  23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  1  ym
-#&gt; 10 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  1  yf
-#&gt; 11 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  0 yb1
-#&gt; 12 23.75109 24.91365 13.758275 15.12345  1  1   1   0  3  0 yb2</div><div class='input'>
+</div><div class='output co'>#&gt;       agem     agef     ageb1     ageb2 xm xf xb1 xb2 ym yf yb1 yb2 id
+#&gt; 1 28.21417 31.47441  6.105765  7.227351  1  1   0   0  1  1   1   0  1
+#&gt; 2 22.45870 29.00487 12.336780 14.339498  1  1   1   1  1  1   1   1  2
+#&gt; 3 26.02417 27.86702  5.663357  8.545406  1  1   0   1  1  1   1   1  3</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,var<span class='op'>=</span><span class='st'>"y"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;        agem     agef     ageb1     ageb2 xm xf xb1 xb2 id y num
+#&gt; 1  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1 1   m
+#&gt; 2  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1 1   f
+#&gt; 3  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1 1  b1
+#&gt; 4  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1 0  b2
+#&gt; 5  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2 1   m
+#&gt; 6  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2 1   f
+#&gt; 7  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2 1  b1
+#&gt; 8  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2 1  b2
+#&gt; 9  26.02417 27.86702  5.663357  8.545406  1  1   0   1  3 1   m
+#&gt; 10 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3 1   f
+#&gt; 11 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3 1  b1
+#&gt; 12 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3 1  b2</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,varying<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ym"</span>,<span class='st'>"yf"</span>,<span class='st'>"yb1"</span>,<span class='st'>"yb2"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;        agem     agef     ageb1     ageb2 xm xf xb1 xb2 id ym num
+#&gt; 1  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1  1  ym
+#&gt; 2  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1  1  yf
+#&gt; 3  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1  1 yb1
+#&gt; 4  28.21417 31.47441  6.105765  7.227351  1  1   0   0  1  0 yb2
+#&gt; 5  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2  1  ym
+#&gt; 6  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2  1  yf
+#&gt; 7  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2  1 yb1
+#&gt; 8  22.45870 29.00487 12.336780 14.339498  1  1   1   1  2  1 yb2
+#&gt; 9  26.02417 27.86702  5.663357  8.545406  1  1   0   1  3  1  ym
+#&gt; 10 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3  1  yf
+#&gt; 11 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3  1 yb1
+#&gt; 12 26.02417 27.86702  5.663357  8.545406  1  1   0   1  3  1 yb2</div><div class='input'>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span><span class='op'>(</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/lvm.html'>lvm</a></span><span class='op'>(</span><span class='op'>~</span><span class='va'>y1</span><span class='op'>+</span><span class='va'>y2</span><span class='op'>+</span><span class='va'>ya</span><span class='op'>)</span>,<span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>d</span>
 </div><div class='output co'>#&gt;             y1          y2          ya
-#&gt; 1   1.33764478 -0.41504725  0.26237568
-#&gt; 2  -0.10942127  0.34119368 -0.45628311
-#&gt; 3   0.91679581  1.39342931 -0.60957449
-#&gt; 4   0.98043076 -0.60456361 -3.80766246
-#&gt; 5  -1.00970774  0.61192812  1.31799454
-#&gt; 6   0.32508586  1.08371191 -0.54277113
-#&gt; 7  -0.14178005  0.52109427  0.46564005
-#&gt; 8  -2.22750533  0.06642853 -0.18651948
-#&gt; 9  -1.02616727  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 -1.59965484 -0.34129512</div><div class='input'><span class='op'>(</span><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 1  -0.79072920  0.49222745 -1.85163417
+#&gt; 2  -0.07033981  0.53315014  0.54690525
+#&gt; 3   0.20755278  0.19958345  2.04303427
+#&gt; 4   0.67745555 -0.65015253  0.09673758
+#&gt; 5  -1.31952201 -0.68257848  1.38630576
+#&gt; 6   0.62516266  0.05819279 -0.01838253
+#&gt; 7  -1.22042483 -0.17291440  0.69390363
+#&gt; 8  -0.28613030  0.40750732  0.94344927
+#&gt; 9   0.87842877 -0.09988101  0.94327568
+#&gt; 10 -1.10653994  0.51268991  0.01490019</div><div class='input'><span class='op'>(</span><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;              y id num
-#&gt; 1   1.33764478  1   1
-#&gt; 2  -0.41504725  1   2
-#&gt; 3   0.26237568  1   a
-#&gt; 4  -0.10942127  2   1
-#&gt; 5   0.34119368  2   2
-#&gt; 6  -0.45628311  2   a
-#&gt; 7   0.91679581  3   1
-#&gt; 8   1.39342931  3   2
-#&gt; 9  -0.60957449  3   a
-#&gt; 10  0.98043076  4   1
-#&gt; 11 -0.60456361  4   2
-#&gt; 12 -3.80766246  4   a
-#&gt; 13 -1.00970774  5   1
-#&gt; 14  0.61192812  5   2
-#&gt; 15  1.31799454  5   a
-#&gt; 16  0.32508586  6   1
-#&gt; 17  1.08371191  6   2
-#&gt; 18 -0.54277113  6   a
-#&gt; 19 -0.14178005  7   1
-#&gt; 20  0.52109427  7   2
-#&gt; 21  0.46564005  7   a
-#&gt; 22 -2.22750533  8   1
-#&gt; 23  0.06642853  8   2
-#&gt; 24 -0.18651948  8   a
-#&gt; 25 -1.02616727  9   1
-#&gt; 26  0.51126046  9   2
-#&gt; 27 -0.04165241  9   a
-#&gt; 28 -0.05472261 10   1
-#&gt; 29 -1.59965484 10   2
-#&gt; 30 -0.34129512 10   a</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+#&gt; 1  -0.79072920  1   1
+#&gt; 2   0.49222745  1   2
+#&gt; 3  -1.85163417  1   a
+#&gt; 4  -0.07033981  2   1
+#&gt; 5   0.53315014  2   2
+#&gt; 6   0.54690525  2   a
+#&gt; 7   0.20755278  3   1
+#&gt; 8   0.19958345  3   2
+#&gt; 9   2.04303427  3   a
+#&gt; 10  0.67745555  4   1
+#&gt; 11 -0.65015253  4   2
+#&gt; 12  0.09673758  4   a
+#&gt; 13 -1.31952201  5   1
+#&gt; 14 -0.68257848  5   2
+#&gt; 15  1.38630576  5   a
+#&gt; 16  0.62516266  6   1
+#&gt; 17  0.05819279  6   2
+#&gt; 18 -0.01838253  6   a
+#&gt; 19 -1.22042483  7   1
+#&gt; 20 -0.17291440  7   2
+#&gt; 21  0.69390363  7   a
+#&gt; 22 -0.28613030  8   1
+#&gt; 23  0.40750732  8   2
+#&gt; 24  0.94344927  8   a
+#&gt; 25  0.87842877  9   1
+#&gt; 26 -0.09988101  9   2
+#&gt; 27  0.94327568  9   a
+#&gt; 28 -1.10653994 10   1
+#&gt; 29  0.51268991 10   2
+#&gt; 30  0.01490019 10   a</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='st'>"y"</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             ya           y id num
-#&gt; 1   0.26237568  1.33764478  1   1
-#&gt; 2   0.26237568 -0.41504725  1   2
-#&gt; 3  -0.45628311 -0.10942127  2   1
-#&gt; 4  -0.45628311  0.34119368  2   2
-#&gt; 5  -0.60957449  0.91679581  3   1
-#&gt; 6  -0.60957449  1.39342931  3   2
-#&gt; 7  -3.80766246  0.98043076  4   1
-#&gt; 8  -3.80766246 -0.60456361  4   2
-#&gt; 9   1.31799454 -1.00970774  5   1
-#&gt; 10  1.31799454  0.61192812  5   2
-#&gt; 11 -0.54277113  0.32508586  6   1
-#&gt; 12 -0.54277113  1.08371191  6   2
-#&gt; 13  0.46564005 -0.14178005  7   1
-#&gt; 14  0.46564005  0.52109427  7   2
-#&gt; 15 -0.18651948 -2.22750533  8   1
-#&gt; 16 -0.18651948  0.06642853  8   2
-#&gt; 17 -0.04165241 -1.02616727  9   1
-#&gt; 18 -0.04165241  0.51126046  9   2
-#&gt; 19 -0.34129512 -0.05472261 10   1
-#&gt; 20 -0.34129512 -1.59965484 10   2</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,num<span class='op'>=</span><span class='st'>"num"</span><span class='op'>)</span>
+#&gt; 1  -1.85163417 -0.79072920  1   1
+#&gt; 2  -1.85163417  0.49222745  1   2
+#&gt; 3   0.54690525 -0.07033981  2   1
+#&gt; 4   0.54690525  0.53315014  2   2
+#&gt; 5   2.04303427  0.20755278  3   1
+#&gt; 6   2.04303427  0.19958345  3   2
+#&gt; 7   0.09673758  0.67745555  4   1
+#&gt; 8   0.09673758 -0.65015253  4   2
+#&gt; 9   1.38630576 -1.31952201  5   1
+#&gt; 10  1.38630576 -0.68257848  5   2
+#&gt; 11 -0.01838253  0.62516266  6   1
+#&gt; 12 -0.01838253  0.05819279  6   2
+#&gt; 13  0.69390363 -1.22042483  7   1
+#&gt; 14  0.69390363 -0.17291440  7   2
+#&gt; 15  0.94344927 -0.28613030  8   1
+#&gt; 16  0.94344927  0.40750732  8   2
+#&gt; 17  0.94327568  0.87842877  9   1
+#&gt; 18  0.94327568 -0.09988101  9   2
+#&gt; 19  0.01490019 -1.10653994 10   1
+#&gt; 20  0.01490019  0.51268991 10   2</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,num<span class='op'>=</span><span class='st'>"num"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             y1 id          y2          ya
-#&gt; 1   1.33764478  1 -0.41504725  0.26237568
-#&gt; 2  -0.10942127  2  0.34119368 -0.45628311
-#&gt; 3   0.91679581  3  1.39342931 -0.60957449
-#&gt; 4   0.98043076  4 -0.60456361 -3.80766246
-#&gt; 5  -1.00970774  5  0.61192812  1.31799454
-#&gt; 6   0.32508586  6  1.08371191 -0.54277113
-#&gt; 7  -0.14178005  7  0.52109427  0.46564005
-#&gt; 8  -2.22750533  8  0.06642853 -0.18651948
-#&gt; 9  -1.02616727  9  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,num<span class='op'>=</span><span class='st'>"num"</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+#&gt; 1  -0.79072920  1  0.49222745 -1.85163417
+#&gt; 2  -0.07033981  2  0.53315014  0.54690525
+#&gt; 3   0.20755278  3  0.19958345  2.04303427
+#&gt; 4   0.67745555  4 -0.65015253  0.09673758
+#&gt; 5  -1.31952201  5 -0.68257848  1.38630576
+#&gt; 6   0.62516266  6  0.05819279 -0.01838253
+#&gt; 7  -1.22042483  7 -0.17291440  0.69390363
+#&gt; 8  -0.28613030  8  0.40750732  0.94344927
+#&gt; 9   0.87842877  9 -0.09988101  0.94327568
+#&gt; 10 -1.10653994 10  0.51268991  0.01490019</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span>,num<span class='op'>=</span><span class='st'>"num"</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             y1 id          y2          y3
-#&gt; 1   1.33764478  1 -0.41504725  0.26237568
-#&gt; 2  -0.10942127  2  0.34119368 -0.45628311
-#&gt; 3   0.91679581  3  1.39342931 -0.60957449
-#&gt; 4   0.98043076  4 -0.60456361 -3.80766246
-#&gt; 5  -1.00970774  5  0.61192812  1.31799454
-#&gt; 6   0.32508586  6  1.08371191 -0.54277113
-#&gt; 7  -0.14178005  7  0.52109427  0.46564005
-#&gt; 8  -2.22750533  8  0.06642853 -0.18651948
-#&gt; 9  -1.02616727  9  0.51126046 -0.04165241
-#&gt; 10 -0.05472261 10 -1.59965484 -0.34129512</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>a<span class='op'>=</span><span class='st'>"y"</span><span class='op'>)</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'>## New column name</span>
+#&gt; 1  -0.79072920  1  0.49222745 -1.85163417
+#&gt; 2  -0.07033981  2  0.53315014  0.54690525
+#&gt; 3   0.20755278  3  0.19958345  2.04303427
+#&gt; 4   0.67745555  4 -0.65015253  0.09673758
+#&gt; 5  -1.31952201  5 -0.68257848  1.38630576
+#&gt; 6   0.62516266  6  0.05819279 -0.01838253
+#&gt; 7  -1.22042483  7 -0.17291440  0.69390363
+#&gt; 8  -0.28613030  8  0.40750732  0.94344927
+#&gt; 9   0.87842877  9 -0.09988101  0.94327568
+#&gt; 10 -1.10653994 10  0.51268991  0.01490019</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>a<span class='op'>=</span><span class='st'>"y"</span><span class='op'>)</span>,labelnum<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'>## New column name</span>
 </div><div class='output co'>#&gt;             ya           a id num
-#&gt; 1   0.26237568  1.33764478  1   1
-#&gt; 2   0.26237568 -0.41504725  1   2
-#&gt; 3  -0.45628311 -0.10942127  2   1
-#&gt; 4  -0.45628311  0.34119368  2   2
-#&gt; 5  -0.60957449  0.91679581  3   1
-#&gt; 6  -0.60957449  1.39342931  3   2
-#&gt; 7  -3.80766246  0.98043076  4   1
-#&gt; 8  -3.80766246 -0.60456361  4   2
-#&gt; 9   1.31799454 -1.00970774  5   1
-#&gt; 10  1.31799454  0.61192812  5   2
-#&gt; 11 -0.54277113  0.32508586  6   1
-#&gt; 12 -0.54277113  1.08371191  6   2
-#&gt; 13  0.46564005 -0.14178005  7   1
-#&gt; 14  0.46564005  0.52109427  7   2
-#&gt; 15 -0.18651948 -2.22750533  8   1
-#&gt; 16 -0.18651948  0.06642853  8   2
-#&gt; 17 -0.04165241 -1.02616727  9   1
-#&gt; 18 -0.04165241  0.51126046  9   2
-#&gt; 19 -0.34129512 -0.05472261 10   1
-#&gt; 20 -0.34129512 -1.59965484 10   2</div><div class='input'>
+#&gt; 1  -1.85163417 -0.79072920  1   1
+#&gt; 2  -1.85163417  0.49222745  1   2
+#&gt; 3   0.54690525 -0.07033981  2   1
+#&gt; 4   0.54690525  0.53315014  2   2
+#&gt; 5   2.04303427  0.20755278  3   1
+#&gt; 6   2.04303427  0.19958345  3   2
+#&gt; 7   0.09673758  0.67745555  4   1
+#&gt; 8   0.09673758 -0.65015253  4   2
+#&gt; 9   1.38630576 -1.31952201  5   1
+#&gt; 10  1.38630576 -0.68257848  5   2
+#&gt; 11 -0.01838253  0.62516266  6   1
+#&gt; 12 -0.01838253  0.05819279  6   2
+#&gt; 13  0.69390363 -1.22042483  7   1
+#&gt; 14  0.69390363 -0.17291440  7   2
+#&gt; 15  0.94344927 -0.28613030  8   1
+#&gt; 16  0.94344927  0.40750732  8   2
+#&gt; 17  0.94327568  0.87842877  9   1
+#&gt; 18  0.94327568 -0.09988101  9   2
+#&gt; 19  0.01490019 -1.10653994 10   1
+#&gt; 20  0.01490019  0.51268991 10   2</div><div class='input'>
 
 <span class='co'>##### Unbalanced data</span>
 <span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://kkholst.github.io/lava/reference/lvm.html'>lvm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>y2</span>,<span class='va'>y3</span>,<span class='va'>y4</span><span class='op'>)</span><span class='op'>~</span> <span class='va'>x</span><span class='op'>+</span><span class='va'>z1</span><span class='op'>+</span><span class='va'>z3</span><span class='op'>+</span><span class='va'>z5</span><span class='op'>)</span>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>sim</a></span><span class='op'>(</span><span class='va'>m</span>,<span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>d</span>
-</div><div class='output co'>#&gt;           y1         y2        y3         y4          x          z1          z3
-#&gt; 1  2.0533778  1.7691243  2.590250  2.4621101 -0.2905331  0.65021574  0.05225591
-#&gt; 2 -1.6883598 -2.2693025 -3.258077 -0.6541728  1.5555723 -1.68832368 -0.48894459
-#&gt; 3  0.5963096  0.7015472  1.569971 -1.7878806  0.7315199 -0.05380033 -1.20277031
-#&gt;           z5
-#&gt; 1  0.9821673
-#&gt; 2 -1.1820431
-#&gt; 3  0.1141341</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y"</span>,<span class='st'>"z"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x          y           z id num
-#&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
-#&gt; 2  -0.2905331  1.7691243          NA  1   2
-#&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
-#&gt; 4  -0.2905331  2.4621101          NA  1   4
-#&gt; 5  -0.2905331         NA  0.98216728  1   5
-#&gt; 6   1.5555723 -1.6883598 -1.68832368  2   1
-#&gt; 7   1.5555723 -2.2693025          NA  2   2
-#&gt; 8   1.5555723 -3.2580765 -0.48894459  2   3
-#&gt; 9   1.5555723 -0.6541728          NA  2   4
-#&gt; 10  1.5555723         NA -1.18204306  2   5
-#&gt; 11  0.7315199  0.5963096 -0.05380033  3   1
-#&gt; 12  0.7315199  0.7015472          NA  3   2
-#&gt; 13  0.7315199  1.5699708 -1.20277031  3   3
-#&gt; 14  0.7315199 -1.7878806          NA  3   4
-#&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
+</div><div class='output co'>#&gt;          y1        y2        y3        y4          x         z1         z3
+#&gt; 1  3.913257 2.1852597  3.569181  2.865170  1.6641621 -1.5399405  1.3126754
+#&gt; 2 -3.185682 0.3776233 -2.776879 -4.252584 -1.4104728  0.1248257 -0.6162465
+#&gt; 3  1.328163 2.8094582  1.039085  2.429321  0.6552037  1.3275028 -0.1304471
+#&gt;             z5
+#&gt; 1  1.548377100
+#&gt; 2 -0.397956131
+#&gt; 3 -0.001175883</div><div class='input'><span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y"</span>,<span class='st'>"z"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;             x          y            z id num
+#&gt; 1   1.6641621  3.9132570 -1.539940528  1   1
+#&gt; 2   1.6641621  2.1852597           NA  1   2
+#&gt; 3   1.6641621  3.5691812  1.312675427  1   3
+#&gt; 4   1.6641621  2.8651701           NA  1   4
+#&gt; 5   1.6641621         NA  1.548377100  1   5
+#&gt; 6  -1.4104728 -3.1856821  0.124825699  2   1
+#&gt; 7  -1.4104728  0.3776233           NA  2   2
+#&gt; 8  -1.4104728 -2.7768785 -0.616246543  2   3
+#&gt; 9  -1.4104728 -4.2525842           NA  2   4
+#&gt; 10 -1.4104728         NA -0.397956131  2   5
+#&gt; 11  0.6552037  1.3281625  1.327502837  3   1
+#&gt; 12  0.6552037  2.8094582           NA  3   2
+#&gt; 13  0.6552037  1.0390851 -0.130447133  3   3
+#&gt; 14  0.6552037  2.4293205           NA  3   4
+#&gt; 15  0.6552037         NA -0.001175883  3   5</div><div class='input'>
 <span class='co'>##### not-varying syntax:</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span>,<span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"x"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x          y           z id num
-#&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
-#&gt; 2  -0.2905331  1.7691243          NA  1   2
-#&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
-#&gt; 4  -0.2905331  2.4621101          NA  1   4
-#&gt; 5  -0.2905331         NA  0.98216728  1   5
-#&gt; 6   1.5555723 -1.6883598 -1.68832368  2   1
-#&gt; 7   1.5555723 -2.2693025          NA  2   2
-#&gt; 8   1.5555723 -3.2580765 -0.48894459  2   3
-#&gt; 9   1.5555723 -0.6541728          NA  2   4
-#&gt; 10  1.5555723         NA -1.18204306  2   5
-#&gt; 11  0.7315199  0.5963096 -0.05380033  3   1
-#&gt; 12  0.7315199  0.7015472          NA  3   2
-#&gt; 13  0.7315199  1.5699708 -1.20277031  3   3
-#&gt; 14  0.7315199 -1.7878806          NA  3   4
-#&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
+</div><div class='output co'>#&gt;             x          y            z id num
+#&gt; 1   1.6641621  3.9132570 -1.539940528  1   1
+#&gt; 2   1.6641621  2.1852597           NA  1   2
+#&gt; 3   1.6641621  3.5691812  1.312675427  1   3
+#&gt; 4   1.6641621  2.8651701           NA  1   4
+#&gt; 5   1.6641621         NA  1.548377100  1   5
+#&gt; 6  -1.4104728 -3.1856821  0.124825699  2   1
+#&gt; 7  -1.4104728  0.3776233           NA  2   2
+#&gt; 8  -1.4104728 -2.7768785 -0.616246543  2   3
+#&gt; 9  -1.4104728 -4.2525842           NA  2   4
+#&gt; 10 -1.4104728         NA -0.397956131  2   5
+#&gt; 11  0.6552037  1.3281625  1.327502837  3   1
+#&gt; 12  0.6552037  2.8094582           NA  3   2
+#&gt; 13  0.6552037  1.0390851 -0.130447133  3   3
+#&gt; 14  0.6552037  2.4293205           NA  3   4
+#&gt; 15  0.6552037         NA -0.001175883  3   5</div><div class='input'>
 <span class='co'>##### Automatically define varying variables from trailing digits</span>
 <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x          y           z id num
-#&gt; 1  -0.2905331  2.0533778  0.65021574  1   1
-#&gt; 2  -0.2905331  1.7691243          NA  1   2
-#&gt; 3  -0.2905331  2.5902502  0.05225591  1   3
-#&gt; 4  -0.2905331  2.4621101          NA  1   4
-#&gt; 5  -0.2905331         NA  0.98216728  1   5
-#&gt; 6   1.5555723 -1.6883598 -1.68832368  2   1
-#&gt; 7   1.5555723 -2.2693025          NA  2   2
-#&gt; 8   1.5555723 -3.2580765 -0.48894459  2   3
-#&gt; 9   1.5555723 -0.6541728          NA  2   4
-#&gt; 10  1.5555723         NA -1.18204306  2   5
-#&gt; 11  0.7315199  0.5963096 -0.05380033  3   1
-#&gt; 12  0.7315199  0.7015472          NA  3   2
-#&gt; 13  0.7315199  1.5699708 -1.20277031  3   3
-#&gt; 14  0.7315199 -1.7878806          NA  3   4
-#&gt; 15  0.7315199         NA  0.11413410  3   5</div><div class='input'>
+</div><div class='output co'>#&gt;             x          y            z id num
+#&gt; 1   1.6641621  3.9132570 -1.539940528  1   1
+#&gt; 2   1.6641621  2.1852597           NA  1   2
+#&gt; 3   1.6641621  3.5691812  1.312675427  1   3
+#&gt; 4   1.6641621  2.8651701           NA  1   4
+#&gt; 5   1.6641621         NA  1.548377100  1   5
+#&gt; 6  -1.4104728 -3.1856821  0.124825699  2   1
+#&gt; 7  -1.4104728  0.3776233           NA  2   2
+#&gt; 8  -1.4104728 -2.7768785 -0.616246543  2   3
+#&gt; 9  -1.4104728 -4.2525842           NA  2   4
+#&gt; 10 -1.4104728         NA -0.397956131  2   5
+#&gt; 11  0.6552037  1.3281625  1.327502837  3   1
+#&gt; 12  0.6552037  2.8094582           NA  3   2
+#&gt; 13  0.6552037  1.0390851 -0.130447133  3   3
+#&gt; 14  0.6552037  2.4293205           NA  3   4
+#&gt; 15  0.6552037         NA -0.001175883  3   5</div><div class='input'>
 <span class='co'>##### Prostate cancer example</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>prt</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prtw</span> <span class='op'>&lt;-</span> <span class='fu'>fast.reshape</span><span class='op'>(</span><span class='va'>prt</span>,<span class='st'>"cancer"</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span><span class='op'>)</span>

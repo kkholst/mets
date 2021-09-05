@@ -443,19 +443,19 @@ fast.</p>
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>10000</span>
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>5000</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>
 <span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='npc.html'>simBinFam</a></span><span class='op'>(</span><span class='va'>n</span>,beta<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
 <span class='va'>binfam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='fast.reshape.html'>fast.reshape</a></span><span class='op'>(</span><span class='va'>dd</span>,varying<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>,<span class='st'>"x"</span>,<span class='st'>"y"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>## mother, father, children  (ordered)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>binfam</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   id      age x y num
-#&gt; 1  1 20.44017 0 1   m
-#&gt; 2  1 24.17965 0 1   f
-#&gt; 3  1 10.63289 0 1  b1
-#&gt; 4  1 12.11630 0 1  b2
-#&gt; 5  2 28.03707 1 1   m
-#&gt; 6  2 25.00649 1 0   f</div><div class='input'>
+#&gt; 1  1 29.10523 0 1   m
+#&gt; 2  1 29.41385 0 1   f
+#&gt; 3  1 11.03423 1 1  b1
+#&gt; 4  1 13.72128 1 1  b2
+#&gt; 5  2 24.19918 0 1   m
+#&gt; 6  2 26.54858 1 1   f</div><div class='input'>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
 <span class='co'>####  simple analyses of binomial family data</span>
 <span class='co'>########### ########### ########### ########### ########### ###########</span>
@@ -473,16 +473,16 @@ fast.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>ud</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;         theta         se
-#&gt; pp 0.02714191 0.07881159
-#&gt; pc 0.31959351 0.03689402
-#&gt; cc 0.65795314 0.06659724
+#&gt;          theta         se
+#&gt; pp -0.03760497 0.11475447
+#&gt; pc  0.40400558 0.05108072
+#&gt; cc  0.72782925 0.09233881
 #&gt; 
 #&gt; $or
-#&gt;    Estimate Std.Err   2.5% 97.5%    P-value
-#&gt; pp    1.028 0.08098 0.8688 1.186  6.849e-37
-#&gt; pc    1.377 0.05079 1.2770 1.476 8.676e-162
-#&gt; cc    1.931 0.12859 1.6788 2.183  5.800e-51
+#&gt;    Estimate Std.Err   2.5% 97.5%   P-value
+#&gt; pp   0.9631 0.11052 0.7465 1.180 2.927e-18
+#&gt; pc   1.4978 0.07651 1.3479 1.648 2.436e-85
+#&gt; cc   2.0706 0.19119 1.6958 2.445 2.490e-27
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -495,16 +495,16 @@ fast.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>udx</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;         theta         se
-#&gt; pp 0.02777621 0.07893634
-#&gt; pc 0.32266211 0.03698398
-#&gt; cc 0.66038803 0.06680438
+#&gt;          theta         se
+#&gt; pp -0.04739133 0.11503577
+#&gt; pc  0.40679702 0.05124946
+#&gt; cc  0.73709599 0.09257276
 #&gt; 
 #&gt; $or
-#&gt;    Estimate Std.Err   2.5% 97.5%    P-value
-#&gt; pp    1.028 0.08116 0.8691 1.187  8.846e-37
-#&gt; pc    1.381 0.05107 1.2807 1.481 5.182e-161
-#&gt; cc    1.936 0.12930 1.6821 2.189  1.169e-50
+#&gt;    Estimate Std.Err   2.5% 97.5%   P-value
+#&gt; pp   0.9537 0.10971 0.7387 1.169 3.532e-18
+#&gt; pc   1.5020 0.07698 1.3511 1.653 8.614e-85
+#&gt; cc   2.0899 0.19346 1.7107 2.469 3.356e-27
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -530,18 +530,18 @@ fast.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>udi</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;                   theta         se
-#&gt; pp           0.02714191 0.07881159
-#&gt; mother-child 0.52984686 0.05036850
-#&gt; father-child 0.09176086 0.05581411
-#&gt; cc           0.65795314 0.06659724
+#&gt;                    theta         se
+#&gt; pp           -0.03760497 0.11475447
+#&gt; mother-child  0.61962950 0.07061574
+#&gt; father-child  0.16483867 0.07637147
+#&gt; cc            0.72782925 0.09233881
 #&gt; 
 #&gt; $or
 #&gt;              Estimate Std.Err   2.5% 97.5%   P-value
-#&gt; pp              1.028 0.08098 0.8688 1.186 6.849e-37
-#&gt; mother-child    1.699 0.08556 1.5310 1.866 1.024e-87
-#&gt; father-child    1.096 0.06118 0.9762 1.216 8.749e-72
-#&gt; cc              1.931 0.12859 1.6788 2.183 5.800e-51
+#&gt; pp             0.9631 0.11052 0.7465 1.180 2.927e-18
+#&gt; mother-child   1.8582 0.13122 1.6011 2.115 1.594e-45
+#&gt; father-child   1.1792 0.09006 1.0027 1.356 3.568e-39
+#&gt; cc             2.0706 0.19119 1.6958 2.445 2.490e-27
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -556,12 +556,12 @@ fast.</p>
 <span class='va'>nbinfam</span><span class='op'>$</span><span class='va'>num</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>binfam</span><span class='op'>$</span><span class='va'>num</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>nbinfam</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   id      age x y num
-#&gt; 1  1 20.44017 0 1   1
-#&gt; 2  1 24.17965 0 1   2
-#&gt; 3  1 10.63289 0 1   3
-#&gt; 4  1 12.11630 0 1   4
-#&gt; 5  2 28.03707 1 1   1
-#&gt; 6  2 25.00649 1 0   2</div><div class='input'>
+#&gt; 1  1 29.10523 0 1   1
+#&gt; 2  1 29.41385 0 1   2
+#&gt; 3  1 11.03423 1 1   3
+#&gt; 4  1 13.72128 1 1   4
+#&gt; 5  2 24.19918 0 1   1
+#&gt; 6  2 26.54858 1 1   2</div><div class='input'>
 <span class='va'>desfsai</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>,<span class='va'>num1</span><span class='op'>=</span><span class='st'>"num1"</span>,<span class='va'>num2</span><span class='op'>=</span><span class='st'>"num2"</span><span class='op'>)</span>
 <span class='op'>{</span>
     <span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>num1</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"m"</span><span class='op'>)</span><span class='op'>*</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>num2</span><span class='op'>]</span><span class='op'>==</span><span class='st'>"f"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1</span>
@@ -592,22 +592,22 @@ fast.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>udxai2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;                    theta         se
-#&gt; pp           -0.04132083 0.11936287
-#&gt; pp-age       -0.01937892 0.02485374
-#&gt; mother-child  0.53543124 0.05066611
-#&gt; father-child  0.09288514 0.05583962
-#&gt; cc            0.68690859 0.06870483
-#&gt; cc-age        0.03718788 0.02336246
+#&gt;                      theta         se
+#&gt; pp           -0.1347520605 0.17968233
+#&gt; pp-age       -0.0235331410 0.03696640
+#&gt; mother-child  0.6223360756 0.07091609
+#&gt; father-child  0.1698829179 0.07659981
+#&gt; cc            0.7368848713 0.09526400
+#&gt; cc-age        0.0009801409 0.03213098
 #&gt; 
 #&gt; $or
-#&gt;              Estimate Std.Err   2.5% 97.5%   P-value
-#&gt; pp             0.9595 0.11453 0.7350 1.184 5.392e-17
-#&gt; pp-age         0.9808 0.02438 0.9330 1.029 0.000e+00
-#&gt; mother-child   1.7082 0.08655 1.5386 1.878 1.036e-86
-#&gt; father-child   1.0973 0.06127 0.9772 1.217 1.013e-71
-#&gt; cc             1.9876 0.13656 1.7199 2.255 5.427e-48
-#&gt; cc-age         1.0379 0.02425 0.9904 1.085 0.000e+00
+#&gt;              Estimate Std.Err   2.5% 97.5%    P-value
+#&gt; pp             0.8739 0.15703 0.5662 1.182  2.616e-08
+#&gt; pp-age         0.9767 0.03611 0.9060 1.048 3.658e-161
+#&gt; mother-child   1.8633 0.13214 1.6043 2.122  3.735e-45
+#&gt; father-child   1.1852 0.09078 1.0072 1.363  5.962e-39
+#&gt; cc             2.0894 0.19905 1.6993 2.480  8.903e-26
+#&gt; cc-age         1.0010 0.03216 0.9379 1.064 1.191e-212
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"

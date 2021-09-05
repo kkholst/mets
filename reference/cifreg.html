@@ -267,14 +267,14 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt;  408 clusters
 #&gt; coeffients:
 #&gt;           Estimate      S.E.   dU^-1/2 P-value
-#&gt; tcell    -0.709620  0.331983  0.274927  0.0326
-#&gt; platelet -0.455296  0.236020  0.187921  0.0537
-#&gt; age       0.391176  0.098036  0.083670  0.0001
+#&gt; tcell    -0.709648  0.331981  0.274926  0.0325
+#&gt; platelet -0.455292  0.236018  0.187921  0.0537
+#&gt; age       0.391175  0.098036  0.083670  0.0001
 #&gt; 
 #&gt; exp(coeffients):
 #&gt;          Estimate    2.5%  97.5%
-#&gt; tcell     0.49183 0.25658 0.9428
-#&gt; platelet  0.63426 0.39936 1.0073
+#&gt; tcell     0.49182 0.25658 0.9427
+#&gt; platelet  0.63426 0.39937 1.0073
 #&gt; age       1.47872 1.22022 1.7920
 #&gt; 
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>ll</span><span class='op'>)</span>
@@ -292,15 +292,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt;  408 clusters
 #&gt; coeffients:
 #&gt;           Estimate      S.E.   dU^-1/2 P-value
-#&gt; tcell    -0.596632  0.270518  0.275783  0.0274
-#&gt; platelet -0.425976  0.180709  0.187721  0.0184
-#&gt; age       0.343783  0.080261  0.086282  0.0000
+#&gt; tcell    -0.596978  0.270453  0.275786  0.0273
+#&gt; platelet -0.425527  0.180751  0.187724  0.0186
+#&gt; age       0.343764  0.080258  0.086281  0.0000
 #&gt; 
 #&gt; exp(coeffients):
 #&gt;          Estimate    2.5%  97.5%
-#&gt; tcell     0.55066 0.32406 0.9357
-#&gt; platelet  0.65313 0.45833 0.9307
-#&gt; age       1.41027 1.20499 1.6505
+#&gt; tcell     0.55047 0.32399 0.9353
+#&gt; platelet  0.65343 0.45850 0.9312
+#&gt; age       1.41025 1.20498 1.6505
 #&gt; 
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>fg</span><span class='op'>)</span>
 </div><div class='img'><img src='cifreg-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='va'>nd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>tcell<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>0</span><span class='op'>)</span>,platelet<span class='op'>=</span><span class='fl'>0</span>,age<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
@@ -316,12 +316,12 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 #&gt;  408 clusters
 #&gt; coeffients:
 #&gt;           Estimate      S.E.   dU^-1/2 P-value
-#&gt; platelet -0.424631  0.180789  0.187822  0.0188
-#&gt; age       0.341978  0.079854  0.086282  0.0000
+#&gt; platelet -0.424141  0.180838  0.187825   0.019
+#&gt; age       0.341977  0.079852  0.086282   0.000
 #&gt; 
 #&gt; exp(coeffients):
 #&gt;          Estimate    2.5%  97.5%
-#&gt; platelet  0.65401 0.45888 0.9321
+#&gt; platelet  0.65433 0.45906 0.9327
 #&gt; age       1.40773 1.20378 1.6462
 #&gt; 
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>sfg</span><span class='op'>)</span>
@@ -331,11 +331,11 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class='va'>Biid</span> <span class='op'>&lt;-</span> <span class='fu'>mets</span><span class='fu'>:::</span><span class='fu'>iid.baseline.cifreg</span><span class='op'>(</span><span class='va'>fg</span>,time<span class='op'>=</span><span class='fl'>20</span><span class='op'>)</span>
 <span class='fu'>FGprediid</span><span class='op'>(</span><span class='va'>Biid</span>,<span class='va'>bmt</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>,<span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;           pred     se-log     lower     upper
-#&gt; [1,] 0.4564160 0.07254064 0.3959262 0.5261476
-#&gt; [2,] 0.5072485 0.07328411 0.4393810 0.5855990
-#&gt; [3,] 0.6064635 0.08622212 0.5121678 0.7181200
-#&gt; [4,] 0.6026848 0.08566100 0.5095367 0.7128612
-#&gt; [5,] 0.4288154 0.07564733 0.3697253 0.4973493</div><div class='input'>
+#&gt; [1,] 0.4563815 0.07253452 0.3959010 0.5261015
+#&gt; [2,] 0.5072094 0.07327865 0.4393518 0.5855476
+#&gt; [3,] 0.6064169 0.08622007 0.5121305 0.7180620
+#&gt; [4,] 0.6026385 0.08565878 0.5094997 0.7128033
+#&gt; [5,] 0.4287835 0.07564125 0.3697022 0.4973063</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

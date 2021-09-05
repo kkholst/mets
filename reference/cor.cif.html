@@ -427,13 +427,13 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 #&gt; </div><div class='input'>
 <span class='va'>out2</span><span class='op'>&lt;-</span><span class='fu'>cor.cif</span><span class='op'>(</span><span class='va'>add</span>,data<span class='op'>=</span><span class='va'>multcif</span>,cause1<span class='op'>=</span><span class='fl'>1</span>,cause2<span class='op'>=</span><span class='fl'>1</span>,theta.des<span class='op'>=</span><span class='va'>theta.des</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Cross odds ratio dependence for competing risks
+</div><div class='output co'>#&gt; <span class='warning'>Warning: WARNING: check score for convergence</span></div><div class='output co'>#&gt; Cross odds ratio dependence for competing risks
 #&gt; 
 #&gt; Effect of cause1=1 on cause2=1 under symmetry=0
 #&gt; 
-#&gt;              log-Coef.    SE      z P-val Cross odds ratio   SE
-#&gt; factor(zyg)0     1.250 23.10 0.0540 0.957             3.49 80.8
-#&gt; factor(zyg)1     0.883  8.88 0.0994 0.921             2.42 21.5
+#&gt;              log-Coef.   SE      z P-val Cross odds ratio    SE
+#&gt; factor(zyg)0     1.600 46.4 0.0344 0.973             4.94 229.0
+#&gt; factor(zyg)1     0.635  6.1 0.1040 0.917             1.89  11.5
 #&gt; </div><div class='input'>
 <span class='co'>##out3&lt;-cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)</span>
 <span class='co'>##summary(out3)</span>

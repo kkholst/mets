@@ -294,7 +294,7 @@
 #&gt; 1 -2.135152 0.7568562         1  MZ
 #&gt; 2 -2.172390 0.1960491         2  DZ</div><div class='input'>
  <span class='co'>## Reduce Ex.Timings</span>
-<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>1e4</span>
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>2e3</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='op'>-</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='pmvn.html'>rmvn</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0</span><span class='op'>)</span>, rho<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>&gt;</span><span class='fl'>0</span>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y1<span class='op'>=</span><span class='va'>y</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span>, y2<span class='op'>=</span><span class='va'>y</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span>, x<span class='op'>=</span><span class='va'>x</span><span class='op'>)</span>
@@ -303,30 +303,30 @@
 <span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit</span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>x</span>,rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>x</span>,data<span class='op'>=</span><span class='va'>dd</span>,id<span class='op'>=</span><span class='st'>"id"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>a</span>, mean.contrast<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.5</span><span class='op'>)</span>, cor.contrast<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>.5</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
-#&gt;                 Estimate    Std.Err       Z p-value    
-#&gt; (Intercept)   -0.0095570  0.0089408 -1.0689 0.28511    
-#&gt; x              0.0094745  0.0147944  0.6404 0.52190    
-#&gt; r:(Intercept)  0.0311101  0.0170227  1.8276 0.06762 .  
-#&gt; r:x            0.9709029  0.0314323 30.8887 &lt; 2e-16 ***
+#&gt;                Estimate   Std.Err       Z p-value    
+#&gt; (Intercept)   0.0089919 0.0198323  0.4534 0.65026    
+#&gt; x             0.0754384 0.0326733  2.3089 0.02095 *  
+#&gt; r:(Intercept) 0.0156138 0.0385085  0.4055 0.68514    
+#&gt; r:x           1.0507497 0.0728455 14.4244 &lt; 2e-16 ***
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #&gt; 
-#&gt; logLik: -13302.29  mean(score^2): 0.0001116 
+#&gt; logLik: -2639.188  mean(score^2): 1.247e-05 
 #&gt;     n pairs 
-#&gt; 20000 10000 
+#&gt;  4000  2000 
 #&gt; 
 #&gt; Contrast:
 #&gt; 	Dependence    [(Intercept)] + 0.5[x] 
 #&gt; 	Mean          [(Intercept)] + 0.5[x] 
 #&gt; 
 #&gt;                         Estimate 2.5%    97.5%  
-#&gt; Rel.Recur.Risk          1.31757  1.28858 1.34656
-#&gt; OR                      3.68749  3.29162 4.13098
-#&gt; Tetrachoric correlation 0.47504  0.43894 0.50962
+#&gt; Rel.Recur.Risk          1.30501  1.24470 1.36532
+#&gt; OR                      3.92015  3.03534 5.06290
+#&gt; Tetrachoric correlation 0.49374  0.41196 0.56762
 #&gt;                                                 
-#&gt; Concordance             0.32686  0.31474 0.33923
-#&gt; Casewise Concordance    0.65625  0.64140 0.67080
-#&gt; Marginal                0.49808  0.48761 0.50855</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>p00</span><span class='op'>~</span><span class='va'>x</span>,type<span class='op'>=</span><span class='st'>"l"</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; Concordance             0.35101  0.32394 0.37909
+#&gt; Casewise Concordance    0.67681  0.64463 0.70741
+#&gt; Marginal                0.51863  0.49539 0.54178</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>p00</span><span class='op'>~</span><span class='va'>x</span>,type<span class='op'>=</span><span class='st'>"l"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='biprobit-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>a</span>,<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>,by<span class='op'>=</span><span class='fl'>.1</span><span class='op'>)</span><span class='op'>)</span>,which<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pp</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>~</span><span class='va'>pp</span><span class='op'>$</span><span class='va'>x</span>, type<span class='op'>=</span><span class='st'>"l"</span>, xlab<span class='op'>=</span><span class='st'>"x"</span>, ylab<span class='op'>=</span><span class='st'>"Concordance"</span>, lwd<span class='op'>=</span><span class='fl'>2</span>, xaxs<span class='op'>=</span><span class='st'>"i"</span><span class='op'>)</span>
@@ -355,21 +355,14 @@
                        cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='va'>zyg</span>,
                        breaks<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
 
-    <span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"MZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
-                       cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
-                       breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+    <span class='co'>#a1 &lt;- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,</span>
+    <span class='co'>#                   cens.formula=Surv(time,status==0)~1,</span>
+    <span class='co'>#                   breaks=100,pairs.only=TRUE)</span>
 
-    <span class='va'>a2</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time2</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
-                        cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
-                        breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-
-    <span class='va'>prt0</span><span class='op'>$</span><span class='va'>trunc</span> <span class='op'>&lt;-</span> <span class='va'>prt0</span><span class='op'>$</span><span class='va'>time</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>prt0</span><span class='op'>)</span><span class='op'>)</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>prt0</span><span class='op'>)</span>,<span class='fl'>1</span>,<span class='fl'>0.5</span><span class='op'>)</span>
-    <span class='va'>a3</span> <span class='op'>&lt;-</span> <span class='fu'>biprobit.time</span><span class='op'>(</span><span class='va'>cancer</span><span class='op'>~</span><span class='fl'>1</span>, rho<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>, id<span class='op'>=</span><span class='st'>"id"</span>, data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>prt0</span>,<span class='va'>zyg</span><span class='op'>==</span><span class='st'>"DZ"</span><span class='op'>)</span>, eqmarg<span class='op'>=</span><span class='cn'>TRUE</span>,
-                        cens.formula<span class='op'>=</span><span class='fu'>Surv</span><span class='op'>(</span><span class='va'>trunc</span>,<span class='va'>time</span>,<span class='va'>status</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>~</span><span class='fl'>1</span>,
-                        breaks<span class='op'>=</span><span class='fl'>100</span>,pairs.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-
-    <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>a</span>,which<span class='op'>=</span><span class='fl'>3</span>,ylim<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>0.1</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>}</span> 
+    <span class='co'>#a2 &lt;- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,</span>
+    <span class='co'>#                    cens.formula=Surv(time,status==0)~1,</span>
+    <span class='co'>#                    breaks=100,pairs.only=TRUE)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

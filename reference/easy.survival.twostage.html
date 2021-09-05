@@ -309,12 +309,12 @@ likelihood assuming that the marginals are known.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;             log-Coef.        SE         z       P-val Kendall tau         SE
-#&gt; dependence1  -1.47177 0.4992257 -2.948105 0.003197286   0.1029455 0.04610236
+#&gt;              log-Coef.        SE         z       P-val Kendall tau         SE
+#&gt; dependence1 -0.9363086 0.3038615 -3.081366 0.002060531   0.1639049 0.04164121
 #&gt; 
 #&gt; $vargam
-#&gt;             Estimate Std.Err     2.5%  97.5% P-value
-#&gt; dependence1   0.2295  0.1146 0.004943 0.4541 0.04517
+#&gt;             Estimate Std.Err   2.5%  97.5%   P-value
+#&gt; dependence1   0.3921  0.1191 0.1586 0.6256 0.0009984
 #&gt; 
 #&gt; $type
 #&gt; [1] "clayton.oakes"
@@ -327,14 +327,14 @@ likelihood assuming that the marginals are known.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Clayton-Oakes model
 #&gt; Variance of Gamma distributed random effects 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;                log-Coef.        SE         z      P-val Kendall tau         SE
-#&gt; factor(zyg)DZ -1.8118821 0.7803716 -2.321820 0.02024266  0.07550636 0.05447396
-#&gt; factor(zyg)MZ -0.9745889 0.6188210 -1.574913 0.11527663  0.15872625 0.08263254
+#&gt;                log-Coef.        SE        z      P-val Kendall tau         SE
+#&gt; factor(zyg)DZ -0.9452397 0.3736229 -2.52993 0.01140853   0.1626847 0.05089430
+#&gt; factor(zyg)MZ -0.9245538 0.5038084 -1.83513 0.06648646   0.1655222 0.06958833
 #&gt; 
 #&gt; $vargam
-#&gt;             Estimate Std.Err     2.5%  97.5% P-value
-#&gt; dependence1   0.1633  0.1275 -0.08649 0.4132  0.2000
-#&gt; dependence2   0.3773  0.2335 -0.08032 0.8350  0.1061
+#&gt;             Estimate Std.Err    2.5%  97.5% P-value
+#&gt; dependence1   0.3886  0.1452 0.10403 0.6731 0.00744
+#&gt; dependence2   0.3967  0.1999 0.00498 0.7884 0.04716
 #&gt; 
 #&gt; $type
 #&gt; [1] "clayton.oakes"
@@ -362,20 +362,16 @@ likelihood assuming that the marginals are known.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>out3</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;               log-Coef.         SE         z        P-val Spearman Corr.
-#&gt; parent-parent 1.4395408 0.09217263 15.617877 0.000000e+00      0.4489952
-#&gt; parent-child  0.7489145 0.06093386 12.290614 0.000000e+00      0.2450628
-#&gt; child-cild    0.6539244 0.09216016  7.095522 1.288747e-12      0.2149146
-#&gt;                       SE
-#&gt; parent-parent 0.02507264
-#&gt; parent-child  0.01920914
-#&gt; child-cild    0.02943919
+#&gt;               log-Coef.         SE        z P-val Spearman Corr.         SE
+#&gt; parent-parent 1.6674544 0.08834856 18.87359     0      0.5089844 0.02245865
+#&gt; parent-child  0.7751126 0.06336616 12.23228     0      0.2533054 0.01989718
+#&gt; child-cild    0.9293058 0.08872420 10.47410     0      0.3011186 0.02714681
 #&gt; 
 #&gt; $or
 #&gt;               Estimate Std.Err  2.5% 97.5%   P-value
-#&gt; parent-parent    4.219  0.3889 3.457 4.981 2.012e-27
-#&gt; parent-child     2.115  0.1289 1.862 2.367 1.589e-60
-#&gt; child-cild       1.923  0.1772 1.576 2.270 1.980e-27
+#&gt; parent-parent    5.299  0.4681 4.381 6.216 1.059e-29
+#&gt; parent-child     2.171  0.1376 1.901 2.440 4.185e-56
+#&gt; child-cild       2.533  0.2247 2.092 2.973 1.827e-29
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
