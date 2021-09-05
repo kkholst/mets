@@ -465,14 +465,15 @@ a.dz_country
 
 ```{r, label=liability_ace_time1}
 ## ACE model (time-varying) with and without adjustment for country
-#system.time(a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
-#                              zyg="zyg", DZ="DZ", 
-#                              cens.formula=Surv(time,status==0)~zyg,
-#                              breaks=tt))
-#system.time(a2 <- bptwin.time(cancer~country, id="id", data=prt0, #type="ace",
+a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
+                              zyg="zyg", DZ="DZ", 
+                              cens.formula=Surv(time,status==0)~zyg,
+                              breaks=tt)
+
+#a2 <- bptwin.time(cancer~country, id="id", data=prt0, #type="ace",
 #                              zyg="zyg", DZ="DZ", 
 #                              #cens.formula=Surv(time,status==0)~country+zyg,
-#                              breaks=tt))
+#                              breaks=tt)
 ```
 
 
