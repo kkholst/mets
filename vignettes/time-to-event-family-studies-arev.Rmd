@@ -112,7 +112,7 @@ marginals and random-effects variances that differ for MZ and DZ twins.
 ```
 
 The dependence of MZ twins is much stronger, and is summarized by a 
-variance at $`r fitco4$coef[2]`$ in contrast to the $DZ$ variance at $`r fitco4$coef[1]`$.
+variance at $`r round(fitco4$coef[2],2)`$ in contrast to the $DZ$ variance at $`r round(fitco4$coef[1],2)`$.
 
 Now we look at the polygenic modelling for survival data, here applied to
 the cause specific hazards. 
