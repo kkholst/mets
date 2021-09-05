@@ -308,7 +308,7 @@ fast.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>twinstut</span><span class='op'>)</span>
-<span class='va'>twinstut0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>twinstut</span>, <span class='va'>tvparnr</span><span class='op'>&lt;</span><span class='fl'>2300000</span><span class='op'>)</span>
+<span class='va'>twinstut0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>twinstut</span>, <span class='va'>tvparnr</span><span class='op'>&lt;</span><span class='fl'>10000</span><span class='op'>)</span>
 <span class='va'>twinstut</span> <span class='op'>&lt;-</span> <span class='va'>twinstut0</span>
 <span class='va'>twinstut</span><span class='op'>$</span><span class='va'>binstut</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>stutter</span><span class='op'>==</span><span class='st'>"yes"</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1</span>
 <span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span> <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span>,data<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>)</span>
@@ -320,25 +320,25 @@ fast.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                   theta        se
-#&gt; factor(zyg)dz 0.5278527 0.2396796
-#&gt; factor(zyg)mz 3.4850037 0.1864190
-#&gt; factor(zyg)os 0.7802940 0.2894394
+#&gt; factor(zyg)dz 0.4592786 0.3724594
+#&gt; factor(zyg)mz 3.3313275 0.3219407
+#&gt; factor(zyg)os 0.5097220 0.4815677
 #&gt; 
 #&gt; $or
-#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; factor(zyg)dz    1.695  0.4063  0.8989  2.492 3.016e-05
-#&gt; factor(zyg)mz   32.623  6.0815 20.7031 44.542 8.128e-08
-#&gt; factor(zyg)os    2.182  0.6316  0.9442  3.420 5.504e-04
+#&gt;               Estimate Std.Err     2.5%  97.5%  P-value
+#&gt; factor(zyg)dz    1.583  0.5896  0.42738  2.738 0.007256
+#&gt; factor(zyg)mz   27.975  9.0064 10.32316 45.628 0.001895
+#&gt; factor(zyg)os    1.665  0.8017  0.09347  3.236 0.037843
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "summary.mets.twostage"</div><div class='input'><span class='fu'>lava</span><span class='fu'>::</span><span class='fu'><a href='https://kkholst.github.io/lava/reference/estimate.default.html'>estimate</a></span><span class='op'>(</span>coef<span class='op'>=</span><span class='va'>bin</span><span class='op'>$</span><span class='va'>theta</span>,vcov<span class='op'>=</span><span class='va'>bin</span><span class='op'>$</span><span class='va'>var.theta</span>,f<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; NA      1.695  0.4063  0.8989  2.492 3.016e-05
-#&gt; NA.1   32.623  6.0815 20.7031 44.542 8.128e-08
-#&gt; NA.2    2.182  0.6316  0.9442  3.420 5.504e-04</div><div class='input'>
+</div><div class='output co'>#&gt;      Estimate Std.Err     2.5%  97.5%  P-value
+#&gt; NA      1.583  0.5896  0.42738  2.738 0.007256
+#&gt; NA.1   27.975  9.0064 10.32316 45.628 0.001895
+#&gt; NA.2    1.665  0.8017  0.09347  3.236 0.037843</div><div class='input'>
 <span class='va'>twinstut</span><span class='op'>$</span><span class='va'>cage</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/scale.html'>scale</a></span><span class='op'>(</span><span class='va'>twinstut</span><span class='op'>$</span><span class='va'>age</span><span class='op'>)</span>
 <span class='va'>theta.des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span> <span class='op'>~</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>zyg</span><span class='op'>)</span><span class='op'>+</span><span class='va'>cage</span>,data<span class='op'>=</span><span class='va'>twinstut</span><span class='op'>)</span>
 <span class='va'>bina</span> <span class='op'>&lt;-</span> <span class='fu'><a href='binomial.twostage.html'>binomial.twostage</a></span><span class='op'>(</span><span class='va'>margbin</span>,data<span class='op'>=</span><span class='va'>twinstut</span>,var.link<span class='op'>=</span><span class='fl'>1</span>,
@@ -346,18 +346,18 @@ fast.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>bina</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
-#&gt;                     theta        se
-#&gt; factor(zyg)dz  0.52618528 0.2404053
-#&gt; factor(zyg)mz  3.47580396 0.1929538
-#&gt; factor(zyg)os  0.78180443 0.2896335
-#&gt; cage          -0.02603244 0.1366320
+#&gt;                   theta        se
+#&gt; factor(zyg)dz 0.5059022 0.3880797
+#&gt; factor(zyg)mz 3.3650106 0.3263683
+#&gt; factor(zyg)os 0.5070644 0.4882211
+#&gt; cage          0.1501763 0.2551689
 #&gt; 
 #&gt; $or
-#&gt;               Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; factor(zyg)dz   1.6925  0.4069  0.8950  2.490 3.187e-05
-#&gt; factor(zyg)mz  32.3238  6.2370 20.0995 44.548 2.188e-07
-#&gt; factor(zyg)os   2.1854  0.6330  0.9448  3.426 5.551e-04
-#&gt; cage            0.9743  0.1331  0.7134  1.235 2.500e-13
+#&gt;               Estimate Std.Err     2.5%  97.5%   P-value
+#&gt; factor(zyg)dz    1.658  0.6436  0.39700  2.920 9.972e-03
+#&gt; factor(zyg)mz   28.934  9.4431 10.42572 47.442 2.184e-03
+#&gt; factor(zyg)os    1.660  0.8106  0.07157  3.249 4.054e-02
+#&gt; cage             1.162  0.2965  0.58088  1.743 8.893e-05
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -371,21 +371,21 @@ fast.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                         theta        se
-#&gt; factor(zyg)dz       0.5184191 0.2425122
-#&gt; factor(zyg)mz       3.5157878 0.1983717
-#&gt; factor(zyg)os       0.7806223 0.2901748
-#&gt; cage               -0.1082647 0.2640090
-#&gt; factor(zyg)mz:cage  0.1939135 0.3225548
-#&gt; factor(zyg)os:cage -0.1284699 0.4095734
+#&gt; factor(zyg)dz       0.3037310 0.4586524
+#&gt; factor(zyg)mz       3.4143434 0.3301659
+#&gt; factor(zyg)os       0.4804629 0.5073920
+#&gt; cage               -0.3547975 0.5124653
+#&gt; factor(zyg)mz:cage  0.7245451 0.6254771
+#&gt; factor(zyg)os:cage  0.6798778 0.7714539
 #&gt; 
 #&gt; $or
-#&gt;                    Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; factor(zyg)dz        1.6794  0.4073  0.8811  2.478 3.732e-05
-#&gt; factor(zyg)mz       33.6424  6.6737 20.5622 46.723 4.630e-07
-#&gt; factor(zyg)os        2.1828  0.6334  0.9414  3.424 5.685e-04
-#&gt; cage                 0.8974  0.2369  0.4330  1.362 1.520e-04
-#&gt; factor(zyg)mz:cage   1.2140  0.3916  0.4465  1.981 1.934e-03
-#&gt; factor(zyg)os:cage   0.8794  0.3602  0.1735  1.585 1.462e-02
+#&gt;                    Estimate Std.Err      2.5%  97.5%  P-value
+#&gt; factor(zyg)dz        1.3549  0.6214  0.136924  2.573 0.029235
+#&gt; factor(zyg)mz       30.3970 10.0360 10.726691 50.067 0.002455
+#&gt; factor(zyg)os        1.6168  0.8204  0.008941  3.225 0.048740
+#&gt; cage                 0.7013  0.3594 -0.003095  1.406 0.051015
+#&gt; factor(zyg)mz:cage   2.0638  1.2909 -0.466236  4.594 0.109870
+#&gt; factor(zyg)os:cage   1.9736  1.5226 -1.010545  4.958 0.194888
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -399,15 +399,15 @@ fast.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;                    theta        se
-#&gt; factor(zyg1)dz 0.5278527 0.2396796
-#&gt; factor(zyg1)mz 3.4850037 0.1864190
-#&gt; factor(zyg1)os 0.7802940 0.2894394
+#&gt; factor(zyg1)dz 0.4592786 0.3724594
+#&gt; factor(zyg1)mz 3.3313275 0.3219407
+#&gt; factor(zyg1)os 0.5097220 0.4815677
 #&gt; 
 #&gt; $or
-#&gt;                Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; factor(zyg1)dz    1.695  0.4063  0.8989  2.492 3.016e-05
-#&gt; factor(zyg1)mz   32.623  6.0815 20.7031 44.542 8.128e-08
-#&gt; factor(zyg1)os    2.182  0.6316  0.9442  3.420 5.504e-04
+#&gt;                Estimate Std.Err     2.5%  97.5%  P-value
+#&gt; factor(zyg1)dz    1.583  0.5896  0.42738  2.738 0.007256
+#&gt; factor(zyg1)mz   27.975  9.0064 10.32316 45.628 0.001895
+#&gt; factor(zyg1)os    1.665  0.8017  0.09347  3.236 0.037843
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"
@@ -427,15 +427,15 @@ fast.</p>
 </div><div class='output co'>#&gt; Dependence parameter for Odds-Ratio (Plackett) model 
 #&gt; With log-link </div><div class='output co'>#&gt; $estimates
 #&gt;        theta        se
-#&gt; mz 3.4850037 0.1864190
-#&gt; dz 0.5278527 0.2396796
-#&gt; os 0.7802940 0.2894394
+#&gt; mz 3.3313275 0.3219407
+#&gt; dz 0.4592786 0.3724594
+#&gt; os 0.5097220 0.4815677
 #&gt; 
 #&gt; $or
-#&gt;    Estimate Std.Err    2.5%  97.5%   P-value
-#&gt; mz   32.623  6.0815 20.7031 44.542 8.128e-08
-#&gt; dz    1.695  0.4063  0.8989  2.492 3.016e-05
-#&gt; os    2.182  0.6316  0.9442  3.420 5.504e-04
+#&gt;    Estimate Std.Err     2.5%  97.5%  P-value
+#&gt; mz   27.975  9.0064 10.32316 45.628 0.001895
+#&gt; dz    1.583  0.5896  0.42738  2.738 0.007256
+#&gt; os    1.665  0.8017  0.09347  3.236 0.037843
 #&gt; 
 #&gt; $type
 #&gt; [1] "plackett"

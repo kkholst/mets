@@ -240,10 +240,10 @@
 
  <span class="co">## mz kendalls tau</span>
  <span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="va">fitco4</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="fl">0</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span><span class="op">$</span><span class="va">mz.kendall</span>
-<span class="co">#&gt; [1] 0.7272947</span>
+<span class="co">#&gt; [1] 0.7353288</span>
  <span class="co">## dz kendalls tau</span>
  <span class="fu"><a href="../reference/npc.html">kendall.ClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="va">fitco4</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="fl">0</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span><span class="op">$</span><span class="va">mz.kendall</span>
-<span class="co">#&gt; [1] 0.398409</span></code></pre></div>
+<span class="co">#&gt; [1] 0.3921898</span></code></pre></div>
 <p>The dependence of MZ twins is much stronger, and is summarized by a variance at <span class="math inline">\(5.4\)</span> in contrast to the <span class="math inline">\(DZ\)</span> variance at <span class="math inline">\(1.3\)</span>.</p>
 <p>Now we look at the polygenic modelling for survival data, here applied to the cause specific hazards.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -885,9 +885,9 @@
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                Estimate   Std.Err        Z   p-value    </span>
-<span class="co">#&gt; (Intercept)   -1.348188  0.026276 -51.3086 &lt; 2.2e-16 ***</span>
+<span class="co">#&gt; (Intercept)   -1.348187  0.026276 -51.3086 &lt; 2.2e-16 ***</span>
 <span class="co">#&gt; atanh(rho) MZ  0.735992  0.087838   8.3789 &lt; 2.2e-16 ***</span>
-<span class="co">#&gt; atanh(rho) DZ  0.353023  0.068234   5.1737 2.295e-07 ***</span>
+<span class="co">#&gt; atanh(rho) DZ  0.353022  0.068234   5.1737 2.295e-07 ***</span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
@@ -903,14 +903,14 @@
 <span class="co">#&gt; Concordance          0.03504  0.02779 0.04409</span>
 <span class="co">#&gt; Casewise Concordance 0.39458  0.31876 0.47584</span>
 <span class="co">#&gt; Marginal             0.08880  0.08086 0.09743</span>
-<span class="co">#&gt; Rel.Recur.Risk       4.44351  3.50521 5.38182</span>
+<span class="co">#&gt; Rel.Recur.Risk       4.44351  3.50520 5.38182</span>
 <span class="co">#&gt; log(OR)              2.34131  1.87105 2.81157</span>
 <span class="co">#&gt; DZ:</span>
 <span class="co">#&gt;                      Estimate 2.5%    97.5%  </span>
 <span class="co">#&gt; Concordance          0.01952  0.01449 0.02625</span>
 <span class="co">#&gt; Casewise Concordance 0.21983  0.16667 0.28415</span>
 <span class="co">#&gt; Marginal             0.08880  0.08086 0.09743</span>
-<span class="co">#&gt; Rel.Recur.Risk       2.47556  1.81096 3.14017</span>
+<span class="co">#&gt; Rel.Recur.Risk       2.47556  1.81095 3.14016</span>
 <span class="co">#&gt; log(OR)              1.23088  0.81020 1.65156</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5%    97.5%  </span>
@@ -927,7 +927,7 @@
 <span class="co">#&gt;             Estimate  Std.Err        Z p-value    </span>
 <span class="co">#&gt; (Intercept) -2.20664  0.16463 -13.4034  &lt;2e-16 ***</span>
 <span class="co">#&gt; log(var(A))  0.43260  0.39149   1.1050  0.2691    </span>
-<span class="co">#&gt; log(var(C)) -1.98289  2.52342  -0.7858  0.4320    </span>
+<span class="co">#&gt; log(var(C)) -1.98290  2.52344  -0.7858  0.4320    </span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
@@ -946,14 +946,14 @@
 <span class="co">#&gt; Concordance          0.03504  0.02779 0.04409</span>
 <span class="co">#&gt; Casewise Concordance 0.39458  0.31876 0.47584</span>
 <span class="co">#&gt; Marginal             0.08880  0.08086 0.09743</span>
-<span class="co">#&gt; Rel.Recur.Risk       4.44351  3.50521 5.38182</span>
+<span class="co">#&gt; Rel.Recur.Risk       4.44351  3.50520 5.38182</span>
 <span class="co">#&gt; log(OR)              2.34131  1.87105 2.81157</span>
 <span class="co">#&gt; DZ:</span>
 <span class="co">#&gt;                      Estimate 2.5%    97.5%  </span>
 <span class="co">#&gt; Concordance          0.01952  0.01449 0.02625</span>
 <span class="co">#&gt; Casewise Concordance 0.21983  0.16667 0.28415</span>
 <span class="co">#&gt; Marginal             0.08880  0.08086 0.09743</span>
-<span class="co">#&gt; Rel.Recur.Risk       2.47556  1.81096 3.14016</span>
+<span class="co">#&gt; Rel.Recur.Risk       2.47556  1.81095 3.14016</span>
 <span class="co">#&gt; log(OR)              1.23088  0.81020 1.65156</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5%    97.5%  </span>
@@ -965,7 +965,7 @@
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html">AIC</a></span><span class="op">(</span><span class="va">b0</span>, <span class="va">b1</span><span class="op">)</span>
 <span class="co">#&gt;    df      AIC</span>
-<span class="co">#&gt; b0  3 17340.12</span>
+<span class="co">#&gt; b0  3 17340.13</span>
 <span class="co">#&gt; b1  3 17340.12</span></code></pre></div>
 <p>ACE model with marginal adjusted for country</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -975,11 +975,11 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                Estimate  Std.Err        Z   p-value    </span>
 <span class="co">#&gt; (Intercept)    -1.97165  0.15371 -12.8267 &lt; 2.2e-16 ***</span>
-<span class="co">#&gt; countryDenmark -0.72489  0.11920  -6.0812 1.193e-09 ***</span>
+<span class="co">#&gt; countryDenmark -0.72489  0.11920  -6.0813 1.192e-09 ***</span>
 <span class="co">#&gt; countryFinland  0.18968  0.12518   1.5152    0.1297    </span>
 <span class="co">#&gt; countryNorway  -0.11611  0.16621  -0.6986    0.4848    </span>
 <span class="co">#&gt; log(var(A))     0.40388  0.40524   0.9966    0.3189    </span>
-<span class="co">#&gt; log(var(C))    -3.88758 17.56360  -0.2213    0.8248    </span>
+<span class="co">#&gt; log(var(C))    -3.88745 17.56131  -0.2214    0.8248    </span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
@@ -1005,7 +1005,7 @@
 <span class="co">#&gt; Concordance          0.02439  0.01747 0.03396</span>
 <span class="co">#&gt; Casewise Concordance 0.22788  0.17060 0.29749</span>
 <span class="co">#&gt; Marginal             0.10703  0.09453 0.12096</span>
-<span class="co">#&gt; Rel.Recur.Risk       2.12912  1.54508 2.71315</span>
+<span class="co">#&gt; Rel.Recur.Risk       2.12912  1.54509 2.71315</span>
 <span class="co">#&gt; log(OR)              1.06262  0.62460 1.50064</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                          Estimate 2.5%    97.5%  </span>
@@ -1032,12 +1032,12 @@
                                cens.formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,
                                 breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   1.045   0.000   1.044</span>
+<span class="co">#&gt;   1.329   0.000   1.330</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">a.dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,
                                cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,
                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   1.409   0.012   1.421</span>
+<span class="co">#&gt;   1.799   0.000   1.800</span>
 
 <span class="co">#system.time(a.zyg &lt;- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, </span>
 <span class="co">#                               cens.formula = Event(time,status==0)~1,</span>
@@ -1054,32 +1054,32 @@
 <span class="co">#&gt;  6:Tetrachoric correlation</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...    5:OR 6:Tetrac...</span>
-<span class="co">#&gt;  [1,]   70      0.0049      0.2976     0.0166     17.9651 35.3881      0.6973</span>
-<span class="co">#&gt;  [2,]   71      0.0059      0.3254     0.0182     17.9060 38.1520      0.7194</span>
-<span class="co">#&gt;  [3,]   72      0.0075      0.3419     0.0219     15.6454 34.8151      0.7223</span>
-<span class="co">#&gt;  [4,]   73      0.0096      0.3695     0.0260     14.2030 34.2149      0.7362</span>
-<span class="co">#&gt;  [5,]   74      0.0113      0.3734     0.0303     12.3241 29.8422      0.7278</span>
-<span class="co">#&gt;  [6,]   75      0.0113      0.3466     0.0326     10.6189 23.5308      0.6931</span>
-<span class="co">#&gt;  [7,]   76      0.0119      0.3373     0.0353      9.5429 20.4508      0.6747</span>
-<span class="co">#&gt;  [8,]   77      0.0138      0.3610     0.0382      9.4430 21.6753      0.6936</span>
-<span class="co">#&gt;  [9,]   78      0.0144      0.3453     0.0418      8.2562 17.9272      0.6662</span>
-<span class="co">#&gt; [10,]   79      0.0158      0.3501     0.0450      7.7749 17.0408      0.6637</span>
-<span class="co">#&gt; [11,]   80      0.0178      0.3590     0.0497      7.2228 16.1437      0.6628</span>
-<span class="co">#&gt; [12,]   81      0.0193      0.3711     0.0519      7.1487 16.5475      0.6720</span>
-<span class="co">#&gt; [13,]   82      0.0215      0.3508     0.0614      5.7159 12.1882      0.6253</span>
-<span class="co">#&gt; [14,]   83      0.0255      0.3809     0.0668      5.7005 13.2643      0.6518</span>
-<span class="co">#&gt; [15,]   84      0.0271      0.3859     0.0702      5.5016 12.9388      0.6514</span>
-<span class="co">#&gt; [16,]   85      0.0279      0.3764     0.0742      5.0761 11.4819      0.6312</span>
-<span class="co">#&gt; [17,]   86      0.0279      0.3718     0.0751      4.9516 11.0122      0.6232</span>
-<span class="co">#&gt; [18,]   87      0.0279      0.3504     0.0797      4.3991  9.0555      0.5843</span>
-<span class="co">#&gt; [19,]   88      0.0299      0.3626     0.0823      4.4045  9.3798      0.5959</span>
-<span class="co">#&gt; [20,]   89      0.0308      0.3647     0.0846      4.3118  9.2048      0.5941</span>
-<span class="co">#&gt; [21,]   90      0.0319      0.3724     0.0856      4.3501  9.5054      0.6028</span>
-<span class="co">#&gt; [22,]   91      0.0319      0.3634     0.0877      4.1413  8.7501      0.5858</span>
+<span class="co">#&gt;  [1,]   70      0.0049      0.2976     0.0166     17.9649 35.3873      0.6973</span>
+<span class="co">#&gt;  [2,]   71      0.0059      0.3254     0.0182     17.9059 38.1513      0.7194</span>
+<span class="co">#&gt;  [3,]   72      0.0075      0.3419     0.0219     15.6453 34.8146      0.7223</span>
+<span class="co">#&gt;  [4,]   73      0.0096      0.3695     0.0260     14.2030 34.2145      0.7362</span>
+<span class="co">#&gt;  [5,]   74      0.0113      0.3734     0.0303     12.3241 29.8419      0.7278</span>
+<span class="co">#&gt;  [6,]   75      0.0113      0.3466     0.0326     10.6188 23.5306      0.6931</span>
+<span class="co">#&gt;  [7,]   76      0.0119      0.3373     0.0353      9.5429 20.4507      0.6747</span>
+<span class="co">#&gt;  [8,]   77      0.0138      0.3610     0.0382      9.4429 21.6751      0.6936</span>
+<span class="co">#&gt;  [9,]   78      0.0144      0.3453     0.0418      8.2561 17.9271      0.6662</span>
+<span class="co">#&gt; [10,]   79      0.0158      0.3501     0.0450      7.7749 17.0406      0.6637</span>
+<span class="co">#&gt; [11,]   80      0.0178      0.3590     0.0497      7.2228 16.1436      0.6628</span>
+<span class="co">#&gt; [12,]   81      0.0193      0.3711     0.0519      7.1487 16.5474      0.6720</span>
+<span class="co">#&gt; [13,]   82      0.0215      0.3508     0.0614      5.7159 12.1883      0.6253</span>
+<span class="co">#&gt; [14,]   83      0.0255      0.3809     0.0668      5.7005 13.2644      0.6518</span>
+<span class="co">#&gt; [15,]   84      0.0271      0.3859     0.0702      5.5017 12.9389      0.6514</span>
+<span class="co">#&gt; [16,]   85      0.0279      0.3764     0.0742      5.0761 11.4820      0.6312</span>
+<span class="co">#&gt; [17,]   86      0.0279      0.3718     0.0751      4.9517 11.0123      0.6232</span>
+<span class="co">#&gt; [18,]   87      0.0279      0.3504     0.0797      4.3992  9.0555      0.5844</span>
+<span class="co">#&gt; [19,]   88      0.0299      0.3626     0.0823      4.4045  9.3799      0.5959</span>
+<span class="co">#&gt; [20,]   89      0.0308      0.3647     0.0846      4.3118  9.2049      0.5941</span>
+<span class="co">#&gt; [21,]   90      0.0319      0.3724     0.0856      4.3501  9.5055      0.6028</span>
+<span class="co">#&gt; [22,]   91      0.0319      0.3634     0.0877      4.1413  8.7502      0.5859</span>
 <span class="co">#&gt; [23,]   92      0.0342      0.3735     0.0916      4.0758  8.8354      0.5924</span>
-<span class="co">#&gt; [24,]   93      0.0342      0.3675     0.0931      3.9476  8.3688      0.5811</span>
+<span class="co">#&gt; [24,]   93      0.0342      0.3675     0.0931      3.9476  8.3689      0.5811</span>
 <span class="co">#&gt; [25,]   94      0.0368      0.3805     0.0967      3.9341  8.6451      0.5925</span>
-<span class="co">#&gt; [26,]   95      0.0409      0.4144     0.0988      4.1951 10.3178      0.6352</span>
+<span class="co">#&gt; [26,]   95      0.0409      0.4144     0.0988      4.1952 10.3179      0.6352</span>
 <span class="va">a.dz</span>
 <span class="co">#&gt;                           </span>
 <span class="co">#&gt;  1:Concordance            </span>
@@ -1090,32 +1090,32 @@
 <span class="co">#&gt;  6:Tetrachoric correlation</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...    5:OR 6:Tetrac...</span>
-<span class="co">#&gt;  [1,]   70      0.0007      0.0767     0.0088      8.6697  9.9963      0.3855</span>
-<span class="co">#&gt;  [2,]   71      0.0010      0.0896     0.0106      8.4526  9.9924      0.4016</span>
-<span class="co">#&gt;  [3,]   72      0.0015      0.1198     0.0125      9.5630 12.0528      0.4559</span>
-<span class="co">#&gt;  [4,]   73      0.0021      0.1342     0.0156      8.6269 11.1737      0.4618</span>
-<span class="co">#&gt;  [5,]   74      0.0027      0.1549     0.0174      8.8956 12.0558      0.4897</span>
-<span class="co">#&gt;  [6,]   75      0.0030      0.1598     0.0189      8.4555 11.5599      0.4891</span>
-<span class="co">#&gt;  [7,]   76      0.0033      0.1492     0.0224      6.6562  8.8142      0.4469</span>
+<span class="co">#&gt;  [1,]   70      0.0007      0.0767     0.0088      8.6698  9.9963      0.3855</span>
+<span class="co">#&gt;  [2,]   71      0.0010      0.0896     0.0106      8.4527  9.9925      0.4016</span>
+<span class="co">#&gt;  [3,]   72      0.0015      0.1198     0.0125      9.5630 12.0529      0.4559</span>
+<span class="co">#&gt;  [4,]   73      0.0021      0.1342     0.0156      8.6270 11.1738      0.4618</span>
+<span class="co">#&gt;  [5,]   74      0.0027      0.1549     0.0174      8.8956 12.0559      0.4897</span>
+<span class="co">#&gt;  [6,]   75      0.0030      0.1598     0.0189      8.4555 11.5600      0.4891</span>
+<span class="co">#&gt;  [7,]   76      0.0033      0.1492     0.0224      6.6561  8.8142      0.4469</span>
 <span class="co">#&gt;  [8,]   77      0.0040      0.1676     0.0240      6.9803  9.6311      0.4738</span>
 <span class="co">#&gt;  [9,]   78      0.0044      0.1625     0.0269      6.0388  8.1837      0.4484</span>
-<span class="co">#&gt; [10,]   79      0.0062      0.2015     0.0308      6.5459  9.6973      0.5012</span>
-<span class="co">#&gt; [11,]   80      0.0070      0.1996     0.0350      5.7088  8.3500      0.4799</span>
+<span class="co">#&gt; [10,]   79      0.0062      0.2015     0.0308      6.5458  9.6973      0.5012</span>
+<span class="co">#&gt; [11,]   80      0.0070      0.1996     0.0350      5.7087  8.3499      0.4799</span>
 <span class="co">#&gt; [12,]   81      0.0074      0.1986     0.0372      5.3458  7.7673      0.4690</span>
 <span class="co">#&gt; [13,]   82      0.0074      0.1753     0.0421      4.1618  5.6484      0.4040</span>
 <span class="co">#&gt; [14,]   83      0.0087      0.1858     0.0467      3.9770  5.4903      0.4069</span>
-<span class="co">#&gt; [15,]   84      0.0096      0.1913     0.0499      3.8320  5.3305      0.4058</span>
+<span class="co">#&gt; [15,]   84      0.0096      0.1913     0.0499      3.8320  5.3304      0.4058</span>
 <span class="co">#&gt; [16,]   85      0.0096      0.1728     0.0553      3.1269  4.1085      0.3480</span>
-<span class="co">#&gt; [17,]   86      0.0110      0.1854     0.0593      3.1272  4.2056      0.3603</span>
-<span class="co">#&gt; [18,]   87      0.0120      0.1928     0.0623      3.0948  4.2149      0.3653</span>
-<span class="co">#&gt; [19,]   88      0.0131      0.1964     0.0666      2.9496  4.0186      0.3584</span>
+<span class="co">#&gt; [17,]   86      0.0110      0.1854     0.0593      3.1273  4.2057      0.3603</span>
+<span class="co">#&gt; [18,]   87      0.0120      0.1928     0.0623      3.0948  4.2150      0.3653</span>
+<span class="co">#&gt; [19,]   88      0.0131      0.1964     0.0666      2.9496  4.0187      0.3584</span>
 <span class="co">#&gt; [20,]   89      0.0136      0.1971     0.0691      2.8539  3.8759      0.3519</span>
 <span class="co">#&gt; [21,]   90      0.0142      0.1997     0.0711      2.8075  3.8220      0.3507</span>
-<span class="co">#&gt; [22,]   91      0.0167      0.2249     0.0741      3.0362  4.3888      0.3918</span>
-<span class="co">#&gt; [23,]   92      0.0167      0.2163     0.0770      2.8086  3.9444      0.3662</span>
-<span class="co">#&gt; [24,]   93      0.0167      0.2107     0.0790      2.6655  3.6733      0.3489</span>
-<span class="co">#&gt; [25,]   94      0.0167      0.2051     0.0812      2.5257  3.4144      0.3308</span>
-<span class="co">#&gt; [26,]   95      0.0174      0.2091     0.0831      2.5163  3.4241      0.3335</span>
+<span class="co">#&gt; [22,]   91      0.0167      0.2249     0.0741      3.0362  4.3889      0.3918</span>
+<span class="co">#&gt; [23,]   92      0.0167      0.2163     0.0770      2.8086  3.9445      0.3662</span>
+<span class="co">#&gt; [24,]   93      0.0167      0.2107     0.0790      2.6656  3.6734      0.3489</span>
+<span class="co">#&gt; [25,]   94      0.0167      0.2051     0.0812      2.5257  3.4145      0.3308</span>
+<span class="co">#&gt; [26,]   95      0.0174      0.2091     0.0831      2.5163  3.4242      0.3335</span>
 
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">conczyg</span>,se<span class="op">=</span><span class="cn">TRUE</span>,legend<span class="op">=</span><span class="cn">FALSE</span>,xlab<span class="op">=</span><span class="st">"Age"</span>,ylab<span class="op">=</span><span class="st">"Concordance"</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.07</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">a.mz</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">.07</span><span class="op">)</span>, col<span class="op">=</span><span class="va">cols</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lty<span class="op">=</span><span class="va">ltys</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
@@ -1127,12 +1127,12 @@
                                cens.formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,
                                 breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   2.023   0.000   2.023</span>
+<span class="co">#&gt;   2.551   0.000   2.552</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">a.dz_country</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="va">country</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,
                                cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,
                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   2.391   0.008   2.399</span>
+<span class="co">#&gt;   3.033   0.008   3.040</span>
 
 <span class="va">a.mz_country</span>
 <span class="co">#&gt;                           </span>
@@ -1144,32 +1144,32 @@
 <span class="co">#&gt;  6:Tetrachoric correlation</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...    5:OR 6:Tetrac...</span>
-<span class="co">#&gt;  [1,]   70      0.0059      0.3061     0.0193     15.8281 31.7991      0.6944</span>
-<span class="co">#&gt;  [2,]   71      0.0072      0.3285     0.0219     15.0093 32.0708      0.7084</span>
-<span class="co">#&gt;  [3,]   72      0.0086      0.3487     0.0248     14.0806 31.8382      0.7194</span>
-<span class="co">#&gt;  [4,]   73      0.0118      0.3756     0.0314     11.9720 29.1381      0.7271</span>
-<span class="co">#&gt;  [5,]   74      0.0130      0.3786     0.0344     11.0026 26.9068      0.7222</span>
-<span class="co">#&gt;  [6,]   75      0.0135      0.3553     0.0380      9.3457 21.0811      0.6878</span>
-<span class="co">#&gt;  [7,]   76      0.0138      0.3422     0.0405      8.4586 18.2354      0.6662</span>
-<span class="co">#&gt;  [8,]   77      0.0161      0.3605     0.0446      8.0851 18.3248      0.6769</span>
-<span class="co">#&gt;  [9,]   78      0.0177      0.3502     0.0506      6.9206 15.0199      0.6499</span>
-<span class="co">#&gt; [10,]   79      0.0193      0.3555     0.0542      6.5555 14.3749      0.6478</span>
-<span class="co">#&gt; [11,]   80      0.0219      0.3682     0.0594      6.2014 14.0286      0.6518</span>
-<span class="co">#&gt; [12,]   81      0.0226      0.3773     0.0600      6.2921 14.6468      0.6617</span>
-<span class="co">#&gt; [13,]   82      0.0259      0.3606     0.0718      5.0240 10.8429      0.6153</span>
-<span class="co">#&gt; [14,]   83      0.0301      0.3931     0.0766      5.1297 12.2113      0.6477</span>
-<span class="co">#&gt; [15,]   84      0.0332      0.4010     0.0829      4.8393 11.6987      0.6460</span>
-<span class="co">#&gt; [16,]   85      0.0336      0.3903     0.0860      4.5398 10.5237      0.6264</span>
-<span class="co">#&gt; [17,]   86      0.0341      0.3874     0.0881      4.3994 10.0592      0.6185</span>
-<span class="co">#&gt; [18,]   87      0.0360      0.3728     0.0966      3.8588  8.2671      0.5817</span>
-<span class="co">#&gt; [19,]   88      0.0391      0.3863     0.1013      3.8142  8.4717      0.5921</span>
-<span class="co">#&gt; [20,]   89      0.0407      0.3890     0.1047      3.7153  8.2728      0.5896</span>
-<span class="co">#&gt; [21,]   90      0.0420      0.3963     0.1060      3.7376  8.5114      0.5976</span>
-<span class="co">#&gt; [22,]   91      0.0418      0.3847     0.1086      3.5429  7.7171      0.5763</span>
-<span class="co">#&gt; [23,]   92      0.0437      0.3877     0.1126      3.4422  7.5149      0.5732</span>
-<span class="co">#&gt; [24,]   93      0.0436      0.3820     0.1142      3.3443  7.1376      0.5617</span>
-<span class="co">#&gt; [25,]   94      0.0447      0.3853     0.1160      3.3214  7.1434      0.5634</span>
-<span class="co">#&gt; [26,]   95      0.0497      0.4190     0.1186      3.5323  8.5025      0.6079</span>
+<span class="co">#&gt;  [1,]   70      0.0059      0.3061     0.0193     15.8269 31.7936      0.6943</span>
+<span class="co">#&gt;  [2,]   71      0.0072      0.3285     0.0219     15.0084 32.0654      0.7084</span>
+<span class="co">#&gt;  [3,]   72      0.0086      0.3487     0.0248     14.0801 31.8348      0.7193</span>
+<span class="co">#&gt;  [4,]   73      0.0118      0.3755     0.0314     11.9716 29.1351      0.7270</span>
+<span class="co">#&gt;  [5,]   74      0.0130      0.3786     0.0344     11.0022 26.9044      0.7222</span>
+<span class="co">#&gt;  [6,]   75      0.0135      0.3553     0.0380      9.3454 21.0793      0.6878</span>
+<span class="co">#&gt;  [7,]   76      0.0138      0.3421     0.0405      8.4584 18.2339      0.6662</span>
+<span class="co">#&gt;  [8,]   77      0.0161      0.3605     0.0446      8.0849 18.3235      0.6769</span>
+<span class="co">#&gt;  [9,]   78      0.0177      0.3501     0.0506      6.9203 15.0187      0.6499</span>
+<span class="co">#&gt; [10,]   79      0.0193      0.3555     0.0542      6.5554 14.3744      0.6478</span>
+<span class="co">#&gt; [11,]   80      0.0219      0.3681     0.0594      6.2013 14.0276      0.6518</span>
+<span class="co">#&gt; [12,]   81      0.0226      0.3773     0.0600      6.2919 14.6454      0.6617</span>
+<span class="co">#&gt; [13,]   82      0.0259      0.3606     0.0718      5.0238 10.8420      0.6152</span>
+<span class="co">#&gt; [14,]   83      0.0301      0.3931     0.0766      5.1296 12.2108      0.6477</span>
+<span class="co">#&gt; [15,]   84      0.0332      0.4009     0.0829      4.8392 11.6981      0.6460</span>
+<span class="co">#&gt; [16,]   85      0.0336      0.3903     0.0860      4.5398 10.5231      0.6263</span>
+<span class="co">#&gt; [17,]   86      0.0341      0.3874     0.0881      4.3993 10.0586      0.6185</span>
+<span class="co">#&gt; [18,]   87      0.0360      0.3728     0.0966      3.8587  8.2666      0.5817</span>
+<span class="co">#&gt; [19,]   88      0.0391      0.3863     0.1013      3.8141  8.4712      0.5921</span>
+<span class="co">#&gt; [20,]   89      0.0407      0.3890     0.1047      3.7152  8.2724      0.5896</span>
+<span class="co">#&gt; [21,]   90      0.0420      0.3963     0.1060      3.7376  8.5111      0.5976</span>
+<span class="co">#&gt; [22,]   91      0.0418      0.3847     0.1086      3.5428  7.7168      0.5763</span>
+<span class="co">#&gt; [23,]   92      0.0437      0.3877     0.1126      3.4421  7.5144      0.5732</span>
+<span class="co">#&gt; [24,]   93      0.0436      0.3820     0.1142      3.3442  7.1372      0.5617</span>
+<span class="co">#&gt; [25,]   94      0.0447      0.3853     0.1160      3.3213  7.1428      0.5634</span>
+<span class="co">#&gt; [26,]   95      0.0497      0.4190     0.1186      3.5322  8.5015      0.6079</span>
 <span class="va">a.dz_country</span>
 <span class="co">#&gt;                           </span>
 <span class="co">#&gt;  1:Concordance            </span>
@@ -1181,14 +1181,14 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...    5:OR 6:Tetrac...</span>
 <span class="co">#&gt;  [1,]   70      0.0009      0.0824     0.0113      7.2626  8.4383      0.3735</span>
-<span class="co">#&gt;  [2,]   71      0.0012      0.0884     0.0131      6.7205  7.8832      0.3724</span>
+<span class="co">#&gt;  [2,]   71      0.0012      0.0884     0.0131      6.7202  7.8829      0.3724</span>
 <span class="co">#&gt;  [3,]   72      0.0018      0.1219     0.0150      8.1122 10.2237      0.4394</span>
 <span class="co">#&gt;  [4,]   73      0.0030      0.1482     0.0200      7.4102  9.8344      0.4597</span>
-<span class="co">#&gt;  [5,]   74      0.0037      0.1689     0.0221      7.6314 10.6013      0.4867</span>
+<span class="co">#&gt;  [5,]   74      0.0037      0.1689     0.0221      7.6314 10.6014      0.4867</span>
 <span class="co">#&gt;  [6,]   75      0.0043      0.1743     0.0246      7.0866  9.9271      0.4830</span>
-<span class="co">#&gt;  [7,]   76      0.0048      0.1653     0.0293      5.6443  7.6653      0.4417</span>
-<span class="co">#&gt;  [8,]   77      0.0061      0.1885     0.0323      5.8417  8.3514      0.4716</span>
-<span class="co">#&gt;  [9,]   78      0.0062      0.1776     0.0348      5.1095  7.0766      0.4401</span>
+<span class="co">#&gt;  [7,]   76      0.0048      0.1653     0.0293      5.6443  7.6654      0.4417</span>
+<span class="co">#&gt;  [8,]   77      0.0061      0.1885     0.0323      5.8418  8.3516      0.4716</span>
+<span class="co">#&gt;  [9,]   78      0.0062      0.1776     0.0348      5.1095  7.0767      0.4401</span>
 <span class="co">#&gt; [10,]   79      0.0088      0.2171     0.0405      5.3636  8.1188      0.4884</span>
 <span class="co">#&gt; [11,]   80      0.0098      0.2118     0.0463      4.5703  6.7465      0.4574</span>
 <span class="co">#&gt; [12,]   81      0.0099      0.2066     0.0479      4.3136  6.2634      0.4423</span>
@@ -1198,14 +1198,14 @@
 <span class="co">#&gt; [16,]   85      0.0122      0.1812     0.0674      2.6888  3.5187      0.3237</span>
 <span class="co">#&gt; [17,]   86      0.0142      0.1943     0.0731      2.6587  3.5551      0.3332</span>
 <span class="co">#&gt; [18,]   87      0.0157      0.2018     0.0777      2.5985  3.5090      0.3347</span>
-<span class="co">#&gt; [19,]   88      0.0166      0.2046     0.0813      2.5171  3.3977      0.3295</span>
-<span class="co">#&gt; [20,]   89      0.0174      0.2055     0.0847      2.4248  3.2569      0.3211</span>
-<span class="co">#&gt; [21,]   90      0.0186      0.2096     0.0887      2.3625  3.1807      0.3181</span>
-<span class="co">#&gt; [22,]   91      0.0212      0.2318     0.0914      2.5354  3.6017      0.3558</span>
-<span class="co">#&gt; [23,]   92      0.0215      0.2248     0.0957      2.3479  3.2429      0.3298</span>
-<span class="co">#&gt; [24,]   93      0.0208      0.2156     0.0964      2.2372  3.0109      0.3089</span>
-<span class="co">#&gt; [25,]   94      0.0208      0.2088     0.0995      2.0994  2.7562      0.2857</span>
-<span class="co">#&gt; [26,]   95      0.0221      0.2184     0.1012      2.1576  2.8949      0.3014</span></code></pre></div>
+<span class="co">#&gt; [19,]   88      0.0166      0.2046     0.0813      2.5171  3.3978      0.3295</span>
+<span class="co">#&gt; [20,]   89      0.0174      0.2055     0.0847      2.4248  3.2570      0.3211</span>
+<span class="co">#&gt; [21,]   90      0.0186      0.2096     0.0887      2.3625  3.1808      0.3181</span>
+<span class="co">#&gt; [22,]   91      0.0212      0.2318     0.0914      2.5354  3.6018      0.3558</span>
+<span class="co">#&gt; [23,]   92      0.0215      0.2248     0.0957      2.3479  3.2430      0.3298</span>
+<span class="co">#&gt; [24,]   93      0.0208      0.2156     0.0964      2.2372  3.0110      0.3090</span>
+<span class="co">#&gt; [25,]   94      0.0208      0.2088     0.0995      2.0994  2.7562      0.2858</span>
+<span class="co">#&gt; [26,]   95      0.0221      0.2184     0.1012      2.1575  2.8948      0.3013</span></code></pre></div>
 <p>ACE model (time-varying) with and without adjustment for country</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="va">prt0</span>, type<span class="op">=</span><span class="st">"ace"</span>,
@@ -1213,13 +1213,13 @@
                               cens.formula<span class="op">=</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">zyg</span>,
                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;  10.062   0.000  10.062</span>
+<span class="co">#&gt;  12.569   0.048  12.619</span>
 <span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">a2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="va">country</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="va">prt0</span>, type<span class="op">=</span><span class="st">"ace"</span>,
                               zyg<span class="op">=</span><span class="st">"zyg"</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, 
                               cens.formula<span class="op">=</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span><span class="op">+</span><span class="va">zyg</span>,
                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;  15.256   0.000  15.257</span></code></pre></div>
+<span class="co">#&gt;  18.907   0.004  18.913</span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">a.mz</span>, which<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, xlab<span class="op">=</span><span class="st">"Age"</span>, ylab<span class="op">=</span><span class="st">"Correlation"</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, col<span class="op">=</span><span class="va">cols</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lty<span class="op">=</span><span class="va">ltys</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">NULL</span>, alpha<span class="op">=</span><span class="fl">.1</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">a.dz</span>, which<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, col<span class="op">=</span><span class="va">cols</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, lty<span class="op">=</span><span class="va">ltys</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">NULL</span>, add<span class="op">=</span><span class="cn">TRUE</span>, alpha<span class="op">=</span><span class="fl">.1</span><span class="op">)</span>
