@@ -1680,6 +1680,9 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  ft[Gc<0.00001] <- 0
  ft[St<0.00001] <- 0
 
+ S1ft <- c(revcumsumstrata(rr*ft,xxstrata,nstrata))
+ Eft <- S1ft/S0
+
  Z <- dd$X
  U1 <- matrix(0,nrow(Z),1)
  U1[jumps,] <- ft[jumps]*btime[jumps]
@@ -1703,8 +1706,9 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  ## only report SE based on iid 
  bra$var.orig <- bra$var
  bra$augment <- augment
- ## bra$iid <- bra$iid.naive - MGiid %*%  bra$ihessian
- bra$iid <- bra$iid + MGiid %*%  bra$ihessian
+ ## with correct augmentation term, things cancel out 
+ bra$iid <- bra$iid.naive + MGiid %*%  bra$ihessian
+### bra$iid <- bra$iid + MGiid %*%  bra$ihessian
  bra$var <- crossprod(bra$iid)
  bra$se.coef <-  diag(bra$var)^.5
  bra$robvar <- bra$var
