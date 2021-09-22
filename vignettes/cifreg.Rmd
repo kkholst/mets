@@ -157,7 +157,37 @@ if (run==1) {
 # [2,] 0.16606441 0.16606441 -1.091264e-10
 ```
 
-Estimates and SE's are slightly different. 
+When comparing with the results from the coxph based on setting up the data using
+the finegray function, we get the same estimates but note that the standard errors
+of the coxph is missing a term and therefore slightly different. When comparing to 
+the estimates from coxph missing the additional censoring term we see that we 
+get also the same standard errors
+
+```{r}
+if (run==1) {
+ dats$id <- 1:nrow(dats)
+ dats$event <- factor(dats$status,0:2, labels=c("censor", "death", "other"))
+ fgdats <- finegray(Surv(time,event)~.,data=dats)
+ coxfg <- coxph(Surv(fgstart, fgstop, fgstatus) ~ Z1+Z2 + cluster(id), weight=fgwt, data=fgdats)
+
+ fg0 <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+ cbind( coxfg$coef,fg0$coef, coxfg$coef-fg0$coef)
+#           [,1]        [,2]          [,3]
+# Z1  0.06882199  0.06882199 -4.246603e-15
+# Z2 -0.36807951 -0.36807951  2.908784e-14
+ cbind(diag(coxfg$var)^.5,fg0$se.coef,diag(coxfg$var)^.5-fg0$se.coef)
+#            [,1]       [,2]         [,3]
+# [1,] 0.08196556 0.08184642 1.191361e-04
+# [2,] 0.16611225 0.16606444 4.781467e-05
+ cbind(diag(coxfg$var)^.5,fg0$se1.coef,diag(coxfg$var)^.5-fg0$se1.coef)
+#            [,1]       [,2]          [,3]
+# [1,] 0.08196556 0.08196556 -9.714451e-17
+# [2,] 0.16611225 0.16611225  7.494005e-16
+}
+
+```
+
+
 
 We also remove all censorings from the data to compare the estimates with those 
 based on coxph, and observe that the estimates as well as the standard errors agree 
