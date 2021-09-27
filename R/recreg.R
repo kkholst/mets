@@ -71,7 +71,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster","offset")
+    special <- c("strata", "cluster","offset","strataAugment")
     Terms <- terms(formula, special, data = data)
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
@@ -102,6 +102,14 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
         strata <- m[[ts$vars]]
         strata.name <- ts$vars
     }  else { strata.name <- NULL; pos.strata <- NULL}
+
+   if (!is.null(stratapos <- attributes(Terms)$specials$strataAugment)) {
+    ts <- survival::untangle.specials(Terms, "strataAugment")
+    Terms  <- Terms[-ts$terms]
+    strataAugment <- as.numeric(m[[ts$vars]])-1
+    strataAugment.name <- ts$vars
+  }  else { strataAugment <- NULL; strataAugment.name <- NULL}
+
     if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
         ts <- survival::untangle.specials(Terms, "offset")
         Terms  <- Terms[-ts$terms]
@@ -114,8 +122,10 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 
     ## }}}
 
-    res <- c(recreg01(data,X,entry,exit,status,cens,id,strata,offset,weights,
-		      strata.name, cens.model=cens.model, cause=cause,
+    res <- c(recreg01(data,X,entry,exit,status,cens,id=id,strata=strata,offset=offset,weights=weights,
+		      strataA=strataAugment,
+		      strata.name=strata.name, 
+		      cens.model=cens.model, cause=cause,
 		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
              list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
                   cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
@@ -125,8 +135,9 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
     return(res)
 }# }}}
 
-recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NULL,weights=NULL,
-          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=NULL,profile=0,
+recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
+          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,
+	  propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=1,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {# {{{ setting up weights, strata, beta and so forth before the action starts# {{{ p <- ncol(X)
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
@@ -157,6 +168,20 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
             strata <- as.integer(factor(strata,labels=seq(nstrata)))-1
         }
     }
+
+    orig.strataA <- strataA
+   if (is.null(strataA)) {  strataA <- rep(0,length(exit)); 
+              nstrataA <- 1; strataA.level <- NULL; 
+   } else {
+	  strataA.level <- levels(strataA)
+	  ustrataA <- sort(unique(strataA))
+	  nstrataA <- length(ustrataA)
+	  strataA.values <- ustrataA
+      if (is.numeric(strataA)) strataA <-  fast.approx(ustrataA,strataA)-1 else  {
+      strataA <- as.integer(factor(strataA,labels=seq(nstrataA)))-1
+    }
+  }
+
 
     if (is.null(entry)) entry <- rep(0,length(exit))
     trunc <- (any(entry>0))
@@ -222,7 +247,7 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
     }# }}}
 
 
-    Zcall <- cbind(status,cens.strata,Stime,cens) ## to keep track of status and Censoring strata
+    Zcall <- cbind(status,cens.strata,Stime,cens,strata,strataA) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status==cause)
 ###    trunc <- FALSE
@@ -490,6 +515,37 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
         ## }}}
     } else MGc <- 0
 
+
+    if (!is.null(orig.strataA)) { ### compute augmentation term based on this beta
+	xx2strataA <- xx2$Z[,6]
+        Xos <- matrix(0,nrow(Z),ncol(Z));
+        Xos[otherxx2,] <- Z[otherxx2,]*rrx2
+        rrx <- rep(0,nrow(Z))
+        rrx[otherxx2] <- rrx2
+        S0A <- revcumsumstrata(rr0,xx2strataA,nstrataA)
+	S0A[S0A==0] <- 1
+        rrsx <- cumsumstrata(rrx,xx2strataA,nstrataA)/S0A
+        Xos <- apply(Xos,2,cumsumstrata,xx2strataA,nstrataA)/c(S0A)
+        q2 <- (Xos*c(Htsj)-EHtsj*c(rrsx))
+
+        dstrataA  <- mystrata(data.frame(strataCxx2,xx2strataA))
+        ndstrataA <- attr(dstrataA,"nlevel")
+
+        sss <- headstrata(dstrataA-1,ndstrataA)
+        fff <- function(x) {
+            gtstart <- x[sss]
+            cx  <- cumsum2strata(x,S0iC,dstrataA-1,ndstrataA,strataCxx2,nCstrata,gtstart)$res
+            return(cx)
+        }
+        EdLam0qA2 <- apply(q2,2,fff)
+
+        ### Martingale  as a function of time and for all subjects to handle strata
+        MGAc <- q2*(S0iC!=0)-EdLam0q2*c(xx2$sign)
+        MGAc <- apply(MGAc,2,sumstrata,xx2$id,mid+1)
+	augment.new <- apply(MGAc,2,sum)
+    } else { augment.new <- MGAc <- NULL}
+
+
     iH <- - tryCatch(solve(opt$hessian),error=function(e) matrix(0,nrow(opt$hessian),ncol(opt$hessian)) )
     Uiid <-  (UU+MGc) %*% iH
     UUiid <- UU %*% iH
@@ -524,13 +580,16 @@ out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,Ut=opt$U,
 	jumps=jumps,exit=exit,p=p,S0s=val$S0s,
 	no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
-	Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,cause=cause
+	Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,
+	cause=cause,
+	strataA=strataA,nstrataA=nstrataA,augment=augment.new,MGAc=MGAc
 	)
 
 if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
     return(out)
 }# }}}
+
 
 #' @export
 EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {{{
@@ -554,6 +613,9 @@ EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {
     attr(out,"cens.code") <- cens.code
     return(out)
 }# }}}
+
+##' @export
+strataAugment <- survival:::strata
 
 simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,...)
 {# {{{
