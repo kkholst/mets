@@ -27,6 +27,7 @@
 ##' dlist(rr2,start-time+status+gapstart+gaptime~id)
 ##'
 ##' @export 
+
 Event.Split <- function(data,
 		time="time",status="status",entry="start",cuts="cuts",name.id="id",
 		gaptime=NULL,gaptime.entry=NULL,cuttime=c("time","gaptime"),
@@ -74,10 +75,10 @@ Event.Split <- function(data,
 	    new.status[splits] <- cens.code
 	    idl <- c(idl,idl[splits]) 
 
-	    if (!is.null(gaptime)) new.gapstart <- c(new.gapstart,new.cuts[splits]-nnstart[splits])
 	    if (!is.null(gaptime)) {
+	       new.gapstart <- c(new.gapstart,new.cuts[splits]-nnstart[splits]+new.gapstart[splits])
                new.gaptime <-   c(new.gaptime,new.gaptime[splits])
-	       new.gaptime[splits] <- new.cuts[splits]- nnstart[splits]
+	       new.gaptime[splits] <- new.cuts[splits]- nnstart[splits]+new.gapstart[splits]
             }
 
 	    data <- data[rows,]
@@ -118,10 +119,9 @@ Event.Split <- function(data,
         data[,gaptime.entry] <- new.gapstart
         if (order.id) data <- data[order(idl,new.start),] 
        }
-    } ## }}}
 
+    }# }}}
 
     return(data)
     ## }}} 
 } 
-
