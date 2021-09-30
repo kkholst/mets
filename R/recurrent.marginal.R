@@ -1062,6 +1062,7 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 
   ll <- nrow(cumhaz)
   max.time <- tail(cumhaz[,1],1)
+  rc <- 1
 
 ### recurrent first time
   tall <- timereg::rchaz(cumhaz,z1)
