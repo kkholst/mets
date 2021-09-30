@@ -1028,7 +1028,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' @aliases showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 recurrentMarginalgam squareintHdM addCums 
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
-	 max.recurrent=100,dhaz=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
+	 max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
 {# {{{
   dtime <- NULL ## to avoid R-check 
 
@@ -1090,7 +1090,7 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 
 ### fixing the first time to event
   tall$death <- 0
-  tall <- dtransform(tall,death=1,time>dtime)
+  tall <- dtransform(tall,death=fdeath,time>dtime)
   tall <- dtransform(tall,status=0,time>dtime)
   tall <- dtransform(tall,time=dtime,time>dtime)
   tt <- tall
@@ -1103,8 +1103,8 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
           tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(gap.time)*still$time)
 	  if (gap.time) tt$time <- tt$time+still$time
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
-	  tt <- dtransform(tt,death=fdeath,time>dtime)
-	  tt <- dtransform(tt,status=0,time>dtime)
+	  tt <- dtransform(tt,death=1,time>dtime)
+	  tt <- dtransform(tt,status=fdeath,time>dtime)
 	  tt <- dtransform(tt,time=dtime,time>dtime)
 	  nt <- nrow(tt)
 	  tall <- rbind(tall,tt,row.names=NULL)
