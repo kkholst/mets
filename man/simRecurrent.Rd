@@ -18,7 +18,6 @@ simRecurrent(
   cens = NULL,
   max.recurrent = 100,
   dhaz = NULL,
-  haz2 = NULL,
   dependence = 0,
   var.z = 2,
   cor.mat = NULL,

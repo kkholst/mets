@@ -3,6 +3,7 @@
 \name{recreg}
 \alias{recreg}
 \alias{EventCens}
+\alias{strataAugment}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(
