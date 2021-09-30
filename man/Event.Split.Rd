@@ -35,11 +35,11 @@ Event.Split(
 
 \item{gaptime.entry}{name of entry variable for gaptime.}
 
+\item{cuttime}{to cut after time or gaptime}
+
 \item{cens.code}{code for the censoring.}
 
 \item{order.id}{order data after id and start.}
-
-\item{cutttime}{to cut after time or gaptime}
 }
 \description{
 splits after cut times for the two time-scales.
