@@ -14,11 +14,10 @@ simRecurrent(
   n,
   cumhaz,
   death.cumhaz = NULL,
-  cumhaz2 = NULL,
   gap.time = FALSE,
+  cens = NULL,
   max.recurrent = 100,
   dhaz = NULL,
-  haz2 = NULL,
   dependence = 0,
   var.z = 2,
   cor.mat = NULL,
@@ -32,15 +31,13 @@ simRecurrent(
 
 \item{death.cumhaz}{cumulative hazard of death}
 
-\item{cumhaz2}{cumulative hazard of recurrent events  of type 2}
-
 \item{gap.time}{if true simulates gap-times with specified cumulative hazard}
+
+\item{cens}{rate of exponential on total time i.e. on death time-scale}
 
 \item{max.recurrent}{limits number recurrent events to 100}
 
 \item{dhaz}{rate for death hazard if it is extended to time-range of first event}
-
-\item{haz2}{rate of second cause  if it is extended to time-range of first event}
 
 \item{dependence}{=0 independence, =1 all share same random effect with variance var.z
 =2 random effect exp(normal) with correlation structure from cor.mat,
@@ -81,16 +78,6 @@ base4 <- base4cumhaz
  rr <- simRecurrent(1000,base1,death.cumhaz=dr)
  par(mfrow=c(1,3))
  showfitsim(causes=1,rr,dr,base1,base1)
-
-######################################################################
-### simulating simple model that mimicks data 
-### now with two event types and second type has same rate as death rate
-######################################################################
-
- rr <- simRecurrent(1000,base1,death.cumhaz=dr,cumhaz2=base4)
- dtable(rr,~death+status)
- par(mfrow=c(2,2))
- showfitsim(causes=2,rr,dr,base1,base4)
 
 ######################################################################
 ### simulating simple model 
