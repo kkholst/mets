@@ -54,7 +54,7 @@ data(drcumhaz)
 dr <- drcumhaz
 base1 <- base1cumhaz
 base4 <- base4cumhaz
-rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=dr)
+rr <- simRecurrentII(1000,base1,cumhaz2=base4,death.cumhaz=dr)
 rr <- count.history(rr)
 rr$strata <- 1
 dtable(rr,~death+status)
