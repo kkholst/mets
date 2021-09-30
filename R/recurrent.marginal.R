@@ -1103,7 +1103,7 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
           tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(gap.time)*still$time)
 	  if (gap.time) tt$time <- tt$time+still$time
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
-	  tt <- dtransform(tt,death=1,time>dtime)
+	  tt <- dtransform(tt,death=fdeath,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
 	  tt <- dtransform(tt,time=dtime,time>dtime)
 	  nt <- nrow(tt)
