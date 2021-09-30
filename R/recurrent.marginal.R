@@ -2102,7 +2102,7 @@ return(data)
 ##' base4 <- base4cumhaz
 ##'
 ##' cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
-##' rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=dr)
+##' rr <- simRecurrentII(1000,base4,cumhaz2=base4,death.cumhaz=dr,cens=2/5000)
 ##' rr <-  count.history(rr)
 ##' dtable(rr,~death+status)
 ##' 
@@ -2116,7 +2116,7 @@ return(data)
 ##' 
 ##' 
 ##' ### Bivariate probability of exceeding 
-##' oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5,10),exceed2=c(1,2,3))
+##' oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5),exceed2=c(1,2))
 ##' with(oo, matplot(time,pe1e2,type="s"))
 ##' nc <- ncol(oo$pe1e2)
 ##' legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
@@ -2659,7 +2659,7 @@ base   <- phreg(form,data=data,no.opt=TRUE)
 ##' dr <- drcumhaz
 ##' base1 <- base1cumhaz
 ##' base4 <- base4cumhaz
-##' rr <- simRecurrent(1000,base1,cumhaz2=base4,death.cumhaz=dr)
+##' rr <- simRecurrentII(1000,base1,cumhaz2=base4,death.cumhaz=dr)
 ##' rr <- count.history(rr)
 ##' rr$strata <- 1
 ##' dtable(rr,~death+status)
