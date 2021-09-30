@@ -1030,7 +1030,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 	 max.recurrent=100,dhaz=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
 {# {{{
-  dtime <- NULL ## to avoid R-check 
+  fdeath <-  dtime <- NULL ## to avoid R-check 
 
   ### drawing relative risk frailty terms to generate dependence
   if (dependence==0) { z1 <- z2 <- zd <- rep(1,n) # {{{
