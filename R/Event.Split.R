@@ -10,7 +10,7 @@
 ##' @param name.id name of id variable.
 ##' @param gaptime gaptime variable.
 ##' @param gaptime.entry name of entry variable for gaptime.
-##' @param cutttime to cut after time or gaptime
+##' @param cuttime to cut after time or gaptime
 ##' @param cens.code code for the censoring.
 ##' @param order.id order data after id and start.
 ##' @author Thomas Scheike
@@ -42,7 +42,7 @@ Event.Split <- function(data,
 
     if (is.numeric(cuts)) {
 	    new.cuts <- rep(cuts,nrow(data))
-    } else { new.cuts  <-  data[,cutname] }
+    } else { new.cuts  <-  data[,cuts] }
 
     if (is.numeric(entry)) {
 	    start0 <- entry
