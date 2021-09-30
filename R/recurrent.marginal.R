@@ -1038,9 +1038,8 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'
 ##' @aliases showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 recurrentMarginalgam squareintHdM addCums 
 ##' @export
-simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
-			    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
-			    dependence=0,var.z=2,cor.mat=NULL,...) 
+simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,gap.time=FALSE,
+	 max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
 {# {{{
   dtime <- NULL ## to avoid R-check 
 
@@ -1111,7 +1110,8 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,
   while (any(tt$time<tt$dtime) & i < max.recurrent) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
-          tt <- timereg::rchaz(cumhaz,z1[still$id],entry=still$time)
+	  ## start at where we are or "0" for gaptime
+          tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(gap.time)*still$time)
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=1,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
@@ -1287,8 +1287,7 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
 ##'
 ##' @export
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,
-		    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,
-		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
+    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
   {# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
@@ -1379,8 +1378,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
 	  i <- i+1
 	  still <- subset(tt,time<dtime)
 	  nn <- nrow(still)
-          tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=still$time)
-          tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=still$time)
+          tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=gap.time*still$time)
+          tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=gap.time*still$time)
 	  tt <- tt1
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
