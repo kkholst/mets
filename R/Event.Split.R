@@ -27,7 +27,6 @@
 ##' dlist(rr2,start-time+status+gapstart+gaptime~id)
 ##'
 ##' @export 
-
 Event.Split <- function(data,
 		time="time",status="status",entry="start",cuts="cuts",name.id="id",
 		gaptime=NULL,gaptime.entry=NULL,cuttime=c("time","gaptime"),

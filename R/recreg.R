@@ -64,7 +64,7 @@
 ##'               cause=1, cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases EventCens 
+##' @aliases EventCens  strataAugment
 ##' @export
 recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.model=~1,
             weights=NULL,offset=NULL,Gc=NULL,...)
@@ -589,7 +589,6 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
     return(out)
 }# }}}
-
 
 #' @export
 EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {{{
