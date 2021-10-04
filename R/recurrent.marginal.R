@@ -1101,7 +1101,10 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 	  still <- subset(tt,time<dtime)
 	  ## start at where we are or "0" for gaptime
           tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(1-gap.time)*still$time)
-	  if (gap.time) tt$time <- tt$time+still$time
+	  if (gap.time) { 
+		  tt$entry <- still$time
+		  tt$time <- tt$time+still$time
+	  }
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=fdeath,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
@@ -1357,7 +1360,10 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
 	  tt$rr2 <- tt2$rr
-	  if (gap.time) tt$time <- tt$time+still$time
+	  if (gap.time) {
+		  tt$entry <- still$time
+		  tt$time  <- tt$time+still$time
+	  }
           ###
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=fdeath,time>dtime)
