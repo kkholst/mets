@@ -1042,9 +1042,9 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
               stdevs <- var.z^.5
               b <- stdevs %*% t(stdevs)  
               covv  <- b * cor.mat  
-	      z <- matrix(rnorm(3*n),n,3)
+	      z <- matrix(rnorm(n*2),n,2)
 	      z <- (z%*% chol(covv))
-	      z1 <- exp(z[,1]); zd <- exp(z[,3])
+	      z1 <- exp(z[,1]); zd <- exp(z[,2])
 	      apply(exp(z),2,mean); cov(exp(z))
       } else if (dependence==3) {
 	      zz <- rgamma(n,1/var.z[1])*var.z[1]

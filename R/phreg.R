@@ -975,12 +975,12 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
   if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
  if (fixbeta==0)  {
-    gamma.iid <- iid.phreg(x) 
-    robvar <- crossprod(gamma.iid)
- } else robvar <- gamma.iid <- NULL
+    beta.iid <- iid.phreg(x) 
+    robvar <- crossprod(beta.iid)
+ } else robvar <- beta.iid <- NULL
  baseline <- robust.basehaz.phreg(x,fixbeta=fixbeta,...); 
  ## add arguments so that we can call basehazplot.phreg
- res <- c(x,list(gamma.iid=gamma.iid,robvar=robvar,robse.cumhaz=baseline$se.cumhaz))
+ res <- c(x,list(beta.iid=beta.iid,robvar=robvar,robse.cumhaz=baseline$se.cumhaz))
  class(res) <- "phreg"
  return(res)
 }
