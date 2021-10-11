@@ -748,19 +748,19 @@ Dp10 <- X0 * c(p10/(1+exp(p10lp)))
 Dpai <-  - Xtreat * exp(-lpa)
 D1mpai <-   Xtreat * exp(lpa)
 
-DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,mean)
-DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,mean)
-DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,mean)
-DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
+DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,sum)
+DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,sum)
+DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,sum)
+DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,sum)
 
-DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,mean)
-DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
+DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
+DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
 
-DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
-DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
+DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
+DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
 
-DriskG1 <- apply(Dp11,2,mean)
-DriskG0 <- apply(Dp10,2,mean)
+DriskG1 <- apply(Dp11,2,sum)
+DriskG0 <- apply(Dp10,2,sum)
 DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
@@ -879,8 +879,8 @@ val$difriskDR <- val$riskDR[1]-val$riskDR[2]
 val$var.difriskDR <- sum(difriskiid^2)
 val$se.difriskDR <- val$var.difriskDR^.5
 
-val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
-	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
@@ -1110,19 +1110,19 @@ Dp10 <- X0 * c(p10/(1+exp(p10lp)))
 Dpai <-  - Xtreat * exp(-lpa)
 D1mpai <-   Xtreat * exp(lpa)
 
-DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,mean)
-DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,mean)
-DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,mean)
-DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,mean)
+DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,sum)
+DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,sum)
+DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,sum)
+DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,sum)
 
-DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,mean)
-DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,mean)
+DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
+DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
 
-DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,mean)
-DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,mean)
+DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
+DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
 
-DriskG1 <- apply(Dp11,2,mean)
-DriskG0 <- apply(Dp10,2,mean)
+DriskG1 <- apply(Dp11,2,sum)
+DriskG0 <- apply(Dp10,2,sum)
 DdifriskG <- DriskG1-DriskG0
 
  if (se) {## {{{ censoring adjustment of variance 
@@ -1244,8 +1244,8 @@ val$difriskDR <- val$riskDR[1]-val$riskDR[2]
 val$var.difriskDR <- sum(difriskiid^2)
 val$se.difriskDR <- val$var.difriskDR^.5
 
-val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid)),
-	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid)))
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
