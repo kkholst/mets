@@ -172,20 +172,43 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 }# }}}
 
 ##' @export
-summary.recurrent <- function(object,times=NULL,...) {
+summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,...) {# {{{
  if (is.null(times)) times <- object$times
 
- where <- fast.approx(c(0,object$times),times,type="left")
- mu <- c(0,object$mu)[where]
- se.mu <- c(0,object$se.mu)[where]
+if (object$nstrata==1) {
+   where <- fast.approx(c(0,object$times),times,type="left")
+   mu <- c(0,object$mu)[where]
+   se.mu <- c(0,object$se.mu)[where]
+   stratao <- 0
+} else {
+ nstrata <- object$nstrata
+ if (is.null(strata))  {
+    where <- indexstratarightR(object$times,object$strata,
+    rep(times,each=nstrata),rep((nstrata-1):0,length(times)),nstrata,type="left")
+
+ times <- rep(times,each=nstrata)
+ strata <- rep((nstrata-1):0,length(times))
+
+ } else where <- indexstratarightR(object$times,object$strata,times,strata,nstrata,type="left")
+
+   mu <- object$mu[where]
+   se.mu <- object$se.mu[where]
+   stratao <- object$strata[where] 
+}
+
  se.logmu=se.mu/mu
  lower <- exp(log(mu) - 1.96*se.logmu)
  upper <- exp(log(mu) + 1.96*se.logmu)
 
- out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
- names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%")
+ out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper,
+ strata=stratao)
+ names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
+ if (estimates) {
+         attr(out,"where") <- where
+	 attr(out,"estimates") <- cbind(object$cumhaz,object$strata)[where,]
+ }
  return(out)
-}
+}# }}}
 
 ##' @export
 summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {# {{{

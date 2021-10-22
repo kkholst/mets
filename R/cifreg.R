@@ -245,7 +245,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         Gts <-   Gjumps <- rep(1,length(jumptimes))
     }
 
-
     ## computing terms for those experiencing another cause, need S0, S1, S2
     if (length(other)>=1) {# {{{
         trunc <- TRUE
@@ -530,13 +529,16 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 ##' @export
 indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 {
+  if (any(stratao<0 | stratao>=nstrata)) stop("time-strata strata not between 0-(nstrata-1)\n")
+  if (any(js<0 | js>=nstrata)) stop("jump-strata strata not between 0-(nstrata-1)\n")
   mm <- cbind(timeo,stratao,1:length(timeo),0)
   mm <- rbind(mm,cbind(jump,js,1:length(jump),1))
   ord <- order(mm[,1],mm[,4])
   mm <- mm[ord,]
   if (type=="right") right <- 1 else right <- 0
-  res <- .Call("indexstrataR",mm[,2],mm[,3],mm[,4],nstrata,right)$res
-  return(res[,1])
+  res <- .Call("indexstrataR",mm[,2],mm[,3],mm[,4],nstrata,right)$res[,1]
+  if (right==0) res <- rev(res)
+  return(res)
 }# }}}
 
 ###S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2,Gcstart)

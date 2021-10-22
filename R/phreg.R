@@ -1941,6 +1941,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param xlim to give xlim 
 ##' @param lty to specify lty of components
 ##' @param col to specify col of components
+##' @param lwd to specify lwd of components
 ##' @param legend to specify col of components
 ##' @param ylab to specify ylab 
 ##' @param xlab to specify xlab 
@@ -1961,11 +1962,10 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' bplot(out1,stratas=c(0,3))
 ##' bplot(out1,stratas=c(0,3),col=2:3,lty=1:2,se=TRUE)
 ##' bplot(out1,stratas=c(0),col=2,lty=2,se=TRUE,polygon=FALSE)
-##' bplot(out1,stratas=c(0),col=matrix(c(2,1,3),1,3),
-##'             lty=matrix(c(1,2,3),1,3),se=TRUE,polygon=FALSE)
+##' bplot(out1,stratas=c(0),col=matrix(c(2,1,3),1,3),lty=matrix(c(1,2,3),1,3),se=TRUE,polygon=FALSE)
 ##' @export
 basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
-    lty=NULL,col=NULL,legend=TRUE,ylab=NULL,xlab=NULL,
+    lty=NULL,col=NULL,lwd=NULL,legend=TRUE,ylab=NULL,xlab=NULL,
     polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,...) {# {{{
 	if (class(x)[1]=="phreg" & is.null(ylab)) ylab <- "Cumulative hazard"
 	if (class(x)[1]=="km" & is.null(ylab)) ylab <- "Survival probability"
@@ -2005,16 +2005,23 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
          if (is.null(col)) cols <- 1:length(stratas) else 
 		 if (length(col)!=length(stratas)) cols <- rep(col[1],length(stratas))
       } else cols <- col
+      if (!is.matrix(lwd)) {
+         if (is.null(lwd)) lwds <- 1:length(stratas) else 
+		 if (length(lwd)!=length(stratas)) lwds <- rep(lwd[1],length(stratas))
+      } else lwds <- lwd
    } else { 
      stratnames <- "Baseline" 
      if (is.matrix(col))  cols <- col
      if (is.null(col)) cols <- 1  else cols <- col[1]
      if (is.matrix(lty))  ltys <- lty
      if (is.null(lty)) ltys <- 1  else ltys <- lty[1]
+     if (is.matrix(lwd))  lwds <- lwd
+     if (is.null(lwd)) lwds <- 1  else lwds <- lwd[1]
    }
 
   if (!is.matrix(ltys))  ltys <- cbind(ltys,ltys,ltys)
   if (!is.matrix(cols))  cols <- cbind(cols,cols,cols)
+  if (!is.matrix(lwds))  lwds <- cbind(lwds,lwds,lwds)
 
   first <- 0
   for (i in seq(stratas)) {
@@ -2023,11 +2030,10 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
         if (!is.null(cumhazard)) {
 	if (nrow(cumhazard)>1) {
         if (add | first==1) 
-        lines(cumhazard,type="s",lty=ltys[i,1],col=cols[i,1])   
+        lines(cumhazard,type="s",lty=ltys[i,1],col=cols[i,1],lwd=lwds[i,1])   
        else {
 	  first <- 1
-          plot(cumhazard,type="s",lty=ltys[i,1],col=cols[i,1],ylim=ylim,ylab=ylab,xlab=xlab,
-	    xlim=xlim,...)
+          plot(cumhazard,type="s",lty=ltys[i,1],col=cols[i,1],lwd=lwds[i,1],ylim=ylim,ylab=ylab,xlab=xlab,xlim=xlim,...)
        }
        if (se==TRUE) {
 	    if (robust==TRUE) secumhazard  <- x$robse.cumhaz[strat==j,,drop=FALSE]
@@ -2042,8 +2048,8 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 
 		 }
 	      if (!polygon) {
-		  lines(nl,type="s",lty=ltys[i,2],col=cols[i,2])
-		  lines(ul,type="s",lty=ltys[i,3],col=cols[i,3])
+		  lines(nl,type="s",lty=ltys[i,2],col=cols[i,2],lwd=lwds[i,2])
+		  lines(ul,type="s",lty=ltys[i,3],col=cols[i,3],lwd=lwds[i,3])
 	      } else {
                  ## type="s" confidence regions
 		 ll <- length(nl[,1])
