@@ -256,14 +256,11 @@ recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,
  rr$revnr2 <-  c(revcumsumstrata(rep(1,nrow(rr)),rr[,id]-1,nid))
  rr$cens[rr$revnr2==1 & rr$death==0] <- 1
 
-
 ###
 formC <- as.formula(paste("Surv(",start,",",stop,",cens)~cluster(",id,")",sep=""))
 formD <- as.formula(paste("Surv(",start,",",stop,",",death,")~cluster(",id,")",sep=""))
-form1L <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
-  Count",cause,"+death+cens+cluster(",id,")",sep=""))
-form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
-  cluster(",id,")",sep=""))
+form1L <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~Count",cause,"+death+cens+cluster(",id,")",sep=""))
+form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluster(",id,")",sep=""))
 
  xr <- phreg(form1L,data=rr,no.opt=TRUE)
  cr <- phreg(formC,data=rr,no.opt=TRUE)
@@ -272,17 +269,9 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
  rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr[,stop])[,2])
 
-### mean(rr$Hst[rr$lbnr__id==1])
-### summary(rr$Hst[rr$lbnr__id==1])
-### dlist(rr,start+stop+Gctrr+status+Hst~id|id==938,n=0)
-### dlist(rr,start+stop+Gctrr+status+Hst~id,n=0)
-
  ### cook-lawless ghosh-lin
  xr0 <- phreg(form1,data=rr,no.opt=TRUE)
  clgl  <- recurrentMarginal(xr0,dr)
-
-### browser()
-### clgl$se.mu
 
   ### censoring weights
   strat <- cr$strata[cr$jumps+1]
@@ -299,8 +288,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
   } else Gc <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
   ###
   S0it <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
-###  S0iD[dr$jumps+1] <- 1/dr$S0
-###  St <- c(exp(cumsumstratasum(log(1-S0iD),xx$strata,xx$nstrata)$lagsum))
 
   ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
   x <- xr
@@ -326,11 +313,9 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
 
   ### IPCW estimator 
   cumhaz <- cbind(timeJ,avNtD)
-
 # }}}
 
   ### Partitioned estimator , same as Lin, Lawless & Cook estimator {{{
-  ### mu_p
   cumhazP <- c(cumsumstrata(1/Gc[jump1],strataN1J,xx$nstrata)/nid)
   cumhazP <- cbind(timeJ,cumhazP)
 
@@ -355,7 +340,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
        form <- as.formula(paste("Surv(",start,",",stop,",cens)~Hst+",modP,"+cluster(id)"))
        nterms <- length(terms)
 
-###       browser()
   for (i in seq_along(times)) {
      timel <- times[i]
      rr$Hst <- revcumsumstrata((rr[,stop]<timel)*(rr[,status]==1)/rr$Gctrr,rr$id-1,nid)
@@ -385,7 +369,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
      gamma[gamma=Inf] <- 0
      augment <- sum(apply(gamma*t(cr2$U[timeb,1+1:nterms,drop=FALSE])/Gctb,2,sum))/nid
      ###
-###     browser()
      muPA[i] <- muP.times[i]+augment
      semuPA[i] <- (semuP.times[i]^2 +(gamma %*% varZ %*% gamma)/nid^2)^.5
      muPA.times[i] <- muP.times[i]+augment.times
@@ -394,12 +377,9 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~
   }
 # }}}
 
-  return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],
-  gamma=gamma,gamma.time=gammahat, times=times,
-  muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA
-	      ))
+  return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],gamma=gamma,gamma.time=gammahat,times=times,
+  muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
 }# }}}
-
 
 ##' @export
 recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
