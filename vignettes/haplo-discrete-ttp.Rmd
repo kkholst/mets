@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5        
 vignette: >
-  %\VignetteIndexEntry{Discrete Survival Models}
+  %\VignetteIndexEntry{Haplotype Discrete Survival Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -40,7 +40,9 @@ function of the form
 \begin{align*}
       \mbox{logit}(P(T=t| T >= t, x,h)) & = \alpha_t + x(h) beta         
 \end{align*}
-where x(h) is a regression design of x and haplotypes $h=(h_1,h_2)$
+where x(h) is a regression design of x and haplotypes $h=(h_1,h_2)$. 
+
+Simple binomial data can be fitted using this function. 
 
 For standard errors we assume that haplotype probabilities are known. 
 
@@ -54,8 +56,7 @@ data(hapfreqs)
 print(hapfreqs)
 ```
 
-Among the types of interest we look up the frequencies 
-and choose a baseline   
+Among the types of interest we look up the frequencies and choose a baseline   
 
 ```{r}
 www <-which(hapfreqs$haplotype %in% types)
