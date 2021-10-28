@@ -54,10 +54,6 @@
 ##' @export
 casewise.test <- function(conc,marg,test="no-test",p=0.01)
 { ## {{{
-###	conc=cdz; marg=cifdz; p=0.01
-###	conc=cmz; marg=cifmz
-###	names(cdz)
-###	cdz$casewise
   if (sum(marg$P1>p)==0) stop("No timepoints where marginal > ",p,"\n"); 
   time1 <- conc$time; time2 <- marg$time[marg$P1>0.01]
   mintime <- max(time1[1],time2[1])
@@ -446,13 +442,11 @@ binregCasewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
 
   margiid <- margbreg$iid
   conciid <- matrix(0,nrow(margiid),nrow(pconc))
-###  rownames(margiid) <- margbreg$iid.origid
   wiid <- which(concbreg$iid.origid %in% margbreg$iid.origid)
   conciid[wiid,] <- concbreg$iid
   iids <- cbind(conciid,margiid)
   vcov <- crossprod(iids)
 
-###  dd <- estimate(coef=c(concbreg$coef,margbreg$coef),vcov=vcov,f=fcase,null=0)
   dd <- estimate(coef=c(concbreg$coef,margbreg$coef),vcov=vcov,f=fcase,...)
   expcoef <- exp(dd$coefma[,c(1,3:4)])
 

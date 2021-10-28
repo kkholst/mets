@@ -169,7 +169,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
@@ -182,7 +181,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-###mm <-  .Call("CubeVec",D2logl,Dlogl)
  Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
@@ -271,9 +269,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-###    Ih2dLam0 <- apply(h2*S0i2,2,sum)
-###    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
-###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
  
    }  else {
@@ -289,7 +284,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val$naive.var <- val$var
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
-### val$var  <- val$naive.var - val$varadjC
   val$se.robust <- diag(robvar)^.5
   val$se.coef <- diag(val$var)^.5
 
@@ -378,7 +372,6 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
@@ -440,7 +433,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  opt$method <- "nlm"
       }
       cc <- opt$estimate; 
-###	      if (!se) return(cc)
       val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
       } else val <- c(list(coef=beta),obj(beta,all=TRUE))
   } else {
@@ -462,19 +454,15 @@ hessian <- matrix(D2log,length(pp),length(pp))
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-###    Y <- weights*c(Y[ord]-p)  *(exit<=time)
     Yglm <- weights*c(Y[ord]-p) # *(exit<=time)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0
     S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
-###    hX  <-  apply(X,2,revcumsumstrata,xx$strata,xx$nstrata)
-    ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -483,9 +471,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-###    Ih2dLam0 <- apply(h2*S0i2,2,sum)
-###    varadjC <- matrix(Ih2dLam0,length(val$coef),length(val$coef))
-###    val$varadjC <- val$ihessian %*% varadjC %*% val$ihessian
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
   }  else {
 	  MGCiid <- 0
@@ -641,7 +626,6 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-###mm <-  .Call("CubeVec",D2logl,Dlogl)
   Y <- c((status==cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
@@ -652,13 +636,11 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
-###
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
-###
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
@@ -688,7 +670,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  opt$method <- "nlm"
       }
       cc <- opt$estimate; 
-###      if (!se) return(cc)
       val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
       } else val <- c(list(coef=beta),obj(beta,all=TRUE))
   } else {
@@ -782,13 +763,11 @@ DdifriskG <- DriskG1-DriskG0
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0
     S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -885,7 +864,6 @@ val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
 val$difriskG <- mean(p11)-mean(p10)
-###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
 val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
 val$var.difriskG <- sum(val$difriskG.iid^2)
 val$se.difriskG <- val$var.difriskG^.5
@@ -983,7 +961,6 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-###      cens.weights <- predict(resC,data,times=exittime,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)$surv
       cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
@@ -996,7 +973,6 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-###mm <-  .Call("CubeVec",D2logl,Dlogl)
   obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
@@ -1012,13 +988,10 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
-###
 ploglik <- sum(weights*(Y-p)^2)
-
 Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
-###
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
@@ -1048,7 +1021,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  opt$method <- "nlm"
       }
       cc <- opt$estimate; 
-###      if (!se) return(cc)
       val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
       } else val <- c(list(coef=beta),obj(beta,all=TRUE))
   } else {
@@ -1146,13 +1118,11 @@ DdifriskG <- DriskG1-DriskG0
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0
     S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
     h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -1250,7 +1220,6 @@ val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
 val$difriskG <- mean(p11)-mean(p10)
-###val$difriskG.iid <- c(p11-p10-difriskG)/n + c(DdifriskG %*% t(val$iid))
 val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
 val$var.difriskG <- sum(val$difriskG.iid^2)
 val$se.difriskG <- val$var.difriskG^.5
@@ -1367,7 +1336,6 @@ summary.binreg <- function(object,...) {# {{{
 cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
 
 expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
-###expC <- estimate(coef=object$coef,vcov=object$var,f=function(p) exp(p),null=1)$coefmat
 V=object$var
 
 res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
@@ -1439,34 +1407,6 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
 return(preds)
 } # }}}
 
-###predict.binreg <- function(x,newdata,se=TRUE,...)
-###{# {{{
-###  Z <- as.matrix(model.matrix(x$formula,newdata))
-###  expit  <- function(z) 1/(1+exp(-z)) ## expit
-###  lp <- c(Z %*% x$coef)
-###  p <- expit(lp)
-###  preds <- p
-###
-###  if (se) {
-###    Ft <- function(p,lpi=1)
-###    {# {{{
-###	 p <- expit(lpi)
-###	 return(p)
-###    }# }}}
-###
-###  preds <- c()
-###  for (i in 1:length(lp)) {
-###     if (is.null(x$var)) covv <- vcov(x)  else covv <- x$var
-###     eud <- estimate(coef=x$coef,vcov=covv,f=function(p) Ft(p,lpi=lp[i]))
-###     cmat <- data.frame(eud$coefmat)
-###     names(cmat)[1:4] <- c("pred","se","lower","upper")
-###     preds <- rbind(preds,cmat)
-###  } 
-###  }
-###
-###return(preds)
-###} # }}}
-###
 
 ##' Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) 
 ##'
@@ -1553,7 +1493,6 @@ BinAugmentCifstrata <- function(formula,data=data,cause=1,cens.code=0,km=TRUE,ti
   }  
   X <- model.matrix(Terms, m)
   if (!is.null(intpos  <- attributes(Terms)$intercept))
-###    X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   id.orig <- id; 
@@ -1708,7 +1647,6 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  bra$augment <- augment
  ## with correct augmentation term, things cancel out 
  bra$iid <- bra$iid.naive + MGiid %*%  bra$ihessian
-### bra$iid <- bra$iid + MGiid %*%  bra$ihessian
  bra$var <- crossprod(bra$iid)
  bra$se.coef <-  diag(bra$var)^.5
  bra$robvar <- bra$var

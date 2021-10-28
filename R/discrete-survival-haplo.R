@@ -131,11 +131,8 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
 
 ## creates sub-index for haplo-types within each id
    nmm <- names(Xhap)[mm]
-###   lll <- lapply(Xhap[,c("id",nmm)],as.numeric)
-###   stratidhap <-    as.numeric(survival::strata(lll))
    ms <- mystrata(Xhap[,c("id",nmm)])
 	   stratidhap <- ms
-###nidhap <- length(unique(stratidhap))
    nidhap <- attr(ms,"nlevel")
    nid <- length(unique(Haplos$id))
 
@@ -217,9 +214,7 @@ if (!design.only) {
 	## plp <- family$linkinv(lp)
 	plp <- expit(lp+ offiid)
 	nplp <- 1-plp
-	###lognp <- log(nplp)
 
-	### logpht <-  (response - plp)/family$variance(plp)
 	logpht <- log(plp)*response+log(nplp)*(1-response)
 	pht <-c(exp(logpht))
 	Dlogpht <-  X* c(response-plp)
@@ -449,85 +444,6 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ## this is only used for simulations 
 ## out <- simHaplo(1,100,tcoef,hapfreqs)
 
-###simHaplo <- function(i,n,tcoef,hapfreqs)
-###{ ## {{{  
-###
-###   haplos <- sample(19,2*n,replace=TRUE,prob=hapfreqs$freq)
-###   haplos <- matrix(haplos,n,2) 
-###   hap1 <- hapfreqs$haplotype[haplos[,1]]
-###   hap2 <- hapfreqs$haplotype[haplos[,2]]
-###   ###
-###   X <- t(apply(cbind(hap1,hap2),1,designftypes))
-###   X <- data.frame(X,id=1:n)
-###   sud <- simTTP(coef=tcoef,Xglm=X,n=n,times=1:6)
-###   ## known haplotypes
-###   ssud <- glm(y~factor(times)+X1+X2+X3+X4+X5,data=sud,family=binomial())
-###
-###   genotype <- c()
-###   for (i in 1:11)
-###     genotype <- cbind(genotype,substr(hap1,i,i), substr(hap2,i,i) )
-###
-###   setup <- geno.setup(genotype,haplo.baseline=baseline,sep="") 
-###   wh <- match(setup$uniqueHaploNames,hapfreqs$haplotype)
-###   wwf <- wh[!is.na(wh)]
-###   ghaplos <- matrix(unlist(setup$HPIordered),byrow=TRUE,ncol=2)
-###   ghaplos <- cbind(rep(1:n,setup$nPossHaps),ghaplos)
-###   ghaplos <- data.frame(ghaplos)
-###   names(ghaplos) <- c("id","haplo1","haplo2")
-###   haploff <- rep(0,length(setup$uniqueHaploNames))
-###   haploff[!is.na(wh)] <- hapfreqs[wwf,"freq"]
-######
-###   hap1f <- haploff[ghaplos[,2]]
-###   hap2f <- haploff[ghaplos[,3]]
-###   hap12f <- hap1f*hap2f
-###   hapsshed  <- hap12f
-###   ghaplos$p <- hapsshed
-###   ghaplos <- subset(ghaplos,p>0)
-###   ## back to characters for indentification of design
-###   ghaplos$haplo1 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo1])
-###   ghaplos$haplo2 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo2])
-###   ptot <- sumstrata(ghaplos$p,ghaplos$id-1,n)
-###   ghaplos$p <- ghaplos$p/ptot[ghaplos$id]
-###
-###sud$time <- sud$times
-###Xdes <- model.matrix(~factor(time),sud)
-###colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
-###X <- dkeep(sud,~id+y+time)
-###X <- cbind(X,Xdes)
-###Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
-###dtable(Haplos,~"haplo*",level=1)
-######Haplos
-######
-###y <- "y"
-###time.name="time"
-###desnames=paste("X",1:6,sep="")
-######
-######
-###mm <- system.time(
-###mud <- haplo.surv.discrete(X=X,y="y",time.name="time",##design.only=TRUE,
-###		  Haplos=Haplos,designfunc=designftypes,desnames=desnames)
-###)
-###
-###   ### max haplo-type
-###   Haplos$nhaplo1 <- as.numeric(Haplos$haplo1)
-###   Haplos$nhaplo2 <- as.numeric(Haplos$haplo2)
-###   dsort(Haplos) <- ~id+nhaplo1+nhaplo2-p
-###   Haplos <- count.history(Haplos,status="p",types="1")
-###   mHaplos <- subset(Haplos,lbnr__id==1)
-###   bothid <- intersect(X$id, mHaplos$id)
-###   X <- subset(X, id %in% bothid)
-###   mHaplos <- subset(mHaplos, id %in% bothid)
-###   Xhap <- merge(X, mHaplos, by.x = "id", by.y = "id")
-###   mm <- grep("haplo*", names(Xhap))
-###   X <- t(as.matrix(apply(Xhap[, mm], 1, designftypes)))
-###   ###
-###   mmud <- glm(y~factor(time)+X,data=Xhap,family=binomial())
-###
-###ud <- list(coef=mud$coef,se=mud$se,se.robust=mud$se.robust,mcoef=mmud$coef,kcoef=ssud$coef)
-###return(ud)
-###} ## }}} 
-###
-
 ##' Discrete time to event interval censored data 
 ##'
 ##' \deqn{
@@ -622,7 +538,6 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   if (!is.null(intpos  <- attributes(Terms)$intercept))
   X <- X[,-intpos,drop=FALSE]
   if (ncol(X)>0) X.names <- colnames(X) else X.names <- NULL
-###  if (ncol(X)==0) X <- NULL 
 
   if (!is.null(id)) {
 	  ids <- unique(id)
@@ -636,8 +551,6 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
 
   ## times 1 -> mutimes , 0 til start
   utimes <- sort(unique(c(time2,entrytime)))
-### time2 <- fast.approx(utimes,time2)-1
-### entrytime <- fast.approx(utimes,entrytime)-1
   mutimes <- max(utimes[utimes<Inf])
   n <- length(time2)
   
@@ -818,7 +731,6 @@ hessian <- D2log
   val <- c(list(increment=increment,exp.link=exp.link,ntimes=mutimes,utimes=utimes),val)
 
   class(val) <- c("survd","logistic.survd")
-###  class(val) <- "logit.survd"
   return(val)
 } ## }}} 
 

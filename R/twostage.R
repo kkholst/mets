@@ -344,14 +344,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
          ## from variances to and with sum for all random effects
          if (is.null(var.func)) {
 	 if (var.link==0)  {
-###		 print(c(sp,epar))
              mm <- matrix(-epar*2*sp,length(epar),length(epar))
 	     diag(mm) <- sp^2-epar*2*sp
-###	    print(mm)
 	 } else {
             mm <- -c(epar) %o% c(epar)*2*sp
             diag(mm) <- epar*sp^2-epar^2*2*sp
-###	    print(mm)
 	 }
 	    mm <- mm/sp^4
 	 } else mm  <- numDeriv::hessian(var.func,par)
@@ -377,8 +374,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
     outl$gradient <- outl$score 
     outl$hessian <- outl$Dscore
 
-###    attr(outl,"gradient") <-outl$score
-###    if (oout==0) ret <- c(-1*outl$loglike) else if (oout==1) ret <- sum(outl$score^2) else if (oout==2) ret <- outl else ret <- outl$score
     if (oout==0) ret <- with(outl,structure(outl$loglike,gradient=-gradient,hessian=-hessian))
     else if (oout==1) ret <- outl$gradient 
     else if (oout==2) ret <- outl
@@ -402,7 +397,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
           opt$method <- "nlm"
       }
       cc <- opt$estimate;  ## names(cc) <- colnames(X)
-###      if (!stderr) return(cc)
       oout <- 2
       val <- c(list(coef=cc),obj(opt$estimate))
  } else {oout <- 2; val <- c(list(coef=p),obj(p))}
@@ -448,7 +442,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		  ## t- not needed because using S(T-) for survival already
                   Gbasedt <- Dlamthetal[xx$ord+1,,drop=FALSE]*psurvmarg[xx$ord+1]*rr[xx$ord+1]
                   Gbase <- apply(Gbasedt,2,revcumsumstrata,xx$strata,xx$nstrata)
-###		  print(Gbase)
 
                   if (fixbeta==0) {  ### iid after beta of marginal model
 		     Z <- xx$X
@@ -506,7 +499,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   }
      theta.iid <- val$theta.iid %*% hessi
 ### rownames not set to make more robust
-###     if (is.null(call.secluster)) rownames(theta.iid) <- unique(cluster.call) else rownames(theta.iid) <- unique(se.clusters)
+### if (is.null(call.secluster)) rownames(theta.iid) <- unique(cluster.call) else rownames(theta.iid) <- unique(se.clusters)
      robvar.theta  <- crossprod(theta.iid)
      loglikeiid <- val$loglikeiid
     } else { all.likepairs <- NULL}
@@ -684,30 +677,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
  if (fix.baseline==0)  { #  when baseline is estimated
  if (is.null(cr.models)) stop("give hazard models for different causes, ex cr.models=list(Surv(time,status==1)~+1,Surv(time,status==2)~+1) \n")
 
-###      if (case.control==0 & ascertained==0) { #
-###
-###       	#### organize subject specific random variables and design
-###        ###  for additive gamma model
-###	#
-###	dimt <- dim(theta.des[,,1,drop=FALSE])[-3]
-###	dimr <- dim(random.design[,,,drop=FALSE])
-###	mtheta.des <- array(0,c(dimt,nrow(data)))
-###	mrv.des <- array(0,c(dimr[1]/2,dimr[2],nrow(data)))
-###	nrv.des <- rep(0,nrow(data))
-###	nrv.des[pairs[,1]] <- pairs.rvs
-###	nrv.des[pairs[,2]] <- pairs.rvs
-###	mtheta.des[,,pairs[,1]] <- theta.des
-###	mtheta.des[,,pairs[,2]] <- theta.des
-###	mrv.des[,,pairs[,1]] <- random.design[1:(dimr[1]/2),,,drop=FALSE]
-###	mrv.des[,,pairs[,2]] <- random.design[(dimr[1]/2+1):dimr[1],,,drop=FALSE]
-###	### array thetades to jump times (subjects)
-###	mtheta.des <- mtheta.des[,,ids,drop=FALSE]
-###	### array randomdes to jump times (subjects)
-###	mrv.des <- mrv.des[,,ids,drop=FALSE]
-###	nrv.des <- pairs.rvs[ids]
-###	#
-###      } #
-
       if (case.control==1 || ascertained==1) { #
 
 ###      print(dim(data)); print(summary(pairs))
@@ -734,7 +703,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 	dcauses       <- lstatus[jumps][st]
 	dcausescase   <- lstatuscase[jumps][st]
 	ids           <- (1:nrow(data1))[jumps][st]
-	###
 	### delayed entry for case because of ascertained sampling
 	### controls are however control probands, and have entry=0
 	entry <- timescase*lstatuscase
@@ -827,7 +795,6 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
           if ( (case.control==1 || ascertained==1) & (convergence.bp==1)) { #  profiles out baseline under case-control/ascertainment sampling
 
 ###	      ## initial values , only one cr.model for survival
-###           Bit <- cbind(Cpred(a[[1]]$cum,dtimesst)[,-1])
              if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
 
              if (ncol(Bit)==0) Bit <- Bit.ini
@@ -841,12 +808,9 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		   d <- max(abs(Bit-cncc$B))
 		   if (detail>1) print(d)
 		   Bit <- cncc$B
-###		   if (detail>1) print(c(par,epar,partheta));
-###		   if (detail>1) print(summary(Bit));
 		   if (detail>1) print(summary(cncc$caseweights))
 		   cum1 <- cbind(dtimesst,cncc$B)
 		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
-###		   if (detail>1) print(summary(Bitcase))
 		   if (detail>1) lines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
 			  if (shut.up==0) cat("Baseline profiler gives missing values\n");
@@ -1285,626 +1249,6 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 }
 
 
-###survival.twostage <- function(margsurv,data=parent.frame(),
-###    method="nr",Nit=60,detail=0,clusters=NULL,
-###    silent=1,weights=NULL, control=list(),theta=NULL,theta.des=NULL,
-###    var.link=1,iid=1,step=0.5,model="clayton.oakes",
-###    marginal.trunc=NULL,marginal.survival=NULL,marginal.status=NULL,strata=NULL,
-###    se.clusters=NULL,numDeriv=0,
-###    random.design=NULL, pairs=NULL,dim.theta=NULL,
-###    numDeriv.method="simple",additive.gamma.sum=NULL,var.par=1,cr.models=NULL,
-###    case.control=0,ascertained=0,shut.up=0)
-###{#
-#### seting up design and variables
-###two.stage <- 1; rate.sim <- 1; sym=1; var.func <- NULL
-###if (model=="clayton.oakes" || model=="gamma") dep.model <- 1
-###else if (model=="plackett" || model=="or") dep.model <- 2
-###else stop("Model must by either clayton.oakes or plackett \n");
-###start.time <- NULL; ptrunc <- NULL; psurvmarg <- NULL; status <- NULL; score.iid <- NULL
-###fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler converges
-###
-###  if ((!is.null(margsurv)) | (!is.null(marginal.survival))) fix.baseline <- 1
-###  antpers <- nrow(data); RR <-  rep(1,antpers);
-###
-###  if (!is.null(margsurv)) {
-###     rrr <-  readmargsurv(margsurv,data,clusters)
-###     psurvmarg <- rrr$psurvmarg; ptrunc <- rrr$ptrunc; start.time <- rrr$entry;
-###     time2 <- rrr$exit; status <- rrr$status; clusters <- rrr$clusters
-###  }
-###
-###  if (is.null(psurvmarg)) psurvmarg <- rep(1,antpers);
-###  if (!is.null(marginal.survival)) psurvmarg <- marginal.survival
-###  if (!is.null(marginal.trunc)) ptrunc <- marginal.trunc
-###  if (is.null(ptrunc)) ptrunc <- rep(1,length(psurvmarg))
-###  if (!is.null(marginal.status)) status <- marginal.status
-###  if (is.null(status) & is.null(cr.models)) stop("must give status variable for survival via either margninal model (margsurv), marginal.status or as cr.models \n");
-###  if (is.null(weights)==TRUE) weights <- rep(1,antpers);
-###  if (is.null(strata)==TRUE) strata<- rep(1,antpers);
-###  if (length(strata)!=antpers) stop("Strata must have length equal to number of data points \n");
-###
-###  # cluster set up
-###  cluster.call <- clusters
-###  out.clust <- cluster.index(clusters);
-###  clusters <- out.clust$clusters
-###  maxclust <- out.clust$maxclust
-###  antclust <- out.clust$cluster.size
-###  clusterindex <- out.clust$idclust
-###  clustsize <- out.clust$cluster.size
-###  call.secluster <- se.clusters
-###
-###  if (is.null(se.clusters)) { se.clusters <- clusters; antiid <- nrow(clusterindex);} else  {
-###      iids <-  unique(se.clusters);
-###      antiid <- length(iids);
-###      if (is.numeric(se.clusters)) se.clusters <-  fast.approx(iids,se.clusters)-1
-###       else se.clusters <- as.integer(factor(se.clusters, labels = seq(antiid)))-1
-###  }
-###  if (length(se.clusters)!=length(clusters)) stop("Length of seclusters and clusters must be same\n");
-###
-###  #
-###
-###  ### setting design for random variables, in particular with pairs are given
-###  ddd <- randomDes(dep.model,random.design,theta.des,theta,antpers,additive.gamma.sum,pairs,var.link,clusterindex,dim.theta)
-###  random.design=ddd$random.design;clusterindex=ddd$clusterindex;
-###  antpairs=ddd$antpairs; pairs.rvs=ddd$pairs.rvs;
-###  theta=ddd$theta;ptheta=ddd$ptheta;theta.des=ddd$theta.des
-###  pair.structure=ddd$pair.structure; dep.model=ddd$dep.model
-###  dim.rv <- ddd$dim.rv; additive.gamma.sum=ddd$additive.gamma.sum
-###
-###  theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta);
-###  #
-###
-######  setting up arguments for Aalen baseline profile estimates
-### if (fix.baseline==0)  { #  when baseline is estimated
-### if (is.null(cr.models)) stop("give hazard models for different causes, ex cr.models=list(Surv(time,status==1)~+1,Surv(time,status==2)~+1) \n")
-###
-###      if (case.control==0 & ascertained==0) { #
-###
-###       	#### organize subject specific random variables and design
-###        ###  for additive gamma model
-###	#
-###	dimt <- dim(theta.des[,,1,drop=FALSE])[-3]
-###	dimr <- dim(random.design[,,,drop=FALSE])
-###	mtheta.des <- array(0,c(dimt,nrow(data)))
-###	mrv.des <- array(0,c(dimr[1]/2,dimr[2],nrow(data)))
-###	nrv.des <- rep(0,nrow(data))
-###	nrv.des[pairs[,1]] <- pairs.rvs
-###	nrv.des[pairs[,2]] <- pairs.rvs
-###	mtheta.des[,,pairs[,1]] <- theta.des
-###	mtheta.des[,,pairs[,2]] <- theta.des
-###	mrv.des[,,pairs[,1]] <- random.design[1:(dimr[1]/2),,,drop=FALSE]
-###	mrv.des[,,pairs[,2]] <- random.design[(dimr[1]/2+1):dimr[1],,,drop=FALSE]
-###	### array thetades to jump times (subjects)
-###	mtheta.des <- mtheta.des[,,ids,drop=FALSE]
-###	### array randomdes to jump times (subjects)
-###	mrv.des <- mrv.des[,,ids,drop=FALSE]
-###	nrv.des <- pairs.rvs[ids]
-###	#
-###      } #
-###
-###      if (case.control==1 || ascertained==1) { #
-###
-######      print(dim(data)); print(summary(pairs))
-###         data1 <-        data[pairs[,1],]
-###         data.proband <- data[pairs[,2],]
-###	 weights1 <-     weights[pairs[,1]]
-######	print(summary(data.proband)); print(summary(data1))
-###
-#### setting up designs for jump times
-###        timestatus <- all.vars(cr.models[[1]])
-###        if (is.null(status)) status <- data[,timestatus[2]]
-###	alltimes      <- data[,timestatus[1]]
-###	times         <- data1[,timestatus[1]]
-###	lstatus       <- data1[,timestatus[2]]
-###	timescase     <- data.proband[,timestatus[1]]
-###	lstatuscase   <- data.proband[,timestatus[2]]
-###	### organize increments according to overall jump-times
-###	jumps         <- lstatus!=0
-###	dtimes        <- times[jumps]
-###	dtimescase    <- timescase[jumps]
-###	st            <- order(dtimes)
-###	dtimesst      <- dtimes[st]
-###	dtimesstcase  <- dtimescase[st]
-###	dcauses       <- lstatus[jumps][st]
-###	dcausescase   <- lstatuscase[jumps][st]
-###	ids           <- (1:nrow(data1))[jumps][st]
-###	###
-###	### delayed entry for case because of ascertained sampling
-###	### controls are however control probands, and have entry=0
-###	entry <- timescase*lstatuscase
-###	data1$entry <- entry
-###	cr.models2 <- list()
-###	if (ascertained==1) {
-###           for (i in 1:length(cr.models)) {
-###	      cr.models2[[i]] <- update(cr.models[[i]],as.formula(paste("Surv(entry,",timestatus[1],",",timestatus[2],")~.",sep="")))
-###	    }
-###	} else cr.models2 <- cr.models
-###
-###        nc <- 0
-###	for (i in 1:length(cr.models)) {
-###              X <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
-###	      nc <- nc+ncol(X)
-###	}
-###	dBaalen    <- matrix(0,length(dtimes),nc)
-###	xjump      <- array(0,c(length(cr.models),nc,length(ids)))
-###	xjumpcase  <- array(0,c(length(cr.models),nc,length(ids)))
-###
-###	## first compute marginal aalen models for all causes
-###	a <- list(); da <- list();
-###        ### starting values for iteration
-###        Bit <- Bitcase <- c()
-###	for (i in 1:length(cr.models)) { #
-###	      a[[i]]  <-  aalen(as.formula(cr.models2[[i]]),data=data1,robust=0,weights=weights1)
-###	      da[[i]] <- apply(a[[i]]$cum[,-1,drop=FALSE],2,diff)
-###	      jumpsi  <- (1:length(dtimes))[dcauses==i]
-###              X       <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
-###              Xcase   <- aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
-###	      if (i==1) fp <- 1
-###	      indexc  <- fp:(fp+ncol(X)-1)
-###	      dBaalen[jumpsi,indexc] <- da[[i]]
-###              xjump[i,indexc,]       <- t(X[ids,])
-###              xjumpcase[i,indexc,]   <- t(Xcase[ids,])
-###	      fp <- fp+ncol(X)
-###	      ### starting values
-###	      Bit <- cbind(Bit,Cpred(a[[i]]$cum,dtimesst)[,-1,drop=FALSE])
-###       } #
-###       Bit.ini <- Bit
-###       #
-###
-#######  organize subject specific random variables and design
-#######  already done in basic pairwise setup
-###	mtheta.des <- theta.des[ids,drop=FALSE]
-###	### array randomdes to jump times (subjects)
-###	mrv.des <- random.design[ids,drop=FALSE]
-###	nrv.des <- pairs.rvs[ids]
-###      } #
-###
-### }  else {
-###	 mrv.des <- mtheta.des <- margthetades <- matrix(0,1,1);
-###	 xjump <- dBaalen <- matrix(0,1,1); nrv.des <- 3
-### } #
-###
-###  loglike <- function(par)
-###  { #
-###
-###     if (pair.structure==0 | dep.model!=3) Xtheta <- as.matrix(theta.des) %*% matrix(c(par),nrow=ptheta,ncol=1);
-###     if (pair.structure==1 & dep.model==3) Xtheta <- matrix(0,antpers,1); ## not needed
-###
-###      if (var.link==1 & dep.model==3) epar <- c(exp(par)) else epar <- c(par)
-###      partheta <- epar
-###
-###      if (var.par==1 & dep.model==3) {
-###	 ## from variances to
-###	 if (is.null(var.func)) {
-###	    sp <- sum(epar)
-###	    partheta <- epar/sp^2
-###         } else partheta <- epar ## par.func(epar)
-###      }
-###
-###      if (pair.structure==0) {
-###	      outl<-.Call("twostageloglikeRV", # only two stage model for this option
-###	      icause=status,ipmargsurv=psurvmarg,
-###	      itheta=c(partheta), ithetades=theta.des,
-###	      icluster=clusters,iclustsize=clustsize,iclusterindex=clusterindex,
-###	      ivarlink=var.link,iid=iid,iweights=weights,isilent=silent,idepmodel=dep.model,
-###	      itrunkp=ptrunc,istrata=as.numeric(strata),iseclusters=se.clusters,iantiid=antiid,
-###	      irvdes=random.design,iags=additive.gamma.sum,iascertained=ascertained,
-###              PACKAGE="mets") #
-###      }
-###      else { # pair-structure
-###	     ## twostage model,    case.control option,   profile out baseline
-###	     ## conditional model, case.control option,   profile out baseline
-###         if (fix.baseline==0) ## if baseline is not given
-###         {
-###          cum1 <- cbind(dtimesst,Bit)
-###          if ( (case.control==1 || ascertained==1) & (convergence.bp==1)) { #  profiles out baseline under case-control/ascertainment sampling
-###
-######	      ## initial values , only one cr.model for survival
-######           Bit <- cbind(Cpred(a[[1]]$cum,dtimesst)[,-1])
-###             if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
-###
-###             if (ncol(Bit)==0) Bit <- Bit.ini
-###             Bitcase  <- Cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
-###             Bitcase <- .Call("MatxCube",Bitcase,dim(xjumpcase),xjumpcase,PACKAGE="mets")$X
-###
-###             for (j in 1:5) { # profile via iteration
-###                   cncc <- .Call("BhatAddGamCC",1,dBaalen,dcauses,dim(xjump),xjump,
-###		                 c(partheta),dim(mtheta.des),mtheta.des,additive.gamma.sum,var.link,
-###				 dim(mrv.des),mrv.des,nrv.des,1,Bit,Bitcase,dcausescase,PACKAGE="mets")
-###		   d <- max(abs(Bit-cncc$B))
-###		   if (detail>1) print(d)
-###		   Bit <- cncc$B
-######		   if (detail>1) print(c(par,epar,partheta));
-######		   if (detail>1) print(summary(Bit));
-###		   if (detail>1) print(summary(cncc$caseweights))
-###		   cum1 <- cbind(dtimesst,cncc$B)
-###		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
-######		   if (detail>1) print(summary(Bitcase))
-###		   if (detail>1) lines(dtimesst,Bit,col=j+1);
-###		   if (is.na(d)) {
-###			  if (shut.up==0) cat("Baseline profiler gives missing values\n");
-###		          Bit <- Bit.ini; cum1 <- cbind(dtimesst,Bit); convergence.bp <<- 0; break;
-###		   }
-###		   Bitcase <- .Call("MatxCube",Bitcase,dim(xjumpcase),xjumpcase,PACKAGE="mets")$X
-###		   if (d<0.00001) break;
-###           } #
-###
-###
-###	   nulrow    <- rep(0,ncol(Bit)+1)
-###	   pbases    <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
-###           X         <- aalen.des(as.formula(cr.models[[1]]),data=data)$X
-###	   psurvmarg <- exp(-apply(X*pbases,1,sum))  ## psurv given baseline
-###	   if (ascertained==1) {
-###              Xcase     <- aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
-###              X         <- aalen.des(as.formula(cr.models[[1]]),data=data1)$X
-###	      pba.case  <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
-###	      ptrunc    <- rep(0,nrow(data))
-###	      ### for control probands ptrunc=1, thus no adjustment
-###	      ptrunc[pairs[,1]]     <- exp(-apply(X*    pba.case,1,sum)*lstatuscase) ## delayed entry at time of ascertainment proband
-### 	      ptrunc[pairs[,2]]     <- exp(-apply(Xcase*pba.case,1,sum)*lstatuscase)
-###	   }
-###
-###          } #
-###          }
-###
-###
-###          outl<-.Call("twostageloglikeRVpairs", #
-###          icause=status,ipmargsurv=psurvmarg,
-###          itheta=c(partheta),
-######	  iXtheta=Xtheta,iDXtheta=DXtheta,idimDX=dim(DXtheta),
-###	  ithetades=theta.des,
-###          icluster=clusters,iclustsize=clustsize,iclusterindex=clusterindex,
-###          ivarlink=var.link,iiid=iid,iweights=weights,isilent=silent,idepmodel=dep.model,
-###          itrunkp=ptrunc,istrata=as.numeric(strata),iseclusters=se.clusters,iantiid=antiid,
-###          irvdes=random.design, iags=additive.gamma.sum,
-###	  iascertained=ascertained,PACKAGE="mets")
-###	  #
-###
-###          if (fix.baseline==0)  {
-###              outl$baseline <- cum1;
-###	      outl$marginal.surv <- psurvmarg;
-###	      outl$marginal.trunc <- ptrunc
-###	  }
-###
-###      } #
-###
-###    if (detail==3) print(c(partheta,outl$loglike))
-###
-###    ## variance parametrization, and inverse.link
-###    if (dep.model==3) {
-###    if (var.par==1) {
-###         ## from variances to and with sum for all random effects
-###         if (is.null(var.func)) {
-###	 if (var.link==0)  {
-######		 print(c(sp,epar))
-###             mm <- matrix(-epar*2*sp,length(epar),length(epar))
-###	     diag(mm) <- sp^2-epar*2*sp
-######	    print(mm)
-###	 } else {
-###            mm <- -c(epar) %o% c(epar)*2*sp
-###            diag(mm) <- epar*sp^2-epar^2*2*sp
-######	    print(mm)
-###	 }
-###	    mm <- mm/sp^4
-###	 } else mm  <- numDeriv::hessian(var.func,par)
-###      } else {
-###	   if (var.link==0) mm <- diag(length(epar)) else
-###			  mm <- diag(length(c(epar)))*c(epar)
-###      }
-###      }
-###
-###    if (dep.model==3) {
-###       outl$score <-  t(mm) %*% outl$score
-###       outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
-###       if (iid==1) { outl$score.iid <- t(t(mm) %*% t(outl$score.iid))
-###               if (class(margsurv)=="phreg") {
-###	          outl$D1thetal  <- t(t(mm) %*% t(outl$D1thetal))
-###	          outl$D2thetal  <- t(t(mm) %*% t(outl$D2thetal))
-###	       }
-###       }
-###    }
-###
-###    attr(outl,"gradient") <-outl$score
-###    if (oout==0) ret <- c(-1*outl$loglike) else if (oout==1) ret <- sum(outl$score^2) else if (oout==2) ret <- outl else ret <- outl$score
-###    return(ret)
-###  } #
-###
-###  if (score.method=="optimize" && ptheta!=1) {
-###     cat("optimize only works for d==1, score.mehod set to nlminb \n");
-###     score.method <- "nlminb";
-###  }
-###
-###  score1 <- NULL
-###  theta.iid <- NULL
-###  logl <- NULL
-###  p <- theta
-###
-###    if (score.method=="nr") { #
-###        oout <- 2;  ### output control for obj
-###        if (Nit>0)
-###            for (i in 1:Nit)
-###            {
-###                    out <- loglike(p)
-###		    ## updating starting values for cumulative baselines
-###		    if (fix.baseline==0) Bit <- out$baseline[,-1,drop=FALSE]
-###		    if (fix.baseline==1) hess <-  out$Dscore
-###                    ###  uses simple second derivative for computing derivative of score
-###		    if (numDeriv==2 || (((fix.baseline==0)) & (i==1))) {
-###			    oout <- 3
-###			    hess <- numDeriv::jacobian(loglike,p,method="simple")
-###			    oout <- 2
-###		    }
-###                    if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- hess
-###                    if (detail==1) {#
-###                        cat(paste("Fisher-Scoring ===================: it=",i,"\n"));
-###                        cat("theta:");print(c(theta))
-###                        cat("loglike:");cat(c(out$loglike),"\n");
-###                        cat("score:");cat(c(out$score),"\n");
-###                        cat("hess:\n"); cat(hess,"\n");
-###                    }#
-###                    delta <- step*( hessi %*% out$score )
-###		    ### update p, but note that score and derivative in fact related to previous p
-###		    ### unless Nit=0,
-###	            if (Nit>0) {
-###                    p <- p - delta
-###                    theta <- p;
-###		    }
-###                    if (is.nan(sum(out$score))) break;
-###                    if (sum(abs(out$score))<0.00001) break;
-###                    if (max(theta)>20 & var.link==1) { cat("theta too large lacking convergence \n"); break; }
-###           }
-###        if (!is.nan(sum(p))) {
-###            if (detail==1 && iid==1) cat("iid decomposition\n");
-###            out <- loglike(p)
-###            logl <- out$loglike
-###            score1 <- score <- out$score
-###            oout <- 0;
-###            hess1 <- hess  <- -1*out$Dscore
-###           if (iid==1) {  #
-###		score.iid <- out$score.iid
-###		out$theta.iid <- score.iid
-###		theta.iid <- score.iid
-###		ucc <-  unique(cluster.call)
-###		if (length(ucc)== nrow(theta.iid))
-###		    rownames(theta.iid) <- unique(cluster.call)
-###		### lets iid for theta be just score to start, correction for marginal for phreg call
-###
-###                if (class(margsurv)=="phreg") {  #
-###
-###                  if (is.null(margsurv$opt) | is.null(margsurv$coef)) fixbeta<- 1 else fixbeta <- 0
-###		  xx <- margsurv$cox.prep
-###                  id  <-  xx$id+1
-###		  cumhazt <- c(rrr$cum)
-###		  rr <- c(rrr$RR)
-###
-######		  print(clusters)
-######		  print(clusterindex)
-###
-###		  ## these refers to id given in cluster.call
-###		  xx <- margsurv$cox.prep
-###		  D1thetal<- out$D1thetal
-###		  D2thetal<- out$D2thetal
-###		  Dlamthetal <- -(D1thetal+D2thetal)
-###		  ## ordered as original data
-###                  Fbeta <- t(Dlamthetal) %*% (margsurv$X *cumhazt*psurvmarg*rr)
-###
-###                  ### timeordered
-######               Gbasem <- apply(-Dlamthetal[xx$ord+1,,drop=FALSE]*psurvmarg[xx$ord+1]*rr[xx$ord+1],2,cumsumstratasum,xx$strata,xx$nstrata,type="lagsum")
-###		  ## t- not needed because using S(T-) for survival already
-###                  Gbasedt <- Dlamthetal[xx$ord+1,,drop=FALSE]*psurvmarg[xx$ord+1]*rr[xx$ord+1]
-######                  Gbase <- apply(Gbasedt,2,cumsumstrata,xx$strata,xx$nstrata) ## new
-###                  Gbase <- apply(Gbasedt,2,revcumsumstrata,xx$strata,xx$nstrata)
-######		  print(c(Gbase)); print(Fbeta)
-###
-###                  if (fixbeta==0) {  iid after beta of marginal model
-###		     Z <- xx$X
-###		     U <- E <- matrix(0,nrow(xx$X),margsurv$p)
-###		     E[xx$jumps+1,] <- margsurv$E
-###		     U[xx$jumps+1,] <- margsurv$U
-###		     invhess <- -solve(margsurv$hessian)
-###		     S0i <- rep(0,length(xx$strata))
-###		     S0i[xx$jumps+1] <- 1/margsurv$S0
-###		     cumhaz <- c(cumsumstrata(S0i,xx$strata,xx$nstrata))
-###		     EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-###	             rr <- c(xx$sign*exp(Z %*% coef(margsurv) + xx$offset))
-###		     ### Martingale for all subjects
-###		     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
-###		     UUbeta <- apply(MGt,2,sumstrata,id-1,max(id))
-###		     UUbeta <- UUbeta %*% invhess
-###		     GbaseEdLam0 <- t(Gbasedt) %*% (E*S0i)
-###		     Fbeta   <-  Fbeta +  GbaseEdLam0
-###		     Fbetaiid <- UUbeta %*% t(Fbeta)
-###	          }
-###
-###	  ###  \int_0^\tau (GBase(s) / S_0(s)) dN_i(s) - dLamba_i(s)
-###	  xx <- margsurv$cox.prep
-###	  S0i  <- S0i2 <- rep(0,length(xx$strata))
-###	  S0i[xx$jumps+1] <- 1/margsurv$S0
-###	  S0i2[xx$jumps+1] <- 1/margsurv$S0^2
-###
-######	  dN <- S0i; dLam0 <- cumsumstrata(S0i2,xx$strata,xx$nstrata)
-###
-###	  GbasedN <- Gbase*S0i
-###	  GbasedLam0 <- apply(Gbase*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-###
-###	  if (fixbeta==0) rr <- c(xx$sign*exp(Z %*% coef(margsurv) + xx$offset)) else rr <- c(xx$sign*exp( xx$offset))
-###	  MGt <- (GbasedN[,drop=FALSE]-GbasedLam0*rr)*c(xx$weights)
-###	  MGti <- apply(MGt,2,sumstrata,id-1,max(id))
-######	  if (fixbeta==1) uxid <- unique(margsurv$id)
-######	  rownames(MGti) <- uxid
-###
-###	  theta.iid <-  -theta.iid + MGti
-###	  if (fixbeta==0) theta.iid <-  theta.iid + Fbetaiid
-###	  ## add id's after rownames that may not be exactly the same in marginal model and in pairs for fitting
-######	  if (all.equal(uxid,ucc)==TRUE) {
-######	     theta.iid <-  theta.iid + MGti
-######	     if (fixbeta==0) theta.iid  <-  theta.iid - Fbetaiid
-######	  } else {
-######	     allid <-  unique(c(uxid,ucc))
-######	     theta.iid <- matrix(0,length(allid),ncol(theta.iid))
-######	     rownames(theta.iid) <- allid
-######	     theta.iid[rownames(score.iid),] <- score.iid
-######	     theta.iid[rownames(MGti),] <- theta.iid[rownames(MGti),] + MGti
-######	     if (fixbeta==0) theta.iid[rownames(MGti),] <-  theta.iid[rownames(MGti),]+Fbetaiid
-######	  }
-###
-###	  out$theta.iid <- -theta.iid
-###	  } #
-###   } #
-###
-###
-###            if (detail==1 && iid==1) cat("finished iid decomposition\n");
-###	    ### for profile solutions update second derivative at final
-###	    if (numDeriv==2 || ((fix.baseline==0))) {
-###                    oout <- 3
-###                    hess <- numDeriv::jacobian(loglike,p,method="simple")
-###		    oout <- 2
-###		    }
-###        }
-###        if (numDeriv>=1) {
-###            if (detail==1 ) cat("starting numDeriv for second derivative \n");
-###            oout <- 0;
-###            score2 <- numDeriv::jacobian(loglike,p)
-###	    score1 <- matrix(score2,ncol=1)
-###            oout <- 3
-###            hess <- numDeriv::jacobian(loglike,p,method="simple")
-###            if (detail==1 ) cat("finished numDeriv for second derivative \n");
-###        }
-###        if (detail==1 & Nit==0) {#
-###            cat(paste("Fisher-Scoring ===================: final","\n"));
-###            cat("theta:");print(c(p))
-###            cat("loglike:");cat(c(out$loglike),"\n");
-###            cat("score:");cat(c(out$score),"\n");
-###            cat("hess:\n"); cat(hess,"\n");
-###        }#
-###        if (!is.na(sum(hess))) hessi <- lava::Inverse(hess) else hessi <- diag(nrow(hess))
-###        #
-###  } else if (score.method=="nlminb") { # nlminb optimizer
-###    oout <- 0;
-###    tryCatch(opt <- nlminb(theta,loglike,control=control),error=function(x) NA)
-###    if (detail==1) print(opt);
-###    if (detail==1 && iid==1) cat("iid decomposition\n");
-###    oout <- 2
-###    theta <- opt$par
-###    out <- loglike(opt$par)
-###    logl <- out$loglike
-###    score1 <- score <- out$score
-###    hess1 <- hess <- -1* out$Dscore
-###    if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
-###    if (numDeriv==1) {
-###    if (detail==1 ) cat("numDeriv hessian start\n");
-###      oout <- 3; ## returns score
-###      hess <- numDeriv::jacobian(loglike,opt$par)
-###    if (detail==1 ) cat("numDeriv hessian done\n");
-###    }
-###    hessi <- lava::Inverse(hess);
-###  #
-###  } else if (score.method=="optimize" && ptheta==1) { #  optimizer
-###    oout <- 0;
-###    if (var.link==1) {mino <- -20; maxo <- 10;} else {mino <- 0.001; maxo <- 100;}
-###    tryCatch(opt <- optimize(loglike,c(mino,maxo)));
-###    if (detail==1) print(opt);
-###    opt$par <- opt$minimum
-###    theta <- opt$par
-###    if (detail==1 && iid==1) cat("iid decomposition\n");
-###    oout <- 2
-###    out <- loglike(opt$par)
-###    logl <- out$loglike
-###    score1 <- score <- out$score
-###    hess1 <- hess <- -1* out$Dscore
-###    if (numDeriv==1) {
-###    if (detail==1 ) cat("numDeriv hessian start\n");
-###      oout <- 3;  ## to get jacobian
-###      hess <- numDeriv::jacobian(loglike,theta)
-###    if (detail==1 ) cat("numDeriv hessian done\n");
-###    }
-###    hessi <- lava::Inverse(hess);
-###    if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
-###  #
-###  } else if (score.method=="nlm") { # nlm optimizer
-###    iid <- 0; oout <- 0;
-###    tryCatch(opt <- nlm(loglike,theta,hessian=TRUE,print.level=detail),error=function(x) NA)
-###    iid <- 1;
-###    hess <- opt$hessian
-###    score <- opt$gradient
-###    if (detail==1) print(opt);
-###    hessi <- lava::Inverse(hess);
-###    theta <- opt$estimate
-###    if (detail==1 && iid==1) cat("iid decomposition\n");
-###    oout <- 2
-###    out <- loglike(opt$estimate)
-###    logl <- out$loglike
-###    score1 <- out$score
-###    hess1 <- out$Dscore
-###    if (iid==1) { theta.iid <- out$score.iid; score.iid <- out$score.iid }
-###  #
-###  }  else stop("score.methods = optimize(dim=1) nlm nlminb nr\n");
-###
-#### handling output
-###  loglikeiid <- NULL
-###  robvar.theta <- NULL
-###  likepairs <- NULL
-###  if (fix.baseline==1)  { marginal.surv <- psurvmarg; marginal.trunc <- ptrunc; } else { marginal.surv <- out$marginal.surv; marginal.trunc <- out$marginal.trunc;}
-###
-###  if (iid==1) {
-###  if (dep.model==3 & pair.structure==1) likepairs <- out$likepairs
-###  if (dep.model==3 & two.stage==0) {
-###	  hessi <- -1*hessi
-###	  all.likepairs <- out$all.likepairs
-###	  colnames(all.likepairs) <- c("surv","dt","ds","dtds","cause1","cause2")
-###  }
-###     theta.iid <- -out$theta.iid %*% hessi
-###### rownames not set to make more robust
-######     if (is.null(call.secluster)) rownames(theta.iid) <- unique(cluster.call) else rownames(theta.iid) <- unique(se.clusters)
-###     robvar.theta  <- crossprod(theta.iid)
-###     loglikeiid <- out$loglikeiid
-###    } else { all.likepairs <- NULL}
-###  var.theta <- robvar.theta
-###  if (is.null(robvar.theta)) var.theta <- hessi
-###
-###  if (!is.null(colnames(theta.des))) thetanames <- colnames(theta.des) else thetanames <- paste("dependence",1:length(theta),sep="")
-###  theta <- matrix(theta,length(c(theta)),1)
-###  if (length(thetanames)==nrow(theta)) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
-###  if (!is.null(logl)) logl <- -1*logl
-###
-###  if (convergence.bp==0) theta <- rep(NA,length(theta))
-###  ud <- list(theta=theta,score=score,hess=hess,hessi=hessi,var.theta=var.theta,
-###	     model=model,robvar.theta=robvar.theta,
-###             theta.iid=theta.iid,loglikeiid=loglikeiid,likepairs=likepairs,
-###	     thetanames=thetanames,loglike=logl,score1=score1,Dscore=out$Dscore,
-###	     marginal.surv=marginal.surv,marginal.trunc=marginal.trunc,
-###	     baseline=out$baseline,se=diag(robvar.theta)^.5,
-###	     score.iid=-score.iid,theta.des=theta.des,random.design=random.design)
-###  class(ud) <- "mets.twostage"
-###  attr(ud,"response") <- "survival"
-###  attr(ud,"Formula") <- formula
-###  attr(ud,"clusters") <- clusters
-###  attr(ud,"cluster.call") <- cluster.call
-###  attr(ud,"secluster") <- c(se.clusters)
-###  attr(ud,"sym")<-sym;
-###  attr(ud,"var.link")<-var.link;
-###  attr(ud,"var.par")<-var.par;
-###  attr(ud,"var.func")<-var.func;
-###  attr(ud,"ptheta")<-ptheta
-###  attr(ud,"antpers")<-antpers;
-###  attr(ud,"antclust")<-antclust;
-###  attr(ud,"Type") <- model
-###  attr(ud,"twostage") <- two.stage
-###  attr(ud,"additive-gamma") <- (dep.model==3)*1
-###  if (!is.null(marginal.trunc)) attr(ud,"trunclikeiid")<- out$trunclikeiid
-###  if (dep.model==3 & two.stage==0) attr(ud,"all.likepairs")<- all.likepairs
-###  if (dep.model==3 ) attr(ud,"additive.gamma.sum") <- additive.gamma.sum
-###  #likepairs=likepairs,##  if (dep.model==3 & pair.structure==1) attr(ud, "likepairs") <- c(out$likepairs)
-###  if (dep.model==3 & pair.structure==0) attr(ud, "pardes") <-    theta.des
-###  if (dep.model==3 & pair.structure==0) attr(ud, "theta.des") <- theta.des
-###
-###  if (dep.model==3 & pair.structure==1) attr(ud, "pardes") <-    theta.des[,,1]
-###  if (dep.model==3 & pair.structure==1) attr(ud, "theta.des") <- theta.des[,,1]
-###  if (dep.model==3 & pair.structure==0) attr(ud, "rv1") <- random.design[1,]
-###  if (dep.model==3 & pair.structure==1) attr(ud, "rv1") <- random.design[,,1]
-###  return(ud);
-###  #
-###
-###} #
 
 ##' @export
 readmargsurv <- function(margsurv,data,clusters)
@@ -1942,8 +1286,6 @@ if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") {
 		 else start.time <- rep(0,antpers);
 		 status <- rr$status
 	         if (is.null(clusters)) clusters <- rr$clusters
-###		 clusters <- rr$clusters
-###		 print(lapply(rr,summary))
 	
 } else { ### coxph 
 	  antpers <- margsurv$n
@@ -1960,7 +1302,6 @@ if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") {
 		 time2 <- Y[, 2];
 		 status <- Y[, 3];
 		}
-###	   Z <- na.omit(model.matrix(margsurv)[,-1]) ## Discard intercept
 	   Z <- matrix(1,antpers,length(coef(margsurv)));
 
 	   if (is.null(clusters)) stop("must give clusters for coxph\n");
@@ -2148,7 +1489,6 @@ l1 <- sumstrata(log(1+thetav*Nsum$lagsum)*statusxx,xx$id,mid)
 l2 <- sumstrata(statusxx*H,xx$id,mid)
 l3 <- -((thetai)^{-1}+Ni.tau) * log(R)
 logliid <- (l1 + thetai* l2 + l3)*c(weights)
-###cbind(logliid,fit2$loglikeiid,Ni.tau)
 logl <- sum(logliid)
 ploglik <- logl
 
@@ -2757,32 +2097,10 @@ if (!is.null(margsurv))  {
 	nrv.des <- pairs.rvs[ids]
 	#
 
-###       	#### organize subject specific random variables and design
-###        ###  for additive gamma model
-###	#
-###	dimt <- dim(theta.des[,,1])
-###	dimr <- dim(random.design[,,])
-###	mtheta.des <- array(0,c(dimt,nrow(data)))
-###	mrv.des <- array(0,c(dimr[1]/2,dimr[2],nrow(data)))
-###	mtheta.des[,,pairs[,1]] <- theta.des
-###	mtheta.des[,,pairs[,2]] <- theta.des
-###	mrv.des[,,pairs[,1]] <- random.design[1:(dimr[1]/2),,,drop=FALSE]
-###	mrv.des[,,pairs[,2]] <- random.design[(dimr[1]/2+1):dimr[1],,,drop=FALSE]
-###	nrv.des <- rep(0,nrow(data))
-###	nrv.des[pairs[,1]] <- pairs.rvs
-###	nrv.des[pairs[,2]] <- pairs.rvs
-###	### array thetades to jump times (subjects)
-###	mtheta.des <- mtheta.des[,,ids,drop=FALSE]
-###	### array randomdes to jump times (subjects)
-###	mrv.des <- mrv.des[,,ids,drop=FALSE]
-###	nrv.des <- pairs.rvs[ids]
-###	#
-
       } #
 
       if (case.control==1 || ascertained==1) { #
 
-###      print(dim(data)); print(summary(pairs))
          data1 <-        data[pairs[,1],]
          data.proband <- data[pairs[,2],]
 	 weights1 <-     weights[pairs[,1]]
@@ -2902,7 +2220,6 @@ if (!is.null(margsurv))  {
           if ( (case.control==1 || ascertained==1) & (convergence.bp==1)) { #  profiles out baseline under case-control/ascertainment sampling
 
 ###	      ## initial values , only one cr.model for survival
-###           Bit <- cbind(Cpred(a[[1]]$cum,dtimesst)[,-1])
              if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
 
              if (ncol(Bit)==0) Bit <- Bit.ini
@@ -2916,12 +2233,9 @@ if (!is.null(margsurv))  {
 		   d <- max(abs(Bit-cncc$B))
 		   if (detail>1) print(d)
 		   Bit <- cncc$B
-###		   if (detail>1) print(c(par,epar,partheta));
-###		   if (detail>1) print(summary(Bit));
 		   if (detail>1) print(summary(cncc$caseweights))
 		   cum1 <- cbind(dtimesst,cncc$B)
 		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
-###		   if (detail>1) print(summary(Bitcase))
 		   if (detail>1) lines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
 			  if (shut.up==0) cat("Baseline profiler gives missing values\n");
@@ -2945,16 +2259,9 @@ if (!is.null(margsurv))  {
 	      ptrunc[pairs[,1]]     <- exp(-apply(X*    pba.case,1,sum)*lstatuscase) ## delayed entry at time of ascertainment proband
  	      ptrunc[pairs[,2]]     <- exp(-apply(Xcase*pba.case,1,sum)*lstatuscase)
 	   }
-###	   print(head(cbind(psurvmarg,ptrunc)))
-###	   print(summary(psurvmarg))
-###	   print(summary(ptrunc))
-###	   print(dim(pbases));
 
           } #
           }
-
-###      browser()
-###      print(dim(random.design))
 
 
           outl<-.Call("twostageloglikeRVpairs", #
@@ -2977,9 +2284,7 @@ if (!is.null(margsurv))  {
       } #
       else { #  survival model two.stage==0
 
-###      cum1 <- cbind(dtimesst,Bit)
 	 entry.cause  <- rep(0,nrow(data))
-###	 proband.time <- rep(0,nrow(data))
 
          ### update aalen type baseline
 	 if (fix.baseline==0)  { #
@@ -3000,7 +2305,6 @@ if (!is.null(margsurv))  {
 		   Bit <- profile.baseline$B
 		   cum1 <- cbind(dtimesst,Bit)
 		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
-###		   matlines(dtimesst,Bit,type="l",col=j+1)
 
 		   if (detail>1) matlines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
@@ -3011,8 +2315,6 @@ if (!is.null(margsurv))  {
                    if (d<0.00001) break;
            } #
 
-###	     print("profile slut");
-###	   plot(cum1); abline(c(0,1))
 
            ### makes cumulative hazard for all subjects
 	   nulrow <- rep(0,ncol(Bit)+1)
@@ -3031,7 +2333,6 @@ if (!is.null(margsurv))  {
 	          if (ascertained==1 || case.control==1) {
                      Xcase     <- aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
                      X         <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
-###		     print(dim(Xcase)); print(dim(pbase.case[,indexc,drop=FALSE]))
 		     ptrunc.new <- rep(0,length(alltimes))
 		     ## delayed entry at time of ascertainment proband, for case control no adjustment for first
 		     if (ascertained==1) ptrunc.new[pairs[,1]] <- apply(X*pbase.case[,indexc,drop=FALSE],1,sum)*lstatuscase
@@ -3052,11 +2353,6 @@ if (!is.null(margsurv))  {
 	  dim(mtheta.des),mtheta.des,
 	  additive.gamma.sum,0,dim(mrv.des),mrv.des,0,matrix(0,1,1),PACKAGE="mets")
 
-###	  print(summary(cbind(dtimesst,profile.baseline$B)))
-###	  matplot(dtimesst,profile.baseline$B,type="l")
-###	  print(head(profile.baseline$B))
-###	  abline(c(0,0.2),col=3)
-###	  abline(c(0,0.4),col=3)
 
 	  marg.model <- "no-cox"
           if (marg.model=="cox") {
@@ -3087,15 +2383,6 @@ if (!is.null(margsurv))  {
 	  } #
 
 	 } #
-
-###	 if (fix.baseline==1) if (is.null(psurvmarg)) stop("must provide baselines or set fix.baseline=0\n");
-
-###	 print("er vi her surv ");
-###	 print(fix.baseline)
-###         print(dim(as.matrix(psurvmarg))); print(dim(as.matrix(ptrunc)))
-###	 print(dim(pairs))
-###	 print(head(pairs))
-###         print(summary(psurvmarg[pairs,])); print(summary(ptrunc[pairs,]))
 
       ### cumulative hazard for this model  when fix.baseline==1
       if (fix.baseline==1 ) {
@@ -3130,14 +2417,11 @@ if (!is.null(margsurv))  {
          ## from variances to and with sum for all random effects
          if (is.null(var.func)) {
 	 if (var.link==0)  {
-###		 print(c(sp,epar))
              mm <- matrix(-epar*2*sp,length(epar),length(epar))
 	     diag(mm) <- sp^2-epar*2*sp
-###	    print(mm)
 	 } else {
             mm <- -c(epar) %o% c(epar)*2*sp
             diag(mm) <- epar*sp^2-epar^2*2*sp
-###	    print(mm)
 	 }
 	    mm <- mm/sp^4
 	 } else mm  <- numDeriv::hessian(var.func,par)
@@ -3147,18 +2431,10 @@ if (!is.null(margsurv))  {
       }
       }
 
-###    print(c(var.link,dep.model,var.par))
-###    print("hh"); print(mm); print(outl$score)
-
     if (dep.model==3) {
-###	    print(dim(mm))
        outl$score <-  t(mm) %*% outl$score
        outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
        if (iid==1) outl$theta.iid <- t(t(mm) %*% t(outl$theta.iid))
-
-###       print(crossprod(outl$theta.iid)); print(outl$Dscore)
-###       print(c(outl$score))
-###       print(apply(outl$theta.iid,2,sum))
     }
 
     attr(outl,"gradient") <-outl$score
@@ -3465,7 +2741,6 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
              e      <-   lava::estimate(coef=theta,vcov=robvar.theta,f=function(p) fp(p,1,1),labels=rownames(theta))
              vare   <-   lava::estimate(coef=theta,vcov=robvar.theta,f=function(p) exp(p),labels=rownames(theta))
              vartot <-   lava::estimate(coef=theta,vcov=robvar.theta,f=function(p) sum(exp(p)))
-###	     names(e) <- names(vare) <- colnames(coefs)
       } else {
               fp <- function(p,d,t) {  res <- (p^t)/(sum(rv1* c(theta.des %*% matrix(p,ncol=1))))^d;
                                      if (t==0) res <- res[1]; return(res); }
@@ -3473,7 +2748,6 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
               pare  <-  lava::estimate(coef=theta,vcov=robvar.theta,f=function(p) fp(p,2,1),labels=rownames(theta))
               vartot <- lava::estimate(coef=theta,vcov=robvar.theta,f=function(p) sum(p))
 	      vare <- NULL
-###	      names(e) <- names(pare) <- colnames(coefs)
 	       } #
       } #
       res <- list(estimates=coefs, type=attr(object,"Type"),h=e,vare=vare,vartot=vartot)
@@ -3485,13 +2759,11 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
 	        res <- list(estimates=coefs,or=or,type=attr(object,"Type"))
 	     } else {
 	        vargam <-  lava::estimate(coef=object$theta,vcov=object$var.theta,f=function(p) exp(p),labels=rownames(theta))
-###             names(vargam) <- colnames(coefs)
                 res <- list(estimates=coefs,vargam=vargam, type=attr(object,"Type"))
 	     }
       } else {
 	     if (model=="or") {
              lor <- lava::estimate(coef=object$theta,vcov=object$var.theta,f=function(p) log(p),labels=rownames(theta))
-###          names(lor) <- colnames(coefs)
 	     res <- list(estimates=coefs,log.or=lor,type=attr(object,"Type"))
 	     } else  {
              res <- list(estimates=coefs,type=attr(object,"Type"))
@@ -3499,7 +2771,6 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
       } #
   }
 
-###  if (attr(object,"twostage")==0)  res <- c(res,list(marginal=marginal))
   class(res) <- "summary.mets.twostage"
   res
 } #
@@ -3701,29 +2972,6 @@ theta.mat <- se.theta.mat <- cor.mat <- score.mat <- se.cor.mat <- matrix(0,nc1-
 clusters <- data[,id]
 cluster.call <- clusters
 idi <- unique(data[,id]);
-###print(head(idi))
-
-#
-###   se.clusters=NULL,max.clust=1000,
-###  evt saette cluster se max.clust paa
-###  if (is.null(se.clusters)) { se.clusters <- clusters; antiid <- nrow(clusterindex);} else  {
-###      iids <-  unique(seclusters);
-###      antiid <- length(iids);
-###      if (is.numeric(seclusters)) se.clusters <-  fast.approx(iids,se.clusters)-1
-###       else se.clusters <- as.integer(factor(se.clusters, labels = seq(antiid)))-1
-###  }
-###  if (length(se.clusters)!=length(clusters)) stop("Length of seclusters and clusters must be same\n");
-###
-###  if ((!is.null(max.clust))) if (max.clust< antiid) {
-###        coarse.clust <- TRUE
-###	qq <- unique(quantile(se.clusters, probs = seq(0, 1, by = 1/max.clust)))
-###	qqc <- cut(se.clusters, breaks = qq, include.lowest = TRUE)
-###	se.clusters <- as.integer(qqc)-1
-###	max.clusters <- length(unique(se.clusters))
-###	maxclust <- max.clust
-###	antiid <- max.clusters
-###  }
-#
 
 if (iid==1) { theta.iid <- matrix(0,length(idi),(nc1-1)*(nc2-1));
               rownames(theta.iid) <- idi
@@ -4121,16 +3369,6 @@ twin.polygen.design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",t
   } #
 
   if (type=="adce") { ### adce #
-###zygdes=model.matrix(~-1+factor(zygbin),prtwomen)
-###n <- nrow(prtwomen)
-###des.rv <- cbind( zygdes[,c(2,1)], (prtwomen$zygbin==0)*(prtwomen$tv==1),
-###	(prtwomen$zygbin==0)*(prtwomen$tv==2),
-###	zygdes[,c(2,1)], (prtwomen$zygbin==0)*(prtwomen$tv==1),
-###	(prtwomen$zygbin==0)*(prtwomen$tv==2),1
-###	)
-###pard <- rbind(c(1,0,0), c(0.25,0,0),c(0.75,0,0), c(0.75,0,0),
-###	      c(0,1,0), c(0,0.5,0),c(0,0.5,0), c(0,0.5,0) ,c(0,0,1))
-###pardes <- matrix(pard,n,27,byrow=TRUE)
   } #
 
   if (type=="de") { ### ae #
@@ -4358,16 +3596,13 @@ EVaddGam <- function(theta,x1,x2,thetades,ags)
 
 	mvar <- pars/lamtot
 	vvar <- pars/lamtot^2
-###	print(pars)
 
 	x1mvar <- sum(x1 * mvar)
 	x2mvar <- sum(x2 * mvar)
 	x1x2vvar <- sum(x1*x2*vvar)
-###	print(x1x2vvar)
 
 	list(x1m=x1mvar,mx2=x2mvar,
 	     dN=x1x2vvar/x2mvar)
-###	     pars=pars,mvar=mvar,vvar=vvar)
 } #
 
 

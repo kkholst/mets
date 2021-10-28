@@ -204,8 +204,6 @@ binomial.twostage <- function(margbin,data=parent.frame(),
         ps <- predict(margbin,newdata=data,type="response")
         if (margbin$family$family!="binomial") warning("not binomial family\n");
         ### takes data to extract response and predictions, these could be different for pairs call
-###     cause <- margbin$y
-###     print(all.vars(margbin$formula)[1])
         cause <- data[,all.vars(margbin$formula)[1]]
 
 	if (!is.numeric(cause)) stop(paste("response in data",margbin$formula)[1],"not numeric\n");
@@ -408,7 +406,6 @@ if (pair.structure==1) {
           opt$method <- "nlm"
       }
       cc <- opt$estimate;  ## names(cc) <- colnames(X)
-###      if (!stderr) return(cc)
       oout <- 2
       val <- c(list(coef=cc),obj(opt$estimate))
  } else val <- c(list(coef=beta),obj(p))
@@ -447,8 +444,6 @@ if (pair.structure==1) {
 
   if (iid==1) var.theta <- robvar.theta else var.theta <- -hessi
   if (!is.null(colnames(theta.des))) thetanames <- colnames(theta.des) else thetanames <- paste("dependence",1:length(theta),sep="")
-### fix names !!!
-###    theta <- matrix(theta,length(c(theta)),1)
    if (length(thetanames)==nrow(theta)) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
 
     ud <- list(coef=val$coef,theta=theta,score=val$gradient,hess=hess,hessi=hessi,
@@ -507,9 +502,6 @@ concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL
 
    ### takes dependence paramter from output
       ptheta <- length(theta)
-###      ptheta <- attr(object,"ptheta")
-###   theta <- object$theta[seq(1,ptheta)]
-###   robvar.theta <- object$robvar.theta[seq(1,ptheta),seq(1,ptheta)]
 
    if (var.par==1) theta <- theta/sum(theta)^2
 
@@ -641,7 +633,6 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
         data0[,outcome] <- data[,outcome]
         data0[cond0,outcome] <- FALSE
         if ((fix.censweights==1 & k==0) | (fix.censweights==0)) time0[cond0] <- tau
-###        if (fix.censweights==0 ) time0[cond0] <- tau
         if ((fix.censweights==1 & k==0) | (fix.censweights==0)) {
 		data0$S <- survival::Surv(time0,status0==1)
 	}
@@ -668,13 +659,9 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 	conc <- c(conc,concordance)
 	cif <- c(cif,prev0)
 	logor <- rbind(logor,coef(b))
-###     res <- c(res,list(coef(b),concordance=concordance,cif=prev0))
     }
-###    if (length(breaks)==1) return(b)
     res <- list(varname="Time",var=breaks,concordance=rev(conc),cif=rev(cif),
 		time=breaks,call=m,type="time",logor=logor[k:1,])
-###	coef=lapply(res,function(x) x$all),
-###    class(res) <- ""
     return(res)
 } ## }}}
 
@@ -1016,7 +1003,6 @@ simbinClaytonOakes.family.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## 
   child2 <- apply(cbind(mother.g[,c(1,3)],father.g[,c(1,3)]),1,sum) + env
   Gam1 <- cbind(mother,father,child1,child2)
   ## }}}
-###  apply(Gam1,2,mean); apply(Gam1,2,var); cor(Gam1)
 
   ## {{{ marginals p's and conditional p's given random effects
   ### marginals p's for mother, father, children
@@ -1024,7 +1010,6 @@ simbinClaytonOakes.family.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## 
   xb2 <- rbinom(K,1,0.5)
   xm <- rbinom(K,1,0.5)
   xf <- rbinom(K,1,0.5)
-###
 ###
   if (is.null(beta)) beta <- rep(0.3,4)
   if (is.null(alpha)) alpha <- rep(0.5,4)
@@ -1046,7 +1031,6 @@ simbinClaytonOakes.family.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## 
 
   ud <- data.frame(ybin=c(Ybin),x=c(t(xs)),type=type,cluster=rep(1:K,each=n))
 
-###names(ud)<-c("ybin","x","cluster","type")
 return(ud)
 } ## }}}
 
@@ -1054,7 +1038,6 @@ return(ud)
 simbinClaytonOakes.twin.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{{
 {
   ## K antal clustre (families), n=antal i clustre
-###  K <- 10000
   n <- 2 # twins with ace structure
   ## total variance 1/(varg+varc)
   sumpar <- sum(varg+varc)
@@ -1073,14 +1056,12 @@ simbinClaytonOakes.twin.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{
   dz1 <- apply(dz.g[,c(1,2)],1,sum) + env2
   dz2 <- apply(dz.g[,c(1,3)],1,sum) + env2
   Gam1 <- rbind(cbind(mz,mz),cbind(dz1,dz2))
-###  print(apply(Gam1,2,mean)); print(apply(Gam1,2,var))
   ## }}}
 
   ## {{{ marginals p's and conditional p's given random effects
   ### marginals p's for mother, father, children
   xb1 <- rbinom(K,1,0.5)
   xb2 <- rbinom(K,1,0.5)
-###
 ###
   if (is.null(beta)) beta <- rep(0.3,2)
   if (is.null(alpha)) alpha <- rep(0.5,2)
