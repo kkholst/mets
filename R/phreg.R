@@ -630,8 +630,8 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 	weightsJ=weights[Jumps];  
 	caseweightsJ=caseweights[Jumps];  
 	S0 = S0[Jumps];
-	grad = (X[Jumps,]-E);        ## Score
-	val =  (Xb[Jumps]-log(S0)); ## Partial log-likelihood
+	grad = (X[Jumps,]-E);                         ## Score
+	val =  (Xb[Jumps]-log(S0));                   ## Partial log-likelihood
 
 	##  colvec iweightsJ=1/weightsJ; 
 	S02 = S0/(caseweightsJ*weightsJ);             ## S0 with weights to estimate baseline 
@@ -639,10 +639,10 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 	gradient=apply(grad2,2,sum)
 	val2 = caseweightsJ*weightsJ*val;             ## Partial log-likelihood with weights
 
-	hesst = -(XX2-E2);                               ## hessian contributions in jump times 
+	hesst = -(XX2-E2);                            ## hessian contributions in jump times 
 ###	hess  = matrix(apply(hesst,2,sum),p,p);
-	hesst2 = hesst*(caseweightsJ*weightsJ);          ## hessian over time with weights 
-	hess2 = matrix(apply(hesst2,2,sum),p,p);         ## hessian with weights 
+	hesst2 = hesst*(caseweightsJ*weightsJ);       ## hessian over time with weights 
+	hess2 = matrix(apply(hesst2,2,sum),p,p);      ## hessian with weights 
 
 
 	out=list(jumps=Jumps, ploglik=sum(val2),U=grad2, 

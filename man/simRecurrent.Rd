@@ -5,7 +5,6 @@
 \alias{showfitsim}
 \alias{simRecurrentGamma}
 \alias{covIntH1dM1IntH2dM2}
-\alias{recurrentMarginalgam}
 \alias{squareintHdM}
 \alias{addCums}
 \title{Simulation of recurrent events data based on cumulative hazards}
