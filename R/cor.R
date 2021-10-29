@@ -78,7 +78,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         Gcx<-Cpred(Gfit,time)[,2];
         if (is.null(entry.call)==FALSE) Gcxe<-Cpred(Gfit,entry)[,2];
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx ## }}}
       } else if (cens.model=="cox") { ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
@@ -92,7 +91,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           Gcxe<-exp(-Gcxe*RR)
         }
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx  ## }}}
       } else if (cens.model=="aalen") {  ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
@@ -108,7 +106,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           Gcxe[Gcxe>1]<-1; Gcxe[Gcxe<0]<-0
         }
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx  ## }}}
       }
     } else { Gcx <- cens.weight; Gctimes <- cens.weight;} 
@@ -152,7 +149,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
      dimpar <- ncol(theta.des); 
  
      if (nrow(theta.des)!=ncol(random.design)) stop("nrow(theta.des)!= ncol(random.design)"); 
-###     score.method <- "nlminb"; ### force nlminb because derivatives are not working
  } else random.design <- matrix(0,1,1); 
 
   if ( (!is.null(par.func)) && is.null(dimpar) ) 
@@ -183,7 +179,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   if (is.null(weights)==TRUE) weights <- rep(1,antpers); 
   ## }}}
 
-###  ## {{{ function and derivative
+   ###  ## {{{ function and derivative
   if (is.null(par.func)==FALSE)
   {
      flex.func<-1; # use flexible design
@@ -192,8 +188,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	  score.method <- "nlminb"
 	  dpar.func <- par.func
   }
-###  if (score.method=="nr) 
-###  cat("Score.method set to nlminb for flexible modelling \n"); 
   } ## }}}
 
   Zgamma <-  c(Z %*% gamma); 
@@ -202,9 +196,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   dep.model <- switch(model,COR=1,RR=2,OR=3,RANCIF=4,ARANCIF=5)
   if (dep.model==0) stop("model must be COR, OR, RR, RANCIF, ARANCIF \n"); 
   if (dep.model<=4) rvdes <- matrix(0,1,1); 
-###  if (dep.model==4 & !is.null(cif2) ) dep.model <- 6 ## two cause random cif
-###  if (dep.model==6) stop("Different causes  under development \n"); 
-
   
   obj <- function(par) 
     { ## {{{
@@ -226,7 +217,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 			  stop("dparfunc must return matrix n x dimpar when called on dparfunc(par,t,theta.des)"); 
 		  DXtheta[s,,] <- Dttheta
 	  }
-###	  print(dim(Xtheta)); print(dim(DXtheta))
     }
 
       outl<-.Call("cor", ## {{{
@@ -271,12 +261,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	  cat("hess:"); print(hess); 
         }## }}}
         delta <- hessi %*% out$score 
-	### for test purposes
-###     oout <- 0;  ### output control for obj
-###     score1 <- numDeriv::jacobian(obj,p)
-###	hess1 <-  numDeriv::hessian(obj,p)
-###	print(score1)
-###	print(hess1)
 	## do not update last iteration 
 	if (i<Nit) p <- p-delta* step
 	if (is.nan(sum(out$score))) break; 
@@ -296,10 +280,8 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           cat("theta:");print(c(p))
           cat("score:");print(c(out$score)); 
 	  cat("hess:"); print(hess); 
-###	  oout <- 0; hess1 <-  numDeriv::hessian(obj,p); print(hess1)
     }## }}}
     if (!is.na(sum(hess))) hessi <- lava::Inverse(out$Dscore) else hessi <- diag(nrow(hess))
-###    score1 <- numDeriv::jacobian(obj,p)
     score1 <- score; 
     ## }}}
   } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
@@ -985,7 +967,6 @@ summary.cor <- function(object,marg.cif=NULL,marg.cif2=NULL,digits=3,...) { ## {
     } ## }}} 
     outcase <- cbind(time,casewise,caselower,caseup)
     outconc <- cbind(time,concordance,conclower,concup)
-###    rownames(outcase) <- rownames(outconc)  <-  rownames(coefs)
     colnames(outcase) <- c("time","casewise concordance","2.5 %","97.5%")
     colnames(outconc) <- c("time","concordance","2.5 %","97.5%")
 	  if (length(thetav)==1) {
@@ -1144,7 +1125,6 @@ concordanceCor <- function(object,cif1,cif2=NULL,messages=TRUE,model=NULL,coefs=
 
     out[[k]] <- list(concordance=outconc,casewise=outcase)
     names(out)[k] <- rownames(coefs)[k]
-###k <- k+1
   }
 
   return(out)
@@ -1245,7 +1225,6 @@ coef.randomcif<- function (object, digits = 3, ...)
   colnames(res) <- c("Coef.", "SE", "z", "P-val", "Cross odds ratio", "SE")
   if (!is.null(object$thetanames)) rownames(res)<-object$thetanames
 
-###  prmatrix(signif(res, digits))
   return(res)
 } ## }}}
 
@@ -1303,26 +1282,6 @@ coef.randomcifrv<- function (object, digits = 3, ...)
 
    if (!is.null(object$thetanames)) rownames(res)<-object$thetanames
    prmatrix(signif(res, digits))
-
-###    cat("\n\n Random effect variances for gamma random effects \n\n")
-###    varpar <- theta/sum(theta)^2 
-###    res <- as.matrix(varpar); 
-###    if (elog==0)  { var.theta <-   object$var.theta; 
-###                    df <- 0*var.theta; 
-###                    for (i in 1:nrow(var.theta))
-###                    df[i,] <- -theta[i]*2*theta; 
-###		    diag(df) <- diag(df)+sum(theta)^2
-###		    df <- df/sum(theta)^4
-###		    var.varpar <- df %*% var.theta %*% df
-###                  }
-###    if (elog==1)  { 
-###	            var.theta <-   object$var.theta; 
-###                    var.varpar <- var.theta
-###                  }
-###    res <- cbind(res,diag(var.varpar)^.5)  
-###    colnames(res) <- c("variance","SE")
-###    if (is.null((rownames(res))) == TRUE) rownames(res) <- rep(" ", nrow(res))
-###    prmatrix(signif(res, digits))
 
 } ## }}}
 

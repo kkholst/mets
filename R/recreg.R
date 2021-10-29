@@ -145,12 +145,7 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
 
     cause.jumps <- which(status==cause)
     max.jump <- max(exit[cause.jumps])
-###    other <- which((!(status %in% c(cens.code,cause)) ) & (exit< max.jump))
     other <- which((status %in% death.code ) & (exit< max.jump))
-
-
-###    o2 <- which(status==0)
-###    o2 <- which(status==2)
 
     n <- length(exit)
     if (is.null(strata)) {
@@ -204,7 +199,7 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
 
     ## }}}
 
-### censoring weights constructed
+   ### censoring weights constructed
     whereC <- which(cens==cens.code)
     time <- exit
     statusC <- c(cens==cens.code)
@@ -214,9 +209,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
     data$statusC <- statusC
     cens.strata <- cens.nstrata <- NULL
 
-###	strataC <- model.matrix(cens.model,data)
-###	print(strataC)
-
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
         kmt <- TRUE
@@ -225,7 +217,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
             cens.model <- phreg(formC,data)
         }
         if (cens.model$p>0) kmt <- FALSE
-###        Pcens.model <- predict(cens.model,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)
         Pcens.model <- predict(cens.model,data,times=exit,individual.time=TRUE,se=FALSE,km=kmt)
         Stime <- Pcens.model$surv <- c(Pcens.model$surv)
         ## strata from original data
@@ -250,7 +241,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
     Zcall <- cbind(status,cens.strata,Stime,cens,strata,strataA) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status==cause)
-###    trunc <- FALSE
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
     xx2$nstrata <- nstrata
     jumps <- xx2$jumps+1
@@ -286,7 +276,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
         entryo <- exit[other]
         ido <- id[other]
         stratao <- strata[other]
-        ###
         if (nCstrata>1) {
 	    Cstratao <- cens.strata[other]
 	    Zcall <- matrix(Cstratao,length(other),1)
@@ -304,7 +293,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
 	### gives index of timeo related to jumptimes and same strata
 	### the value 0 means that jumptime has no point in time0, thus S0other=0
         where <- indexstratarightR(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata)
-###	print(cbind(where,strata1jumptimes, strata1jumptimes %in% xx$strata ))
     }# }}}
 
 
@@ -432,7 +420,7 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
     opt <-  val ## obj(beta.s,all=TRUE)
 
     if (p>0) {
-### iid version given G_c
+    ### iid version given G_c
     ## {{{
     ##iid robust phreg
     S0i <- rep(0,length(xx2$strata))
@@ -561,8 +549,6 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
 if (no.opt==FALSE & p!=0) {
 DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
 varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
-### covariance is 0 for cox model
-### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
 } else varbetat <- 0
 var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
@@ -594,20 +580,6 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {{{
     out <- cbind(time,time2,cause,cens)
     colnames(out) <- c("entry","exit","cause","cens")
-###    if (!missing(cause)) {
-###        colnames(out) <- c("entry","exit","cause")
-###    tmp <- (out[,1]>out[,2]) 
-###    if (any(tmp)) warning("entry time later than exit time\n")
-######    if (any(tmp) & !is.na(tmp)) warning("entry time later than exit time\n")
-###    tmp <- (out[,2]<=0) 
-###    if (any(tmp)) warning("exit times must be >0\n")
-######    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
-###    } else {
-###        colnames(out) <- c("exit","cause")
-###    tmp <- (out[,1]<=0) 
-###    if (any(tmp)) warning("exit times must be >0\n")
-######    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
-###    }
     class(out) <- "EventCens"
     attr(out,"cens.code") <- cens.code
     return(out)
@@ -659,11 +631,6 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  rownames(data) <- NULL
 
  return(list(data=data,X=XX))
-
-### data <- cbind(data,XX)
-### data <- as.data.frame(data)
-###
-### return(data)
 }# }}}
 
 simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
@@ -689,17 +656,9 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
  rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
  rr$cens <- 0
  rr <- dtransform(rr,cens=1,revnr==1 & death==0)
- ###
  rr <- dtransform(rr,statusG=status)
  rr <- dtransform(rr,statusG=0,status==2)
  rr <- dtransform(rr,statusG=2,death==1)
-
-### oxr <- phreg(Surv(entry,time,status==1)~X1+X2+cluster(id),data=rr)
-### odr <- phreg(Surv(entry,time,death)~X1+X2+cluster(id),data=rr)
-### ocr <- phreg(Surv(entry,time,cens)~X1+X2+cluster(id),data=rr)
-### print(summary(oxr))
-### print(summary(odr))
-### print(summary(ocr))
 
  if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
  if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2

@@ -679,13 +679,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
       if (case.control==1 || ascertained==1) { #
 
-###      print(dim(data)); print(summary(pairs))
          data1 <-        data[pairs[,1],]
          data.proband <- data[pairs[,2],]
 	 weights1 <-     weights[pairs[,1]]
-###	print(summary(data.proband)); print(summary(data1))
 
-# setting up designs for jump times
+        # setting up designs for jump times
         timestatus <- all.vars(cr.models[[1]])
         if (is.null(status)) status <- data[,timestatus[2]]
 	alltimes      <- data[,timestatus[1]]
@@ -1942,19 +1940,12 @@ if (!is.null(margsurv))  {
 ###  if (is.null(random.design)) random.design <- matrix(1,antpers,1);
      dim.rv <- ncol(random.design);
      if (is.null(theta.des)) theta.des<-diag(dim.rv);
-
-
-###     ptheta <- dimpar <- ncol(theta.des);
-###   if (dim(theta.des)[2]!=ncol(random.design))
-###   stop("nrow(theta.des)!= ncol(random.design),\nspecifies restrictions on paramters, if theta.des not given =diag (free)\n");
  } else { random.design <- matrix(0,1,1);  dim.rv <- 1;
            additive.gamma.sum <- matrix(1,1,1);
    }
 
   if (is.null(theta.des)) ptheta<-1;
   if (is.null(theta.des)) theta.des<-matrix(1,antpers,ptheta); ###  else theta.des<-as.matrix(theta.des);
-###    ptheta<-ncol(theta.des);
-###    if (nrow(theta.des)!=antpers) stop("Theta design does not have correct dim");
 
   if (length(dim(theta.des))==3) ptheta<-dim(theta.des)[2] else if (length(dim(theta.des))==2) ptheta<-ncol(theta.des)
   if (nrow(theta.des)!=antpers & dep.model!=3 ) stop("Theta design does not have correct dim");
@@ -1967,8 +1958,6 @@ if (!is.null(margsurv))  {
   }
 
   if (length(theta)!=ptheta) {
-###	 warning("dimensions of theta.des and theta do not match\n");
-###         print(theta);
          theta<-rep(theta[1],ptheta);
   }
   theta.score<-rep(0,ptheta);Stheta<-var.theta<-matrix(0,ptheta,ptheta);
@@ -1980,14 +1969,8 @@ if (!is.null(margsurv))  {
 
   if (!is.null(pairs)) { pair.structure <- 1;} else  pair.structure <- 0;
 
-## ppprint
-###  print(c(pair.structure,dep.model,fix.baseline))
-###  print(head(theta.des))
-###  print(c(case.control,ascertained))
-
   if (pair.structure==1 & dep.model==3) { #
-### something with dimensions of rv.des
-### theta.des
+### something with dimensions of rv.des theta.des
        antpairs <- nrow(pairs);
        if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))==3) )
        {
@@ -2006,7 +1989,6 @@ if (!is.null(margsurv))  {
        }
        if ( (length(dim(theta.des))!=3)  & (length(dim(random.design))!=3) )
        {
-###	       print("laver 3-dim design ");
           Ptheta.des <- array(0,c(nrow(theta.des),ncol(theta.des),antpairs))
           rv.des <- array(0,c(2,ncol(random.design),antpairs))
           for (i in 1:antpairs) {
@@ -2019,8 +2001,6 @@ if (!is.null(margsurv))  {
        }
        if (max(pairs)>antpers) stop("Indices of pairs should refer to given data \n");
        if (is.null(pairs.rvs)) pairs.rvs <- rep(dim(random.design)[2],antpairs)
-###       if (max(pairs.rvs)> dim(random.design)[3] | max(pairs.rvs)>ncol(theta.des[1,,]))
-###	       stop("random variables for each cluster higher than  possible, pair.rvs not consistent with random.design or theta.des\n");
        clusterindex <- pairs-1;
   } #
 
@@ -2037,7 +2017,7 @@ if (!is.null(margsurv))  {
  if (is.null(cr.models)) stop("give hazard models for different causes, ex cr.models=list(Surv(time,status==1)~+1,Surv(time,status==2)~+1) \n")
 
       if (case.control==0 & ascertained==0) { #
-# setting up random effects and covariates for marginal modelling
+        # setting up random effects and covariates for marginal modelling
         timestatus <- all.vars(cr.models[[1]])
 	times <- data[,timestatus[1]]
 	if (is.null(status)) status <- data[,timestatus[2]]
@@ -2104,7 +2084,6 @@ if (!is.null(margsurv))  {
          data1 <-        data[pairs[,1],]
          data.proband <- data[pairs[,2],]
 	 weights1 <-     weights[pairs[,1]]
-###	print(summary(data.proband)); print(summary(data1))
 
 # setting up designs for jump times
         timestatus <- all.vars(cr.models[[1]])
@@ -2124,7 +2103,6 @@ if (!is.null(margsurv))  {
 	dcauses       <- lstatus[jumps][st]
 	dcausescase   <- lstatuscase[jumps][st]
 	ids           <- (1:nrow(data1))[jumps][st]
-	###
 	### delayed entry for case because of ascertained sampling
 	### controls are however control probands, and have entry=0
 	entry <- timescase*lstatuscase
@@ -2219,7 +2197,7 @@ if (!is.null(margsurv))  {
           cum1 <- cbind(dtimesst,Bit)
           if ( (case.control==1 || ascertained==1) & (convergence.bp==1)) { #  profiles out baseline under case-control/ascertainment sampling
 
-###	      ## initial values , only one cr.model for survival
+             ###  initial values , only one cr.model for survival
              if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
 
              if (ncol(Bit)==0) Bit <- Bit.ini
@@ -2611,7 +2589,6 @@ if (!is.null(margsurv))  {
 	  all.likepairs <- out$all.likepairs
 	  colnames(all.likepairs) <- c("surv","dt","ds","dtds","cause1","cause2")
   }
-###  print(crossprod(out$theta.iid) %*% hessi)
      theta.iid <- out$theta.iid %*% hessi
      if (is.null(call.secluster) & is.null(max.clust)) rownames(theta.iid) <- unique(cluster.call) else rownames(theta.iid) <- unique(se.clusters)
      robvar.theta  <- crossprod(theta.iid)
@@ -2709,7 +2686,6 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
       ptheta <- attr(object,"ptheta")
       npar <- nrow(object$theta)
       theta <- object$theta[seq(1,ptheta),1,drop=FALSE]
-###   print(theta.des); print(theta); print(theta.des %*% theta); print(rv1);
       robvar.theta <- object$robvar.theta[seq(1,ptheta),seq(1,ptheta)]
       if (var.link==1) par <- theta.des %*% exp(theta) else  par <- theta.des %*% theta
 
@@ -2820,7 +2796,6 @@ coef.mets.twostage <- function(object,var.link=NULL,response="survival",...)
 ##' @export
 print.mets.twostage<-function(x,digits=3,...)
 { #
-###  print(x$call);
   cat("\n")
   print(summary(x,silent=0));
 } #
@@ -3068,7 +3043,6 @@ if (silent<=-1) print(head(datalr));
 datalr$tstime <- datalr[,timevar]
 datalr$tsstatus <- datalr[,status]
 datalr$tsid <- datalr[,id]
-###
 datalr$strata <- paste( c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),collapse=",",sep="-")
 datalr$intstrata <-
 c(paste(c(cut1[i1-1],cut1[i1]),collapse=",",sep="-"),paste( c(cut2[i2-1],cut2[i2]),collapse=",",sep="-"))
@@ -3214,7 +3188,6 @@ pentry <- NULL
 if (is.null(marginal.surv))
 if (class(margsurv)[1]=="coxph")
 { #
-###    ps <- survfit(margsurv)$surv
     coxformula <- margsurv$formula
     X <- model.matrix(coxformula,data=data)[,-1];
     baseout <- survival::basehaz(margsurv,centered=FALSE);
@@ -3273,7 +3246,6 @@ if (class(margsurv)[1]=="coxph")
 	cat("Back to long format for twostage (head)\n");
         print(head(data.fam));
 	cat("\n")
-###	cat(paste("twostage, called with reponse",response,"\n"));
 	cat(paste("cluster=",id,",  subcluster (pairs)=subfam \n"));
 	cat(paste("design variables ="));
 	cat(desnames)
@@ -3295,7 +3267,6 @@ if (class(margsurv)[1]=="coxph")
 
 ##' @export
 simSurvFam <- function(n,beta=0.0,theta=1,lam0=0.5,lam1=1,lam2=1,ctime=10,...) { #
-###	n=10; beta=0; theta=1; lam1=1;lam2=1; ctime=10; lam0=0.5
 xm <- rbinom(n,1,0.5); xf <- rbinom(n,1,0.5);
 xb1 <- rbinom(n,1,0.5); xb2 <- rbinom(n,1,0.5);
 ###
@@ -3322,7 +3293,6 @@ object.defined <- function(object)
 ##' @export
 twin.polygen.design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { #
   ### twin case
-###  nid <- table(data[,id])
   id <- data[,id]
   tv <- diff(c(NA,id))
   tv[tv!=0 | is.na(tv)] <- 1
@@ -3450,9 +3420,9 @@ ace.family.design <-function (data,id="id",member="type",mother="mother",father=
 
   if (type=="ade") { ### ade #
   #ADE
-	  stop("not done yet");
-###  pard <- rbind(c(1,0),c(0.25,0),c(0.75,0),c(0.75,0),c(0,1),c(0,0.5),c(0,0.5),c(0,0.5) )
-###  pardes <- matrix(pard,n,16,byrow=TRUE)
+    stop("not done yet");
+    pard <- rbind(c(1,0),c(0.25,0),c(0.75,0),c(0.75,0),c(0,1),c(0,0.5),c(0,0.5),c(0,0.5) )
+    pardes <- matrix(pard,n,16,byrow=TRUE)
   } #
 
   if (type=="adce") { ### adce #
@@ -3460,8 +3430,8 @@ ace.family.design <-function (data,id="id",member="type",mother="mother",father=
   } #
 
   if (type=="de") { ### ae #
-	  stop("not done yet");
-###  pard <- rbind(c(1,0), c(0.25,0),c(0.75,0), c(0.75,0))[,1,drop=FALSE]
+    stop("not done yet");
+    pard <- rbind(c(1,0), c(0.25,0),c(0.75,0), c(0.75,0))[,1,drop=FALSE]
   } #
 
   if (type=="un") { ### ae #
