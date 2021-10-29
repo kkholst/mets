@@ -57,20 +57,12 @@ obs <- apply(abs(Ut),2,max)
 if (is.null(robust)) 
    if (!is.null(object$call.id)) robust <- TRUE else robust <- FALSE
 
-### cluster call or robust \hat M_i(t) based  
+   ### cluster call or robust \hat M_i(t) based  
 if (robust) {# {{{
    xx <- object$cox.prep
-###   S0i <- rep(0,length(xx$strata))
-###   S0i[xx$jumps+ 1] <- 1/object$S0
    Z <- xx$X
-###   ZdN <- U <- E <- matrix(0, nrow(xx$X), object$p)
-###   E[xx$jumps + 1, ] <- object$E
-###   U[xx$jumps + 1, ] <- object$U
-###   cumhaz <- c(cumsumstrata(S0i, xx$strata, xx$nstrata))
-###   EdLam0 <- apply(E * S0i, 2, cumsumstrata, xx$strata, xx$nstrata)
    rrw <- c(xx$sign * exp(Z %*% coef(object) + xx$offset)*xx$weights)
    UdN <- xx$weights[xx$jumps+1]*object$U 
-###   MGt <- U[, drop = FALSE] - (Z * cumhaz - EdLam0) * rr * c(xx$weights)
    ### also weights 
    nn <- nrow(Z)
 
@@ -179,8 +171,6 @@ U <- coxM$U
 Ubeta <- cox1$U
 ii <- -solve(cox1$hessian)
 EE <- .Call("vecMatMat",coxM$E,cox1$E,PACKAGE="mets")$vXZ; 
-###print(dim(EE))
-###print(cox1$ZX)
 Pt <- cox1$ZX - EE
 Pt <- apply(Pt,2,cumsum)
 betaiid <- t(ii %*% t(Ubeta))
@@ -302,54 +292,6 @@ class(out) <- c("gof.phreg")
 return(out)
 }# }}}
 
-###gofZ.phregGam  <- function(formula,data,vars,offset=NULL,weights=NULL,breaks=40,equi=TRUE,
-###			n.sim=1000,silent=1,...)
-###{# {{{
-###
-### res <- matrix(0,length(vars),2)
-### colnames(res) <- c("Sup_z |U(tau,z)|","pval")
-### rownames(res) <- vars
-###
-### i <- 1
-###for (vv in vars) {
-### modelmatrix <- cumContr(data[,vv],breaks=breaks,equi=equi)
-###
-###cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
-###offsets <- cox1$X %*% cox1$coe
-###if (!is.null(offset)) offsets <- offsets*offset
-###
-###if (!is.null(cox1$strata)) 
-###     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
-###else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
-###nnames <- colnames(modelmatrix)
-###
-###Ut <- apply(coxM$U,2,cumsum)
-###jumptimes <- coxM$jumptimes
-###U <- coxM$U
-###Ubeta <- cox1$U
-###ii <- -solve(cox1$hessian)
-###EE <- .Call("vecMatMat",coxM$E,cox1$E,PACKAGE="mets")$vXZ; 
-###Pt <- cox1$ZX - EE
-###Pt <- apply(Pt,2,cumsum)
-###betaiid <- t(ii %*% t(Ubeta))
-###obs <- apply(abs(Ut),2,max)
-###simcox <-  .Call("ModelMatrixTestCox",U,Pt,betaiid,n.sim,obs,PACKAGE="mets")
-###
-### ## pvals efter z i model.matrix sup_z | M(z,tau) | 
-### Utlast <- max(abs(tail(Ut,1)))
-### maxlast <- apply(abs(simcox$last),1,max)
-### pval.last <- mean(maxlast>=Utlast)
-### res[i,] <- c(Utlast,pval.last)
-### i <- i+1
-###}
-###
-###out <- list(res=res, type="modelmatrix")
-###class(out) <- "gof.phreg"
-###
-###return(out)
-###}# }}}
-###
-
 
 ##' @export
 cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks=TRUE,...)
@@ -443,7 +385,6 @@ stratnames <- paste(stratn,lstrata,sep=":")
 
 if (is.null(cumhaz)) stop("Must run phreg with cumhaz=TRUE (default)"); 
 if (nstrata==1) stop("Stratified Cox to look at baselines");
-###
 
 if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
@@ -460,7 +401,6 @@ for (j in (i+1):(nstrata-1)) {
       graphics::title(paste("Stratified baselines for",stratn))
       if ((fixbeta==0 | sim==0) & lm ) 
       graphics::legend("topleft",c("Nonparametric","lm"),lty=1,col=1:2)
-###      graphics::legend("topleft",c("Nonparametric","Stratified-Cox-Sim"),lty=1,col=1:3)
       ab <- lm(cumhazi[,2]~-1+cumhazj[,2])
       if (sim==1 & fixbeta==0) {
              Pt <- DLambeta.t <- apply(x$E/c(x$S0),2,cumsumstrata,strata,nstrata)
@@ -517,7 +457,6 @@ lines(x$jumptimes,x$score[,i],type="s",lwd=1.5)
 	   {
 	    xr <- x$Zres[[i]]
 	    obsz <- c(tail(xr$score,1))
-###	    times <- 1:length(obsz)
 	    times <- xr$xaxs
 	    rsU <- max(max(abs(obsz)),max(abs(xr$simUtlast[1:50,])))
 	    plot(times,obsz,type="l",ylim=c(-rsU,rsU),xlab="",ylab="")
