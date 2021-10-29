@@ -176,7 +176,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     ## }}}
 
-### censoring weights constructed
+    ### censoring weights constructed
     whereC <- which(status==cens.code)
     time <- exit
     statusC <- (status==cens.code)
@@ -184,9 +184,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     data$exit <- exit
     data$statusC <- statusC
     cens.strata <- cens.nstrata <- NULL
-
-###	strataC <- model.matrix(cens.model,data)
-###	print(strataC)
 
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
@@ -274,7 +271,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	### gives index of timeo related to jumptimes and same strata
 	### the value 0 means that jumptime has no point in time0, thus S0other=0
         where <- indexstratarightR(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata)
-###	print(cbind(where,strata1jumptimes, strata1jumptimes %in% xx$strata ))
     }# }}}
 
 
@@ -404,7 +400,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
 
     if (p>0) {
-### iid version given G_c
+    ### iid version given G_c
     ## {{{
     ##iid robust phreg
     S0i <- rep(0,length(xx2$strata))
@@ -422,14 +418,14 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     }
     EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
 
-### Martingale  as a function of time and for all subjects to handle strata
+    ### Martingale  as a function of time and for all subjects to handle strata
     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     mid <- max(xx2$id)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
 
     if (length(other)>=1) { ## martingale part for type-2 after T
 
-### xx2 data all data
+    ### xx2 data all data
         otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code)))
         statusxx2 <- xx2$Z[,1]
         rr0 <- xx2$sign
@@ -500,8 +496,6 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     if (no.opt==FALSE & p!=0) {
         DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
         varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
-### covariance is 0 for cox model
-### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
     } else varbetat <- 0
     var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
     se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
@@ -540,17 +534,6 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
   if (right==0) res <- rev(res)
   return(res)
 }# }}}
-
-###S0_FG_Gct <- function(S0,Gct,strata,nstrata,strata2,nstrata2,Gcstart)
-###{# {{{
-###    if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
-###    if (any(strata2<0) | any(strata2>nstrata2-1)) stop("strata2 index not ok\n");
-###    if (length(S0)!=length(strata))  stop("length of x and strata must be same\n");
-###    if (length(S0)!=length(strata2)) stop("length of x and strata2 must be same\n");
-###    if (length(Gct)!=length(S0)) stop("length of S0 and Gct must be same\n");
-###    res <- .Call("S0_FG_GcR",as.double(S0),as.double(Gct),strata,nstrata,strata2,nstrata2,as.double(Gcstart),PACKAGE="mets")$S0
-###    return(res)
-###}# }}}
 
 ##' @export
 iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
@@ -1061,7 +1044,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     ndstrata <- attr(dstrata,"nlevel")
     lastt <- tailstrata(dstrata-1,ndstrata)
 
-### ## \int_t^\infty G_c^j(t) d\Lambda_1^k(t)
+    ### ## \int_t^\infty G_c^j(t) d\Lambda_1^k(t)
     G0start <- rep(1,nstrataC)
     cLam1fg  <- cumsum2strata(Gc,dLam1fg,xxstrataC,nstrataC,xxstrata,nstrata,G0start)
     RLam1fg <- cLam1fg$res[lastt][dstrata]-cLam1fg$res
@@ -1096,7 +1079,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     U1[jumps,] <- gt[jumps]
     U2[jumps,] <- ERLam1fg[jumps,]
 
-### Martingale  as a function of time and for all subjects to handle strata
+    ### Martingale  as a function of time and for all subjects to handle strata
     MG1t <- Z*c(U1[,,drop=FALSE]-E1dLam0)*rr*c(dd$weights)
     MG2t <- (U2[,,drop=FALSE]-E2dLam0)*rr*c(dd$weights)
     MGt <- MG1t-MG2t
@@ -1104,7 +1087,6 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     augment <- apply(MGt,2,sum)
 
     augment <- list(MGiid=MGiid,augment=augment,id=id,id.orig=id.orig,
-###     dd=dd,Et=Et,E=E, gt=gt, ERLam1fg=ERLam1fg,RLam1fg=RLam1fg,ERLam1fg0=ERLam1fg0,
                     jumps1=jumps1,jumps=jumps,other=other,
                     nstrata=nstrata,nstrataC=nstrataC,dstrata=dstrata,ndstrata=ndstrata,
                     cif1=cif1,cif2=cif2,St=St,Gc=Gc,strata=xxstrata,strataC=xxstrataC,time=dd$time)
@@ -1151,7 +1133,6 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,
 
     cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type=type[1])
     cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type=type[1])
-###
     data <- timereg::sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
     if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(rcZ*Z[,1]))),6)
@@ -1173,7 +1154,6 @@ simul.mod <- function(n,rho1,rho2,beta,rc=0.5,k=1,depcens=0) {# {{{
     colnames(Z) <- paste("Z",1:2,sep="")
     cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
     cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
-###
     data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
     censhaz  <-  cbind(tt,k*tt)

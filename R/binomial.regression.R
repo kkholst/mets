@@ -191,13 +191,11 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
-###
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
-###
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
@@ -256,11 +254,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0
     S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ### Ys <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
     ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    ### h2  <- .Call("vecMatMat",h,h)$vXZ
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -398,13 +394,11 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
-###
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
-###
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
