@@ -275,7 +275,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
 
   ### censoring weights
   strat <- cr$strata[cr$jumps+1]
-  ###
   x <- cr
   xx <- x$cox.prep
   S0iD <- S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -286,7 +285,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
     cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
     Gc      <- exp(-cumhazD)
   } else Gc <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-  ###
   S0it <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
 
   ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
@@ -302,10 +300,8 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
   ## counting N(D) forward in time skal ikke checke ud når man dør N_(D_i) er i spil efter D_i
   NtD <- cumsumstrata(xx$X[,1]*(xx$X[,2]==1)*(xx$sign==1)/Gc,xx$strata,xx$nstrata)
   jump1 <- xx$jumps+1
-  ###  risk <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
   timeJ <- xx$time[jump1]
   avNtD <- (NtD+Nt)[jump1]/nid
-  ###
   strataN1J <- xx$strata[jump1]
 
   varIPCW1 <- NULL
@@ -358,7 +354,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
      gammahat[is.na(gammahat)] <- 0
      gammahat[gammahat==Inf] <- 0
      Gctb <- Gc[cr$jumps][timeb]
-###  augment.times <- sum(apply(gammahat*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum)/Gctb)/nid
      augment.times <- sum(apply(gammahat*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum))/nid
      mterms <- length(terms)
      ###
@@ -391,7 +386,6 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
  rr$revnr <- NULL
  rr$cens <- 0
  rr <- count.history(rr)
- ###
  dsort(rr) <- ~id-start
  nid <- max(rr$id)
  rr$revnr <- cumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
@@ -404,7 +398,6 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
 
   ### censoring weights
   strat <- cr$strata[cr$jumps]
-  ###
   x <- cr
   xx <- x$cox.prep
   S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -415,7 +408,6 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
     cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
     St      <- exp(-cumhazD)
   } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-  #### 
   x <- xr
   xx <- xr$cox.prep
   S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -424,7 +416,6 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
   ## stay with N(D_i) when t is large so no -1 when death
   signm <- xx$sign
   signm[xx$X[,2]==1 & xx$sign==-1] <- 0
-  ###
   Nt <- revcumsumstrata(xx$X[,1]*xx$sign,xx$strata,xx$nstrata)
   Nt <- Nt/St
   ## counting N(D) forward in time skal ikke checke ud når man dør N_(D_i) er i spil efter D_i
@@ -502,7 +493,6 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
   U <- E <- matrix(0,nrow(xx$X),x$p)
   E[xx$jumps+1,] <- x$E
   U[xx$jumps+1,] <- x$U
-  ###    
   cumhaz <- cbind(xx$time,cumsumstrata(S0i,xx$strata,xx$nstrata))
   if (is.null(ft))  ft <- rep(1,length(xx$time))
   cumS0i2 <- c(cumsumstrata(ft*S0i2,xx$strata,xx$nstrata))
@@ -532,12 +522,10 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
      varbetat <-   rowSums((Ht %*% vbeta)*Ht)
      ### writing each beta for all individuals 
      betakt <- betaiidR[id+1,,drop=FALSE]
-     ###
      covk1 <- apply(xxx*betakt,2,cumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="sum")
      covk2 <- apply(w*rr*betakt,2,revcumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="lagsum")
      covk2 <- c(covk2)*cumS0i2
      covv <- covk1-covk2
-     ###
      varA1 <- varA1+varbetat-2*apply(covv*Ht,1,sum)
   }# }}}
 
@@ -593,7 +581,6 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 	 HtR <- square1$Ht; HtD <- square2$Ht
 	 covbetaRD <- t(betaiidR) %*% betaiidD
 	 covbeta <-   -1*rowSums((HtR %*% covbetaRD)*HtD)
-###	 print(summary(covbeta))
 
 	 ### cov12 wrt betaD and betaR
 	 betakt <- betaiidD[id1+1,,drop=FALSE]
@@ -601,7 +588,6 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 	 covk2 <-apply(w*rrR*betakt,2,revcumsumidstratasum,id1,mid,xx$strata,xx$nstrata,type="lagsum")
 	 covk2 <- c(covk2)*c(square1$cumS0i2)
 	 covRD12 <- apply((covk1-covk2)*HtD,1,sum)
-	###
 	 betakt <- betaiidR[id2+1,,drop=FALSE]
 	 covk1 <-apply(xxxD1*betakt,2,cumsumidstratasum,id2,mid,xx2$strata,xx$nstrata,type="sum")
 	 covk2 <-apply(w*rrD1*betakt,2,revcumsumidstratasum,id2,mid,xx2$strata,xx$nstrata,type="lagsum")
@@ -1426,20 +1412,17 @@ gamma2  <- rep(rgamma(n,agam2)*vargam,each=k)
 agam12 <- 1/vargam12
 betagam12 <- 1/vargam12
 gamma12 <- rep(rgamma(n,agam12)*vargam12,each=k)
-###
 agamD <- agam1+agam2
 z1 <- (gamma1^nu1)*gamma12
 z2 <- (gamma2^nu2)*gamma12^nu3
 gamD <- gamma1+gamma2
 zd <- gamD
 egamma12nu3 <- (gamma(agam12+nu3)/gamma(agam12))*1/(betagam12)^nu3
-###
 zs <- cbind(z1,z2,zd)
 
   fdeath <- dtime <- NULL # to avoid R-check 
   dhaz <- haz2 <- dhaz <- NULL
 
-###  cumhaz <- rbind(c(0,0),cumhaz)
  ll <- nrow(cumhaz)
  max.time <- tail(cumhaz[,1],1)
 
@@ -1447,7 +1430,6 @@ zs <- cbind(z1,z2,zd)
  ### approximate hazards to make marginals fit (approximately)
  ################################################################
  orig.death <- death.cumhaz
- ###
  base1 <- death.cumhaz
  gt <- exp(vargam*base1[,2]) 
  dtt <- diff(c(0,base1[,1]))
@@ -1456,7 +1438,6 @@ zs <- cbind(z1,z2,zd)
 
  base1 <- cumhaz
  dbase1 <- Cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
- ###
  dtt <- diff(c(0,base1[,1]))
  gt <- (gamma(agam1+nu1)/gamma(agam1))*(1/(betagam+dbase1))^nu1
  lams <- (diff(c(0,base1[,2]))/dtt)*(1/gt)
@@ -2148,15 +2129,8 @@ form <- as.formula(paste("Surv(",start,",",stop,",",status,"!=0)~",status,"+",
 	}
 }
 
-###print(formdr); print(form)
-
 dr     <- phreg(formdr,data=data)
 base   <- phreg(form,data=data,no.opt=TRUE)
-
-### P(N_1 >= k1, N2 >= k2) is estimated by 
-###   sum_i int_0^t G_strat(s-) I(Ni1(t-)==k1-1,Ni2(t)>= k2) /Y_{strat} (s) dN_{i1,strat}(s)
-### + sum_i int_0^t G_strat(s-) I(Ni1(t)>= k1,Ni2(t-)==k2-1) /Y_{strat} (s) dN_{i2,strat}(s)
-### = sum_i int_0^t G_strat(s-) ( I(Ni1(t-)==k1-1,Ni2(t)>= k2,type=1) + I(Ni1(t)>= k1,Ni2(t-)==k2-1,type=2)) /Y_{strat} (s) dN_{i.,strat}(s)
 
   # {{{
   strat <- dr$strata[dr$jumps]
@@ -2263,21 +2237,14 @@ covarianceRecurrent <- function(data,type1,type2,status="status",death="death",
 formdr <- as.formula(paste("Surv(",start,",",stop,",",death,")~ cluster(",id,")",sep=""))
 form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type1,")~cluster(",id,")",sep=""))
 form2 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type2,")~cluster(",id,")",sep=""))
-###
 form1C <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type1,")~strata(",names.count,type2,")+cluster(",id,")",sep=""))
 form2C <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type2,")~strata(",names.count,type1,")+cluster(",id,")",sep=""))
 
 dr <- phreg(formdr,data=data)
-###basehazplot.phreg(dr)
-###
 base1   <- phreg(form1,data=data)
 base1.2 <- phreg(form1C,data=data)
-###
 base2   <- phreg(form2,data=data)
 base2.1 <- phreg(form2C,data=data)
-
-###marginal.mean1 <- recurrentMarginal(base1,dr)
-###marginal.mean2 <- recurrentMarginal(base2,dr)
 
 marginal.mean1 <- recmarg(base1,dr)
 marginal.mean2 <- recmarg(base2,dr)
@@ -2294,7 +2261,6 @@ sshed1   <- list(cumhaz=cbind(cc$time,ssshed1),
 	      jumps=1:length(cc$time),
 	      strata.name=paste("prob",type1,sep=""),
 	      strata.level=base2.1$strata.level)
-###
 riskstrata <- .Call("riskstrataR",cc$sign,cc$strata,cc$nstrata)$risk
 nrisk <- apply(riskstrata,2,revcumsumstrata,rep(0,nrow(riskstrata)),1)
 ntot <- apply(nrisk,1,sum)
@@ -2699,8 +2665,6 @@ return(list(mupi=mupi,mupg=mupg,mu1mu2=mu1mu2,time=times,
 	    mup=apply(mupi,1,mean),mug=apply(mupg,1,mean),
 	    dmupg=apply(mupg-mupi,1,mean),mmu1mu2=apply(mu1mu2,1,mean), 
 	    se.mui=apply(mupi,1,sd),se.mug=apply(mupg,1,sd)
-###	    se.dmug=apply(mupg-mu1mu2,1,sd),se.dmui=apply(mupi-mu1mu2,1,sd),
-###	    se.difmugmup=apply(mupg-mupi,1,sd), se.mu1mu2=apply(mu1mu2,1,sd)
 	    ))
 }# }}}
 
@@ -2740,7 +2704,6 @@ iidCovarianceRecurrent <-  function (rec1,death,xrS,xr,means)
    rrs <- rrs[xrid,]
    ntot <- ntot[xrid]
    rrs <- apply(Stt* diff(c(0,ariid))*rrs,2,cumsum)
-###   dmu <- diff(c(0,mu))
    rrcum <- apply(Stt*meano*diff(c(0,ariid))*rr,2,cumsum)
    miid <- (rrs-rrcum)/ntot
 
