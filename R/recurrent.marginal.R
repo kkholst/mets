@@ -950,7 +950,6 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
      } else if (dependence==1) {
 	      z <- rgamma(n,1/var.z[1])*var.z[1]
 	      z1 <- z; z2 <- z; zd <- z
-	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
       } else if (dependence==2) {
               stdevs <- var.z^.5
               b <- stdevs %*% t(stdevs)  
