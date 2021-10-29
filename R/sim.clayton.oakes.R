@@ -20,7 +20,6 @@ simClaytonOakes <- function(K,n,eta,beta,stoptime,lam=1,left=0,pairleft=0,trunc.
   ## K antal clustre, n=antal i clustre
   ###	K <- 100; n=2; stoptime=2; eta=1/2; beta=0; lam=0.5;left=0.5; trunc.prob=0.5; pairleft=0; same=0
   ### change such that eta is variance 
-###  eta <- 1/eta
   x<-array(c(runif(n*K),rep(0,n*K),rbinom(n*K,1,0.5)),dim=c(K,n,3))
   C<-matrix(stoptime,K,n);
   Gam1 <-matrix(rgamma(K,eta)/eta,K,n)
@@ -40,7 +39,6 @@ if (left>0) {
      } else {
        if (same==0) lefttime <- rexp(n*K)*left
        if (same==1) lefttime <- rep(rexp(K)*left,each=n)
-###       lefttime <- runif(K)*(stoptime-left)
        if (same==0) left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        if (same==1) left <- rep(rbinom(K,1,trunc.prob),each=n)
        lefttime <- lefttime*left
@@ -51,15 +49,6 @@ if (left>0) {
   if (pairleft==1) ud <- cbind(ud,rep(minstime,each=n),rep(lefttime,each=n),rep(trunk,each=n))
   else ud <- cbind(ud,rep(minstime,each=n),lefttime,trunk)
 
-###  if (left>0) {
-###    lefttime <- rexp(K)*left
-###    left <- rbinom(K,1,0.5) ## not trunation times!
-###    lefttime <- apply(cbind(lefttime*left,3),1,min)
-###    trunk <- (lefttime > minstime)
-###    medleft <- rep(trunk,each=n)
-###  } else { lefttime <- trunk <- rep(0,K);}
-###
-###  ud <- cbind(ud,rep(minstime,each=n),rep(lefttime,each=n),rep(trunk,each=n))
   names(ud)<-c("time","status","x","cluster","mintime","lefttime","truncated")
   return(ud)
 } ## }}} 
@@ -107,7 +96,6 @@ simClaytonOakesWei <- function(K,n,eta,beta,stoptime,weiscale=1,weishape=2,left=
  C<-rep(stoptime,n*K);
  Gam1 <-rep(rgamma(K,eta),each=n)
  temp <- rexp(K*n)
-### temp <- rweibull(n*K,weishape,scale=weiscale)/(exp(X*beta)*Gam1)
  temp<- (eta*log(eta*temp/(eta*Gam1)+1)/(exp(beta*X)*weiscale^weishape))^{1/weishape}
  status<- ifelse(temp<=C,1,0);
  temp <-   pmin(temp,C)
@@ -123,7 +111,6 @@ if (left>0) {
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,0.5) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -156,16 +143,12 @@ simClaytonOakes.twin.ace <- function(K,varg,varc,beta,stoptime,Cvar=0,left=0,pai
   etao <- eta <- varc+varg
   if (etao==0) eta <- 1
   Gams1 <-cbind( rgamma(K,varg)/eta, rgamma(K,varg*0.5)/eta, rgamma(K,varg*0.5)/eta, rgamma(K,varg*0.5)/eta, rgamma(K,varc)/eta )
-###  print(apply(Gams1,2,mean)); print(apply(Gams1,2,var))
   mz <- c(rep(1,K/2),rep(0,K/2)); dz <- 1-mz;
   mzrv <-  Gams1[,1]+Gams1[,5]           ### shared gene + env 
   dzrv1 <- Gams1[,2]+Gams1[,3]+Gams1[,5] ### 0.5 shared gene + 0.5 non-shared + env 
   dzrv2 <- Gams1[,2]+Gams1[,4]+Gams1[,5] ### 0.5 shared gene + 0.5 non-shared + env 
   Gam1 <- cbind(mz*mzrv+dz*dzrv1,mz*mzrv+dz*dzrv2)
-###  print(apply(Gam1,2,mean)); print(apply(Gam1,2,var))
   Gam1[Gam1==0] <- 1 ## to work also under independence 
-###  print(mean(mzrv)); print(mean(dzrv1)); print(mean(dzrv2)); 
-###  print(var(mzrv));  print(var(dzrv1));  print(var(dzrv2)); 
   temp<-eta*log(-log(1-x[,,1])/(eta*Gam1)+1)*exp(-beta*x[,,3])/lam0
   if (etao==0) temp <- matrix(rexp(n*K),K,n)*exp(-beta*x[,,3])/lam0
   x[,,2]<-ifelse(temp<=C,1,0);
@@ -182,7 +165,6 @@ if (left>0) { ## {{{
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -221,7 +203,6 @@ simClaytonOakes.family.ace <- function(K,varg,varc,beta,stoptime,lam0=0.5,Cvar=0
   child1 <- apply(cbind(mother.g[,c(1,2)],father.g[,c(1,2)]),1,sum) + env
   child2 <- apply(cbind(mother.g[,c(1,3)],father.g[,c(1,3)]),1,sum) + env
   Gam1 <- cbind(mother,father,child1,child2)
-###  print(apply(Gam1,2,mean)); print(apply(Gam1,2,var))
   temp<-eta*log(-log(1-x[,,1])/(eta*Gam1)+1)*exp(-beta*x[,,3])/lam0
   x[,,2]<-ifelse(temp<=C,1,0);
   x[,,1]<-pmin(temp,C)
@@ -237,7 +218,6 @@ if (left>0) { ## {{{
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -274,13 +254,6 @@ simCompete.twin.ace <- function(K,varg,varc,beta,stoptime,lam0=c(0.2,0.3),
   etat <- sum(eta)
   ### total variance for each cause + overall
   nc <- length(lam0); 
-###  etat <- sum(eta[1:nc])
-###  print(etat)
-###  print(varc)
-###  print(varg)
-###  print("MZ shared variance"); print(eta[1]/eta[1]^2); 
-###  print("DZ shared variance"); 
-###  print(c(mdz,vdz,vdz/mdz^2)); 
 
   mz <- c(rep(1,K/2),rep(0,K/2)); dz <- 1-mz;
   ### ace overall 
@@ -290,8 +263,6 @@ simCompete.twin.ace <- function(K,varg,varc,beta,stoptime,lam0=c(0.2,0.3),
     Gams1 <-cbind(
        rgamma(K,vargl)/etal, rgamma(K,vargl*0.5)/etal, rgamma(K,vargl*0.5)/etal, rgamma(K,vargl*0.5)/etal,
        rgamma(K,varcl)/etal )
-###  ex1 <- Gams1[,6]
-###  ex2 <- Gams1[,7]
   mzrv <-  Gams1[,1]+          Gams1[,5] ### shared gene + env 
   dzrv1 <- Gams1[,2]+Gams1[,3]+Gams1[,5] 
   dzrv2 <- Gams1[,2]+Gams1[,4]+Gams1[,5]
@@ -309,52 +280,20 @@ simCompete.twin.ace <- function(K,varg,varc,beta,stoptime,lam0=c(0.2,0.3),
       rgamma(K,vargl)/etal, 
       rgamma(K,vargl*0.5)/etal, rgamma(K,vargl*0.5)/etal, rgamma(K,vargl*0.5)/etal,
       rgamma(K,varcl)/etal )
-###  
+  ###  
   mzrv <-  Gams1[,1]+Gams1[,5]     ### shared gene + env 
   dzrv1 <- Gams1[,2]+Gams1[,3]+Gams1[,5] 
   dzrv2 <- Gams1[,2]+Gams1[,4]+Gams1[,5]
   Gam1 <- cbind(mz*mzrv+dz*dzrv1,mz*mzrv+dz*dzrv2)
   Gam1 <- Gam1+Gamoa
   Gamm <- cbind(Gamm,Gam1)
-### ## {{{ 
-###  mean(mzrv)
-###  var(mzrv)
-###  var(mzrv[mz==1])
-###  mean(dzrv1)
-###  mean(dzrv2)
-###  var(dzrv1)
-###  var(dzrv2)
-###  apply(Gam1,2,mean); apply(Gam1,2,var)
-###  apply(Gam1[mz==1,],2,mean); apply(Gam1[mz==0,],2,mean)
-###  var(Gam1[mz==1,]); var(Gam1[mz==0,])
-###  shdz <- Gams1[,2]+Gams1[,5]
-###  mean(shdz)
-###  ###1.25/etat
-###  var(shdz)
-###  mean(shdz/0.83)
-###  var(shdz/0.83)
-###  ## }}}
   ttemp<-matrix(rexp(2*K),K,2)/(Gam1*exp(beta*x[,,3])*lam0[i])
   temp1[,i] <- ttemp[,1]
   temp2[,i] <- ttemp[,2]
   }
-###  print(cov(Gamm))
-###  temp0 <- cbind( temp1, temp2)
-###  print(cov(temp0))
   temp <- cbind( apply(temp1,1,min), apply(temp2,1,min))
   cause1 <- apply(temp1,1,which.min)
   cause2 <- apply(temp2,1,which.min)
-###  for (zyg in c(0,1)) 
-###  for (i in 1:2) for (j in 1:2) {
-###	  med <- (i==cause1) & (j==cause2) & mz==zyg
-###	  datl <- temp[med,]
-###	  dato <- temp0[med,]
-###	  print(c(zyg,i,j))
-###	  print(cor(datl))
-###	  print(c(zyg,i,j))
-###	  print(cor(dato))
-###  }
-###
   x[,,2]<- ifelse(temp<=C,1,0)*cbind(cause1,cause2);
   x[,,1]<-pmin(temp,C)
   minstime <- apply(x[,,1],1,min)  
@@ -369,7 +308,6 @@ if (left>0) { ## {{{
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -407,14 +345,11 @@ simCompete.simple <- function(K,varr,beta,stoptime,lam0=c(0.2,0.3),
   mz <- c(rep(1,K/2),rep(0,K/2)); dz <- 1-mz;
   ### ace overall 
   if (overall==1) {
-  ###    if (all.sum==1) etal <-  etat else etal <- vargl+varcl
     etal <- etat
     Gams1 <-cbind(rgamma(K,eta[nc+1])/etal)
   Gamoa <- Gams1
   } else Gamoa <- 0
 
-###  print(apply(Gamoa,2,mean))
-###  print(apply(Gamoa,2,var))
 
   temp1 <- matrix(0,K,length(lam0))
   temp2 <- matrix(0,K,length(lam0))
@@ -424,15 +359,10 @@ simCompete.simple <- function(K,varr,beta,stoptime,lam0=c(0.2,0.3),
 	  Gams1 <-cbind(rgamma(K,eta[i])/etal)
 	  Gam1 <- Gams1+Gamoa
 	  Gam1 <- cbind(Gam1,Gam1)
-###  print("_________________")
-###  print(apply(Gam1,2,mean))
-###  print(apply(Gam1,2,var))
 	  occ <- (1:nc)[-i]
 	  for (j in  occ) {
 		  print(eta[j])
 	     Gamo <- cbind(rgamma(K,eta[j])/etal,rgamma(K,eta[j])/etal)
-###             print(apply(Gamo,2,mean))
-###             print(apply(Gamo,2,var))
 	     Gam1 <- Gam1+Gamo
 	  }
   print(apply(Gam1,2,mean))
@@ -444,7 +374,6 @@ simCompete.simple <- function(K,varr,beta,stoptime,lam0=c(0.2,0.3),
   temp <- cbind( apply(temp1,1,min), apply(temp2,1,min))
   cause1 <- apply(temp1,1,which.min)
   cause2 <- apply(temp2,1,which.min)
-###
   x[,,2]<- ifelse(temp<=C,1,0)*cbind(cause1,cause2);
   x[,,1]<-pmin(temp,C)
   minstime <- apply(x[,,1],1,min)  
@@ -459,7 +388,6 @@ if (left>0) { ## {{{
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -517,7 +445,6 @@ simFrailty.simple <- function(K,varr,beta,stoptime,lam0=c(0.2),
   temp <- cbind( apply(temp1,1,min), apply(temp2,1,min))
   cause1 <- apply(temp1,1,which.min)
   cause2 <- apply(temp2,1,which.min)
-###
   x[,,2]<- ifelse(temp<=C,1,0)*cbind(cause1,cause2);
   x[,,1]<-pmin(temp,C)
   minstime <- apply(x[,,1],1,min)  
@@ -532,7 +459,6 @@ if (left>0) { ## {{{
        trunk <- (lefttime > minstime)
        medleft <- rep(trunk,each=n)
      } else {
-###       lefttime <- rexp(n*K)*left
        lefttime <- runif(K)*(stoptime-left)
        left <- rbinom(n*K,1,trunc.prob) ## not trunation times!
        lefttime <- apply(cbind(lefttime*left,3),1,min)
@@ -630,12 +556,4 @@ kendall.normal.twin.ace <- function(parg,parc,K=10000)  ## {{{
 
   return(list(mz.kendall=mz.kendall,dz.kendall=dz.kendall))
 } ## }}} 
-
-##
-###kendall.ClaytonOakes.twin.ace(2,0)
-## sim.clayton <- function(n=100,K=2,eta=0.5,beta,...) {
-##     m <- lvm(T~x)
-##     rates <- c(0.3,0.5); cuts <- c(0,5)
-##     distribution(m,~) <- coxExponential.lvm(rate=rates,timecut=cuts)    
-## }
 
