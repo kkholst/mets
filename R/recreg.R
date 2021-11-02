@@ -1,12 +1,12 @@
 ##' Recurrent events regression with terminal event 
 ##'
-##' Fits Ghosh-Lin IPCW cox type model
+##' Fits Ghosh-Lin IPCW Cox-type model
 ##'
 ##' For Cox type model :
 ##' \deqn{
-##' E(dN_1(t)|X) = \mu_0(t)ddtt exp(X^T \beta)
+##' E(dN_1(t)|X) = \mu_0(t)dt exp(X^T \beta)
 ##' }
-##' by solving Cox IPCW weighted score equations 
+##' by solving Cox-type IPCW weighted score equations 
 ##' \deqn{
 ##'  \int (Z - E(t)) w(t) dN_1(t) 
 ##' }
@@ -127,8 +127,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 		      strata.name=strata.name, 
 		      cens.model=cens.model, cause=cause,
 		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
-             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
-                  cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
+             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
 
     class(res) <- c("phreg","recreg")
