@@ -20,8 +20,8 @@
 ##' }
 ##' and returned as iid.
 ##'
-##' Events, deaths and censorings are specified via stop start structure and the EventCens  call, that via a status vector 
-##' and cause (code) and death.code(s) indentifies these, a second censoring indicator specifies where the censorings.  See example. 
+##' Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
+##' and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example. 
 ##'
 ##' @param formula formula with 'EventCens' outcome
 ##' @param data data frame
@@ -44,30 +44,24 @@
 ##' rr <- simRecurrentII(1000,Lam1,cumhaz2=Lam2,death.cumhaz=LamD,cens=3/5000)
 ##' rr <- count.history(rr)
 ##' rr$cens <- 0
-##' dsort(rr) <- ~id-start
 ##' nid <- max(rr$id)
-##' rr$revnr <- cumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
-##' dsort(rr) <- ~id+start
+##' rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
 ##' rr$x <- rnorm(nid)[rr$id]
-##' rr <- dtransform(rr,cens=1,revnr==1 & death==0)
+##' rr$statusG <- rr$status
+##' rr <- dtransform(rr,statusG=3,death==1)
+##' dtable(rr,~statusG+status+death)
 ##' dcut(rr) <- gx~x
 ##'
-##' rr <- dtransform(rr,statusG=status)
-##' rr <- dtransform(rr,statusG=0,status==2)
-##' rr <- dtransform(rr,statusG=2,death==1)
-##'
-##' ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1)
+##' ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1)
 ##' summary(ll)
 ##' 
 ##' ## censoring stratified after quartiles of x
-##' lls <- recreg(EventCens(start, stop, statusG, cens) ~ x+cluster(id), data=rr,
-##'               cause=1, cens.model=~strata(gx))
+##' lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
 ##' @aliases EventCens  strataAugment
 ##' @export
-recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.model=~1,
-            weights=NULL,offset=NULL,Gc=NULL,...)
+recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -77,16 +71,16 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (class(Y)!="EventCens") stop("Expected a 'EventCens'-object")
+    if (class(Y)=="EventCens") stop("Change to Event call, see example, EventCens disabled")
+    if (class(Y)!="Event") stop("Expected a 'Event'-object")
     if (ncol(Y)==2) {
         exit <- Y[,1]
-        entry <- NULL ## rep(0,nrow(Y))
+        entry <- rep(0,nrow(Y))
         status <- Y[,2]
     } else {
         entry <- Y[,1]
         exit <- Y[,2]
         status <- Y[,3]
-        cens <- Y[,4]
     }
     id <- strata <- NULL
     if (!is.null(attributes(Terms)$specials$cluster)) {
@@ -122,10 +116,8 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
 
     ## }}}
 
-    res <- c(recreg01(data,X,entry,exit,status,cens,id=id,strata=strata,offset=offset,weights=weights,
-		      strataA=strataAugment,
-		      strata.name=strata.name, 
-		      cens.model=cens.model, cause=cause,
+    res <- c(recreg01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
+		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=strataAugment,
 		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
              list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
@@ -134,10 +126,9 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=1,cens.mo
     return(res)
 }# }}}
 
-recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
-          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,
-	  propodds=NULL,profile=0,
-          case.weights=NULL,cause=1,death.code=2,cens.code=1,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {# {{{ setting up weights, strata, beta and so forth before the action starts# {{{ p <- ncol(X)
+recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
+          strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
+          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {# {{{ setting up weights, strata, beta and so forth before the action starts# {{{ p <- ncol(X)
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
@@ -163,7 +154,7 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
         }
     }
 
-    orig.strataA <- strataA
+   orig.strataA <- strataA
    if (is.null(strataA)) {  strataA <- rep(0,length(exit)); 
               nstrataA <- 1; strataA.level <- NULL; 
    } else {
@@ -198,10 +189,11 @@ recreg01 <- function(data,X,entry,exit,status,cens,id=NULL,strata=NULL,offset=NU
 
     ## }}}
 
+
    ### censoring weights constructed
-    whereC <- which(cens==cens.code)
+    whereC <- which( status %in% cens.code)
     time <- exit
-    statusC <- c(cens==cens.code)
+    cens <- statusC <- c(status %in% cens.code)
     data$id <- id
     data$exit__ <- exit
     data$entry__ <- entry
@@ -575,14 +567,14 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
     return(out)
 }# }}}
 
-#' @export
-EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {{{
-    out <- cbind(time,time2,cause,cens)
-    colnames(out) <- c("entry","exit","cause","cens")
-    class(out) <- "EventCens"
-    attr(out,"cens.code") <- cens.code
-    return(out)
-}# }}}
+####' @export
+###EventCens <- function(time,time2=TRUE,cause=NULL,cens=NULL,cens.code=0,...) {# {{{
+###    out <- cbind(time,time2,cause,cens)
+###    colnames(out) <- c("entry","exit","cause","cens")
+###    class(out) <- "EventCens"
+###    attr(out,"cens.code") <- cens.code
+###    return(out)
+###}# }}}
 
 ##' @export
 strataAugment <- survival:::strata
@@ -653,11 +645,8 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
  dsort(rr) <- ~id+start
  nid <- max(rr$id)
  rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
- rr$cens <- 0
- rr <- dtransform(rr,cens=1,revnr==1 & death==0)
- rr <- dtransform(rr,statusG=status)
- rr <- dtransform(rr,statusG=0,status==2)
- rr <- dtransform(rr,statusG=2,death==1)
+ rr$statusG <- rr$status 
+ rr <- dtransform(rr,statusG=3,death==1)
 
  if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
  if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2

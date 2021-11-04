@@ -11,7 +11,7 @@ recreg(
   data = data,
   cause = 1,
   death.code = c(2),
-  cens.code = 1,
+  cens.code = 0,
   cens.model = ~1,
   weights = NULL,
   offset = NULL,
@@ -41,14 +41,14 @@ recreg(
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Fits Ghosh-Lin IPCW cox type model
+Fits Ghosh-Lin IPCW Cox-type model
 }
 \details{
 For Cox type model :
 \deqn{
-E(dN_1(t)|X) = \mu_0(t)ddtt exp(X^T \beta)
+E(dN_1(t)|X) = \mu_0(t)dt exp(X^T \beta)
 }
-by solving Cox IPCW weighted score equations 
+by solving Cox-type IPCW weighted score equations 
 \deqn{
  \int (Z - E(t)) w(t) dN_1(t) 
 }
@@ -62,8 +62,8 @@ The iid decomposition of the beta's are on the form
 }
 and returned as iid.
 
-Events, deaths and censorings are specified via stop start structure and the EventCens  call, that via a status vector 
-and cause (code) and death.code(s) indentifies these, a second censoring indicator specifies where the censorings.  See example.
+Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
+and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example.
 }
 \examples{
 ## data with no ties
@@ -75,24 +75,19 @@ Lam1 <- base1cumhaz;  Lam2 <- base4cumhaz;  LamD <- drcumhaz
 rr <- simRecurrentII(1000,Lam1,cumhaz2=Lam2,death.cumhaz=LamD,cens=3/5000)
 rr <- count.history(rr)
 rr$cens <- 0
-dsort(rr) <- ~id-start
 nid <- max(rr$id)
-rr$revnr <- cumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
-dsort(rr) <- ~id+start
+rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
 rr$x <- rnorm(nid)[rr$id]
-rr <- dtransform(rr,cens=1,revnr==1 & death==0)
+rr$statusG <- rr$status
+rr <- dtransform(rr,statusG=3,death==1)
+dtable(rr,~statusG+status+death)
 dcut(rr) <- gx~x
 
-rr <- dtransform(rr,statusG=status)
-rr <- dtransform(rr,statusG=0,status==2)
-rr <- dtransform(rr,statusG=2,death==1)
-
-ll <- recreg(EventCens(start,stop,statusG,cens)~x+cluster(id),data=rr,cause=1)
+ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1)
 summary(ll)
 
 ## censoring stratified after quartiles of x
-lls <- recreg(EventCens(start, stop, statusG, cens) ~ x+cluster(id), data=rr,
-              cause=1, cens.model=~strata(gx))
+lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
 summary(lls)
 
 }
