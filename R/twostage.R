@@ -3421,8 +3421,8 @@ ace.family.design <-function (data,id="id",member="type",mother="mother",father=
   if (type=="ade") { ### ade #
   #ADE
     stop("not done yet");
-    pard <- rbind(c(1,0),c(0.25,0),c(0.75,0),c(0.75,0),c(0,1),c(0,0.5),c(0,0.5),c(0,0.5) )
-    pardes <- matrix(pard,n,16,byrow=TRUE)
+###    pard <- rbind(c(1,0),c(0.25,0),c(0.75,0),c(0.75,0),c(0,1),c(0,0.5),c(0,0.5),c(0,0.5) )
+###    pardes <- matrix(pard,n,16,byrow=TRUE)
   } #
 
   if (type=="adce") { ### adce #

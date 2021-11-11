@@ -673,8 +673,8 @@ vcov.phreg  <- function(object,...) {
   attributes(res)$ncluster <- attributes(ii)$ncluster
   attributes(res)$invhess <- attributes(ii)$invhess
   colnames(res) <- rownames(res) <- names(coef(object))
-} else if ((length(class(object))==2) & class(object)[2]=="cif.reg") {
-  res <- object$var
+} else { ##if ((length(class(object))==2) & class(object)[2]=="cif.reg") {
+  res <- as.matrix(object$var)
   colnames(res) <- rownames(res) <- names(coef(object))
 }
   res
@@ -1946,9 +1946,9 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 
    ## all strata
    if (is.null(stratas)) stratas <- 0:(x$nstrata-1) 
-
    ltys <- lty
    cols <- col
+   lwds <- lwd
 
    if (length(stratas)>0 & x$nstrata>1) { ## with strata
    lstrata <- x$strata.level[(stratas+1)]
@@ -1963,7 +1963,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 		 if (length(col)!=length(stratas)) cols <- rep(col[1],length(stratas))
       } else cols <- col
       if (!is.matrix(lwd)) {
-         if (is.null(lwd)) lwds <- 1:length(stratas) else 
+         if (is.null(lwd)) lwds <- rep(1,length(stratas)) else 
 		 if (length(lwd)!=length(stratas)) lwds <- rep(lwd[1],length(stratas))
       } else lwds <- lwd
    } else { 
