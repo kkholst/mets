@@ -97,12 +97,12 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
         strata.name <- ts$vars
     }  else { strata.name <- NULL; pos.strata <- NULL}
 
-   if (!is.null(stratapos <- attributes(Terms)$specials$strataAugment)) {
-    ts <- survival::untangle.specials(Terms, "strataAugment")
-    Terms  <- Terms[-ts$terms]
-    strataAugment <- as.numeric(m[[ts$vars]])-1
-    strataAugment.name <- ts$vars
-  }  else { strataAugment <- NULL; strataAugment.name <- NULL}
+###   if (!is.null(stratapos <- attributes(Terms)$specials$strataAugment)) {
+###    ts <- survival::untangle.specials(Terms, "strataAugment")
+###    Terms  <- Terms[-ts$terms]
+###    strataAugment <- as.numeric(m[[ts$vars]])-1
+###    strataAugment.name <- ts$vars
+###  }  else { strataAugment <- NULL; strataAugment.name <- NULL}
 
     if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
         ts <- survival::untangle.specials(Terms, "offset")
@@ -117,7 +117,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
     ## }}}
 
     res <- c(recreg01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
-		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=strataAugment,
+		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=NULL,## strataAugment,
 		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
              list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
@@ -531,7 +531,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     var1 <-  crossprod(UUiid)
     varmc <-  crossprod(Uiid)
     ### end if (p>0)
-    } else {varmc <- var1 <- 0; MGc <- iH <- UUiid <- Uiid <- NULL}
+    } else {varmc <- var1 <- 0; augment.new <- MGAc <- MGc <- iH <- UUiid <- Uiid <- NULL}
     strata <- xx2$strata[jumps]
     cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
     colnames(cumhaz)    <- c("time","cumhaz")
