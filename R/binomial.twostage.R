@@ -200,7 +200,7 @@ binomial.twostage <- function(margbin,data=parent.frame(),
     if (!is.null(pairs)) nn <- NROW(pairs) else nn <- 1
 
 ### marginal prediction and binomial response, two types of calls ## {{{
-    if (class(margbin)[1]=="glm") {
+    if (inherits(margbin,"glm")) {
         ps <- predict(margbin,newdata=data,type="response")
         if (margbin$family$family!="binomial") warning("not binomial family\n");
         ### takes data to extract response and predictions, these could be different for pairs call
@@ -211,7 +211,7 @@ binomial.twostage <- function(margbin,data=parent.frame(),
 	if (is.null(Dbeta.iid)) Dbeta.iid <- model.matrix(margbin$formula,data=data) * ps
 	if (twostage==0)            Xbeta <- model.matrix(margbin$formula,data=data)
     }
-    else if (class(margbin)[1]=="formula") {
+    else if (inherits(margbin,"formula")) {
         margbin <- glm(margbin,data=data,family=binomial())
         ps <- predict(margbin,type="response")
         cause <- margbin$y
@@ -439,7 +439,7 @@ if (pair.structure==1) {
 	if (is.null(var.tot)) var.tot <- var.theta
     } else var.theta <- -1* hessi
 
-  if (class(margbin)[1]=="glm") beta <- coef(margbin);
+  if (inherits(margbin,"glm")) beta <- coef(margbin);
   if (twostage==0) beta <- theta[seq(ptheta,ptheta+dimbeta)]
 
   if (iid==1) var.theta <- robvar.theta else var.theta <- -hessi
@@ -836,8 +836,8 @@ easy.binomial.twostage <- function(margbin=NULL,data=parent.frame(),method="nr",
                                    step=1.0,model="plackett",marginal.p=NULL,
 				   strata=NULL,max.clust=NULL,se.clusters=NULL)
 { ## {{{
-   if (class(margbin)[1]=="glm") ps <- predict(margbin,type="response")
-   else if (class(margbin)=="formula") {
+   if (inherits(margbin,"glm")) ps <- predict(margbin,type="response")
+   else if (inherits(margbin,"formula")) {
        margbin <- glm(margbin,data=data,family=binomial())
        ps <- predict(margbin,type="response")
    }  else if (is.null(marginal.p))
@@ -1150,8 +1150,8 @@ CCbinomial.twostage <- function(margbin=NULL,data=parent.frame(),method="nlminb"
 { ## {{{
   ### under construction
 
-    if (class(margbin)[1]=="glm") ps <- predict(margbin,type="response")
-    else if (class(margbin)=="formula") {
+    if (inherits(margbin,"glm")) ps <- predict(margbin,type="response")
+    else if (inherits(margbin,"formula")) {
         margbin <- glm(margbin,data=data,family=binomial())
         ps <- predict(margbin,type="response")
     }  else if (is.null(marginal.p)) stop("without marginal model, marginal p's must be given\n");

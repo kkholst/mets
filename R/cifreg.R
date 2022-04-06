@@ -78,7 +78,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (class(Y)!="Event") stop("Expected a 'Event'-object")
+    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
     if (ncol(Y)==2) {
         exit <- Y[,1]
         entry <- NULL ## rep(0,nrow(Y))
@@ -188,7 +188,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
         kmt <- TRUE
-        if (class(cens.model)[1]=="formula") {
+        if (inherits(cens.model,"formula")) {
             formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
             cens.model <- phreg(formC,data)
         }
@@ -541,8 +541,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
   if (length(class(x))!=2) stop("Must be cifreg object\n"); 
-  if (class(x)[1]!="phreg") stop("Must be phreg object\n"); 
-  if (class(x)[2]!="cif.reg") stop("Must be cifregobject\n"); 
+  if (!inherits(x,"cif.reg")) stop("Must be cifreg object\n"); 
   if (is.null(time)) stop("Must give time for iid of baseline")
 
   if (!is.null(x$propodds))  stop("Only for Fine-Gray-model") 
@@ -851,7 +850,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (class(Y)!="Event") stop("Expected a 'Event'-object")
+    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
     if (ncol(Y)==2) {
         exit <- Y[,1]
         entry <- NULL ## rep(0,nrow(Y))
@@ -1118,8 +1117,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
 
 
 ##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,
-                type=c("cloglog","logistic"),rate=1) {# {{{
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL) {# {{{
     p=length(beta)/2
     tt <- seq(0,6,by=0.1)
     if (length(rate)==1) rate <- rep(rate,2)
@@ -1127,15 +1125,18 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,
     Lam2 <- rho2*(1-exp(-tt/rate[2]))
 
     if (length(bin)==1) bin <- rep(bin,2)
+    if (length(rcZ)==1) rcZ <- c(rcZ,0)
 
+    if (is.null(Z)) 
     Z=cbind((bin[1]==1)*(2*rbinom(n,1,1/2)-1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n,1,1/2))+(bin[2]==0)*rnorm(n))
     colnames(Z) <- paste("Z",1:2,sep="")
+    p <- ncol(Z)
 
-    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type=type[1])
-    cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type=type[1])
+    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
+    cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
     data <- timereg::sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
-    if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(rcZ*Z[,1]))),6)
+    if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)
 
     status=data$status*(data$time<=censor)
     time=pmin(data$time,censor)

@@ -363,7 +363,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
        outl$score <-  t(mm) %*% outl$score
        outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
        if (iid==1) { outl$score.iid <- t(t(mm) %*% t(outl$score.iid))
-               if (class(margsurv)=="phreg") {
+               if (inherits(margsurv,"phreg")) {
 	          outl$D1thetal  <- t(t(mm) %*% t(outl$D1thetal))
 	          outl$D2thetal  <- t(t(mm) %*% t(outl$D2thetal))
 	       }
@@ -422,7 +422,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		    rownames(theta.iid) <- unique(cluster.call)
                 ### lets iid for theta be just score to start, correction for marginal for phreg call
 
-                if (class(margsurv)=="phreg" & baseline.iid==1) {  # adjust for baseline when phreg is used
+                if (inherits(margsurv,"phreg") & baseline.iid==1) {  # adjust for baseline when phreg is used
 
                   if ((margsurv$no.opt) | is.null(margsurv$coef)) fixbeta<- 1 else fixbeta <- 0
 		  xx <- margsurv$cox.prep
@@ -881,7 +881,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
        outl$score <-  t(mm) %*% outl$score
        outl$Dscore <- t(mm) %*% outl$Dscore %*% mm
        if (iid==1) { outl$score.iid <- t(t(mm) %*% t(outl$score.iid))
-               if (class(margsurv)=="phreg") {
+               if (inherits(margsurv,"phreg")) {
 	          outl$D1thetal  <- t(t(mm) %*% t(outl$D1thetal))
 	          outl$D2thetal  <- t(t(mm) %*% t(outl$D2thetal))
 	       }
@@ -953,7 +953,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		    rownames(theta.iid) <- unique(cluster.call)
 		### lets iid for theta be just score to start, correction for marginal for phreg call
 
-                if (class(margsurv)=="phreg" & baseline.iid==1) {  # adjust for baseline when phreg is used
+                if (inherits(margsurv,"phreg") & baseline.iid==1) {  # adjust for baseline when phreg is used
 
                   if ((margsurv$no.opt) | is.null(margsurv$coef)) fixbeta<- 1 else fixbeta <- 0
 		  xx <- margsurv$cox.prep
@@ -1253,7 +1253,7 @@ readmargsurv <- function(margsurv,data,clusters)
 {
 start.time <- 0
 
-if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") {
+if (inherits(margsurv,c("aalen","cox.aalen"))) {
 	 formula<-attr(margsurv,"Formula");
 	 beta.fixed <- attr(margsurv,"beta.fixed")
 	 if (is.null(beta.fixed)) beta.fixed <- 1;
@@ -1275,7 +1275,7 @@ if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") {
          if (is.null(clusters) && is.null(mclusters)) stop("No cluster variabel specified in marginal or twostage call\n");
          if (is.null(clusters)) clusters <- mclusters
 	 if (nrow(X)!=length(clusters)) stop("Length of Marginal survival data not consistent with cluster length\n"); 
-	 } else if (class(margsurv)=="phreg") { 
+	 } else if (inherits(margsurv,"phreg")) { 
             ### setting up newdata with factors and strata
                 antpers <- nrow(data)
 		 rr <- readPhreg(margsurv,data,nr=FALSE)
@@ -1316,14 +1316,14 @@ if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") {
   } else lefttrunk <- 0
 
 if (!is.null(margsurv))  {
-  if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen")  { 
+  if (inherits(margsurv,c("aalen","cox.aalen")))  { 
          resi <- residualsTimereg(margsurv,data=data)
          RR  <- resi$RR
 	 cum <- resi$cumhaz/RR
 	 psurvmarg <- exp(-resi$cumhaz);
          ptrunc <- rep(1,length(psurvmarg));
 	 if (lefttrunk==1) ptrunc <- exp(-resi$cumhazleft); 
-  } else if (class(margsurv)=="coxph") {  
+  } else if (inherits(margsurv,"coxph")) {  
     ### some problems here when data is different from data used in margsurv
        residuals <- residuals(margsurv)
        cum <- cumhaz <- status-residuals
@@ -1339,7 +1339,7 @@ if (!is.null(margsurv))  {
 	 cumt <- Cpred(cumt,start.time)[,2]
 	 ptrunc <- exp(-cumt * RR)
 	}
-  } else if (class(margsurv)=="phreg") {
+  } else if (inherits(margsurv,"phreg")) {
 
 	ppsurvmarg <- predict(margsurv,data,tminus=TRUE,times=time2,individual.time=TRUE,se=FALSE)
         psurvmarg <- ppsurvmarg$surv
@@ -1352,7 +1352,7 @@ if (!is.null(margsurv))  {
   }
 }
 
-if (is.null(clusters) &  class(margsurv)!="phreg") stop("must give clusters")
+if (is.null(clusters) &  (!inherits(margsurv,"phreg"))) stop("must give clusters")
 
 return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 	    status=status,clusters=clusters,cum=cum,RR=RR))
@@ -1416,7 +1416,7 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 twostageMLE <-function(margsurv,data=parent.frame(),
 theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,se.cluster=NULL,...)
 {
- if (class(margsurv)!="phreg")  stop("Must use phreg for this \n");
+ if (!inherits(margsurv,"phreg"))  stop("Must use phreg for this \n");
 
  clusters <- margsurv$cox.prep$id
  n <- nrow(margsurv$cox.prep$X)
@@ -1793,7 +1793,7 @@ if ((!is.null(margsurv)) | (!is.null(marginal.survival))) fix.baseline <- 1
 
 
 if (!is.null(margsurv)) {
-if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") { #
+if (inherits(margsurv,c("aalen","cox.aalen"))) { #
 	 formula<-attr(margsurv,"Formula");
 	 beta.fixed <- attr(margsurv,"beta.fixed")
 	 if (is.null(beta.fixed)) beta.fixed <- 1;
@@ -1860,14 +1860,14 @@ if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen") { #
   } else lefttrunk <- 0
 
 if (!is.null(margsurv))  {
-  if (class(margsurv)=="aalen" || class(margsurv)=="cox.aalen")  { #
+  if (inherits(margsurv,c("aalen","cox.aalen")))  { #
          resi <- residualsTimereg(margsurv,data=data)
          RR  <- resi$RR
 	 psurvmarg <- exp(-resi$cumhaz);
          ptrunc <- rep(1,length(psurvmarg));
 	 if (lefttrunk==1) ptrunc <- exp(-resi$cumhazleft);
   } #
-  else if (class(margsurv)=="coxph") {  #
+  else if (inherits(margsurv,"coxph")) {  #
 	### some problems here when data is different from data used in margsurv
        notaylor <- 1
        residuals <- residuals(margsurv)
@@ -2473,7 +2473,7 @@ if (!is.null(margsurv))  {
             hess1 <- hess  <- -1*out$Dscore
 
             if (iid==1) { theta.iid <- out$theta.iid
-                if (class(margsurv)=="phreg") {  #
+                if (inherits(margsurv,"phreg")) {  #
                     ## order after time
 		       D1dltheta1 <- out$D1dltheta1[xx$order+1,]
 		       D2dltheta1 <- out$D1dltheta1[xx$order+1,]
@@ -3186,7 +3186,7 @@ step=0.5,model="plackett",marginal.surv=NULL,strata=NULL,se.clusters=NULL)
 pentry <- NULL
 
 if (is.null(marginal.surv))
-if (class(margsurv)[1]=="coxph")
+if (inherits(margsurv,"coxph"))
 { #
     coxformula <- margsurv$formula
     X <- model.matrix(coxformula,data=data)[,-1];
@@ -3196,7 +3196,7 @@ if (class(margsurv)[1]=="coxph")
     RR<-exp(X %*% coef(margsurv))
     ps<-exp(-cumh*RR)
     #
-  } else if (class(margsurv)[1]=="phreg")
+  } else if (inherits(margsurv,"phreg"))
   {  #
 	if (!is.null(margsurv$coef))
 		rr <- c(exp(margsurv$X  %*% margsurv$coef))

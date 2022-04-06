@@ -26,6 +26,7 @@ basehazplot.phreg(
   level = 0.95,
   stratas = NULL,
   robust = FALSE,
+  conf.type = c("plain", "log"),
   ...
 )
 }
@@ -61,6 +62,8 @@ basehazplot.phreg(
 \item{stratas}{wich strata to plot}
 
 \item{robust}{to use robust standard errors if possible}
+
+\item{conf.type}{"plain" or "log" transformed}
 
 \item{...}{Additional arguments to lower level funtions}
 }

@@ -197,7 +197,7 @@ return(out)
 casewise <- function(conc,marg,cause.marg)
 { ## {{{
   if (missing(cause.marg)) stop("Please specify cause of marginal (as given in Event object)")
-  if ((!class(conc)=="prodlim")  || (!class(marg)=="prodlim")) stop("Assumes that both models are based on prodlim function \n"); 
+  if ((!inherits(conc,"prodlim"))  || (!inherits(marg,"prodlim"))) stop("Assumes that both models are based on prodlim function \n"); 
   time1 <- conc$time
   time2 <- marg$time
 
@@ -211,15 +211,15 @@ casewise <- function(conc,marg,cause.marg)
  
   out <- conc
   out$time <- timer
-  if (class(marg)=="comp.risk") margtime <- Cpred(cbind(marg$time,c(marg$P1)),timer)[,2] else if (class(marg)=="prodlim") {
+  if (inherits(marg,"comp.risk")) margtime <- Cpred(cbind(marg$time,c(marg$P1)),timer)[,2] else if (inherits(marg,"prodlim")) {
 	  cuminc <- data.frame(marg$cuminc)[,cause.prodlim]; 
 	  se.cuminc <- data.frame(marg$se.cuminc)[,cause.prodlim]; 
 	  margtime <- Cpred(cbind(marg$time,c(cuminc)),timer)[,2]; 
 	  se.margtime <- Cpred(cbind(marg$time,c(se.cuminc)),timer)[,2]; 
   } else stop("marginal cumulative incidence comp.risk or prodlim output\n"); 
 
-  if (class(conc)=="comprisk") concP1 <-  Cpred(cbind(conc$time,c(conc$P1)),timer)[,2]
-  else if (class(conc)=="prodlim")  {
+  if (inherits(conc,"comprisk")) concP1 <-  Cpred(cbind(conc$time,c(conc$P1)),timer)[,2]
+  else if (inherits(conc,"prodlim"))  {
 	  conc.cuminc <- data.frame(conc$cuminc)[,1]
 	  conc.se.cuminc <- data.frame(conc$se.cuminc)[,1]
           se.P1 <-  Cpred(cbind(conc$time,conc.se.cuminc),timer)[,2]

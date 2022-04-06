@@ -478,7 +478,7 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_k ( int_0^t f(s)/S_0^r(s) dM_k.^r(s) )^2
 ###  strata "r" from object and "k" id from cluster 
-  if (class(phreg)!="phreg") stop("Must be phreg object\n"); 
+  if (!inherits(phreg,"phreg")) stop("Must be phreg object\n"); 
 
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
@@ -1096,16 +1096,15 @@ if (3 %in% which) {
 ##'
 ##' Simulation of illness-death model 
 ##'
-##' simMultistate with same death intensity from states 1 and 2 
-##' simMultistateII with different death intensities from states 1 and 2 
+##' simMultistate with different death intensities from states 1 and 2 
 ##'
 ##' Must give cumulative hazards on some time-range 
 ##'
 ##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of recurrent events 
-##' @param cumhaz2  cumulative hazard of recurrent events  of type 2
-##' @param death.cumhaz cumulative hazard of death from state 1 
-##' @param death.cumhaz2 cumulative hazard of death from state 2
+##' @param cumhaz  cumulative hazard of going from state 1 to 2.
+##' @param cumhaz2  cumulative hazard of going from state 2 to 1. 
+##' @param death.cumhaz cumulative hazard of death from state 1. 
+##' @param death.cumhaz2 cumulative hazard of death from state 2.
 ##' @param rr  relative risk adjustment for cumhaz
 ##' @param rr2  relative risk adjustment for cumhaz2
 ##' @param rd  relative risk adjustment for death.cumhaz

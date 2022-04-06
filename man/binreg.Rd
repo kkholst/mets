@@ -3,6 +3,7 @@
 \name{binreg}
 \alias{binreg}
 \alias{logitIPCW}
+\alias{binregt}
 \title{Binomial Regression for censored competing risks data}
 \usage{
 binreg(

@@ -71,8 +71,8 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (class(Y)=="EventCens") stop("Change to Event call, see example, EventCens disabled")
-    if (class(Y)!="Event") stop("Expected a 'Event'-object")
+    if (inherits(Y,"EventCens")) stop("Change to Event call, see example, EventCens disabled")
+    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
     if (ncol(Y)==2) {
         exit <- Y[,1]
         entry <- rep(0,nrow(Y))
@@ -203,7 +203,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
         kmt <- TRUE
-        if (class(cens.model)[1]=="formula") {
+        if (inherits(cens.model,"formula")) {
             formC <- update.formula(cens.model,Surv(entry__,exit__,statusC)~ . +cluster(id))
             cens.model <- phreg(formC,data)
         }
