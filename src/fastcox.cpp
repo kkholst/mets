@@ -543,17 +543,28 @@ RcppExport SEXP revcumsum2strataR(SEXP ia,SEXP istrata, SEXP instrata,SEXP istra
 
 	unsigned n = a.n_rows;
 
+
+//	printf(" %i %i \n",nstrata,nstrata2); 
+//	for (unsigned i=0; i<n; i++) {
+//		Rprintf(" %d %d \n",strata(n-i-1),strata2(n-i-1)); 
+//		Rprintf("\n"); 
+//	}
+
 	mat Ss(n,nstrata2);
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros();
 	colvec res = a;
 	colvec lagres = a;
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1); int ss2=strata2(n-i-1);
+//		printf(" %d %d \n",ss,ss2); 
 		lagres(n-i-1)=tmpsum(ss,ss2);
 		tmpsum(ss,ss2) += a(n-i-1);
 		for (int k=0;k<nstrata2;k++) Ss(n-i-1,k)=tmpsum(ss,k);
+//		for (int k=0;k<nstrata2;k++) Rprintf(" %lf",tmpsum(ss,k)); Rprintf("\n"); 
 		res(n-i-1)=tmpsum(ss,ss2);
 	}
+
+//	Ss.print(); 
 
 	List rres;
 	rres["res"]=res;

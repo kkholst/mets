@@ -233,7 +233,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             ### back to km product-limit form
             Gts <- apply(rbind(0,Gts),2,diff)
             ### back to km
-            GtsAl<- Gts <- apply(Gts,2,function(x) exp(cumsum(log(1-x))))
+            Gts <- apply(Gts,2,function(x) exp(cumsum(log(1-x))))
             Gts <- rbind(1,Gts)[whereaJ,]
             Gts[is.na(Gts)] <- 0
             Gjumps <- Gts
