@@ -1286,7 +1286,6 @@ return(res)
 # {{{Restricted mean for stratified Kaplan-Meier with martingale standard errors 
 
 ##' Restricted mean for stratified Kaplan-Meier with martingale standard errors 
-##'
 ##' 
 ##' Restricted mean for stratified Kaplan-Meier with martingale standard errors 
 ##' @param x phreg object 
@@ -2177,15 +2176,16 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
    stratnames <- paste(stratn,lstrata,sep=":")
    
       if (!is.matrix(lty)) {
-         if (is.null(lty)) ltys <- 1:length(stratas) else if (length(lty)!=length(stratas)) ltys <- rep(lty[1],length(stratas))
+         if (is.null(lty)) lty <- ltys <- 1:length(stratas) 
+         if (length(lty)!=length(stratas)) ltys <- rep(lty[1],length(stratas)) else ltys <- lty
       } else ltys <- lty
       if (!is.matrix(col)) {
-         if (is.null(col)) cols <- 1:length(stratas) else 
-		 if (length(col)!=length(stratas)) cols <- rep(col[1],length(stratas))
+         if (is.null(col)) col <- cols <- 1:length(stratas)  
+	 if (length(col)!=length(stratas)) cols <- rep(col[1],length(stratas)) else cols <- col
       } else cols <- col
       if (!is.matrix(lwd)) {
-         if (is.null(lwd)) lwds <- rep(1,length(stratas)) else 
-		 if (length(lwd)!=length(stratas)) lwds <- rep(lwd[1],length(stratas))
+         if (is.null(lwd)) lwd <- lwds <- rep(1,length(stratas))  
+	 if (length(lwd)!=length(stratas)) lwds <- rep(lwd[1],length(stratas)) else lwds <- lwd
       } else lwds <- lwd
    } else { 
      stratnames <- "Baseline" 
@@ -2200,6 +2200,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
   if (!is.matrix(ltys))  ltys <- cbind(ltys,ltys,ltys)
   if (!is.matrix(cols))  cols <- cbind(cols,cols,cols)
   if (!is.matrix(lwds))  lwds <- cbind(lwds,lwds,lwds)
+
 
   first <- 0
   for (i in seq(stratas)) {
@@ -2263,6 +2264,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
     graphics::legend(where,legend=stratnames,col=cols[,1],lty=ltys[,1])
 
 }# }}}
+
 
 ##' @export
 plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,type="s",...)
