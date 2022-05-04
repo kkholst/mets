@@ -41,13 +41,13 @@
 ##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 ##' # logistic regresion with IPCW binomial regression 
 ##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-                        cause=1,time=50,cens.model=~strata(platelet),model="exp")
+##'                 cause=1,time=50,cens.model=~strata(platelet),model="exp")
 ##' summary(out)
 ##'
 ##' ### same as Kaplan-Meier for full censoring model 
 ##' bmt$int <- with(bmt,interaction(tcell,platelet))
 ##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,cause=1,time=30,
-                               cens.model=~strata(platelet,tcell),model="lin")
+##'                             cens.model=~strata(platelet,tcell),model="lin")
 ##' summary(out)
 ##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 ##' rm1 <- resmean.phreg(out1,times=30)
