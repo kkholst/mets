@@ -20,14 +20,14 @@
 ##' rr$gaptime <-  rr$time-rr$start
 ##' rr$gapstart <- 0
 ##'
-##' rr1 <- Event.Split(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
-##' rr2 <- Event.Split(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
+##' rr1 <- EventSplit(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
+##' rr2 <- EventSplit(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
 ##'
 ##' dlist(rr1,start-time+status+gapstart+gaptime~id)
 ##' dlist(rr2,start-time+status+gapstart+gaptime~id)
 ##'
 ##' @export 
-Event.Split <- function(data,
+EventSplit <- function(data,
 		time="time",status="status",entry="start",cuts="cuts",name.id="id",
 		gaptime=NULL,gaptime.entry=NULL,cuttime=c("time","gaptime"),
 		cens.code=0,order.id=TRUE)
