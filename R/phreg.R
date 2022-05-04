@@ -240,7 +240,15 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
                 ihessian=II,
                 II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
-  res
+
+  ## also computing robust variance 
+  if (p>0 & no.opt!=TRUE) {
+  phvar <- crossprod(iid(res))
+  colnames(phvar) <- rownames(phvar) <- names(res$coef)
+  res$var <- phvar
+  } else res$var <- 0
+
+  return(res)
 }
 
 ###}}} phreg0
@@ -596,7 +604,15 @@ phreg01R <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights
 		lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
 		II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
-  res
+
+  ## also computing robust variance 
+  if (p>0 & no.opt!=TRUE) {
+  phvar <- crossprod(iid(res))
+  colnames(phvar) <- rownames(phvar) <- names(res$coef)
+  res$var <- phvar
+  } else res$var <- 0
+
+  return(res)
 }# }}}
 
 ##' @export
