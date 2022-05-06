@@ -1,3 +1,6 @@
+# mets 1.3.0
+  - IPCW restricted mean survival regression: resmeanIPCW 
+
 
 # mets 1.2.9
   - Examples updated

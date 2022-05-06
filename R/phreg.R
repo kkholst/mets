@@ -242,7 +242,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
   class(res) <- "phreg"
 
   ## also computing robust variance 
-  if (p>0 & no.opt!=TRUE) {
+  if (p>0) {
   phvar <- crossprod(iid(res))
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
@@ -606,7 +606,7 @@ phreg01R <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights
   class(res) <- "phreg"
 
   ## also computing robust variance 
-  if (p>0 & no.opt!=TRUE) {
+  if (p>0) {
   phvar <- crossprod(iid(res))
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
