@@ -108,7 +108,7 @@ phreg0 <- function(X,entry,exit,status,id=NULL,strata=NULL,beta,stderr=TRUE,meth
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	   offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
              beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
-	     case.weights=NULL,...) {
+	     case.weights=NULL,no.var=0,...) {
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(exit)))
@@ -242,7 +242,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
   class(res) <- "phreg"
 
   ## also computing robust variance 
-  if (p>0) {
+  if (p>0 & no.var==0) {
   phvar <- crossprod(iid(res))
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar

@@ -5,6 +5,7 @@
 \alias{logitIPCWATE}
 \alias{logitATE}
 \alias{kumarsim}
+\alias{kumarsimRCT}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(

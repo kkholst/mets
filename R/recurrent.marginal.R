@@ -1985,12 +1985,12 @@ form1Ccc <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type1,")~
   strata(",names.count,type1,",",names.count,type2,")+cluster(",id,")",sep=""))
 
 ### stratified and with counts in covariate matrix 
-bb2.12 <- phreg(form2Ccc,data=data,no.opt=TRUE)
-bb1.12 <- phreg(form1Ccc,data=data,no.opt=TRUE)
+bb2.12 <- phreg(form2Ccc,data=data,no.opt=TRUE,no.var=1)
+bb1.12 <- phreg(form1Ccc,data=data,no.opt=TRUE,no.var=1)
 
 dr <- phreg(formdr,data=data)
-base1   <- phreg(form1,data=data)
-base2   <- phreg(form2,data=data)
+base1   <- phreg(form1,data=data,no.var=1)
+base2   <- phreg(form2,data=data,no.var=1)
 
 cc <- base1$cox.prep
 risk1 <- revcumsumstrata(cc$sign,cc$strata,cc$nstrata)

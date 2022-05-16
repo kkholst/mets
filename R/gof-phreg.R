@@ -160,9 +160,9 @@ if (is.null(modelmatrix)) stop(" must give matrix for cumulating residuals\n");
 cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
 offsets <- cox1$X %*% cox1$coef
 if (!is.null(offset)) offsets <- offsets*offset
-if (!is.null(cox1$strata)) 
-     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
-else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,...)
+if (!is.null(cox1$strata.name)) 
+     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
+else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
 nnames <- colnames(modelmatrix)
 
 Ut <- apply(coxM$U,2,cumsum)
