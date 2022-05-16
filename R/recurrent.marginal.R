@@ -262,9 +262,9 @@ formD <- as.formula(paste("Surv(",start,",",stop,",",death,")~cluster(",id,")",s
 form1L <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~Count",cause,"+death+cens+cluster(",id,")",sep=""))
 form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluster(",id,")",sep=""))
 
- xr <- phreg(form1L,data=rr,no.opt=TRUE)
- cr <- phreg(formC,data=rr,no.opt=TRUE)
- dr <- phreg(formD,data=rr,no.opt=TRUE)
+ xr <- phreg(form1L,data=rr,no.opt=TRUE,no.var=1)
+ cr <- phreg(formC,data=rr,no.opt=TRUE,no.var=1)
+ dr <- phreg(formD,data=rr,no.opt=TRUE,no.var=1)
 
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
  rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr[,stop])[,2])
@@ -339,7 +339,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
   for (i in seq_along(times)) {
      timel <- times[i]
      rr$Hst <- revcumsumstrata((rr[,stop]<timel)*(rr[,status]==1)/rr$Gctrr,rr$id-1,nid)
-     cr2 <- phreg(form,data=rr,no.opt=TRUE)
+     cr2 <- phreg(form,data=rr,no.opt=TRUE,no.var=1)
 
      dhessian <- cr2$hessianttime
      ###  matrix(apply(dhessian,2,sum),3,3)
@@ -392,7 +392,7 @@ recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
  dsort(rr) <- ~id+start
  rr <- dtransform(rr,cens=1,revnr==1 & death==0)
 
-  xr <- phreg(Surv(entry,time,status==1)~Count1+death+cluster(id),data=rr,no.opt=TRUE)
+  xr <- phreg(Surv(entry,time,status==1)~Count1+death+cluster(id),data=rr,no.opt=TRUE,no.var=1)
   cr <- phreg(Surv(entry,time,cens)~cluster(id),data=rr)
   dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
 
@@ -1902,8 +1902,8 @@ formdr <- as.formula(paste("Surv(",start,",",stop,",",death,")~strata(",strata,"
 form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",type,")~",names.count,type,"+strata(",strata,")+cluster(",id,")",sep=""))
 }
 
-dr      <- phreg(formdr,data=data,no.opt=TRUE)
-base1   <- phreg(form1,data=data,no.opt=TRUE)
+dr      <- phreg(formdr,data=data,no.opt=TRUE,no.var=1)
+base1   <- phreg(form1,data=data,no.opt=TRUE,no.var=1)
 
 ### marginal int_0^t G(s) P(N1(t-)==k|D>t) \lambda_{1,N1=k}(s) ds 
 ### strata og count skal passe sammen
