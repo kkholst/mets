@@ -345,7 +345,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   return(ud);
 } ## }}}
 
-##' Fits a parametric model for the log-cross-odds-ratio 
+##' Cross-odds-ratio, OR or RR risk regression for competing risks
 ##'
 ##' Fits a parametric model for the log-cross-odds-ratio for the 
 ##' predictive effect of for the cumulative incidence curves for \eqn{T_1} 
@@ -406,7 +406,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' \eqn{h()} may be specified as an R-function of the parameters, 
 ##' see example below, but the default is that it is simply \eqn{\theta^T z}.
 ##'
-##' @title Cross-odds-ratio, OR or RR risk regression for competing risks
 ##' @aliases or.cif rr.cif
 ##' @param cif a model object from the comp.risk function with the 
 ##' marginal cumulative incidence of cause1, i.e., the event of interest, and whose
@@ -690,6 +689,8 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
   fit
 } ## }}}
 
+##'Additive Random effects model for competing risks data for polygenetic modelling
+##' 
 ##'Fits a random effects  model describing the dependence in the cumulative 
 ##'incidence curves for subjects within a cluster.  Given the gamma distributed
 ##'random effects it is assumed that the cumulative incidence curves 
@@ -723,7 +724,6 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##'\lambda = pard \theta 
 ##'}
 ##'
-##' @title Additive Random effects model for competing risks data for polygenetic modelling
 ##'
 ##'
 ##' @param cif a model object from the comp.risk function with the 
