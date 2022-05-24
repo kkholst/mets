@@ -345,6 +345,8 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   return(ud);
 } ## }}}
 
+##' Fits a parametric model for the log-cross-odds-ratio 
+##'
 ##' Fits a parametric model for the log-cross-odds-ratio for the 
 ##' predictive effect of for the cumulative incidence curves for \eqn{T_1} 
 ##' experiencing cause i given that \eqn{T_2} has experienced a cause k :
