@@ -1529,7 +1529,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @examples
 ##' 
 ##' data(bmt)
-##' out1 <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+##' out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 ##' summary(out)
 ##' 
 ##' @export
