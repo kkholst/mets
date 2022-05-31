@@ -1572,7 +1572,7 @@ x$cumhaz[,2] <- x$cumhaz[,2]- intZbar[xx$jumps+1,] %*% gamma
 
 ### iid gamma #########################################
 # {{{
-mm <-  xx$X * c(xx$X %*% gamma) * c(xx$time)+ apply( E* c(E %*% gamma)*dts,2,cumsumstrata,xx$strata,xx$nstrata)-xx$X* c(intZbar%*% gamma)-c(xx$X%*%gamma)*ntZbar 
+mm <-  xx$X * c(xx$X %*% gamma) * c(xx$time)+ apply( E* c(E %*% gamma)*dts,2,cumsumstrata,xx$strata,xx$nstrata) -  xx$X* c(intZbar %*% gamma) - c(xx$X %*% gamma)* intZbar 
 mm <- c(xx$weights) * mm
 
 id <- xx$id
