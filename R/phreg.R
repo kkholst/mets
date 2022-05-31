@@ -1514,6 +1514,88 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
+##' Fast additive hazards model with robust standard errors 
+##'
+##' Fast Lin-Ying additive hazards model with a possibly stratified baseline. 
+##' Robust variance is default variance with the summary. 
+##'
+##' influence functions (iid) will follow numerical order of given cluster variable
+##' so ordering after $id will give iid in order of data-set.
+##'
+##' @param formula formula with 'Surv' outcome (see \code{coxph})
+##' @param data data frame
+##' @param ... Additional arguments to phreg 
+##' @author Thomas Scheike
+##' @examples
+##' 
+##' data(bmt)
+##' out1 <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+##' summary(out)
+##' 
+##' @export
+aalenMets <- function(formula,data=data,...)
+{# {{{
+x <- phreg(formula,data=data,no.opt=TRUE,...)
+
+xx <- x$cox.prep
+###ii <- solve(x$hessian)
+###S0i <- rep(0,length(xx$strata))
+###S0i[xx$jumps+1] <- 1/x$S0
+###Z <- xx$X
+###U <- E <- matrix(0,nrow(xx$X),x$p)
+###E[xx$jumps+1,] <- x$E
+###U[xx$jumps+1,] <- x$U
+###cumhaz <- cbind(xx$time,cumsumstrata(S0i,xx$strata,xx$nstrata))
+###EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+
+### computation of intZHZ matrix, and gamma and baseline ##################
+# {{{
+eXb <- c(xx$sign) * c(xx$weights)
+S0 = c(revcumsumstrata(eXb,xx$strata,xx$nstrata))
+E=apply(eXb*xx$X,2,revcumsumstrata,xx$strata,xx$nstrata)/S0; 
+S2=apply(eXb*xx$XX,2,revcumsumstrata,xx$strata,xx$nstrata)
+###
+E2=.Call("vecMatMat",E,E)$vXZ;  
+###
+dts <- c(diffstrata(xx$time,xx$strata,xx$nstrata))
+dt <- diff(c(0,xx$time))
+###
+intZbar <- apply(E*dts,2,cumsumstrata,xx$strata,xx$nstrata) 
+intZHZt <- apply((S2-S0*E2)*dts,2,cumsum) 
+intZHZ <- matrix(tail(intZHZt,1),ncol(E), ncol(E))
+IintZHZ  <-  solve(intZHZ)
+intZHdN <- matrix(x$gradient,ncol(E),1)
+gamma <- IintZHZ %*% intZHdN
+rownames(gamma)  <-  colnames(x$X)
+x$cumhaz[,2] <- x$cumhaz[,2]- intZbar[xx$jumps+1,] %*% gamma
+# }}}
+
+### iid gamma #########################################
+# {{{
+mm <-  xx$X * c(xx$X %*% gamma) * c(xx$time)+ apply( E* c(E %*% gamma)*dts,2,cumsumstrata,xx$strata,xx$nstrata)-xx$X* c(intZbar%*% gamma)-c(xx$X%*%gamma)*ntZbar 
+mm <- c(xx$weights) * mm
+
+id <- xx$id
+mm <- apply(mm,2,sumstrata,id,max(id)+1)
+MGt <- t(x$hessian %*% t(iid(x))) + mm
+iid <-  - MGt %*% IintZHZ
+# }}}
+
+coef <- c(gamma)
+names(coef) <- rownames(gamma)
+x$coef <- coef
+x$var <- crossprod(iid) 
+x$iid <- iid
+x$intZHdN <- intZHdN
+x$intZHZ  <-  intZHZ
+
+x$no.opt <- FALSE
+class(x) <- c(class(x),"aalen")
+
+return(x)
+}# }}}
+
+
 ##' Kaplan-Meier with robust standard errors 
 ##'
 ##' Kaplan-Meier with robust standard errors 

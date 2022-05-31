@@ -1,6 +1,6 @@
 # mets 1.3.0
   - IPCW restricted mean survival regression: resmeanIPCW 
-
+  - Lin-Ying additive hazards model with fast robust standard errors: aalenMets 
 
 # mets 1.2.9
   - Examples updated
