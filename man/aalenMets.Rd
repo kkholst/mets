@@ -24,7 +24,7 @@ so ordering after $id will give iid in order of data-set.
 \examples{
 
 data(bmt)
-out1 <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 summary(out)
 
 }
