@@ -295,6 +295,20 @@ First we generate data that from a cox model with $\beta=(-0.3,0.3)$
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
+In the case where covariates might be important but we are still interested in the marginal mean 
+we can also augment wrt these covariates 
+
+```{r}
+times <- seq(500,5000,by=500)
+recEFF1x <- recurrentMarginalAIPCW(rr,times,start="start",stop="stop",status="status",death="death",cause=1,x.design=c("X1","X2"),terms=NULL)
+with( recEFF1x, cbind(muPAt,semuPAt,semuPAt/semuP))
+
+xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
+dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
+out <- recurrentMarginal(xr,dr)
+mets::summaryTimeobject(out$times,out$mu,times=times,se.mu=out$se.mu)
+
+```
 
 
 Other marginal properties 
