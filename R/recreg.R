@@ -633,7 +633,7 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
  p <- length(beta1)
 
  if (is.null(X))  {
-    if (bin==1) X <- matrix(binom(n*length(p),1,0.5),n,p) else  X <- matrix(rnorm(n*p),n,p)
+    if (bin==1) X <- matrix(rbinom(n*length(p),1,0.5),n,p) else  X <- matrix(rnorm(n*p),n,p)
     colnames(X) <- paste("X",1:p,sep="")
  }
  r1 <- exp( X %*% beta1)
