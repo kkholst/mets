@@ -121,6 +121,8 @@ cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 summary(cifdob)
 
+expit  <- function(z) 1/(1+exp(-z)) 
+
 riskratio <- function(p) {
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   Z <- rbind(c(1,0,1,1,0,0,0,0), c(0,1,1,1,0,1,1,0))

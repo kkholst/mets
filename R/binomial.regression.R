@@ -78,6 +78,8 @@
 ##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 ##' summary(cifdob)
 ##' 
+##' expit  <- function(z) 1/(1+exp(-z)) 
+##' 
 ##' riskratio <- function(p) {
 ##'   expit  <- function(z) 1/(1+exp(-z)) ## expit
 ##'   Z <- rbind(c(1,0,1,1,0,0,0,0), c(0,1,1,1,0,1,1,0))
@@ -1546,6 +1548,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
                0.02430556, 0.05555556, 0.01273148, 0.10879630)
     Zs <- expand.grid(gp=c(0,1),dnr=c(0,1),preauto=c(0,1),ttt24=c(0,1))
     Zs <- dsort(Zs,~ttt24+gp+dnr+preauto)
+    expit  <- function(z) 1/(1+exp(-z)) ## expit
 
     samn <- sample(1:16,n,replace=TRUE,prob=c(Zdist))
     Z <- Zs[samn,]
