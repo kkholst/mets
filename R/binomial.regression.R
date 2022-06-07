@@ -173,7 +173,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
-  } else formC <- NULL
+  } else resC <- formC <- NULL
   expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   if (is.null(beta)) beta <- rep(0,ncol(X))
@@ -188,7 +188,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
 obj <- function(pp,all=FALSE)
 { # {{{
-
 lp <- c(X %*% pp+offset)
 p <- expit(lp)
 ploglik <- sum(weights*(Y-p)^2)
@@ -224,7 +223,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 		  opt$method <- "nlm"
 	      }
 	      cc <- opt$estimate; 
-	      if (!se) return(cc)
+###	      if (!se) return(cc)
 	      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
 	      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
 	  } else {
@@ -276,7 +275,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val$orig.id <- orig.id
   val$iid.origid <- ids 
   val$iid.naive <- val$iid 
-  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
   val$naive.var <- val$var
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar

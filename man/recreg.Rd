@@ -4,6 +4,7 @@
 \alias{recreg}
 \alias{EventCens}
 \alias{strataAugment}
+\alias{scalecumhaz}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(

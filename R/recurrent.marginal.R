@@ -237,7 +237,7 @@ summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {#
 }# }}}
 
 ##' @export
-recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,
+recurrentMarginalAIPCW <- function(rr,times,km=TRUE,terms=1,idt=1,x.design=NULL,
    id="id",start="start",stop="stop",status="status",death="death",cause=1,...)
 {# {{{
 
@@ -332,14 +332,18 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
        muP.times <- cumhazP[ww,2]
        semuP.times <- clgl$se.mu[ww]
        Aterms <- c("Count1","Count1s","eCount1","CeCount1")[terms]
-       modP <- paste(Aterms,collapse="+")
+       modP <- NULL
+       if (length(Aterms)>=1) modP <- Aterms
+       if (!is.null(x.design)) modP <- c(modP,x.design)
+       nterms <- length(modP)
+       modP <- paste(modP,collapse="+") 
        form <- as.formula(paste("Surv(",start,",",stop,",cens)~Hst+",modP,"+cluster(id)"))
-       nterms <- length(terms)
 
   for (i in seq_along(times)) {
      timel <- times[i]
      rr$Hst <- revcumsumstrata((rr[,stop]<timel)*(rr[,status]==1)/rr$Gctrr,rr$id-1,nid)
      cr2 <- phreg(form,data=rr,no.opt=TRUE,no.var=1)
+     nterms <- cr2$p-1
 
      dhessian <- cr2$hessianttime
      ###  matrix(apply(dhessian,2,sum),3,3)
@@ -356,6 +360,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
      Gctb <- Gc[cr$jumps][timeb]
      augment.times <- sum(apply(gammahat*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum))/nid
      mterms <- length(terms)
+     mterms <- nterms
      ###
      varZ <- matrix(apply(Pt/Gctb^2,2,sum),mterms,mterms)
      gamma <- .Call("CubeVec",matrix(c(varZ),nrow=1),matrix(apply(covts/Gctb,2,sum),nrow=1),1,PACKAGE="mets")$XXbeta

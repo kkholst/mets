@@ -59,7 +59,7 @@
 ##' lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases EventCens  strataAugment
+##' @aliases EventCens  strataAugment scalecumhaz
 ##' @export
 recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,...)
 {# {{{
@@ -624,15 +624,18 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  return(list(data=data,X=XX))
 }# }}}
 
-simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),...)
+simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),X=NULL,...)
 {# {{{
 ###
 
 ### to avoid R-check error
  revnr <- death <- status <- NULL
+ p <- length(beta1)
 
- if (bin==1) X <- matrix(rbinom(n*2,1,0.5),n,2) else  X <- matrix(rnorm(n*2),n,2)
- colnames(X) <- paste("X",1:2,sep="")
+ if (is.null(X))  {
+    if (bin==1) X <- matrix(binom(n*length(p),1,0.5),n,p) else  X <- matrix(rnorm(n*p),n,p)
+    colnames(X) <- paste("X",1:p,sep="")
+ }
  r1 <- exp( X %*% beta1)
  rd <- exp( X %*% betad)
  rc <- exp( X %*% betac)
@@ -653,4 +656,9 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
  return(rr)
 }# }}}
 
+##' @export
+scalecumhaz <- function(cumt,k)
+{# {{{
+	return( t(t(cumt)*c(1,k)))
+}# }}}
 
