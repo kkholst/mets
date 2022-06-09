@@ -243,30 +243,41 @@ Improving efficiency
 ======================
 
 We now simulate some data where there is strong heterogenity such that
-we can improve the efficiency for censored survival data.
+we can improve the efficiency for censored survival data. The augmentation is 
+a regression on the history  for each subject consisting of any of the 
+terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt))
+
 
 ```{r}
 rr <- simRecurrentII(1000,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
 rr <-  count.history(rr)
 
-# cox case
-xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=rr)
-dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
+rr <- transform(rr,statusD=status)
+rr <- dtransform(rr,statusD=3,death==1)
+dtable(rr,~statusD+status+death,level=2,response=1)
+
+xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
+dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
+# marginal mean of expected number of recurrent events 
 out <- recurrentMarginal(xr,dr)
 
 times <- 500*(1:10)
-     
-recEFF1 <- recurrentMarginalAIPCW(rr,times,start="entry",stop="time",status="status",death="death",cause=1,terms=1)
+recEFF1 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+				   death.code=3,cause=1,augment.model=~Nt)
+with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
 bplot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
 for (t in times) {
 	ci1 <- c(recEFF1$muPAt[k]-1.96*recEFF1$semuPAt[k],
   	         recEFF1$muPAt[k]+1.96*recEFF1$semuPAt[k])
-	lines(rep(t,2)-20,ci1,col=1,lty=2)
+	ci2 <- c(recEFF1$muP[k]-1.96*recEFF1$semuP[k],
+  	         recEFF1$muP[k]+1.96*recEFF1$semuP[k])
+	lines(rep(t,2)-2,ci2,col=2,lty=1,lwd=2)
+	lines(rep(t,2)+2,ci1,col=1,lty=1,lwd=2)
 	k <- k+1
 }
-legend("bottomright",c("Eff-pred"),lty=2:3,col=c(1,3))
+legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
 
 with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
@@ -283,11 +294,13 @@ then Ghost-Lin suggested IPCW score equations that are implemented in the recreg
 
 First we generate data that from a cox model with $\beta=(-0.3,0.3)$
 ```{r}
- rr <- mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
- dtable(rr,~statusG+status+death,level=2,response=1)
+rr <- mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
+				betad=c(-0.3,0.3))
+dtable(rr,~statusG+status+death,level=2,response=1)
 
  out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
- outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,cens.model=~strata(X1,X2))
+ outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+		cens.model=~strata(X1,X2))
 
  summary(out)$coef
  summary(outs)$coef
@@ -300,14 +313,17 @@ we can also augment wrt these covariates
 
 ```{r}
 times <- seq(500,5000,by=500)
-recEFF1x <- recurrentMarginalAIPCW(rr,times,start="start",stop="stop",status="status",death="death",cause=1,x.design=c("X1","X2"),terms=NULL)
-with( recEFF1x, cbind(muPAt,semuPAt,semuPAt/semuP))
+rr <- transform(rr,statusD=status)
+rr <- dtransform(rr,statusD=2,death==1)
+dtable(rr,~statusD+status+death,level=2)
+recEFF1x <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,
+				   cens.code=0,death.code=2,cause=1,augment.model=~X1+X2)
+with(recEFF1x, cbind(muP,muPA,muPAt,semuP,semuPA,semuPAt,semuPAt/semuP))
 
 xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
 dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
 out <- recurrentMarginal(xr,dr)
 mets::summaryTimeobject(out$times,out$mu,times=times,se.mu=out$se.mu)
-
 ```
 
 
