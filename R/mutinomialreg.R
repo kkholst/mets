@@ -47,7 +47,6 @@
 ##' @aliases predictmlogit 
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
-a
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
