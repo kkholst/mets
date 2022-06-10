@@ -40,14 +40,14 @@
 ##' estimate(coef=mreg3$coef,vcov=mreg3$II)
 ##' 
 ##' ## predictions based on seen response or not 
-##' newdata <- data.frame(tcell=c(1,1),platelet=c(0,1),cause1f=c("2","1"))
+##' newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
 ##' predictmlogit(mreg,newdata,response=FALSE)
 ##' predictmlogit(mreg,newdata)
 ##' @export
 ##' @aliases predictmlogit 
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
-
+a
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -189,24 +189,32 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
   nrefs <- (1:(object$nlev-1))
   px <- ncol(X)
   Xbeta <- c()
-  k <- 1
   for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
 
   ppp <- cbind(1,exp(Xbeta))
   spp <- apply(ppp,1,sum)
   pp <- ppp/spp
+  colnames(pp) <- ylev
+
   if (!is.null(Y)) {
-	 pp <- c(mdi(pp,1:length(Y),Y)) 
-###	 ey <- mdi(ppp,1:length(Y),Y)
-###         Dp <- X*(spp*ey- ey*ey)/spp^2
-###         if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
-###	  se <-  apply((Dp %*% covv) * Dp,1,sum)
-###	  cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
-###       names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
-###       pp <- rbind(pp, cmat)
-  }
+	  Yg2 <- which(Y>=2)
+          p <- c(mdi(pp,1:length(Y),Y)) 
+          pppy <- c(mdi(ppp,1:length(Y),Y)) 
+     if (se) {
+	     Dpp0 <- -ppp[,-1,drop=FALSE]/spp^2
+	     Dppy <- (spp[Yg2]*pppy[Yg2]-pppy[Yg2]^2)/spp[Yg2]^2
+	     ## asign Dppy in specified locations when Yg2
+	     if (length(Yg2)>=1) Dpp0 <- mdi(Dpp0,(1:length(Y))[Yg2],Y[Yg2]-1,xvec=Dppy)
+	     Dp <- c()
+             for (i in nrefs) Dp <- cbind(Dp,X*Dpp0[,i]);  
+             if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
+	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
+	     cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
+             names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
+             pp <- cmat
+     }
+ }
 
   return(pp)
 }# }}}
-
 

@@ -55,7 +55,7 @@ summary(mreg3)
 estimate(coef=mreg3$coef,vcov=mreg3$II)
 
 ## predictions based on seen response or not 
-newdata <- data.frame(tcell=c(1,1),platelet=c(0,1),cause1f=c("2","1"))
+newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
 predictmlogit(mreg,newdata,response=FALSE)
 predictmlogit(mreg,newdata)
 }
