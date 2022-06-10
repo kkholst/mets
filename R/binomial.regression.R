@@ -1704,15 +1704,12 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
   preds <- p
 
   if (se) {
-  preds <- c()
-  for (i in 1:length(lp)) {
      if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
-     Dp <- Z[i,]*exp(-lp[i])*p[i]^2
-     se <- (Dp %*% covv %*% Dp)^.5
-     cmat <- data.frame(pred=p[i],se=se,lower=p[i]-1.96*se,upper=p[i]+1.96*se)
+     Dpv <- Z*exp(-lp)*p^2
+     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
+     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
-     preds <- rbind(preds,cmat)
-  } 
+     preds <- cmat
   }
 
 return(preds)

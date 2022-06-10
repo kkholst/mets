@@ -2,6 +2,7 @@
 % Please edit documentation in R/mutinomialreg.R
 \name{mlogit}
 \alias{mlogit}
+\alias{predictmlogit}
 \title{Multinomial regression based on phreg regression}
 \usage{
 mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
@@ -53,7 +54,10 @@ summary(mreg3)
 ## inverse information standard errors 
 estimate(coef=mreg3$coef,vcov=mreg3$II)
 
-
+## predictions based on seen response or not 
+newdata <- data.frame(tcell=c(1,1),platelet=c(0,1),cause1f=c("2","1"))
+predictmlogit(mreg,newdata,response=FALSE)
+predictmlogit(mreg,newdata)
 }
 \author{
 Thomas Scheike

@@ -415,7 +415,6 @@ back2timereg <- function(obj)
 ##' bcif1 <- binreg(Event(time,status)~-1+factor(zyg)+cluster(id), data=dd,
 ##'                 time=80, cause=1, cens.model=~strata(zyg))
 ##' pconc <- predict(bcif1,newdata)
-##' pconc
 ##' 
 ##' ## marginal estimates 
 ##' mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
