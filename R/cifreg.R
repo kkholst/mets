@@ -121,7 +121,7 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
                   cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
              )
 
-    class(res) <- c("phreg","cif.reg")
+    class(res) <- c("phreg","cifreg")
     return(res)
 }# }}}
 
@@ -541,7 +541,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
   if (length(class(x))!=2) stop("Must be cifreg object\n"); 
-  if (!inherits(x,"cif.reg")) stop("Must be cifreg object\n"); 
+  if (!inherits(x,"cifreg")) stop("Must be cifreg object\n"); 
   if (is.null(time)) stop("Must give time for iid of baseline")
 
   if (!is.null(x$propodds))  stop("Only for Fine-Gray-model") 

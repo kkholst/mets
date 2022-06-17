@@ -689,7 +689,7 @@ vcov.phreg  <- function(object,...) {
   attributes(res)$ncluster <- attributes(ii)$ncluster
   attributes(res)$invhess <- attributes(ii)$invhess
   colnames(res) <- rownames(res) <- names(coef(object))
-} else { ##if ((length(class(object))==2) & class(object)[2]=="cif.reg") {
+} else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
   res <- as.matrix(object$var)
   colnames(res) <- rownames(res) <- names(coef(object))
 }
@@ -998,7 +998,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
     I <- -solve(object$hessian)
-    if ( (length(class(object))==2) && ( inherits(object,c("cif.reg","recreg")))) {
+    if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
     } else  { 
@@ -1026,7 +1026,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
 ##' @export
 print.summary.phreg  <- function(x,max.strata=5,...) {
 
-  if (length(class(x))==2 & inherits(x,"cif.reg")) cat("Competing risks regression \n"); 
+  if (length(class(x))==2 & inherits(x,"cifreg")) cat("Competing risks regression \n"); 
   if (!is.null(x$propodds)) { 
        cat("Proportional odds model, log-OR regression \n"); 
   } else cat("\n")
@@ -1535,6 +1535,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @export
 aalenMets <- function(formula,data=data,...)
 {# {{{
+formula.call <- formula
 x <- phreg(formula,data=data,no.opt=TRUE,...)
 
 xx <- x$cox.prep
@@ -1588,9 +1589,10 @@ x$var <- crossprod(iid)
 x$iid <- iid
 x$intZHdN <- intZHdN
 x$intZHZ  <-  intZHZ
+x$formula <- formula.call
 
 x$no.opt <- FALSE
-class(x) <- c(class(x),"aalen")
+class(x) <- c(class(x),"aalenMets")
 
 return(x)
 }# }}}
