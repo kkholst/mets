@@ -197,7 +197,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
 
   if (!is.null(Y)) {
 	  Yg2 <- which(Y>=2)
-          p <- c(mdi(pp,1:length(Y),Y)) 
+          pp <- p <- c(mdi(pp,1:length(Y),Y)) 
           pppy <- c(mdi(ppp,1:length(Y),Y)) 
      if (se) {
 	     Dpp0 <- -ppp[,-1,drop=FALSE]/spp^2
