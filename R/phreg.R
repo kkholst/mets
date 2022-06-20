@@ -1590,6 +1590,7 @@ x$iid <- iid
 x$intZHdN <- intZHdN
 x$intZHZ  <-  intZHZ
 x$formula <- formula.call
+x$ihessian <- IintZHZ
 
 x$no.opt <- FALSE
 class(x) <- c(class(x),"aalenMets")
