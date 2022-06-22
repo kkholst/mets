@@ -193,7 +193,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             cens.model <- phreg(formC,data)
         }
         if (cens.model$p>0) kmt <- FALSE
-        Pcens.model <- predict(cens.model,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)
+        Pcens.model <- suppressWarnings(predict(cens.model,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt))
         Stime <- Pcens.model$surv <- c(Pcens.model$surv)
         ## strata from original data
         nCstrata <- cens.model$nstrata
@@ -233,7 +233,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             ### back to km product-limit form
             Gts <- apply(rbind(0,Gts),2,diff)
             ### back to km
-            Gts <- apply(Gts,2,function(x) exp(cumsum(log(1-x))))
+            Gts <- suppressWarnings(apply(Gts,2,function(x) exp(cumsum(log(1-x)))))
             Gts <- rbind(1,Gts)[whereaJ,]
             Gts[is.na(Gts)] <- 0
             Gjumps <- Gts

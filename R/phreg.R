@@ -1579,7 +1579,7 @@ mm <- c(xx$weights) * mm
 id <- xx$id
 mm <- apply(mm,2,sumstrata,id,max(id)+1)
 MGt <- t(x$hessian %*% t(iid(x))) + mm
-iid <-  - MGt %*% IintZHZ
+iid <-  MGt %*% IintZHZ
 # }}}
 
 coef <- c(gamma)
@@ -1591,6 +1591,8 @@ x$intZHdN <- intZHdN
 x$intZHZ  <-  intZHZ
 x$formula <- formula.call
 x$ihessian <- IintZHZ
+## score of gamma 
+x$gradient <- c(intZHdN-intZHZ %*% gamma)
 
 x$no.opt <- FALSE
 class(x) <- c(class(x),"aalenMets")
