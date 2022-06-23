@@ -171,7 +171,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -371,7 +371,8 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
       cens.weights <- c()
       for (tt in time)  {
       exittime <- pmin(exit,tt)
-      cens.weights <- cbind(cens.weights,predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
+      cens.weights1 <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
+      cens.weights <- cbind(cens.weights,cens.weights1)
       }
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
@@ -607,7 +608,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -846,7 +847,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -1193,7 +1194,8 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+###      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata

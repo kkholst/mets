@@ -1956,7 +1956,7 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
     for (j in unique(strataNew)) {
         where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
 	plhazt <- hazt <- c(0,chaz[strata==j])
-	if (km) { plhazt <- c(1,exp(cumsum(log(1-diff(hazt)))));  plhazt[is.na(hazt)] <- 0 }
+	if (km) { plhazt <- suppressWarnings(c(1,exp(cumsum(log(1-diff(hazt))))));  plhazt[is.na(hazt)] <- 0 }
 	if (se) se.hazt <- c(0,se.chaz[strata==j])
 	Xs <- X[strataNew==j,,drop=FALSE]
         if (object$p==0) RR <- rep(1,nrow(Xs)) else RR <- c(exp( Xs %*% coef(object)))
