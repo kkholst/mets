@@ -283,6 +283,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
   val$se.coef <- diag(val$var)^.5
+  val$cause <- cause
+  val$cens.code <- cens.code 
 
 
   class(val) <- "binreg"
@@ -521,6 +523,9 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
   val$se.coef <- diag(val$var)^.5
+  val$cause <- cause
+  val$cens.code <- cens.code 
+
 
 
   class(val) <- "binreg"
@@ -721,6 +726,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$var <-  val$robvar <- robvar
     val$se.robust <- diag(robvar)^.5
     val$se.coef <- diag(val$var)^.5
+  val$cause <- cause
+  val$cens.code <- cens.code 
+
 
 
   class(val) <- "binreg"
@@ -1039,6 +1047,9 @@ robvar <- crossprod(val$iid)
 val$var <-  val$robvar <- robvar
 val$se.robust <- diag(robvar)^.5
 val$se.coef <- diag(val$var)^.5
+  val$cause <- cause
+  val$cens.code <- cens.code 
+
 
 ### estimates risk, att, atc
 val$riskDR <- c(mean(risk1),mean(risk0))
@@ -1265,7 +1276,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
     model.frame=m,n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
-	  
+
+  
 # {{{ computation of ate, att, atc and their influence functions
 
 
@@ -1395,6 +1407,9 @@ robvar <- crossprod(val$iid)
 val$var <-  val$robvar <- robvar
 val$se.robust <- diag(robvar)^.5
 val$se.coef <- diag(val$var)^.5
+  val$cause <- cause
+  val$cens.code <- cens.code 
+
 
 ### estimates risk, att, atc
 val$riskDR <- c(mean(risk1),mean(risk0))
@@ -1962,6 +1977,7 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  bra$robvar <- bra$var
  bra$se.robust <-bra$se.coef
  bra$MGciid <- MGiid
+
 
  allAugment <- list(MGiid=MGiid,augment=augment,id=id,id.orig=id.orig,
 	       cif=cif1,St=St,Gc=Gc,strata=xxstrata,strataC=xxstrataC,time=dd$time)
