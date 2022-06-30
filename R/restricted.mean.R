@@ -274,6 +274,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
   val$se.coef <- diag(val$var)^.5
+  val$cens.code <- cens.code
 
   class(val) <- "binreg"
   return(val)
