@@ -175,7 +175,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
-  } else resC <- formC <- NULL
+  } else { se <- FALSE; resC <- formC <- NULL}
   expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   if (is.null(beta)) beta <- rep(0,ncol(X))

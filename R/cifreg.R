@@ -392,12 +392,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         val <- obj(0,all=TRUE)
     }# }}}
 
-
     beta.s <- val$coef
     if (is.null(beta.s)) beta.s <- 0
     ## getting final S's
     opt <-  val ## obj(beta.s,all=TRUE)
-
 
     if (p>0) {
     ### iid version given G_c
