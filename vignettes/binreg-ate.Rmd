@@ -157,14 +157,15 @@ transplant period, under the standard causal assumptions. We here use the logist
 that is also logistic. The 1/0 variable used for the causal computation is found as the rhs of the treat.model. 
 
 
-Average treatment effect for binary data
-========================================
+Average treatment effect for binary or continuous responses
+===========================================================
 
 In the binary case a binary outcome is specified instead of the survival outcome, and as a
 consequence no-censoring adjustment is done 
 
- - the binary outcome must be a variable in the data-frame 
+ - the binary/numeric outcome must be a variable in the data-frame 
 
+First binnary outcome 
 
 ```{r}
 
@@ -176,9 +177,15 @@ summary(b3)
 ## quite similar to binregATE
 b2 <- logitATE(Event(time,cause)~gp+dnr+preauto+ttt24,kumar,cause=2,time=60,treat.model=gp~dnr+preauto+ttt24)
 summary(b2)
-
 ```
 
+Or with continuous response using normal estiamating equations
+
+```{r}
+b3 <- normalATE(time~gp+dnr+preauto+ttt24,kumar,treat.model=gp~dnr+preauto+ttt24)
+summary(b3)
+
+```
 
 
 SessionInfo

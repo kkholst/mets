@@ -773,7 +773,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'	  treat.model=tcell~platelet+age)
 ##' summary(brs)
 ##'
-##' @aliases logitIPCWATE logitATE kumarsim kumarsimRCT
+##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -1121,13 +1121,12 @@ val$se.attc <- diag(val$var.attc)^.5
   return(val)
 }# }}}
 
-
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   Ydirect=NULL,...)
+	   Ydirect=NULL,logitmodel=TRUE,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -1232,10 +1231,10 @@ obj <- function(pp,all=FALSE)
 { # {{{
 
 lp <- c(X %*% pp+offset)
-p <- expit(lp)
+if (logitmodel) p <- expit(lp) else p <- lp
 ploglik <- sum(weights*(Y-p)^2)
 Dlogl <- weights*X*c(Y-p)
-D2logl <- c(weights*p/(1+exp(lp)))*X2
+if (logitmodel) { D2logl <- c(weights*p/(1+exp(lp)))*X2 } else D2logl <- c(weights)*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
@@ -1280,7 +1279,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
   
 # {{{ computation of ate, att, atc and their influence functions
 
-
 ## dropping cluster here 
 treat.model <- drop.specials(treat.model,"cluster")
 treat <- glm(treat.model,data,family="binomial")
@@ -1306,9 +1304,11 @@ X0 <- model.matrix(formulanc[-2],dat0)
 p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
 p1lp <-   X %*% val$coef+offset
-p1 <- expit(p1lp)
-p10 <- expit(p10lp)
-p11 <- expit(p11lp)
+if (logitmodel) {
+p1 <- expit(p1lp); p10 <- expit(p10lp); p11 <- expit(p11lp); 
+} else {
+p1 <- p1lp; p10 <- p10lp; p11 <- p11lp; 
+}
 
 ###Y <- weights*( 1*(exit<time & status==cause)/cens.weights
 Y <- c(Y/cens.weights)
@@ -1322,9 +1322,15 @@ ntreat <- sum(ytreat)
 att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
 atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
 
+if (logitmodel) {
 Dp1 <- X * c(p1/(1+exp(p1lp)))
 Dp11 <- X1 * c(p11/(1+exp(p11lp)))
 Dp10 <- X0 * c(p10/(1+exp(p10lp)))
+} else {
+Dp1 <- X 
+Dp11 <- X1 
+Dp10 <- X0 
+}
 Dpai <-  - Xtreat * exp(-lpa)
 D1mpai <-   Xtreat * exp(lpa)
 
@@ -1355,7 +1361,7 @@ DdifriskG <- DriskG1-DriskG0
     offset <- offset[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
-    p <- expit(lp)
+    if (logitmodel) p <- expit(lp) else p <- lp
     ### only out to time for censoring martingales, also for Yglm
     Yglm <- weights*c((status==cause)*(exit<=time)-p) ## *(exit<=time)
     Y <- c((status==cause)*(exit<=time))/cens.weights
@@ -1619,7 +1625,6 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     return(cbind(data, Z))
 }# }}}
 
-
 ##' @export
 logitATE <- function(formula,data,...)
 {# {{{
@@ -1645,6 +1650,13 @@ logitATE <- function(formula,data,...)
       out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
     }
 
+   return(out)
+}# }}}
+
+##' @export
+normalATE <- function(formula,data,...)
+{# {{{
+   out <- logitATE(formula,data,logitmodel=FALSE,...)
    return(out)
 }# }}}
 

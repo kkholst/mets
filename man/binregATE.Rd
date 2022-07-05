@@ -4,6 +4,7 @@
 \alias{binregATE}
 \alias{logitIPCWATE}
 \alias{logitATE}
+\alias{normalATE}
 \alias{kumarsim}
 \alias{kumarsimRCT}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}

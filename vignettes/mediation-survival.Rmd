@@ -1,0 +1,161 @@
+---
+title: "Mediation Analysis for survival data"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{Mediation Analysis for survival data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  #dev="png",
+  comment = "#>"  
+)
+library(mets)
+```
+
+Overview 
+========
+
+Fit 
+
+ * binomial-regression IPCW, binreg 
+ * additive Lin-Ying model, aalenMets
+ * cox model phreg 
+ * standard logistic regression via binreg
+
+in the context of mediation analysis using mediation weights as in the medFlex package. 
+
+The mediator can 
+
+ * binomial using glm-binomial.
+ * multnomial via the mlogit function 
+
+Both mediator and exposure must be coded as factors.
+
+In the below example these are
+
+ * mediator: gp.f
+ * exposure : dnr.f
+
+and the outcome model is concerned with the risk/hazard of cause=2. 
+
+The key is that the standard errors are computed using the i.i.d influence
+functions and a Taylor expansion to deal with the uncertainty from the
+mediation weights. 
+
+
+```{r}
+ library(mets)
+ runb <- 0
+ options(warn=-1)
+ set.seed(1000) # to control output in simulatins for p-values below.
+
+ n <- 400; k.boot <- 100; 
+
+dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
+          beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
+    treatmodel = c(-0.18, 0.56, 0.56, 0.54),restrict=1)
+dfactor(dat) <- dnr.f~dnr
+dfactor(dat) <- gp.f~gp
+drename(dat) <- ttt24~"ttt24*"
+dat$id <- 1:n
+dat$ftime <- 1
+```
+
+Compute mediation weights   based on fitted  model 
+
+```{r}
+weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
+wdata <- medweight(fit,data=dat)
+
+aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
+summary(aaMss2)
+aaMss22 <- binreg(Event(time,status)~dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
+summary(aaMss22)
+```
+
+
+```{r}
+### binomial regression ###########################################################
+aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cause=2)
+summary(aaMss)
+
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### lin-ying model ################################################################
+aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### cox model ###############################################################################
+aaMss <- phreg(Surv(time,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### Fine-Gray #############################################################3
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights,propodds=NULL,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+
+### logit model  #############################################################3
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### binomial outcome  ############################
+aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cens.weights=1,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+```
+
+
+Multinomial regression
+======================
+
+Also works with mediator with more than two levels
+
+ * meditor: wmi in 4 categories
+ * exposure: age in 4 categories
+
+```{r}
+data(tTRACE)
+dcut(tTRACE) <- ~. 
+
+weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
+wdata <- medweight(fit,data=tTRACE)
+
+aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,time=7,weights=wdata$weights,cause=9)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
+summary(ll)
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
