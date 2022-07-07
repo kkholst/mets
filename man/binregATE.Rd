@@ -7,6 +7,7 @@
 \alias{normalATE}
 \alias{kumarsim}
 \alias{kumarsimRCT}
+\alias{binregATEF}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(
@@ -74,7 +75,7 @@ then IPCW censoring adjusted using binomial regression.
 
 Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
 
-Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. A factor based
 }
 \examples{
 data(bmt)

@@ -161,9 +161,8 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 }# }}}
 
 ##' @export
-predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
+predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,...)
 {# {{{
-    Y <- NULL
    ## when response not given, not used for predictions
    if (!missing(newdata)) 
    if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
@@ -180,7 +179,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
         allvar <- all.vars(tt)
 	tt <- delete.response(tt)
         X <- as.matrix(model.matrix(object$formula, data = newdata, xlev = xlev))
-        if (response) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
+        if (response & !is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
     }
 
   expit <- function(z) 1/(1 + exp(-z))
@@ -197,7 +196,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
 
   if (!is.null(Y)) {
 	  Yg2 <- 1*(Y>=2)
-          p <- c(mdi(pp,1:length(Y),Y)) 
+          pp <- p <- c(mdi(pp,1:length(Y),Y)) 
           pppy <- c(mdi(ppp,1:length(Y),Y)) 
      if (se) {
 	     Dppy <-  (spp*Yg2-pppy) 
