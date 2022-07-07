@@ -179,7 +179,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,..
         allvar <- all.vars(tt)
 	tt <- delete.response(tt)
         X <- as.matrix(model.matrix(object$formula, data = newdata, xlev = xlev))
-        if (response & !is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
+        if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
     }
 
   expit <- function(z) 1/(1 + exp(-z))
