@@ -196,16 +196,13 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
   colnames(pp) <- ylev
 
   if (!is.null(Y)) {
-	  Yg2 <- which(Y>=2)
-          pp <- p <- c(mdi(pp,1:length(Y),Y)) 
+	  Yg2 <- 1*(Y>=2)
+          p <- c(mdi(pp,1:length(Y),Y)) 
           pppy <- c(mdi(ppp,1:length(Y),Y)) 
      if (se) {
-	     Dpp0 <- -ppp[,-1,drop=FALSE]/spp^2
-	     Dppy <- (spp[Yg2]*pppy[Yg2]-pppy[Yg2]^2)/spp[Yg2]^2
-	     ## asign Dppy in specified locations when Yg2
-	     if (length(Yg2)>=1) Dpp0 <- mdi(Dpp0,(1:length(Y))[Yg2],Y[Yg2]-1,xvec=Dppy)
+	     Dppy <-  (spp*Yg2-pppy) 
 	     Dp <- c()
-             for (i in nrefs) Dp <- cbind(Dp,X*Dpp0[,i]);  
+             for (i in nrefs) Dp <- cbind(Dp,X*ppp[,i+1]*Dppy/spp^2);  
              if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
 	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
 	     cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
@@ -217,3 +214,60 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
   return(pp)
 }# }}}
 
+
+###predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
+###{# {{{
+###    Y <- NULL
+###   ## when response not given, not used for predictions
+###   if (!missing(newdata)) 
+###   if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
+###
+###    if (missing(newdata)) {
+###        X <- object$X
+###        if (response)  Y <- as.numeric(object$Y) 
+###    } else {
+###        xlev <- lapply(object$model.frame, levels)
+###        ylev <- xlev[[1]]
+###        ff <- unlist(lapply(object$model.frame, is.factor))
+###        upf <- update(object$formula,~.)
+###        tt <- terms(upf)
+###        allvar <- all.vars(tt)
+###	tt <- delete.response(tt)
+###        X <- as.matrix(model.matrix(object$formula, data = newdata, xlev = xlev))
+###        if (response) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
+###    }
+###
+###  expit <- function(z) 1/(1 + exp(-z))
+###  refg <- 1  ### else refg <- match(ref,types)
+###  nrefs <- (1:(object$nlev-1))
+###  px <- ncol(X)
+###  Xbeta <- c()
+###  for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
+###
+###  ppp <- cbind(1,exp(Xbeta))
+###  spp <- apply(ppp,1,sum)
+###  pp <- ppp/spp
+###  colnames(pp) <- ylev
+###
+###  if (!is.null(Y)) {
+###	  Yg2 <- which(Y>=2)
+###          pp <- p <- c(mdi(pp,1:length(Y),Y)) 
+###          pppy <- c(mdi(ppp,1:length(Y),Y)) 
+###     if (se) {
+###	     Dpp0 <- -ppp[,-1,drop=FALSE]/spp^2
+###	     Dppy <- (spp[Yg2]*pppy[Yg2]-pppy[Yg2]^2)/spp[Yg2]^2
+###	     ## asign Dppy in specified locations when Yg2
+###	     if (length(Yg2)>=1) Dpp0 <- mdi(Dpp0,(1:length(Y))[Yg2],Y[Yg2]-1,xvec=Dppy)
+###	     Dp <- c()
+###             for (i in nrefs) Dp <- cbind(Dp,X*Dpp0[,i]);  
+###             if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
+###	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
+###	     cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
+###             names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
+###             pp <- cmat
+###     }
+### }
+###
+###  return(pp)
+###}# }}}
+###
