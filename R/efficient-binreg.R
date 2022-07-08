@@ -1,17 +1,19 @@
-##' Restricted IPCW mean for censored survival data 
+##' Efficient IPCW for binary data 
 ##'
 ##' Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
 ##' \deqn{E(T \leq t | X ) = expit( X^T beta) }
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
+##' \deqn{ X  ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
 ##' \deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
 ##' for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
-##' 
-##' By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
+##' By using appropriately the h argument we can also do the efficient IPCW estimator estimator this works 
+##' the prepsurv and prepcif for survival or competing risks data. In this case also the censoring martingale 
+##' should be given for variance calculation and this also comes out of the prepsurv or prepcif functions. 
+##' (Experimental version at this stage).
 ##' 
 ##' Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 ##' under known censoring model. 
@@ -38,27 +40,10 @@
 ##' @param MCaugment iid of h and censoring model 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
-##' @examples
-##'
-##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
-##' # logistic regresion with IPCW binomial regression 
-##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-##'                 cause=1,time=50,cens.model=~strata(platelet),model="exp")
-##' summary(out)
-##'
-##' ### same as Kaplan-Meier for full censoring model 
-##' bmt$int <- with(bmt,interaction(tcell,platelet))
-##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,cause=1,time=30,
-##'                             cens.model=~strata(platelet,tcell),model="lin")
-##' summary(out)
-##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-##' rm1 <- resmean.phreg(out1,times=30)
-##' summary(rm1)
 ##' @export
-##' @aliases Effbinreg
-resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
+Effbinreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
    offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",model="exp",
+   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",
    augmentation=NULL,h=NULL,MCaugment=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -148,31 +133,21 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  obs <- (exit<=time & status==cause) | (exit>=time)
-  Y <- c(pmin(exit,time)*obs)/cens.weights
+  Y <- c((status==cause)*(exit<=time)/cens.weights)
+  nevent <- sum((status==cause)*(exit<=time))
 
- if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
-
- h.call <- h
- if (is.null(h))  h <- rep(1,length(exit))
+  if (is.null(augmentation))  augmentation=rep(0,p)
+  if (is.null(h))  h <- rep(1,length(exit))
 
 obj <- function(pp,all=FALSE)
 { # {{{
 
 lp <- c(X %*% pp+offset)
-if (model=="exp") p <- exp(lp) else p <- lp
+p <- expit(lp)
 ploglik <- sum(weights*(Y-p)^2)
 
-if (model=="exp")  {
-if (is.null(h.call)) ph <- p else ph  <- h
-Dlogl <- weights*ph*X*c(Y-p)
-D2logl <- c(weights*ph*p)*X2
-} else {
-if (is.null(h.call)) ph <- 1 else ph  <- h
-Dlogl <- weights*ph*X*c(Y-p)
-D2logl <- c(weights*ph)*X2
-}
+Dlogl <- weights*h*X*c(Y-p)
+D2logl <- c(weights*h*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
@@ -180,7 +155,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   if (all) {
       ihess <- solve(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
-      beta.iid <- apply(beta.iid,2,sumstrata,id,max(id)+1)
+      beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
@@ -212,9 +187,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid,Y=Y))
-  
- if (!is.null(MCaugment)) {se <- FALSE;}
+    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+
+ if (!is.null(MCaugment)) { se <- FALSE;}
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -225,123 +200,159 @@ hessian <- matrix(D2log,length(pp),length(pp))
     weights <- weights[ord]
     offset <- offset[ord]
     cens.weights <- cens.weights[ord]
-    h <- h[ord]
     lp <- c(X %*% val$coef+offset)
-    p <- exp(lp)
-    obs <- (exit<=time & status==cause) | (exit>=time)
-    Y  <- c(pmin(exit,time)*obs)/cens.weights
-    if (model=="exp" & is.null(h.call))  ph <- p
-    if (model=="exp" & !is.null(h.call)) ph <- h
-    if (model!="exp" & is.null(h.call))  ph <- 1 
-    if (model!="exp" & !is.null(h.call)) ph <- h 
-    Xd <- ph*X
+    p <- expit(lp)
+    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
+    h <- h[ord]
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0
     S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i) 
+    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
     ## to make \int h(s)/Ys  dM_i^C(s) 
-    btime <- 1*(exit<time)
-    ht  <-  apply(Xd*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    ht  <-  apply(h*X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(ht*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply(ht*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- (resC$jumptimes<=time)*ht[xx$jumps+1,]/c(resC$S0)
-    htdN <- U
+    U[xx$jumps+1,] <- (resC$jumptimes<time)*ht[xx$jumps+1,] /c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-    htdN <- apply(htdN,2,sumstrata,xx$id,max(id)+1)
+ 
    }  else {
 	  MGCiid <- 0
   }## }}}
 
-  ph <- 1
-  lp <- c(X %*% val$coe+offset)
-  if (model=="exp") p <- exp(lp) else p <- lp
-  if (!is.null(h.call)) ph<- h 
-  if (model=="exp" & is.null(h.call)) ph<- p
-  if (model!="exp" & is.null(h.call)) ph<- 1
-  if (!is.null(MCaugment)) MGCiid <- MCaugment*ph*X 
+  if (!is.null(MCaugment)) { MGCiid <- MCaugment*h*X}
   val$MGciid <- MGCiid
   val$MGtid <- id
   val$orig.id <- orig.id
   val$iid.origid <- ids 
   val$iid.naive <- val$iid 
-  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  val$iid  <- beta.iid <- val$iid+(MGCiid %*% val$ihessian)
+  beta.iid <- apply(beta.iid,2,sumstrata,id,max(id)+1)
+  val$iid <- beta.iid
   val$naive.var <- val$var
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
   val$se.coef <- diag(val$var)^.5
-  val$cens.code <- cens.code
 
   class(val) <- "binreg"
   return(val)
 }# }}}
 
-preprrm <- function(cs,ss,X,times,data,model="exp") 
+prepsurv <- function(cs,ss,X,times,data) 
 {# {{{
-
 ttimes <- ss$cumhaz[,1]
 ttimes <- ttimes[(ttimes< times)]
-ttimes <- c(ttimes,times)
-## cens model 
 pcs <- predict(cs,data,se=FALSE,times=ttimes)
 pcst0 <- c(tail(t(pcs$surv),n=1))
+###
 ## survival model 
 ps <- predict(ss,data,se=FALSE,times=ttimes)
-###dLamt <- apply(cbind(0,ps$cumhaz),1,diff)
+dLamt <- apply(cbind(0,ps$cumhaz),1,diff)
 pst0 <- c(tail(t(ps$surv),n=1))
-dtime <- diff(c(0,ttimes))
-RRM <-  apply(dtime * t(ps$surv),2,cumsum)
-RRMt0 <- c(tail(RRM,n=1))
-dF <- -apply(cbind(1,ps$surv),1,diff)
-I <- apply(ttimes^2/t(pcs$surv)*dF,2,sum)+times^2*pst0/pcst0 -RRMt0*apply(ttimes/t(pcs$surv)*dF,2,sum)-RRMt0*times*pst0/pcst0 
-varY <- apply(ttimes^2*dF,2,sum)+times^2*pst0 - RRMt0^2
+Fsst0 <- 1-pst0
+###
+L <- apply((1/t(ps$surv*pcs$surv))*dLamt,2,sum)
+L0 <- (1/pst0-1)
 
 ctimes <- cs$cumhaz[,1]
 ctimes <- ctimes[(ctimes< times)]
-## cens model 
 pcs <- predict(cs,data,se=FALSE,times=ctimes)
 pcst0 <- c(tail(t(pcs$surv),n=1))
 dLamc <- apply(cbind(0,pcs$cumhaz),1,diff)
+
+###cctimes <- cs$cumhaz[,1]
+###Lamcc <- cs$cumhaz[,2] %o%  exp(X[,2] * coef(cs)) 
+###dLamcc <- diff(c(0,cs$cumhaz[cctimes<times,2])) %o%  exp(X[,2] * coef(cs)) 
+###Lamcc[cctimes<times,]- t(pcs$cumhaz)
+###matplot(ctimes, t(exp(-pcs$cumhaz)),type="s",lwd=0.5)
+
 ## survival model 
 ps <- predict(ss,data,se=FALSE,times=ctimes)
 pst0 <- c(tail(t(ps$surv),n=1))
 Fsst0 <- 1-pst0
-dtime <- diff(c(0,ctimes))
-###dS <- -apply(cbind(1,ps$surv),1,diff)
-RRM <-  apply(dtime * t(ps$surv),2,cumsum)
-###
-RRMt0 <- c(tail(RRM,n=1))
-dF <- dRRM <- t(RRMt0-t(RRM)) + ctimes*t(ps$surv)
-II <- apply((dF^2/t(ps$surv*pcs$surv))*dLamc,2,sum)-RRMt0*apply((dF/t(pcs$surv))*dLamc,2,sum) 
-if (model=="exp") DbetaF <- RRMt0 else DbetaF <- 1
-h <- DbetaF/(I-II) 
-###varYII <- 2*apply(ctimes*dtime*ps$surv,1,sum)-RRMt0^2
+###L <- 1/(pst0*pcst0) - 1 - apply( (1/t(ps$surv*pcs$surv))*dLamc,2,sum)
+h <- Fsst0/(pst0*L)
 
 cmtimes <- matrix(ctimes,nrow(dLamc),ncol(dLamc))
 tttimes <- matrix(pmin(data[,"time"],times),nrow(dLamc),ncol(dLamc),byrow=TRUE)
-Augmentf <- (dF/t(ps$surv*pcs$surv))
-AugmentC <- apply(Augmentf*dLamc*(cmtimes<=tttimes),2,sum)
+## augment
+dF <- t(Fsst0-((1-ps$surv)))
+Augmentf <- dF/t(ps$surv*pcs$surv)
+AugmentC <- apply(Augmentf*dLamc*(cmtimes<tttimes),2,sum)
 ###
 n <- nrow(data)
 AdN <- rep(0,n)
 jc <- (1:nrow(data))[cs$ord][cs$jumps]
 jc <-jc[1:length(ctimes)] 
 AdN[jc] <- mdi(Augmentf,1:length(ctimes),jc)
-Mc <- AdN- AugmentC
+Augment <- AdN-AugmentC
 
-ph <- 1
-if (model=="exp") ph <- RRMt0
-Xaugment <- apply(X*Mc*ph,2,sum)
-augment <- apply(X*Mc*h,2,sum)
-hh <- (DbetaF/varY)
-Faugment <- apply(X*hh*Mc,2,sum)
-return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=hh,varY=varY,RRMt0=RRMt0))
+saugment <- apply(X*Augment,2,sum)
+augment <- apply(X*Augment*h,2,sum)
+return(list(L=L,L0=L0,Mc=Augment,AugmentC=AugmentC,Xaugment=saugment,hXaugment=augment,h=h))
+}# }}}
+
+prepcif <- function(cs,ps,cif1,X,times,data) 
+{# {{{
+
+ctimes <- cs$cumhaz[,1]
+ctimes <- ctimes[(ctimes< times)]
+pcif1 <- predict(cif1,data,se=FALSE,times=ctimes)
+pcift0 <- c(tail(t(pcif1$cif),n=1))
+###
+ctimes <- cs$cumhaz[,1]
+ctimes <- ctimes[(ctimes< times)]
+pcs <- predict(cs,data,se=FALSE,times=ctimes)
+pcst0 <- c(tail(t(pcs$surv),n=1))
+###
+pps <- predict(ps,data,se=FALSE,times=ctimes)
+dim(pps$surv)
+pst0 <- c(tail(t(pps$surv),n=1))
+psst0 <- 1-pst0
+###
+dLamc <- apply(cbind(0,pcs$cumhaz),1,diff)
+Ia <- (1-pcift0)* ( pcift0/pcst0 - apply( t(pcif1$cif/pcs$surv)*dLamc,2,sum) )
+
+times1 <- cif1$cumhaz[,1]
+times1 <- times1[times1<times]
+ppcs <- predict(cs,data,se=FALSE,times=times1)
+ppcif1 <- predict(cif1,data,se=FALSE,times=times1)
+dF1 <- apply(cbind(0,ppcif1$cif),1,diff)
+I <- (1-pcift0)* apply(1/t(ppcs$surv)*dF1,2,sum)
+###
+ddF1 <-  t(((pcift0)-((pcif1$cif))))
+II <- apply(ddF1^2/(t(pps$surv*pcs$surv))*dLamc,2,sum)-pcift0*apply(ddF1/(t(pcs$surv))*dLamc,2,sum) 
+###
+h <- pcift0*(1-pcift0)/(I-II) 
+hc <- pcift0*(1-pcift0)/(Ia-II) 
+###
+cmtimes <- matrix(ctimes,nrow(dLamc),ncol(dLamc))
+tttimes <- matrix(pmin(data[,"time"],times),nrow(dLamc),ncol(dLamc),byrow=TRUE)
+med <- cmtimes<tttimes
+## augment
+dF <- t(((pcift0)-((pcif1$cif))))
+Augmentf <- dF/t(pps$surv*pcs$surv)
+AugmentC <- apply(Augmentf*dLamc*med,2,sum)
+###
+n <- nrow(data)
+AdN <- rep(0,n)
+dc <- length(ctimes)
+jc <- (1:nrow(data))[cs$ord][cs$jumps]
+jc <-jc[1:dc] 
+AdN[jc] <- mdi(Augmentf,1:dc,jc)
+Augment <- AdN- AugmentC
+###
+###X <- model.matrix(~formula,data)
+saugment <- apply(X*Augment,2,sum)
+augment <- apply(X*Augment*h,2,sum)
+
+return(list(Mc=Augment,AugmentC=AugmentC,Xaugment=saugment,hXaugment=augment,h=h,hc=hc))
 }# }}}
 

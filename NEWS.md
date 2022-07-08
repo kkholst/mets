@@ -1,4 +1,5 @@
 # mets 1.3.0
+  - Efficient IPCW for binary data: Effbinreg 
   - IPCW restricted mean survival regression: resmeanIPCW 
   - Lin-Ying additive hazards model with fast robust standard errors: aalenMets 
   - mediator weighted survial mediation with robust standard errors: mediatorSurv
