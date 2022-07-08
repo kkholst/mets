@@ -2,7 +2,6 @@
 % Please edit documentation in R/restricted.mean.R
 \name{resmeanIPCW}
 \alias{resmeanIPCW}
-\alias{Effbinreg}
 \title{Restricted IPCW mean for censored survival data}
 \usage{
 resmeanIPCW(
