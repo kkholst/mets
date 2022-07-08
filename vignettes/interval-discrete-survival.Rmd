@@ -172,12 +172,12 @@ although the baseline is parametrized differently.
 ```{r}
 if (test==1) {
 
- library(ordinal)
+###
+### data(ttpd) 
+### dtable(ttpd,~entry+time2)
+### out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+### summary(out)
 
- data(ttpd) 
- dtable(ttpd,~entry+time2)
- out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
- summary(out)
 #       Estimate Std.Err     2.5%   97.5%   P-value
 # time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43
 # time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45
@@ -192,9 +192,11 @@ if (test==1) {
  out$ploglik
 # [1] -1676.456
 
- ttpd <- dfactor(ttpd,fentry~entry)
- out1 <- clm(fentry~X1+X2+X3+X4,data=ttpd)
- summary(out1)
+### library(ordinal)
+### ttpd <- dfactor(ttpd,fentry~entry)
+### out1 <- clm(fentry~X1+X2+X3+X4,data=ttpd)
+### summary(out1)
+
 # formula: fentry ~ X1 + X2 + X3 + X4
 # data:    ttpd
 # 
