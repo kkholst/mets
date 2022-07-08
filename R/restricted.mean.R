@@ -55,7 +55,6 @@
 ##' rm1 <- resmean.phreg(out1,times=30)
 ##' summary(rm1)
 ##' @export
-##' @aliases Effbinreg
 resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
    offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
    kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",model="exp",
