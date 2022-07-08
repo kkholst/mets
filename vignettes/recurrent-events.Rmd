@@ -278,15 +278,12 @@ for (t in times) {
 	k <- k+1
 }
 legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
-
-with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
-
 ```
 
 Regression models for the marginal mean 
 ========================================
 
-One can also do regression model, using the model
+One can also do regression modelling , using the model
 \begin{align*}
 E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
