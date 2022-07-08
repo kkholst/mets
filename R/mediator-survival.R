@@ -90,10 +90,13 @@ return(wdata)
 ##' weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
 ##' wdata <- medweight(fit,data=dat)
 ##'
+##' ### fitting models with and without mediator
 ##' aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 ##' aaMss22 <- binreg(Event(time,status)~dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 ##'
-##' aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cause=2)
+##' ### estimating direct and indirect effects (under strong strong assumptions) 
+##' aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),
+##'                 data=wdata,time=50,weights=wdata$weights,cause=2)
 ##' ## to compute standard errors , requires numDeriv
 ##' library(numDeriv)
 ##' ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)

@@ -69,7 +69,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   m[[1]] <- as.name("model.frame")
   m <- eval(m, parent.frame())
   Y <- model.extract(m, "response")
-  if (class(Y)!="Event") stop("Expected a 'Event'-object")
+  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
   if (ncol(Y)==2) {
     exit <- Y[,1]
     entry <- NULL ## rep(0,nrow(Y))
