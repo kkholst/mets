@@ -739,14 +739,16 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'
 ##' Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 ##'
-##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
+##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary. 
+##'
 ##' This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
 ##' then IPCW censoring adjusted using binomial regression. 
 ##'
 ##' Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
 ##'
-##' Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. A factor based
-##̈́' version of the program binregATEF can take factors for the treatment and then uses the mlogit for propensity score modelling. 
+##' Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
+##'
+##' A factor based version of the program binregATEF can take factors for the treatment and then uses the mlogit for propensity score modelling. 
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
@@ -1268,14 +1270,13 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
     model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
-	  
 
 # {{{ computation of ate, att, atc and their influence functions
 
 ### treatment is rhs of treat.model 
 treat.name <-  all.vars(treat.model)[1]
 treatvar <- data[,treat.name]
-if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor if there are more than two levels \n",sep="")); 
+if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
 ## treatvar, 1,2,...,nlev or 1,2
 nlev <- nlevels(treatvar)
 nlevs <- levels(treatvar)
@@ -1436,7 +1437,6 @@ for (a in nlevs) {
 }
 difriskiid <- (iidrisk[,-1]-iidrisk[,1])
 difriskGiid <- (riskG.iid[,-1]-riskG.iid[,1])
-
 # }}}
 
 # {{{ output variances and se for ate, att, atc
