@@ -69,13 +69,16 @@ binregATE(
 Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 }
 \details{
-The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary.
+The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary. 
+
 This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
 then IPCW censoring adjusted using binomial regression. 
 
 Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
 
-Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. A factor based
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
+
+A factor based version of the program binregATEF can take factors for the treatment and then uses the mlogit for propensity score modelling.
 }
 \examples{
 data(bmt)
