@@ -7,7 +7,7 @@
 \alias{normalATE}
 \alias{kumarsim}
 \alias{kumarsimRCT}
-\alias{binregATEF}
+\alias{binregATEbin}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(
@@ -51,7 +51,7 @@ binregATE(
 
 \item{cens.weights}{censoring weights}
 
-\item{se}{to compute se's  with IPCW  adjustment, otherwise assumes that IPCW weights are known}
+\item{se}{to compute se's with IPCW  adjustment, otherwise assumes that IPCW weights are known}
 
 \item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
 
@@ -69,22 +69,23 @@ binregATE(
 Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 }
 \details{
-The first covariate in the specification of the competing risks regression model must be the treatment effect that is binary. 
+The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
+then it uses the mlogit for propensity score modelling. If there are no censorings this is performing ordinary logistic regression modelling. 
 
 This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
 then IPCW censoring adjusted using binomial regression. 
 
-Also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively.
-
 Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
 
-A factor based version of the program binregATEF can take factors for the treatment and then uses the mlogit for propensity score modelling.
+The original version of the program with only binary treatment binregATEbin take  binary-numeric as input for the treatment, 
+and also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively. Experimental version.
 }
 \examples{
 data(bmt)
+dfactor(bmt)  <-  ~.
 
-brs <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,
-  treat.model=tcell~platelet+age)
+brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
+  treat.model=tcell.f~platelet+age)
 summary(brs)
 
 }
