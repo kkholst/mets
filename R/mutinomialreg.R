@@ -161,7 +161,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 }# }}}
 
 ##' @export
-predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,...)
+predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,alpha=0.05,...)
 {# {{{
    ## when response not given, not used for predictions
    if (!missing(newdata)) 
@@ -204,7 +204,8 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,..
              for (i in nrefs) Dp <- cbind(Dp,X*ppp[,i+1]*Dppy/spp^2);  
              if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
 	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
-	     cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
+	     rr <- qnorm(1-alpha/2)
+	     cmat <- data.frame(pred = p, se = se, lower = p - rr * se, upper = p + rr * se)
              names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
              pp <- cmat
      }
