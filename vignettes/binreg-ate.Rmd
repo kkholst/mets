@@ -42,11 +42,12 @@ The function logitIPCW instead considers
  U(\beta) = &  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric given $X$.
+It seems that the binreg estimating equations most often the preferable ones to use. 
 
 Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
 the average effect on non-treated (ATC). We demonstrate their use below. 
 
-The functions binregATE and logitATE also works when there is no censoring and we thus have simple binary outcome. 
+The functions binregATE (recommended) and logitATE also works when there is no censoring and we thus have simple binary outcome. 
 
 Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
 under known censoring model. The influence functions are stored in the output. 
@@ -54,6 +55,8 @@ under known censoring model. The influence functions are stored in the output.
  - We estimate the average treatment effect of our binary response $I(T \leq t, \epsilon=1)$
    - Using a working logistic model for the resonse
    - Using a working logistic model for treatment given covariates
+     - The binregATE can also handle a factor with more than two levels and then uses
+        the mlogit multinomial regression function (of mets). 
    - Using a working model for censoring given covariates, here  a stratified Kaplan-Meier.
 
 If there are no censoring then the censoring weights are simply put to 1.
