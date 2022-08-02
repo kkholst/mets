@@ -2,9 +2,9 @@
 % Please edit documentation in R/recreg.R
 \name{recreg}
 \alias{recreg}
-\alias{EventCens}
 \alias{strataAugment}
 \alias{scalecumhaz}
+\alias{GLprediid}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(

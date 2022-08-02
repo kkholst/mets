@@ -59,7 +59,7 @@
 ##' lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases EventCens  strataAugment scalecumhaz
+##' @aliases strataAugment scalecumhaz GLprediid
 ##' @export
 recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,...)
 {# {{{
