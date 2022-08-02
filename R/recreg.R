@@ -255,7 +255,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         Gts <-   Gjumps <- rep(1,length(jumptimes))
     }
 
-
     ## computing terms for those experiencing another cause, need S0, S1, S2
     if (length(other)>=1) {# {{{
         trunc <- TRUE
@@ -493,7 +492,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
         ## }}}
     } else MGc <- 0
-
 
     if (!is.null(orig.strataA)) { ### compute augmentation term based on this beta
 	xx2strataA <- xx2$Z[,6]
