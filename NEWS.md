@@ -3,8 +3,6 @@
   - IPCW restricted mean survival regression: resmeanIPCW 
   - Lin-Ying additive hazards model with fast robust standard errors: aalenMets 
   - mediator weighted survial mediation with robust standard errors: mediatorSurv
-
-# mets 1.2.9
   - Examples updated
   - dutility function no longer casts warnings when handling formulas
   - Efficient estimation of recurrent events mean: recurrentMarginalAIPCW 
