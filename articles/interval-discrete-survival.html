@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -81,6 +77,9 @@
       <a href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
     </li>
     <li>
+      <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
+    </li>
+    <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
     </li>
     <li>
@@ -100,7 +99,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/kkholst/mets/">
+  <a href="https://github.com/kkholst/mets/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -119,25 +118,25 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Discrete Interval Censored Survival Models</h1>
-                        <h4 class="author">Klaus Holst &amp; Thomas Scheike</h4>
+                        <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 class="date">2021-09-05</h4>
+            <h4 data-toc-skip class="date">2022-08-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/master/vignettes/interval-discrete-survival.Rmd"><code>vignettes/interval-discrete-survival.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/interval-discrete-survival.Rmd" class="external-link"><code>vignettes/interval-discrete-survival.Rmd</code></a></small>
       <div class="hidden name"><code>interval-discrete-survival.Rmd</code></div>
 
     </div>
 
     
     
-<div id="discrete-inteval-censored-survival-times" class="section level1">
-<h1 class="hasAnchor">
-<a href="#discrete-inteval-censored-survival-times" class="anchor"></a>Discrete Inteval Censored survival times</h1>
+<div class="section level2">
+<h2 id="discrete-inteval-censored-survival-times">Discrete Inteval Censored survival times<a class="anchor" aria-label="anchor" href="#discrete-inteval-censored-survival-times"></a>
+</h2>
 <p><span class="math display">\[\begin{align*}
    \mbox{logit}(P(T &gt;t | x)) &amp; = \log(G(t)) + x^T \beta              \\
                 P(T &gt;t | x)  &amp; =  \frac{1}{1 + G(t) exp( x^T \beta) }         
 \end{align*}\]</span></p>
-<p>Input are intervals given by <span class="math inline">\(]t_l,t_r]\)</span> where t_r can be infinity for right-censored intervals. When truly discrete <span class="math inline">\(]0,1]\)</span> will be an observation at 1, and <span class="math inline">\(]j,j+1]\)</span> will be an observation at j+1.</p>
+<p>Input are intervals given by <span class="math inline">\(]t_l,t_r]\)</span> where t_r can be infinity for right-censored intervals. When the data is truly discrete, in contrast to grouping of continuous data, <span class="math inline">\(]0,1]\)</span> will be an observation at 1, and <span class="math inline">\(]j,j+1]\)</span> will be an observation at j+1.</p>
 <p>Likelihood is maximized: <span class="math display">\[\begin{align*}
     \prod_i  P(T_i &gt;t_{il} | x) - P(T_i&gt; t_{ir}| x).            
 \end{align*}\]</span></p>
@@ -145,172 +144,227 @@
      P(T \leq t | x)  &amp; =  \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta) }.
 \end{align*}\]</span> and <span class="math inline">\(\beta\)</span> says something about the OR of probability of being before <span class="math inline">\(t\)</span>.</p>
 <p>The baseline is parametrized as <span class="math display">\[\begin{align*}
-                G(t)  &amp; =  \sum_{j \leq t} \exp( \alpha_j ) 
+       G(t)  &amp; =  \sum_{j \leq t} \exp( \alpha_j ) 
 \end{align*}\]</span></p>
 <p>An important consequence of the model is that for all cut-points <span class="math inline">\(t\)</span> we have the same OR parameters for the OR of being early or later than <span class="math inline">\(t\)</span>.</p>
 </div>
-<div id="discrete-ttp" class="section level1">
-<h1 class="hasAnchor">
-<a href="#discrete-ttp" class="anchor"></a>Discrete TTP</h1>
-<p>First we look at some time to pregnancy (discrete survival data) that is right-censored, and set it up to fit the cumulative odds model by constructing the intervals appropriately:</p>
+<div class="section level2">
+<h2 id="discrete-ttp">Discrete TTP<a class="anchor" aria-label="anchor" href="#discrete-ttp"></a>
+</h2>
+<p>First we look at some time to pregnancy data (simulated discrete survival data) that is right-censored, and set it up to fit the cumulative odds model by constructing the intervals appropriately:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/">mets</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> 
-<span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">ttpd</span>,<span class="op">~</span><span class="va">entry</span><span class="op">+</span><span class="va">time2</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;       time2   1   2   3   4   5   6 Inf</span>
-<span class="co">#&gt; entry                                  </span>
-<span class="co">#&gt; 0           316   0   0   0   0   0   0</span>
-<span class="co">#&gt; 1             0 133   0   0   0   0   0</span>
-<span class="co">#&gt; 2             0   0 150   0   0   0   0</span>
-<span class="co">#&gt; 3             0   0   0  23   0   0   0</span>
-<span class="co">#&gt; 4             0   0   0   0  90   0   0</span>
-<span class="co">#&gt; 5             0   0   0   0   0  68   0</span>
-<span class="co">#&gt; 6             0   0   0   0   0   0 220</span>
-<span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
-<span class="co">#&gt;       Estimate Std.Err     2.5%   97.5%   P-value</span>
-<span class="co">#&gt; time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43</span>
-<span class="co">#&gt; time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45</span>
-<span class="co">#&gt; time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22</span>
-<span class="co">#&gt; time4  -2.9260  0.2436 -3.40344 -2.4486 3.078e-33</span>
-<span class="co">#&gt; time5  -1.2051  0.1655 -1.52935 -0.8808 3.267e-13</span>
-<span class="co">#&gt; time6  -0.9102  0.1790 -1.26103 -0.5594 3.671e-07</span>
-<span class="co">#&gt; X1      0.9913  0.1171  0.76175  1.2208 2.557e-17</span>
-<span class="co">#&gt; X2      0.6962  0.1156  0.46953  0.9228 1.739e-09</span>
-<span class="co">#&gt; X3      0.3466  0.1150  0.12110  0.5721 2.590e-03</span>
-<span class="co">#&gt; X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">ttpd</span>,<span class="op">~</span><span class="va">entry</span><span class="op">+</span><span class="va">time2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       time2   1   2   3   4   5   6 Inf</span></span>
+<span><span class="co">#&gt; entry                                  </span></span>
+<span><span class="co">#&gt; 0           316   0   0   0   0   0   0</span></span>
+<span><span class="co">#&gt; 1             0 133   0   0   0   0   0</span></span>
+<span><span class="co">#&gt; 2             0   0 150   0   0   0   0</span></span>
+<span><span class="co">#&gt; 3             0   0   0  23   0   0   0</span></span>
+<span><span class="co">#&gt; 4             0   0   0   0  90   0   0</span></span>
+<span><span class="co">#&gt; 5             0   0   0   0   0  68   0</span></span>
+<span><span class="co">#&gt; 6             0   0   0   0   0   0 220</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err     2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43</span></span>
+<span><span class="co">#&gt; time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45</span></span>
+<span><span class="co">#&gt; time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22</span></span>
+<span><span class="co">#&gt; time4  -2.9260  0.2436 -3.40344 -2.4486 3.078e-33</span></span>
+<span><span class="co">#&gt; time5  -1.2051  0.1655 -1.52935 -0.8808 3.267e-13</span></span>
+<span><span class="co">#&gt; time6  -0.9102  0.1790 -1.26103 -0.5594 3.671e-07</span></span>
+<span><span class="co">#&gt; X1      0.9913  0.1171  0.76175  1.2208 2.557e-17</span></span>
+<span><span class="co">#&gt; X2      0.6962  0.1156  0.46953  0.9228 1.739e-09</span></span>
+<span><span class="co">#&gt; X3      0.3466  0.1150  0.12110  0.5721 2.590e-03</span></span>
+<span><span class="co">#&gt; X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</span></span></code></pre></div>
 <p>Now using this discrete survival model we simulate some data from this model</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
-<span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="va">n</span>,<span class="fl">4</span><span class="op">)</span>
-<span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">simlogitSurvd</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">coef</span>,<span class="va">Z</span><span class="op">)</span>
-<span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">outsim</span>,left<span class="op">=</span><span class="va">time</span>,right<span class="op">=</span><span class="va">time</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span>
-<span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">outsim</span>,right<span class="op">=</span><span class="cn">Inf</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span>
-<span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span>
-<span class="co">#&gt;       Estimate Std.Err    2.5%   97.5%    P-value</span>
-<span class="co">#&gt; time1  -2.0151 0.04545 -2.1042 -1.9260  0.000e+00</span>
-<span class="co">#&gt; time2  -2.1767 0.04783 -2.2704 -2.0829  0.000e+00</span>
-<span class="co">#&gt; time3  -1.4573 0.04628 -1.5480 -1.3666 1.147e-217</span>
-<span class="co">#&gt; time4  -2.8678 0.07498 -3.0148 -2.7208  0.000e+00</span>
-<span class="co">#&gt; time5  -1.2186 0.05162 -1.3198 -1.1175 3.133e-123</span>
-<span class="co">#&gt; time6  -0.8938 0.05581 -1.0031 -0.7844  1.039e-57</span>
-<span class="co">#&gt; X1      0.9897 0.03682  0.9176  1.0619 3.444e-159</span>
-<span class="co">#&gt; X2      0.6927 0.03641  0.6213  0.7640  1.076e-80</span>
-<span class="co">#&gt; X3      0.3211 0.03612  0.2503  0.3919  6.196e-19</span>
-<span class="co">#&gt; X4      0.3613 0.03613  0.2905  0.4321  1.537e-23</span>
-
-<span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="../reference/haplo.surv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
+<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="va">n</span>,<span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">simlogitSurvd</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">coef</span>,<span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">outsim</span>,left<span class="op">=</span><span class="va">time</span>,right<span class="op">=</span><span class="va">time</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">outsim</span>,right<span class="op">=</span><span class="cn">Inf</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err    2.5%   97.5%    P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0151 0.04545 -2.1042 -1.9260  0.000e+00</span></span>
+<span><span class="co">#&gt; time2  -2.1767 0.04783 -2.2704 -2.0829  0.000e+00</span></span>
+<span><span class="co">#&gt; time3  -1.4573 0.04628 -1.5480 -1.3666 1.147e-217</span></span>
+<span><span class="co">#&gt; time4  -2.8678 0.07498 -3.0148 -2.7208  0.000e+00</span></span>
+<span><span class="co">#&gt; time5  -1.2186 0.05162 -1.3198 -1.1175 3.133e-123</span></span>
+<span><span class="co">#&gt; time6  -0.8938 0.05581 -1.0031 -0.7844  1.039e-57</span></span>
+<span><span class="co">#&gt; X1      0.9897 0.03682  0.9176  1.0619 3.444e-159</span></span>
+<span><span class="co">#&gt; X2      0.6927 0.03641  0.6213  0.7640  1.076e-80</span></span>
+<span><span class="co">#&gt; X3      0.3211 0.03612  0.2503  0.3919  6.196e-19</span></span>
+<span><span class="co">#&gt; X4      0.3613 0.03613  0.2905  0.4321  1.537e-23</span></span>
+<span></span>
+<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/haplo.surv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interval-discrete-survival_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<p>And now taking some data and comparing with icenReg. We make the data fully interval censored/discrete by letting also exact obsevations be discrete (thus being in an interval) by modifying the intervals.</p>
-<p>We consider the interval censored survival times for time from onset of diabetes to to diabetic nephronpathy, and make it discrete by fixing a nuber of fixed cutpoints.</p>
+<p>Finally, we look at some data and compare with the icenReg package that can also fit the proportional odds model for continous or discrete data. We make the data fully interval censored/discrete by letting also exact obsevations be only observed to be in an interval.</p>
+<p>We consider the interval censored survival times for time from onset of diabetes to to diabetic nephronpathy, then modify it to observe only that the event times are in certain intervals.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">test</span> <span class="op">&lt;-</span> <span class="fl">0</span> 
-<span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va">icenReg</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">IR_diabetes</span><span class="op">)</span>
-<span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="va">IR_diabetes</span>
-<span class="co">## removing fully observed data in continuous version, here making it a discrete observation </span>
-<span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">IRdia</span>,left<span class="op">=</span><span class="va">left</span><span class="op">-</span><span class="fl">1</span>,<span class="va">left</span><span class="op">==</span><span class="va">right</span><span class="op">)</span>
-<span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="op">~</span><span class="va">left</span><span class="op">+</span><span class="va">right</span>,level<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
-
-<span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="../reference/interval.logitsurv.discrete.html">dInterval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span>,cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">40</span>,<span class="cn">Inf</span><span class="op">)</span>,show<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fl">0</span> </span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">icenReg</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">IR_diabetes</span><span class="op">)</span></span>
+<span><span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="va">IR_diabetes</span></span>
+<span><span class="co">## removing fully observed data in continuous version, here making it a discrete observation </span></span>
+<span><span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">IRdia</span>,left<span class="op">=</span><span class="va">left</span><span class="op">-</span><span class="fl">1</span>,<span class="va">left</span><span class="op">==</span><span class="va">right</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="op">~</span><span class="va">left</span><span class="op">+</span><span class="va">right</span>,level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="../reference/interval.logitsurv.discrete.html">dInterval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span>,cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">40</span>,<span class="cn">Inf</span><span class="op">)</span>,show<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>We note that the gender effect is equivalent for the two approaches.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
-<span class="va">ints</span><span class="op">$</span><span class="va">Ileft</span> <span class="op">&lt;-</span> <span class="va">ints</span><span class="op">$</span><span class="va">left</span>
-<span class="va">ints</span><span class="op">$</span><span class="va">Iright</span> <span class="op">&lt;-</span> <span class="va">ints</span><span class="op">$</span><span class="va">right</span>
-<span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Ileft<span class="op">=</span><span class="va">ints</span><span class="op">$</span><span class="va">Ileft</span>,Iright<span class="op">=</span><span class="va">ints</span><span class="op">$</span><span class="va">Iright</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="op">~</span><span class="va">Ileft</span><span class="op">+</span><span class="va">Iright</span><span class="op">)</span>
-<span class="co"># </span>
-<span class="co">#       Iright   1   2   3   4   5 Inf</span>
-<span class="co"># Ileft                               </span>
-<span class="co"># 0             10   1  34  25   4   0</span>
-<span class="co"># 1              0  55  19  17   1   1</span>
-<span class="co"># 2              0   0 393  16   4   0</span>
-<span class="co"># 3              0   0   0 127   1   0</span>
-<span class="co"># 4              0   0   0   0  21   0</span>
-<span class="co"># 5              0   0   0   0   0   2</span>
-
-<span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">Ileft</span>,<span class="va">Iright</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">gender</span>,<span class="va">IRdia</span><span class="op">)</span>
-<span class="co">#            Estimate Std.Err    2.5%    97.5%   P-value</span>
-<span class="co"># time1        -3.934  0.3316 -4.5842 -3.28418 1.846e-32</span>
-<span class="co"># time2        -2.042  0.1693 -2.3742 -1.71038 1.710e-33</span>
-<span class="co"># time3         1.443  0.1481  1.1530  1.73340 1.911e-22</span>
-<span class="co"># time4         3.545  0.2629  3.0295  4.06008 1.976e-41</span>
-<span class="co"># time5         6.067  0.7757  4.5470  7.58784 5.217e-15</span>
-<span class="co"># gendermale   -0.385  0.1691 -0.7165 -0.05351 2.283e-02</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span>
-<span class="va">outss</span><span class="op">$</span><span class="va">ploglik</span>
-<span class="co"># [1] -646.1946</span>
-
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/icenReg/man/ic_sp.html">ic_sp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">Ileft</span>, <span class="va">Iright</span><span class="op">)</span> <span class="op">~</span> <span class="va">gender</span>, data <span class="op">=</span> <span class="va">IRdia</span>, model <span class="op">=</span> <span class="st">"po"</span><span class="op">)</span>
-<span class="co"># </span>
-<span class="co"># Model:  Proportional Odds</span>
-<span class="co"># Dependency structure assumed: Independence</span>
-<span class="co"># Baseline:  semi-parametric </span>
-<span class="co"># Call: ic_sp(formula = cbind(Ileft, Iright) ~ gender, data = IRdia, </span>
-<span class="co">#     model = "po")</span>
-<span class="co"># </span>
-<span class="co">#            Estimate Exp(Est)</span>
-<span class="co"># gendermale    0.385     1.47</span>
-<span class="co"># </span>
-<span class="co"># final llk =  -646.1946 </span>
-<span class="co"># Iterations =  6 </span>
-<span class="co"># Bootstrap Samples =  0 </span>
-<span class="co"># WARNING: only  0  bootstrap samples used for standard errors. </span>
-<span class="co"># Suggest using more bootstrap samples for inference</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-
-<span class="co">## sometimes NR-algorithm needs modifications of stepsize to run </span>
-<span class="co">## outss &lt;- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))</span>
-<span class="op">}</span></code></pre></div>
-</div>
-<div id="sessioninfo" class="section level1">
-<h1 class="hasAnchor">
-<a href="#sessioninfo" class="anchor"></a>SessionInfo</h1>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">ints</span><span class="op">$</span><span class="va">Ileft</span> <span class="op">&lt;-</span> <span class="va">ints</span><span class="op">$</span><span class="va">left</span></span>
+<span><span class="va">ints</span><span class="op">$</span><span class="va">Iright</span> <span class="op">&lt;-</span> <span class="va">ints</span><span class="op">$</span><span class="va">right</span></span>
+<span><span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Ileft<span class="op">=</span><span class="va">ints</span><span class="op">$</span><span class="va">Ileft</span>,Iright<span class="op">=</span><span class="va">ints</span><span class="op">$</span><span class="va">Iright</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="op">~</span><span class="va">Ileft</span><span class="op">+</span><span class="va">Iright</span><span class="op">)</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#       Iright   1   2   3   4   5 Inf</span></span>
+<span><span class="co"># Ileft                               </span></span>
+<span><span class="co"># 0             10   1  34  25   4   0</span></span>
+<span><span class="co"># 1              0  55  19  17   1   1</span></span>
+<span><span class="co"># 2              0   0 393  16   4   0</span></span>
+<span><span class="co"># 3              0   0   0 127   1   0</span></span>
+<span><span class="co"># 4              0   0   0   0  21   0</span></span>
+<span><span class="co"># 5              0   0   0   0   0   2</span></span>
+<span></span>
+<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">Ileft</span>,<span class="va">Iright</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">gender</span>,<span class="va">IRdia</span><span class="op">)</span></span>
+<span><span class="co">#            Estimate Std.Err    2.5%    97.5%   P-value</span></span>
+<span><span class="co"># time1        -3.934  0.3316 -4.5842 -3.28418 1.846e-32</span></span>
+<span><span class="co"># time2        -2.042  0.1693 -2.3742 -1.71038 1.710e-33</span></span>
+<span><span class="co"># time3         1.443  0.1481  1.1530  1.73340 1.911e-22</span></span>
+<span><span class="co"># time4         3.545  0.2629  3.0295  4.06008 1.976e-41</span></span>
+<span><span class="co"># time5         6.067  0.7757  4.5470  7.58784 5.217e-15</span></span>
+<span><span class="co"># gendermale   -0.385  0.1691 -0.7165 -0.05351 2.283e-02</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span></span>
+<span><span class="va">outss</span><span class="op">$</span><span class="va">ploglik</span></span>
+<span><span class="co"># [1] -646.1946</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/icenReg/man/ic_sp.html" class="external-link">ic_sp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Ileft</span>, <span class="va">Iright</span><span class="op">)</span> <span class="op">~</span> <span class="va">gender</span>, data <span class="op">=</span> <span class="va">IRdia</span>, model <span class="op">=</span> <span class="st">"po"</span><span class="op">)</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Model:  Proportional Odds</span></span>
+<span><span class="co"># Dependency structure assumed: Independence</span></span>
+<span><span class="co"># Baseline:  semi-parametric </span></span>
+<span><span class="co"># Call: ic_sp(formula = cbind(Ileft, Iright) ~ gender, data = IRdia, </span></span>
+<span><span class="co">#     model = "po")</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#            Estimate Exp(Est)</span></span>
+<span><span class="co"># gendermale    0.385     1.47</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># final llk =  -646.1946 </span></span>
+<span><span class="co"># Iterations =  6 </span></span>
+<span><span class="co"># Bootstrap Samples =  0 </span></span>
+<span><span class="co"># WARNING: only  0  bootstrap samples used for standard errors. </span></span>
+<span><span class="co"># Suggest using more bootstrap samples for inference</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## sometimes NR-algorithm needs modifications of stepsize to run </span></span>
+<span><span class="co">## outss &lt;- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Also agrees with the cumulative link regression of the ordinal package, although the baseline is parametrized differently.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
-<span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">#&gt; Running under: Ubuntu 20.04.3 LTS</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span>
-<span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; locale:</span>
-<span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span>
-<span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span>
-<span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span>
-<span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attached base packages:</span>
-<span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] mets_1.2.9      lava_1.6.10     timereg_2.0.0   survival_3.2-11</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.7          compiler_4.1.1      highr_0.9          </span>
-<span class="co">#&gt;  [4] tools_4.1.1         digest_0.6.27       evaluate_0.14      </span>
-<span class="co">#&gt;  [7] memoise_2.0.0       lattice_0.20-44     rlang_0.4.11       </span>
-<span class="co">#&gt; [10] Matrix_1.3-4        yaml_2.2.1          parallel_4.1.1     </span>
-<span class="co">#&gt; [13] mvtnorm_1.1-2       pkgdown_1.6.1       xfun_0.25          </span>
-<span class="co">#&gt; [16] fastmap_1.1.0       stringr_1.4.0       knitr_1.33         </span>
-<span class="co">#&gt; [19] desc_1.3.0          fs_1.5.0            systemfonts_1.0.2  </span>
-<span class="co">#&gt; [22] globals_0.14.0      rprojroot_2.0.2     grid_4.1.1         </span>
-<span class="co">#&gt; [25] listenv_0.8.0       R6_2.5.1            textshaping_0.3.5  </span>
-<span class="co">#&gt; [28] future.apply_1.8.1  parallelly_1.27.0   rmarkdown_2.10     </span>
-<span class="co">#&gt; [31] magrittr_2.0.1      codetools_0.2-18    htmltools_0.5.2    </span>
-<span class="co">#&gt; [34] splines_4.1.1       future_1.22.1       numDeriv_2016.8-1.1</span>
-<span class="co">#&gt; [37] ragg_1.1.3          stringi_1.7.4       cachem_1.0.6       </span>
-<span class="co">#&gt; [40] crayon_1.4.1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### data(ttpd) </span></span>
+<span><span class="co">### dtable(ttpd,~entry+time2)</span></span>
+<span><span class="co">### out &lt;- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)</span></span>
+<span><span class="co">### summary(out)</span></span>
+<span></span>
+<span><span class="co">#       Estimate Std.Err     2.5%   97.5%   P-value</span></span>
+<span><span class="co"># time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43</span></span>
+<span><span class="co"># time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45</span></span>
+<span><span class="co"># time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22</span></span>
+<span><span class="co"># time4  -2.9260  0.2436 -3.40344 -2.4486 3.078e-33</span></span>
+<span><span class="co"># time5  -1.2051  0.1655 -1.52935 -0.8808 3.267e-13</span></span>
+<span><span class="co"># time6  -0.9102  0.1790 -1.26103 -0.5594 3.671e-07</span></span>
+<span><span class="co"># X1      0.9913  0.1171  0.76175  1.2208 2.557e-17</span></span>
+<span><span class="co"># X2      0.6962  0.1156  0.46953  0.9228 1.739e-09</span></span>
+<span><span class="co"># X3      0.3466  0.1150  0.12110  0.5721 2.590e-03</span></span>
+<span><span class="co"># X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</span></span>
+<span> <span class="va">out</span><span class="op">$</span><span class="va">ploglik</span></span>
+<span><span class="co"># [1] -1676.456</span></span>
+<span></span>
+<span><span class="co">### library(ordinal)</span></span>
+<span><span class="co">### ttpd &lt;- dfactor(ttpd,fentry~entry)</span></span>
+<span><span class="co">### out1 &lt;- clm(fentry~X1+X2+X3+X4,data=ttpd)</span></span>
+<span><span class="co">### summary(out1)</span></span>
+<span></span>
+<span><span class="co"># formula: fentry ~ X1 + X2 + X3 + X4</span></span>
+<span><span class="co"># data:    ttpd</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co">#  link  threshold nobs logLik   AIC     niter max.grad cond.H </span></span>
+<span><span class="co">#  logit flexible  1000 -1676.46 3372.91 6(2)  1.17e-12 5.3e+02</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Coefficients:</span></span>
+<span><span class="co">#    Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co"># X1  -0.9913     0.1171  -8.465  &lt; 2e-16 ***</span></span>
+<span><span class="co"># X2  -0.6962     0.1156  -6.021 1.74e-09 ***</span></span>
+<span><span class="co"># X3  -0.3466     0.1150  -3.013  0.00259 ** </span></span>
+<span><span class="co"># X4  -0.3223     0.1147  -2.810  0.00495 ** </span></span>
+<span><span class="co"># ---</span></span>
+<span><span class="co"># Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># Threshold coefficients:</span></span>
+<span><span class="co">#     Estimate Std. Error z value</span></span>
+<span><span class="co"># 0|1  -2.0064     0.1461 -13.733</span></span>
+<span><span class="co"># 1|2  -1.3940     0.1396  -9.984</span></span>
+<span><span class="co"># 2|3  -0.7324     0.1347  -5.435</span></span>
+<span><span class="co"># 3|4  -0.6266     0.1343  -4.667</span></span>
+<span><span class="co"># 4|5  -0.1814     0.1333  -1.361</span></span>
+<span><span class="co"># 5|6   0.2123     0.1342   1.582</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.0     lava_1.6.10    timereg_2.0.2  survival_3.3-1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] Rcpp_1.0.9          highr_0.9           bslib_0.4.0        </span></span>
+<span><span class="co">#&gt;  [4] compiler_4.2.1      jquerylib_0.1.4     tools_4.2.1        </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.15      </span></span>
+<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.4        </span></span>
+<span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.3.0           parallel_4.2.1     </span></span>
+<span><span class="co">#&gt; [16] yaml_2.3.5          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
+<span><span class="co">#&gt; [19] xfun_0.31           fastmap_1.1.0       stringr_1.4.0      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.39          desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.15.1     </span></span>
+<span><span class="co">#&gt; [28] rprojroot_2.0.3     grid_4.2.1          listenv_0.8.0      </span></span>
+<span><span class="co">#&gt; [31] R6_2.5.1            textshaping_0.3.6   parallelly_1.32.1  </span></span>
+<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.14      purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [37] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.3    </span></span>
+<span><span class="co">#&gt; [40] splines_4.2.1       future_1.27.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [43] ragg_1.2.2          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
 
@@ -325,11 +379,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
+  <p></p>
+<p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -337,6 +393,8 @@
 
   
 
+
+  
 
   </body>
 </html>

@@ -1,5 +1,5 @@
 pandoc: '2.5'
-pkgdown: 1.6.1
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
@@ -11,9 +11,10 @@ articles:
   haplo-discrete-ttp: haplo-discrete-ttp.html
   interval-discrete-survival: interval-discrete-survival.html
   marginal-cox: marginal-cox.html
+  mediation-survival: mediation-survival.html
   quantitative-twin: quantitative-twin.html
   recurrent-events: recurrent-events.html
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
-last_built: 2021-09-05T17:42Z
+last_built: 2022-08-03T10:47Z
 

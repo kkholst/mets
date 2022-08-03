@@ -25,6 +25,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,23 +39,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,6 +83,9 @@
       <a href="articles/marginal-cox.html">Marginal modelling of clustered survival data</a>
     </li>
     <li>
+      <a href="articles/mediation-survival.html">Mediation Analysis for survival data</a>
+    </li>
+    <li>
       <a href="articles/quantitative-twin.html">Twin models</a>
     </li>
     <li>
@@ -106,7 +105,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/kkholst/mets/">
+  <a href="https://github.com/kkholst/mets/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -125,33 +124,28 @@
   <div class="contents col-md-9">
 
 
-<div id="multivariate-event-times-mets-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#multivariate-event-times-mets-" class="anchor"></a>Multivariate Event Times (<code>mets</code>) <img src="reference/figures/timerrr.png" align="right" height="150">
+<div class="section level1">
+<div class="page-header"><h1 id="multivariate-event-times-mets-">Multivariate Event Times (<code>mets</code>) <img src="reference/figures/timerrr.png" align="right" height="150"><a class="anchor" aria-label="anchor" href="#multivariate-event-times-mets-"></a>
 </h1></div>
 <p>Implementation of various statistical models for multivariate event history data &lt;10.1007/s10985-013-9244-x&gt;. Including multivariate cumulative incidence models &lt;10.1002/sim.6016&gt;, and bivariate random effects probit models (Liability models) &lt;10.1016/j.csda.2015.01.014&gt;. Also contains two-stage binomial modelling that can do pairwise odds-ratio dependence modelling based marginal logistic regression models. This is an alternative to the alternating logistic regression approach (ALR).</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"mets"</span><span class="op">)</span></code></pre></div>
-<p>The development version may be installed directly from github (requires <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a> on windows and <a href="https://cran.r-project.org/bin/macosx/tools/">development tools</a> (+Xcode) for Mac OS X):</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mets"</span><span class="op">)</span></span></code></pre></div>
+<p>The development version may be installed directly from github (requires <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a> on windows and <a href="https://cran.r-project.org/bin/macosx/tools/" class="external-link">development tools</a> (+Xcode) for Mac OS X):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>, dependencies<span class="op">=</span><span class="st">"Suggests"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>, dependencies<span class="op">=</span><span class="st">"Suggests"</span><span class="op">)</span></span></code></pre></div>
 <p>or to get development version</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>,ref<span class="op">=</span><span class="st">"develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>,ref<span class="op">=</span><span class="st">"develop"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="citation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#citation" class="anchor"></a>Citation</h2>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
 <p>To cite the <code>mets</code> package please use one of the following references</p>
-<blockquote>
-<p>Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013). Estimating heritability for cause specific mortality based on twin studies. Lifetime Data Analysis. <a href="http://dx.doi.org/10.1007/s10985-013-9244-x" class="uri">http://dx.doi.org/10.1007/s10985-013-9244-x</a></p>
-</blockquote>
-<blockquote>
-<p>Klaus K. Holst and Thomas H. Scheike Jacob B. Hjelmborg (2015). The Liability Threshold Model for Censored Twin Data. Computational Statistics and Data Analysis. <a href="http://dx.doi.org/10.1016/j.csda.2015.01.014" class="uri">http://dx.doi.org/10.1016/j.csda.2015.01.014</a></p>
-</blockquote>
+<blockquote><p>Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013). Estimating heritability for cause specific mortality based on twin studies. Lifetime Data Analysis. <a href="http://dx.doi.org/10.1007/s10985-013-9244-x" class="external-link uri">http://dx.doi.org/10.1007/s10985-013-9244-x</a></p></blockquote>
+<blockquote><p>Klaus K. Holst and Thomas H. Scheike Jacob B. Hjelmborg (2015). The Liability Threshold Model for Censored Twin Data. Computational Statistics and Data Analysis. <a href="http://dx.doi.org/10.1016/j.csda.2015.01.014" class="external-link uri">http://dx.doi.org/10.1016/j.csda.2015.01.014</a></p></blockquote>
 <p>BibTeX:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="op">@</span>Article{,</a>
 <a class="sourceLine" id="cb4-2" title="2">  title={Estimating heritability <span class="cf">for</span> cause specific mortality based on twin studies},</a>
@@ -177,44 +171,44 @@
 <a class="sourceLine" id="cb4-22" title="22">  journal={Computational Statistics and Data Analysis}</a>
 <a class="sourceLine" id="cb4-23" title="23">}</a></code></pre></div>
 </div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/mets/">"mets"</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">prt</span><span class="op">)</span> <span class="co">## Prostate data example (sim)</span>
-
-<span class="co">## Bivariate competing risk, concordance estimates</span>
-<span class="va">p33</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bicomprisk.html">bicomprisk</a></span><span class="op">(</span><span class="fu">Event</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu">strata</span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu">id</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,
-                  data<span class="op">=</span><span class="va">prt</span>, cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, return.data<span class="op">=</span><span class="fl">1</span>, prodlim<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; Strata 'DZ'</span>
-<span class="co">#&gt; Strata 'MZ'</span>
-
-<span class="va">p33dz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"DZ"</span><span class="op">$</span><span class="va">comp.risk</span>
-<span class="va">p33mz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"MZ"</span><span class="op">$</span><span class="va">comp.risk</span>
-
-<span class="co">## Probability weights based on Aalen's additive model</span>
-<span class="va">prtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipw.html">ipw</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span>, data<span class="op">=</span><span class="va">prt</span>,
-            cluster<span class="op">=</span><span class="st">"id"</span>,weight.name<span class="op">=</span><span class="st">"w"</span><span class="op">)</span>
-
-<span class="co">## Marginal model (wrongly ignoring censorings)</span>
-<span class="va">bpmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,
-                 data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">prt</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>, eqmarg<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co">## Extended liability model</span>
-<span class="va">bpmzIPW</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,
-                    data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">prtw</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>,
-                    weight<span class="op">=</span><span class="st">"w"</span><span class="op">)</span>
-<span class="va">smz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bpmzIPW</span><span class="op">)</span>
-
-<span class="co">## Concordance</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">p33mz</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.1</span><span class="op">)</span>,axes<span class="op">=</span><span class="cn">FALSE</span>,automar<span class="op">=</span><span class="cn">FALSE</span>,atrisk<span class="op">=</span><span class="cn">FALSE</span>,background<span class="op">=</span><span class="cn">TRUE</span>,background.fg<span class="op">=</span><span class="st">"white"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html">axis</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="va">smz</span><span class="op">$</span><span class="va">prob</span><span class="op">[</span><span class="st">"Concordance"</span>,<span class="op">]</span>,lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"darkblue"</span><span class="op">)</span>
-<span class="co">## Wrong estimates:</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bpmz</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span><span class="op">[</span><span class="st">"Concordance"</span>,<span class="op">]</span>,lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"lightgray"</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/mets/" class="external-link">"mets"</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">prt</span><span class="op">)</span> <span class="co">## Prostate data example (sim)</span></span>
+<span></span>
+<span><span class="co">## Bivariate competing risk, concordance estimates</span></span>
+<span><span class="va">p33</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bicomprisk.html">bicomprisk</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu">strata</span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu">id</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>                  data<span class="op">=</span><span class="va">prt</span>, cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, return.data<span class="op">=</span><span class="fl">1</span>, prodlim<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Strata 'DZ'</span></span>
+<span><span class="co">#&gt; Strata 'MZ'</span></span>
+<span></span>
+<span><span class="va">p33dz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"DZ"</span><span class="op">$</span><span class="va">comp.risk</span></span>
+<span><span class="va">p33mz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"MZ"</span><span class="op">$</span><span class="va">comp.risk</span></span>
+<span></span>
+<span><span class="co">## Probability weights based on Aalen's additive model</span></span>
+<span><span class="va">prtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipw.html">ipw</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span>, data<span class="op">=</span><span class="va">prt</span>,</span>
+<span>            cluster<span class="op">=</span><span class="st">"id"</span>,weight.name<span class="op">=</span><span class="st">"w"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Marginal model (wrongly ignoring censorings)</span></span>
+<span><span class="va">bpmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>                 data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>, eqmarg<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Extended liability model</span></span>
+<span><span class="va">bpmzIPW</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>                    data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prtw</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>,</span>
+<span>                    weight<span class="op">=</span><span class="st">"w"</span><span class="op">)</span></span>
+<span><span class="va">smz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bpmzIPW</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Concordance</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p33mz</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.1</span><span class="op">)</span>,axes<span class="op">=</span><span class="cn">FALSE</span>,automar<span class="op">=</span><span class="cn">FALSE</span>,atrisk<span class="op">=</span><span class="cn">FALSE</span>,background<span class="op">=</span><span class="cn">TRUE</span>,background.fg<span class="op">=</span><span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="va">smz</span><span class="op">$</span><span class="va">prob</span><span class="op">[</span><span class="st">"Concordance"</span>,<span class="op">]</span>,lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"darkblue"</span><span class="op">)</span></span>
+<span><span class="co">## Wrong estimates:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bpmz</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span><span class="op">[</span><span class="st">"Concordance"</span>,<span class="op">]</span>,lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"lightgray"</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/ex1-1.png" title="plot of chunk ex1" alt="plot of chunk ex1" width="60%"></p>
 </div>
 </div>
@@ -223,55 +217,59 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mets">https://​cloud.r-project.org/​package=mets</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/kkholst/mets/">https://​github.com/​kkholst/​mets/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/kkholst/mets/issues">https://​github.com/​kkholst/​mets/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=mets" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/kkholst/mets/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/kkholst/mets/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>GPL (&gt;=2)</li>
 </ul>
 </div>
+
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing mets</a></li>
+<li><a href="authors.html#citation">Citing mets</a></li>
 </ul>
 </div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Thomas Scheike <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/kkholst/mets/actions"><img src="https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/github/kkholst/mets?branch=master"><img src="https://codecov.io/github/kkholst/mets/coverage.svg?branch=master" alt="coverage"></a></li>
-<li><a href="https://CRAN.R-project.org/package=mets"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
-<li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/mets"><img src="https://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>
+<li><a href="https://github.com/kkholst/mets/actions" class="external-link"><img src="https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/github/kkholst/mets?branch=master" class="external-link"><img src="https://codecov.io/github/kkholst/mets/coverage.svg?branch=master" alt="coverage"></a></li>
+<li><a href="https://CRAN.R-project.org/package=mets" class="external-link"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
+<li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/mets" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Klaus K. Holst, Thomas Scheike.</p>
+  <p></p>
+<p>Developed by Klaus K. Holst, Thomas Scheike.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -279,6 +277,8 @@
 
   
 
+
+  
 
   </body>
 </html>
