@@ -1,20 +1,24 @@
 ##' Restricted IPCW mean for censored survival data 
 ##'
 ##' Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
-##' \deqn{E(T \leq t | X ) = expit( X^T beta) }
+##' \deqn{E(T \leq t | X ) = exp( X^T beta) }
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
+##' \deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
+##' \deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 ##' 
 ##' By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
 ##' 
 ##' Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 ##' under known censoring model. 
+##' 
+##' Based on binomial regresion IPCW response estimating equation: 
+##' \deqn{ X ( \Delta Ydirect /G_c(T_i-) - exp( X^T beta)) = 0 }
+##' for IPCW adjusted responses. 
 ##'
 ##' Censoring model may depend on strata. 
 ##'
@@ -36,6 +40,7 @@
 ##' @param augmentation to augment binomial regression 
 ##' @param h  h for estimating equation 
 ##' @param MCaugment iid of h and censoring model 
+##' @param Ydirect to bypass the construction of the response Y=min(T,tau) and use this instead
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -58,7 +63,7 @@
 resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
    offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
    kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",model="exp",
-   augmentation=NULL,h=NULL,MCaugment=NULL,...)
+   augmentation=NULL,h=NULL,MCaugment=NULL,Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -148,7 +153,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
   obs <- (exit<=time & status==cause) | (exit>=time)
-  Y <- c(pmin(exit,time)*obs)/cens.weights
+  if (is.null(Ydirect)) Y <- c(pmin(exit,time)*obs)/cens.weights else Y <- c(Ydirect*obs)/cens.weights
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -223,12 +228,12 @@ hessian <- matrix(D2log,length(pp),length(pp))
     exit <- exit[ord]
     weights <- weights[ord]
     offset <- offset[ord]
+    if (!is.null(Ydirect)) Ydirect <- Ydirect[ord]
     cens.weights <- cens.weights[ord]
     h <- h[ord]
     lp <- c(X %*% val$coef+offset)
     p <- exp(lp)
-    obs <- (exit<=time & status==cause) | (exit>=time)
-    Y  <- c(pmin(exit,time)*obs)/cens.weights
+    if (is.null(Ydirect)) Y <- c(pmin(exit,time)*obs)/cens.weights else Y <- c(Ydirect*obs)/cens.weights
     if (model=="exp" & is.null(h.call))  ph <- p
     if (model=="exp" & !is.null(h.call)) ph <- h
     if (model!="exp" & is.null(h.call))  ph <- 1 

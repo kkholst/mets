@@ -23,6 +23,7 @@ resmeanIPCW(
   augmentation = NULL,
   h = NULL,
   MCaugment = NULL,
+  Ydirect = NULL,
   ...
 )
 }
@@ -63,25 +64,31 @@ resmeanIPCW(
 
 \item{MCaugment}{iid of h and censoring model}
 
+\item{Ydirect}{to bypass the construction of the response Y=min(T,tau) and use this instead}
+
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
 Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
-\deqn{E(T \leq t | X ) = expit( X^T beta) }
+\deqn{E(T \leq t | X ) = exp( X^T beta) }
 }
 \details{
 Based on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
+\deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
 Based on binomial regresion IPCW response estimating equation: 
-\deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - expit( X^T beta)) = 0 }
+\deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 
 By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
 
 Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 under known censoring model. 
+
+Based on binomial regresion IPCW response estimating equation: 
+\deqn{ X ( \Delta Ydirect /G_c(T_i-) - exp( X^T beta)) = 0 }
+for IPCW adjusted responses. 
 
 Censoring model may depend on strata.
 }

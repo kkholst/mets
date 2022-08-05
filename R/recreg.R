@@ -52,11 +52,11 @@
 ##' dtable(rr,~statusG+status+death)
 ##' dcut(rr) <- gx~x
 ##'
-##' ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1)
+##' ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1,death.code=3)
 ##' summary(ll)
 ##' 
 ##' ## censoring stratified after quartiles of x
-##' lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
+##' lls <- recreg(Event(start, stop, statusG)~x+cluster(id),data=rr,cause=1,death.code=3,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
 ##' @aliases strataAugment scalecumhaz GLprediid
@@ -227,7 +227,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         nCstrata <- 1
 	cens.strata <- rep(0,length(exit))
     }# }}}
-
 
     Zcall <- cbind(status,cens.strata,Stime,cens,strata,strataA) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
@@ -439,7 +438,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         otherxx2 <- which((xx2$Z[,1] %in% death.code) & xx2$sign==1)
         statusxx2 <- xx2$Z[,1]
         rr0 <- xx2$sign
-        jumpsC <- which((xx2$Z[,4]==cens.code) & xx2$sign==1)
+        jumpsC <- which((xx2$Z[,1]==cens.code) & xx2$sign==1)
         strataCxx2 <- xx2$Z[,2]
         S0iC2  <-  S0iC <- rep(0,length(xx2$status))
         S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
