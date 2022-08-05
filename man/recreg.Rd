@@ -84,11 +84,11 @@ rr <- dtransform(rr,statusG=3,death==1)
 dtable(rr,~statusG+status+death)
 dcut(rr) <- gx~x
 
-ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1)
+ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1,death.code=3)
 summary(ll)
 
 ## censoring stratified after quartiles of x
-lls <- recreg(Event(start, stop, statusG) ~ x+cluster(id), data=rr,cause=1, cens.model=~strata(gx))
+lls <- recreg(Event(start, stop, statusG)~x+cluster(id),data=rr,cause=1,death.code=3,cens.model=~strata(gx))
 summary(lls)
 
 }
