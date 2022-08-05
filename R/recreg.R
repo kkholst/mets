@@ -554,7 +554,7 @@ out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	jumps=jumps,exit=exit,p=p,S0s=val$S0s,
 	no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
 	Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,
-	cause=cause,
+	death.code=death.code, cause=cause, 
 	strataA=strataA,nstrataA=nstrataA,augment=augment.new,MGAc=MGAc
 	)
 

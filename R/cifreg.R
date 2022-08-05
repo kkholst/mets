@@ -425,9 +425,8 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     ### xx2 data all data
         otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code)))
-        statusxx2 <- xx2$Z[,1]
         rr0 <- xx2$sign
-        jumpsC <- which(xx2$Z[,1]==cens.code)
+        jumpsC <- whereC 
         strataCxx2 <- xx2$Z[,2]
         S0iC2  <-  S0iC <- rep(0,length(xx2$status))
         S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
@@ -555,13 +554,14 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
   btimexx <- c(1*(xx2$time < time))
 
   status <- xx2$Z[,1]
-  cause.jumps <- which(status==x$cause)
+  cause.jumps <- xx2$jumps+1 
   exit <- xx2$time
-  max.jump <- max(exit[cause.jumps])
-  cause <- x$cause
-  cens.code <- x$cens.code
-  other <- which((!(status %in% c(x$cens.code,x$cause)) ) & (exit< max.jump))
-  whereC <- which(status==cens.code)
+  max.jump <- max(exit[cause.jumps])+1
+  if (inherits(x,c("cifreg"))) 
+  other <- which((!(status %in% c(x$cens.code,x$cause)) ) )
+  else 
+  other <- which((status %in% x$death.code) & (xx2$sign==1) )
+  whereC <- which( (status %in% x$cens.code) & xx2$sign==1)
 
   jumps <- xx2$jumps+1
   jumptimes <- xx2$time[jumps]
@@ -593,7 +593,6 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
     cumhazA <- cumsumstratasum(S0i,xx2$strata,xx2$nstrata,type="all")
     cumhaz <- c(cumhazA$sum)
 
-
     if (fixbeta==0) {
 	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
 	  Ht <- apply(E*S0i*btimexx,2,cumsumstrata,xx2$strata,xx2$nstrata)
@@ -614,14 +613,13 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
     cumhazAA <- cumsumstrata(S0i2*btimexx,xx2$strata,xx2$nstrata)
     MGAiid <- S0i*btimexx-cumhazAA*rr*c(xx2$weights)
     MGAiid <-  apply(MGAiid,2,sumstrata,newid-1,nnewid)
-###    MGAiid <-  apply(MGAiid,2,sumstrata,xx2$id,mid+1)
+### MGAiid <-  apply(MGAiid,2,sumstrata,xx2$id,mid+1)
 
   if (length(other)>=1) { ## martingale part for type-2 after T
     ### xx2 data all data
-        otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code)))
-        statusxx2 <- xx2$Z[,1]
+        otherxx2 <- other  
         rr0 <- xx2$sign
-        jumpsC <- which(xx2$Z[,1]==cens.code)
+        jumpsC <- whereC 
         S0iC2  <-  S0iC <- rep(0,length(xx2$status))
         S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
         S0iC[jumpsC] <- 1/S0rrr[jumpsC]
