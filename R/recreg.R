@@ -438,7 +438,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         otherxx2 <- which((xx2$Z[,1] %in% death.code) & xx2$sign==1)
         statusxx2 <- xx2$Z[,1]
         rr0 <- xx2$sign
-        jumpsC <- which((xx2$Z[,1]==cens.code) & xx2$sign==1)
+        jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1)
         strataCxx2 <- xx2$Z[,2]
         S0iC2  <-  S0iC <- rep(0,length(xx2$status))
         S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
@@ -466,7 +466,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         UU  <-  UU+UU2
     }
     ## }}}
-
 
     if ((stderr==1) & (length(other)>=1) & (length(whereC)>0)) { ### Censoring adjustment for jumps of other type but only for KM-case {{{
 
