@@ -228,6 +228,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 	cens.strata <- rep(0,length(exit))
     }# }}}
 
+    trunc <- TRUE
     Zcall <- cbind(status,cens.strata,Stime,cens,strata,strataA) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status==cause)

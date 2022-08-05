@@ -426,7 +426,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     ### xx2 data all data
         otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code)))
         rr0 <- xx2$sign
-        jumpsC <- whereC 
+        jumpsC <-  which(xx2$Z[,1] %in% cens.code)
         strataCxx2 <- xx2$Z[,2]
         S0iC2  <-  S0iC <- rep(0,length(xx2$status))
         S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
@@ -600,7 +600,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
   if (fixbeta==0) rr <- c(xx2$sign*exp(Z %*% coef(x) + xx2$offset)) else rr <- c(xx2$sign*exp(xx2$offset))
 
 ### Martingale  as a function of time and for all subjects to handle strata
-    mid <- max(xx2$id)
+   mid <- max(xx2$id)
   if (fixbeta==0)  {
     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx2$weights)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
@@ -631,11 +631,12 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         ndstrata <- attr(dstrata,"nlevel")
         lastt <- tailstrata(dstrata-1,ndstrata)
         ll <-  cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
-        Htsj <- ll$res[lastt][dstrata]-ll$lagres
+###        Htsj <- ll$res[lastt][dstrata]-ll$lagres
+        Htsj <- ll$res[lastt][dstrata]-ll$res
 
         fff <- function(x) {
             cx  <- cumsum2strata(Gcxx2,x*S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
-            cx <- cx$res[lastt][dstrata]-cx$lagres
+            cx <- cx$res[lastt][dstrata]-cx$res
             return(cx)
         }
         EHtsj  <- apply(E,2,fff)
@@ -645,10 +646,10 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         UU  <-  UU+UU2
 
         ll <-  cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
-        HBtsj <- ll$res[lastt][dstrata]-ll$lagres
+        HBtsj <- ll$res[lastt][dstrata]-ll$res
         MGAiid2 <- -HBtsj[otherxx2,,drop=FALSE]*rrx2
-	MGAiid2 <-  apply(MGAiid2,2,sumstrata,newid[otherxx2]-1,nnewid)
-###	MGAiid2 <-  apply(MGAiid2,2,sumstrata,xx2$id[otherxx2],mid+1)
+###	MGAiid2 <-  apply(MGAiid2,2,sumstrata,newid[otherxx2]-1,nnewid)
+	MGAiid2 <-  apply(MGAiid2,2,sumstrata,xx2$id[otherxx2],mid+1)
 	MGAiid <- MGAiid+MGAiid2
     }
     ## }}}
