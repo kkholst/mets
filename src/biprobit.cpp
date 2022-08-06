@@ -184,7 +184,7 @@ RcppExport SEXP biprobit0(SEXP m,
     W = W0;
     //    WW = trans(reshape(W1,2,N/2));    
   }
-  if (OneWeight & weights) {
+  if (OneWeight && weights) {
     vecmat U0 = score(Y,mu,X,S,dS,U);
     res["loglik"] = log(U0.V)%W.col(0);
     for (unsigned i=0; i<U0.M.n_rows; i++) U0.M.row(i) *= W(i,0);
@@ -399,7 +399,7 @@ BEGIN_RCPP
     W = W0;
     //    WW = trans(reshape(W1,2,N/2));    
   }
-  if (OneWeight & weights) {
+  if (OneWeight && weights) {
     if (Cor) { 
       U0 = scorecor(Y,mu,dmu,S,dS,U,EqMarginal);
     } else {

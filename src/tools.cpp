@@ -49,19 +49,19 @@ BEGIN_RCPP
     unsigned type=0; // 1:logical,2:integer,3:numeric,4:complex,5:character
     for (unsigned i=0; i<nclust; i++) {
       bool assigned = false;
-      if (Rf_isLogical(d[idx[k]+i]) & (type<2)) {
+      if (Rf_isLogical(d[idx[k]+i]) && (type<2)) {
 	type=1;
 	assigned=true;
       }
-      if (Rf_isInteger(d[idx[k]+i]) & (type<3)) {
+      if (Rf_isInteger(d[idx[k]+i]) && (type<3)) {
 	type=2;
 	assigned=true;
       }
-      if (Rf_isNumeric(d[idx[k]+i]) & (type<4)) {
+      if (Rf_isNumeric(d[idx[k]+i]) && (type<4)) {
 	type=3;
 	assigned=true;
       }
-      if (Rf_isComplex(d[idx[k]+i]) & (type<5)) {
+      if (Rf_isComplex(d[idx[k]+i]) && (type<5)) {
 	type=4;
 	assigned=true;
       }
