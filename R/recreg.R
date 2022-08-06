@@ -56,7 +56,8 @@
 ##' summary(ll)
 ##' 
 ##' ## censoring stratified after quartiles of x
-##' lls <- recreg(Event(start, stop, statusG)~x+cluster(id),data=rr,cause=1,death.code=3,cens.model=~strata(gx))
+##' lls <- recreg(Event(start, stop, statusG)~x+cluster(id),data=rr,cause=1,
+##'               death.code=3,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
 ##' @aliases strataAugment scalecumhaz GLprediid
