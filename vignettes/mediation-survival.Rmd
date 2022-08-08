@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   #dev="png",
   comment = "#>"  
 )
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 library(mets)
 ```
 
@@ -59,7 +60,7 @@ mediation weights.
  options(warn=-1)
  set.seed(1000) # to control output in simulatins for p-values below.
 
- n <- 400; k.boot <- 100; 
+n <- 200; k.boot <- 10; 
 
 dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
           beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
@@ -138,7 +139,7 @@ Also works with mediator with more than two levels
  * meditor: wmi in 4 categories
  * exposure: age in 4 categories
 
-```{r}
+```{r, cache=TRUE, eval=fullVignette}
 data(tTRACE)
 dcut(tTRACE) <- ~. 
 
@@ -147,10 +148,21 @@ wdata <- medweight(fit,data=tTRACE)
 
 aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,time=7,weights=wdata$weights,cause=9)
 summary(aaMss)
-ll <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
-summary(ll)
+MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
 ```
 
+```{r  results="hide", echo=FALSE }
+## To save time building the vignettes on CRAN, we cache time consuming computations
+if (fullVignette) {
+  saveRDS(MultMed, "MultMed.rds")
+} else {
+  MultMed <- readRDS("MultMed.rds")
+}
+```
+
+```{r}
+summary(MultMed)
+```
 
 SessionInfo
 ============

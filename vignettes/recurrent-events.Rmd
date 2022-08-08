@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   #dev="png",
   comment = "#>"
 )
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 library(mets)
 ```
 
@@ -159,7 +160,7 @@ data(drcumhaz)
 ddr <- drcumhaz
 base1 <- base1cumhaz
 base4 <- base4cumhaz
-rr <- simRecurrent(1000,base1,death.cumhaz=ddr)
+rr <- simRecurrent(200,base1,death.cumhaz=ddr)
 rr$x <- rnorm(nrow(rr)) 
 rr$strata <- floor((rr$id-0.01)/500)
 dlist(rr,.~id| id %in% c(1,7,9))
@@ -249,7 +250,7 @@ terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt))
 
 
 ```{r}
-rr <- simRecurrentII(1000,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
+rr <- simRecurrentII(200,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
 rr <-  count.history(rr)
 
 rr <- transform(rr,statusD=status)
@@ -271,7 +272,6 @@ recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr
 death.code=3,cause=1,augment.model=~Nt+Nt2+expNt+NtexpNt)
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
-
 bplot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
 for (t in times) {
@@ -286,36 +286,14 @@ for (t in times) {
 legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
 ```
 
-
-Regression models for the marginal mean 
-========================================
-
-One can also do regression modelling , using the model
-\begin{align*}
-E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
-\end{align*}
-then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
-
-First we generate data that from a cox model with $\beta=(-0.3,0.3)$
-```{r}
-rr <- mets:::simMarginalMeanCox(1000,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
-				betad=c(-0.3,0.3))
-dtable(rr,~statusG+status+death,level=2,response=1)
-
- out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
- outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
-		cens.model=~strata(X1,X2))
-
- summary(out)$coef
- summary(outs)$coef
-```
-
-We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
-
 In the case where covariates might be important but we are still interested in the marginal mean 
 we can also augment wrt these covariates 
 
 ```{r}
+rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
+				betad=c(-0.3,0.3))
+dtable(rr,~statusG+status+death,level=2,response=1)
+
 times <- seq(500,5000,by=500)
 rr <- transform(rr,statusD=status)
 rr <- dtransform(rr,statusD=2,death==1)
@@ -329,6 +307,32 @@ dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
 out <- recurrentMarginal(xr,dr)
 mets::summaryTimeobject(out$times,out$mu,times=times,se.mu=out$se.mu)
 ```
+
+
+Regression models for the marginal mean 
+========================================
+
+One can also do regression modelling , using the model
+\begin{align*}
+E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
+
+First we generate data that from a cox model with $\beta=(-0.3,0.3)$
+```{r}
+rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
+				betad=c(-0.3,0.3))
+dtable(rr,~statusG+status+death,level=2,response=1)
+
+ out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+ outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+		cens.model=~strata(X1,X2))
+
+ summary(out)$coef
+ summary(outs)$coef
+```
+
+We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
 
 Other marginal properties 
@@ -384,7 +388,7 @@ number of previous events of type "1" by the  count.history function
 
 ```{r}
 ###cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
-rr <- simRecurrentII(5000,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
+rr <- simRecurrentII(200,base1,base4,death.cumhaz=ddr,cens=3/5000,dependence=4,var.z=1)
 rr <-  count.history(rr)
 dtable(rr,~death+status)
 
@@ -429,7 +433,7 @@ We now generate recurrent events with two types of events. We start by
 generating data as before where all events are independent. 
 
 ```{r}
-rr <- simRecurrentII(1000,base1,cumhaz2=base4,death.cumhaz=ddr)
+rr <- simRecurrentII(200,base1,cumhaz2=base4,death.cumhaz=ddr)
 rr <-  count.history(rr)
 dtable(rr,~death+status)
 ```
@@ -559,7 +563,7 @@ Bootstrap standard errors for terms
 First fitting the model again to get our estimates of interst, and then 
 computing them for some specific time-points  
 
-```{r}
+```{r, eval=FALSE}
 times <- seq(500,5000,500)
 
 coo1 <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
@@ -576,15 +580,15 @@ cbind(times,mu1.2,mu1.i)
 
 To get the bootstrap standard errors there is a quick memory demanding function 
 (with S for speed and strata)  BootcovariancerecurrenceS
-and slow function that goes through the loops in R Bootcovariancerecurrence. 
+and slower function that goes through the loops in R Bootcovariancerecurrence. 
 
-```{r}
+```{r, eval=FALSE}
 bt1 <- BootcovariancerecurrenceS(rr,1,2,status="status",start="entry",stop="time",K=100,times=times)
 #bt1 <- Bootcovariancerecurrence(rr,1,2,status="status",start="entry",stop="time",K=K,times=times)
 
-output <- list(bt1=bt1,mug=mug,mui=mui,
-               bse.mug=bt1$se.mug,bse.mui=bt1$se.mui,
-               dmugi=mug-mui,
+BCoutput <- list(bt1=bt1,mug=mug,mui=mui,
+        bse.mug=bt1$se.mug,bse.mui=bt1$se.mui,
+        dmugi=mug-mui,
 	bse.dmugi=apply(bt1$EN1N2-bt1$EIN1N2,1,sd),
 	mu2.1 = mu2.1 , mu2.i = mu2.i , dmu2.i=mu2.1-mu2.i,
 	mu1.2 = mu1.2 , mu1.i = mu1.i , dmu1.i=mu1.2-mu1.i,
@@ -598,31 +602,30 @@ output <- list(bt1=bt1,mug=mug,mui=mui,
 We then look at the test for overall dependence  in the different time-points. 
 We here have no suggestion of dependence.
 
-```{r}
-tt  <- output$dmugi/output$bse.dmugi
+```{r, eval=FALSE}
+tt  <- BCoutput$dmugi/BCoutput$bse.dmugi
 cbind(times,2*(1-pnorm(abs(tt))))
 ```
 
 We can also take out the specific components for whether $N_1$ is predictive for 
 $N_2$ and vice versa.  We here have no suggestion of dependence.
 
-```{r}
-t21  <- output$dmu1.i/output$bse.dmu1.i 
-t12  <- output$dmu2.i/output$bse.dmu2.i 
+```{r, eval=FALSE}
+t21  <- BCoutput$dmu1.i/BCoutput$bse.dmu1.i 
+t12  <- BCoutput$dmu2.i/BCoutput$bse.dmu2.i 
 cbind(times,2*(1-pnorm(abs(t21))),2*(1-pnorm(abs(t12))))
 ```
 
 We finally plot the boostrap samples 
 
-```{r}
+```{r, eval=FALSE}
 par(mfrow=c(1,2))
-matplot(bt1$time,bt1$EN1N2,type="l",lwd=0.3)
-matplot(bt1$time,bt1$EIN1N2,type="l",lwd=0.3)
+matplot(BCoutput$bt1$time,BCoutput$bt1$EN1N2,type="l",lwd=0.3)
+matplot(BCoutput$bt1$time,BCoutput$bt1$EIN1N2,type="l",lwd=0.3)
 ```
 
 Looking at other simulations with dependence 
 =============================================
-
 
 Using the normally distributed random effects we plot 4 different settings. We have variance $0.5$ for all
 random effects and change the correlation. We let the correlation between the random effect associated with
@@ -632,7 +635,7 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 
  * Scenario I $\rho=(0,0.0,0.0)$ Independence among all efects.
 
-```{r}
+```{r, eval=FALSE}
   data(base1cumhaz)
   data(base4cumhaz)
   data(drcumhaz)
@@ -644,7 +647,7 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
   var.z <- c(0.5,0.5,0.5)
   # death related to  both causes in same way 
   cor.mat <- corM <- rbind(c(1.0, 0.0, 0.0), c(0.0, 1.0, 0.0), c(0.0, 0.0, 1.0))
-  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- simRecurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
   rr <- count.history(rr,types=1:2)
   cor(attr(rr,"z"))
   coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
@@ -652,11 +655,11 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 ```
  * Scenario II $\rho=(0,0.5,0.5)$ Independence among survivors but dependence on terminal event 
 
-```{r}
+```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)
   # death related to  both causes in same way 
   cor.mat <- corM <- rbind(c(1.0, 0.0, 0.5), c(0.0, 1.0, 0.5), c(0.5, 0.5, 1.0))
-  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- simRecurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
   rr <- count.history(rr,types=1:2)
   coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
   par(mfrow=c(1,3))
@@ -665,11 +668,11 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 
  * Scenario III $\rho=(0.5,0.5,0.5)$ Positive dependence among survivors and dependence on terminal event 
 
-```{r}
+```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)
   # positive dependence for N1 and N2 all related in same way
   cor.mat <- corM <- rbind(c(1.0, 0.5, 0.5), c(0.5, 1.0, 0.5), c(0.5, 0.5, 1.0))
-  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- simRecurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
   rr <- count.history(rr,types=1:2)
   coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
   par(mfrow=c(1,3))
@@ -678,17 +681,16 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 
  * Scenario IV $\rho=(-0.4,0.5,0.5)$ Negative dependence among survivors and positive dependence on terminal event 
 
-```{r}
+```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)
   # negative dependence for N1 and N2 all related in same way
   cor.mat <- corM <- rbind(c(1.0, -0.4, 0.5), c(-0.4, 1.0, 0.5), c(0.5, 0.5, 1.0))
-  rr <- simRecurrentII(3000,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- simRecurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
   rr <- count.history(rr,types=1:2)
   coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
   par(mfrow=c(1,3))
   plot(coo,main="Scenario IV")
 ```
-
 
 
 SessionInfo

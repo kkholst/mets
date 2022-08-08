@@ -304,7 +304,7 @@ First we generate some data from the Clayton-Oakes model with variance $0.5$ and
 And fit the related model. 
 
 ```{r}
- d <- simClaytonOakes(2000,2,0.5,0,3)
+ d <- simClaytonOakes(200,2,0.5,0,3)
   margph <- phreg(Surv(time,status)~x+cluster(cluster),data=d)
  # Clayton-Oakes, MLE 
  fitco1<-twostageMLE(margph,data=d)
@@ -339,7 +339,7 @@ each twin pair (for example). We start by setting this up.
 random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ ).
 
 ```{r}
- data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
+ data <- simClaytonOakes.twin.ace(200,2,1,0,3)
 
  out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  pardes <- out$pardes
@@ -424,7 +424,7 @@ only the environment, and two-children that share genes with their parents.
 ```{r}
 library(mets)
 set.seed(1000)
-data <- simClaytonOakes.family.ace(1000,2,1,0,3)
+data <- simClaytonOakes.family.ace(200,2,1,0,3)
 head(data)
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
@@ -465,7 +465,7 @@ specifying the pairs argument.  We start by considering all pairs as we also did
 All pairs can be written up by calling the familycluster.index
 function. 
 
-There are 6000 pairs to consider, and the first 6 pairs for the first family 
+There are xx pairs to consider, and the first 6 pairs for the first family 
 is written out here. 
 
 ```{r}
@@ -490,7 +490,7 @@ picked still refers to the data given in the data argument, and clusters (famili
 are also specified as before. 
 
 ```{r}
-ssid <- sort(sample(1:nrow(pairs),2000))
+ssid <- sort(sample(1:nrow(pairs),200))
 tsd <- twostage(pa,data=data,clusters=data$cluster,
     theta=c(2,1)/10,var.link=0,random.design=out$des.rv,
    theta.des=out$pardes,pairs=pairs[ssid,])
@@ -680,7 +680,7 @@ First we get the pairs to be considered
 ```{r}
 library(mets)
 set.seed(1000)
-data <- simClaytonOakes.family.ace(1000,2,1,0,3)
+data <- simClaytonOakes.family.ace(200,2,1,0,3)
 head(data)
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
