@@ -648,8 +648,8 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         ll <-  cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
         HBtsj <- ll$res[lastt][dstrata]-ll$res
         MGAiid2 <- -HBtsj[otherxx2,,drop=FALSE]*rrx2
-###	MGAiid2 <-  apply(MGAiid2,2,sumstrata,newid[otherxx2]-1,nnewid)
-	MGAiid2 <-  apply(MGAiid2,2,sumstrata,xx2$id[otherxx2],mid+1)
+	MGAiid2 <-  apply(MGAiid2,2,sumstrata,newid[otherxx2]-1,nnewid)
+###	MGAiid2 <-  apply(MGAiid2,2,sumstrata,xx2$id[otherxx2],mid+1)
 	MGAiid <- MGAiid+MGAiid2
     }
     ## }}}
@@ -677,10 +677,10 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         EBdLam0q2 <- apply(qB2,2,fff)
 
         ### Martingale  as a function of time and for all subjects to handle strata
-        MGc <- q2*S0iC-EdLam0q2
+        MGc <- q2*S0iC-EdLam0q2*c(xx2$sign)
         MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
 
-        MGBc <- qB2*S0iC-EBdLam0q2
+        MGBc <- qB2*S0iC-EBdLam0q2*c(xx2$sign)
         MGBc <- apply(MGBc,2,sumstrata,newid-1,nnewid)
         ## }}}
     } else { MGc <- 0; MGBc <- 0}
