@@ -2345,7 +2345,6 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 		  lines(nl,type="s",lty=ltys[i,2],col=cols[i,2],lwd=lwds[i,2],...)
 		  lines(ul,type="s",lty=ltys[i,3],col=cols[i,3],lwd=lwds[i,3],...)
 	      } else {
-		      print(paste("strata",j)); 
                  ## type="s" confidence regions
 		 ll <- length(nl[,1])
 		 timess <- nl[,1]
