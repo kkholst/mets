@@ -2246,9 +2246,9 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
     lty=NULL,col=NULL,lwd=NULL,legend=TRUE,ylab=NULL,xlab=NULL,
     polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,conf.type=c("plain","log"),...) {# {{{
-	if (inherits(x,"phreg") & is.null(ylab)) ylab <- "Cumulative hazard"
-	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
 	if (inherits(x,"cif") & is.null(ylab)) ylab <- "Probability"
+	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
+	if (inherits(x,"phreg") & is.null(ylab)) ylab <- "Cumulative hazard"
 	if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
    rr <- range(x$cumhaz[,-1]) 
@@ -2345,6 +2345,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 		  lines(nl,type="s",lty=ltys[i,2],col=cols[i,2],lwd=lwds[i,2],...)
 		  lines(ul,type="s",lty=ltys[i,3],col=cols[i,3],lwd=lwds[i,3],...)
 	      } else {
+		      print(paste("strata",j)); 
                  ## type="s" confidence regions
 		 ll <- length(nl[,1])
 		 timess <- nl[,1]
@@ -2352,7 +2353,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 		 tt <- c(ttp,rev(ttp))
 		 yy <- c(rep(nl[-ll,2],each=rep(2)),rep(rev(ul[-ll,2]),each=2))
 		 col.alpha<-0.1
-		 col.ci<-cols[j+1]
+		 col.ci<-cols[i,1]
 		 col.trans <- sapply(col.ci, FUN=function(x) 
 			   do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
 		 polygon(tt,yy,lty=0,col=col.trans)
