@@ -1363,7 +1363,6 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
 	  var.resmean <- var.resmean+varbetat
   }
 
-
   time<- x$jumptimes
   mm <- cbind(time,intkm)
   se.mm <- cbind(time,var.resmean^.5)
@@ -1497,7 +1496,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 		 tt <- c(timess,rev(timess))
 		 yy <- c(nl[,2],rev(ul[,2]))
 		 col.alpha<-0.1
-		 col.ci<-cols[j+1]
+		 col.ci<-cols[i,11]
 		 col.trans <- sapply(col.ci, FUN=function(x) 
 		   do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
 		 polygon(tt,yy,lty=0,col=col.trans)
