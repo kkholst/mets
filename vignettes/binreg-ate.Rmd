@@ -143,9 +143,15 @@ kumar$ttt24 <- kumar[,6]
 dtable(kumar,~cause)
 dfactor(kumar) <- gp.f~gp
 
+### censoring model must be adapted to size of data
+###c2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
+###	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr,preauto,ttt24))
+###summary(c2)
+
 c2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
-	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr,preauto,ttt24))
+	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(c2)
+
 
 c1 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 		treat.model=gp.f~dnr+preauto+ttt24,time=60)
