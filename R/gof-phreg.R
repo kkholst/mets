@@ -356,10 +356,10 @@ cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks
 ##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @examples
-##' data(TRACE)
+##' data(tTRACE)
 ##' 
-##' m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACE) 
-##' m2 <- phreg(Surv(time,status==9)~vf+strata(chf)+wmi,data=TRACE) 
+##' m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=tTRACE) 
+##' m2 <- phreg(Surv(time,status==9)~vf+strata(chf)+wmi,data=tTRACE) 
 ##' par(mfrow=c(2,2))
 ##' 
 ##' gofG.phreg(m1)

@@ -23,10 +23,10 @@ other to see if lines are straight, with 50 resample versions under the
 assumptiosn that the stratified Cox is correct
 }
 \examples{
-data(TRACE)
+data(tTRACE)
 
-m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACE) 
-m2 <- phreg(Surv(time,status==9)~vf+strata(chf)+wmi,data=TRACE) 
+m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=tTRACE) 
+m2 <- phreg(Surv(time,status==9)~vf+strata(chf)+wmi,data=tTRACE) 
 par(mfrow=c(2,2))
 
 gofG.phreg(m1)

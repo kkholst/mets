@@ -1305,10 +1305,13 @@ return(res)
 
 ##' Restricted mean for stratified Kaplan-Meier with martingale standard errors 
 ##' 
-##' Restricted mean for stratified Kaplan-Meier with martingale standard errors 
+##' Restricted mean for stratified Kaplan-Meier with martingale standard errors,  
+##' standard error is computed using linear interpolation between standard errors at jump-times.
+##' So standard errors agrees with survfit restricted residual means at jump-times. 
+##' 
 ##' @param x phreg object 
 ##' @param times possible times for which to report restricted mean 
-##' @param covs possible covariaates for Cox model 
+##' @param covs possible covariate for Cox model 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -1322,50 +1325,52 @@ return(res)
 resmean.phreg <- function(x,times=NULL,covs=NULL,...) 
 {# {{{
 
-  rr <- 1
   invhess <- x$II
   xx <- x$cox.prep
   ii <- invhess 
   S0i <- c(1/x$S0)
   S0i2 <- c(1/x$S0)^2
   cumhaz <- x$cumhaz
-  if (!is.null(covs)) rr <- exp(covs * coef(x))
-  if (is.null(covs)) covs <- rep(0,x$p) 
-###  EdLam0 <- apply(x$E*S0i,2,cumsumstrata,x$strata.jumps,x$nstrata)
-  var.cumhazMG <- rr^2*cumsumstrata(S0i2,x$strata.jumps,x$nstrata)
+  var.cumhazMG <- cumsumstrata(S0i2,x$strata.jumps,x$nstrata)
 
-  km <- exp(cumsumstratasum(log(1-S0i*rr),x$strata.jumps,x$nstrata,type="lagsum"))
+  ## baseline survival 
+  km <- exp(cumsumstratasum(log(1-S0i),x$strata.jumps,x$nstrata,type="lagsum"))
+
+  ## If covariates compute rr = exp( X beta)  and adjust km 
+  if (!is.null(covs)) { rr <- exp(sum(covs * coef(x))) } else rr <- 1 
+  km <- km^rr
+
+  if (!is.null(x$coef) & is.null(covs))  covs <- rep(0,length(x$coef))
 
   ## start integral in 0 
   dtime <- c(diffstrata(x$jumptimes,x$strata.jumps,x$nstrata))
   intkm <-  cumsumstrata( c(km)*dtime,x$strata.jumps,x$nstrata)
 
-  if (!is.null(x$coef)) {
-	  rr <- exp(covs * coef(x))
-	  intLam <- cumsumstratasum(S0i,x$strata.jumps,x$nstrata,type="lagsum")
-	  intLam <-  cumsumstrata( c(intLam)*dtime,x$strata.jumps,x$nstrata)
-	  intp <- apply(x$E*S0i,2,cumsumstratasum,x$strata.jumps,x$nstrata,type="lagsum")
-	  intp <- apply(intp*dtime,2,cumsumstrata,x$strata.jumps,x$nstrata)
-	  Dbeta <- intp + matrix(covs,nrow=nrow(intLam),ncol=length(covs),byrow=TRUE)*c(intLam)
-	  varbetat <-   rr^2 * rowSums((Dbeta %*% x$II)*Dbeta)
-  } else {
-	  rr <- 1 
-	  varbetat <- 0
-  }
-
   ### variance of baseline term 
   var.intkmcumhaz <- cumsumstrata(intkm*S0i^2,x$strata.jumps,x$nstrata)
   var.intkm2cumhaz <- cumsumstrata(intkm^2*S0i^2,x$strata.jumps,x$nstrata)
-  
   var.resmean <- intkm^2*var.cumhazMG+var.intkm2cumhaz-2*intkm*var.intkmcumhaz
 
-  if (!is.null(x$coef)) {
-	  var.resmean <- var.resmean+varbetat
+   if (!is.null(x$coef)) {
+      intp <- apply(x$E*S0i,2,cumsumstratasum,x$strata.jumps,x$nstrata,type="lagsum")
+      intLam <- cumsumstratasum(S0i,x$strata.jumps,x$nstrata,type="lagsum")
+      intLamS <-  cumsumstrata( c(intLam)*km*dtime,x$strata.jumps,x$nstrata)
+      intpS <-  apply(intp*c(km)*dtime,2,cumsumstrata,x$strata.jumps,x$nstrata)
+      Dbeta <- intpS - matrix(covs,nrow=nrow(intLam),ncol=length(covs),byrow=TRUE)*c(intLamS)
+      varbetat <-   rowSums((Dbeta %*% x$II)*Dbeta)
+      var.resmean <- rr^2*(var.resmean+varbetat)
+  } else {
+      varbetat <- 0
   }
 
   time<- x$jumptimes
   mm <- cbind(time,intkm)
-  se.mm <- cbind(time,var.resmean^.5)
+  se.resmean <- var.resmean^.5
+  ## to avoid negative values for first jump 
+  se.resmean[var.resmean<0] <- 0
+  se.mm <- cbind(time,se.resmean)
+
+  ### make output at specified times
 
   if (!is.null(times)) {
     intkmtimes <- c()
@@ -1373,8 +1378,8 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
     for (i in 0:(x$nstrata-1)) {
       cumhaz <- mm[x$strata.jumps==i,]
       se.cumhaz <- se.mm[x$strata.jumps==i,]
-      ll <- lin.approx(times,cumhaz)
-      se.ll <- lin.approx(times,se.cumhaz)
+      ll <- timereg::lin.approx(times,cumhaz)
+      se.ll <- timereg::lin.approx(times,se.cumhaz)
       mll <- cbind(i,times,ll,se.ll)
       intkmtimes <- rbind(intkmtimes,mll)
       colnames(intkmtimes) <- c("strata","times","rmean","se.rmean")
@@ -1383,7 +1388,7 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
 
  intkmtimes=data.frame(intkmtimes)
 
- out <- list(cumhaz=mm,se.cumhaz=se.mm,
+ out <- list(cumhaz=mm,se.cumhaz=se.mm,covs=covs,
        time=time, strata=x$strata.jumps,nstrata=x$nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,intkmtimes=intkmtimes)
@@ -1406,7 +1411,8 @@ summary.resmean_phreg(x,...)
 ##' @export
 plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
     lty=NULL,col=NULL,lwd=NULL,legend=TRUE,ylab=NULL,xlab=NULL,
-    polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,...) {# {{{
+    polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,years.lost=FALSE,...) {# {{{
+
 	if (inherits(x,"phreg") & is.null(ylab)) ylab <- "Cumulative hazard"
 	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
 	if (inherits(x,"cif") & is.null(ylab)) ylab <- "Probability"
@@ -1419,10 +1425,9 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
    if (is.null(ylim)) ylim <- rr
    if (is.null(xlim)) xlim <- range(x$cumhaz[,1])
    if (se==TRUE) {
-	   if (is.null(x$se.cumhaz) & is.null(x$robse.cumhaz) ) 
+      if (is.null(x$se.cumhaz) & is.null(x$robse.cumhaz) ) 
 		   stop("phreg must be with cumhazard=TRUE\n"); 
        rrse <- range(c(x$cumhaz[,-1]+level*x$se.cumhaz[,-1])) 
-       if (inherits(x)[1]=="km") rrse <- c(min(x$lower,na.rm=TRUE),1)
        if (is.null(ylimo)) ylim <- rrse
    }
 
@@ -1466,6 +1471,8 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
   for (i in seq(stratas)) {
       j <- stratas[i]
         cumhazard <- x$cumhaz[strat==j,,drop=FALSE]
+        if (is.numeric(years.lost)) cumhazard[,2] <- years.lost-cumhazard[,2]
+        if ((years.lost))  cumhazard[,2] <- tail(cumhazard[,1],1)-cumhazard[,2]
         if (!is.null(cumhazard)) {
 	if (nrow(cumhazard)>1) {
         if (add | first==1) 
@@ -1496,7 +1503,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 		 tt <- c(timess,rev(timess))
 		 yy <- c(nl[,2],rev(ul[,2]))
 		 col.alpha<-0.1
-		 col.ci<-cols[i,11]
+		 col.ci<-cols[i,]
 		 col.trans <- sapply(col.ci, FUN=function(x) 
 		   do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
 		 polygon(tt,yy,lty=0,col=col.trans)

@@ -11,12 +11,14 @@ resmean.phreg(x, times = NULL, covs = NULL, ...)
 
 \item{times}{possible times for which to report restricted mean}
 
-\item{covs}{possible covariaates for Cox model}
+\item{covs}{possible covariate for Cox model}
 
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Restricted mean for stratified Kaplan-Meier with martingale standard errors
+Restricted mean for stratified Kaplan-Meier with martingale standard errors,  
+standard error is computed using linear interpolation between standard errors at jump-times.
+So standard errors agrees with survfit restricted residual means at jump-times.
 }
 \examples{
 data(TRACE)
