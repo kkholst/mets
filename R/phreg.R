@@ -1378,8 +1378,8 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
     for (i in 0:(x$nstrata-1)) {
       cumhaz <- mm[x$strata.jumps==i,]
       se.cumhaz <- se.mm[x$strata.jumps==i,]
-      ll <- timereg::lin.approx(times,cumhaz)
-      se.ll <- timereg::lin.approx(times,se.cumhaz)
+      ll <- lin.approx(times,cumhaz)
+      se.ll <- lin.approx(times,se.cumhaz)
       mll <- cbind(i,times,ll,se.ll)
       intkmtimes <- rbind(intkmtimes,mll)
       colnames(intkmtimes) <- c("strata","times","rmean","se.rmean")
