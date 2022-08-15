@@ -1468,7 +1468,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
   if (!is.matrix(lwds))  lwds <- cbind(lwds,lwds,lwds)
 
   first <- 0
-  for (i in seq(stratas)) {
+  for (i in seq_along(stratas)) {
       j <- stratas[i]
         cumhazard <- x$cumhaz[strat==j,,drop=FALSE]
         if (is.numeric(years.lost)) cumhazard[,2] <- years.lost-cumhazard[,2]
@@ -2312,9 +2312,8 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
   if (!is.matrix(cols))  cols <- cbind(cols,cols,cols)
   if (!is.matrix(lwds))  lwds <- cbind(lwds,lwds,lwds)
 
-
   first <- 0
-  for (i in seq(stratas)) {
+  for (i in seq_along(stratas)) {
       j <- stratas[i]
         cumhazard <- x$cumhaz[strat==j,,drop=FALSE]
         if (!is.null(cumhazard)) {
