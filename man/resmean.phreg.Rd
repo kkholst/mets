@@ -21,12 +21,14 @@ standard error is computed using linear interpolation between standard errors at
 So standard errors agrees with survfit restricted residual means at jump-times.
 }
 \examples{
-data(TRACE)
-out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=TRACE)
+data(sTRACE)
+out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 
 rm1 <- resmean.phreg(out1,times=5)
 summary(rm1)
-mets:::plot.resmean_phreg(rm1)
+par(mfrow=c(1,2)) 
+plot(rm1,se=1)
+plot(rm1,se=1,years.lost=TRUE)
 }
 \author{
 Thomas Scheike

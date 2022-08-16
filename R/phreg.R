@@ -1315,26 +1315,41 @@ return(res)
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' data(TRACE)
-##' out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=TRACE)
+##' data(sTRACE)
+##' out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 ##' 
 ##' rm1 <- resmean.phreg(out1,times=5)
 ##' summary(rm1)
-##' mets:::plot.resmean_phreg(rm1)
+##' par(mfrow=c(1,2)) 
+##' plot(rm1,se=1)
+##' plot(rm1,se=1,years.lost=TRUE)
 ##' @export
 resmean.phreg <- function(x,times=NULL,covs=NULL,...) 
 {# {{{
 
+  ### setting up data with times included 
+  dat <- cbind(x$jumptimes,x$strata.jumps,1/x$S0)
+  if (!is.null(times)) {
+	  datt <- expand.grid(0:(x$nstrata-1),times)
+	  datt <- cbind(datt[,c(2,1)],0) 
+	  colnames(datt) <- NULL
+	  colnames(dat) <- NULL
+	  dat <- rbind(dat,as.matrix(datt))
+	  ot <- order(dat[,1])
+	  dat <- dat[ot,]
+  }
+  S0i <- dat[,3]
+  S0i2 <- S0i^2
+  jumptimes <- dat[,1]
+  strata <- dat[,2]
+  indata <- which(S0i!=0)
+
   invhess <- x$II
-  xx <- x$cox.prep
-  ii <- invhess 
-  S0i <- c(1/x$S0)
-  S0i2 <- c(1/x$S0)^2
-  cumhaz <- x$cumhaz
-  var.cumhazMG <- cumsumstrata(S0i2,x$strata.jumps,x$nstrata)
+  cumhaz <- cumsumstrata(S0i2,strata,x$nstrata)
+  var.cumhazMG <- cumsumstrata(S0i2,strata,x$nstrata)
 
   ## baseline survival 
-  km <- exp(cumsumstratasum(log(1-S0i),x$strata.jumps,x$nstrata,type="lagsum"))
+  km <- exp(cumsumstratasum(log(1-S0i),strata,x$nstrata,type="lagsum"))
 
   ## If covariates compute rr = exp( X beta)  and adjust km 
   if (!is.null(covs)) { rr <- exp(sum(covs * coef(x))) } else rr <- 1 
@@ -1343,19 +1358,21 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
   if (!is.null(x$coef) & is.null(covs))  covs <- rep(0,length(x$coef))
 
   ## start integral in 0 
-  dtime <- c(diffstrata(x$jumptimes,x$strata.jumps,x$nstrata))
-  intkm <-  cumsumstrata( c(km)*dtime,x$strata.jumps,x$nstrata)
+  dtime <- c(diffstrata(jumptimes,strata,x$nstrata))
+  intkm <-  cumsumstrata( c(km)*dtime,strata,x$nstrata)
 
   ### variance of baseline term 
-  var.intkmcumhaz <- cumsumstrata(intkm*S0i^2,x$strata.jumps,x$nstrata)
-  var.intkm2cumhaz <- cumsumstrata(intkm^2*S0i^2,x$strata.jumps,x$nstrata)
+  var.intkmcumhaz <- cumsumstrata(intkm*S0i2,strata,x$nstrata)
+  var.intkm2cumhaz <- cumsumstrata(intkm^2*S0i2,strata,x$nstrata)
   var.resmean <- intkm^2*var.cumhazMG+var.intkm2cumhaz-2*intkm*var.intkmcumhaz
 
    if (!is.null(x$coef)) {
-      intp <- apply(x$E*S0i,2,cumsumstratasum,x$strata.jumps,x$nstrata,type="lagsum")
-      intLam <- cumsumstratasum(S0i,x$strata.jumps,x$nstrata,type="lagsum")
-      intLamS <-  cumsumstrata( c(intLam)*km*dtime,x$strata.jumps,x$nstrata)
-      intpS <-  apply(intp*c(km)*dtime,2,cumsumstrata,x$strata.jumps,x$nstrata)
+      E <- matrix(0,length(strata),length(x$coef))
+      E[indata,] <- x$E
+      intp <- apply(E*S0i,2,cumsumstratasum,strata,x$nstrata,type="lagsum")
+      intLam <- cumsumstratasum(S0i,strata,x$nstrata,type="lagsum")
+      intLamS <-  cumsumstrata( c(intLam)*km*dtime,strata,x$nstrata)
+      intpS <-  apply(intp*c(km)*dtime,2,cumsumstrata,strata,x$nstrata)
       Dbeta <- intpS - matrix(covs,nrow=nrow(intLam),ncol=length(covs),byrow=TRUE)*c(intLamS)
       varbetat <-   rowSums((Dbeta %*% x$II)*Dbeta)
       var.resmean <- rr^2*(var.resmean+varbetat)
@@ -1363,34 +1380,20 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
       varbetat <- 0
   }
 
-  time<- x$jumptimes
-  mm <- cbind(time,intkm)
-  se.resmean <- var.resmean^.5
-  ## to avoid negative values for first jump 
-  se.resmean[var.resmean<0] <- 0
-  se.mm <- cbind(time,se.resmean)
+  mm <- cbind(jumptimes,intkm)
+  se.mm <- cbind(jumptimes,var.resmean^.5)
 
   ### make output at specified times
-
   if (!is.null(times)) {
-    intkmtimes <- c()
-    se.intkmtimes <- c()
-    for (i in 0:(x$nstrata-1)) {
-      cumhaz <- mm[x$strata.jumps==i,]
-      se.cumhaz <- se.mm[x$strata.jumps==i,]
-      ll <- lin.approx(times,cumhaz)
-      se.ll <- lin.approx(times,se.cumhaz)
-      mll <- cbind(i,times,ll,se.ll)
-      intkmtimes <- rbind(intkmtimes,mll)
-      colnames(intkmtimes) <- c("strata","times","rmean","se.rmean")
-    }
+    intkmtimes <- cbind(strata[S0i==0],mm[S0i==0,],se.mm[S0i==0,2])
+    colnames(intkmtimes) <- c("strata","times","rmean","se.rmean")
+    intkmtimes=data.frame(intkmtimes)
   } else intkmtimes <- se.intkmtimes <- NULL
 
- intkmtimes=data.frame(intkmtimes)
 
  out <- list(cumhaz=mm,se.cumhaz=se.mm,covs=covs,
-       time=time, strata=x$strata.jumps,nstrata=x$nstrata,
-       jumps=1:length(km),strata.name=x$strata.name,
+       time=time,strata=strata,nstrata=x$nstrata,notdata=(S0i==0)*1,
+       jumps=1:length(strata),strata.name=x$strata.name,
        strata.level=x$strata.level,intkmtimes=intkmtimes)
 class(out) <- c("resmean_phreg")
 return(out)
@@ -1416,7 +1419,8 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 	if (inherits(x,"phreg") & is.null(ylab)) ylab <- "Cumulative hazard"
 	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
 	if (inherits(x,"cif") & is.null(ylab)) ylab <- "Probability"
-	if (inherits(x,"resmean_phreg") & is.null(ylab)) ylab <- "Restricted residual mean life"
+	if (inherits(x,"resmean_phreg") & is.null(ylab) & (!years.lost)) ylab <- "Restricted residual mean life"
+	if (inherits(x,"resmean_phreg") & is.null(ylab) & (years.lost)) ylab <- "Years lost mean life  t-E( min(T,t))"
 	if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
    rr <- range(x$cumhaz[,-1]) 
@@ -1428,6 +1432,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
       if (is.null(x$se.cumhaz) & is.null(x$robse.cumhaz) ) 
 		   stop("phreg must be with cumhazard=TRUE\n"); 
        rrse <- range(c(x$cumhaz[,-1]+level*x$se.cumhaz[,-1])) 
+       if (years.lost) rrse <- range(c(x$cumhaz[,1]-x$cumhaz[,-1]+level*x$se.cumhaz[,-1])) 
        if (is.null(ylimo)) ylim <- rrse
    }
 
@@ -1471,8 +1476,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
   for (i in seq_along(stratas)) {
       j <- stratas[i]
         cumhazard <- x$cumhaz[strat==j,,drop=FALSE]
-        if (is.numeric(years.lost)) cumhazard[,2] <- years.lost-cumhazard[,2]
-        if ((years.lost))  cumhazard[,2] <- tail(cumhazard[,1],1)-cumhazard[,2]
+        if ((years.lost)) cumhazard[,2] <- cumhazard[,1]-cumhazard[,2]
         if (!is.null(cumhazard)) {
 	if (nrow(cumhazard)>1) {
         if (add | first==1) 
