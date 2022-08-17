@@ -1626,7 +1626,7 @@ return(x)
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(sTRACE)
-##' sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+##' sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 ##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 ##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
 ##' 
@@ -1697,7 +1697,7 @@ km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(sTRACE)
-##' sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+##' sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 ##' out1 <- cif(Event(time,status)~+1,data=sTRACE,cause=9)
 ##' out2 <- cif(Event(time,status)~+1+cluster(cluster),data=sTRACE,cause=9)
 ##' 
