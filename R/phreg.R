@@ -271,9 +271,9 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' @author Klaus K. Holst, Thomas Scheike
 ##' @aliases phreg phreg.par robust.phreg readPhreg 
 ##' @examples
-##' data(TRACE)
-##' dcut(TRACE) <- ~.
-##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' data(sTRACE)
+##' dcut(sTRACE) <- ~.
+##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
 ##' ## tracesim <- timereg::sim.cox(out1,1000)
 ##' ## sout1 <- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)
 ##' ## robust standard errors default 
@@ -1625,10 +1625,10 @@ return(x)
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' data(TRACE)
-##' TRACE$cluster <- sample(1:100,1878,replace=TRUE)
-##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=TRACE)
-##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=TRACE)
+##' data(sTRACE)
+##' sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
+##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
 ##' 
 ##' par(mfrow=c(1,2))
 ##' bplot(out1,se=TRUE)
@@ -1696,13 +1696,13 @@ km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' data(TRACE)
-##' TRACE$cluster <- sample(1:100,1878,replace=TRUE)
-##' out1 <- cif(Event(time,status)~+1,data=TRACE,cause=9)
-##' out2 <- cif(Event(time,status)~+1+cluster(cluster),data=TRACE,cause=9)
+##' data(sTRACE)
+##' sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+##' out1 <- cif(Event(time,status)~+1,data=sTRACE,cause=9)
+##' out2 <- cif(Event(time,status)~+1+cluster(cluster),data=sTRACE,cause=9)
 ##' 
-##' out1 <- cif(Event(time,status)~strata(vf,chf),data=TRACE,cause=9)
-##' out2 <- cif(Event(time,status)~strata(vf,chf)+cluster(cluster),data=TRACE,cause=9)
+##' out1 <- cif(Event(time,status)~strata(vf,chf),data=sTRACE,cause=9)
+##' out2 <- cif(Event(time,status)~strata(vf,chf)+cluster(cluster),data=sTRACE,cause=9)
 ##' 
 ##' par(mfrow=c(1,2))
 ##' bplot(out1,se=TRUE)
@@ -1825,9 +1825,9 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
 ##' Biometrics, 2015, 3, 687--695, 71,
 ##'
 ##' @examples
-##' data(TRACE)
-##' dcut(TRACE) <- ~.
-##' out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' data(sTRACE)
+##' dcut(sTRACE) <- ~.
+##' out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
 ##' summary(out1)
 ##' gof(out1)
 ##' plot(out1)
@@ -2242,9 +2242,9 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @author Klaus K. Holst, Thomas Scheike
 ##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata
 ##' @examples
-##' data(TRACE)
-##' dcut(TRACE) <- ~.
-##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' data(sTRACE)
+##' dcut(sTRACE) <- ~.
+##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
 ##' 
 ##' par(mfrow=c(2,2))
 ##' bplot(out1)
