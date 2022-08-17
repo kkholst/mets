@@ -32,7 +32,7 @@ Robust variance is default variance with the summary.
 }
 \examples{
 data(sTRACE)
-sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
 

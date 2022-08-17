@@ -22,7 +22,7 @@ Cumulative incidence with robust standard errors
 }
 \examples{
 data(sTRACE)
-sTRACE$cluster <- sample(1:100,1878,replace=TRUE)
+sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 out1 <- cif(Event(time,status)~+1,data=sTRACE,cause=9)
 out2 <- cif(Event(time,status)~+1+cluster(cluster),data=sTRACE,cause=9)
 
