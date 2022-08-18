@@ -847,30 +847,28 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
 
  ### \hat beta - \beta = \sum_i \beta_i  (iid) 
  ### iid after baseline:
- ### \hat A_s-A_s=\sum_{i clusters} \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \sum_i \beta_i
+ ### \hat A_s-A_s=\sum_{i clusters} \sum_{j: i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_{i,j} - P^s(t) \sum_i \beta_i
  ### = \sum_{i clusters} ( \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \beta_i ) 
 
- ### sum should be over id within different strata
- newid <- mystrata2index(cbind(xx$strata,xx$id))
- nnewid <- attr(newid,"nlevel")
- idds <- cbind(newid,xx$strata,xx$id)
- on <- order(newid)
- idds <- idds[on,]
- firstnewid <- (!duplicated(idds[,1]))
- strata <- idds[firstnewid,2]
- idstrata <- idds[firstnewid,3]
+ ## sum after id's within strata and order 
+ MGAiids <- c()
+ for (i in sort(unique(xx$strata)))  { 
+	 wi <- which(xx$strata==i)
+         MGAiidl <- sumstrata(MGAiid[xx$strata==i],xx$id[xx$strata==i],mid)
 
- ## sum after id's with strata and order 
- MGAiid <- sumstrata(MGAiid,newid-1,nnewid)
-
- if (fixbeta==0) {
-     UU <-  apply(HtS[strata+1,,drop=FALSE]*MGtiid[idstrata+1,],1,sum)
-     MGAiid <- MGAiid - UU
+        if (fixbeta==0) {
+           UU <-  apply(HtS[i+1,]*MGtiid,1,sum)
+           MGAiidl <- MGAiidl - UU
+         }
+         MGAiids <- cbind(MGAiids,MGAiidl)
  }
+ MGAiid <- MGAiids
+ colnames(MGAiid) <- paste("strata",sort(unique(strata)),sep="")
 
  return(list(time=time,base.iid=MGAiid,strata=strata,nstrata=xx$nstrata,idstrata=idstrata,
 	     nid=nnewid,beta.id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
 } # }}}
+
 
 ##' @export
 residuals.phreg  <- function(object,cumsum=FALSE,...) {# {{{
