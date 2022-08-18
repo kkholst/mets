@@ -32,9 +32,9 @@ This is equivalent to using a hazards model
 where Z is gamma distributed with mean and variance 1.
 }
 \examples{
-data(sTRACE)
-dcut(sTRACE) <- ~.
-out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
+data(TRACE)
+dcut(TRACE) <- ~.
+out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
 summary(out1)
 gof(out1)
 plot(out1)

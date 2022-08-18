@@ -49,6 +49,7 @@ First looking at the data
 
 ```{r, label=data-prt}
  library(mets)
+ set.seed(122)
  data(prt)
  
  dtable(prt,~status+cancer)
@@ -106,9 +107,9 @@ marginals and random-effects variances that differ for MZ and DZ twins.
  round(estimate(coef=fitco4$coef,vcov=fitco4$var.theta)$coefmat[,c(1,3:4)],2)
 
  ## mz kendalls tau
- kendall.ClaytonOakes.twin.ace(fitco4$theta[2],0,K=10000)$mz.kendall
+ kendall.ClaytonOakes.twin.ace(fitco4$theta[2],0,K=1000)$mz.kendall
  ## dz kendalls tau
- kendall.ClaytonOakes.twin.ace(fitco4$theta[1],0,K=10000)$mz.kendall
+ kendall.ClaytonOakes.twin.ace(fitco4$theta[1],0,K=1000)$mz.kendall
 ```
 
 The dependence of MZ twins is much stronger, and is summarized by a 

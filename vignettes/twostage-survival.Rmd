@@ -229,6 +229,7 @@ modelling, so here it is better to use the twostageMLE.
 ```{r}
  library(mets)
  data(diabetes)
+ set.seed(100)
  
  # Marginal Cox model  with treat as covariate
  margph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)

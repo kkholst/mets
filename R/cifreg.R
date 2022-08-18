@@ -162,6 +162,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     if (is.null(case.weights)) case.weights <- rep(1,length(exit))
     strata.call <- strata
 
+    call.id <- id
     if (!is.null(id)) {
         ids <- unique(id)
         nid <- length(ids)
@@ -504,10 +505,12 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
                 ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
                 ploglik=opt$ploglik,gradient=opt$gradient,
                 cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
+		strata.call=strata.call,
                 strata=xx2$strata, nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
 		propodds=propodds,
                 S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,Ut=opt$U,
                 jumps=jumps,exit=exit,p=p,
+		id=id.orig,call.id=call.id,
 		no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
                 Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,cause=cause
                 )

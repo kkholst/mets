@@ -71,9 +71,9 @@ basehazplot.phreg(
 Plotting the baslines of stratified Cox
 }
 \examples{
-data(sTRACE)
-dcut(sTRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
+data(TRACE)
+dcut(TRACE) <- ~.
+out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
 
 par(mfrow=c(2,2))
 bplot(out1)

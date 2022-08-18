@@ -29,9 +29,9 @@ influence functions (iid) will follow numerical order of given cluster variable
 so ordering after $id will give iid in order of data-set.
 }
 \examples{
-data(sTRACE)
-dcut(sTRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=sTRACE)
+data(TRACE)
+dcut(TRACE) <- ~.
+out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
 ## tracesim <- timereg::sim.cox(out1,1000)
 ## sout1 <- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)
 ## robust standard errors default 
