@@ -575,16 +575,6 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
   nCstrata <- max(strataCxx2)+1
 # }}}
 
-### find id's within different strata
- newid <- mystrata2index(cbind(xx2$strata,xx2$id))
- nnewid <- attr(newid,"nlevel")
- idds <- cbind(newid,xx2$strata,xx2$id)
- on <- order(newid)
- idds <- idds[on,]
- firstnewid <- (!duplicated(idds[,1]))
- strata <- idds[firstnewid,2]
- idstrata <- idds[firstnewid,3]
-
 ### iid version given G_c {{{
     ##iid robust phreg
     S0i <- rep(0,length(xx2$strata))
@@ -613,10 +603,9 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
     S0i2 <- rep(0,length(xx2$strata))
     S0i2[jumps] <- 1/x$S0^2
     MGAiid <- matrix(0,length(S0i2),1)
+    MGAiid2 <- matrix(0,length(S0i2),1)
     cumhazAA <- cumsumstrata(S0i2*btimexx,xx2$strata,xx2$nstrata)
     MGAiid <- S0i*btimexx-cumhazAA*rr*c(xx2$weights)
-    MGAiid <-  apply(MGAiid,2,sumstrata,newid-1,nnewid)
-### MGAiid <-  apply(MGAiid,2,sumstrata,xx2$id,mid+1)
 
   if (length(other)>=1) { ## martingale part for type-2 after T
     ### xx2 data all data
@@ -634,7 +623,6 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         ndstrata <- attr(dstrata,"nlevel")
         lastt <- tailstrata(dstrata-1,ndstrata)
         ll <-  cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
-###        Htsj <- ll$res[lastt][dstrata]-ll$lagres
         Htsj <- ll$res[lastt][dstrata]-ll$res
 
         fff <- function(x) {
@@ -650,9 +638,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 
         ll <-  cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
         HBtsj <- ll$res[lastt][dstrata]-ll$res
-        MGAiid2 <- -HBtsj[otherxx2,,drop=FALSE]*rrx2
-	MGAiid2 <-  apply(MGAiid2,2,sumstrata,newid[otherxx2]-1,nnewid)
-###	MGAiid2 <-  apply(MGAiid2,2,sumstrata,xx2$id[otherxx2],mid+1)
+        MGAiid2[otherxx2,] <- -HBtsj[otherxx2,,drop=FALSE]*rrx2
 	MGAiid <- MGAiid+MGAiid2
     }
     ## }}}
@@ -684,12 +670,10 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
         MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
 
         MGBc <- qB2*S0iC-EBdLam0q2*c(xx2$sign)
-        MGBc <- apply(MGBc,2,sumstrata,newid-1,nnewid)
         ## }}}
     } else { MGc <- 0; MGBc <- 0}
 
   if (fixbeta==0) { betaiid <-  (UU+MGc) %*% x$ihessian} else betaiid <- NULL
-   MGAiid.naive <- MGAiid
    MGAiid <- MGAiid+MGBc
 
  ### \hat beta - \beta = \sum_i \beta_i  (iid) 
@@ -697,18 +681,34 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
  ### \hat A_s-A_s=\sum_{i clusters} \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \sum_i \beta_i
  ### = \sum_{i clusters} ( \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \beta_i ) 
 
- if (fixbeta==0) {
-     Htlast <- tailstrata(xx2$strata,xx2$nstrata)
-     HtS <- Ht[Htlast,,drop=FALSE]
-     UU <-  apply(HtS[strata+1,,drop=FALSE]*betaiid[idstrata+1,],1,sum)
-     MGAiid <- MGAiid - UU
-     MGAiid.naive <- MGAiid.naive - UU
- }
+ if (fixbeta==0) {# {{{
+    Htlast <- tailstrata(xx2$strata,xx2$nstrata)
+    HtS <- Ht[Htlast,,drop=FALSE]
+ } ## }}}
 
- return(list(time=time,base.iid=MGAiid,base.iid.naive=MGAiid.naive,
-	     strata=strata,nstrata=xx2$nstrata,idstrata=idstrata,nid=nnewid,
-	     beta.iid=betaiid,
+
+## sum after id's within strata and order 
+ MGAiids <- c()
+ cumhaz.time <- c()
+ sus <- sort(unique(xx2$strata))
+ for (i in sus)  { 
+	 wi <- which(xx2$strata==i)
+         MGAiidl <- sumstrata(MGAiid[wi],xx2$id[wi],mid+1)
+	 cumhaz.time <- c(cumhaz.time,Cpred(x$cumhaz[x$strata[x$jumps]==i,],time)[,-1])
+
+        if (fixbeta==0) {
+           UU <-  apply(HtS[i+1,]*t(betaiid),2,sum)
+           MGAiidl <- MGAiidl - UU
+         }
+         MGAiids <- cbind(MGAiids,MGAiidl)
+ }
+ colnames(MGAiids) <- paste("strata",sus,sep="")
+ names(cumhaz.time) <- paste("strata",sus,sep="")
+
+ return(list(time=time,base.iid=MGAiids, nstrata=xx2$nstrata, beta.iid=betaiid,
+	     strata.call=x$strata.call,id=x$id,call.id=x$call.id,
 	     coef=coef(x),cumhaz=x$cumhaz,cumhaz.strata=x$strata[x$jumps],
+	     cumhaz.time=cumhaz.time,strata.time=sus,
              nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
 	     model.frame=x$model.frame,formula=x$formula))
 } # }}}
@@ -718,18 +718,16 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
 {# {{{
   des <- readPhreg(iidBase,newdata)
   strata <- des$strata
-  if (!is.null(iidBase$beta.iid))  { fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X} else { 
-	  fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); }
+  if (!is.null(iidBase$beta.iid))  { 
+	  fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X; p <- ncol(beta.iid); 
+  } else { fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); p <- 1 }
 
-   At <- c()
-   for (i in sort(unique(strata))) {
-   At <- c(At,Cpred(iidBase$cumhaz[iidBase$cumhaz.strata==i,],iidBase$time)[,-1])
-   }
-   p <- length(iidBase$coef)
+   sus <- sort(unique(strata))
+
+   At <- iidBase$cumhaz.time[match(sus,iidBase$strata.time)]
 
    if (missing(X)) X <- matrix(0,1,p)
    if (ncol(X)!=p) stop("X and coef does not match \n"); 
-
 
    Ft <- function(p,Xi=rep(0,length(p)-1),type="log") {
        if (type=="log")     y <- log(1-exp(-p[1]*exp(sum(Xi*p[-1]))))
@@ -745,37 +743,40 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
        return(y)
    }
 
-preds <- matrix(0,length(strata),4)
+   preds <- matrix(0,length(strata),4)
 
-k <- 0
-for (i in sort(unique(strata))) {
-   k <- k+1
-   wheres <- which(strata==i) 
-if (fixbeta==0)  {
-   iidAB <- cbind(iidBase$base.iid,iidBase$beta.iid)[iidBase$strata==i,]
-   covv <- crossprod(iidAB)
-   coeff <- c(At[k],iidBase$coef)
-   Xs <- X[wheres,,drop=FALSE]
-   for (j in seq(1,nrow(Xs)))  {
-      Xj <- Xs[j,]
-      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=Xj,type=conf.type[1]))
-      cmat <- eud$coefmat
-      cmat <- c(cmat[,-5])
-      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
-      cmat[c(1,3:4)] <- cicmat
-      preds[wheres[j],] <- c(cmat)
-   } 
-} else {
-      iidAB <- cbind(iidBase$base.iid)[iidBase$strata==i,]
-      covv <- crossprod(iidAB)
-      coeff <- c(At[k])
-      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=1,type=conf.type[1]))
-      cmat <- eud$coefmat
-      cmat <- c(cmat[,-5])
-      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
-      cmat[c(1,3:4)] <- cicmat
-      preds[wheres,] <- matrix(c(cmat),length(wheres),4,byrow=TRUE)
-}
+   k <- 0
+   for (i in sus) {
+      wheres <- which(strata==i) 
+      wi <- match(i,iidBase$strata.time)
+      At <- iidBase$cumhaz.time[wi]
+	if (fixbeta==0)  {
+	   iidAB <- cbind(iidBase$base.iid[,wi],iidBase$beta.iid)
+      print(head(iidAB))
+	   covv <- crossprod(iidAB)
+      print(covv)
+	   coeff <- c(At,iidBase$coef)
+	   for (j in wheres)  {
+	      Xj <- X[j,]
+	   print(Xj)
+	      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=Xj,type=conf.type[1]))
+	      cmat <- eud$coefmat
+	      cmat <- c(cmat[,-5])
+	      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
+	      cmat[c(1,3:4)] <- cicmat
+	      preds[j,] <- c(cmat)
+	   } 
+	} else {
+	      iidAB <- cbind(iidBase$base.iid[,wi])
+	      covv <- crossprod(iidAB)
+	      coeff <- c(At)
+	      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=1,type=conf.type[1]))
+	      cmat <- eud$coefmat
+	      cmat <- c(cmat[,-5])
+	      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
+	      cmat[c(1,3:4)] <- cicmat
+	      preds[wheres,] <- matrix(c(cmat),length(wheres),4,byrow=TRUE)
+	}
 }
 
 colnames(preds) <- c("pred",paste("se",conf.type[1],sep="-"),"lower","upper")

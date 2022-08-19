@@ -859,7 +859,7 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
          MGAiidl <- sumstrata(MGAiid[xx$strata==i],xx$id[xx$strata==i],mid)
 
         if (fixbeta==0) {
-           UU <-  apply(HtS[i+1,]*MGtiid,1,sum)
+           UU <-  apply(HtS[i+1,]*t(MGtiid),2,sum)
            MGAiidl <- MGAiidl - UU
          }
          MGAiids <- cbind(MGAiids,MGAiidl)
