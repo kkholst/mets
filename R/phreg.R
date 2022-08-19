@@ -850,9 +850,11 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
  ### \hat A_s-A_s=\sum_{i clusters} \sum_{j: i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_{i,j} - P^s(t) \sum_i \beta_i
  ### = \sum_{i clusters} ( \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \beta_i ) 
 
+
  ## sum after id's within strata and order 
  MGAiids <- c()
- for (i in sort(unique(xx$strata)))  { 
+ sus <- sort(unique(xx$strata))
+ for (i in sus)  { 
 	 wi <- which(xx$strata==i)
          MGAiidl <- sumstrata(MGAiid[xx$strata==i],xx$id[xx$strata==i],mid)
 
@@ -863,7 +865,7 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
          MGAiids <- cbind(MGAiids,MGAiidl)
  }
  MGAiid <- MGAiids
- colnames(MGAiid) <- paste("strata",sort(unique(strata)),sep="")
+ colnames(MGAiid) <- paste("strata",sus,sep="")
 
  return(list(time=time,base.iid=MGAiid,strata=strata,nstrata=xx$nstrata,idstrata=idstrata,
 	     nid=nnewid,beta.id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
