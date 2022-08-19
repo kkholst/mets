@@ -752,13 +752,10 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
       At <- iidBase$cumhaz.time[wi]
 	if (fixbeta==0)  {
 	   iidAB <- cbind(iidBase$base.iid[,wi],iidBase$beta.iid)
-      print(head(iidAB))
 	   covv <- crossprod(iidAB)
-      print(covv)
 	   coeff <- c(At,iidBase$coef)
 	   for (j in wheres)  {
 	      Xj <- X[j,]
-	   print(Xj)
 	      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=Xj,type=conf.type[1]))
 	      cmat <- eud$coefmat
 	      cmat <- c(cmat[,-5])
