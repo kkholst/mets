@@ -2,7 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{resmean.phreg}
 \alias{resmean.phreg}
-\title{Restricted mean for stratified Kaplan-Meier with martingale standard errors}
+\title{Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors}
 \usage{
 resmean.phreg(x, times = NULL, covs = NULL, ...)
 }
@@ -11,20 +11,24 @@ resmean.phreg(x, times = NULL, covs = NULL, ...)
 
 \item{times}{possible times for which to report restricted mean}
 
-\item{covs}{possible covariaates for Cox model}
+\item{covs}{possible covariate for Cox model}
 
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Restricted mean for stratified Kaplan-Meier with martingale standard errors
+Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale 
+standard error. Standard error is computed using linear interpolation between 
+standard errors at jump-times. Plots gives restricted mean at all times.
 }
 \examples{
-data(TRACE)
-out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=TRACE)
+data(sTRACE)
+out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 
 rm1 <- resmean.phreg(out1,times=5)
 summary(rm1)
-mets:::plot.resmean_phreg(rm1)
+par(mfrow=c(1,2))
+plot(d1,se=1)
+plot(d1,years.lost=TRUE,se=1)
 }
 \author{
 Thomas Scheike

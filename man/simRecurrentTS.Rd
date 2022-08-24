@@ -48,15 +48,16 @@ simRecurrentTS(
 Simulation of recurrent events data based on cumulative hazards
 }
 \details{
-Model is constructed such that marginals are on specified form  by linear approximations
+Model is constructed such that marginals are on specified form by linear approximations
 of cumulative hazards that are on a specific form to make them equivalent to marginals
-after integrating out. 
+after integrating out over survivors. Therefore E(dN_1 | D>t) = cumhaz, 
+E(dN_2 | D>t) = cumhaz2,  and hazard of death is death.cumhazard 
 
-Must give hazard of death and two recurrent events.  Possible with two
+Must give hazard of death and two recurrent events.  Hazard of death is death.cumhazard  two
 event types and their dependence can be specified but the two recurrent events need
 to share random effect. 
 
-Random effect to death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
+Random effect for  death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
 \deqn{Z.death=Zd1+Zd2}  gamma distributions 
 \deqn{Zdj}  gamma distribution  with mean parameters (sharej), vargamD,  share2=1-share1
 \deqn{Z12}  gamma distribution with mean 1 and variance vargam12
