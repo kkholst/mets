@@ -27,8 +27,8 @@ out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
 rm1 <- resmean.phreg(out1,times=5)
 summary(rm1)
 par(mfrow=c(1,2))
-plot(d1,se=1)
-plot(d1,years.lost=TRUE,se=1)
+plot(rm1,se=1)
+plot(rm1,years.lost=TRUE,se=1)
 }
 \author{
 Thomas Scheike

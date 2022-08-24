@@ -1326,8 +1326,8 @@ return(res)
 ##' rm1 <- resmean.phreg(out1,times=5)
 ##' summary(rm1)
 ##' par(mfrow=c(1,2))
-##' plot(d1,se=1)
-##' plot(d1,years.lost=TRUE,se=1)
+##' plot(rm1,se=1)
+##' plot(rm1,years.lost=TRUE,se=1)
 ##' @export
 resmean.phreg <- function(x,times=NULL,covs=NULL,...) 
 {# {{{
