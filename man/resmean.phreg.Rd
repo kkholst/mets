@@ -2,6 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{resmean.phreg}
 \alias{resmean.phreg}
+\alias{cif.yearslost}
 \title{Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors}
 \usage{
 resmean.phreg(x, times = NULL, covs = NULL, ...)
@@ -21,14 +22,18 @@ standard error. Standard error is computed using linear interpolation between
 standard errors at jump-times. Plots gives restricted mean at all times.
 }
 \examples{
-data(sTRACE)
-out1 <- phreg(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
+data(bmt)
+out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 
-rm1 <- resmean.phreg(out1,times=5)
+rm1 <- resmean.phreg(out1,times=10*(1:6))
 summary(rm1)
 par(mfrow=c(1,2))
 plot(rm1,se=1)
 plot(rm1,years.lost=TRUE,se=1)
+
+## years.lost decomposed into causes
+drm1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=10*(1:6))
+summary(drm1)
 }
 \author{
 Thomas Scheike

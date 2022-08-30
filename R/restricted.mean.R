@@ -1,7 +1,9 @@
 ##' Restricted IPCW mean for censored survival data 
 ##'
-##' Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
-##' \deqn{E(T \leq t | X ) = exp( X^T beta) }
+##' Simple and fast version of comp.risk function of timereg for just one time-point thus fitting the model 
+##' \deqn{E(T \leq t | X ) = exp( X^T beta) } or in the case of competing risks data
+##' \deqn{E( I(epsilon=1) (t - T \leq t) | X ) = exp( X^T beta) } thus given years lost to 
+##' cause.
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
 ##' \deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
@@ -46,19 +48,27 @@
 ##' @examples
 ##'
 ##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
-##' # logistic regresion with IPCW binomial regression 
+##' # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 ##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-##'                 cause=1,time=50,cens.model=~strata(platelet),model="exp")
+##'                 time=50,cens.model=~strata(platelet),model="exp")
 ##' summary(out)
-##'
-##' ### same as Kaplan-Meier for full censoring model 
-##' bmt$int <- with(bmt,interaction(tcell,platelet))
-##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,cause=1,time=30,
-##'                             cens.model=~strata(platelet,tcell),model="lin")
-##' summary(out)
+##' 
+##'  ### same as Kaplan-Meier for full censoring model 
+##' bmt$int <- with(bmt,strata(tcell,platelet))
+##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
+##'                              cens.model=~strata(platelet,tcell),model="lin")
+##' estimate(out)
 ##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 ##' rm1 <- resmean.phreg(out1,times=30)
 ##' summary(rm1)
+##' 
+##' ## competing risks years-lost for cause 1  
+##' out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
+##'                             cens.model=~strata(platelet,tcell),model="lin")
+##' estimate(out)
+##' ## same as integrated cumulative incidence 
+##' rmc1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=30)
+##' summary(rmc1)
 ##' @export
 resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
    offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
@@ -129,6 +139,10 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   kmt <- kaplan.meier
 
   statusC <- (status==cens.code) 
+  ucauses  <-  sort(unique(status))
+  ccc <- which(ucauses==cens.code)
+  Causes <- ucauses[-ccc]
+  competing  <-  (length(Causes)>1) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -152,8 +166,12 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  obs <- (exit<=time & status==cause) | (exit>=time)
-  if (is.null(Ydirect)) Y <- c(pmin(exit,time)*obs)/cens.weights else Y <- c(Ydirect*obs)/cens.weights
+  ## if event before time or alive, then uncensored  
+  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
+  if (is.null(Ydirect))  {
+	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
+	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+  } else Y <- c(Ydirect*obs)/cens.weights
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -234,7 +252,10 @@ hessian <- matrix(D2log,length(pp),length(pp))
     lp <- c(X %*% val$coef+offset)
     p <- exp(lp)
     obs <- (exit<=time & status==cause) | (exit>=time)
-    if (is.null(Ydirect)) Y <- c(pmin(exit,time)*obs)/cens.weights else Y <- c(Ydirect*obs)/cens.weights
+    if (is.null(Ydirect))  {
+	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
+	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+    } else Y <- c(Ydirect*obs)/cens.weights
     if (model=="exp" & is.null(h.call))  ph <- p
     if (model=="exp" & !is.null(h.call)) ph <- h
     if (model!="exp" & is.null(h.call))  ph <- 1 

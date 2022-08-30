@@ -69,8 +69,10 @@ resmeanIPCW(
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
-\deqn{E(T \leq t | X ) = exp( X^T beta) }
+Simple and fast version of comp.risk function of timereg for just one time-point thus fitting the model 
+\deqn{E(T \leq t | X ) = exp( X^T beta) } or in the case of competing risks data
+\deqn{E( I(epsilon=1) (t - T \leq t) | X ) = exp( X^T beta) } thus given years lost to 
+cause.
 }
 \details{
 Based on binomial regresion IPCW response estimating equation: 
@@ -95,19 +97,27 @@ Censoring model may depend on strata.
 \examples{
 
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
-# logistic regresion with IPCW binomial regression 
+# E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-                cause=1,time=50,cens.model=~strata(platelet),model="exp")
+                time=50,cens.model=~strata(platelet),model="exp")
 summary(out)
 
-### same as Kaplan-Meier for full censoring model 
-bmt$int <- with(bmt,interaction(tcell,platelet))
-out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,cause=1,time=30,
-                            cens.model=~strata(platelet,tcell),model="lin")
-summary(out)
+ ### same as Kaplan-Meier for full censoring model 
+bmt$int <- with(bmt,strata(tcell,platelet))
+out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
+                             cens.model=~strata(platelet,tcell),model="lin")
+estimate(out)
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 rm1 <- resmean.phreg(out1,times=30)
 summary(rm1)
+
+## competing risks years-lost for cause 1  
+out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
+                            cens.model=~strata(platelet,tcell),model="lin")
+estimate(out)
+## same as integrated cumulative incidence 
+rmc1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=30)
+summary(rmc1)
 }
 \author{
 Thomas Scheike
