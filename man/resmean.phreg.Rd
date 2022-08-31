@@ -19,7 +19,14 @@ resmean.phreg(x, times = NULL, covs = NULL, ...)
 \description{
 Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale 
 standard error. Standard error is computed using linear interpolation between 
-standard errors at jump-times. Plots gives restricted mean at all times.
+standard errors at jump-times. Plots gives restricted mean at all times. 
+Years lost can be computed based on this and decomposed into years lost for
+different causes using the cif.yearslost function that is based on  
+integrating the cumulative incidence functions.
+}
+\details{
+One particular feature of these functions are that the restricted mean and years-lost are 
+computed for all event times as functions and can be viewed.
 }
 \examples{
 data(bmt)
