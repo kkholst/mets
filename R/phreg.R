@@ -1473,9 +1473,10 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 	   S0i2[x$S0==1] <- 0
  }# }}}
 
- pka <- 0
  ### formula from Pepe-Mori: SIM 93, 737-
- pepemori <- 1
+ pepemori <- 0
+ ### formula from PKA SIM 2013
+ pka <- 0
 
   years.lostF1 <- se.years.lostF1m  <- se.years.lostF1 <- se.years.lostF1pm <- c()
   for (i in seq_along(causes)) {
@@ -1587,7 +1588,6 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 	  se.years.lostF1pm <- cbind(se.years.lostF1pm,se.intF1pm)
 # }}}
 	  }
-
  }
  years.lostF1 <- cbind(jumptimes,years.lostF1)
  colnames(years.lostF1) <- c("time",paste("intF_",causes,sep=""))
