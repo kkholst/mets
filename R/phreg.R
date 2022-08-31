@@ -867,7 +867,7 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
  MGAiid <- MGAiids
  colnames(MGAiid) <- paste("strata",sus,sep="")
 
- return(list(time=time,base.iid=MGAiid,strata=strata,nstrata=xx$nstrata,
+ return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,
 	     beta.id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
 } # }}}
 
