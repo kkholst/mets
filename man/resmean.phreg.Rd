@@ -22,11 +22,11 @@ standard error. Standard error is computed using linear interpolation between
 standard errors at jump-times. Plots gives restricted mean at all times. 
 Years lost can be computed based on this and decomposed into years lost for
 different causes using the cif.yearslost function that is based on  
-integrating the cumulative incidence functions.
-}
-\details{
+integrating the cumulative incidence functions.  
 One particular feature of these functions are that the restricted mean and years-lost are 
-computed for all event times as functions and can be viewed.
+computed for all event times as functions and can be viewed.  When times are given and beyond
+the last event time withn a strata the curves are extrapolated using the estimates of 
+cumulative incidence.
 }
 \examples{
 data(bmt)
