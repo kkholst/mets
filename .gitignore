@@ -10,6 +10,7 @@ src/minimake
 inst/doc
 inst/misc/workshop*.org
 inst/misc/mena.org
+vignettes/templates
 vignettes/test?.Rmd
 vignettes/*_files
 vignettes/*.html
