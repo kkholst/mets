@@ -2060,7 +2060,7 @@ coef.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
-predict.binreg <- function(object,newdata,se=TRUE,...)
+predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
 {# {{{
 
   xlev <- lapply(object$model.frame,levels)
@@ -2089,6 +2089,10 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
   }
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
 
   } else {
 
@@ -2104,7 +2108,10 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
   }
-
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
 
   }
 return(preds)
