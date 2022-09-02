@@ -60,3 +60,5 @@ _region*
 symbols.rds
 doc
 Meta
+/doc/
+/Meta/

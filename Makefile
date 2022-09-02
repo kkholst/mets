@@ -12,7 +12,7 @@ test:
 	R -q -e "devtools::test()"
 
 vignette:
-	@_R_FULL_VIGNETTE_=1 R -q -e "devtools::build_vignettes(quiet=FALSE)"
+	@_R_FULL_VIGNETTE_=1 R -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
 
 roxy: doc
 
