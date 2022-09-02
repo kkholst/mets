@@ -56,9 +56,10 @@ library("mets")
 \newcommand{\n}{}
 \)
 
-The development version may be installed from *github*:
-
-```{r  install, eval=FALSE }
+ <!-- 
+ The development version may be installed from *github*: 
+ -->
+```{r  install, eval=FALSE, echo=FALSE}
 # install.packages("remotes")
 remotes::install_github("kkholst/mets", dependencies="Suggests")
 ```
@@ -240,10 +241,13 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 \end{gather*}
 
 
+```{r}
+dd <- na.omit(twinbmi)
+```
+
 Saturated model (different marginals in MZ and DZ twins and different marginals
 for twin 1 and twin 2):
 ```{r lmsat, eval=FALSE}
-dd <- na.omit(twinbmi)
 l0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
 ```
 
@@ -253,7 +257,7 @@ lf <- twinlm(bmi ~ age+gender, data=dd,DZ="DZ", zyg="zyg", id="tvparnr", type="f
 ```
  
 Same marginals but free correlation with MZ, DZ
-```{r lmu}
+```{r lmeqmarg}
 lu <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="eqmarg")
 estimate(lu)
 ```
@@ -264,7 +268,7 @@ estimate(lu,contr(5:6,6))
 ```
 
 We also consider the ACE model
-```{r   }
+```{r  ace}
 ace0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="ace")
 summary(ace0)
 ```

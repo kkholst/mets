@@ -23,11 +23,20 @@ test_that("daggregate", {
     dd$g2[2:3] <- NA
     dd$a[3:7] <- NA
     ##dcor(dd,.~g1+g2)
-    
-    dcor(dd, "[acg][12]*$", regex=TRUE, use="pairwise")
-    dcor(dd, "[ab]",subset=is.na(g1), regex=TRUE, use="pairwise")
-    dcor(dd, ~.|is.na(g1)|is.na(g2))
-    dcor(dd, use="pairwise")
+
+    r1 <- dcor(dd, "[acg][12]*$", regex=TRUE, use="pairwise")
+    r2 <- cor(dd[,c("a","g1","g2")], use="pairwise")
+    expect_equal(norm(r1-r2), 0)
+    r1 <- dcor(dd, "[ab]",subset=is.na(g1), regex=TRUE, use="pairwise")
+    dd0 <- subset(dd, is.na(g1))
+    r2 <- cor(dd[, c("a","b")], use="pairwise")
+    expect_equal(norm(r1-r2), 0)
+    suppressWarnings(r1 <- dcor(dd, ~.|is.na(g1)|is.na(g2))) # do not warn about zero sd
+    dd0 <- subset(dd, is.na(g1) | is.na(g2), select=-c(g1,g2))
+    suppressWarnings(r2 <- dcor(dd0)) # do not warn about zero sd
+    expect_equal(r1,r2)
+    r1 <- dcor(dd, use="pairwise")
+    expect_equal(norm(r1-cor(dd, use="pairwise")), 0)
 })
 
 test_that("dby", {
