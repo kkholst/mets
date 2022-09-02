@@ -711,9 +711,8 @@ coef.phreg  <- function(object,...) {
 
 ##' @export
 iid.phreg  <- function(x,type="robust",all=FALSE,...) {# {{{
-
-if ((length(class(x))==1) & inherits(x,"phreg")) {
-
+classes1 <- "mlogit"
+if ((length(class(x))==1) || inherits(x, classes1)) {
  invhess <- -solve(x$hessian)
  orig.order <- FALSE
 
@@ -791,8 +790,7 @@ if (is.null(x$propodds)) {
   } else {
      UU <- MGt
   }
-  
-  return(structure(UU%*%invhess,invhess=invhess,ncluster=ncluster)) 
+  return(structure(UU%*%invhess,invhess=invhess,ncluster=ncluster))
 } else if (inherits(x,c("cifreg","recreg"))) return(x$iid)
 
 } # }}}

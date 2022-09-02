@@ -118,7 +118,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   idtab <- table(data[,id])
   if (sum(idtab>2)) stop("More than two individuals with the same id ")
 
-  ##  suppressMessages(browser())
   if (pairs.only) {
     data <- data[as.character(data[,id])%in%names(idtab)[idtab==2],]
     idtab <- table(data[,id])
@@ -263,8 +262,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
 ###}}} setup
 
 ###{{{ Mean/Var function
-
-  ##  suppressMessages(browser())
 
   ##Marginals etc.
   MyData0 <- ExMarg(Y0,XX0,W0,dS0,eqmarg=TRUE,allmarg=allmarg)
