@@ -85,7 +85,7 @@ summary(aaMss22)
 ```
 
 
-```{r}
+```{r, label=multiplemodels}
 ### binomial regression ###########################################################
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cause=2)
 summary(aaMss)
@@ -139,7 +139,7 @@ Also works with mediator with more than two levels
  * meditor: wmi in 4 categories
  * exposure: age in 4 categories
 
-```{r, cache=TRUE, eval=fullVignette}
+```{r, label=multinom, cache=TRUE, eval=fullVignette}
 data(tTRACE)
 dcut(tTRACE) <- ~. 
 
@@ -154,6 +154,7 @@ MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
 ```{r  results="hide", echo=FALSE }
 ## To save time building the vignettes on CRAN, we cache time consuming computations
 if (fullVignette) {
+  MultMed[c('iid','iid.w','iid.surv')] <- NULL
   saveRDS(MultMed, "MultMed.rds")
 } else {
   MultMed <- readRDS("MultMed.rds")
