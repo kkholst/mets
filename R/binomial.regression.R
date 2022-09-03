@@ -2060,7 +2060,7 @@ coef.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
-predict.binreg <- function(object,newdata,se=TRUE,...)
+predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
 {# {{{
 
   xlev <- lapply(object$model.frame,levels)
@@ -2075,6 +2075,7 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
   if (length(clusterTerm)>=1) 
 	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
 
+  if (!inherits(object,"resmean")) {
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
@@ -2088,7 +2089,31 @@ predict.binreg <- function(object,newdata,se=TRUE,...)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
   }
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
 
+  } else {
+
+  lp <- c(Z %*% object$coef)
+  if (object$model.type=="exp") p <- exp(lp) else p <- lp
+  preds <- p
+
+  if (se) {
+     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
+     if (object$model.type=="exp") Dpv <- Z*p else Dpv <- Z 
+     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
+     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
+     names(cmat)[1:4] <- c("pred","se","lower","upper")
+     preds <- cmat
+  }
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
+
+  }
 return(preds)
 } # }}}
 
