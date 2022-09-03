@@ -296,7 +296,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
 
   rm(Y0,XX0,W0,Y1,XX1,W1,Y2,XX2,W2)
   
-
   Sigma <- function(p0) {
     Sigma2 <- NULL
     p0[vidx] <- mytr(p0[vidx])    
@@ -322,14 +321,13 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
     return(list(Sigma0=Sigma0,Sigma1=Sigma1,Sigma2=Sigma2,dS2=dS2))
   }
 
-  ## p0 <- op$par
-  ## ff <- function(p) as.vector(Sigma(p)$Sigma2)
-  ## numDeriv::jacobian(ff,p0)
-  ## Sigma(p0)$dS2
-  ## dmytr(p0[vidx])
-  ## Sigma(p0)$dS2[1,]*dmytr(p0[vidx])[1]
-  ## Sigma(p0)$dS2[2,]*dmytr(p0[vidx])[2]
-  ## Sigma(p0)$dS2[3,]*dmytr(p0[vidx])[3]
+  env <- new.env(parent=baseenv())
+  #environment(mytr) <- baseenv()
+  for (v in c("ACDU","mytr","vidx","OSon","plen",
+              "Rm","Am","Vm","Dm","dS2.","dS2")) {
+    assign(v, get(v), envir=env)
+  }
+  environment(Sigma) <- env
 
 ###}}} Mean/Var function
   
@@ -639,6 +637,10 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                ACDU=ACDU[-4]*1)
   
   npar[unlist(lapply(npar,length))==0] <- 0
+
+  environment(mytr) <- baseenv()
+  environment(myinvtr) <- baseenv()
+  environment(dmytr) <- baseenv()
 
   val <- list(coef=cc,vcov=V,bread=iI,I=I,score=UU,logLik=attributes(UU)$logLik,opt=op,
               id=Wide[,id], model.frame=Wide,

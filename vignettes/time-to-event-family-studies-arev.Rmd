@@ -20,7 +20,18 @@ knitr::opts_chunk$set(
   #dev="png",
   comment = "#>"
   )
-fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE") || length(list.files("save"))==0
+saveobj <- function(obj, null_elements) {
+  x <- get(obj, envir=parent.frame())
+  if (length(null_elements)>0) {
+    print(object.size(x))
+    x[null_elements] <- NULL
+    attributes(x)[null_elements] <- NULL
+    print(object.size(x))
+  }
+  saveRDS(x, paste0("save/", obj, ".rds"), compress="xz")
+}
+
 library(mets)
  cols <- c("darkred","darkblue","black")
  ltys <- c(1,3,2)
@@ -28,6 +39,28 @@ library(mets)
  fig_h <- 5
  savefig <- TRUE
 ```
+
+```{r  results="hide", echo=FALSE, eval=!fullVignette}
+## To save time building the vignettes on CRAN, we cache time consuming computations
+fitco1 <- readRDS("save/fitco1.rds")
+fitco2 <- readRDS("save/fitco2.rds")
+fitco3 <- readRDS("save/fitco3.rds")
+fitco4 <- readRDS("save/fitco4.rds")
+fitace <- readRDS("save/fitace.rds")
+fitde <- readRDS("save/fitde.rds")
+cse <- readRDS("save/cse.rds")
+slr <- readRDS("save/slr.rds")
+outacem <- readRDS("save/outacem.rds")
+b0 <- readRDS("save/b0.rds")
+b1 <- readRDS("save/b1.rds")
+b2 <- readRDS("save/b2.rds")
+a1 <- readRDS("save/a1.rds")
+h2 <- readRDS("save/h2.rds")
+concMZ <- readRDS("save/concMZ.rds")
+s_mz_country <- readRDS("save/s_mz_country.rds")
+s_dz_country <- readRDS("save/s_dz_country.rds")
+```
+
 
 This vignette demonstrates how to analyze familial resemblance for 
 twins using the \texttt{mets} {\bf R}-package and is accompanying the
@@ -65,10 +98,6 @@ In addition we see that there are around 10000 twins from Denmark and Sweden, an
 Survival 
 ==========
 
-```{r }
-
-```
-
 Under assumption of random effects acting independently on different cause
 specific hazards we can analyse competing risks data considering the
 cause-specific hazard.  Typically, this can be questionable and the cumulative
@@ -90,20 +119,40 @@ We see that the marginal of Denmark in particular is quite different.
 Then we fit a two-stage random effects models with country specific 
 marginals and random-effects variances that differ for MZ and DZ twins. 
 
-```{r, label=survival-pairwise}
- # Clayton-Oakes, MLE , overall variance
- fitco1<-twostageMLE(margph,data=prt,theta=2.7)
- summary(fitco1)
- 
- fitco2 <- survival.twostage(margph,data=prt,theta=2.7,clusters=prt$id,var.link=0)
- summary(fitco2)
 
- ## now with different random effects for MZ and DZ
+```{r, label=survival-pairwise1, eval=fullVignette}
+# Clayton-Oakes, MLE , overall variance
+fitco1<-twostageMLE(margph,data=prt,theta=2.7)
+```
+
+```{r}
+ summary(fitco1)
+```
+
+```{r, label=survival-pairwise2, eval=fullVignette}
+fitco2 <- survival.twostage(margph,data=prt,theta=2.7,clusters=prt$id,var.link=0)
+```
+
+```{r}
+ summary(fitco2)
+```
+
+With different random effects for MZ and DZ
+```{r label=survival-pairwise3, eval=fullVignette}
  mm <- model.matrix(~-1+factor(zyg),prt)
  fitco3<-twostageMLE(margph,data=prt,theta=1,theta.des=mm)
- summary(fitco3)
+```
 
- fitco4 <- survival.twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,theta.des=mm)
+
+```{r}
+ summary(fitco3)
+```
+
+```{r label=survival-pairwise4, eval=fullVignette}
+fitco4 <- survival.twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,theta.des=mm)
+```
+
+```{r}
  summary(fitco4)
  round(estimate(coef=fitco4$coef,vcov=fitco4$var.theta)$coefmat[,c(1,3:4)],2)
 
@@ -113,14 +162,15 @@ marginals and random-effects variances that differ for MZ and DZ twins.
  kendall.ClaytonOakes.twin.ace(fitco4$theta[1],0,K=1000)$mz.kendall
 ```
 
+
 The dependence of MZ twins is much stronger, and is summarized by a 
 variance at $`r round(fitco4$coef[2],2)`$ in contrast to the $DZ$ variance at $`r round(fitco4$coef[1],2)`$.
+
 
 Now we look at the polygenic modelling for survival data, here applied to
 the cause specific hazards. 
 
-```{r, label=survival-polygenic}
-
+```{r, label=survival-polygenic1, eval=fullVignette}
  ### setting up design for random effects and parameters of random effects
  desace <- twin.polygen.design(prt,type="ace")
 
@@ -128,8 +178,13 @@ the cause specific hazards.
  fitace <- survival.twostage(margph,data=prt,theta=1,
        clusters=prt$id,var.link=0,model="clayton.oakes",
        numDeriv=1,random.design=desace$des.rv,theta.des=desace$pardes)
- summary(fitace)
+```
 
+```{r}
+ summary(fitace)
+```
+
+```{r label=survival-polygenic2, eval=fullVignette} 
  ### ace model with positive random effects variances
  # fitacee <- survival.twostage(margph,data=prt,theta=1,
  #      clusters=prt$id,var.link=1,model="clayton.oakes",
@@ -145,10 +200,11 @@ the cause specific hazards.
 
  ### de model 
  desde <- twin.polygen.design(prt,type="de")
- fitde <- survival.twostage(margph,data=prt,theta=1,
-       clusters=prt$id,var.link=0,model="clayton.oakes",
-       numDeriv=1,random.design=desde$des.rv,theta.des=desde$pardes)
- summary(fitde)
+ fitde <- survival.twostage(margph,data=prt,theta=1,                            clusters=prt$id,var.link=0,model="clayton.oakes",
+numDeriv=1,random.design=desde$des.rv,theta.des=desde$pardes)                            
+
+```{r}
+summary(fitde)
 ```
 
 The DE model  fits quite well. In summary all shared variance is due to 
@@ -168,13 +224,17 @@ and DZ twins.
 For simplicity we do not do this for each country even though as we show there are big
 differences between the countries. 
 
-```{r, label=concordance}
- prt <-  force.same.cens(prt,cause="status")
+
+```{r}
+prt <-  force.same.cens(prt,cause="status")
 
  dtable(prt,~status+cancer)
  dtable(prt,~status+country)
  dtable(prt,~zyg+country)
+```
 
+
+```{r, label=concordance}
  ## cumulative incidence with cluster standard errors.
  cif1 <- cif(Event(time,status)~strata(country)+cluster(id),prt,cause=2)
  plot(cif1,se=1)
@@ -183,9 +243,11 @@ differences between the countries.
 
  ### concordance estimator, ignoring country differences. 
  p11 <- bicomprisk(Event(time,status)~strata(zyg)+id(id),data=prt,cause=c(2,2))
-
- p11mz <- p11$model$"MZ"
- p11dz <- p11$model$"DZ"
+p11mz <- p11$model$"MZ"
+p11dz <- p11$model$"DZ" 
+```
+ 
+```{r}
  par(mfrow=c(1,2))
  ## Concordance
  plot(p11mz,ylim=c(0,0.1));
@@ -264,7 +326,7 @@ concordance as well as the marginal, and combine the iid decompositions
 when estimating the standard error.  We also do this ignoring country differences. 
 
 
-```{r, label=concordance4}
+```{r, label=concordance4, eval=fullVignette}
  ### new version of Casewise for specific time-point based on binreg 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
@@ -279,8 +341,10 @@ when estimating the standard error.  We also do this ignoring country difference
 
  ### casewise with improved se's from log-scale 
  cse <- binregCasewise(bcif1,mbcif1)
- cse
- 
+```
+
+```{r} 
+ cse 
 ```
 
 It can be useful also to simply model the concordance given covariates, and in
@@ -288,7 +352,7 @@ this case we might find it important to adjust for country, or to see if the
 differences between MZ and DZ are comparable across contries even though
 clearly DK has a much lower cumulative incidence of prostate cancer. 
 
-```{r, label=semiparconc}
+```{r, label=semiparconc, eval=fullVignette}
  ### semi-parametric modelling of concordance 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  regconc <- cifreg(Event(time,status)~country*zyg,data=dd,prop=NULL)
@@ -301,13 +365,14 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
 
  ## logistic link 
  logitregconc <- cifreg(Event(time,status)~country+zyg,data=dd)
- summary(logitregconc)
-
-### library(Publish)
-### publish(round(summary(logitregconc)$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
-
+ slr <- summary(logitregconc)
 ```
 
+```{r}
+slr
+### library(Publish)
+### publish(round(slr$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
+```
 
 Competing risk using additive Gamma
 ====================================
@@ -315,7 +380,7 @@ Competing risk using additive Gamma
 Here we do the cumulative incidence random effects modelling 
 
 
-```{r, label=additive_gamma}
+```{r, label=additive_gamma, eval=fullVignette}
   times <- seq(50,90,length.out=5)
   cif1 <- comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
 		   cause=2,times=times,max.clust=NULL)
@@ -331,7 +396,10 @@ Here we do the cumulative incidence random effects modelling
   outacem <- Grandom.cif(cif1,data=prt,cause1=2,cause2=2,
   	 same.cens=TRUE,theta=c(0.45,0.15),var.link=0,
          step=0.5,theta.des=desace$pardes,random.design=desace$des.rv)
-  outacem$score
+  ##outacem$score
+```
+
+```{r}  
   summary(outacem)
 
  ###  variances
@@ -375,6 +443,7 @@ Here we do the cumulative incidence random effects modelling
 
 ```
 
+
 Competing risk modeling using the Liabilty Threshold model 
 ===========================================================
 
@@ -389,16 +458,25 @@ prt_wide <- fast.reshape(prt0, id="id", num="num", varying=c("time","status","ca
 prt_time <- subset(prt_wide,  cancer1 & cancer2, select=c(time1, time2, zyg))
 tau <- 95
 tt <- seq(70, tau, length.out=5) ## Time points to evaluate model in
+```
 
+```{r b0, eval=fullVignette}
 b0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="cor",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
+```
+
+```{r}
 summary(b0)
 ```
 
+
 Liability threshold model with ACE random effects structure
-```{r, label=liability_ace1}
+```{r, label=liability_ace1, eval=fullVignette}
 b1 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
+```
+
+```{r}
 summary(b1)
 ```
 
@@ -408,25 +486,32 @@ AIC(b0, b1)
 ```
 
 ACE model with marginal adjusted for country
-```{r, label=liability_ace_country}
+```{r, label=liability_ace_country, eval=fullVignette}
 b2 <- bptwin.time(cancer ~ country, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg+country, breaks=95)
+```
+
+```{r}
 summary(b2)
 ```
 
-```{r, label=bptime1}
+```{r, label=bptime1, eval=fullVignette}
 bt0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace", 
               cens.formula=Surv(time,status==0)~zyg,
               summary.function=function(x) x, breaks=tt)
 h2 <- Reduce(rbind, lapply(bt0$coef, function(x) x$heritability))[,c(1,3,4),drop=FALSE]
 concMZ <- Reduce(rbind, lapply(bt0$coef, function(x) x$probMZ["Concordance",,drop=TRUE]))
 
+```
+
+```{r}
 par(mfrow=c(1,2))
 plot(tt, h2[,1], type="s", lty=1, col=cols[3], xlab="Age", ylab="Heritability", ylim=c(0,1))
 confband(tt, h2[,2], h2[,3],polygon=TRUE, step=TRUE, col=Col(cols[3], 0.1), border=NA)
 plot(tt, concMZ[,1], type="s", lty=1, col=cols[1], xlab="Age", ylab="Concordance", ylim=c(0,.1))
 confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=Col(cols[1], 0.1), border=NA)
 ```
+
 
 Bivariate probit model at time different time points
 ```{r, label=biprobittime1}
@@ -452,20 +537,26 @@ plot(a.dz, col=cols[2], lty=ltys[2], add=TRUE)
 
 
 Bivariate probit model adjusting for country
-```{r, label=biprobittime2}
-system.time(a.mz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="MZ"),
+```{r, label=biprobittime2, eval=fullVignette}
+a.mz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~country, pairs.only=TRUE,
-                                breaks=tt))
+                                breaks=tt)
 system.time(a.dz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~country, pairs.only=TRUE,
                                breaks=tt))
 
-a.mz_country
-a.dz_country
+s_mz_country <- summary(a.mz_country)
+s_dz_country <- summary(a.dz_country)
+```
+
+```{r}
+s_mz_country
+s_dz_country
 ```
 
 
-```{r, label=liability_ace_time1}
+
+```{r, label=liability_ace_time1, eval=fullVignette}
 ## ACE model (time-varying) with and without adjustment for country
 a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
                               zyg="zyg", DZ="DZ", 
@@ -497,10 +588,41 @@ plot(a1, which=c(5,6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1:2
 plot(a1, which=c(1), xlab="Age", ylim=c(0,1), col="black", lty=1, ylab="Heritability", legend=NULL, alpha=.1)
 ```
 
-
 SessionInfo
 ============
 
 ```{r}
 sessionInfo()
+```
+
+
+```{r  saveobj, results="hide", echo=FALSE, eval=fullVignette }
+## To save time building the vignettes on CRAN, we cache time consuming computations
+
+rms <- c('id','theta.iid','theta.des','marginal.trunc',
+  'loglikeiid','marginal.surv','theta.iid.naive',
+  'antclust','secluster','cluster.call','trunclikeiid',
+  'logl.iid','score.iid','clusters')  
+tmp <- lapply(as.list(paste0("fitco", 1:4)),
+              function(x) saveobj(x, rms))
+
+rms <- c('random.design','marginal.surv','marginal.trunc','theta.iid','score.iid','loglikeiid','trunclikeiid','antclust','cluster.call','secluster','clusters')
+saveobj("fitace", rms)
+saveobj("fitde", rms)
+
+saveobj("cse", NULL)
+saveobj("slr", NULL)
+
+rms <- c("theta.iid", "Clusters", "p11")
+saveobj("outacem", rms)
+
+rms <- c("model.frame", "score", "id", "logLik")
+saveobj("b0", rms)
+saveobj("b1", rms)
+saveobj("b2", rms)
+saveobj("a1", rms)
+saveobj("h2", NULL)
+saveobj("concMZ", NULL)
+saveobj("s_mz_country", NULL)
+saveobj("s_dz_country", NULL)
 ```
