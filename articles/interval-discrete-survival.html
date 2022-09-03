@@ -120,7 +120,7 @@
       <h1 data-toc-skip>Discrete Interval Censored Survival Models</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-08-03</h4>
+            <h4 data-toc-skip class="date">2022-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/interval-discrete-survival.Rmd" class="external-link"><code>vignettes/interval-discrete-survival.Rmd</code></a></small>
       <div class="hidden name"><code>interval-discrete-survival.Rmd</code></div>
@@ -183,24 +183,24 @@
 <p>Now using this discrete survival model we simulate some data from this model</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="va">n</span>,<span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">simlogitSurvd</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">coef</span>,<span class="va">Z</span><span class="op">)</span></span>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">outsim</span>,left<span class="op">=</span><span class="va">time</span>,right<span class="op">=</span><span class="va">time</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">outsim</span>,right<span class="op">=</span><span class="cn">Inf</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Estimate Std.Err    2.5%   97.5%    P-value</span></span>
-<span><span class="co">#&gt; time1  -2.0151 0.04545 -2.1042 -1.9260  0.000e+00</span></span>
-<span><span class="co">#&gt; time2  -2.1767 0.04783 -2.2704 -2.0829  0.000e+00</span></span>
-<span><span class="co">#&gt; time3  -1.4573 0.04628 -1.5480 -1.3666 1.147e-217</span></span>
-<span><span class="co">#&gt; time4  -2.8678 0.07498 -3.0148 -2.7208  0.000e+00</span></span>
-<span><span class="co">#&gt; time5  -1.2186 0.05162 -1.3198 -1.1175 3.133e-123</span></span>
-<span><span class="co">#&gt; time6  -0.8938 0.05581 -1.0031 -0.7844  1.039e-57</span></span>
-<span><span class="co">#&gt; X1      0.9897 0.03682  0.9176  1.0619 3.444e-159</span></span>
-<span><span class="co">#&gt; X2      0.6927 0.03641  0.6213  0.7640  1.076e-80</span></span>
-<span><span class="co">#&gt; X3      0.3211 0.03612  0.2503  0.3919  6.196e-19</span></span>
-<span><span class="co">#&gt; X4      0.3613 0.03613  0.2905  0.4321  1.537e-23</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err     2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0814  0.1436 -2.36292 -1.7998 1.401e-47</span></span>
+<span><span class="co">#&gt; time2  -2.2012  0.1497 -2.49451 -1.9079 5.663e-49</span></span>
+<span><span class="co">#&gt; time3  -1.4943  0.1447 -1.77790 -1.2107 5.329e-25</span></span>
+<span><span class="co">#&gt; time4  -3.1848  0.2594 -3.69322 -2.6764 1.200e-34</span></span>
+<span><span class="co">#&gt; time5  -1.3539  0.1636 -1.67443 -1.0333 1.260e-16</span></span>
+<span><span class="co">#&gt; time6  -0.6973  0.1671 -1.02478 -0.3699 2.997e-05</span></span>
+<span><span class="co">#&gt; X1      0.9283  0.1159  0.70119  1.1553 1.125e-15</span></span>
+<span><span class="co">#&gt; X2      0.7191  0.1152  0.49326  0.9449 4.338e-10</span></span>
+<span><span class="co">#&gt; X3      0.4306  0.1143  0.20654  0.6546 1.654e-04</span></span>
+<span><span class="co">#&gt; X4      0.2950  0.1140  0.07156  0.5184 9.659e-03</span></span>
 <span></span>
 <span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/haplo.surv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -352,18 +352,18 @@
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          highr_0.9           bslib_0.4.0        </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.2.1      jquerylib_0.1.4     tools_4.2.1        </span></span>
-<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.15      </span></span>
-<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.4        </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.16      </span></span>
+<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.5        </span></span>
 <span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.3.0           parallel_4.2.1     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.5          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.31           fastmap_1.1.0       stringr_1.4.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.39          desc_1.4.1          fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.15.1     </span></span>
+<span><span class="co">#&gt; [19] xfun_0.32           fastmap_1.1.0       stringr_1.4.1      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.40          desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.16.1     </span></span>
 <span><span class="co">#&gt; [28] rprojroot_2.0.3     grid_4.2.1          listenv_0.8.0      </span></span>
 <span><span class="co">#&gt; [31] R6_2.5.1            textshaping_0.3.6   parallelly_1.32.1  </span></span>
-<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.14      purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.16      purrr_0.3.4        </span></span>
 <span><span class="co">#&gt; [37] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.3    </span></span>
-<span><span class="co">#&gt; [40] splines_4.2.1       future_1.27.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [40] splines_4.2.1       future_1.28.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [43] ragg_1.2.2          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>

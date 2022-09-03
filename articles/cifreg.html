@@ -120,7 +120,7 @@
       <h1 data-toc-skip>Cumulative Incidence Regression</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-08-03</h4>
+            <h4 data-toc-skip class="date">2022-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/cifreg.Rmd" class="external-link"><code>vignettes/cifreg.Rmd</code></a></small>
       <div class="hidden name"><code>cifreg.Rmd</code></div>
@@ -152,15 +152,15 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
 <span></span>
 <span> <span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">4000</span></span>
+<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span> <span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>,<span class="op">-</span><span class="fl">0.1</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
 <span> <span class="co">## beta1=c(0.0,-0.1); beta2=c(-0.5,0.3)</span></span>
 <span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dats</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
-<span><span class="co">#&gt;    0    1    2 </span></span>
-<span><span class="co">#&gt; 1184  147 2669</span></span>
+<span><span class="co">#&gt;   0   1   2 </span></span>
+<span><span class="co">#&gt; 127  12 261</span></span>
 <span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">dats</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">time</span></span></code></pre></div>
 <p>We have a look at the non-parametric cumulative incidence curves</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -176,19 +176,19 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <code class="sourceCode R"><span> <span class="va">fg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.068822  0.081846  0.082637  0.4004</span></span>
-<span><span class="co">#&gt; Z2 -0.368080  0.166064  0.167404  0.0267</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.69686  0.38760  0.38882  0.0722</span></span>
+<span><span class="co">#&gt; Z2 -0.85929  0.62453  0.61478  0.1689</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.07125 0.91248 1.2576</span></span>
-<span><span class="co">#&gt; Z2  0.69206 0.49979 0.9583</span></span>
+<span><span class="co">#&gt; Z1  2.00744 0.93911 4.2911</span></span>
+<span><span class="co">#&gt; Z2  0.42346 0.12451 1.4402</span></span>
 <span></span>
 <span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Z1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,Z2<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="va">pfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fg</span>,<span class="va">dd</span><span class="op">)</span></span>
@@ -206,11 +206,11 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span><span class="va">Biid</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu"><a href="../reference/cifreg.html">iid.baseline.cifreg</a></span><span class="op">(</span><span class="va">fg</span>,time<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">pfgse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">FGprediid</a></span><span class="op">(</span><span class="va">Biid</span>,<span class="va">dd</span><span class="op">)</span></span>
 <span><span class="va">pfgse</span></span>
-<span><span class="co">#&gt;            pred    se-log      lower      upper</span></span>
-<span><span class="co">#&gt; [1,] 0.08951308 0.1409136 0.06791108 0.11798651</span></span>
-<span><span class="co">#&gt; [2,] 0.10202580 0.1328646 0.07863493 0.13237456</span></span>
-<span><span class="co">#&gt; [3,] 0.06283755 0.1518146 0.04666534 0.08461436</span></span>
-<span><span class="co">#&gt; [4,] 0.07176982 0.1561657 0.05284615 0.09746985</span></span>
+<span><span class="co">#&gt;            pred    se-log       lower     upper</span></span>
+<span><span class="co">#&gt; [1,] 0.04253879 0.7418354 0.009938793 0.1820692</span></span>
+<span><span class="co">#&gt; [2,] 0.16069100 0.3946377 0.074143886 0.3482633</span></span>
+<span><span class="co">#&gt; [3,] 0.01823957 0.9410399 0.002884032 0.1153531</span></span>
+<span><span class="co">#&gt; [4,] 0.07149610 0.4611261 0.028958169 0.1765199</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">+</span><span class="va">i</span><span class="op">/</span><span class="fl">10</span>,<span class="va">pfgse</span><span class="op">[</span><span class="va">i</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,col<span class="op">=</span><span class="va">i</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cifreg_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
@@ -227,18 +227,18 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span> <span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,<span class="va">dats</span><span class="op">)</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
 <span> <span class="va">cr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dats</span>,<span class="fu"><a href="https://rdrr.io/pkg/cmprsk/man/crr.html" class="external-link">crr</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span>,<span class="va">mm</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">coef</span>,<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span>,<span class="va">fg</span><span class="op">$</span><span class="va">coef</span>,<span class="va">fg</span><span class="op">$</span><span class="va">se.coef</span>,<span class="va">cr</span><span class="op">$</span><span class="va">coef</span><span class="op">-</span><span class="va">fg</span><span class="op">$</span><span class="va">coef</span>,<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">fg</span><span class="op">$</span><span class="va">se.coef</span><span class="op">)</span></span>
+<span><span class="co">#          [,1]      [,2]       [,3]      [,4]          [,5]          [,6]</span></span>
+<span><span class="co"># Z1  0.6968603 0.3876029  0.6968603 0.3876029 -1.534155e-09 -7.811395e-10</span></span>
+<span><span class="co"># Z2 -0.8592892 0.6245258 -0.8592892 0.6245258  8.537615e-14  4.430734e-11</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#           [,1]       [,2]        [,3]       [,4]         [,5]          [,6]</span></span>
-<span><span class="co"># Z1  0.06882201 0.08184642  0.06882199 0.08184642 1.398233e-08 -9.805955e-11</span></span>
-<span><span class="co"># Z2 -0.36807861 0.16606441 -0.36807951 0.16606444 9.045060e-07 -2.529264e-08</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">run</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
 <span> <span class="va">fg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span>,beta<span class="op">=</span><span class="va">cr</span><span class="op">$</span><span class="va">coef</span>,no.opt<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span>,<span class="va">fg0</span><span class="op">$</span><span class="va">se.coef</span>,<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">fg0</span><span class="op">$</span><span class="va">se.coef</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#            [,1]       [,2]          [,3]</span></span>
-<span><span class="co"># [1,] 0.08184642 0.08184642 -8.975096e-11</span></span>
-<span><span class="co"># [2,] 0.16606441 0.16606441 -1.091264e-10</span></span></code></pre></div>
+<span><span class="co">#           [,1]      [,2]          [,3]</span></span>
+<span><span class="co"># [1,] 0.3876029 0.3876029 -8.881784e-16</span></span>
+<span><span class="co"># [2,] 0.6245258 0.6245258  3.330669e-16</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>When comparing with the results from the coxph based on setting up the data using the finegray function, we get the same estimates but note that the standard errors of the coxph is missing a term and therefore slightly different. When comparing to the estimates from coxph missing the additional censoring term we see that we get also the same standard errors</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">run</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
@@ -249,17 +249,17 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span></span>
 <span> <span class="va">fg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="va">coxfg</span><span class="op">$</span><span class="va">coef</span>,<span class="va">fg0</span><span class="op">$</span><span class="va">coef</span>, <span class="va">coxfg</span><span class="op">$</span><span class="va">coef</span><span class="op">-</span><span class="va">fg0</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#           [,1]        [,2]          [,3]</span></span>
-<span><span class="co"># Z1  0.06882199  0.06882199 -4.246603e-15</span></span>
-<span><span class="co"># Z2 -0.36807951 -0.36807951  2.908784e-14</span></span>
+<span><span class="co">#          [,1]       [,2]          [,3]</span></span>
+<span><span class="co"># Z1  0.6968603  0.6968603 -1.534153e-09</span></span>
+<span><span class="co"># Z2 -0.8592892 -0.8592892  8.726353e-14</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">coxfg</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span>,<span class="va">fg0</span><span class="op">$</span><span class="va">se.coef</span>,<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">coxfg</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">fg0</span><span class="op">$</span><span class="va">se.coef</span><span class="op">)</span></span>
-<span><span class="co">#            [,1]       [,2]         [,3]</span></span>
-<span><span class="co"># [1,] 0.08196556 0.08184642 1.191361e-04</span></span>
-<span><span class="co"># [2,] 0.16611225 0.16606444 4.781467e-05</span></span>
+<span><span class="co">#           [,1]      [,2]          [,3]</span></span>
+<span><span class="co"># [1,] 0.3889129 0.3876029  0.0013099907</span></span>
+<span><span class="co"># [2,] 0.6241225 0.6245258 -0.0004033148</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">coxfg</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span>,<span class="va">fg0</span><span class="op">$</span><span class="va">se1.coef</span>,<span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">coxfg</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">fg0</span><span class="op">$</span><span class="va">se1.coef</span><span class="op">)</span></span>
-<span><span class="co">#            [,1]       [,2]          [,3]</span></span>
-<span><span class="co"># [1,] 0.08196556 0.08196556 -9.714451e-17</span></span>
-<span><span class="co"># [2,] 0.16611225 0.16611225  7.494005e-16</span></span>
+<span><span class="co">#           [,1]      [,2]          [,3]</span></span>
+<span><span class="co"># [1,] 0.3889129 0.3889129 -7.839487e-10</span></span>
+<span><span class="co"># [2,] 0.6241225 0.6241225  4.448153e-11</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>We also remove all censorings from the data to compare the estimates with those based on coxph, and observe that the estimates as well as the standard errors agree</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -267,8 +267,8 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">datsnc</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
-<span><span class="co">#&gt;    1    2 </span></span>
-<span><span class="co">#&gt;  147 3853</span></span>
+<span><span class="co">#&gt;   1   2 </span></span>
+<span><span class="co">#&gt;  12 388</span></span>
 <span><span class="va">datsnc</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
 <span><span class="va">datsnc</span><span class="op">$</span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">max</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">dats</span><span class="op">$</span><span class="va">time</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span></span>
@@ -281,13 +281,13 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span><span class="va">cifnc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">datsnc</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datsncf</span>,robust<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cifnc</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cifnc</span><span class="op">$</span><span class="va">se.coef</span>, <span class="va">cc</span><span class="op">$</span><span class="va">coef</span>, <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1]       [,2]        [,3]       [,4]</span></span>
-<span><span class="co">#&gt; Z1  0.06785579 0.08251841  0.06785579 0.08251841</span></span>
-<span><span class="co">#&gt; Z2 -0.37911703 0.16716489 -0.37911703 0.16716489</span></span>
+<span><span class="co">#&gt;          [,1]      [,2]       [,3]      [,4]</span></span>
+<span><span class="co">#&gt; Z1  0.7376223 0.3962877  0.7376223 0.3962877</span></span>
+<span><span class="co">#&gt; Z2 -0.8211457 0.6308807 -0.8211457 0.6308807</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cifnc</span><span class="op">$</span><span class="va">coef</span><span class="op">-</span><span class="va">cc</span><span class="op">$</span><span class="va">coef</span>, <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">cifnc</span><span class="op">$</span><span class="va">se.coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            [,1]          [,2]</span></span>
-<span><span class="co">#&gt; Z1 1.859624e-15  1.387779e-16</span></span>
-<span><span class="co">#&gt; Z2 3.452794e-14 -6.661338e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; Z1 2.053291e-09 -1.048035e-09</span></span>
+<span><span class="co">#&gt; Z2 1.915135e-13  7.571810e-11</span></span></code></pre></div>
 <p>the cmprsk gives something slightly-slightly different</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">run</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
@@ -295,10 +295,10 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span> <span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,<span class="va">datsnc</span><span class="op">)</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
 <span> <span class="va">cr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">datsnc</span>,<span class="fu"><a href="https://rdrr.io/pkg/cmprsk/man/crr.html" class="external-link">crr</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span>,<span class="va">mm</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cifnc</span><span class="op">$</span><span class="va">coef</span><span class="op">-</span><span class="va">cr</span><span class="op">$</span><span class="va">coef</span>, <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">-</span><span class="va">cifnc</span><span class="op">$</span><span class="va">se.coef</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#             [,1]          [,2]</span></span>
-<span><span class="co"># Z1  1.194188e-10 -6.742754e-11</span></span>
-<span><span class="co"># Z2 -8.828051e-07 -2.488335e-08</span></span></code></pre></div>
+<span><span class="co">#            [,1]          [,2]</span></span>
+<span><span class="co"># Z1 2.053291e-09 -1.048037e-09</span></span>
+<span><span class="co"># Z2 1.926237e-13  7.571876e-11</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="strata-dependent-censoring-weights">Strata dependent Censoring weights<a class="anchor" aria-label="anchor" href="#strata-dependent-censoring-weights"></a>
@@ -309,34 +309,34 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span>        cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgcm</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.069400  0.078569  0.083018  0.3771</span></span>
-<span><span class="co">#&gt; Z2 -0.282263  0.159823  0.167928  0.0774</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.54277  0.37188  0.39352  0.1444</span></span>
+<span><span class="co">#&gt; Z2 -0.91846  0.61886  0.61447  0.1378</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.07186 0.91889 1.2503</span></span>
-<span><span class="co">#&gt; Z2  0.75408 0.55128 1.0315</span></span>
+<span><span class="co">#&gt; Z1  1.72077 0.83019 3.5667</span></span>
+<span><span class="co">#&gt; Z2  0.39913 0.11867 1.3424</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.068822  0.081846  0.082637  0.4004</span></span>
-<span><span class="co">#&gt; Z2 -0.368080  0.166064  0.167404  0.0267</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.69686  0.38760  0.38882  0.0722</span></span>
+<span><span class="co">#&gt; Z2 -0.85929  0.62453  0.61478  0.1689</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.07125 0.91248 1.2576</span></span>
-<span><span class="co">#&gt; Z2  0.69206 0.49979 0.9583</span></span></code></pre></div>
+<span><span class="co">#&gt; Z1  2.00744 0.93911 4.2911</span></span>
+<span><span class="co">#&gt; Z2  0.42346 0.12451 1.4402</span></span></code></pre></div>
 <p>We note that the standard errors are slightly smaller for the more efficient estimator.</p>
 <p>The influence functions of the FG-estimator is given by ,<br><span class="math display">\[\begin{align*}
 \phi_i^{FG}  &amp; = \int (X_i- e(t))  \tilde w_i(t) dM_{i1}(t,X_i)  + \int \frac{q(t)}{\pi(t)} dM_{ic}(t),  \\
@@ -359,53 +359,53 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <code class="sourceCode R"><span>  <span class="va">fgaugS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">FG_AugmentCifstrata</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fg</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.067458  0.077405  0.082633  0.3835</span></span>
-<span><span class="co">#&gt; Z2 -0.263816  0.155584  0.166147  0.0900</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.55614  0.29861  0.35607  0.0625</span></span>
+<span><span class="co">#&gt; Z2 -0.88438  0.61209  0.62011  0.1485</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;    Estimate    2.5% 97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.06979 0.91920 1.245</span></span>
-<span><span class="co">#&gt; Z2  0.76812 0.56623 1.042</span></span>
+<span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
+<span><span class="co">#&gt; Z1  1.74392 0.97128 3.1312</span></span>
+<span><span class="co">#&gt; Z2  0.41297 0.12442 1.3707</span></span>
 <span></span>
 <span>  <span class="va">fgaugS2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">FG_AugmentCifstrata</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.067484  0.077405  0.082633  0.3833</span></span>
-<span><span class="co">#&gt; Z2 -0.265099  0.155551  0.166160  0.0883</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.56000  0.29957  0.35687  0.0616</span></span>
+<span><span class="co">#&gt; Z2 -0.88347  0.61172  0.61993  0.1487</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.06981 0.91922 1.2451</span></span>
-<span><span class="co">#&gt; Z2  0.76713 0.56554 1.0406</span></span>
+<span><span class="co">#&gt; Z1  1.75068 0.97321 3.1492</span></span>
+<span><span class="co">#&gt; Z2  0.41335 0.12463 1.3709</span></span>
 <span></span>
 <span>  <span class="va">fgaugS3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">FG_AugmentCifstrata</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS2</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    147</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     12</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.067484  0.077405  0.082633  0.3833</span></span>
-<span><span class="co">#&gt; Z2 -0.265083  0.155551  0.166160  0.0884</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.55989  0.29954  0.35685  0.0616</span></span>
+<span><span class="co">#&gt; Z2 -0.88350  0.61173  0.61994  0.1487</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.06981 0.91922 1.2451</span></span>
-<span><span class="co">#&gt; Z2  0.76714 0.56555 1.0406</span></span></code></pre></div>
+<span><span class="co">#&gt; Z1  1.75047 0.97317 3.1487</span></span>
+<span><span class="co">#&gt; Z2  0.41333 0.12462 1.3709</span></span></code></pre></div>
 <p>Again we note slightly smaller standard errors when augmenting the estimator.</p>
 <p>The function  compute the augmentation term for fixed <span class="math inline">\(E(t)\)</span> based on the current <span class="math inline">\(\hat \beta\)</span> <span class="math display">\[\begin{align*}
  U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
@@ -426,14 +426,14 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 </h2>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">4000</span></span>
+<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span> <span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>,<span class="op">-</span><span class="fl">0.1</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
 <span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span>,type<span class="op">=</span><span class="st">"logistic"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dats</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
-<span><span class="co">#&gt;    0    1    2 </span></span>
-<span><span class="co">#&gt; 1668  159 2173</span></span>
+<span><span class="co">#&gt;   0   1   2 </span></span>
+<span><span class="co">#&gt; 166  13 221</span></span>
 <span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">dats</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">time</span></span></code></pre></div>
 <p>The model where <span class="math display">\[\begin{align*}
  \mbox{logit}(F_1(t,X)) &amp; =  \alpha(t) + X^T \beta
@@ -443,19 +443,19 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <code class="sourceCode R"><span> <span class="va">or</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">or</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000    159</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400     13</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  4000 clusters</span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.144583  0.082144  0.079903  0.0784</span></span>
-<span><span class="co">#&gt; Z2 -0.126192  0.163767  0.159062  0.4410</span></span>
+<span><span class="co">#&gt; Z1 -0.021671  0.280140  0.278754  0.9383</span></span>
+<span><span class="co">#&gt; Z2  0.459416  0.581451  0.570530  0.4295</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.15556 0.98372 1.3574</span></span>
-<span><span class="co">#&gt; Z2  0.88145 0.63944 1.2150</span></span></code></pre></div>
+<span><span class="co">#&gt; Z1  0.97856 0.56511 1.6945</span></span>
+<span><span class="co">#&gt; Z2  1.58315 0.50651 4.9483</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
@@ -485,18 +485,18 @@ F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \bet
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          highr_0.9           bslib_0.4.0        </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.2.1      jquerylib_0.1.4     tools_4.2.1        </span></span>
-<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.15      </span></span>
-<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.4        </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.16      </span></span>
+<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.5        </span></span>
 <span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.3.0           parallel_4.2.1     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.5          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.31           fastmap_1.1.0       stringr_1.4.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.39          desc_1.4.1          fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.15.1     </span></span>
+<span><span class="co">#&gt; [19] xfun_0.32           fastmap_1.1.0       stringr_1.4.1      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.40          desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.16.1     </span></span>
 <span><span class="co">#&gt; [28] rprojroot_2.0.3     grid_4.2.1          listenv_0.8.0      </span></span>
 <span><span class="co">#&gt; [31] R6_2.5.1            textshaping_0.3.6   parallelly_1.32.1  </span></span>
-<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.14      purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.16      purrr_0.3.4        </span></span>
 <span><span class="co">#&gt; [37] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.3    </span></span>
-<span><span class="co">#&gt; [40] splines_4.2.1       future_1.27.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [40] splines_4.2.1       future_1.28.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [43] ragg_1.2.2          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>

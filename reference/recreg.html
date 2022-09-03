@@ -218,7 +218,7 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span>         2               0    0</span>
 <span class="r-in"><span><span class="fu"><a href="dcut.html">dcut</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">gx</span><span class="op">~</span><span class="va">x</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu">recreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusG</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu">recreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusG</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n events</span>
@@ -227,16 +227,17 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1000 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x -0.032941  0.030874  0.026055   0.286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x -0.030137  0.040684  0.026317  0.4588</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate    2.5% 97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x  0.96760 0.91078 1.028</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate    2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x  0.97031 0.89595 1.0509</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## censoring stratified after quartiles of x</span></span></span>
-<span class="r-in"><span><span class="va">lls</span> <span class="op">&lt;-</span> <span class="fu">recreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>, <span class="va">stop</span>, <span class="va">statusG</span><span class="op">)</span> <span class="op">~</span> <span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gx</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lls</span> <span class="op">&lt;-</span> <span class="fu">recreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>, <span class="va">stop</span>, <span class="va">statusG</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span>              death.code<span class="op">=</span><span class="fl">3</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gx</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lls</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n events</span>
@@ -245,11 +246,11 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1000 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x -0.037166  0.031142  0.026081  0.2327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x -0.037876  0.038803  0.026484   0.329</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x  0.96352 0.90646 1.0242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x  0.96283 0.89232 1.0389</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>

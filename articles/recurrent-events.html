@@ -120,7 +120,7 @@
       <h1 data-toc-skip>Recurrent events</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-08-03</h4>
+            <h4 data-toc-skip class="date">2022-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/recurrent-events.Rmd" class="external-link"><code>vignettes/recurrent-events.Rmd</code></a></small>
       <div class="hidden name"><code>recurrent-events.Rmd</code></div>
@@ -250,36 +250,26 @@ Then the intensities are
 <span><span class="va">ddr</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span>
 <span><span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">base1cumhaz</span></span>
 <span><span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">base4cumhaz</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrent.html">simRecurrent</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrent.html">simRecurrent</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span><span class="op">)</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">strata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="op">(</span><span class="va">rr</span><span class="op">$</span><span class="va">id</span><span class="op">-</span><span class="fl">0.01</span><span class="op">)</span><span class="op">/</span><span class="fl">500</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dprint.html">dlist</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span> <span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">7</span>,<span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; id: 1</span></span>
 <span><span class="co">#&gt;   entry time  status rr dtime fdeath death start stop  x     strata</span></span>
-<span><span class="co">#&gt; 1 0     133.1 0      1  133.1 1      1     0     133.1 1.185 0     </span></span>
+<span><span class="co">#&gt; 1 0     132.6 0      1  132.6 1      1     0     132.6 1.386 0     </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] matrix array </span></span>
 <span><span class="co">#&gt; ------------------------------------------------------------ </span></span>
 <span><span class="co">#&gt; id: 7</span></span>
-<span><span class="co">#&gt;      entry  time   status rr dtime fdeath death start  stop   x       strata</span></span>
-<span><span class="co">#&gt; 7       0.0  813.3 1      1  1729  1      0        0.0  813.3  1.5495 0     </span></span>
-<span><span class="co">#&gt; 1004  813.3 1288.4 1      1  1729  1      0      813.3 1288.4  1.0535 0     </span></span>
-<span><span class="co">#&gt; 1658 1288.4 1315.4 1      1  1729  1      0     1288.4 1315.4  1.5330 0     </span></span>
-<span><span class="co">#&gt; 2150 1315.4 1449.4 1      1  1729  1      0     1315.4 1449.4  0.8944 0     </span></span>
-<span><span class="co">#&gt; 2539 1449.4 1726.1 1      1  1729  1      0     1449.4 1726.1 -0.1931 0     </span></span>
-<span><span class="co">#&gt; 2851 1726.1 1729.4 0      1  1729  1      1     1726.1 1729.4  0.4081 0     </span></span>
+<span><span class="co">#&gt;   entry time  status rr dtime fdeath death start stop  x      strata</span></span>
+<span><span class="co">#&gt; 7 0     141.3 0      1  141.3 1      1     0     141.3 0.6628 0     </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] matrix array </span></span>
 <span><span class="co">#&gt; ------------------------------------------------------------ </span></span>
 <span><span class="co">#&gt; id: 9</span></span>
-<span><span class="co">#&gt;      entry  time   status rr dtime fdeath death start  stop   x       strata</span></span>
-<span><span class="co">#&gt; 9       0.0  433.5 1      1  5110  0      0        0.0  433.5 -0.4660 0     </span></span>
-<span><span class="co">#&gt; 1006  433.5 2451.1 1      1  5110  0      0      433.5 2451.1  1.0647 0     </span></span>
-<span><span class="co">#&gt; 1659 2451.1 3629.7 1      1  5110  0      0     2451.1 3629.7 -0.2506 0     </span></span>
-<span><span class="co">#&gt; 2151 3629.7 3644.7 1      1  5110  0      0     3629.7 3644.7 -0.6748 0     </span></span>
-<span><span class="co">#&gt; 2540 3644.7 3695.8 1      1  5110  0      0     3644.7 3695.8  0.6510 0     </span></span>
-<span><span class="co">#&gt; 2852 3695.8 3890.7 1      1  5110  0      0     3695.8 3890.7 -0.2033 0     </span></span>
-<span><span class="co">#&gt; 3112 3890.7 5110.0 0      1  5110  0      0     3890.7 5110.0 -1.6981 0     </span></span>
+<span><span class="co">#&gt;     entry time  status rr dtime fdeath death start stop  x       strata</span></span>
+<span><span class="co">#&gt; 9     0.0 433.5 1      1  558.7 1      0       0.0 433.5 -0.7528 0     </span></span>
+<span><span class="co">#&gt; 204 433.5 558.7 0      1  558.7 1      1     433.5 558.7 -0.6565 0     </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] matrix array</span></span></code></pre></div>
 <p>The status variable keeps track of the recurrent evnts and their type, and death the timing of death.</p>
@@ -304,8 +294,8 @@ Then the intensities are
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span>,times<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   times  mean    se-mean  CI-2.5% CI-97.5% strata</span></span>
-<span><span class="co">#&gt; 1  1000 1.207 0.04227054 1.126929 1.292760      0</span></span>
-<span><span class="co">#&gt; 2  2000 1.922 0.06531928 1.798145 2.054386      0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1000 1.220 0.08472827 1.064739 1.397901      0</span></span>
+<span><span class="co">#&gt; 2  2000 1.915 0.14069906 1.658166 2.211615      0</span></span></code></pre></div>
 <p>The marginal mean can also be estimated in a stratified case:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
@@ -345,7 +335,7 @@ Then the intensities are
 </h2>
 <p>We now simulate some data where there is strong heterogenity such that we can improve the efficiency for censored survival data. The augmentation is a regression on the history for each subject consisting of any of the terms: Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt))</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,dependence<span class="op">=</span><span class="fl">4</span>,var.z<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,dependence<span class="op">=</span><span class="fl">4</span>,var.z<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="va">status</span><span class="op">)</span></span>
@@ -353,15 +343,15 @@ Then the intensities are
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">statusD</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">death</span>,level<span class="op">=</span><span class="fl">2</span>,response<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       statusD</span></span>
-<span><span class="co">#&gt; status    0    1    2    3</span></span>
-<span><span class="co">#&gt;      0  435    0    0  565</span></span>
-<span><span class="co">#&gt;      1    0 1479    0    0</span></span>
-<span><span class="co">#&gt;      2    0    0  159    0</span></span>
+<span><span class="co">#&gt; status   0   1   2   3</span></span>
+<span><span class="co">#&gt;      0  93   0   0 107</span></span>
+<span><span class="co">#&gt;      1   0 280   0   0</span></span>
+<span><span class="co">#&gt;      2   0   0  21   0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      statusD</span></span>
-<span><span class="co">#&gt; death    0    1    2    3</span></span>
-<span><span class="co">#&gt;     0  435 1479  159    0</span></span>
-<span><span class="co">#&gt;     1    0    0    0  565</span></span>
+<span><span class="co">#&gt; death   0   1   2   3</span></span>
+<span><span class="co">#&gt;     0  93 280  21   0</span></span>
+<span><span class="co">#&gt;     1   0   0   0 107</span></span>
 <span></span>
 <span><span class="va">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
 <span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">death</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
@@ -372,34 +362,33 @@ Then the intensities are
 <span><span class="va">recEFF1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginalAIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,times<span class="op">=</span><span class="va">times</span>,cens.code<span class="op">=</span><span class="fl">0</span>,</span>
 <span>                   death.code<span class="op">=</span><span class="fl">3</span>,cause<span class="op">=</span><span class="fl">1</span>,augment.model<span class="op">=</span><span class="op">~</span><span class="va">Nt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span> <span class="va">recEFF1</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">muP</span>,<span class="va">semuP</span>,<span class="va">muPAt</span>,<span class="va">semuPAt</span>,<span class="va">semuPAt</span><span class="op">/</span><span class="va">semuP</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times       muP      semuP     muPAt    semuPAt          </span></span>
-<span><span class="co">#&gt;  [1,]   500 0.8099811 0.04427280 0.8155553 0.04415881 0.9974252</span></span>
-<span><span class="co">#&gt;  [2,]  1000 1.1640264 0.06377420 1.1770393 0.06331799 0.9928466</span></span>
-<span><span class="co">#&gt;  [3,]  1500 1.5126545 0.09144809 1.5208357 0.08944860 0.9781352</span></span>
-<span><span class="co">#&gt;  [4,]  2000 1.8550719 0.12617094 1.8546776 0.12075953 0.9571104</span></span>
-<span><span class="co">#&gt;  [5,]  2500 2.1473347 0.16010164 2.1333956 0.15031682 0.9388837</span></span>
-<span><span class="co">#&gt;  [6,]  3000 2.4020526 0.18976754 2.3942104 0.17579359 0.9263628</span></span>
-<span><span class="co">#&gt;  [7,]  3500 2.5901158 0.21155061 2.5921086 0.19455930 0.9196820</span></span>
-<span><span class="co">#&gt;  [8,]  4000 2.7993623 0.24564706 2.7918248 0.22145427 0.9015140</span></span>
-<span><span class="co">#&gt;  [9,]  4500 2.9681828 0.27427211 2.9433477 0.24351052 0.8878428</span></span>
-<span><span class="co">#&gt; [10,]  5000 3.0599569 0.30242558 3.0400731 0.26709855 0.8831877</span></span>
+<span><span class="co">#&gt;       times       muP     semuP     muPAt   semuPAt          </span></span>
+<span><span class="co">#&gt;  [1,]   500 0.8419436 0.1138226 0.8342534 0.1127409 0.9904967</span></span>
+<span><span class="co">#&gt;  [2,]  1000 1.3259159 0.1602411 1.3135511 0.1579272 0.9855596</span></span>
+<span><span class="co">#&gt;  [3,]  1500 1.6739075 0.2079551 1.6549621 0.2031499 0.9768930</span></span>
+<span><span class="co">#&gt;  [4,]  2000 2.0087541 0.2758262 1.9898497 0.2655614 0.9627852</span></span>
+<span><span class="co">#&gt;  [5,]  2500 2.2542760 0.3558186 2.2286651 0.3314850 0.9316125</span></span>
+<span><span class="co">#&gt;  [6,]  3000 2.4916081 0.4659928 2.4404719 0.4112639 0.8825544</span></span>
+<span><span class="co">#&gt;  [7,]  3500 2.7141071 0.5380272 2.6399687 0.4557299 0.8470388</span></span>
+<span><span class="co">#&gt;  [8,]  4000 2.8031067 0.5786283 2.6534900 0.4763625 0.8232616</span></span>
+<span><span class="co">#&gt;  [9,]  4500 3.0701054 0.7255539 2.6940540 0.5318311 0.7330001</span></span>
+<span><span class="co">#&gt; [10,]  5000 3.2481045 0.7426535 2.6858796 0.4392249 0.5914264</span></span>
 <span></span>
 <span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fl">500</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">recEFF14</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginalAIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,times<span class="op">=</span><span class="va">times</span>,cens.code<span class="op">=</span><span class="fl">0</span>,</span>
 <span>death.code<span class="op">=</span><span class="fl">3</span>,cause<span class="op">=</span><span class="fl">1</span>,augment.model<span class="op">=</span><span class="op">~</span><span class="va">Nt</span><span class="op">+</span><span class="va">Nt2</span><span class="op">+</span><span class="va">expNt</span><span class="op">+</span><span class="va">NtexpNt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">recEFF14</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">muP</span>,<span class="va">semuP</span>,<span class="va">muPAt</span>,<span class="va">semuPAt</span>,<span class="va">semuPAt</span><span class="op">/</span><span class="va">semuP</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times       muP      semuP     muPAt    semuPAt          </span></span>
-<span><span class="co">#&gt;  [1,]   500 0.8099811 0.04427280 0.8156109 0.04413164 0.9968117</span></span>
-<span><span class="co">#&gt;  [2,]  1000 1.1640264 0.06377420 1.1742442 0.06322381 0.9913697</span></span>
-<span><span class="co">#&gt;  [3,]  1500 1.5126545 0.09144809 1.5167403 0.08923337 0.9757817</span></span>
-<span><span class="co">#&gt;  [4,]  2000 1.8550719 0.12617094 1.8459818 0.12025676 0.9531256</span></span>
-<span><span class="co">#&gt;  [5,]  2500 2.1473347 0.16010164 2.1251893 0.14932386 0.9326816</span></span>
-<span><span class="co">#&gt;  [6,]  3000 2.4020526 0.18976754 2.3673332 0.17486196 0.9214535</span></span>
-<span><span class="co">#&gt;  [7,]  3500 2.5901158 0.21155061 2.5249339 0.19321633 0.9133338</span></span>
-<span><span class="co">#&gt;  [8,]  4000 2.7993623 0.24564706 2.6982593 0.21817652 0.8881707</span></span>
-<span><span class="co">#&gt;  [9,]  4500 2.9681828 0.27427211 2.8188006 0.23694334 0.8638988</span></span>
-<span><span class="co">#&gt; [10,]  5000 3.0599569 0.30242558 2.9089871 0.25874482 0.8555652</span></span>
-<span></span>
+<span><span class="co">#&gt;       times       muP     semuP     muPAt   semuPAt          </span></span>
+<span><span class="co">#&gt;  [1,]   500 0.8419436 0.1138226 0.8388243 0.1124568 0.9880011</span></span>
+<span><span class="co">#&gt;  [2,]  1000 1.3259159 0.1602411 1.3247808 0.1568448 0.9788046</span></span>
+<span><span class="co">#&gt;  [3,]  1500 1.6739075 0.2079551 1.6758336 0.2006904 0.9650662</span></span>
+<span><span class="co">#&gt;  [4,]  2000 2.0087541 0.2758262 1.9920578 0.2601625 0.9432116</span></span>
+<span><span class="co">#&gt;  [5,]  2500 2.2542760 0.3558186 2.1803210 0.3181150 0.8940370</span></span>
+<span><span class="co">#&gt;  [6,]  3000 2.4916081 0.4659928 2.3329225 0.3817341 0.8191847</span></span>
+<span><span class="co">#&gt;  [7,]  3500 2.7141071 0.5380272 2.4139302 0.4081356 0.7585781</span></span>
+<span><span class="co">#&gt;  [8,]  4000 2.8031067 0.5786283 2.4434973 0.4192198 0.7245063</span></span>
+<span><span class="co">#&gt;  [9,]  4500 3.0701054 0.7255539 2.5321944 0.4266270 0.5880018</span></span>
+<span><span class="co">#&gt; [10,]  5000 3.2481045 0.7426535 2.5504732 0.2288128 0.3081016</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
@@ -414,6 +403,71 @@ Then the intensities are
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Eff-pred"</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p>In the case where covariates might be important but we are still interested in the marginal mean we can also augment wrt these covariates</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">simMarginalMeanCox</span><span class="op">(</span><span class="fl">200</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,Lam1<span class="op">=</span><span class="va">base1</span>,LamD<span class="op">=</span><span class="va">ddr</span>,beta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span><span class="op">)</span>,</span>
+<span>                betad<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.3</span>,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">statusG</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">death</span>,level<span class="op">=</span><span class="fl">2</span>,response<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       statusG</span></span>
+<span><span class="co">#&gt; status   0   1   3</span></span>
+<span><span class="co">#&gt;      0  95   0 105</span></span>
+<span><span class="co">#&gt;      1   0  87   0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      statusG</span></span>
+<span><span class="co">#&gt; death   0   1   3</span></span>
+<span><span class="co">#&gt;     0  95  87   0</span></span>
+<span><span class="co">#&gt;     1   0   0 105</span></span>
+<span></span>
+<span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">5000</span>,by<span class="op">=</span><span class="fl">500</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="va">status</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="fl">2</span>,<span class="va">death</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">statusD</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">death</span>,level<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       statusD</span></span>
+<span><span class="co">#&gt; status   0   1   2</span></span>
+<span><span class="co">#&gt;      0  95   0 105</span></span>
+<span><span class="co">#&gt;      1   0  87   0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      statusD</span></span>
+<span><span class="co">#&gt; death   0   1   2</span></span>
+<span><span class="co">#&gt;     0  95  87   0</span></span>
+<span><span class="co">#&gt;     1   0   0 105</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      status</span></span>
+<span><span class="co">#&gt; death   0   1</span></span>
+<span><span class="co">#&gt;     0  95  87</span></span>
+<span><span class="co">#&gt;     1 105   0</span></span>
+<span><span class="va">recEFF1x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginalAIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,times<span class="op">=</span><span class="va">times</span>,</span>
+<span>                   cens.code<span class="op">=</span><span class="fl">0</span>,death.code<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fl">1</span>,augment.model<span class="op">=</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">recEFF1x</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">muP</span>,<span class="va">muPA</span>,<span class="va">muPAt</span>,<span class="va">semuP</span>,<span class="va">semuPA</span>,<span class="va">semuPAt</span>,<span class="va">semuPAt</span><span class="op">/</span><span class="va">semuP</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             muP      muPA     muPAt      semuP     semuPA    semuPAt          </span></span>
+<span><span class="co">#&gt;  [1,] 0.1518353 0.1518529 0.1511457 0.02948052 0.02945165 0.02943720 0.9985304</span></span>
+<span><span class="co">#&gt;  [2,] 0.2562828 0.2596232 0.2557855 0.04004262 0.03996702 0.03989066 0.9962052</span></span>
+<span><span class="co">#&gt;  [3,] 0.3270346 0.3288994 0.3263434 0.05188583 0.05186797 0.05178425 0.9980422</span></span>
+<span><span class="co">#&gt;  [4,] 0.5023451 0.5037651 0.5056017 0.07203201 0.07179332 0.07145162 0.9919426</span></span>
+<span><span class="co">#&gt;  [5,] 0.7052234 0.6731841 0.6652085 0.11001917 0.10848677 0.10783477 0.9801453</span></span>
+<span><span class="co">#&gt;  [6,] 0.7867792 0.7353194 0.7162445 0.12817048 0.12572431 0.12428666 0.9696980</span></span>
+<span><span class="co">#&gt;  [7,] 0.9169280 0.8261260 0.7792783 0.15950878 0.15290158 0.15117680 0.9477648</span></span>
+<span><span class="co">#&gt;  [8,] 1.1224213 0.9802906 0.8780498 0.18229765 0.16276738 0.16036283 0.8796758</span></span>
+<span><span class="co">#&gt;  [9,] 1.3133061 1.1691099 0.9365609 0.23468133 0.20617317 0.20079447 0.8556048</span></span>
+<span><span class="co">#&gt; [10,] 1.3133061 1.2587935 0.9365609 0.23468133 0.20670560 0.20079447 0.8556048</span></span>
+<span></span>
+<span><span class="va">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
+<span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">death</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span><span class="op">)</span></span>
+<span><span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="../reference/prob.exceed.recurrent.html">summaryTimeobject</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">times</span>,<span class="va">out</span><span class="op">$</span><span class="va">mu</span>,times<span class="op">=</span><span class="va">times</span>,se.mu<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">se.mu</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    times      mean    se-mean   CI-2.5%  CI-97.5%</span></span>
+<span><span class="co">#&gt; 1    500 0.1518353 0.02948052 0.1037766 0.2221499</span></span>
+<span><span class="co">#&gt; 2   1000 0.2562828 0.04004262 0.1886783 0.3481103</span></span>
+<span><span class="co">#&gt; 3   1500 0.3270346 0.05188583 0.2396313 0.4463176</span></span>
+<span><span class="co">#&gt; 4   2000 0.5023451 0.07203201 0.3792668 0.6653642</span></span>
+<span><span class="co">#&gt; 5   2500 0.7052234 0.11001917 0.5194355 0.9574626</span></span>
+<span><span class="co">#&gt; 6   3000 0.7867792 0.12817048 0.5717223 1.0827312</span></span>
+<span><span class="co">#&gt; 7   3500 0.9169280 0.15950878 0.6520148 1.2894751</span></span>
+<span><span class="co">#&gt; 8   4000 1.1224213 0.18229765 0.8164052 1.5431425</span></span>
+<span><span class="co">#&gt; 9   4500 1.3133061 0.23468133 0.9252469 1.8641218</span></span>
+<span><span class="co">#&gt; 10  5000 1.3133061 0.23468133 0.9252469 1.8641218</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="regression-models-for-the-marginal-mean">Regression models for the marginal mean<a class="anchor" aria-label="anchor" href="#regression-models-for-the-marginal-mean"></a>
@@ -422,85 +476,34 @@ Then the intensities are
 E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}\]</span> then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets.</p>
 <p>First we generate data that from a cox model with <span class="math inline">\(\beta=(-0.3,0.3)\)</span></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">simMarginalMeanCox</span><span class="op">(</span><span class="fl">1000</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,Lam1<span class="op">=</span><span class="va">base1</span>,LamD<span class="op">=</span><span class="va">ddr</span>,beta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span><span class="op">)</span>,</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">simMarginalMeanCox</span><span class="op">(</span><span class="fl">200</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,Lam1<span class="op">=</span><span class="va">base1</span>,LamD<span class="op">=</span><span class="va">ddr</span>,beta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span><span class="op">)</span>,</span>
 <span>                betad<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.3</span>,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">statusG</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">death</span>,level<span class="op">=</span><span class="fl">2</span>,response<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       statusG</span></span>
 <span><span class="co">#&gt; status   0   1   3</span></span>
-<span><span class="co">#&gt;      0 437   0 563</span></span>
-<span><span class="co">#&gt;      1   0 304   0</span></span>
+<span><span class="co">#&gt;      0 100   0 100</span></span>
+<span><span class="co">#&gt;      1   0  65   0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      statusG</span></span>
 <span><span class="co">#&gt; death   0   1   3</span></span>
-<span><span class="co">#&gt;     0 437 304   0</span></span>
-<span><span class="co">#&gt;     1   0   0 563</span></span>
+<span><span class="co">#&gt;     0 100  65   0</span></span>
+<span><span class="co">#&gt;     1   0   0 100</span></span>
 <span></span>
 <span> <span class="va">out</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recreg.html">recreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusG</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">3</span>,cens.code<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span> <span class="va">outs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recreg.html">recreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusG</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">3</span>,cens.code<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">X1</span>,<span class="va">X2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span></span>
-<span><span class="co">#&gt;      Estimate      S.E.   dU^-1/2    P-value</span></span>
-<span><span class="co">#&gt; X1  0.2919020 0.1374571 0.1152286 0.03370476</span></span>
-<span><span class="co">#&gt; X2 -0.1707304 0.1371473 0.1152148 0.21318005</span></span>
+<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2   P-value</span></span>
+<span><span class="co">#&gt; X1 0.2679789 0.3584144 0.2522670 0.4546539</span></span>
+<span><span class="co">#&gt; X2 0.3531921 0.3352655 0.2492851 0.2921257</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outs</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span></span>
-<span><span class="co">#&gt;      Estimate      S.E.   dU^-1/2    P-value</span></span>
-<span><span class="co">#&gt; X1  0.3500547 0.1424913 0.1156087 0.01402297</span></span>
-<span><span class="co">#&gt; X2 -0.1322910 0.1408327 0.1154608 0.34755175</span></span></code></pre></div>
+<span><span class="co">#&gt;     Estimate      S.E.   dU^-1/2   P-value</span></span>
+<span><span class="co">#&gt; X1 0.2613928 0.3440964 0.2567159 0.4474639</span></span>
+<span><span class="co">#&gt; X2 0.1125436 0.3199334 0.2613827 0.7250093</span></span></code></pre></div>
 <p>We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values.</p>
-<p>In the case where covariates might be important but we are still interested in the marginal mean we can also augment wrt these covariates</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">5000</span>,by<span class="op">=</span><span class="fl">500</span><span class="op">)</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="va">status</span><span class="op">)</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="fl">2</span>,<span class="va">death</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">statusD</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">death</span>,level<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       statusD</span></span>
-<span><span class="co">#&gt; status   0   1   2</span></span>
-<span><span class="co">#&gt;      0 437   0 563</span></span>
-<span><span class="co">#&gt;      1   0 304   0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      statusD</span></span>
-<span><span class="co">#&gt; death   0   1   2</span></span>
-<span><span class="co">#&gt;     0 437 304   0</span></span>
-<span><span class="co">#&gt;     1   0   0 563</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      status</span></span>
-<span><span class="co">#&gt; death   0   1</span></span>
-<span><span class="co">#&gt;     0 437 304</span></span>
-<span><span class="co">#&gt;     1 563   0</span></span>
-<span><span class="va">recEFF1x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginalAIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,times<span class="op">=</span><span class="va">times</span>,</span>
-<span>                   cens.code<span class="op">=</span><span class="fl">0</span>,death.code<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fl">1</span>,augment.model<span class="op">=</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">recEFF1x</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">muP</span>,<span class="va">muPA</span>,<span class="va">muPAt</span>,<span class="va">semuP</span>,<span class="va">semuPA</span>,<span class="va">semuPAt</span>,<span class="va">semuPAt</span><span class="op">/</span><span class="va">semuP</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             muP      muPA     muPAt      semuP     semuPA    semuPAt          </span></span>
-<span><span class="co">#&gt;  [1,] 0.1147423 0.1151143 0.1151398 0.01193854 0.01193666 0.01193555 0.9997489</span></span>
-<span><span class="co">#&gt;  [2,] 0.2093680 0.2088276 0.2098622 0.01816394 0.01815826 0.01815255 0.9993730</span></span>
-<span><span class="co">#&gt;  [3,] 0.3151161 0.3162203 0.3161674 0.02528543 0.02522463 0.02520612 0.9968634</span></span>
-<span><span class="co">#&gt;  [4,] 0.3939007 0.3937156 0.3944516 0.02993171 0.02986776 0.02984273 0.9970270</span></span>
-<span><span class="co">#&gt;  [5,] 0.5010551 0.5019135 0.5020025 0.03667636 0.03666325 0.03662622 0.9986328</span></span>
-<span><span class="co">#&gt;  [6,] 0.5557224 0.5562616 0.5567755 0.04257590 0.04252213 0.04246203 0.9973255</span></span>
-<span><span class="co">#&gt;  [7,] 0.6314370 0.6296025 0.6259783 0.05176335 0.05155855 0.05142817 0.9935247</span></span>
-<span><span class="co">#&gt;  [8,] 0.7493053 0.7336486 0.7316662 0.06711802 0.06642056 0.06600760 0.9834558</span></span>
-<span><span class="co">#&gt;  [9,] 0.7961338 0.7849639 0.7780904 0.06935809 0.06909078 0.06831049 0.9848959</span></span>
-<span><span class="co">#&gt; [10,] 0.8691580 0.8668636 0.8284341 0.09548653 0.09412879 0.09277266 0.9715785</span></span>
-<span></span>
-<span><span class="va">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
-<span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">death</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span><span class="op">)</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span><span class="op">)</span></span>
-<span><span class="fu">mets</span><span class="fu">::</span><span class="fu"><a href="../reference/prob.exceed.recurrent.html">summaryTimeobject</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">times</span>,<span class="va">out</span><span class="op">$</span><span class="va">mu</span>,times<span class="op">=</span><span class="va">times</span>,se.mu<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">se.mu</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    times      mean    se-mean    CI-2.5%  CI-97.5%</span></span>
-<span><span class="co">#&gt; 1    500 0.1147423 0.01193854 0.09357441 0.1406986</span></span>
-<span><span class="co">#&gt; 2   1000 0.2093680 0.01816394 0.17662902 0.2481753</span></span>
-<span><span class="co">#&gt; 3   1500 0.3151161 0.02528543 0.26925732 0.3687853</span></span>
-<span><span class="co">#&gt; 4   2000 0.3939007 0.02993171 0.33939425 0.4571608</span></span>
-<span><span class="co">#&gt; 5   2500 0.5010551 0.03667636 0.43408806 0.5783531</span></span>
-<span><span class="co">#&gt; 6   3000 0.5557224 0.04257590 0.47823690 0.6457624</span></span>
-<span><span class="co">#&gt; 7   3500 0.6314370 0.05176335 0.53771201 0.7414985</span></span>
-<span><span class="co">#&gt; 8   4000 0.7493053 0.06711802 0.62865469 0.8931110</span></span>
-<span><span class="co">#&gt; 9   4500 0.7961338 0.06935809 0.67116481 0.9443716</span></span>
-<span><span class="co">#&gt; 10  5000 0.8691580 0.09548653 0.70078242 1.0779888</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="other-marginal-properties">Other marginal properties<a class="anchor" aria-label="anchor" href="#other-marginal-properties"></a>
@@ -537,14 +540,14 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <p>To compute these estimators we need to set up the data by computing the number of previous events of type “1” by the count.history function</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###cor.mat &lt;- corM &lt;- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">5000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,dependence<span class="op">=</span><span class="fl">4</span>,var.z<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,dependence<span class="op">=</span><span class="fl">4</span>,var.z<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       status    0    1    2</span></span>
-<span><span class="co">#&gt; death                      </span></span>
-<span><span class="co">#&gt; 0            2157 7605  872</span></span>
-<span><span class="co">#&gt; 1            2843    0    0</span></span>
+<span><span class="co">#&gt;       status   0   1   2</span></span>
+<span><span class="co">#&gt; death                   </span></span>
+<span><span class="co">#&gt; 0            106 333  31</span></span>
+<span><span class="co">#&gt; 1             94   0   0</span></span>
 <span></span>
 <span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceedRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">oo</span><span class="op">)</span></span></code></pre></div>
@@ -564,52 +567,31 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <p><img src="recurrent-events_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">summaryTimeobject</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">times</span>,<span class="va">oop</span><span class="op">$</span><span class="va">prob</span>,se.mu<span class="op">=</span><span class="va">oop</span><span class="op">$</span><span class="va">se.prob</span>,times<span class="op">=</span><span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="co">#&gt;            times         mean      se-mean      CI-2.5%    CI-97.5%</span></span>
-<span><span class="co">#&gt; N=0         1000 0.5127738105 0.0077164038 4.978705e-01 0.528123213</span></span>
-<span><span class="co">#&gt; exceed&gt;=1   1000 0.4872261895 0.0077164038 4.723344e-01 0.502587526</span></span>
-<span><span class="co">#&gt; exceed&gt;=2   1000 0.2788206588 0.0071787699 2.650994e-01 0.293252120</span></span>
-<span><span class="co">#&gt; exceed&gt;=3   1000 0.1702857903 0.0060945071 1.587499e-01 0.182659963</span></span>
-<span><span class="co">#&gt; exceed&gt;=4   1000 0.1059473584 0.0050806723 9.644290e-02 0.116388477</span></span>
-<span><span class="co">#&gt; exceed&gt;=5   1000 0.0623362209 0.0040194731 5.493556e-02 0.070733869</span></span>
-<span><span class="co">#&gt; exceed&gt;=6   1000 0.0396604930 0.0032866409 3.371462e-02 0.046654975</span></span>
-<span><span class="co">#&gt; exceed&gt;=7   1000 0.0249747581 0.0026491208 2.028668e-02 0.030746206</span></span>
-<span><span class="co">#&gt; exceed&gt;=8   1000 0.0167719544 0.0022004688 1.296894e-02 0.021690161</span></span>
-<span><span class="co">#&gt; exceed&gt;=9   1000 0.0102242474 0.0017294473 7.339165e-03 0.014243478</span></span>
-<span><span class="co">#&gt; exceed&gt;=10  1000 0.0068470224 0.0014316312 4.544879e-03 0.010315284</span></span>
-<span><span class="co">#&gt; exceed&gt;=11  1000 0.0044740435 0.0011588400 2.692917e-03 0.007433227</span></span>
-<span><span class="co">#&gt; exceed&gt;=12  1000 0.0029125793 0.0009232229 1.564807e-03 0.005421191</span></span>
-<span><span class="co">#&gt; exceed&gt;=13  1000 0.0017555185 0.0007181405 7.873954e-04 0.003913974</span></span>
-<span><span class="co">#&gt; exceed&gt;=14  1000 0.0015300712 0.0006862231 6.352555e-04 0.003685317</span></span>
-<span><span class="co">#&gt; exceed&gt;=15  1000 0.0012688420 0.0006351405 4.756815e-04 0.003384534</span></span>
-<span><span class="co">#&gt; exceed&gt;=16  1000 0.0009484191 0.0005481577 3.055079e-04 0.002944274</span></span>
-<span><span class="co">#&gt; exceed&gt;=17  1000 0.0009739122 0.0005626620 3.138650e-04 0.003022016</span></span>
-<span><span class="co">#&gt; exceed&gt;=18  1000 0.0006294385 0.0004449686 1.574718e-04 0.002515960</span></span>
-<span><span class="co">#&gt; exceed&gt;=19  1000 0.0003368723 0.0003367502 4.748503e-05 0.002389868</span></span>
-<span><span class="co">#&gt; exceed&gt;=20  1000 0.0003437671 0.0003436308 4.846015e-05 0.002438619</span></span>
-<span><span class="co">#&gt; exceed&gt;=21  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=22  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=23  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=24  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=25  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=26  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=27  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=28  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=29  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=30  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=31  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=32  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=33  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=34  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=35  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=36  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=37  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=38  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=39  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=40  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=41  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=42  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=43  1000 0.0000000000 0.0000000000          NaN         NaN</span></span>
-<span><span class="co">#&gt; exceed&gt;=44  1000 0.0000000000 0.0000000000          NaN         NaN</span></span></code></pre></div>
+<span><span class="co">#&gt;            times        mean     se-mean     CI-2.5%   CI-97.5%</span></span>
+<span><span class="co">#&gt; N=0         1000 0.480467585 0.040739041 0.406901268 0.56733443</span></span>
+<span><span class="co">#&gt; exceed&gt;=1   1000 0.519532415 0.040739041 0.445517335 0.60584383</span></span>
+<span><span class="co">#&gt; exceed&gt;=2   1000 0.291855819 0.037107797 0.227478818 0.37445165</span></span>
+<span><span class="co">#&gt; exceed&gt;=3   1000 0.211343529 0.034042683 0.154126400 0.28980166</span></span>
+<span><span class="co">#&gt; exceed&gt;=4   1000 0.148969406 0.030255486 0.100049753 0.22180848</span></span>
+<span><span class="co">#&gt; exceed&gt;=5   1000 0.091817280 0.024882086 0.053981910 0.15617108</span></span>
+<span><span class="co">#&gt; exceed&gt;=6   1000 0.046765356 0.017561743 0.022401009 0.09762946</span></span>
+<span><span class="co">#&gt; exceed&gt;=7   1000 0.039360920 0.015860441 0.017867680 0.08670863</span></span>
+<span><span class="co">#&gt; exceed&gt;=8   1000 0.026275556 0.012979453 0.009978663 0.06918811</span></span>
+<span><span class="co">#&gt; exceed&gt;=9   1000 0.020668856 0.011822177 0.006736543 0.06341556</span></span>
+<span><span class="co">#&gt; exceed&gt;=10  1000 0.014837717 0.010459184 0.003726830 0.05907375</span></span>
+<span><span class="co">#&gt; exceed&gt;=11  1000 0.007418664 0.007371104 0.001058194 0.05200989</span></span>
+<span><span class="co">#&gt; exceed&gt;=12  1000 0.007515010 0.007463180 0.001072959 0.05263517</span></span>
+<span><span class="co">#&gt; exceed&gt;=13  1000 0.007613891 0.007560521 0.001087317 0.05331595</span></span>
+<span><span class="co">#&gt; exceed&gt;=14  1000 0.009420701 0.009345693 0.001347856 0.06584503</span></span>
+<span><span class="co">#&gt; exceed&gt;=15  1000 0.009601868 0.009519328 0.001375485 0.06702790</span></span>
+<span><span class="co">#&gt; exceed&gt;=16  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=17  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=18  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=19  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=20  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=21  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=22  1000 0.000000000 0.000000000         NaN        NaN</span></span>
+<span><span class="co">#&gt; exceed&gt;=23  1000 0.000000000 0.000000000         NaN        NaN</span></span></code></pre></div>
 <p>We note from the plot that the estimates are quite similar.</p>
 <p>Finally, we make a plot with 95% confidence intervals</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -623,14 +605,14 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 </h2>
 <p>We now generate recurrent events with two types of events. We start by generating data as before where all events are independent.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,cumhaz2<span class="op">=</span><span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,cumhaz2<span class="op">=</span><span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">ddr</span><span class="op">)</span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       status    0    1    2</span></span>
-<span><span class="co">#&gt; death                      </span></span>
-<span><span class="co">#&gt; 0             145 3093  440</span></span>
-<span><span class="co">#&gt; 1             855    0    0</span></span></code></pre></div>
+<span><span class="co">#&gt;       status   0   1   2</span></span>
+<span><span class="co">#&gt; death                   </span></span>
+<span><span class="co">#&gt; 0             32 684 110</span></span>
+<span><span class="co">#&gt; 1            168   0   0</span></span></code></pre></div>
 <p>Based on this we can estimate also the joint distribution function, that is the probability that <span class="math inline">\((N_1(t) \geq k_1, N_2(t) \geq k_2)\)</span></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Bivariate probability of exceeding </span></span>
@@ -697,10 +679,10 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <code class="sourceCode R"><span><span class="va">rr</span><span class="op">$</span><span class="va">strata</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       status    0    1    2</span></span>
-<span><span class="co">#&gt; death                      </span></span>
-<span><span class="co">#&gt; 0             145 3093  440</span></span>
-<span><span class="co">#&gt; 1             855    0    0</span></span>
+<span><span class="co">#&gt;       status   0   1   2</span></span>
+<span><span class="co">#&gt; death                   </span></span>
+<span><span class="co">#&gt; 0             32 684 110</span></span>
+<span><span class="co">#&gt; 1            168   0   0</span></span>
 <span></span>
 <span><span class="va">covrp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,death<span class="op">=</span><span class="st">"death"</span>,</span>
 <span>                        start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span>,id<span class="op">=</span><span class="st">"id"</span>,names.count<span class="op">=</span><span class="st">"Count"</span><span class="op">)</span></span>
@@ -729,37 +711,15 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span><span class="va">mu1.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/internal-addreg.html" class="external-link">Cpred</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">coo1</span><span class="op">$</span><span class="va">time</span>,<span class="va">coo1</span><span class="op">$</span><span class="va">mu1.2</span><span class="op">)</span>,<span class="va">times</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
 <span><span class="va">mu1.i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/internal-addreg.html" class="external-link">Cpred</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">coo1</span><span class="op">$</span><span class="va">time</span>,<span class="va">coo1</span><span class="op">$</span><span class="va">mu1.i</span><span class="op">)</span>,<span class="va">times</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">mu2.1</span>,<span class="va">mu2.i</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times      mu2.1      mu2.i</span></span>
-<span><span class="co">#&gt;  [1,]   500 0.03500984 0.03735664</span></span>
-<span><span class="co">#&gt;  [2,]  1000 0.12305453 0.12838337</span></span>
-<span><span class="co">#&gt;  [3,]  1500 0.26915936 0.28950065</span></span>
-<span><span class="co">#&gt;  [4,]  2000 0.34423043 0.36199426</span></span>
-<span><span class="co">#&gt;  [5,]  2500 0.59154109 0.57609878</span></span>
-<span><span class="co">#&gt;  [6,]  3000 0.85692433 0.84625457</span></span>
-<span><span class="co">#&gt;  [7,]  3500 1.17445317 1.17992551</span></span>
-<span><span class="co">#&gt;  [8,]  4000 1.29869975 1.30130401</span></span>
-<span><span class="co">#&gt;  [9,]  4500 1.42196867 1.41349721</span></span>
-<span><span class="co">#&gt; [10,]  5000 1.74473941 1.70889475</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">mu1.2</span>,<span class="va">mu1.i</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times      mu1.2      mu1.i</span></span>
-<span><span class="co">#&gt;  [1,]   500 0.02000438 0.02549721</span></span>
-<span><span class="co">#&gt;  [2,]  1000 0.08203487 0.09005970</span></span>
-<span><span class="co">#&gt;  [3,]  1500 0.18410927 0.20858814</span></span>
-<span><span class="co">#&gt;  [4,]  2000 0.32223933 0.34163862</span></span>
-<span><span class="co">#&gt;  [5,]  2500 0.45941366 0.48856743</span></span>
-<span><span class="co">#&gt;  [6,]  3000 0.60762419 0.63159765</span></span>
-<span><span class="co">#&gt;  [7,]  3500 0.82999659 0.82900986</span></span>
-<span><span class="co">#&gt;  [8,]  4000 1.01937518 1.04139624</span></span>
-<span><span class="co">#&gt;  [9,]  4500 1.14264257 1.16829849</span></span>
-<span><span class="co">#&gt; [10,]  5000 1.24489171 1.26414044</span></span></code></pre></div>
-<p>To get the bootstrap standard errors there is a quick memory demanding function (with S for speed and strata) BootcovariancerecurrenceS and slow function that goes through the loops in R Bootcovariancerecurrence.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">mu1.2</span>,<span class="va">mu1.i</span><span class="op">)</span></span></code></pre></div>
+<p>To get the bootstrap standard errors there is a quick memory demanding function (with S for speed and strata) BootcovariancerecurrenceS and slower function that goes through the loops in R Bootcovariancerecurrence.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bt1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">BootcovariancerecurrenceS</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span>,K<span class="op">=</span><span class="fl">100</span>,times<span class="op">=</span><span class="va">times</span><span class="op">)</span></span>
 <span><span class="co">#bt1 &lt;- Bootcovariancerecurrence(rr,1,2,status="status",start="entry",stop="time",K=K,times=times)</span></span>
 <span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bt1<span class="op">=</span><span class="va">bt1</span>,mug<span class="op">=</span><span class="va">mug</span>,mui<span class="op">=</span><span class="va">mui</span>,</span>
-<span>               bse.mug<span class="op">=</span><span class="va">bt1</span><span class="op">$</span><span class="va">se.mug</span>,bse.mui<span class="op">=</span><span class="va">bt1</span><span class="op">$</span><span class="va">se.mui</span>,</span>
-<span>               dmugi<span class="op">=</span><span class="va">mug</span><span class="op">-</span><span class="va">mui</span>,</span>
+<span><span class="va">BCoutput</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bt1<span class="op">=</span><span class="va">bt1</span>,mug<span class="op">=</span><span class="va">mug</span>,mui<span class="op">=</span><span class="va">mui</span>,</span>
+<span>        bse.mug<span class="op">=</span><span class="va">bt1</span><span class="op">$</span><span class="va">se.mug</span>,bse.mui<span class="op">=</span><span class="va">bt1</span><span class="op">$</span><span class="va">se.mui</span>,</span>
+<span>        dmugi<span class="op">=</span><span class="va">mug</span><span class="op">-</span><span class="va">mui</span>,</span>
 <span>    bse.dmugi<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">bt1</span><span class="op">$</span><span class="va">EN1N2</span><span class="op">-</span><span class="va">bt1</span><span class="op">$</span><span class="va">EIN1N2</span>,<span class="fl">1</span>,<span class="va">sd</span><span class="op">)</span>,</span>
 <span>    mu2.1 <span class="op">=</span> <span class="va">mu2.1</span> , mu2.i <span class="op">=</span> <span class="va">mu2.i</span> , dmu2.i<span class="op">=</span><span class="va">mu2.1</span><span class="op">-</span><span class="va">mu2.i</span>,</span>
 <span>    mu1.2 <span class="op">=</span> <span class="va">mu1.2</span> , mu1.i <span class="op">=</span> <span class="va">mu1.i</span> , dmu1.i<span class="op">=</span><span class="va">mu1.2</span><span class="op">-</span><span class="va">mu1.i</span>,</span>
@@ -770,41 +730,18 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span>    <span class="op">)</span></span></code></pre></div>
 <p>We then look at the test for overall dependence in the different time-points. We here have no suggestion of dependence.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tt</span>  <span class="op">&lt;-</span> <span class="va">output</span><span class="op">$</span><span class="va">dmugi</span><span class="op">/</span><span class="va">output</span><span class="op">$</span><span class="va">bse.dmugi</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times           </span></span>
-<span><span class="co">#&gt;  [1,]   500 0.34113114</span></span>
-<span><span class="co">#&gt;  [2,]  1000 0.40525924</span></span>
-<span><span class="co">#&gt;  [3,]  1500 0.07564976</span></span>
-<span><span class="co">#&gt;  [4,]  2000 0.16705716</span></span>
-<span><span class="co">#&gt;  [5,]  2500 0.68177895</span></span>
-<span><span class="co">#&gt;  [6,]  3000 0.73332173</span></span>
-<span><span class="co">#&gt;  [7,]  3500 0.91179062</span></span>
-<span><span class="co">#&gt;  [8,]  4000 0.58436133</span></span>
-<span><span class="co">#&gt;  [9,]  4500 0.69136433</span></span>
-<span><span class="co">#&gt; [10,]  5000 0.72050942</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tt</span>  <span class="op">&lt;-</span> <span class="va">BCoutput</span><span class="op">$</span><span class="va">dmugi</span><span class="op">/</span><span class="va">BCoutput</span><span class="op">$</span><span class="va">bse.dmugi</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We can also take out the specific components for whether <span class="math inline">\(N_1\)</span> is predictive for <span class="math inline">\(N_2\)</span> and vice versa. We here have no suggestion of dependence.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">t21</span>  <span class="op">&lt;-</span> <span class="va">output</span><span class="op">$</span><span class="va">dmu1.i</span><span class="op">/</span><span class="va">output</span><span class="op">$</span><span class="va">bse.dmu1.i</span> </span>
-<span><span class="va">t12</span>  <span class="op">&lt;-</span> <span class="va">output</span><span class="op">$</span><span class="va">dmu2.i</span><span class="op">/</span><span class="va">output</span><span class="op">$</span><span class="va">bse.dmu2.i</span> </span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">t21</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">t12</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       times                     </span></span>
-<span><span class="co">#&gt;  [1,]   500 0.19856639 0.7287592</span></span>
-<span><span class="co">#&gt;  [2,]  1000 0.30112725 0.6779518</span></span>
-<span><span class="co">#&gt;  [3,]  1500 0.05621872 0.2753854</span></span>
-<span><span class="co">#&gt;  [4,]  2000 0.25519638 0.3681604</span></span>
-<span><span class="co">#&gt;  [5,]  2500 0.12941514 0.5648961</span></span>
-<span><span class="co">#&gt;  [6,]  3000 0.29933111 0.7411499</span></span>
-<span><span class="co">#&gt;  [7,]  3500 0.97101671 0.8756343</span></span>
-<span><span class="co">#&gt;  [8,]  4000 0.47487998 0.9415643</span></span>
-<span><span class="co">#&gt;  [9,]  4500 0.41836938 0.8014410</span></span>
-<span><span class="co">#&gt; [10,]  5000 0.54767357 0.3511342</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">t21</span>  <span class="op">&lt;-</span> <span class="va">BCoutput</span><span class="op">$</span><span class="va">dmu1.i</span><span class="op">/</span><span class="va">BCoutput</span><span class="op">$</span><span class="va">bse.dmu1.i</span> </span>
+<span><span class="va">t12</span>  <span class="op">&lt;-</span> <span class="va">BCoutput</span><span class="op">$</span><span class="va">dmu2.i</span><span class="op">/</span><span class="va">BCoutput</span><span class="op">$</span><span class="va">bse.dmu2.i</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">times</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">t21</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,<span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">t12</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We finally plot the boostrap samples</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">bt1</span><span class="op">$</span><span class="va">time</span>,<span class="va">bt1</span><span class="op">$</span><span class="va">EN1N2</span>,type<span class="op">=</span><span class="st">"l"</span>,lwd<span class="op">=</span><span class="fl">0.3</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">bt1</span><span class="op">$</span><span class="va">time</span>,<span class="va">bt1</span><span class="op">$</span><span class="va">EIN1N2</span>,type<span class="op">=</span><span class="st">"l"</span>,lwd<span class="op">=</span><span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">BCoutput</span><span class="op">$</span><span class="va">bt1</span><span class="op">$</span><span class="va">time</span>,<span class="va">BCoutput</span><span class="op">$</span><span class="va">bt1</span><span class="op">$</span><span class="va">EN1N2</span>,type<span class="op">=</span><span class="st">"l"</span>,lwd<span class="op">=</span><span class="fl">0.3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">BCoutput</span><span class="op">$</span><span class="va">bt1</span><span class="op">$</span><span class="va">time</span>,<span class="va">BCoutput</span><span class="op">$</span><span class="va">bt1</span><span class="op">$</span><span class="va">EIN1N2</span>,type<span class="op">=</span><span class="st">"l"</span>,lwd<span class="op">=</span><span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -826,26 +763,23 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span>  <span class="va">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="co"># death related to  both causes in same way </span></span>
 <span>  <span class="va">cor.mat</span> <span class="op">&lt;-</span> <span class="va">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fl">0.0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">3000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">rr</span>,<span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              [,1]         [,2]        [,3]</span></span>
-<span><span class="co">#&gt; [1,]  1.000000000 -0.005515873 -0.02744822</span></span>
-<span><span class="co">#&gt; [2,] -0.005515873  1.000000000  0.02841096</span></span>
-<span><span class="co">#&gt; [3,] -0.027448216  0.028410960  1.00000000</span></span>
 <span>  <span class="va">coo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coo</span>,main <span class="op">=</span><span class="st">"Scenario I"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-23-1.png" width="700"> * Scenario II <span class="math inline">\(\rho=(0,0.5,0.5)\)</span> Independence among survivors but dependence on terminal event</p>
+<ul>
+<li>Scenario II <span class="math inline">\(\rho=(0,0.5,0.5)\)</span> Independence among survivors but dependence on terminal event</li>
+</ul>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="va">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="co"># death related to  both causes in same way </span></span>
 <span>  <span class="va">cor.mat</span> <span class="op">&lt;-</span> <span class="va">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">3000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">coo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coo</span>,main <span class="op">=</span><span class="st">"Scenario II"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-24-1.png" width="700"></p>
 <ul>
 <li>Scenario III <span class="math inline">\(\rho=(0.5,0.5,0.5)\)</span> Positive dependence among survivors and dependence on terminal event</li>
 </ul>
@@ -853,12 +787,11 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <code class="sourceCode R"><span>  <span class="va">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="co"># positive dependence for N1 and N2 all related in same way</span></span>
 <span>  <span class="va">cor.mat</span> <span class="op">&lt;-</span> <span class="va">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">3000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">coo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coo</span>,main<span class="op">=</span><span class="st">"Scenario III"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-25-1.png" width="700"></p>
 <ul>
 <li>Scenario IV <span class="math inline">\(\rho=(-0.4,0.5,0.5)\)</span> Negative dependence among survivors and positive dependence on terminal event</li>
 </ul>
@@ -866,12 +799,11 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <code class="sourceCode R"><span>  <span class="va">var.z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="co"># negative dependence for N1 and N2 all related in same way</span></span>
 <span>  <span class="va">cor.mat</span> <span class="op">&lt;-</span> <span class="va">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">3000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">200</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,var.z<span class="op">=</span><span class="va">var.z</span>,cor.mat<span class="op">=</span><span class="va">cor.mat</span>,dependence<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">coo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/covarianceRecurrent.html">covarianceRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,status<span class="op">=</span><span class="st">"status"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coo</span>,main<span class="op">=</span><span class="st">"Scenario IV"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
@@ -901,18 +833,18 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          highr_0.9           bslib_0.4.0        </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.2.1      jquerylib_0.1.4     tools_4.2.1        </span></span>
-<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.15      </span></span>
-<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.4        </span></span>
+<span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.16      </span></span>
+<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.5        </span></span>
 <span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.3.0           parallel_4.2.1     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.5          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.31           fastmap_1.1.0       stringr_1.4.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.39          desc_1.4.1          fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.15.1     </span></span>
+<span><span class="co">#&gt; [19] xfun_0.32           fastmap_1.1.0       stringr_1.4.1      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.40          desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.16.1     </span></span>
 <span><span class="co">#&gt; [28] rprojroot_2.0.3     grid_4.2.1          listenv_0.8.0      </span></span>
 <span><span class="co">#&gt; [31] R6_2.5.1            textshaping_0.3.6   parallelly_1.32.1  </span></span>
-<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.14      purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.16      purrr_0.3.4        </span></span>
 <span><span class="co">#&gt; [37] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.3    </span></span>
-<span><span class="co">#&gt; [40] splines_4.2.1       future_1.27.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [40] splines_4.2.1       future_1.28.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [43] ragg_1.2.2          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>

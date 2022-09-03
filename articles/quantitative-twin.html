@@ -142,15 +142,14 @@
 <!--     highlight: pygments -->
 <p>This document provides a brief tutorial to analyzing twin data using the <strong><code>mets</code></strong> package:</p>
 <p><span class="math inline">\(\newcommand{\cov}{\mathbb{C}\text{ov}} \newcommand{\cor}{\mathbb{C}\text{or}} \newcommand{\var}{\mathbb{V}\text{ar}} \newcommand{\E}{\mathbb{E}} \newcommand{\unitfrac}[2]{#1/#2} \newcommand{\n}{}\)</span></p>
-<p>The development version may be installed from <em>github</em>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kkholst/mets"</span>, dependencies<span class="op">=</span><span class="st">"Suggests"</span><span class="op">)</span></span></code></pre></div>
+<p><!-- 
+ The development version may be installed from *github*: 
+ --></p>
 <div class="section level2">
 <h2 id="twin-analysis-continuous-traits">Twin analysis, continuous traits<a class="anchor" aria-label="anchor" href="#twin-analysis-continuous-traits"></a>
 </h2>
 <p>In the following we examine the heritability of Body Mass Index<sup id="b71edfd9bc946c317f4a732845bcaf93"><a href="#korkeila_bmi_1991" title="Korkeila, Kaprio, Rissanen \&amp; Koskenvuo, {{E}ffects of gender and age on the heritability of body mass index}, {Int J Obes}, v(10), 647--654 (1991).">korkeila_bmi_1991</a></sup><sup id="718839fcb6ade82ebb2d7de853582b80"><a href="#hjelmborg_bmi_2008" title="Hjelmborg, Fagnani, Silventoinen, McGue, Korkeila, Christensen, Rissanen \&amp; Kaprio, {{G}enetic influences on growth traits of {B}{M}{I}: a longitudinal study of adult twins}, {Obesity (Silver Spring)}, v(4), 847--852 (2008).">hjelmborg_bmi_2008</a></sup>, based on data on self-reported BMI-values from a random sample of 11,411 same-sex twins. First, we will load data</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"twinbmi"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">twinbmi</span><span class="op">)</span></span>
@@ -175,7 +174,7 @@
 <strong><code>zyg</code>:</strong> zygosity (MZ, DZ)</li>
 </ul>
 <p>We transpose the data allowing us to do pairwise analyses</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">twinwide</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast.reshape.html">fast.reshape</a></span><span class="op">(</span><span class="va">twinbmi</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>,varying<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">twinwide</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    tvparnr     bmi1      age gender zyg id num     bmi2</span></span>
@@ -187,7 +186,7 @@
 <span><span class="co">#&gt; 11       6 28.04282 52.52231   male  DZ  6   1 22.30936</span></span></code></pre></div>
 <p>Next we plot the association within each zygosity group</p>
 <p>We here show the log-transformed data which is slightly more symmetric and more appropiate for the twin analysis (see Figure @ref(fig:scatter1) and @ref(fig:scatter2))</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">scatterdens</span><span class="op">(</span><span class="va">mz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -195,7 +194,7 @@
 Scatter plot of logarithmic BMI measurements in MZ twins
 </p>
 </div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">scatterdens</span><span class="op">(</span><span class="va">dz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -204,7 +203,7 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 </p>
 </div>
 <p>The plots and raw association measures shows considerable stronger dependence in the MZ twins, thus indicating genetic influence of the trait</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="va">mz</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">mz</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, method<span class="op">=</span><span class="st">"spearman"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Spearman's rank correlation rho</span></span>
@@ -215,7 +214,7 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <span><span class="co">#&gt; sample estimates:</span></span>
 <span><span class="co">#&gt;       rho </span></span>
 <span><span class="co">#&gt; 0.6956209</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="va">dz</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">dz</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, method<span class="op">=</span><span class="st">"spearman"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Spearman's rank correlation rho</span></span>
@@ -227,18 +226,18 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <span><span class="co">#&gt;       rho </span></span>
 <span><span class="co">#&gt; 0.4012686</span></span></code></pre></div>
 <p>Ńext we examine the marginal distribution (GEE model with working independence)</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">-</span><span class="fl">40</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l0</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate  Std.Err    2.5%   97.5%    P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  23.3687 0.054534 23.2618 23.4756  0.000e+00</span></span>
 <span><span class="co">#&gt; gendermale    1.4077 0.073216  1.2642  1.5512  2.230e-82</span></span>
 <span><span class="co">#&gt; I(age - 40)   0.1177 0.004787  0.1083  0.1271 1.499e-133</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"splines"</span><span class="op">)</span></span>
 <span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">3</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
 <span><span class="va">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l1</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
 <span>        bmi<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span><span class="op">)</span>,</span>
@@ -314,21 +313,17 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
     0 &amp; \sigma_E^2
   \end{pmatrix}
 \end{gather*}\]</span></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">twinbmi</span><span class="op">)</span></span></code></pre></div>
+<p>Saturated model (different marginals in MZ and DZ twins and different marginals for twin 1 and twin 2):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">twinbmi</span><span class="op">)</span></span>
-<span><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"sat"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># different marginals (but within pair)</span></span>
-<span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>,DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"flex"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># same marginals but free correlation with MZ, DZ </span></span>
-<span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"u"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0</span></span>
+<code class="sourceCode R"><span><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"sat"</span><span class="op">)</span></span></code></pre></div>
+<p>Different marginals for MZ and DZ twins (but same marginals within a pair)</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>,DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"flex"</span><span class="op">)</span></span></code></pre></div>
+<p>Same marginals but free correlation with MZ, DZ</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"eqmarg"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%    P-value</span></span>
 <span><span class="co">#&gt; bmi.1@1               18.6037 0.251036 18.1116 19.0957  0.000e+00</span></span>
@@ -336,199 +331,48 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 <span><span class="co">#&gt; bmi.1~gendermale.1@1   1.3848 0.086573  1.2151  1.5544  1.376e-57</span></span>
 <span><span class="co">#&gt; log(var)@1             2.4424 0.022095  2.3991  2.4857  0.000e+00</span></span>
 <span><span class="co">#&gt; atanh(rhoMZ)@1         0.7803 0.036249  0.7092  0.8513 9.008e-103</span></span>
-<span><span class="co">#&gt; atanh(rhoDZ)@2         0.2987 0.020953  0.2576  0.3397  4.288e-46</span></span>
-<span></span>
-<span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">zyg</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"flex"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         bmi.1@1         bmi.1@2 bmi.1~zygMZ.1@1  log(var(MZ))@1  atanh(rhoMZ)@1 </span></span>
-<span><span class="co">#&gt;      24.5832961      24.6575702      -0.3968697       2.5289387       0.8362321 </span></span>
-<span><span class="co">#&gt; bmi.1~zygMZ.1@2  log(var(DZ))@2  atanh(rhoDZ)@2 </span></span>
-<span><span class="co">#&gt;      -0.3968692       2.5659593       0.3860756</span></span>
-<span></span>
-<span></span>
-<span><span class="co">###sink("lu-est-summary.txt")</span></span>
-<span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">zyg</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"u"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 1: MZ (n=1483)</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1~zygMZ.1        -0.47114    0.10242  -4.60001 4.225e-06</span></span>
-<span><span class="co">#&gt; Intercepts:                                                    </span></span>
-<span><span class="co">#&gt;    bmi.1                24.65757    0.05614 439.18694    &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                         </span></span>
-<span><span class="co">#&gt;    log(var)              2.55537    0.01699 150.37316    &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoMZ)          0.84865    0.02296  36.96325    &lt;1e-12</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 2: DZ (n=2788)</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1~zygMZ.1        -0.47114    0.10242  -4.60001 4.225e-06</span></span>
-<span><span class="co">#&gt; Intercepts:                                                    </span></span>
-<span><span class="co">#&gt;    bmi.1                24.65757    0.05614 439.18694    &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                         </span></span>
-<span><span class="co">#&gt;    log(var)              2.55537    0.01699 150.37316    &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoDZ)          0.38268    0.01847  20.71970    &lt;1e-12</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                        Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Correlation within MZ: 0.69036  0.66607 0.71319</span></span>
-<span><span class="co">#&gt; Correlation within DZ: 0.36503  0.33325 0.39598</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'log Lik.' -22355.15 (df=5)</span></span>
-<span><span class="co">#&gt; AIC: 44720.3 </span></span>
-<span><span class="co">#&gt; BIC: 44752.1</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span></span>
-<span><span class="co">#&gt; bmi.1@1          24.6576 0.05650 24.5468 24.7683  0.000e+00</span></span>
-<span><span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10155 -0.6702 -0.2721  3.489e-06</span></span>
-<span><span class="co">#&gt; log(var)@1        2.5554 0.02019  2.5158  2.5949  0.000e+00</span></span>
-<span><span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.03554  0.7790  0.9183 5.146e-126</span></span>
-<span><span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.02095  0.3416  0.4237  1.545e-74</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span></span>
-<span><span class="co">#&gt;            [,1]       [,2]        [,3]       [,4]        [,5]</span></span>
-<span><span class="co">#&gt; [1,] 0.05650271        NaN 0.019575810 0.01346928         NaN</span></span>
-<span><span class="co">#&gt; [2,]        NaN 0.10154621 0.004344490        NaN 0.015803415</span></span>
-<span><span class="co">#&gt; [3,] 0.01957581 0.00434449 0.020190842 0.01053796 0.006669272</span></span>
-<span><span class="co">#&gt; [4,] 0.01346928        NaN 0.010537960 0.03554047         NaN</span></span>
-<span><span class="co">#&gt; [5,]        NaN 0.01580342 0.006669272        NaN 0.020950321</span></span>
-<span><span class="co">###sink()</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               [,1]          [,2]          [,3]         [,4]          [,5]</span></span>
-<span><span class="co">#&gt; [1,]  3.152113e-03 -3.152113e-03  8.675207e-09 4.107098e-09  7.707495e-09</span></span>
-<span><span class="co">#&gt; [2,] -3.152113e-03  1.049033e-02 -3.974292e-10 3.391259e-09 -5.078859e-09</span></span>
-<span><span class="co">#&gt; [3,]  8.675207e-09 -3.974292e-10  2.887794e-04 1.367167e-04  9.170282e-05</span></span>
-<span><span class="co">#&gt; [4,]  4.107098e-09  3.391259e-09  1.367167e-04 5.271249e-04  4.341482e-05</span></span>
-<span><span class="co">#&gt; [5,]  7.707495e-09 -5.078859e-09  9.170282e-05 4.341482e-05  3.411139e-04</span></span>
-<span><span class="co">#&gt; attr(,"det")</span></span>
-<span><span class="co">#&gt; [1] 1.037717e+15</span></span>
-<span><span class="co">#&gt; attr(,"pseudo")</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; attr(,"minSV")</span></span>
-<span><span class="co">#&gt; [1] 85.77516</span></span>
-<span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span></span>
-<span><span class="co">#&gt; bmi.1@1          24.6576 0.05650 24.5468 24.7683  0.000e+00</span></span>
-<span><span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10155 -0.6702 -0.2721  3.489e-06</span></span>
-<span><span class="co">#&gt; log(var)@1        2.5554 0.02019  2.5158  2.5949  0.000e+00</span></span>
-<span><span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.03554  0.7790  0.9183 5.146e-126</span></span>
-<span><span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.02095  0.3416  0.4237  1.545e-74</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 4271    5</span></span>
-<span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....    0.466 0.04138 0.3849 0.5471 2.026e-29</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0</span></span>
-<span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 Estimate Std.Err    2.5%   97.5%    P-value</span></span>
-<span><span class="co">#&gt; bmi.1@1          24.6576 0.05614 24.5475 24.7676  0.000e+00</span></span>
-<span><span class="co">#&gt; bmi.1~zygMZ.1@1  -0.4711 0.10242 -0.6719 -0.2704  4.225e-06</span></span>
-<span><span class="co">#&gt; log(var)@1        2.5554 0.01699  2.5221  2.5887  0.000e+00</span></span>
-<span><span class="co">#&gt; atanh(rhoMZ)@1    0.8486 0.02296  0.8036  0.8936 4.462e-299</span></span>
-<span><span class="co">#&gt; atanh(rhoDZ)@2    0.3827 0.01847  0.3465  0.4189  2.301e-95</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/wald.test.html" class="external-link">wald.test</a></span><span class="op">(</span>coef<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span>,contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   lin.comb        se     lower     upper pval</span></span>
-<span><span class="co">#&gt; B 0.465969 0.0279537 0.4111807 0.5207572    0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Wald test</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; data:  </span></span>
-<span><span class="co">#&gt; chisq = 277.87, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">twinbmi</span>,</span>
-<span>           DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"cor"</span>, missing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 1</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                  </span></span>
-<span><span class="co">#&gt;    bmi.1~ns(age, 1).1    4.16937    0.16669  25.01334   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    bmi.1~gendermale.1    1.41160    0.07284  19.37839   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Intercepts:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1                22.53618    0.07296 308.87100   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                        </span></span>
-<span><span class="co">#&gt;    log(var)              2.44580    0.01425 171.68256   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoMZ)          0.78217    0.02290  34.16186   &lt;1e-12</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 2</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                  </span></span>
-<span><span class="co">#&gt;    bmi.1~ns(age, 1).1    4.16937    0.16669  25.01334   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    bmi.1~gendermale.1    1.41160    0.07284  19.37839   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Intercepts:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1                22.53618    0.07296 308.87100   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                        </span></span>
-<span><span class="co">#&gt;    log(var)              2.44580    0.01425 171.68256   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoDZ)          0.29924    0.01848  16.19580   &lt;1e-12</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                        Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Correlation within MZ: 0.65395  0.62751 0.67889</span></span>
-<span><span class="co">#&gt; Correlation within DZ: 0.29061  0.25712 0.32341</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'log Lik.' -29020.12 (df=6)</span></span>
-<span><span class="co">#&gt; AIC: 58052.24 </span></span>
-<span><span class="co">#&gt; BIC: 58093.29</span></span></code></pre></div>
+<span><span class="co">#&gt; atanh(rhoDZ)@2         0.2987 0.020953  0.2576  0.3397  4.288e-46</span></span></code></pre></div>
 <p>A formal test of genetic effects can be obtained by comparing the MZ and DZ correlation:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4829 0.04176 0.4011 0.5648 6.325e-31</span></span>
+<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@3] = 0</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">twinbmi</span>,</span>
-<span>           DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"cor"</span>, missing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 1</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                  </span></span>
-<span><span class="co">#&gt;    bmi.1~ns(age, 1).1    4.16937    0.16669  25.01334   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    bmi.1~gendermale.1    1.41160    0.07284  19.37839   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Intercepts:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1                22.53618    0.07296 308.87100   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                        </span></span>
-<span><span class="co">#&gt;    log(var)              2.44580    0.01425 171.68256   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoMZ)          0.78217    0.02290  34.16186   &lt;1e-12</span></span>
-<span><span class="co">#&gt; ____________________________________________________</span></span>
-<span><span class="co">#&gt; Group 2</span></span>
-<span><span class="co">#&gt;                         Estimate Std. Error   Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; Regressions:                                                  </span></span>
-<span><span class="co">#&gt;    bmi.1~ns(age, 1).1    4.16937    0.16669  25.01334   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    bmi.1~gendermale.1    1.41160    0.07284  19.37839   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Intercepts:                                                   </span></span>
-<span><span class="co">#&gt;    bmi.1                22.53618    0.07296 308.87100   &lt;1e-12</span></span>
-<span><span class="co">#&gt; Additional Parameters:                                        </span></span>
-<span><span class="co">#&gt;    log(var)              2.44580    0.01425 171.68256   &lt;1e-12</span></span>
-<span><span class="co">#&gt;    atanh(rhoDZ)          0.29924    0.01848  16.19580   &lt;1e-12</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                        Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Correlation within MZ: 0.65395  0.62751 0.67889</span></span>
-<span><span class="co">#&gt; Correlation within DZ: 0.29061  0.25712 0.32341</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'log Lik.' -29020.12 (df=6)</span></span>
-<span><span class="co">#&gt; AIC: 58052.24 </span></span>
-<span><span class="co">#&gt; BIC: 58093.29</span></span></code></pre></div>
+<span><span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0</span></span></code></pre></div>
 <p>We also consider the ACE model</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ace0</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                   Estimate  Std. Error Z value Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; bmi             1.8599e+01  2.5576e-01  72.720   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(A)           2.7270e+00  4.2658e-02  63.927   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(C)          -1.7074e-06  3.1064e-01   0.000        1</span></span>
+<span><span class="co">#&gt; sd(E)           2.0276e+00  3.4787e-02  58.286   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~age         1.1892e-01  5.6246e-03  21.142   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~gendermale  1.3846e+00  8.8748e-02  15.601   &lt;2e-16</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; MZ-pairs DZ-pairs </span></span>
+<span><span class="co">#&gt;     1483     2788 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Variance decomposition:</span></span>
+<span><span class="co">#&gt;   Estimate 2.5%    97.5%  </span></span>
+<span><span class="co">#&gt; A 0.64399  0.61793 0.67005</span></span>
+<span><span class="co">#&gt; C 0.00000  0.00000 0.00000</span></span>
+<span><span class="co">#&gt; E 0.35601  0.32995 0.38207</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                          Estimate 2.5%    97.5%  </span></span>
+<span><span class="co">#&gt; Broad-sense heritability 0.64399  0.61793 0.67005</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                        Estimate 2.5%    97.5%  </span></span>
+<span><span class="co">#&gt; Correlation within MZ: 0.64399  0.61718 0.66931</span></span>
+<span><span class="co">#&gt; Correlation within DZ: 0.32200  0.30890 0.33497</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'log Lik.' -22019.66 (df=6)</span></span>
+<span><span class="co">#&gt; AIC: 44051.32 </span></span>
+<span><span class="co">#&gt; BIC: 44089.47</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="twin-analysis-censored-outcomes">Twin analysis, censored outcomes<a class="anchor" aria-label="anchor" href="#twin-analysis-censored-outcomes"></a>
-</h2>
-</div>
-<div class="section level2">
-<h2 id="twin-analysis-binary-traits">Twin analysis, binary traits<a class="anchor" aria-label="anchor" href="#twin-analysis-binary-traits"></a>
-</h2>
 </div>
 <div class="section level2">
 <h2 id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>

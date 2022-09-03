@@ -120,7 +120,7 @@
       <h1 data-toc-skip>Mediation Analysis for survival data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-08-03</h4>
+            <h4 data-toc-skip class="date">2022-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/mediation-survival.Rmd" class="external-link"><code>vignettes/mediation-survival.Rmd</code></a></small>
       <div class="hidden name"><code>mediation-survival.Rmd</code></div>
@@ -159,7 +159,7 @@
 <span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>warn<span class="op">=</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
 <span></span>
-<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span>; <span class="va">k.boot</span> <span class="op">&lt;-</span> <span class="fl">100</span>; </span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span>; <span class="va">k.boot</span> <span class="op">&lt;-</span> <span class="fl">10</span>; </span>
 <span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">kumarsimRCT</a></span><span class="op">(</span><span class="va">n</span>,rho1<span class="op">=</span><span class="fl">0.5</span>,rho2<span class="op">=</span><span class="fl">0.5</span>,rct<span class="op">=</span><span class="fl">2</span>,censpar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,</span>
 <span>          beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.67</span>, <span class="fl">0.59</span>, <span class="fl">0.55</span>, <span class="fl">0.25</span>, <span class="fl">0.98</span>, <span class="fl">0.18</span>, <span class="fl">0.45</span>, <span class="fl">0.31</span><span class="op">)</span>,</span>
@@ -178,91 +178,91 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  400    214</span></span>
+<span><span class="co">#&gt;  200     97</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.932279  0.219733 -1.362949 -0.501610  0.0000</span></span>
-<span><span class="co">#&gt; gp           1.435290  0.247089  0.951003  1.919576  0.0000</span></span>
-<span><span class="co">#&gt; dnr          0.085438  0.268034 -0.439900  0.610776  0.7499</span></span>
-<span><span class="co">#&gt; preauto      0.426917  0.253432 -0.069800  0.923634  0.0921</span></span>
-<span><span class="co">#&gt; ttt24        0.370901  0.271118 -0.160482  0.902283  0.1713</span></span>
+<span><span class="co">#&gt;             Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; (Intercept) -1.09545  0.33261 -1.74736 -0.44355  0.0010</span></span>
+<span><span class="co">#&gt; gp           1.26427  0.36725  0.54447  1.98407  0.0006</span></span>
+<span><span class="co">#&gt; dnr          0.45202  0.39524 -0.32263  1.22667  0.2528</span></span>
+<span><span class="co">#&gt; preauto      0.35124  0.38217 -0.39780  1.10028  0.3581</span></span>
+<span><span class="co">#&gt; ttt24        0.55819  0.41228 -0.24987  1.36624  0.1758</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.39366 0.25590 0.6056</span></span>
-<span><span class="co">#&gt; gp           4.20086 2.58831 6.8181</span></span>
-<span><span class="co">#&gt; dnr          1.08919 0.64410 1.8419</span></span>
-<span><span class="co">#&gt; preauto      1.53253 0.93258 2.5184</span></span>
-<span><span class="co">#&gt; ttt24        1.44904 0.85173 2.4652</span></span>
+<span><span class="co">#&gt; (Intercept)  0.33439 0.17423 0.6418</span></span>
+<span><span class="co">#&gt; gp           3.54050 1.72370 7.2722</span></span>
+<span><span class="co">#&gt; dnr          1.57148 0.72424 3.4099</span></span>
+<span><span class="co">#&gt; preauto      1.42083 0.67180 3.0050</span></span>
+<span><span class="co">#&gt; ttt24        1.74750 0.77890 3.9206</span></span>
 <span><span class="va">aaMss22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dat</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss22</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  400    214</span></span>
+<span><span class="co">#&gt;  200     97</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.254300  0.169923 -0.587342  0.078742  0.1345</span></span>
-<span><span class="co">#&gt; dnr          0.275815  0.248320 -0.210884  0.762513  0.2667</span></span>
-<span><span class="co">#&gt; preauto      0.522293  0.240045  0.051813  0.992772  0.0296</span></span>
-<span><span class="co">#&gt; ttt24        0.541444  0.258381  0.035027  1.047861  0.0361</span></span>
+<span><span class="co">#&gt; (Intercept) -0.445508  0.257170 -0.949552  0.058536  0.0832</span></span>
+<span><span class="co">#&gt; dnr          0.678218  0.381764 -0.070027  1.426462  0.0756</span></span>
+<span><span class="co">#&gt; preauto      0.409926  0.359574 -0.294826  1.114677  0.2543</span></span>
+<span><span class="co">#&gt; ttt24        0.479037  0.375065 -0.256077  1.214150  0.2015</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.77546 0.55580 1.0819</span></span>
-<span><span class="co">#&gt; dnr          1.31760 0.80987 2.1437</span></span>
-<span><span class="co">#&gt; preauto      1.68589 1.05318 2.6987</span></span>
-<span><span class="co">#&gt; ttt24        1.71849 1.03565 2.8515</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)  0.64050 0.38691 1.0603</span></span>
+<span><span class="co">#&gt; dnr          1.97036 0.93237 4.1639</span></span>
+<span><span class="co">#&gt; preauto      1.50671 0.74466 3.0486</span></span>
+<span><span class="co">#&gt; ttt24        1.61452 0.77408 3.3674</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### binomial regression ###########################################################</span></span>
 <span><span class="va">aaMss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">dnr.f0</span><span class="op">+</span><span class="va">dnr.f1</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">wdata</span>,time<span class="op">=</span><span class="fl">50</span>,weights<span class="op">=</span><span class="va">wdata</span><span class="op">$</span><span class="va">weights</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    428</span></span>
+<span><span class="co">#&gt;  400    194</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.245862  0.170685 -0.580398  0.088674  0.1497</span></span>
-<span><span class="co">#&gt; dnr.f01      0.079039  0.250436 -0.411806  0.569884  0.7523</span></span>
-<span><span class="co">#&gt; dnr.f11      0.200088  0.032943  0.135521  0.264655  0.0000</span></span>
-<span><span class="co">#&gt; preauto      0.495387  0.244456  0.016262  0.974512  0.0427</span></span>
-<span><span class="co">#&gt; ttt24        0.534940  0.260962  0.023464  1.046415  0.0404</span></span>
+<span><span class="co">#&gt; (Intercept) -0.520113  0.259635 -1.028987 -0.011238  0.0452</span></span>
+<span><span class="co">#&gt; dnr.f01      0.339934  0.376813 -0.398605  1.078473  0.3670</span></span>
+<span><span class="co">#&gt; dnr.f11      0.274655  0.071476  0.134564  0.414747  0.0001</span></span>
+<span><span class="co">#&gt; preauto      0.552689  0.365370 -0.163423  1.268800  0.1304</span></span>
+<span><span class="co">#&gt; ttt24        0.300601  0.380049 -0.444282  1.045483  0.4290</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.78203 0.55968 1.0927</span></span>
-<span><span class="co">#&gt; dnr.f01      1.08225 0.66245 1.7681</span></span>
-<span><span class="co">#&gt; dnr.f11      1.22151 1.14513 1.3030</span></span>
-<span><span class="co">#&gt; preauto      1.64113 1.01639 2.6499</span></span>
-<span><span class="co">#&gt; ttt24        1.70735 1.02374 2.8474</span></span>
+<span><span class="co">#&gt; (Intercept)  0.59445 0.35737 0.9888</span></span>
+<span><span class="co">#&gt; dnr.f01      1.40486 0.67126 2.9402</span></span>
+<span><span class="co">#&gt; dnr.f11      1.31608 1.14404 1.5140</span></span>
+<span><span class="co">#&gt; preauto      1.73792 0.84923 3.5566</span></span>
+<span><span class="co">#&gt; ttt24        1.35067 0.64128 2.8448</span></span>
 <span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    428</span></span>
+<span><span class="co">#&gt;  400    194</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.245862  0.170391 -0.579823  0.088099  0.1490</span></span>
-<span><span class="co">#&gt; dnr.f01      0.079039  0.239949 -0.391252  0.549330  0.7419</span></span>
-<span><span class="co">#&gt; dnr.f11      0.200088  0.080364  0.042578  0.357598  0.0128</span></span>
-<span><span class="co">#&gt; preauto      0.495387  0.245149  0.014904  0.975870  0.0433</span></span>
-<span><span class="co">#&gt; ttt24        0.534940  0.261157  0.023082  1.046798  0.0405</span></span>
+<span><span class="co">#&gt; (Intercept) -0.520113  0.259239 -1.028211 -0.012014  0.0448</span></span>
+<span><span class="co">#&gt; dnr.f01      0.339934  0.344113 -0.334515  1.014383  0.3232</span></span>
+<span><span class="co">#&gt; dnr.f11      0.274655  0.117283  0.044785  0.504525  0.0192</span></span>
+<span><span class="co">#&gt; preauto      0.552689  0.361565 -0.155966  1.261343  0.1264</span></span>
+<span><span class="co">#&gt; ttt24        0.300601  0.381561 -0.447245  1.048447  0.4308</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.78203 0.56000 1.0921</span></span>
-<span><span class="co">#&gt; dnr.f01      1.08225 0.67621 1.7321</span></span>
-<span><span class="co">#&gt; dnr.f11      1.22151 1.04350 1.4299</span></span>
-<span><span class="co">#&gt; preauto      1.64113 1.01502 2.6535</span></span>
-<span><span class="co">#&gt; ttt24        1.70735 1.02335 2.8485</span></span>
+<span><span class="co">#&gt; (Intercept)  0.59445 0.35765 0.9881</span></span>
+<span><span class="co">#&gt; dnr.f01      1.40486 0.71569 2.7577</span></span>
+<span><span class="co">#&gt; dnr.f11      1.31608 1.04580 1.6562</span></span>
+<span><span class="co">#&gt; preauto      1.73792 0.85559 3.5302</span></span>
+<span><span class="co">#&gt; ttt24        1.35067 0.63939 2.8532</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### lin-ying model ################################################################</span></span>
@@ -271,20 +271,20 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.318699  0.439340 -0.542392  1.179790  0.4682</span></span>
-<span><span class="co">#&gt; dnr.f11  0.295059  0.126322  0.047472  0.542645  0.0195</span></span>
-<span><span class="co">#&gt; preauto  0.862506  0.380731  0.116287  1.608725  0.0235</span></span>
-<span><span class="co">#&gt; ttt24    1.063462  0.487256  0.108458  2.018467  0.0291</span></span>
+<span><span class="co">#&gt; dnr.f01  1.169577  0.739320 -0.279463  2.618617  0.1137</span></span>
+<span><span class="co">#&gt; dnr.f11  0.207542  0.131751 -0.050685  0.465769  0.1152</span></span>
+<span><span class="co">#&gt; preauto  0.617555  0.504304 -0.370862  1.605973  0.2207</span></span>
+<span><span class="co">#&gt; ttt24    0.457719  0.517829 -0.557207  1.472645  0.3767</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.37534 0.58136 3.2537</span></span>
-<span><span class="co">#&gt; dnr.f11  1.34321 1.04862 1.7206</span></span>
-<span><span class="co">#&gt; preauto  2.36909 1.12332 4.9964</span></span>
-<span><span class="co">#&gt; ttt24    2.89638 1.11456 7.5268</span></span>
+<span><span class="co">#&gt;         Estimate    2.5%   97.5%</span></span>
+<span><span class="co">#&gt; dnr.f01  3.22063 0.75619 13.7167</span></span>
+<span><span class="co">#&gt; dnr.f11  1.23065 0.95058  1.5932</span></span>
+<span><span class="co">#&gt; preauto  1.85439 0.69014  4.9827</span></span>
+<span><span class="co">#&gt; ttt24    1.58046 0.57281  4.3608</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### cox model ###############################################################################</span></span>
@@ -292,40 +292,40 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;         Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; dnr.f01 0.107465 0.142886 0.102697  0.4520</span></span>
-<span><span class="co">#&gt; dnr.f11 0.121645 0.019319 0.095006  0.0000</span></span>
-<span><span class="co">#&gt; preauto 0.366926 0.151224 0.104028  0.0153</span></span>
-<span><span class="co">#&gt; ttt24   0.381095 0.149015 0.105819  0.0105</span></span>
+<span><span class="co">#&gt; dnr.f01 0.414502 0.213721 0.157231  0.0524</span></span>
+<span><span class="co">#&gt; dnr.f11 0.100682 0.039337 0.144971  0.0105</span></span>
+<span><span class="co">#&gt; preauto 0.284446 0.232174 0.162375  0.2205</span></span>
+<span><span class="co">#&gt; ttt24   0.185567 0.226049 0.160886  0.4117</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.11345 0.84149 1.4733</span></span>
-<span><span class="co">#&gt; dnr.f11  1.12935 1.08739 1.1729</span></span>
-<span><span class="co">#&gt; preauto  1.44329 1.07308 1.9412</span></span>
-<span><span class="co">#&gt; ttt24    1.46389 1.09311 1.9604</span></span>
+<span><span class="co">#&gt; dnr.f01  1.51362 0.99563 2.3011</span></span>
+<span><span class="co">#&gt; dnr.f11  1.10592 1.02386 1.1946</span></span>
+<span><span class="co">#&gt; preauto  1.32903 0.84315 2.0949</span></span>
+<span><span class="co">#&gt; ttt24    1.20390 0.77300 1.8750</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.107465  0.135906 -0.158906  0.373836  0.4291</span></span>
-<span><span class="co">#&gt; dnr.f11  0.121645  0.048330  0.026920  0.216370  0.0118</span></span>
-<span><span class="co">#&gt; preauto  0.366926  0.151346  0.070294  0.663558  0.0153</span></span>
-<span><span class="co">#&gt; ttt24    0.381095  0.149163  0.088740  0.673449  0.0106</span></span>
+<span><span class="co">#&gt;            Estimate     Std.Err        2.5%       97.5% P-value</span></span>
+<span><span class="co">#&gt; dnr.f01  0.41450188  0.20869260  0.00547189  0.82353187  0.0470</span></span>
+<span><span class="co">#&gt; dnr.f11  0.10068179  0.05123705  0.00025902  0.20110457  0.0494</span></span>
+<span><span class="co">#&gt; preauto  0.28444642  0.23038059 -0.16709124  0.73598408  0.2169</span></span>
+<span><span class="co">#&gt; ttt24    0.18556746  0.22550192 -0.25640818  0.62754311  0.4106</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.11345 0.85308 1.4533</span></span>
-<span><span class="co">#&gt; dnr.f11  1.12935 1.02729 1.2416</span></span>
-<span><span class="co">#&gt; preauto  1.44329 1.07282 1.9417</span></span>
-<span><span class="co">#&gt; ttt24    1.46389 1.09280 1.9610</span></span>
+<span><span class="co">#&gt; dnr.f01  1.51362 1.00549 2.2785</span></span>
+<span><span class="co">#&gt; dnr.f11  1.10592 1.00026 1.2228</span></span>
+<span><span class="co">#&gt; preauto  1.32903 0.84612 2.0875</span></span>
+<span><span class="co">#&gt; ttt24    1.20390 0.77383 1.8730</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### Fine-Gray #############################################################3</span></span>
@@ -333,42 +333,42 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;         Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; dnr.f01 0.034903 0.144792 0.103066  0.8095</span></span>
-<span><span class="co">#&gt; dnr.f11 0.128120 0.019312 0.095009  0.0000</span></span>
-<span><span class="co">#&gt; preauto 0.273461 0.149496 0.103828  0.0674</span></span>
-<span><span class="co">#&gt; ttt24   0.362530 0.149625 0.105874  0.0154</span></span>
+<span><span class="co">#&gt; dnr.f01 0.189343 0.219850 0.158549  0.3891</span></span>
+<span><span class="co">#&gt; dnr.f11 0.187373 0.040836 0.145027  0.0000</span></span>
+<span><span class="co">#&gt; preauto 0.414500 0.227838 0.160984  0.0689</span></span>
+<span><span class="co">#&gt; ttt24   0.173048 0.228921 0.163080  0.4497</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.03552 0.77967 1.3753</span></span>
-<span><span class="co">#&gt; dnr.f11  1.13669 1.09447 1.1805</span></span>
-<span><span class="co">#&gt; preauto  1.31451 0.98065 1.7620</span></span>
-<span><span class="co">#&gt; ttt24    1.43696 1.07173 1.9267</span></span>
+<span><span class="co">#&gt; dnr.f01  1.20846 0.78541 1.8594</span></span>
+<span><span class="co">#&gt; dnr.f11  1.20608 1.11331 1.3066</span></span>
+<span><span class="co">#&gt; preauto  1.51361 0.96845 2.3657</span></span>
+<span><span class="co">#&gt; ttt24    1.18892 0.75910 1.8621</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.034903  0.136658 -0.232941  0.302747  0.7984</span></span>
-<span><span class="co">#&gt; dnr.f11  0.128120  0.050539  0.029066  0.227174  0.0112</span></span>
-<span><span class="co">#&gt; preauto  0.273461  0.149912 -0.020361  0.567284  0.0681</span></span>
-<span><span class="co">#&gt; ttt24    0.362530  0.149665  0.069192  0.655869  0.0154</span></span>
+<span><span class="co">#&gt; dnr.f01  0.189343  0.200074 -0.202795  0.581482  0.3440</span></span>
+<span><span class="co">#&gt; dnr.f11  0.187373  0.075422  0.039548  0.335198  0.0130</span></span>
+<span><span class="co">#&gt; preauto  0.414500  0.224302 -0.025124  0.854123  0.0646</span></span>
+<span><span class="co">#&gt; ttt24    0.173048  0.229937 -0.277620  0.623717  0.4517</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.03552 0.79220 1.3536</span></span>
-<span><span class="co">#&gt; dnr.f11  1.13669 1.02949 1.2550</span></span>
-<span><span class="co">#&gt; preauto  1.31451 0.97984 1.7635</span></span>
-<span><span class="co">#&gt; ttt24    1.43696 1.07164 1.9268</span></span>
+<span><span class="co">#&gt; dnr.f01  1.20846 0.81645 1.7887</span></span>
+<span><span class="co">#&gt; dnr.f11  1.20608 1.04034 1.3982</span></span>
+<span><span class="co">#&gt; preauto  1.51361 0.97519 2.3493</span></span>
+<span><span class="co">#&gt; ttt24    1.18892 0.75758 1.8659</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span></span>
@@ -377,42 +377,42 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;          Estimate      S.E.   dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; dnr.f01 0.0091874 0.2520698 0.1070144  0.9709</span></span>
-<span><span class="co">#&gt; dnr.f11 0.1883732 0.0316634 0.0949777  0.0000</span></span>
-<span><span class="co">#&gt; preauto 0.4809989 0.2175749 0.1013801  0.0271</span></span>
-<span><span class="co">#&gt; ttt24   0.5011185 0.2506759 0.1081841  0.0456</span></span>
+<span><span class="co">#&gt;         Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; dnr.f01 0.357164 0.339839 0.158937  0.2933</span></span>
+<span><span class="co">#&gt; dnr.f11 0.272389 0.064148 0.145076  0.0000</span></span>
+<span><span class="co">#&gt; preauto 0.657009 0.326087 0.160361  0.0439</span></span>
+<span><span class="co">#&gt; ttt24   0.191334 0.353607 0.167443  0.5884</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.00923 0.61578 1.6541</span></span>
-<span><span class="co">#&gt; dnr.f11  1.20728 1.13464 1.2846</span></span>
-<span><span class="co">#&gt; preauto  1.61769 1.05608 2.4780</span></span>
-<span><span class="co">#&gt; ttt24    1.65057 1.00985 2.6978</span></span>
+<span><span class="co">#&gt; dnr.f01  1.42927 0.73425 2.7822</span></span>
+<span><span class="co">#&gt; dnr.f11  1.31310 1.15796 1.4890</span></span>
+<span><span class="co">#&gt; preauto  1.92901 1.01805 3.6551</span></span>
+<span><span class="co">#&gt; ttt24    1.21086 0.60549 2.4215</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;           Estimate    Std.Err       2.5%      97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.0091874  0.2400952 -0.4613905  0.4797652  0.9695</span></span>
-<span><span class="co">#&gt; dnr.f11  0.1883732  0.0758450  0.0397197  0.3370267  0.0130</span></span>
-<span><span class="co">#&gt; preauto  0.4809989  0.2182593  0.0532186  0.9087792  0.0275</span></span>
-<span><span class="co">#&gt; ttt24    0.5011185  0.2501107  0.0109106  0.9913264  0.0451</span></span>
+<span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; dnr.f01  0.357164  0.317638 -0.265395  0.979723  0.2608</span></span>
+<span><span class="co">#&gt; dnr.f11  0.272389  0.111281  0.054283  0.490495  0.0144</span></span>
+<span><span class="co">#&gt; preauto  0.657009  0.322616  0.024693  1.289325  0.0417</span></span>
+<span><span class="co">#&gt; ttt24    0.191334  0.356870 -0.508119  0.890787  0.5919</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.00923 0.63041 1.6157</span></span>
-<span><span class="co">#&gt; dnr.f11  1.20728 1.04052 1.4008</span></span>
-<span><span class="co">#&gt; preauto  1.61769 1.05466 2.4813</span></span>
-<span><span class="co">#&gt; ttt24    1.65057 1.01097 2.6948</span></span>
+<span><span class="co">#&gt; dnr.f01  1.42927 0.76690 2.6637</span></span>
+<span><span class="co">#&gt; dnr.f11  1.31310 1.05578 1.6331</span></span>
+<span><span class="co">#&gt; preauto  1.92901 1.02500 3.6303</span></span>
+<span><span class="co">#&gt; ttt24    1.21086 0.60163 2.4370</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### binomial outcome  ############################</span></span>
@@ -420,46 +420,46 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;               Estimate    Std.Err       2.5%      97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.2880577  0.1603938 -0.6024239  0.0263084  0.0725</span></span>
-<span><span class="co">#&gt; dnr.f01      0.0384036  0.2246672 -0.4019361  0.4787433  0.8643</span></span>
-<span><span class="co">#&gt; dnr.f11      0.1816005  0.0299270  0.1229447  0.2402563  0.0000</span></span>
-<span><span class="co">#&gt; preauto      0.4349871  0.2231460 -0.0023712  0.8723453  0.0513</span></span>
-<span><span class="co">#&gt; ttt24        0.5046269  0.2344764  0.0450617  0.9641921  0.0314</span></span>
+<span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; (Intercept) -0.674433  0.235285 -1.135583 -0.213284  0.0042</span></span>
+<span><span class="co">#&gt; dnr.f01      0.221834  0.318264 -0.401952  0.845620  0.4858</span></span>
+<span><span class="co">#&gt; dnr.f11      0.262722  0.060281  0.144572  0.380871  0.0000</span></span>
+<span><span class="co">#&gt; preauto      0.578077  0.319091 -0.047331  1.203484  0.0700</span></span>
+<span><span class="co">#&gt; ttt24        0.214442  0.328183 -0.428784  0.857669  0.5135</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.74972 0.54748 1.0267</span></span>
-<span><span class="co">#&gt; dnr.f01      1.03915 0.66902 1.6140</span></span>
-<span><span class="co">#&gt; dnr.f11      1.19914 1.13082 1.2716</span></span>
-<span><span class="co">#&gt; preauto      1.54494 0.99763 2.3925</span></span>
-<span><span class="co">#&gt; ttt24        1.65637 1.04609 2.6227</span></span>
+<span><span class="co">#&gt; (Intercept)  0.50944 0.32123 0.8079</span></span>
+<span><span class="co">#&gt; dnr.f01      1.24836 0.66901 2.3294</span></span>
+<span><span class="co">#&gt; dnr.f11      1.30046 1.15555 1.4636</span></span>
+<span><span class="co">#&gt; preauto      1.78261 0.95377 3.3317</span></span>
+<span><span class="co">#&gt; ttt24        1.23917 0.65130 2.3577</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  800    438</span></span>
+<span><span class="co">#&gt;  400    196</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.288058  0.159069 -0.599827  0.023711  0.0702</span></span>
-<span><span class="co">#&gt; dnr.f01      0.038404  0.217532 -0.387951  0.464759  0.8599</span></span>
-<span><span class="co">#&gt; dnr.f11      0.181600  0.101537 -0.017409  0.380610  0.0737</span></span>
-<span><span class="co">#&gt; preauto      0.434987  0.221383  0.001085  0.868889  0.0494</span></span>
-<span><span class="co">#&gt; ttt24        0.504627  0.232393  0.049144  0.960110  0.0299</span></span>
+<span><span class="co">#&gt; (Intercept) -0.674433  0.234269 -1.133592 -0.215275  0.0040</span></span>
+<span><span class="co">#&gt; dnr.f01      0.221834  0.297615 -0.361481  0.805149  0.4560</span></span>
+<span><span class="co">#&gt; dnr.f11      0.262722  0.154635 -0.040358  0.565801  0.0893</span></span>
+<span><span class="co">#&gt; preauto      0.578077  0.312548 -0.034507  1.190660  0.0644</span></span>
+<span><span class="co">#&gt; ttt24        0.214442  0.328885 -0.430161  0.859045  0.5144</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.74972 0.54891 1.0240</span></span>
-<span><span class="co">#&gt; dnr.f01      1.03915 0.67845 1.5916</span></span>
-<span><span class="co">#&gt; dnr.f11      1.19914 0.98274 1.4632</span></span>
-<span><span class="co">#&gt; preauto      1.54494 1.00109 2.3843</span></span>
-<span><span class="co">#&gt; ttt24        1.65637 1.05037 2.6120</span></span>
+<span><span class="co">#&gt; (Intercept)  0.50944 0.32187 0.8063</span></span>
+<span><span class="co">#&gt; dnr.f01      1.24836 0.69664 2.2370</span></span>
+<span><span class="co">#&gt; dnr.f11      1.30046 0.96045 1.7609</span></span>
+<span><span class="co">#&gt; preauto      1.78261 0.96608 3.2893</span></span>
+<span><span class="co">#&gt; ttt24        1.23917 0.65040 2.3609</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -479,36 +479,9 @@
 <span></span>
 <span><span class="va">aaMss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">agecat.40</span><span class="op">+</span> <span class="va">agecat.41</span><span class="op">+</span> <span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">wdata</span>,time<span class="op">=</span><span class="fl">7</span>,weights<span class="op">=</span><span class="va">wdata</span><span class="op">$</span><span class="va">weights</span>,cause<span class="op">=</span><span class="fl">9</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">aaMss</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     n events</span></span>
-<span><span class="co">#&gt;  4000   2016</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  1000 clusters</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;                       Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept)          -1.837886  0.174438 -2.179778 -1.495995  0.0000</span></span>
-<span><span class="co">#&gt; agecat.40(60.1,68.6]  0.911956  0.215331  0.489914  1.333998  0.0000</span></span>
-<span><span class="co">#&gt; agecat.40(68.6,75.6]  1.367813  0.216774  0.942943  1.792683  0.0000</span></span>
-<span><span class="co">#&gt; agecat.40(75.6,96.3]  2.284648  0.244466  1.805504  2.763792  0.0000</span></span>
-<span><span class="co">#&gt; agecat.41(60.1,68.6]  0.121138  0.020590  0.080781  0.161494  0.0000</span></span>
-<span><span class="co">#&gt; agecat.41(68.6,75.6]  0.119408  0.017715  0.084687  0.154129  0.0000</span></span>
-<span><span class="co">#&gt; agecat.41(75.6,96.3]  0.095385  0.015042  0.065904  0.124866  0.0000</span></span>
-<span><span class="co">#&gt; vf                    0.704175  0.297140  0.121790  1.286559  0.0178</span></span>
-<span><span class="co">#&gt; chf                   1.162855  0.154209  0.860610  1.465099  0.0000</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;                      Estimate    2.5%   97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)           0.15915 0.11307  0.2240</span></span>
-<span><span class="co">#&gt; agecat.40(60.1,68.6]  2.48919 1.63218  3.7962</span></span>
-<span><span class="co">#&gt; agecat.40(68.6,75.6]  3.92675 2.56753  6.0055</span></span>
-<span><span class="co">#&gt; agecat.40(75.6,96.3]  9.82223 6.08304 15.8599</span></span>
-<span><span class="co">#&gt; agecat.41(60.1,68.6]  1.12878 1.08413  1.1753</span></span>
-<span><span class="co">#&gt; agecat.41(68.6,75.6]  1.12683 1.08838  1.1666</span></span>
-<span><span class="co">#&gt; agecat.41(75.6,96.3]  1.10008 1.06812  1.1330</span></span>
-<span><span class="co">#&gt; vf                    2.02218 1.12952  3.6203</span></span>
-<span><span class="co">#&gt; chf                   3.19905 2.36460  4.3280</span></span>
-<span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">tTRACE</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
+<span><span class="va">MultMed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">tTRACE</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">MultMed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     n events</span></span>
 <span><span class="co">#&gt;  4000   2016</span></span>
@@ -541,7 +514,7 @@
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
@@ -566,18 +539,18 @@
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.0         compiler_4.2.1     </span></span>
 <span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.1         digest_0.6.29      </span></span>
-<span><span class="co">#&gt;  [7] jsonlite_1.8.0      evaluate_0.15       memoise_2.0.1      </span></span>
-<span><span class="co">#&gt; [10] lattice_0.20-45     rlang_1.0.4         Matrix_1.4-1       </span></span>
+<span><span class="co">#&gt;  [7] jsonlite_1.8.0      evaluate_0.16       memoise_2.0.1      </span></span>
+<span><span class="co">#&gt; [10] lattice_0.20-45     rlang_1.0.5         Matrix_1.4-1       </span></span>
 <span><span class="co">#&gt; [13] cli_3.3.0           parallel_4.2.1      yaml_2.3.5         </span></span>
-<span><span class="co">#&gt; [16] mvtnorm_1.1-3       pkgdown_2.0.6       xfun_0.31          </span></span>
-<span><span class="co">#&gt; [19] fastmap_1.1.0       stringr_1.4.0       knitr_1.39         </span></span>
+<span><span class="co">#&gt; [16] mvtnorm_1.1-3       pkgdown_2.0.6       xfun_0.32          </span></span>
+<span><span class="co">#&gt; [19] fastmap_1.1.0       stringr_1.4.1       knitr_1.40         </span></span>
 <span><span class="co">#&gt; [22] desc_1.4.1          fs_1.5.2            sass_0.4.2         </span></span>
-<span><span class="co">#&gt; [25] systemfonts_1.0.4   globals_0.15.1      rprojroot_2.0.3    </span></span>
+<span><span class="co">#&gt; [25] systemfonts_1.0.4   globals_0.16.1      rprojroot_2.0.3    </span></span>
 <span><span class="co">#&gt; [28] grid_4.2.1          listenv_0.8.0       R6_2.5.1           </span></span>
 <span><span class="co">#&gt; [31] textshaping_0.3.6   parallelly_1.32.1   future.apply_1.9.0 </span></span>
-<span><span class="co">#&gt; [34] rmarkdown_2.14      purrr_0.3.4         magrittr_2.0.3     </span></span>
+<span><span class="co">#&gt; [34] rmarkdown_2.16      purrr_0.3.4         magrittr_2.0.3     </span></span>
 <span><span class="co">#&gt; [37] codetools_0.2-18    htmltools_0.5.3     splines_4.2.1      </span></span>
-<span><span class="co">#&gt; [40] future_1.27.0       numDeriv_2016.8-1.1 ragg_1.2.2         </span></span>
+<span><span class="co">#&gt; [40] future_1.28.0       numDeriv_2016.8-1.1 ragg_1.2.2         </span></span>
 <span><span class="co">#&gt; [43] stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
