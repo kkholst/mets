@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   #dev="png",
   comment = "#>"
   )
-fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE") || length(list.files("save"))==0
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE") || length(list.files("data"))==0
 saveobj <- function(obj, null_elements) {
   x <- get(obj, envir=parent.frame())
   if (length(null_elements)>0) {
@@ -29,7 +29,7 @@ saveobj <- function(obj, null_elements) {
     attributes(x)[null_elements] <- NULL
     print(object.size(x))
   }
-  saveRDS(x, paste0("save/", obj, ".rds"), compress="xz")
+  saveRDS(x, paste0("data/", obj, ".rds"), compress="xz")
 }
 
 library(mets)
@@ -42,23 +42,23 @@ library(mets)
 
 ```{r  results="hide", echo=FALSE, eval=!fullVignette}
 ## To save time building the vignettes on CRAN, we cache time consuming computations
-fitco1 <- readRDS("save/fitco1.rds")
-fitco2 <- readRDS("save/fitco2.rds")
-fitco3 <- readRDS("save/fitco3.rds")
-fitco4 <- readRDS("save/fitco4.rds")
-fitace <- readRDS("save/fitace.rds")
-fitde <- readRDS("save/fitde.rds")
-cse <- readRDS("save/cse.rds")
-slr <- readRDS("save/slr.rds")
-outacem <- readRDS("save/outacem.rds")
-b0 <- readRDS("save/b0.rds")
-b1 <- readRDS("save/b1.rds")
-b2 <- readRDS("save/b2.rds")
-a1 <- readRDS("save/a1.rds")
-h2 <- readRDS("save/h2.rds")
-concMZ <- readRDS("save/concMZ.rds")
-s_mz_country <- readRDS("save/s_mz_country.rds")
-s_dz_country <- readRDS("save/s_dz_country.rds")
+fitco1 <- readRDS("data/fitco1.rds")
+fitco2 <- readRDS("data/fitco2.rds")
+fitco3 <- readRDS("data/fitco3.rds")
+fitco4 <- readRDS("data/fitco4.rds")
+fitace <- readRDS("data/fitace.rds")
+fitde <- readRDS("data/fitde.rds")
+cse <- readRDS("data/cse.rds")
+slr <- readRDS("data/slr.rds")
+outacem <- readRDS("data/outacem.rds")
+b0 <- readRDS("data/b0.rds")
+b1 <- readRDS("data/b1.rds")
+b2 <- readRDS("data/b2.rds")
+a1 <- readRDS("data/a1.rds")
+h2 <- readRDS("data/h2.rds")
+concMZ <- readRDS("data/concMZ.rds")
+s_mz_country <- readRDS("data/s_mz_country.rds")
+s_dz_country <- readRDS("data/s_dz_country.rds")
 ```
 
 

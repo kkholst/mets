@@ -155,9 +155,9 @@ MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
 ## To save time building the vignettes on CRAN, we cache time consuming computations
 if (fullVignette) {
   MultMed[c('iid','iid.w','iid.surv')] <- NULL
-  saveRDS(MultMed, "save/MultMed.rds")
+  saveRDS(MultMed, "data/MultMed.rds")
 } else {
-  MultMed <- readRDS("save/MultMed.rds")
+  MultMed <- readRDS("data/MultMed.rds")
 }
 ```
 
