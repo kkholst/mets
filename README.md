@@ -1,5 +1,5 @@
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg)](https://github.com/kkholst/mets/actions)
+  [![travis](https://travis-ci.com/kkholst/mets.svg?branch=master)](https://travis-ci.com/kkholst/mets)
   [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg?branch=master)](https://codecov.io/github/kkholst/mets?branch=master)
   [![cran](https://www.r-pkg.org/badges/version-last-release/mets)](https://CRAN.R-project.org/package=mets)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/mets)](https://cranlogs.r-pkg.org/downloads/total/last-month/mets)
@@ -99,22 +99,23 @@ p33 <- bicomprisk(Event(time,status)~strata(zyg)+id(id),
 p33dz <- p33$model$"DZ"$comp.risk
 p33mz <- p33$model$"MZ"$comp.risk
 
-## Probability weights based on Aalen's additive model
-prtw <- ipw(Surv(time,status==0)~country, data=prt,
-            cluster="id",weight.name="w")
+## Probability weights based on Aalen's additive model (same censoring within pair)
+prtw <- ipw(Surv(time,status==0)~country+zyg, data=prt,
+            obs.only=TRUE, same.cens=TRUE, 
+            cluster="id", weight.name="w")
 
 ## Marginal model (wrongly ignoring censorings)
-bpmz <- biprobit(cancer~1 + cluster(id),
+bpmz <- biprobit(cancer~1 + cluster(id), 
                  data=subset(prt,zyg=="MZ"), eqmarg=TRUE)
 
 ## Extended liability model
 bpmzIPW <- biprobit(cancer~1 + cluster(id),
                     data=subset(prtw,zyg=="MZ"),
-                    weight="w")
+                    weights="w")
 smz <- summary(bpmzIPW)
 
 ## Concordance
-plot(p33mz,ylim=c(0,0.1),axes=FALSE,automar=FALSE,atrisk=FALSE,background=TRUE,background.fg="white")
+plot(p33mz,ylim=c(0,0.1),axes=FALSE, automar=FALSE,atrisk=FALSE,background=TRUE,background.fg="white")
 axis(2); axis(1)
 
 abline(h=smz$prob["Concordance",],lwd=c(2,1,1),col="darkblue")
