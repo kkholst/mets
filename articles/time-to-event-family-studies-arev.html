@@ -120,7 +120,7 @@
       <h1 data-toc-skip>A practical guide to Human Genetics with Lifetime Data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-09-03</h4>
+            <h4 data-toc-skip class="date">2022-09-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/time-to-event-family-studies-arev.Rmd" class="external-link"><code>vignettes/time-to-event-family-studies-arev.Rmd</code></a></small>
       <div class="hidden name"><code>time-to-event-family-studies-arev.Rmd</code></div>
@@ -878,12 +878,12 @@
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.268   0.000   0.267</span></span>
+<span><span class="co">#&gt;   0.251   0.000   0.251</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">a.dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,</span>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.366   0.003   0.369</span></span>
+<span><span class="co">#&gt;   0.353   0.000   0.356</span></span>
 <span></span>
 <span><span class="co">#system.time(a.zyg &lt;- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, </span></span>
 <span><span class="co">#                               cens.formula = Event(time,status==0)~1,</span></span>
