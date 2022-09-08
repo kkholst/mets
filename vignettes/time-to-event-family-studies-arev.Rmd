@@ -5,8 +5,8 @@ date: "`r Sys.Date()`"
 #output: pdf_document
 output:
   rmarkdown::html_vignette:
-    fig_width: 7.15
-    fig_height: 5.5
+    #fig_width: 7.15
+    #fig_height: 5.5
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{A practical guide to Human Genetics with Lifetime Data} 
@@ -17,7 +17,11 @@ vignette: >
 ```{r, include = FALSE, label=setup}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  #dev="png",
+  ##dev="png",
+  dpi=50,
+  fig.width=7.15, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1,
   comment = "#>"
   )
 fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE") || length(list.files("data"))==0
