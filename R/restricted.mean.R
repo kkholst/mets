@@ -187,7 +187,7 @@ if (model=="exp") p <- exp(lp) else p <- lp
 ploglik <- sum(weights*(Y-p)^2)
 
 if (model=="exp")  {
-if (is.null(h.call)) ph <- p else ph  <- h
+if (is.null(h.call)) ph <- 1 else ph  <- h
 Dlogl <- weights*ph*X*c(Y-p)
 D2logl <- c(weights*ph*p)*X2
 } else {
@@ -256,7 +256,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
     } else Y <- c(Ydirect*obs)/cens.weights
-    if (model=="exp" & is.null(h.call))  ph <- p
+    if (model=="exp" & is.null(h.call))  ph <- 1
     if (model=="exp" & !is.null(h.call)) ph <- h
     if (model!="exp" & is.null(h.call))  ph <- 1 
     if (model!="exp" & !is.null(h.call)) ph <- h 
@@ -289,7 +289,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   lp <- c(X %*% val$coe+offset)
   if (model=="exp") p <- exp(lp) else p <- lp
   if (!is.null(h.call)) ph<- h 
-  if (model=="exp" & is.null(h.call)) ph<- p
+  if (model=="exp" & is.null(h.call)) ph<- 1
   if (model!="exp" & is.null(h.call)) ph<- 1
   if (!is.null(MCaugment)) MGCiid <- MCaugment*ph*X 
   val$MGciid <- MGCiid

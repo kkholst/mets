@@ -2158,10 +2158,15 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
 {# {{{ default is all time-points from the object
 
    ### take baseline and strata from object# {{{
-   strata <- object$strata[object$jumps]
-   nstrata <- object$nstrata
    jumptimes <- object$cumhaz[,1]
    chaz <- object$cumhaz[,2]
+   if (is.null(object$nstrata)) {  ## try to make more robust
+	nstrata <- 1; 
+	strata <- rep(1,length(jumptimes))
+   } else {
+      nstrata <- object$nstrata
+      strata <- object$strata[object$jumps]
+   }
    if (se) {
    if (!robust) { 
 	   se.chaz <- object$se.cumhaz[,2] 
