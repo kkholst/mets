@@ -243,7 +243,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   ## also computing robust variance 
   if (p>0 & no.var==0) {
-  phvar <- crossprod(iid(res))
+  res$iid <- iid(res)
+  phvar <- crossprod(res$iid)
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
   } else res$var <- 0
@@ -685,9 +686,9 @@ simCox <- function(n=1000, seed=1, beta=c(1,1), entry=TRUE) {
 ##' @export
 vcov.phreg  <- function(object,...) {    
  if ((length(class(object))==1) & inherits(object,"phreg")) {
-  res <- crossprod(ii <- iid(object,...))
-  attributes(res)$ncluster <- attributes(ii)$ncluster
-  attributes(res)$invhess <- attributes(ii)$invhess
+  res <- as.matrix(object$var)  ### objectcrossprod(ii <- iid(object,...))
+###  attributes(res)$ncluster <- attributes(ii)$ncluster
+###  attributes(res)$invhess <- attributes(ii)$invhess
   colnames(res) <- rownames(res) <- names(coef(object))
 } else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
   res <- as.matrix(object$var)
@@ -1004,7 +1005,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
-    } else  { 
+    } else  {  ## phreg
 	    V <- vcov(object,type=type[1])
             ncluster <- object$n
     }

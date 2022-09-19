@@ -776,6 +776,10 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'	  treat.model=tcell.f~platelet+age)
 ##' summary(brs)
 ##'
+##' brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
+##'	  treat.model=tcell.f~platelet+age)
+##' summary(brsi)
+##'
 ##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT binregATEbin
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
