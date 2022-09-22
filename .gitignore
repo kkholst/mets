@@ -26,6 +26,8 @@ vignettes/*.r
 vignettes/*.Rout
 vignettes/*.org
 vignettes/auto
+vignettes/runRmd
+vignettes/makePDF
 *.o
 *.so
 *~
