@@ -69,18 +69,22 @@ resmeanIPCW(
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Simple and fast version of comp.risk function of timereg for just one time-point thus fitting the model 
-\deqn{E(T \leq t | X ) = exp( X^T beta) } or in the case of competing risks data
-\deqn{E( I(epsilon=1) (t - T \leq t) | X ) = exp( X^T beta) } thus given years lost to 
+Simple and fast version for IPCW regression for just one time-point thus fitting the model 
+\deqn{E( min(T, t) | X ) = exp( X^T beta) } or in the case of competing risks data
+\deqn{E( I(epsilon=1) (t - min(T ,t)) | X ) = exp( X^T beta) } thus given years lost to 
 cause.
 }
 \details{
-Based on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
-for IPCW adjusted responses. 
+When the status is binary assumes it is a survival setting and default is to consider outcome Y=min(T,t), 
+if status has more than two levels, then computes years lost due to that particular cause, thus
 
 Based on binomial regresion IPCW response estimating equation: 
-\deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
+\deqn{ X ( \Delta (min(T , t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) I ( min(T ,t) \leq C ) } is indicator of
+being uncensored. 
+
+Can also solve the binomial regresion IPCW response estimating equation: 
+\deqn{ h(X) X ( \Delta (min(T, t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 
 By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
@@ -88,8 +92,8 @@ By using appropriately  the h argument we can also do the efficient IPCW estimat
 Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 under known censoring model. 
 
-Based on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta Ydirect /G_c(T_i-) - exp( X^T beta)) = 0 }
+When Ydirect is given it solves : 
+\deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
 Censoring model may depend on strata.
