@@ -1,4 +1,4 @@
-DOCKER=nerdctl
+default: run
 
 install:
 	@R -q -e "devtools::install()"
@@ -23,11 +23,19 @@ v:
 
 roxy: doc
 
-IMG=rocker/r-devel-ubsan-clang
-dpull:
-	@$(DOCKER) pull $(IMG)
-## run docker, install packages, and docker commit image (e.g. -> mets)
-d:
-	$(DOCKER) run --cap-add SYS_PTRACE -ti --rm -v $(PWD)/../test:/data $(IMG) bash
+.PHONY: c check roxy doc v vignette install
 
-.PHONY: c check roxy doc v vignette install dpull d
+.PHONY: export
+export:
+	@mkdir -p tmp/mets
+	@git archive HEAD | (cd tmp/mets; tar x)
+
+DOCKER?=nerdctl
+IMG=mets
+.PHONY: dbuild
+build:
+	$(DOCKER) build . -f Dockerfile --tag $(IMG)
+
+.PHONY: drun
+drun:
+	$(DOCKER) run --cap-add SYS_PTRACE --priviliged -ti --rm -v $(PWD)/tmp:/data $(IMG) bash
