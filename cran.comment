@@ -1,0 +1,8 @@
+;; -*- mode: org; coding: utf-8 -*-
+
+<2020-09-21 Mon>
+
+This resubmission fixes the date entry in the DESCRIPTION file.
+The tests have also been altered to reduce the overall check-time which seems to be a problem on r-devel-windows-ix86+x86_64. It seems this is primarily related to build times and thus the overall check-time may be hard to reduce further, unless I am mistaken?
+
+Kind regards,
