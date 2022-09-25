@@ -1,3 +1,6 @@
+# mets 1.3.1
+  - Maintenance release
+
 # mets 1.3.0
   - Efficient IPCW for binary data: Effbinreg 
   - IPCW restricted mean survival regression: resmeanIPCW 
