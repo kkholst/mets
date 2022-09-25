@@ -185,8 +185,8 @@ kumar$cause2 <- 1*(kumar$cause==2)
 b3 <- logitATE(cause2~gp+dnr+preauto+ttt24,kumar,treat.model=gp~dnr+preauto+ttt24)
 summary(b3)
 
-b4 <- binregATE(Event(time,cause2)~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24,cens.code=2,time=200)
-summary(b4)
+## b4 <- binregATE(Event(time,cause2)~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24,cens.code=2,time=200)
+## summary(b4)
 ```
 
 Or with continuous response using normal estiamating equations
