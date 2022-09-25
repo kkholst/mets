@@ -1,3 +1,4 @@
+DOCKER=nerdctl
 
 install:
 	@R -q -e "devtools::install()"
@@ -22,4 +23,11 @@ v:
 
 roxy: doc
 
-.PHONY: c check roxy doc v vignette install
+IMG=rocker/r-devel-ubsan-clang
+dpull:
+	@$(DOCKER) pull $(IMG)
+## run docker, install packages, and docker commit image (e.g. -> mets)
+d:
+	$(DOCKER) run --cap-add SYS_PTRACE -ti --rm -v $(PWD)/../test:/data $(IMG) bash
+
+.PHONY: c check roxy doc v vignette install dpull d

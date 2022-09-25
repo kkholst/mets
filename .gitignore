@@ -1,3 +1,5 @@
+.*cache
+.DS_Store
 *_cache
 test.R
 README.Rmd
