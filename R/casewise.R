@@ -1,7 +1,8 @@
 ##' Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
 ##'
 ##' @title Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
-##' @details Uses cluster based conservative standard errors for marginal
+##' @details Uses cluster based conservative standard errors for marginal and sometimes only the uncertainty of the concordance estimates. This works prettey well, alternatively one can use also the 
+##'          funcions Casewise for a specific time point 
 ##' @param conc Concordance 
 ##' @param marg Marginal estimate
 ##' @param test Type of test for independence assumption. "conc" makes test on concordance scale and "case" means a test on the casewise concordance
@@ -12,6 +13,7 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
 ##' data("prt",package="mets");
+##' prt <- force.same.cens(prt,cause="status")
 ##' 
 ##' prt <- prt[which(prt$id %in% sample(unique(prt$id),7500)),]
 ##' ### marginal cumulative incidence of prostate cancer
@@ -52,10 +54,6 @@
 ##' @export
 casewise.test <- function(conc,marg,test="no-test",p=0.01)
 { ## {{{
-###	conc=cdz; marg=cifdz; p=0.01
-###	conc=cmz; marg=cifmz
-###	names(cdz)
-###	cdz$casewise
   if (sum(marg$P1>p)==0) stop("No timepoints where marginal > ",p,"\n"); 
   time1 <- conc$time; time2 <- marg$time[marg$P1>0.01]
   mintime <- max(time1[1],time2[1])
@@ -172,6 +170,7 @@ return(out)
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library(prodlim)
 ##' data(prt);
+##' prt <- force.same.cens(prt,cause="status")
 ##' 
 ##' ### marginal cumulative incidence of prostate cancer##' 
 ##' outm <- prodlim(Hist(time,status)~+1,data=prt)
@@ -198,7 +197,7 @@ return(out)
 casewise <- function(conc,marg,cause.marg)
 { ## {{{
   if (missing(cause.marg)) stop("Please specify cause of marginal (as given in Event object)")
-  if ((!class(conc)=="prodlim")  || (!class(marg)=="prodlim")) stop("Assumes that both models are based on prodlim function \n"); 
+  if ((!inherits(conc,"prodlim"))  || (!inherits(marg,"prodlim"))) stop("Assumes that both models are based on prodlim function \n"); 
   time1 <- conc$time
   time2 <- marg$time
 
@@ -212,15 +211,15 @@ casewise <- function(conc,marg,cause.marg)
  
   out <- conc
   out$time <- timer
-  if (class(marg)=="comp.risk") margtime <- Cpred(cbind(marg$time,c(marg$P1)),timer)[,2] else if (class(marg)=="prodlim") {
+  if (inherits(marg,"comp.risk")) margtime <- Cpred(cbind(marg$time,c(marg$P1)),timer)[,2] else if (inherits(marg,"prodlim")) {
 	  cuminc <- data.frame(marg$cuminc)[,cause.prodlim]; 
 	  se.cuminc <- data.frame(marg$se.cuminc)[,cause.prodlim]; 
 	  margtime <- Cpred(cbind(marg$time,c(cuminc)),timer)[,2]; 
 	  se.margtime <- Cpred(cbind(marg$time,c(se.cuminc)),timer)[,2]; 
   } else stop("marginal cumulative incidence comp.risk or prodlim output\n"); 
 
-  if (class(conc)=="comprisk") concP1 <-  Cpred(cbind(conc$time,c(conc$P1)),timer)[,2]
-  else if (class(conc)=="prodlim")  {
+  if (inherits(conc,"comprisk")) concP1 <-  Cpred(cbind(conc$time,c(conc$P1)),timer)[,2]
+  else if (inherits(conc,"prodlim"))  {
 	  conc.cuminc <- data.frame(conc$cuminc)[,1]
 	  conc.se.cuminc <- data.frame(conc$se.cuminc)[,1]
           se.P1 <-  Cpred(cbind(conc$time,conc.se.cuminc),timer)[,2]
@@ -259,13 +258,18 @@ return(list(p.casewise=pud$fit,ci.casewise=exp(udci)))
 
 
 ##' @export
-plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",legend=FALSE,...)
+plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",
+                          legend=FALSE,add=FALSE, ...)
 { ## {{{
   if (is.null(col)) col <- 1:3
   if (is.null(lty)) lty <- 1:3
   if (is.null(ylim)) ylim=range(c(x$casewise[,2],x$marg[,2]))
 
-  plot(x$casewise[,1],x$casewise[,2],type="s",ylim=ylim,lty=lty[1],col=col[1],xlab=xlab,ylab=ylab,...)
+  if (add) {
+    lines(x$casewise[,1],x$casewise[,2],type="s",lty=lty[1],col=col[1],...)
+  } else {
+   plot(x$casewise[,1],x$casewise[,2],type="s",ylim=ylim,lty=lty[1],col=col[1],xlab=xlab,ylab=ylab,...)
+  }
   if (!is.null(ci)) {
      ul <- x$casewise[,2]+qnorm(1-(1-ci)/2)* x$casewise[,3]
      nl <- x$casewise[,2]-qnorm(1-(1-ci)/2)* x$casewise[,3]
@@ -388,4 +392,65 @@ back2timereg <- function(obj)
   attr(out,"class") <- rev(attr(out,"class")) 
   return(out)
 } ## }}}
+
+
+##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
+##'
+##' @title Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
+##' @details Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
+##' @param concbreg Concordance 
+##' @param margbreg Marginal estimate
+##' @param zygs order of zygosity for estimation of concordance and casewise.
+##' @param newdata to give instead of zygs.
+##' @param ... to pass to estimate function
+##' @author Thomas Scheike
+##' @examples
+##' data(prt)
+##' prt <- force.same.cens(prt,cause="status")
+##' 
+##' dd <- bicompriskData(Event(time, status)~strata(zyg)+id(id), data=prt, cause=c(2, 2))
+##' newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
+##' 
+##' ## concordance 
+##' bcif1 <- binreg(Event(time,status)~-1+factor(zyg)+cluster(id), data=dd,
+##'                 time=80, cause=1, cens.model=~strata(zyg))
+##' pconc <- predict(bcif1,newdata)
+##' 
+##' ## marginal estimates 
+##' mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
+##' mc <- predict(mbcif1,newdata)
+##' mc
+##' 
+##' cse <- binregCasewise(bcif1,mbcif1)
+##' cse
+##' @export
+binregCasewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
+{# {{{
+  if (is.null(newdata)) newdata <- data.frame(zyg=zygs,id=1)
+
+  pconc <- predict(concbreg,newdata)
+  pmarg <- predict(margbreg,newdata)
+
+  f <- function(p) {concbreg$coef <- p; return(log(predict(concbreg,newdata)[,1]))} 
+  fcase <- function(p) {
+      concbreg$coef <- p[1:2];  
+      margbreg$coef <- p[3]; 
+     res <- (log(predict(concbreg,newdata)[,1]) - log(predict(margbreg,newdata)[,1]))
+     return(res)
+  } 
+
+  margiid <- margbreg$iid
+  conciid <- matrix(0,nrow(margiid),nrow(pconc))
+  wiid <- which(concbreg$iid.origid %in% margbreg$iid.origid)
+  conciid[wiid,] <- concbreg$iid
+  iids <- cbind(conciid,margiid)
+  vcov <- crossprod(iids)
+
+  dd <- estimate(coef=c(concbreg$coef,margbreg$coef),vcov=vcov,f=fcase,...)
+  expcoef <- exp(dd$coefma[,c(1,3:4)])
+
+  res <- list(coef=expcoef,logcoef=dd)
+  return(res)
+}# }}}
+
 

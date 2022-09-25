@@ -78,12 +78,6 @@ Bootphreg <- function(formula,data,offset=NULL,weights=NULL,B=1000,type=c("exp",
     strata <- m[[ts$vars]]
     strata.name <- ts$vars
   }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    pos.offset <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  else pos.offset <- NULL
   X <- model.matrix(Terms, m)
   if (!is.null(intpos  <- attributes(Terms)$intercept))
     X <- X[,-intpos,drop=FALSE]
@@ -91,8 +85,6 @@ Bootphreg <- function(formula,data,offset=NULL,weights=NULL,B=1000,type=c("exp",
 
   res <- Bootphreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,B=B,
 		     type=type,...)
-###	   list(call=cl,model.frame=m,formula=formula,
-###           strata.pos=pos.strata,cluster.pos=pos.cluster))
   class(res) <- "boot-phreg"
   
   res
@@ -236,8 +228,6 @@ times2 <- c2$cumhaz[,1]
 coef1 <- do.call("rbind",lapply(b1,function(x) x$coef))
 coef2 <- do.call("rbind",lapply(b2,function(x) x$coef))
 ###
-###cums1 <- do.call("cbind",lapply(b1,function(x) Cpred(rbind(c(0,0),x$cumhaz),xx)[,2]))
-###cums2 <- do.call("cbind",lapply(b2,function(x) Cpred(rbind(c(0,0),x$cumhaz),xx)[,2]))
 bcums1 <- do.call("cbind",lapply(b1,function(x) x$cumhaz))
 bcums2 <- do.call("cbind",lapply(b2,function(x) x$cumhaz))
 

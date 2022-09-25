@@ -9,6 +9,10 @@ simRecurrentII(
   cumhaz,
   cumhaz2,
   death.cumhaz = NULL,
+  r1 = NULL,
+  r2 = NULL,
+  rd = NULL,
+  rc = NULL,
   gap.time = FALSE,
   max.recurrent = 100,
   dhaz = NULL,
@@ -28,6 +32,14 @@ simRecurrentII(
 \item{cumhaz2}{cumulative hazard of recurrent events  of type 2}
 
 \item{death.cumhaz}{cumulative hazard of death}
+
+\item{r1}{potential relative risk adjustment of rate}
+
+\item{r2}{potential relative risk adjustment of rate}
+
+\item{rd}{potential relative risk adjustment of rate}
+
+\item{rc}{potential relative risk adjustment of rate}
 
 \item{gap.time}{if true simulates gap-times with specified cumulative hazard}
 

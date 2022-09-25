@@ -1,9 +1,9 @@
 
 ##' @export
 biprobit.vector <- function(x,id,X=NULL,Z=NULL,
-                    weights=NULL,
-                    biweight=function(x) { u <- min(x); ifelse(u==0,u,1/u) },
-                    ## biweight=function(x) { u <- min(x); ifelse(u==0,0,1/max(u,lava.options()$min.weight)) },
+                            weights=NULL,
+                            weights.fun=function(x) ifelse(any(x<=0), 0, max(x)),
+                    ## weights.fun=function(x) { u <- min(x); ifelse(u==0,u,1/u) },
                     eqmarg=TRUE,add=NULL,control=list(),p=NULL,
                     pair.ascertained=FALSE,
                     marg=NULL,
@@ -18,7 +18,6 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     if (is.null(namX)) namX <- "(Intercept)"
     if (is.null(namZ)) namZ <- "(Intercept)"
     namZ <- paste("r:",namZ,sep="")
-
     resh <- function(x,...,nam,onecol=0,df=1) {
         x <- c(list(x),list(...))
         res <- mis <- c()
@@ -51,8 +50,7 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     }
     DD <- resh(data.frame(x),X,Z,weights,nam=c("y","x","z","w"),onecol=3)
     Y00 <- matrix(c(0,0, 1,0, 0,1, 1,1),ncol=2,byrow=TRUE)
-
-    if (is.null(X) && is.null(Z)) {
+  if (is.null(X) && is.null(Z)) {
         pos <- factor(interaction(DD$y))
         ipos <- unique(as.numeric(pos))
         Tab <- rbind(as.vector(table(DD$y))); colnames(Tab) <- c("00","10","01","11")
@@ -113,7 +111,6 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     varcompname <- "Tetrachoric correlation"    
     ##msg <- "Variance of latent residual sterm = 1 (standard probit link)"
     msg <- NULL
-
     model <- list(tr=vartr,name=trname,inv=itrname,invname=itrname,deriv=dvartr,varcompname=varcompname,eqmarg=eqmarg,blen=blen,zlen=zlen,...)
     SigmaFun <- function(p,Z=MyData$Z0,cor=TRUE,...) {
         if (!cor) {
@@ -126,12 +123,12 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
         dr <- apply(Z,2,function(x) x*dvartr(val))
         structure(list(rho=vartr(val),lp=val,drho=dr),dvartr=dvartr,vartr=vartr)
     }
-    
+
 
     if (length(weights)<2) {
         w0 <- NN
-    } else {        
-        w1 <- apply(DD$w,1,biweight)
+    } else {
+        w1 <- apply(DD$w,1, weights.fun)
         w2 <- unlist(by(w1,pos,sum))
         w0 <- rep(0,4*nrow(Tab))
         w0[ipos] <- w2[ipos]
@@ -194,9 +191,7 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
     f0 <- function(p) -sum(attributes(U(p,w0))$logLik)
     ## f00 <- function(p) -sum(attributes(U(c(0,p),w0))$logLik)
     g0 <- function(p) -as.numeric(colSums(U(p,w0)))
-    aa <- U(c(0.203,0),c(0,1,1,1))
-    exp(attr(aa,"logLik"))
-    
+
     if (!is.null(p)) op <- list(par=p)
     else {
         suppressWarnings(op <- nlminb(p0,f0,gradient=g0,control=control))
@@ -263,8 +258,7 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 ##' @param eqmarg If TRUE same marginals are assumed (exchangeable)
 ##' @param indep Independence
 ##' @param weights Weights
-##' @param biweight Function defining the bivariate weight in each cluster
-##' @param samecens Same censoring
+##' @param weights.fun Function defining the bivariate weight in each cluster
 ##' @param randomeffect If TRUE a random effect model is used (otherwise correlation parameter is estimated allowing for both negative and positive dependence)
 ##' @param vcov Type of standard errors to be calculated
 ##' @param pairs.only Include complete pairs only?
@@ -284,13 +278,10 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 ##' predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 ##' 
 ##' \donttest{ ## Reduce Ex.Timings
-##' library(lava)
-##' m <- lvm(c(y1,y2)~x)
-##' covariance(m,y1~y2) <- "r"
-##' constrain(m,r~x+a+b) <- function(x) tanh(x[2]+x[3]*x[1])
-##' distribution(m,~x) <- uniform.lvm(a=-1,b=1)
-##' ordinal(m) <- ~y1+y2
-##' d <- sim(m,1000,p=c(a=0,b=-1)); d <- d[order(d$x),]
+##' n <- 2e3
+##' x <- sort(runif(n, -1, 1))
+##' y <- rmvn(n, c(0,0), rho=cbind(tanh(x)))>0
+##' d <- data.frame(y1=y[,1], y2=y[,2], x=x)
 ##' dd <- fast.reshape(d)
 ##' 
 ##' a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")
@@ -324,28 +315,20 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 ##'                        cens.formula=Surv(time,status==0)~zyg,
 ##'                        breaks=100)
 ##' 
-##'     a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
-##'                        cens.formula=Surv(time,status==0)~1,
-##'                        breaks=100,pairs.only=TRUE)
+##'     #a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
+##'     #                   cens.formula=Surv(time,status==0)~1,
+##'     #                   breaks=100,pairs.only=TRUE)
 ##' 
-##'     a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-##'                         cens.formula=Surv(time,status==0)~1,
-##'                         breaks=100,pairs.only=TRUE)
-##' 
-##'     prt0$trunc <- prt0$time*runif(nrow(prt0))*rbinom(nrow(prt0),1,0.5)
-##'     a3 <- biprobit.time(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-##'                         cens.formula=Surv(trunc,time,status==0)~1,
-##'                         breaks=100,pairs.only=TRUE)
-#
-##' 
-##'     plot(a,which=3,ylim=c(0,0.1))
-##'} 
+##'     #a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
+##'     #                    cens.formula=Surv(time,status==0)~1,
+##'     #                    breaks=100,pairs.only=TRUE)
+##'}
 biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
                      indep=FALSE, weights=NULL, 
-                     biweight,
-                     samecens=TRUE, randomeffect=FALSE, vcov="robust",
+                     weights.fun=function(x) ifelse(any(x<=0), 0, max(x)),
+                     randomeffect=FALSE, vcov="robust",
                      pairs.only=FALSE,                             
-                     allmarg=samecens&!is.null(weights),
+                     allmarg=!is.null(weights),
                      control=list(trace=0),
                      messages=1, constrain=NULL,
                      table=pairs.only,
@@ -353,9 +336,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
                      ...) {
 
   mycall <- match.call()
-  if (missing(biweight)) {
-      biweight <- mycall$biweight <- function(x) { u=min(x); ifelse(u==0,0,1/min(u)) }
-  }
+
   formulaId <- unlist(Specials(x,"cluster"))
   if (is.null(formulaId)) {
     formulaId <- unlist(Specials(x,"id"))
@@ -373,7 +354,6 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
   }
   if (!is.null(formulaStrata)) strata <- formulaStrata
   mycall$x <- formula
-
   if (!is.null(strata)) {
     dd <- split(data,interaction(data[,strata]))
     fit <- lapply(seq(length(dd)),function(i) {
@@ -391,7 +371,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
     rownames(res$vcov) <- colnames(res$vcov) <- names(res$coef)
     return(res)
   }
-  
+
   if (missing(id)) {    
     if (!is.null(weights)) {
       weights <- data[,weights]
@@ -402,13 +382,18 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
 
   yx <- getoutcome(formula)
 
+  ids <- table(data[,id])
+  if (all(ids==2)) pairs.only <- TRUE
   if (pairs.only) {
       X <- Z <- NULL
       zf <- getoutcome(rho); if (length(attr(zf,"x"))>0) Z <- model.matrix(rho,data);
       if (table && NCOL(Z)<10 && length(unique(sample(Z,min(1000,length(Z)))))<10) { ## Not quantitative?
           if (!is.null(weights)) weights <- data[,weights]
           if (length(attr(yx,"x")>0)) X <- model.matrix(x,data);
-          return(biprobit.vector(data[,yx],X=X,Z=Z,id=data[,id],weights,biweight=biweight,eqmarg=eqmarg,add=list(formula=formula,rho.formula=rho),control=control,p=p,...))
+          return(biprobit.vector(data[,yx],X=X,Z=Z,id=data[,id],
+                                 weights,weights.fun=weights.fun,eqmarg=eqmarg,
+                                 add=list(formula=formula,rho.formula=rho),
+                                 control=control,p=p,...))
       }
   }
   
@@ -447,13 +432,16 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
   model <- list(tr=vartr,name=trname,inv=itrname,invname=itrname,deriv=dvartr,varcompname=varcompname,dS=dS0,eqmarg=eqmarg,randomeffect=randomeffect,blen=blen,zlen=zlen)
 
   MyData <- with(DD,ExMarg(Y0,XX0,W0,dS0,midx1,midx2,eqmarg=eqmarg,allmarg=allmarg,Z0,id=id))
-  if (samecens & !is.null(weights)) {
-      MyData$W0 <- cbind(apply(MyData$W0,1,biweight))
+  if (pairs.only) {
+    MyData$Y0_marg <- NULL
+  }
+  if (!is.null(weights)) {
+      MyData$W0 <- cbind(apply(MyData$W0,1,weights.fun))
       if (!is.null(MyData$Y0_marg)) {
-          MyData$W0_marg <- cbind(apply(MyData$W0_marg,1,biweight))
+          MyData$W0_marg <- cbind(apply(MyData$W0_marg,1,weights.fun))
       }
   }
-  
+
   SigmaFun <- function(p,Z=MyData$Z0,cor=!randomeffect,...) {
       if (!cor) {
           r <- vartr(p[1])
@@ -580,9 +568,8 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
           return(structure(res[free],logLik=attributes(res)$logLik))
       }
   }
-  
+
   if (is.null(control$method)) {
-    ##    control$method <- ifelse(samecens & !is.null(weights), "bhhh","quasi")
     control$method <- "quasi"
   }
   control$method <- tolower(control$method)

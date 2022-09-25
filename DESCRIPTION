@@ -1,8 +1,8 @@
 Package: mets
 Type: Package
 Title: Analysis of Multivariate Event Times
-Version: 1.2.8.1
-Date: 2020-09-25
+Version: 1.3.0
+Date: 2022-08-06
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Thomas Scheike", role=c("aut")))
 Author: Klaus K. Holst [aut, cre], Thomas Scheike [aut]
@@ -30,18 +30,19 @@ Imports:
     splines,
     survival (>= 2.43-1),
 Suggests:
+    optimx,
     prodlim,
     cmprsk,
     testthat (>= 0.11),
     ucminf,
     knitr,
-    bookdown,
     rmarkdown,
     ggplot2,
-    cowplot
+    cowplot,
+    icenReg
 VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 SystemRequirements: C++11
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

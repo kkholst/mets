@@ -17,7 +17,7 @@
 ##' @param group Optional. Variable name defining group for interaction analysis (e.g., gender)
 ##' @param num Optional twin number variable
 ##' @param weights Weight matrix if needed by the chosen estimator (IPCW)
-##' @param biweight Function defining the bivariate weight in each cluster
+##' @param weights.fun Function defining a single weight each individual/cluster
 ##' @param strata Strata
 ##' @param messages Control amount of messages shown 
 ##' @param control Control argument parsed on to the optimization routine. Starting values may be parsed as '\code{start}'.
@@ -34,7 +34,6 @@
 ##' @param constrain Development argument
 ##' @param samecens Same censoring
 ##' @param allmarg Should all marginal terms be included
-##' @param bound Development argument
 ##' @param varlink Link function for variance parameters
 ##' @param ... Additional arguments to lower level functions
 ##' @author Klaus K. Holst
@@ -48,7 +47,7 @@
 bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                    num=NULL,
                    weights=NULL,
-                   biweight=function(x) 1/min(x),
+                   weights.fun=function(x) ifelse(any(x<=0), 0, max(x)),
                    strata=NULL,
                    messages=1,
                    control=list(trace=0),
@@ -61,7 +60,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                    robustvar=TRUE,
                    p, indiv=FALSE,
                    constrain,
-                   bound=FALSE,
                    varlink,
                    ...) {
     
@@ -120,7 +118,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   idtab <- table(data[,id])
   if (sum(idtab>2)) stop("More than two individuals with the same id ")
 
-  ##  suppressMessages(browser())
   if (pairs.only) {
     data <- data[as.character(data[,id])%in%names(idtab)[idtab==2],]
     idtab <- table(data[,id])
@@ -151,24 +148,13 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   data[,zyg] <- zyg2 ## MZ=0, DZ=1, OS=2
 
   
-  ## time <- "time"
-  ## while (time%in%names(data)) time <- paste(time,"_",sep="")
-  ## data[,time] <- unlist(lapply(idtab,seq))
-
-
-  ## ff <- paste(as.character(formula)[3],"+",
-  ##             paste(c(id,zyg,weights,num),collapse="+"))
-  ## ff <- paste("~",yvar,"+",ff)
-  ##formula0 <- as.formula(ff)
   opt <- options(na.action="na.pass")
-  ##  Data <- model.matrix(formula0,data)
   Data <- cbind(model.matrix(formula,data),data[,c(yvar,id,zyg,weights,num)])
   options(opt)
-  ## rnames1 <- setdiff(colnames(Data),c(yvar,time,id,weights,zyg))
+
   rnames1 <- setdiff(colnames(Data),c(yvar,id,weights,zyg,num))
   nx <- length(rnames1) 
   if (nx==0) stop("Zero design not allowed")
-  
 
   bidx0 <- seq(nx)
   midx0 <- bidx0; midx1 <- midx0+nx
@@ -277,8 +263,6 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
 
 ###{{{ Mean/Var function
 
-  ##  suppressMessages(browser())
-
   ##Marginals etc.
   MyData0 <- ExMarg(Y0,XX0,W0,dS0,eqmarg=TRUE,allmarg=allmarg)
   MyData1 <- ExMarg(Y1,XX1,W1,dS1,eqmarg=TRUE,allmarg=allmarg)
@@ -297,22 +281,21 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   if (!OSon) N <- N[,-c(3,6,9),drop=FALSE]
   
   if (samecens & !is.null(weights)) {
-    MyData0$W0 <- cbind(apply(MyData0$W0,1,biweight))
+    MyData0$W0 <- cbind(apply(MyData0$W0,1,weights.fun))
     if (!is.null(MyData0$Y0_marg))
-      MyData0$W0_marg <- cbind(apply(MyData0$W0_marg,1,biweight))
+      MyData0$W0_marg <- cbind(apply(MyData0$W0_marg,1,weights.fun))
 
-    MyData1$W0 <- cbind(apply(MyData1$W0,1,biweight))
+    MyData1$W0 <- cbind(apply(MyData1$W0,1,weights.fun))
     if (!is.null(MyData1$Y0_marg))
-        MyData1$W0_marg <- cbind(apply(MyData1$W0_marg,1,biweight))
+        MyData1$W0_marg <- cbind(apply(MyData1$W0_marg,1,weights.fun))
 
-    MyData2$W0 <- cbind(apply(MyData2$W0,1,biweight))
+    MyData2$W0 <- cbind(apply(MyData2$W0,1,weights.fun))
     if (!is.null(MyData2$Y0_marg))
-        MyData2$W0_marg <- cbind(apply(MyData2$W0_marg,1,biweight))
+        MyData2$W0_marg <- cbind(apply(MyData2$W0_marg,1,weights.fun))
   }
 
   rm(Y0,XX0,W0,Y1,XX1,W1,Y2,XX2,W2)
   
-
   Sigma <- function(p0) {
     Sigma2 <- NULL
     p0[vidx] <- mytr(p0[vidx])    
@@ -338,14 +321,13 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
     return(list(Sigma0=Sigma0,Sigma1=Sigma1,Sigma2=Sigma2,dS2=dS2))
   }
 
-  ## p0 <- op$par
-  ## ff <- function(p) as.vector(Sigma(p)$Sigma2)
-  ## numDeriv::jacobian(ff,p0)
-  ## Sigma(p0)$dS2
-  ## dmytr(p0[vidx])
-  ## Sigma(p0)$dS2[1,]*dmytr(p0[vidx])[1]
-  ## Sigma(p0)$dS2[2,]*dmytr(p0[vidx])[2]
-  ## Sigma(p0)$dS2[3,]*dmytr(p0[vidx])[3]
+  env <- new.env(parent=baseenv())
+  #environment(mytr) <- baseenv()
+  for (v in c("ACDU","mytr","vidx","OSon","plen",
+              "Rm","Am","Vm","Dm","dS2.","dS2")) {
+    assign(v, get(v), envir=env)
+  }
+  environment(Sigma) <- env
 
 ###}}} Mean/Var function
   
@@ -371,7 +353,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
     b1 <- cbind(p[bidx1])
     b2 <- cbind(p[bidx2])
     b00 <- b0; b11 <- b1; b22 <- b2
-    if (bound) p[vidx] <- min(p[vidx],20)
+    ## if (bound) p[vidx] <- min(p[vidx],20)
     S <- Sigma(p)
     lambda <- eigen(S$Sigma0)$values
     if (any(lambda<1e-12 | lambda>1e9)) stop("Variance matrix out of bounds")
@@ -533,7 +515,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
       p1 <- constrain; p1[freeidx] <- p
       -as.numeric(U(p1)[freeidx])
     }
-    p0 <- p0[is.na(constrain)]    
+    p0 <- p0[is.na(constrain)]
   }
 
 
@@ -552,9 +534,21 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   ucminfopt <- intersect(names(control),c("trace","grtol","xtol","stepmax","maxeval","grad","gradstep","invhessian.lt"))
   optimopt <- names(control) 
 
+  if (control$method=="optimx") {
+    if (!requireNamespace("optimx")) stop("Package `optimx` required.")
+    if (is.null(control$lower)) control$lower <- -Inf
+    if (is.null(control$upper)) control$upper <- Inf
+    if (is.null(control$optimx.method)) control$optimx.method <- c("BFGS","Nelder-Mead")
+  }
+
   op <- switch(tolower(control$method),
                nlminb=nlminb(p0,f0,gradient=g0,control=control[nlminbopt]),
                optim=optim(p0,fn=f0,gr=g0,control=control[ucminfopt]),
+               optimx=optimx::optimx(p0, f0, g0, ...,
+                                     lower=control$lower,
+                                     upper=control$upper,
+                                     method=control$optimx.method,
+                                     control=control$optimx.control),
                ucminf=,
                quasi=,
                gradient=ucminf::ucminf(p0,fn=f0,gr=g0,control=control[ucminfopt],hessian=0),
@@ -577,6 +571,16 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                ##                optim=optim(p0,f,control=mycontrol[ucminfopt],...),
                  nlminb(p0,f,control=control[nlminbopt]))
 
+  if (inherits(op, "optimx")) {
+    val <- op$value
+    if (length(val)==1) {
+      pp <- as.numeric(coef(op))
+    } else {
+      idx <- which.min(op$value)
+      pp <- as.numeric(coef(op)[idx,])
+    }
+    op <- list(par=pp, opt=op)
+  }
   if (stderr) {
     UU <- U(op$par,indiv=TRUE)    
     I <- -numDeriv::jacobian(U,op$par)
@@ -633,6 +637,10 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                ACDU=ACDU[-4]*1)
   
   npar[unlist(lapply(npar,length))==0] <- 0
+
+  environment(mytr) <- baseenv()
+  environment(myinvtr) <- baseenv()
+  environment(dmytr) <- baseenv()
 
   val <- list(coef=cc,vcov=V,bread=iI,I=I,score=UU,logLik=attributes(UU)$logLik,opt=op,
               id=Wide[,id], model.frame=Wide,

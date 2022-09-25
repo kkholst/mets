@@ -2,6 +2,8 @@
 % Please edit documentation in R/binomial.regression.R
 \name{binreg}
 \alias{binreg}
+\alias{logitIPCW}
+\alias{binregt}
 \title{Binomial Regression for censored competing risks data}
 \usage{
 binreg(
@@ -44,7 +46,7 @@ binreg(
 
 \item{se}{to compute se's  based on IPCW}
 
-\item{kaplan.meier}{uses Kaplan-Meier for baseline than standard Cox}
+\item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
 
 \item{cens.code}{gives censoring code}
 
@@ -65,6 +67,10 @@ Based on binomial regresion IPCW response estimating equation:
 \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
+logitIPCW instead considers 
+\deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
+a standard logistic regression with weights that adjust for IPCW. 
+
 variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 under known censoring model. 
 
@@ -80,6 +86,10 @@ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
 outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 summary(outs)
+
+## glm with IPCW weights 
+outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
+summary(outl)
 
 ##########################################
 ### risk-ratio of different causes #######
@@ -108,8 +118,10 @@ summary(cifs2)
 
 cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
-	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
+	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 summary(cifdob)
+
+expit  <- function(z) 1/(1+exp(-z)) 
 
 riskratio <- function(p) {
   expit  <- function(z) 1/(1+exp(-z)) ## expit
@@ -119,7 +131,7 @@ riskratio <- function(p) {
   return(p[1]/p[2])
 }
 
-estimate(coef=cifdob$coef,vcov=cifdob$var,f=riskratio)
+estimate(cifdob,f=riskratio)
 
 }
 \author{

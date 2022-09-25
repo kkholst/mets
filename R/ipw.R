@@ -34,7 +34,7 @@
 ##' }
 ##' @export
 ipw <- function(formula,data,cluster,
-                same.cens=FALSE,obs.only=TRUE,
+                same.cens=FALSE,obs.only=FALSE,
                 weight.name="w",
                 trunc.prob=FALSE,weight.name2="wt",indi.weight="pr",
                 cens.model="aalen", pairs=FALSE,

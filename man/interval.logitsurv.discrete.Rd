@@ -54,6 +54,14 @@ interval.logitsurv.discrete(
 }
 }
 \details{
+This is thus also the cumulative odds model, since 
+\deqn{
+   P(T \leq t | x) =  \frac{G(t) \exp(x \beta) }{1 + G(t) exp( x \beta) }
+}
+
+The baseline \eqn{G(t)} is written as \eqn{cumsum(exp(\alpha))} and this is not the standard
+parametrization that takes log of \eqn{G(t)} as the parameters.
+
 Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
 When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an observation at j+1
 
@@ -68,30 +76,8 @@ dtable(ttpd,~entry+time2)
 out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
 
-n <- 100
-Z <- matrix(rbinom(n*4,1,0.5),n,4)
-outsim <- simlogitSurvd(out$coef,Z)
-outsim <- transform(outsim,left=time,right=time+1)
-outsim <- dtransform(outsim,right=Inf,status==0)
-
-outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-
-Z <- matrix(0,5,4)
-Z[2:5,1:4] <- diag(4)
 pred <- predictlogitSurvd(out,se=FALSE)
 plotSurvd(pred)
-
-## simulations 
-n <- 100
-Z <- matrix(rbinom(n*4,1,0.5),n,4)
-outsim <- simlogitSurvd(out$coef,Z)
-###
-outsim <- transform(outsim,left=time,right=time+1)
-outsim <- dtransform(outsim,right=Inf,status==0)
-
-out$coef
-outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-summary(outss)
 
 }
 \author{

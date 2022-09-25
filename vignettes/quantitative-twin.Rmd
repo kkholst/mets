@@ -3,29 +3,30 @@
 title: Twin models
 author: Klaus Holst & Thomas Scheike
 output:
-  bookdown::html_document2:
-    toc: yes
-    toc_float: true
-    number_sections: true
-    fig_width: 7
-    fig_caption: true
-    theme: spacelab
-    highlight: pygments
+  rmarkdown::html_vignette:
+    fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Twin models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-This document provides a brief tutorial to analyzing twin data using
-the **`mets`** package:
+This document provides a brief tutorial to analyzing twin data using the
+**`mets`** package:
 
 ```{r  include=FALSE,echo=FALSE,message=FALSE,warning=FALSE }
 options(warn=-1, family="Times")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  out.width = "70%")
+  dpi=50,
+  fig.width=7.15, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1
+  ##dev="png",
+  ##dpi=72,
+  ## out.width = "70%")
+)
 library("mets")
 ```
 
@@ -37,10 +38,11 @@ library("mets")
 \newcommand{\unitfrac}[2]{#1/#2}
 \newcommand{\n}{}
 \)
-'
-The development version may be installed from *github*:
 
-```{r  install, eval=FALSE }
+ <!-- 
+ The development version may be installed from *github*: 
+ -->
+```{r  install, eval=FALSE, echo=FALSE}
 # install.packages("remotes")
 remotes::install_github("kkholst/mets", dependencies="Suggests")
 ```
@@ -54,6 +56,7 @@ on self-reported BMI-values from a random sample of 11,411 same-sex
 twins. First, we will load data
 
 ```{r  twinbmi }
+library(mets)
 data("twinbmi")
 head(twinbmi)
 ```
@@ -220,39 +223,39 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
   \end{pmatrix}
 \end{gather*}
 
-```{r   }
-dd <- na.omit(twinbmi)
-l0 <- twinlm(bmi ~ age+gender, data=dd,
-            DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
 
+```{r}
+dd <- na.omit(twinbmi)
 ```
 
-```{r   }
-l <- twinlm(bmi ~ ns(age,1)+gender, data=twinbmi,
-           DZ="DZ", zyg="zyg", id="tvparnr", type="cor", missing=TRUE)
-summary(l)
+Saturated model (different marginals in MZ and DZ twins and different marginals
+for twin 1 and twin 2):
+```{r lmsat, eval=FALSE}
+l0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
+```
+
+Different marginals for MZ and DZ twins (but same marginals within a pair)
+```{r lmflex, eval=FALSE}
+lf <- twinlm(bmi ~ age+gender, data=dd,DZ="DZ", zyg="zyg", id="tvparnr", type="flex")
+```
+ 
+Same marginals but free correlation with MZ, DZ
+```{r lmeqmarg}
+lu <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="eqmarg")
+estimate(lu)
 ```
 
 A formal test of genetic effects can be obtained by comparing the MZ and DZ correlation:
-
 ```{r   }
-estimate(l,contr(5:6,6))
+estimate(lu,contr(5:6,6))
 ```
 
-```{r   }
-l <- twinlm(bmi ~ ns(age,1)+gender, data=twinbmi,
-           DZ="DZ", zyg="zyg", id="tvparnr", type="cor", missing=TRUE)
-summary(l)
+We also consider the ACE model
+```{r  ace}
+ace0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="ace")
+summary(ace0)
 ```
 
-
-# Twin analysis, censored outcomes
-
-
-# Twin analysis,  binary traits
-
-
-# Time to event
 
 # Bibliography
 <a id="korkeila_bmi_1991"></a>[korkeila_bmi_1991] Korkeila, Kaprio, Rissanen & Koskenvuo, Effects of gender and age on the heritability of body mass index, <i>Int J Obes</i>, <b>15(10)</b>, 647-654 (1991). [↩](#b71edfd9bc946c317f4a732845bcaf93)

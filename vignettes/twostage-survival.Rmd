@@ -3,8 +3,10 @@ title: "Analysis of multivariate survival data"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5 
 vignette: >
   %\VignetteIndexEntry{Analysis of multivariate survival data} 
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,6 +16,10 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  dpi=50,
+  fig.width=7.15, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1,
   comment = "#>"
 )
 library(mets)
@@ -55,6 +61,24 @@ $$
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
 $$ 
 where $s(k,i)$ is a strata variable. 
+
+
+The constructed likelihood is a composite likehood based on 
+
+  * all pairs within each cluster (when the pairs argument is not used) 
+
+  * the specified pairs when the pairs argument is used. 
+
+
+In addition to the clusters specified for the construction of the composite likelihood these 
+can be added further summed using the se.clusters argument that sums the influence functions over 
+the se.clusters. When se.clusters are not specified it is the same as the cluster argument. 
+
+When the clusters of the dependence parametaters are the same as those of the marginal model and the
+phreg function is used then the standard errors are corrected for the uncertainty from the marginal models, otherwise
+the returned standard errors are computed as if the marginals are known. 
+
+
 
 
 Gamma distributed frailties 
@@ -209,6 +233,7 @@ modelling, so here it is better to use the twostageMLE.
 ```{r}
  library(mets)
  data(diabetes)
+ set.seed(100)
  
  # Marginal Cox model  with treat as covariate
  margph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
@@ -217,13 +242,18 @@ modelling, so here it is better to use the twostageMLE.
  summary(fitco1)
  
  # Clayton-Oakes
- fitco2 <- survival.twostage(margph,data=diabetes,theta=0.0,detail=0,
+ fitco2 <- survival.twostage(margph,data=diabetes,theta=0.0,
                   clusters=diabetes$id,var.link=1,model="clayton.oakes")
  summary(fitco2)
- fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
+ fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,
                   clusters=diabetes$id,var.link=0,model="clayton.oakes")
  summary(fitco3)
 ```
+
+Note, the standard errors are slightly different when comparing 
+fitco1 with fitco3 since the survival.twostage uses numerical 
+derivatives for the hessian and the derivative in the 
+direction of the marginal model. 
 
 The marginal models can be either structured Cox model or as here 
 with a baseline for each strata. This gives quite similar results to those
@@ -232,8 +262,11 @@ before.
 ```{r}
   # without covariates but marginal model stratified 
   marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
+ fitco<-twostageMLE(marg,data=diabetes,theta=1.0)
+ summary(fitco)
+
   fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
-		   model="clayton.oakes")
+		   model="clayton.oakes",var.link=0)
   summary(fitcoa)
 ```
 
@@ -276,7 +309,7 @@ First we generate some data from the Clayton-Oakes model with variance $0.5$ and
 And fit the related model. 
 
 ```{r}
- d <- simClaytonOakes(2000,2,0.5,0,3)
+ d <- simClaytonOakes(200,2,0.5,0,3)
   margph <- phreg(Surv(time,status)~x+cluster(cluster),data=d)
  # Clayton-Oakes, MLE 
  fitco1<-twostageMLE(margph,data=d)
@@ -289,8 +322,7 @@ We see that the parameter is indeed rather constant over the 9 regions. A formal
 test can be constructed. 
 
 ```{r}
- udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
- id="cluster",timevar="time",status="status",model="clayton.oakes",silent=0)
+ udp <- piecewise.twostage(c(0,0.5,2),data=d,id="cluster",timevar="time",status="status",model="clayton.oakes",silent=0)
  summary(udp)
 ```
 
@@ -312,9 +344,9 @@ each twin pair (for example). We start by setting this up.
 random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ ).
 
 ```{r}
- data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
+ data <- simClaytonOakes.twin.ace(200,2,1,0,3)
 
- out <- twin.polygen.design(data,id="cluster")
+ out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  pardes <- out$pardes
  pardes 
 ```
@@ -345,10 +377,31 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
  subject is also computed and is here around $3$, as we indeed constructed.
 
 ```{r}
+### data <- simClaytonOakes.twin.ace(2000,2,1,0,3)
+### out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
- ts <- twostage(aa,data=data,clusters=data$cluster,detail=0,
-      theta=c(2,1),var.link=0,step=0.5,random.design=des.rv,theta.des=pardes)
+ ts <- twostage(aa,data=data,clusters=data$cluster,
+      theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
  summary(ts)
+```
+
+ - A nice feature of the procdure is that it scales linearly in the number of observations
+    - 1 mill pairs had a running time of around 100 seconds. 
+
+```{r}
+run <- 0
+if (run==1) {
+ data <- simClaytonOakes.twin.ace(1000000,2,1,0,3)
+
+ out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
+ pardes <- out$pardes
+ aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
+ system.time(
+ ts <- twostage(aa,data=data,clusters=data$cluster,
+      theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
+ )
+ summary(ts)
+}
 ```
 
 The estimates can be transformed into Kendall's tau estimates for MZ and DZ twins. The Kendall's tau
@@ -376,7 +429,7 @@ only the environment, and two-children that share genes with their parents.
 ```{r}
 library(mets)
 set.seed(1000)
-data <- simClaytonOakes.family.ace(1000,2,1,0,3)
+data <- simClaytonOakes.family.ace(200,2,1,0,3)
 head(data)
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
@@ -405,21 +458,19 @@ Then we fit the model
 pa <- phreg(Surv(time,status)~+1+cluster(cluster),data=data)
 
 # make ace random effects design
-ts <- twostage(pa,data=data,clusters=data$cluster,
-	var.par=1,var.link=0,theta=c(2,1),
+ts <- twostage(pa,data=data,clusters=data$cluster,var.par=1,var.link=0,theta=c(2,1),
         random.design=out$des.rv,theta.des=out$pardes)
 summary(ts)
 ```
 
 The model can also be fitted by specifying the pairs that 
 one wants for the pairwise likelhood. This is done by
-specifying the pairs argument. 
-We start by considering all pairs as we also did before. 
+specifying the pairs argument.  We start by considering all pairs as we also did before. 
 
 All pairs can be written up by calling the familycluster.index
 function. 
 
-There are 6000 pairs to consider, and the first 6 pairs for the first family 
+There are xx pairs to consider, and the first 6 pairs for the first family 
 is written out here. 
 
 ```{r}
@@ -444,9 +495,9 @@ picked still refers to the data given in the data argument, and clusters (famili
 are also specified as before. 
 
 ```{r}
-ssid <- sort(sample(1:nrow(pairs),2000))
+ssid <- sort(sample(1:nrow(pairs),200))
 tsd <- twostage(pa,data=data,clusters=data$cluster,
-    theta=c(2,1)/10,var.link=0,step=1.0, random.design=out$des.rv,
+    theta=c(2,1)/10,var.link=0,random.design=out$des.rv,
    theta.des=out$pardes,pairs=pairs[ssid,])
 summary(tsd)
 ```
@@ -479,8 +530,7 @@ head(outid$des.rv)
 Now fitting the model using only the pair data. 
 
 ```{r}
-tsdid <- twostage(pa,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,
-	  var.link=0,baseline.iid=0,
+tsdid <- twostage(pa,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,var.link=0,baseline.iid=0,
           random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdid)
 
@@ -488,7 +538,7 @@ paid <- phreg(Surv(time,status)~+1+cluster(cluster),data=dataid)
 tsdidb <- twostage(paid,data=dataid,clusters=dataid$cluster,theta=c(2,1)/10,
   var.link=0,random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdidb)
-coef(tsdidb)
+coef(tsdid)
 ```
 
 Estimates changed because we used either the marginal from the full-data, in which case 
@@ -550,12 +600,20 @@ random.des[1,]
 random.des[2,]
 matrix(theta.des[1,],4,2)
 ```
-thus sharing only the third random effect with variance $\sigma_e^2$ and having 
-two non-shared random effects with variances $\sigma_g^2$, and finally  a last 
-4th random effect with variance $0$ that thus could have been omitted.
+thus sharing only the third random effect with variance $\sigma_e^2$ and
+having two non-shared random effects with variances $\sigma_g^2$, and finally
+a last 4th random effect with variance $0$ that thus could have been omitted. 
 
 
-now considering the parent and their child, they are 
+The length of all rows of theta.des
+are the maximum number of random effects $\times$ the number of parameters. 
+These two numbers are given in the call. In this case 4 $\times$ 2. 
+So theta.des has rows of length $8$, possibly including some 0's for rows
+not relevant due to fewer random effects, as is the case here for pairs 
+that do not share genetic effects.
+
+
+Now considering the parent and their child, they are 
 thus sharing the first random effect with variance $0.5 \sigma_g^2$ then there are 
 two non-shared random effects with variances $0.5 \sigma_g^2$, and finally a shared 
 environment with variance $\sigma_e^2$. 
@@ -582,18 +640,14 @@ tsdid$theta
 Finally the same model structure can be setup based on a Kinship coefficient. 
 
 ```{r}
-kinship  <- c()
-for (i in 1:nrow(pair.new))
-{
-if (pair.types[i,1]=="mother" & pair.types[i,2]=="father") pk1 <- 0 else pk1 <- 0.5
-kinship <- c(kinship,pk1)
-}
+kinship  <- rep(0.5,nrow(pair.types))
+kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
 head(kinship,n=10)
 
 out <- make.pairwise.design(pair.new,kinship,type="ace") 
 ```
 
-Same same 
+Same output as before 
 
 ```{r}
 tsdid3 <- twostage(pa,data=dataid,clusters=dataid$cluster,
@@ -606,15 +660,65 @@ tsdid$theta
 
 Now fitting the AE model without the "C" component for shared environment: 
 
-
 ```{r}
-out <- make.pairwise.design(pair.new,kinship,type="ae") 
+outae <- make.pairwise.design(pair.new,kinship,type="ae") 
 tsdid4 <- twostage(pa,data=dataid,clusters=dataid$cluster,
-   theta=c(2,1)/10,var.link=0,step=1.0,random.design=out$random.design,
-   baseline.iid=0,theta.des=out$theta.des,pairs=out$new.pairs,dim.theta=1)
+   theta=c(2,1)/10,var.link=0,random.design=outae$random.design,
+   baseline.iid=0,theta.des=outae$theta.des,pairs=outae$new.pairs,dim.theta=1)
 summary(tsdid4)
 ```
 
+
+Pairwise dependence modelling 
+------------------------------
+
+We now illustate how to estimate all pairwise associations between different
+family-members using the twostage function. They key is specify the pairs for
+the composite likelihood directly  and then the associated design-matrix
+directly.  This needs to be done looking at both subjects in the pairs, and the
+design therefore follows the pairs and is a matrix where its row is given as
+the third column in the pairs argument. 
+
+First we get the pairs to be considered
+
+
+```{r}
+library(mets)
+set.seed(1000)
+data <- simClaytonOakes.family.ace(200,2,1,0,3)
+head(data)
+data$number <- c(1,2,3,4)
+data$child <- 1*(data$number==3)
+
+mm <- familycluster.index(data$cluster)
+head(mm$familypairindex,n=20)
+pairs <- mm$pairs
+dim(pairs)
+head(pairs,12)
+```
+
+Now we construct the design matrix related to the pairs 
+
+```{r}
+ dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
+ dtypes <- droplevels(dtypes)
+ table(dtypes)
+ dm <- model.matrix(~-1+factor(dtypes))
+ head(dm)
+```
+
+Then we fit the model: 
+
+```{r}
+pa <- phreg(Surv(time,status)~cluster(cluster),data)
+
+tsp <- twostage(pa,data=data,theta.des=dm,pairs=cbind(pairs,1:nrow(dm)),se.clusters=data$clust)
+summary(tsp)
+```
+
+We note that mother-father have the smallest correlation since they only share the environmental random effect, whereas
+other pairs have a similar correlation (in fact the same due to the way the data was simulated) consisting of 
+half the genetic effect and the environmental effect that was also shared. 
 
 
 Univariate plackett model twostage models 
@@ -662,14 +766,14 @@ This model has a more free parameter than the Clayton-Oakes model.
  
  # Plackett model
  mph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
- fitp <- survival.twostage(mph,data=diabetes,theta=3.0,Nit=40,
+ fitp <- survival.twostage(mph,data=diabetes,theta=3.0,
                 clusters=diabetes$id,var.link=1,model="plackett")
  summary(fitp)
  
  # without covariates but with stratafied 
  marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
  fitpa <- survival.twostage(marg,data=diabetes,theta=1.0,
-                 clusters=diabetes$id,score.method="optimize")
+                 clusters=diabetes$id)
  summary(fitpa)
  
  fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
@@ -691,8 +795,7 @@ This model has a more free parameter than the Clayton-Oakes model.
  # Piecewise constant cross hazards ratio modelling
 
  d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
- udp <- piecewise.twostage(c(0,0.5,2),data=d,score.method="optimize",
-                           id="cluster",timevar="time",
+ udp <- piecewise.twostage(c(0,0.5,2),data=d,id="cluster",timevar="time",
                            status="status",model="plackett",silent=0)
  summary(udp)
 ```

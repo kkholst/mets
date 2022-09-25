@@ -1,11 +1,3 @@
-## d <- twinsim(5000,b1=c(0),acde=c(0.6,0.2,0,0.2)); d$group <- factor(d$y0,labels=c("A","B"))
-## b <- twinlm.strata(y~1,data=d,id="id",zyg="zyg",DZ="DZ",var="x1",quantiles=c(0,0.25,0.5,0.75,1))
-## b2 <- twinlm.strata(y~1,data=d,id="id",zyg="zyg",DZ="DZ",var="group",type="ae")
-## plot(b2,which=c(2,3),ylim=c(0,1),col=c("darkblue","darkred"),lwd=3,delta=.02,pch=16)
-## b2 <- twinlm.strata(y0~1,data=d,id="id",zyg="zyg",DZ="DZ",var="x1",quantiles=c(0,0.25,0.5,0.75),binary=TRUE)
-## plot(b,which=5:6,ylim=c(0,1),type="l")
-## plot(b,which=5:6,ylim=c(0,1),col=c("darkred","darkblue"),legend=c("MZ","DZ"),lty=1:2)
-
 ##' @export
 coef.timemets <- function(object,...) {    
     res <- unlist(lapply(object$summary,function(x) x$estimate[,1]))
@@ -191,7 +183,7 @@ plot.timemets <- function(x,...,which=1,
         if (is.logical(legend) || length(legend)==1) legend <- rownames(x$coef[[1]])[which]
         graphics::legend(legendpos,legend=legend,col=col,lwd=lwd,lty=lty)
     }
-    invisible(x)    
+    invisible(x)
 }
 
 

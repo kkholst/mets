@@ -9,6 +9,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // ApplyBy2
 NumericMatrix ApplyBy2(NumericMatrix idata, NumericVector icluster, SEXP F, Environment Env, std::string Argument, int Columnwise, int Reduce, double epsilon);
 RcppExport SEXP _mets_ApplyBy2(SEXP idataSEXP, SEXP iclusterSEXP, SEXP FSEXP, SEXP EnvSEXP, SEXP ArgumentSEXP, SEXP ColumnwiseSEXP, SEXP ReduceSEXP, SEXP epsilonSEXP) {

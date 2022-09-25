@@ -27,13 +27,13 @@ simMultistate(
 \arguments{
 \item{n}{number of id's}
 
-\item{cumhaz}{cumulative hazard of recurrent events}
+\item{cumhaz}{cumulative hazard of going from state 1 to 2.}
 
-\item{cumhaz2}{cumulative hazard of recurrent events  of type 2}
+\item{cumhaz2}{cumulative hazard of going from state 2 to 1.}
 
-\item{death.cumhaz}{cumulative hazard of death from state 1}
+\item{death.cumhaz}{cumulative hazard of death from state 1.}
 
-\item{death.cumhaz2}{cumulative hazard of death from state 2}
+\item{death.cumhaz2}{cumulative hazard of death from state 2.}
 
 \item{rr}{relative risk adjustment for cumhaz}
 
@@ -61,8 +61,7 @@ simMultistate(
 Simulation of illness-death model
 }
 \details{
-simMultistate with same death intensity from states 1 and 2 
-simMultistateII with different death intensities from states 1 and 2 
+simMultistate with different death intensities from states 1 and 2 
 
 Must give cumulative hazards on some time-range
 }

@@ -6,6 +6,7 @@
 \alias{diffstrata}
 \alias{iid.baseline.cifreg}
 \alias{FGprediid}
+\alias{indexstratarightR}
 \title{CIF regression}
 \usage{
 cifreg(
@@ -94,9 +95,9 @@ summary(sfg)
 plot(sfg)
 
 ### predictions with CI based on iid decomposition of baseline and beta
-# fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
-# Biid <- iid.baseline.cifreg(Biid,time=20)
-# FGprediid(Biid,bmt[1:5,])
+fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
+Biid <- mets:::iid.baseline.cifreg(fg,time=20)
+FGprediid(Biid,bmt[1:5,])
 
 }
 \author{

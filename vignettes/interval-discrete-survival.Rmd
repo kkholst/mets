@@ -1,0 +1,236 @@
+---
+title: "Discrete Interval Censored Survival Models"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5    
+vignette: >
+  %\VignetteIndexEntry{Discrete Interval Censored Survival Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Discrete Inteval Censored survival times 
+========================================
+
+\begin{align*}
+   \mbox{logit}(P(T >t | x)) & = \log(G(t)) + x^T \beta              \\
+                P(T >t | x)  & =  \frac{1}{1 + G(t) exp( x^T \beta) }         
+\end{align*}
+ 
+
+Input are intervals given by $]t_l,t_r]$ where t_r can be infinity
+for right-censored intervals. When the data is truly discrete,
+in contrast to grouping of continuous data, $]0,1]$ will be an
+observation at 1, and $]j,j+1]$ will be an observation at j+1.
+
+Likelihood is maximized:
+\begin{align*}
+    \prod_i  P(T_i >t_{il} | x) - P(T_i> t_{ir}| x).            
+\end{align*}
+
+This model is also called the cumulative odds model 
+\begin{align*}
+     P(T \leq t | x)  & =  \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta) }.
+\end{align*}
+and $\beta$ says something about the OR of probability of being before $t$. 
+
+The baseline is parametrized as 
+\begin{align*}
+       G(t)  & =  \sum_{j \leq t} \exp( \alpha_j ) 
+\end{align*}
+
+An important consequence of the model is that for all cut-points $t$ we have the same OR parameters for the 
+OR of being early or later than $t$. 
+
+Discrete TTP 
+=============
+
+First we look at some time to pregnancy data (simulated discrete survival data) that is
+right-censored, and set it up to fit the cumulative odds model by 
+constructing the intervals appropriately: 
+
+```{r}
+library(mets)
+
+data(ttpd) 
+dtable(ttpd,~entry+time2)
+out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+summary(out)
+```
+
+Now using this discrete survival model we simulate some data from this model 
+
+```{r}
+set.seed(1000) # to control output in simulatins for p-values below.
+n <- 1000
+Z <- matrix(rbinom(n*4,1,0.5),n,4)
+outsim <- simlogitSurvd(out$coef,Z)
+outsim <- transform(outsim,left=time,right=time+1)
+outsim <- dtransform(outsim,right=Inf,status==0)
+outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
+summary(outss)
+
+pred <- predictlogitSurvd(out,se=TRUE)
+plotSurvd(pred,se=TRUE)
+```
+
+Finally, we look at some data and compare with the icenReg package that can also fit 
+the proportional odds model for continous or discrete data. 
+We make the data fully interval censored/discrete by
+letting also exact obsevations be only observed to be in an interval.
+
+We consider the interval censored survival times for time from onset 
+of diabetes to to diabetic nephronpathy, then modify it to 
+observe only that the event times are in certain intervals. 
+
+
+```{r}
+test <- 0 
+if (test==1) {
+
+require(icenReg)
+data(IR_diabetes)
+IRdia <- IR_diabetes
+## removing fully observed data in continuous version, here making it a discrete observation 
+IRdia <- dtransform(IRdia,left=left-1,left==right)
+dtable(IRdia,~left+right,level=1)
+
+ints <- with(IRdia,dInterval(left,right,cuts=c(0,5,10,20,30,40,Inf),show=TRUE) )
+}
+```
+
+We note that the gender effect is equivalent for the two approaches. 
+
+
+```{r}
+if (test==1) {
+ints$Ileft <- ints$left
+ints$Iright <- ints$right
+IRdia <- cbind(IRdia,data.frame(Ileft=ints$Ileft,Iright=ints$Iright))
+dtable(IRdia,~Ileft+Iright)
+# 
+#       Iright   1   2   3   4   5 Inf
+# Ileft                               
+# 0             10   1  34  25   4   0
+# 1              0  55  19  17   1   1
+# 2              0   0 393  16   4   0
+# 3              0   0   0 127   1   0
+# 4              0   0   0   0  21   0
+# 5              0   0   0   0   0   2
+
+outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia)
+#            Estimate Std.Err    2.5%    97.5%   P-value
+# time1        -3.934  0.3316 -4.5842 -3.28418 1.846e-32
+# time2        -2.042  0.1693 -2.3742 -1.71038 1.710e-33
+# time3         1.443  0.1481  1.1530  1.73340 1.911e-22
+# time4         3.545  0.2629  3.0295  4.06008 1.976e-41
+# time5         6.067  0.7757  4.5470  7.58784 5.217e-15
+# gendermale   -0.385  0.1691 -0.7165 -0.05351 2.283e-02
+summary(outss)
+outss$ploglik
+# [1] -646.1946
+
+fit <- ic_sp(cbind(Ileft, Iright) ~ gender, data = IRdia, model = "po")
+# 
+# Model:  Proportional Odds
+# Dependency structure assumed: Independence
+# Baseline:  semi-parametric 
+# Call: ic_sp(formula = cbind(Ileft, Iright) ~ gender, data = IRdia, 
+#     model = "po")
+# 
+#            Estimate Exp(Est)
+# gendermale    0.385     1.47
+# 
+# final llk =  -646.1946 
+# Iterations =  6 
+# Bootstrap Samples =  0 
+# WARNING: only  0  bootstrap samples used for standard errors. 
+# Suggest using more bootstrap samples for inference
+summary(fit)
+
+## sometimes NR-algorithm needs modifications of stepsize to run 
+## outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
+}
+
+```
+
+Also agrees with the cumulative link regression of the ordinal package,
+although the baseline is parametrized differently.
+
+```{r}
+if (test==1) {
+
+###
+### data(ttpd) 
+### dtable(ttpd,~entry+time2)
+### out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+### summary(out)
+
+#       Estimate Std.Err     2.5%   97.5%   P-value
+# time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43
+# time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45
+# time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22
+# time4  -2.9260  0.2436 -3.40344 -2.4486 3.078e-33
+# time5  -1.2051  0.1655 -1.52935 -0.8808 3.267e-13
+# time6  -0.9102  0.1790 -1.26103 -0.5594 3.671e-07
+# X1      0.9913  0.1171  0.76175  1.2208 2.557e-17
+# X2      0.6962  0.1156  0.46953  0.9228 1.739e-09
+# X3      0.3466  0.1150  0.12110  0.5721 2.590e-03
+# X4      0.3223  0.1147  0.09749  0.5470 4.952e-03
+ out$ploglik
+# [1] -1676.456
+
+### library(ordinal)
+### ttpd <- dfactor(ttpd,fentry~entry)
+### out1 <- clm(fentry~X1+X2+X3+X4,data=ttpd)
+### summary(out1)
+
+# formula: fentry ~ X1 + X2 + X3 + X4
+# data:    ttpd
+# 
+#  link  threshold nobs logLik   AIC     niter max.grad cond.H 
+#  logit flexible  1000 -1676.46 3372.91 6(2)  1.17e-12 5.3e+02
+# 
+# Coefficients:
+#    Estimate Std. Error z value Pr(>|z|)    
+# X1  -0.9913     0.1171  -8.465  < 2e-16 ***
+# X2  -0.6962     0.1156  -6.021 1.74e-09 ***
+# X3  -0.3466     0.1150  -3.013  0.00259 ** 
+# X4  -0.3223     0.1147  -2.810  0.00495 ** 
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Threshold coefficients:
+#     Estimate Std. Error z value
+# 0|1  -2.0064     0.1461 -13.733
+# 1|2  -1.3940     0.1396  -9.984
+# 2|3  -0.7324     0.1347  -5.435
+# 3|4  -0.6266     0.1343  -4.667
+# 4|5  -0.1814     0.1333  -1.361
+# 5|6   0.2123     0.1342   1.582
+}
+
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

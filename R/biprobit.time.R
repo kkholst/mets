@@ -1,8 +1,12 @@
 ##' @export
 biprobit.time <- function(formula,data,id,...,
-                          breaks=NULL,n.times=20,pairs.only=TRUE,fix.cens.weights=FALSE,
-                          cens.formula,cens.model="aalen",weights="w",messages=FALSE,
-                          return.data=FALSE,theta.formula=~1,trunc.weights="w2",
+                          breaks=NULL,n.times=20,
+                          pairs.only=TRUE,fix.cens.weights=TRUE,
+                          cens.formula,cens.model="aalen",
+                          weights.fun=function(x) { u <- min(x); ifelse(u==0, 0, 1/min(u)) },
+                          weights="w",messages=FALSE,
+                          return.data=FALSE,theta.formula=~1,
+                          trunc.weights="w2",
                           estimator="biprobit", summary.function) {
 ## {{{ 
     m <- match.call(expand.dots = FALSE)
@@ -91,11 +95,12 @@ biprobit.time <- function(formula,data,id,...,
             ## data0$status0 <- status0
             ## data0$time0 <- time0
             ## data0$y0 <- data0[,outcome]
-            dataw <- ipw(update(cens.formula,S~.), data=subset(data0,ltimes<time0), cens.model=cens.model,
-                         weight.name=weights,obs.only=TRUE,cluster=id)            
+          dataw <- ipw(update(cens.formula,S~.),
+                       data=subset(data0,ltimes<time0), cens.model=cens.model,
+                       weight.name=weights, obs.only=TRUE, cluster=id)
         }
         if (fix.cens.weights) {
-            timevar <- dataw$S[,1]
+            timevar <- dataw$S[, 1]
             dataw[,outcome] <- (dataw[,outcome])*(timevar<tau)
         }
         k <- k+1
@@ -105,12 +110,14 @@ biprobit.time <- function(formula,data,id,...,
         if (return.data) return(dataw)
         if (ncol(censtime)==3) { ## truncation...
             dataw[,weights] <- dataw[,weights]*dataw[,trunc.weights]
-        }        
-        args <- c(list(x=formula,data=dataw,id=id,weights=weights, pairs.only=pairs.only), list(...))
-        ids <- c(ids,list(rownames(dataw)))
+        }
+        args <- c(list(x=formula,data=dataw,id=id,
+                       weights=weights, weights.fun=weights.fun,
+                       pairs.only=pairs.only), list(...))
+        ids <- c(ids, list(rownames(dataw)))
         suppressWarnings(b <- do.call(estimator, args))
         ## suppressWarnings(b <- biprobit(formula, data=dataw, id=id, weights=weights, pairs.only=pairs.only,...))
-        if (length(breaks)>1) res <- c(res,list(summary(b,...)))
+        if (length(breaks)>1) res <- c(res, list(summary(b,...)))
     }
     if (length(breaks)==1) {
         return(structure(b,time=breaks))
@@ -119,11 +126,14 @@ biprobit.time <- function(formula,data,id,...,
         summary.function <- function(x,...) x$all
     } 
     mycoef <- lapply(rev(res),function(x) summary.function(x))
-    res <- list(varname="Time",var=rev(breaks),coef=mycoef,summary=rev(res),call=m,type="time",id=ids)
+        res <- list(varname="Time",
+                    var=rev(breaks),
+                    coef=mycoef,
+                    summary=rev(res),
+                    call=m, type="time", id=ids)
     class(res) <- "timemets"
-    return(res)    
-} ## }}} 
-
+    return(res)
+} ## }}}
 
 biprobit.time2 <- function(formula,data,id,...,
                           breaks=Inf,pairs.only=TRUE,

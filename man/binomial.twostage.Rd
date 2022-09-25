@@ -12,19 +12,16 @@ binomial.twostage(
   margbin,
   data = parent.frame(),
   method = "nr",
-  Nit = 60,
   detail = 0,
   clusters = NULL,
   silent = 1,
   weights = NULL,
-  control = list(),
   theta = NULL,
   theta.des = NULL,
   var.link = 0,
   var.par = 1,
   var.func = NULL,
   iid = 1,
-  step = 1,
   notaylor = 1,
   model = "plackett",
   marginal.p = NULL,
@@ -40,8 +37,10 @@ binomial.twostage(
   additive.gamma.sum = NULL,
   pair.ascertained = 0,
   case.control = 0,
+  no.opt = FALSE,
   twostage = 1,
-  beta = NULL
+  beta = NULL,
+  ...
 )
 }
 \arguments{
@@ -49,9 +48,7 @@ binomial.twostage(
 
 \item{data}{data frame}
 
-\item{method}{Scoring method default is  "nr"}
-
-\item{Nit}{Number of iterations}
+\item{method}{Scoring method "nr", for lava NR optimizer}
 
 \item{detail}{Detail}
 
@@ -60,8 +57,6 @@ binomial.twostage(
 \item{silent}{Debug information}
 
 \item{weights}{Weights for log-likelihood, can be used for each type of outcome in 2x2 tables.}
-
-\item{control}{Optimization arguments}
 
 \item{theta}{Starting values for variance components}
 
@@ -75,8 +70,6 @@ theta-design for this pair, is given in pairs as column 5}
 \item{var.func}{when alternative parametrizations are used this function can specify how the paramters are related to the \eqn{\lambda_j}'s.}
 
 \item{iid}{Calculate i.i.d. decomposition when iid>=1, when iid=2 then avoids adding the uncertainty for marginal paramters for additive gamma model (default).}
-
-\item{step}{Step size}
 
 \item{notaylor}{Taylor expansion}
 
@@ -109,9 +102,13 @@ indeces of the pairs random.design rows are given as columns 3:4}
 
 \item{case.control}{if data is case control data for pair call, and here 2nd column of pairs are probands (cases or controls)}
 
+\item{no.opt}{for not optimizing}
+
 \item{twostage}{default twostage=1, to fit MLE use twostage=0}
 
 \item{beta}{is starting value for beta for MLE version}
+
+\item{...}{for NR of lava}
 }
 \description{
 The pairwise pairwise odds ratio model provides an alternative to the alternating logistic
@@ -183,16 +180,14 @@ with the (k) underlying \eqn{\theta} parameters
 here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
 }
 \examples{
-library("timereg")
-data("twinstut",package="mets")
+data(twinstut)
 twinstut0 <- subset(twinstut, tvparnr<11000)
 twinstut <- twinstut0
 twinstut$binstut <- (twinstut$stutter=="yes")*1
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
-		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-	                 method="nr")
+         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0)
 summary(bin)
 
 twinstut$cage <- scale(twinstut$age)

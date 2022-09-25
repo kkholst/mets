@@ -131,11 +131,8 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
 
 ## creates sub-index for haplo-types within each id
    nmm <- names(Xhap)[mm]
-###   lll <- lapply(Xhap[,c("id",nmm)],as.numeric)
-###   stratidhap <-    as.numeric(survival::strata(lll))
    ms <- mystrata(Xhap[,c("id",nmm)])
 	   stratidhap <- ms
-###nidhap <- length(unique(stratidhap))
    nidhap <- attr(ms,"nlevel")
    nid <- length(unique(Haplos$id))
 
@@ -217,9 +214,7 @@ if (!design.only) {
 	## plp <- family$linkinv(lp)
 	plp <- expit(lp+ offiid)
 	nplp <- 1-plp
-	###lognp <- log(nplp)
 
-	### logpht <-  (response - plp)/family$variance(plp)
 	logpht <- log(plp)*response+log(nplp)*(1-response)
 	pht <-c(exp(logpht))
 	Dlogpht <-  X* c(response-plp)
@@ -449,85 +444,6 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ## this is only used for simulations 
 ## out <- simHaplo(1,100,tcoef,hapfreqs)
 
-###simHaplo <- function(i,n,tcoef,hapfreqs)
-###{ ## {{{  
-###
-###   haplos <- sample(19,2*n,replace=TRUE,prob=hapfreqs$freq)
-###   haplos <- matrix(haplos,n,2) 
-###   hap1 <- hapfreqs$haplotype[haplos[,1]]
-###   hap2 <- hapfreqs$haplotype[haplos[,2]]
-###   ###
-###   X <- t(apply(cbind(hap1,hap2),1,designftypes))
-###   X <- data.frame(X,id=1:n)
-###   sud <- simTTP(coef=tcoef,Xglm=X,n=n,times=1:6)
-###   ## known haplotypes
-###   ssud <- glm(y~factor(times)+X1+X2+X3+X4+X5,data=sud,family=binomial())
-###
-###   genotype <- c()
-###   for (i in 1:11)
-###     genotype <- cbind(genotype,substr(hap1,i,i), substr(hap2,i,i) )
-###
-###   setup <- geno.setup(genotype,haplo.baseline=baseline,sep="") 
-###   wh <- match(setup$uniqueHaploNames,hapfreqs$haplotype)
-###   wwf <- wh[!is.na(wh)]
-###   ghaplos <- matrix(unlist(setup$HPIordered),byrow=TRUE,ncol=2)
-###   ghaplos <- cbind(rep(1:n,setup$nPossHaps),ghaplos)
-###   ghaplos <- data.frame(ghaplos)
-###   names(ghaplos) <- c("id","haplo1","haplo2")
-###   haploff <- rep(0,length(setup$uniqueHaploNames))
-###   haploff[!is.na(wh)] <- hapfreqs[wwf,"freq"]
-######
-###   hap1f <- haploff[ghaplos[,2]]
-###   hap2f <- haploff[ghaplos[,3]]
-###   hap12f <- hap1f*hap2f
-###   hapsshed  <- hap12f
-###   ghaplos$p <- hapsshed
-###   ghaplos <- subset(ghaplos,p>0)
-###   ## back to characters for indentification of design
-###   ghaplos$haplo1 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo1])
-###   ghaplos$haplo2 <- as.factor(setup$uniqueHaploNames[ghaplos$haplo2])
-###   ptot <- sumstrata(ghaplos$p,ghaplos$id-1,n)
-###   ghaplos$p <- ghaplos$p/ptot[ghaplos$id]
-###
-###sud$time <- sud$times
-###Xdes <- model.matrix(~factor(time),sud)
-###colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
-###X <- dkeep(sud,~id+y+time)
-###X <- cbind(X,Xdes)
-###Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
-###dtable(Haplos,~"haplo*",level=1)
-######Haplos
-######
-###y <- "y"
-###time.name="time"
-###desnames=paste("X",1:6,sep="")
-######
-######
-###mm <- system.time(
-###mud <- haplo.surv.discrete(X=X,y="y",time.name="time",##design.only=TRUE,
-###		  Haplos=Haplos,designfunc=designftypes,desnames=desnames)
-###)
-###
-###   ### max haplo-type
-###   Haplos$nhaplo1 <- as.numeric(Haplos$haplo1)
-###   Haplos$nhaplo2 <- as.numeric(Haplos$haplo2)
-###   dsort(Haplos) <- ~id+nhaplo1+nhaplo2-p
-###   Haplos <- count.history(Haplos,status="p",types="1")
-###   mHaplos <- subset(Haplos,lbnr__id==1)
-###   bothid <- intersect(X$id, mHaplos$id)
-###   X <- subset(X, id %in% bothid)
-###   mHaplos <- subset(mHaplos, id %in% bothid)
-###   Xhap <- merge(X, mHaplos, by.x = "id", by.y = "id")
-###   mm <- grep("haplo*", names(Xhap))
-###   X <- t(as.matrix(apply(Xhap[, mm], 1, designftypes)))
-###   ###
-###   mmud <- glm(y~factor(time)+X,data=Xhap,family=binomial())
-###
-###ud <- list(coef=mud$coef,se=mud$se,se.robust=mud$se.robust,mcoef=mmud$coef,kcoef=ssud$coef)
-###return(ud)
-###} ## }}} 
-###
-
 ##' Discrete time to event interval censored data 
 ##'
 ##' \deqn{
@@ -536,6 +452,14 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##' \deqn{
 ##'    P(T >t | x) =  \frac{1}{1 + G(t) exp( x \beta) }
 ##' }
+##' 
+##' This is thus also the cumulative odds model, since 
+##' \deqn{
+##'    P(T \leq t | x) =  \frac{G(t) \exp(x \beta) }{1 + G(t) exp( x \beta) }
+##' }
+##' 
+##' The baseline \eqn{G(t)} is written as \eqn{cumsum(exp(\alpha))} and this is not the standard
+##' parametrization that takes log of \eqn{G(t)} as the parameters.
 ##' 
 ##' Input are intervals given by ]t_l,t_r] where t_r can be infinity for right-censored intervals 
 ##' When truly discrete ]0,1] will be an observation at 1, and  ]j,j+1] will be an observation at j+1
@@ -563,30 +487,8 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##' out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' 
-##' n <- 100
-##' Z <- matrix(rbinom(n*4,1,0.5),n,4)
-##' outsim <- simlogitSurvd(out$coef,Z)
-##' outsim <- transform(outsim,left=time,right=time+1)
-##' outsim <- dtransform(outsim,right=Inf,status==0)
-##' 
-##' outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-##' 
-##' Z <- matrix(0,5,4)
-##' Z[2:5,1:4] <- diag(4)
 ##' pred <- predictlogitSurvd(out,se=FALSE)
 ##' plotSurvd(pred)
-##' 
-##' ## simulations 
-##' n <- 100
-##' Z <- matrix(rbinom(n*4,1,0.5),n,4)
-##' outsim <- simlogitSurvd(out$coef,Z)
-##' ###
-##' outsim <- transform(outsim,left=time,right=time+1)
-##' outsim <- dtransform(outsim,right=Inf,status==0)
-##' 
-##' out$coef
-##' outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
-##' summary(outss)
 ##' 
 ##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd
 ##' @export
@@ -615,6 +517,8 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
 	if (max(entrytime)==0) left <- 0
     }
 
+  if (any(entrytime==time2)) stop("left==right not possible for discrete data")
+
   id <- strata <- NULL
   if (!is.null(attributes(Terms)$specials$cluster)) {
     ts <- survival::untangle.specials(Terms, "cluster")
@@ -634,12 +538,19 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   if (!is.null(intpos  <- attributes(Terms)$intercept))
   X <- X[,-intpos,drop=FALSE]
   if (ncol(X)>0) X.names <- colnames(X) else X.names <- NULL
-###  if (ncol(X)==0) X <- NULL 
+
+  if (!is.null(id)) {
+	  ids <- unique(id)
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+   } else { id <- as.integer(seq_along(time2))-1; nid <- length(time2) }
+   ## orginal id coding into integers 
+   id.orig <- id+1; 
 
   ## times 1 -> mutimes , 0 til start
   utimes <- sort(unique(c(time2,entrytime)))
-### time2 <- fast.approx(utimes,time2)-1
-### entrytime <- fast.approx(utimes,entrytime)-1
   mutimes <- max(utimes[utimes<Inf])
   n <- length(time2)
   
@@ -669,11 +580,16 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   ## weights/offets will follow id 
   if (is.null(weights))  weights <- rep(1,n); #  else wiid <- weights
   if (is.null(offsets))  offsets <- rep(0,n); # else offsets <- offsets
-  if (is.null(beta)) beta <- rep(0,ncol(X)+mutimes)
   expit  <- function(z) 1/(1+exp(-z)) ## expit
   logit  <- function(p) log(p/(1-p))  ## logit
 
-  beta[1:mutimes] <- (1:mutimes)*exp(logit( (sum(time2<Inf)/(nrow(X)*mutimes))))
+  if (is.null(beta)) {
+     beta <- rep(0,ncol(X)+mutimes)
+     Set <- 1-cumsum(table(time2))/n
+     dHt <- log(diff(c(0,(1/Set-1))))
+     beta[1:mutimes] <- dHt[1:mutimes]
+  }
+
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -782,9 +698,10 @@ hessian <- D2log
   if (all) {
       ihess <- solve(hessian)
       beta.iid <- Dlogliid %*% ihess ## %*% t(Dlogl) 
+      beta.iid <- apply(beta.iid,2,sumstrata,id,nid)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-		  iid=beta.iid,robvar=robvar,var=-ihess,
+		  iid=beta.iid,robvar=robvar,var=-ihess,id=id,
 		  se=diag(-ihess)^.5,se.robust=diag(robvar)^.5)
       return(val)
   }  
@@ -814,7 +731,6 @@ hessian <- D2log
   val <- c(list(increment=increment,exp.link=exp.link,ntimes=mutimes,utimes=utimes),val)
 
   class(val) <- c("survd","logistic.survd")
-###  class(val) <- "logit.survd"
   return(val)
 } ## }}} 
 

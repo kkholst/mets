@@ -1850,7 +1850,7 @@ RcppExport SEXP twostageloglike(
  int antiid = Rcpp::as<int>(iantiid);
  int ci,ck,i,j,c,k,v,c1; 
   double dl1,dl2,ll1,ll2,ll=1,Li,Lk,sdj=0,diff=0,loglikecont=0;
-  double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
+  double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.001; 
   double d2=0,asign=-1; 
   int pt=theta.n_rows; 
   vec dplack(pt); dplack.fill(pt);
@@ -2075,7 +2075,7 @@ RcppExport SEXP twostageloglikeRV(
  int antiid = Rcpp::as<int>(iantiid);
  int ci,ck,i,j,c,k,v,c1; 
  double dl1,dl2,ll1,ll2,ll=1,Li,Lk,diff=0,loglikecont=0,sdj=0;
- double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
+ double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.001; 
  int pt=theta.n_rows; 
  double d2=0,asign=-1; if (ascertained==2) asign=1; 
  vec dplack(pt); dplack.fill(0);
@@ -2290,17 +2290,16 @@ for (j=0;j<antclust;j++) if (clustsize(j)>=2) {
 
      if (depmodel!=3) {
 	    DUtheta+=weights(i)*diff*diff*vthetascore*trans(vthetascore);
-	    vthetascore=weights(i)*diff*vthetascore; 
-	    Utheta-=vthetascore; 
+	    vthetascore=-weights(i)*diff*vthetascore; 
+	    Utheta+=vthetascore; 
 	} else  { // additive gamma structure 
 	    DUtheta+=weights(i)*vthetascore*trans(vthetascore);
 	    vthetascore=weights(i)*vthetascore; 
 	    Utheta-=vthetascore; 
-//		vthetascore.print("vvv 2"); 
 	}
 
      if (iid==1) { 
-	 for (c1=0;c1<pt;c1++) thetiid((int) secluster(i),c1)-=vthetascore(c1); 
+	 for (c1=0;c1<pt;c1++) thetiid((int) secluster(i),c1)+=vthetascore(c1); 
 	 loglikeiid(j)+=loglikecont; 
 	 trunclikeiid(j)+=llt; 
      }
@@ -2391,7 +2390,7 @@ try {
 
   int ci,ck,i,j,k,c1; 
   double dl1,dl2,ll1,ll2,ll=1,Li,Lk,sdj=0,diff=0,loglikecont=0;
-  double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.000001; 
+  double Lit=1,Lkt=1,llt=1,deppar=1,ssf=0,thetak=0,dddl=0.001; 
   double d2=0,asign=-1; if (ascertained==2) asign=1; 
  
   vec dplack(pt); dplack.fill(0);
@@ -2438,8 +2437,9 @@ for (j=0;j<antclust;j++) {
      ci=cause(i); ck=cause(k); Li=pmargsurv(i); Lk=pmargsurv(k); 
          
   if (depmodel!=3) {
-     thetak=Xtheta(i);  
-     pthetavec= trans(thetades.row(i)); 
+     int itrow=clusterindex(j,2); 
+     thetak=Xtheta(itrow);  
+     pthetavec= trans(thetades.row(itrow)); 
      vthetascore=1*pthetavec; 
   }
 
@@ -2633,8 +2633,8 @@ for (j=0;j<antclust;j++) {
 
         if (depmodel!=3) {
 	     DUtheta+=weights(i)*sdj*vthetascore*trans(vthetascore);
-	     vthetascore=weights(i)*diff*vthetascore; 
-	     Utheta-=vthetascore; 
+	     vthetascore=-weights(i)*diff*vthetascore; 
+	     Utheta+=vthetascore; 
 	} else  { // additive gamma structure 
 	     DUtheta+=weights(i)*vthetascore*trans(vthetascore);
 	     vthetascore=weights(i)*vthetascore; 

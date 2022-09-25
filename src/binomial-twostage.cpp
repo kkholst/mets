@@ -599,8 +599,9 @@ for (j=0;j<antclust;j++) {
 
      ci=cause(i); ck=cause(k); Li=pmargsurv(i); Lk=pmargsurv(k); 
      if (depmodel!=3) {
-	  thetak=Xtheta(j);  
-	  pthetavec= trans(thetades.row(j)); 
+          int itrow=clusterindex(j,2); 
+	  thetak=Xtheta(itrow);  
+	  pthetavec= trans(thetades.row(itrow)); 
 	  vthetascore=1*pthetavec; 
      }
 

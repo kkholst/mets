@@ -1,0 +1,170 @@
+---
+title: "Binomial Regression"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5 
+vignette: >
+  %\VignetteIndexEntry{Binomial Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Binomial Regression for censored data 
+=====================================
+
+The binreg function does direct binomial regression for one time-point, $t$, 
+fitting the model 
+\begin{align*}
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta) 
+\end{align*}
+the estimation is based on IPCW weighted EE
+\begin{align*}
+ U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T \beta)) = 0 
+\end{align*}
+for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
+distribution. With $\Delta(t) = I( C_i > T_i \wedge t)$. 
+
+The function logitIPCW instead considers 
+\begin{align*}
+ U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T \beta)) = 0.
+\end{align*}
+The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
+
+Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
+the average effect on non-treated (ATC). We demonstrate this in another vignette. 
+
+The function logitATE also works when there is no censoring and we thus have simple binary outcome. 
+
+Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
+under known censoring model. The influence functions are stored in the output. 
+
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(1000) # to control output in simulatins for p-values below.
+
+ data(bmt)
+ bmt$time <- bmt$time+runif(nrow(bmt))*0.01
+ # logistic regresion with IPCW binomial regression 
+ out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+```
+
+We can also compute predictions using the estimates 
+```{r}
+ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
+```
+
+Further the censoring model can depend on strata 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
+ summary(outs)
+```
+
+Absolute risk differences and ratio
+===================================
+
+Now for illustrations I wish to consider the absolute risk difference
+depending on tcell 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
+ summary(outs)
+```
+
+the risk difference is 
+
+```{r}
+ps <-  predict(outs,data.frame(tcell=c(0,1)),se=TRUE)
+ps
+sum( c(1,-1) * ps[,1])
+```
+
+Getting the standard errors are easy enough since the two-groups are
+independent. In the case where we in addition had adjusted for other covariates, however, we would need 
+the to apply the delta-theorem thus using the relevant covariances along the lines of 
+
+```{r}
+dd <- data.frame(tcell=c(0,1))
+p <- predict(outs,dd)
+
+riskdifratio <- function(p,contrast=c(1,-1)) {
+   outs$coef <- p
+   p <- predict(outs,dd)[,1]
+   pd <- sum(contrast*p)
+   r1 <- p[1]/p[2]
+   r2 <- p[2]/p[1]
+   return(c(pd,r1,r2))
+}
+     
+estimate(outs,f=riskdifratio,dd,null=c(0,1,1))
+```
+
+same as 
+
+```{r}
+run <- 0
+if (run==1) {
+library(prodlim)
+pl <- prodlim(Hist(time,cause)~tcell,bmt)
+spl <- summary(pl,times=50,asMatrix=TRUE)
+spl
+}
+```
+
+
+Augmenting the Binomial Regression 
+===================================
+
+Rather than using a larger censoring model we can also compute an  augmentation term and
+then fit the binomial regression model based on this augmentation term. 
+Here we compute the augmentation based on stratified non-parametric estimates of $F_1(t,S(X))$, 
+where $S(X)$ gives strata based on $X$ as a working model. 
+
+ Computes  the augmentation term for each individual as well as the sum
+\begin{align*}
+ A & = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
+\end{align*}
+ with 
+\begin{align*}
+ H(u,X) & = F_1^*(t,S(X)) - F_1^*(u,S(X))
+\end{align*}
+using a KM for $G_c(t)$ and a working model for cumulative baseline
+related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
+
+ Standard errors computed under assumption of correct but estimated $G_c(s)$ model.
+
+```{r}
+ data(bmt)
+ dcut(bmt,breaks=2) <- ~age 
+ out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+			  strata(platelet,agecat.2),data=bmt,cause=1,time=40)
+ summary(out1)
+
+ out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
+     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
+ summary(out2)
+```
+
+
+SessionInfo
+============
+
+```{r}
+sessionInfo()
+```
+

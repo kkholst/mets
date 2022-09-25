@@ -7,7 +7,7 @@
 easy.survival.twostage(
   margsurv = NULL,
   data = parent.frame(),
-  score.method = "nlminb",
+  method = "nlminb",
   status = "status",
   time = "time",
   entry = NULL,
@@ -34,7 +34,7 @@ easy.survival.twostage(
 
 \item{data}{data frame}
 
-\item{score.method}{Scoring method}
+\item{method}{Scoring method}
 
 \item{status}{Status at exit time}
 
@@ -114,7 +114,7 @@ c(pp,pc,cc)
 marg <- coxph(Surv(time,status)~factor(num),data=dfam)
 out3 <- easy.survival.twostage(marg,data=dfam,time="time",status="status",id="id",
              deshelp=0,
-             score.method="nr",theta.formula=desfs,
+             method="nr",theta.formula=desfs,
              model="plackett",
              desnames=c("parent-parent","parent-child","child-cild"))
 summary(out3)

@@ -26,20 +26,20 @@ Estimation based on derived hazards and recursive estimating equations.
 fits two parametrizations
 1)
  \deqn{
-F_1(t,X) = 1 - \exp( \exp( X^T \beta ) \Lambda_1(t))
+F_1(t,X) = 1 - \exp( - \exp( X^T \beta ) \Lambda_1(t))
 }
 and
  \deqn{
-F_2(t,X_2) = 1 - \exp( \exp( X_2^T \beta_2 ) \Lambda_2(t))
+F_2(t,X_2) = 1 - \exp( -  \exp( X_2^T \beta_2 ) \Lambda_2(t))
 }
 or restricted version
 2)
  \deqn{
-F_1(t,X) = 1 - \exp( \exp( X^T \beta ) \Lambda_1(t))
+F_1(t,X) = 1 - \exp( -  \exp( X^T \beta ) \Lambda_1(t))
 }
 and
  \deqn{
-F_2(t,X_2,X) = ( 1 - \exp( \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\infty,X))
+F_2(t,X_2,X) = ( 1 - \exp(  - \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\infty,X))
 }
 }
 \examples{

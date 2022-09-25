@@ -4,20 +4,20 @@
 ##' fits two parametrizations
 ##' 1)
 ##'  \deqn{
-##' F_1(t,X) = 1 - \exp( \exp( X^T \beta ) \Lambda_1(t))
+##' F_1(t,X) = 1 - \exp( - \exp( X^T \beta ) \Lambda_1(t))
 ##' }
 ##' and
 ##'  \deqn{
-##' F_2(t,X_2) = 1 - \exp( \exp( X_2^T \beta_2 ) \Lambda_2(t))
+##' F_2(t,X_2) = 1 - \exp( -  \exp( X_2^T \beta_2 ) \Lambda_2(t))
 ##' }
 ##' or restricted version
 ##' 2)
 ##'  \deqn{
-##' F_1(t,X) = 1 - \exp( \exp( X^T \beta ) \Lambda_1(t))
+##' F_1(t,X) = 1 - \exp( -  \exp( X^T \beta ) \Lambda_1(t))
 ##' }
 ##' and
 ##'  \deqn{
-##' F_2(t,X_2,X) = ( 1 - \exp( \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\infty,X))
+##' F_2(t,X_2,X) = ( 1 - \exp(  - \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\infty,X))
 ##' }
 ##'
 ##' @param formula formula with 'Event'
@@ -162,12 +162,6 @@ doubleFGR <- function(formula,data,offset=NULL,weights=NULL,X2=NULL,...) {# {{{
     strata <- m[[ts$vars]]
     strata.name <- ts$vars
   }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    pos.offset <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  else pos.offset <- NULL
   X <- model.matrix(Terms, m)
   if (!is.null(intpos  <- attributes(Terms)$intercept))
     X <- X[,-intpos,drop=FALSE]
@@ -297,21 +291,8 @@ doubleFG01R <- function(X,X2, entry,exit,status,id=NULL,strata=NULL,offset=NULL,
 	 jumptimes <- val$jumptimes
 
 	 ## Brewslow estimator
-###	 cumhaz <- cbind(jumptimes,cumsumstrata(1/val$S0,strata,nstrata))
 	 cumhaz <- cbind(jumptimes,val$base12$base)
-
-###	 if ((no.opt==FALSE & p!=0)) {
-###	     DLambeta.t <- apply(val$E/c(val$S0),2,cumsumstrata,strata,nstrata)
-###	     varbetat <-   rowSums((DLambeta.t %*% II)*DLambeta.t)
-###	 ### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
-###	 } else varbetat <- 0
-###	 var.cumhaz <- cumsumstrata(1/val$S0^2,strata,nstrata)+varbetat
-###	 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 	 se.cumhaz <- cumhaz
-
-###	 colnames(cumhaz1)    <- c("time","cumhaz")
-###	 colnames(cumhaz2)    <- c("time","cumhaz")
-###	 colnames(se.cumhaz) <- c("time","se.cumhaz")
  } # }}}
  else {cumhaz <- se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL}
 
@@ -350,9 +331,6 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	if (nrow(X)==0) X <- matrix(1,length(strata),1)
 	if (nrow(X2)==0) X2 <- matrix(1,length(strata),1)
 	strata=c(strata)
-###	X1 <- X[,1:p,drop=FALSE]
-###	X2 <- X[,(p+1):(2*p),drop=FALSE]
-###	print(c(p1,p2))
 	if (p1==0) beta1 <- 0 else beta1 <- beta[1:p1]
 	if (p2==0) beta2 <- 0 else beta2 <- beta[(p1+1):p]
 	Xb1 = c(X %*% beta1+offsets)
@@ -403,8 +381,6 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	        }
 	}
 
-###	DLam  <-  .Call("DLambetaDFGR",weightsJ,S0J,causeJ,EJ,XJ,strata[Jumps],nstrata,eXbJ);
-
 	grad1 = (X[Jumps1,,drop=FALSE]-E1);         ## Score
 	grad2 = (X2[Jumps2,,drop=FALSE]-E2);        ## Score
 
@@ -428,12 +404,10 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 
 
 	## no weights
-###	val2 = caseweightsJ*weightsJ*val;    ## Partial log-likelihood with weights
 	val2 = val;                          ## Partial log-likelihood with weights
 
  	hesst1 = -(XX21-E21);               ## hessian contributions in jump times
 	hesst2 = -(XX22-E22);               ## hessian contributions in jump times
-###	hess  = matrix(apply(hesst,2,sum),p,p);
 	hesst12 = hesst1*(cw1)*pow1;        ## hessian over time with weights
 	hesst22 = hesst2*(cw2)*pow2;        ## hessian over time with weights
 
@@ -514,16 +488,6 @@ predictdFG <- function(x,cause=1,se=FALSE,times=NULL,...)  {# {{{
 	}
 
 	x$cumhaz <- x$cumhaz[,c(1,cause+1)]
-
-###	if (p>0) {
-###           ## sets coefficients to 0 for other cause
-###	   print("====================")
-###	   print(x$coef)
-###	   print(x$p)
-###	   print(head(x$model.frame))
-###	   print(head(x$X))
-###	   print(x$cumhaz)
-###	}
 	class(x) <- c("phreg","cifreg")
 	pll <- predict(x,se=se,times=times,...)
 

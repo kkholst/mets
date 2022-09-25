@@ -16,12 +16,11 @@ biprobit(
   eqmarg = TRUE,
   indep = FALSE,
   weights = NULL,
-  biweight,
-  samecens = TRUE,
+  weights.fun = function(x) ifelse(any(x <= 0), 0, max(x)),
   randomeffect = FALSE,
   vcov = "robust",
   pairs.only = FALSE,
-  allmarg = samecens & !is.null(weights),
+  allmarg = !is.null(weights),
   control = list(trace = 0),
   messages = 1,
   constrain = NULL,
@@ -49,9 +48,7 @@ biprobit(
 
 \item{weights}{Weights}
 
-\item{biweight}{Function defining the bivariate weight in each cluster}
-
-\item{samecens}{Same censoring}
+\item{weights.fun}{Function defining the bivariate weight in each cluster}
 
 \item{randomeffect}{If TRUE a random effect model is used (otherwise correlation parameter is estimated allowing for both negative and positive dependence)}
 
@@ -85,13 +82,10 @@ predict(b,newdata=lava::Expand(prt,zyg=c("MZ")))
 predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 
 \donttest{ ## Reduce Ex.Timings
-library(lava)
-m <- lvm(c(y1,y2)~x)
-covariance(m,y1~y2) <- "r"
-constrain(m,r~x+a+b) <- function(x) tanh(x[2]+x[3]*x[1])
-distribution(m,~x) <- uniform.lvm(a=-1,b=1)
-ordinal(m) <- ~y1+y2
-d <- sim(m,1000,p=c(a=0,b=-1)); d <- d[order(d$x),]
+n <- 2e3
+x <- sort(runif(n, -1, 1))
+y <- rmvn(n, c(0,0), rho=cbind(tanh(x)))>0
+d <- data.frame(y1=y[,1], y2=y[,2], x=x)
 dd <- fast.reshape(d)
 
 a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")
@@ -125,19 +119,12 @@ confband(pp2$x,pp2[,2],pp2[,3],center=pp2[,1])
                        cens.formula=Surv(time,status==0)~zyg,
                        breaks=100)
 
-    a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
-                       cens.formula=Surv(time,status==0)~1,
-                       breaks=100,pairs.only=TRUE)
+    #a1 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="MZ"), eqmarg=TRUE,
+    #                   cens.formula=Surv(time,status==0)~1,
+    #                   breaks=100,pairs.only=TRUE)
 
-    a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-                        cens.formula=Surv(time,status==0)~1,
-                        breaks=100,pairs.only=TRUE)
-
-    prt0$trunc <- prt0$time*runif(nrow(prt0))*rbinom(nrow(prt0),1,0.5)
-    a3 <- biprobit.time(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
-                        cens.formula=Surv(trunc,time,status==0)~1,
-                        breaks=100,pairs.only=TRUE)
-
-    plot(a,which=3,ylim=c(0,0.1))
-} 
+    #a2 <- biprobit.time2(cancer~1, rho=~1, id="id", data=subset(prt0,zyg=="DZ"), eqmarg=TRUE,
+    #                    cens.formula=Surv(time,status==0)~1,
+    #                    breaks=100,pairs.only=TRUE)
+}
 }

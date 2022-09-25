@@ -1,5 +1,5 @@
 dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
-                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
+                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,tol=1e-6,detail=0,
                   clusters=NULL,theta=NULL,theta.des=NULL,step=1,sym=1,weights=NULL,
 		  same.cens=FALSE,censoring.weights=NULL,silent=1,entry=NULL,estimator=1,
 		  trunkp=1,admin.cens=NULL,control=list(),par.func=NULL,dpar.func=NULL,dimpar=NULL,
@@ -78,7 +78,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         Gcx<-Cpred(Gfit,time)[,2];
         if (is.null(entry.call)==FALSE) Gcxe<-Cpred(Gfit,entry)[,2];
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx ## }}}
       } else if (cens.model=="cox") { ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
@@ -92,7 +91,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           Gcxe<-exp(-Gcxe*RR)
         }
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx  ## }}}
       } else if (cens.model=="aalen") {  ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
@@ -108,7 +106,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           Gcxe[Gcxe>1]<-1; Gcxe[Gcxe<0]<-0
         }
         Gcx <- Gcx/Gcxe; 
-###  Gctimes<-Cpred(Gfit,times)[,2];
         Gctimes<- Gcx  ## }}}
       }
     } else { Gcx <- cens.weight; Gctimes <- cens.weight;} 
@@ -152,7 +149,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
      dimpar <- ncol(theta.des); 
  
      if (nrow(theta.des)!=ncol(random.design)) stop("nrow(theta.des)!= ncol(random.design)"); 
-###     score.method <- "nlminb"; ### force nlminb because derivatives are not working
  } else random.design <- matrix(0,1,1); 
 
   if ( (!is.null(par.func)) && is.null(dimpar) ) 
@@ -183,7 +179,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   if (is.null(weights)==TRUE) weights <- rep(1,antpers); 
   ## }}}
 
-###  ## {{{ function and derivative
+   ###  ## {{{ function and derivative
   if (is.null(par.func)==FALSE)
   {
      flex.func<-1; # use flexible design
@@ -192,8 +188,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	  score.method <- "nlminb"
 	  dpar.func <- par.func
   }
-###  if (score.method=="nr) 
-###  cat("Score.method set to nlminb for flexible modelling \n"); 
   } ## }}}
 
   Zgamma <-  c(Z %*% gamma); 
@@ -202,9 +196,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   dep.model <- switch(model,COR=1,RR=2,OR=3,RANCIF=4,ARANCIF=5)
   if (dep.model==0) stop("model must be COR, OR, RR, RANCIF, ARANCIF \n"); 
   if (dep.model<=4) rvdes <- matrix(0,1,1); 
-###  if (dep.model==4 & !is.null(cif2) ) dep.model <- 6 ## two cause random cif
-###  if (dep.model==6) stop("Different causes  under development \n"); 
-
   
   obj <- function(par) 
     { ## {{{
@@ -226,7 +217,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 			  stop("dparfunc must return matrix n x dimpar when called on dparfunc(par,t,theta.des)"); 
 		  DXtheta[s,,] <- Dttheta
 	  }
-###	  print(dim(Xtheta)); print(dim(DXtheta))
     }
 
       outl<-.Call("cor", ## {{{
@@ -271,16 +261,10 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 	  cat("hess:"); print(hess); 
         }## }}}
         delta <- hessi %*% out$score 
-	### for test purposes
-###     oout <- 0;  ### output control for obj
-###     score1 <- numDeriv::jacobian(obj,p)
-###	hess1 <-  numDeriv::hessian(obj,p)
-###	print(score1)
-###	print(hess1)
 	## do not update last iteration 
 	if (i<Nit) p <- p-delta* step
 	if (is.nan(sum(out$score))) break; 
-        if (sum(abs(out$score))<0.00001) break; 
+        if (sum(abs(out$score))<tol) break;
         if (max(delta)>20) { cat("NR increment > 20, lower step zize, increment= \n"); cat(delta); break; }
     }
     if (!is.nan(sum(p))) { ## {{{ iid decomposition
@@ -296,10 +280,8 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           cat("theta:");print(c(p))
           cat("score:");print(c(out$score)); 
 	  cat("hess:"); print(hess); 
-###	  oout <- 0; hess1 <-  numDeriv::hessian(obj,p); print(hess1)
     }## }}}
     if (!is.na(sum(hess))) hessi <- lava::Inverse(out$Dscore) else hessi <- diag(nrow(hess))
-###    score1 <- numDeriv::jacobian(obj,p)
     score1 <- score; 
     ## }}}
   } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
@@ -363,18 +345,8 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   return(ud);
 } ## }}}
 
-###mysolve <- function(A)
-###{
-###  ee <- eigen(A);
-###  threshold <- 1e-12
-###  idx <- ee$values>threshold
-###  ee$values[idx] <- 1/ee$values[idx];
-###  if (!all(idx))
-###    ee$values[!idx] <- 0
-###  V <- with(ee, vectors%*%diag(values)%*%t(vectors))
-###  return(V)
-###}
-
+##' Cross-odds-ratio, OR or RR risk regression for competing risks
+##'
 ##' Fits a parametric model for the log-cross-odds-ratio for the 
 ##' predictive effect of for the cumulative incidence curves for \eqn{T_1} 
 ##' experiencing cause i given that \eqn{T_2} has experienced a cause k :
@@ -434,7 +406,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' \eqn{h()} may be specified as an R-function of the parameters, 
 ##' see example below, but the default is that it is simply \eqn{\theta^T z}.
 ##'
-##' @title Cross-odds-ratio, OR or RR risk regression for competing risks
 ##' @aliases or.cif rr.cif
 ##' @param cif a model object from the comp.risk function with the 
 ##' marginal cumulative incidence of cause1, i.e., the event of interest, and whose
@@ -675,9 +646,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  library("timereg")
-##'  d <- simnordic.random(4000,delayed=TRUE,
-##'        cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+##'  d <- simnordic.random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  add1<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
@@ -696,7 +665,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' ##### 2 different causes
 ##' #########################################
 ##' 
-##'  add2<-comp.risk(Event(time,cause)~const(country)+cluster(id),data=d,
+##'  add2<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'                   times=times,cause=2,max.clust=NULL)
 ##'  out3<-random.cif(add1,data=d,cause1=1,cause2=2,cif2=add2,sym=1,same.cens=TRUE)
 ##'  summary(out3) ## negative dependence
@@ -720,6 +689,8 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
   fit
 } ## }}}
 
+##'Additive Random effects model for competing risks data for polygenetic modelling
+##' 
 ##'Fits a random effects  model describing the dependence in the cumulative 
 ##'incidence curves for subjects within a cluster.  Given the gamma distributed
 ##'random effects it is assumed that the cumulative incidence curves 
@@ -753,7 +724,6 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##'\lambda = pard \theta 
 ##'}
 ##'
-##' @title Additive Random effects model for competing risks data for polygenetic modelling
 ##'
 ##'
 ##' @param cif a model object from the comp.risk function with the 
@@ -999,7 +969,6 @@ summary.cor <- function(object,marg.cif=NULL,marg.cif2=NULL,digits=3,...) { ## {
     } ## }}} 
     outcase <- cbind(time,casewise,caselower,caseup)
     outconc <- cbind(time,concordance,conclower,concup)
-###    rownames(outcase) <- rownames(outconc)  <-  rownames(coefs)
     colnames(outcase) <- c("time","casewise concordance","2.5 %","97.5%")
     colnames(outconc) <- c("time","concordance","2.5 %","97.5%")
 	  if (length(thetav)==1) {
@@ -1158,7 +1127,6 @@ concordanceCor <- function(object,cif1,cif2=NULL,messages=TRUE,model=NULL,coefs=
 
     out[[k]] <- list(concordance=outconc,casewise=outcase)
     names(out)[k] <- rownames(coefs)[k]
-###k <- k+1
   }
 
   return(out)
@@ -1259,7 +1227,6 @@ coef.randomcif<- function (object, digits = 3, ...)
   colnames(res) <- c("Coef.", "SE", "z", "P-val", "Cross odds ratio", "SE")
   if (!is.null(object$thetanames)) rownames(res)<-object$thetanames
 
-###  prmatrix(signif(res, digits))
   return(res)
 } ## }}}
 
@@ -1317,26 +1284,6 @@ coef.randomcifrv<- function (object, digits = 3, ...)
 
    if (!is.null(object$thetanames)) rownames(res)<-object$thetanames
    prmatrix(signif(res, digits))
-
-###    cat("\n\n Random effect variances for gamma random effects \n\n")
-###    varpar <- theta/sum(theta)^2 
-###    res <- as.matrix(varpar); 
-###    if (elog==0)  { var.theta <-   object$var.theta; 
-###                    df <- 0*var.theta; 
-###                    for (i in 1:nrow(var.theta))
-###                    df[i,] <- -theta[i]*2*theta; 
-###		    diag(df) <- diag(df)+sum(theta)^2
-###		    df <- df/sum(theta)^4
-###		    var.varpar <- df %*% var.theta %*% df
-###                  }
-###    if (elog==1)  { 
-###	            var.theta <-   object$var.theta; 
-###                    var.varpar <- var.theta
-###                  }
-###    res <- cbind(res,diag(var.varpar)^.5)  
-###    colnames(res) <- c("variance","SE")
-###    if (is.null((rownames(res))) == TRUE) rownames(res) <- rep(" ", nrow(res))
-###    prmatrix(signif(res, digits))
 
 } ## }}}
 

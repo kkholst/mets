@@ -3,8 +3,10 @@ title: "Marginal modelling of clustered survival data"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
-  knitr:::html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
+    # fig_width: 7.15
+    # fig_height: 5.5        
 vignette: >
   %\VignetteIndexEntry{Marginal modelling of clustered survival data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,7 +16,12 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  ##dev="png",
+  dpi=50,
+  fig.width=7.15, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1,
+  comment = "#>"  
 )
 library(mets)
 ```

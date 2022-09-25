@@ -28,10 +28,10 @@ dsort <- function(data,x,...,decreasing=FALSE,return.order=FALSE)
         if (any(decr)) decreasing <- decr
         x <- all.vars(x)
     }
-    if (is.character(x) && length(x)<nrow(data)) x <- lapply(x,function(z) data[,z])
+    if (is.character(x) && length(x)!=nrow(data)) x <- lapply(x,function(z) data[,z,drop=TRUE])
     dots <- list(...)
     args <- lapply(dots, function(x) {
-        if (length(x)==1 && is.character(x)) x <- data[,x]
+        if (length(x)==1 && is.character(x)) x <- data[,x,drop=TRUE]
         x
     })
     if (!is.list(x)) x <- list(x)
@@ -51,10 +51,10 @@ dsort2 <- function(data,x,...,decreasing=FALSE,return.order=FALSE,regex=FALSE)
         x <- all.vars(x)
 	x <- yxzf$predictor
     }
-    if (is.character(x) && length(x)<nrow(data)) x <- lapply(x,function(z) data[,z])
+    if (is.character(x) && length(x)!=nrow(data)) x <- lapply(x,function(z) data[,z,drop=TRUE])
     dots <- list(...)
     args <- lapply(dots, function(x) {
-        if (length(x)==1 && is.character(x)) x <- data[,x]
+        if (length(x)==1 && is.character(x)) x <- data[,x,drop=TRUE]
         x
     })
     if (!is.list(x)) x <- list(x)

@@ -362,5 +362,3 @@ iid.twinlm <- function(x,...) {
     iI <- vcov(x)
     U%*%iI
 }
-
-     

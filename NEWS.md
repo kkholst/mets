@@ -1,3 +1,14 @@
+# mets 1.3.0
+  - Efficient IPCW for binary data: Effbinreg 
+  - IPCW restricted mean survival regression: resmeanIPCW 
+  - Lin-Ying additive hazards model with fast robust standard errors: aalenMets 
+  - mediator weighted survial mediation with robust standard errors: mediatorSurv
+  - Examples updated
+  - dutility function no longer casts warnings when handling formulas
+  - Efficient estimation of recurrent events mean: recurrentMarginalAIPCW 
+  - Average treatment effect for competing risks and binary data: logitATE, binregATE
+  - Recurrent events regression with IPCW adjustment (Ghosh-Lin model) : recreg
+
 # mets 1.2.8.1
   - Maintenance release
 

@@ -2,9 +2,10 @@
 % Please edit documentation in R/mutinomialreg.R
 \name{mlogit}
 \alias{mlogit}
+\alias{predictmlogit}
 \title{Multinomial regression based on phreg regression}
 \usage{
-mlogit(formula, data, offset = NULL, weights = NULL, ...)
+mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
 }
 \arguments{
 \item{formula}{formula with outcome (see \code{coxph})}
@@ -14,6 +15,8 @@ mlogit(formula, data, offset = NULL, weights = NULL, ...)
 \item{offset}{offsets for partial likelihood}
 
 \item{weights}{for score equations}
+
+\item{fix.X}{to have same coefficients for all categories}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -28,7 +31,9 @@ Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}
 Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
 Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.  
 
-Can also get influence functions (possibly robust) via iid() function, response should be a factor.
+Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
+
+Can fit cumulative odds model as a special case of interval.logitsurv.discrete
 }
 \examples{
 
@@ -36,6 +41,9 @@ data(bmt)
 dfactor(bmt) <- cause1f~cause
 drelevel(bmt,ref=3) <- cause3f~cause
 dlevels(bmt)
+
+mreg <- mlogit(cause1f~+1,bmt)
+summary(mreg)
 
 mreg <- mlogit(cause1f~tcell+platelet,bmt)
 summary(mreg)
@@ -46,6 +54,10 @@ summary(mreg3)
 ## inverse information standard errors 
 estimate(coef=mreg3$coef,vcov=mreg3$II)
 
+## predictions based on seen response or not 
+newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
+predictmlogit(mreg,newdata,response=FALSE)
+predictmlogit(mreg,newdata)
 }
 \author{
 Thomas Scheike

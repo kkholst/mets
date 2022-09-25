@@ -15,7 +15,7 @@ bptwin(
   group = NULL,
   num = NULL,
   weights = NULL,
-  biweight = function(x) 1/min(x),
+  weights.fun = function(x) ifelse(any(x <= 0), 0, max(x)),
   strata = NULL,
   messages = 1,
   control = list(trace = 0),
@@ -29,7 +29,6 @@ bptwin(
   p,
   indiv = FALSE,
   constrain,
-  bound = FALSE,
   varlink,
   ...
 )
@@ -57,7 +56,7 @@ corresponding to the dyzogitic twins.}
 
 \item{weights}{Weight matrix if needed by the chosen estimator (IPCW)}
 
-\item{biweight}{Function defining the bivariate weight in each cluster}
+\item{weights.fun}{Function defining a single weight each individual/cluster}
 
 \item{strata}{Strata}
 
@@ -87,8 +86,6 @@ genetic factors, unique environmental factors).}
 \item{indiv}{If TRUE the score and log-Likelihood contribution of each twin-pair}
 
 \item{constrain}{Development argument}
-
-\item{bound}{Development argument}
 
 \item{varlink}{Link function for variance parameters}
 

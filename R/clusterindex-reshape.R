@@ -74,16 +74,19 @@ if (addid)  {
 name1 <- paste(names.count,id,sep=sep)
 name2 <- paste("index",id,sep=sep)
 name3 <- paste(total.count,id,sep=sep)
+name4 <- paste("reverse",names.count,id,sep=sep)
 } else {
 name1 <- names.count
 name2 <- index.name
 name3 <- total.count
+name4 <- paste("reverse",names.count,sep=sep)
 }
 
 out <- data[,id,drop=FALSE]
-out[,name1]=cumsumstrata(rep(1,nrow(data)),clusters,max.clust)
-out[,name2]=clusters 
-out[,name3]=nclust[clusters+1]
+out[,name1] <- c(cumsumstrata(rep(1,nrow(data)),clusters,max.clust))
+out[,name2] <- clusters 
+out[,name3] <- nclust[clusters+1]
+out[,name4] <- 1+out[,name3]-out[,name1]
 
 attr(out,"max.clust") <- max.clust
 

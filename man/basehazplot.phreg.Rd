@@ -18,6 +18,7 @@ basehazplot.phreg(
   xlim = NULL,
   lty = NULL,
   col = NULL,
+  lwd = NULL,
   legend = TRUE,
   ylab = NULL,
   xlab = NULL,
@@ -25,6 +26,7 @@ basehazplot.phreg(
   level = 0.95,
   stratas = NULL,
   robust = FALSE,
+  conf.type = c("plain", "log"),
   ...
 )
 }
@@ -45,6 +47,8 @@ basehazplot.phreg(
 
 \item{col}{to specify col of components}
 
+\item{lwd}{to specify lwd of components}
+
 \item{legend}{to specify col of components}
 
 \item{ylab}{to specify ylab}
@@ -58,6 +62,8 @@ basehazplot.phreg(
 \item{stratas}{wich strata to plot}
 
 \item{robust}{to use robust standard errors if possible}
+
+\item{conf.type}{"plain" or "log" transformed}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -74,8 +80,7 @@ bplot(out1)
 bplot(out1,stratas=c(0,3))
 bplot(out1,stratas=c(0,3),col=2:3,lty=1:2,se=TRUE)
 bplot(out1,stratas=c(0),col=2,lty=2,se=TRUE,polygon=FALSE)
-bplot(out1,stratas=c(0),col=matrix(c(2,1,3),1,3),
-            lty=matrix(c(1,2,3),1,3),se=TRUE,polygon=FALSE)
+bplot(out1,stratas=c(0),col=matrix(c(2,1,3),1,3),lty=matrix(c(1,2,3),1,3),se=TRUE,polygon=FALSE)
 }
 \author{
 Klaus K. Holst, Thomas Scheike

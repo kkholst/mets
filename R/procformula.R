@@ -149,11 +149,10 @@ procform <- function(formula=NULL, sep="\\|", nsep=1, return.formula=FALSE, data
         for (i in seq_along(specials)) if (is.null(specials[[i]])) specials[i] <- NULL
         if (length(specials)==0) specials <- NULL
     }
-
     if (return.formula) {
         if (foundsep && !is.null(filter)) {
             filter <- lapply(filter,
-                             function(z) as.formula(paste0(c("~", paste0(z,collapse="+")))))
+                             function(z) as.formula(paste0("~", paste0(z,collapse="+"))))
         }
         if (length(pred)>0)
             pred <- as.formula(paste0("~", paste0(pred,collapse="+"), collapse=""))

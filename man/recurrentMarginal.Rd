@@ -5,6 +5,8 @@
 \alias{tie.breaker}
 \alias{recmarg}
 \alias{recurrentMarginalIPCW}
+\alias{recurrentMarginalAIPCW}
+\alias{recurrentMarginalAIPCWdata}
 \title{Fast recurrent marginal mean when death is possible}
 \usage{
 recurrentMarginal(recurrent, death, fixbeta = NULL, km = TRUE, ...)
