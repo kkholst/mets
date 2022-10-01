@@ -30,8 +30,9 @@ export:
 	@mkdir -p tmp/mets
 	@git archive HEAD | (cd tmp/mets; tar x)
 
-DOCKER?=nerdctl
-IMG=mets
+DOCKER?=docker
+IMG?=mets
+
 .PHONY: dbuild
 build:
 	$(DOCKER) build . -f Dockerfile --tag $(IMG)
