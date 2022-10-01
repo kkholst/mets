@@ -260,7 +260,7 @@ summary(margbin)
 Now estimating the OR parameter. We see a strong dependence with an OR
 at around 8 that is clearly significant. 
 
-```{r}
+```{r twostage1}
 bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
                        clusters=twinstut$tvparnr,detail=0)
 summary(bina)
@@ -273,7 +273,7 @@ that there is a genetic effect, alternatively there might be
 a stronger environmental effect for MZ twins. 
 
 
-```{r}
+```{r twostage2}
 # design for OR dependence 
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
@@ -288,7 +288,7 @@ We see that MZ has a much higher dependence and that males have
 a much lower dependence. We tested for interaction in this model and 
 these were not significant. 
      
-```{r}
+```{r twostage3}
 twinstut$cage <- scale(twinstut$age)
 theta.des <- model.matrix( ~-1+factor(zyg)+factor(sex),data=twinstut)
 bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
@@ -305,7 +305,7 @@ the pairwise OR model.
 
 First noticing as before that MZ twins have a much higher dependence. 
      
-```{r}
+```{r altsyntax1}
  # refers to zygosity of first subject in eash pair : zyg1
  # could also use zyg2 (since zyg2=zyg1 within twinpair's)
  out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
@@ -320,7 +320,7 @@ for opposite sex DZ twins and same sex twins.
 We here find that os twins are not markedly different from the same sex DZ 
 twins. 
      
-```{r}
+```{r osdesign}
  # refers to zygosity of first subject in eash pair : zyg1
  # could also use zyg2 (since zyg2=zyg1 within twinpair's))
  
@@ -351,7 +351,7 @@ correction in the mean this is an un-structured model, and the useful
 concordance and casewise concordance estimates can be reported from this
 analysis. 
 
-```{r}
+```{r biprobit1}
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="un")
 summary(b1)
 ```
@@ -368,13 +368,13 @@ Polygenic modelling
    if this submodel is acceptable by a likelihood ratio test. 
 
 
-```{r}
+```{r bptwin1}
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ace")
 summary(b1)
 ```
 
 
-```{r}
+```{r bptwin2}
 b0 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ae")
 summary(b0)
 ```
@@ -388,7 +388,7 @@ stronger for MZ twins. We also test if these are the same by parametrizing the
 OR model with an intercept. This clearly shows a significant difference. 
 
 
-```{r}
+```{r addgamma1}
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~sex,data=twinstut,family=binomial())
 bintwin <- binomial.twostage(margbin,data=twinstut,model="gamma",
@@ -415,7 +415,7 @@ Polygenic modelling
    genetic variance is the same for all subjects. The shared environmental effect is the samme for 
 all. Thus two parameters with these bands. 
 
-```{r}
+```{r polygenic1}
 out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")
 head(cbind(out$des.rv,twinstut$tvparnr),10)
 out$pardes
@@ -427,7 +427,7 @@ component, is 1.5 and the environmental variance is -0.5. Thus suggesting that
 the ACE model does not fit the data.  When the random design is given we 
 automatically use the gamma fralty model. 
 
-```{r}
+```{r polygenic2}
 margbin <- glm(binstut~sex,data=twinstut,family=binomial())
 bintwin1 <- binomial.twostage(margbin,data=twinstut,
      clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
@@ -448,7 +448,7 @@ The E component was not consistent with the fit of the data and we
 now consider instead the AE model. 
 
 
-```{r}
+```{r polygenic_ae}
 out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ae")
 
 bintwin <- binomial.twostage(margbin,data=twinstut,

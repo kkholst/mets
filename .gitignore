@@ -1,3 +1,5 @@
+.*cache
+.DS_Store
 *_cache
 test.R
 README.Rmd
@@ -26,6 +28,8 @@ vignettes/*.r
 vignettes/*.Rout
 vignettes/*.org
 vignettes/auto
+vignettes/runRmd
+vignettes/makePDF
 *.o
 *.so
 *~

@@ -1,16 +1,21 @@
 ##' Restricted IPCW mean for censored survival data 
 ##'
-##' Simple and fast version of comp.risk function of timereg for just one time-point thus fitting the model 
-##' \deqn{E(T \leq t | X ) = exp( X^T beta) } or in the case of competing risks data
-##' \deqn{E( I(epsilon=1) (t - T \leq t) | X ) = exp( X^T beta) } thus given years lost to 
+##' Simple and fast version for IPCW regression for just one time-point thus fitting the model 
+##' \deqn{E( min(T, t) | X ) = exp( X^T beta) } or in the case of competing risks data
+##' \deqn{E( I(epsilon=1) (t - min(T ,t)) | X ) = exp( X^T beta) } thus given years lost to 
 ##' cause.
 ##'
-##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
-##' for IPCW adjusted responses. 
+##' When the status is binary assumes it is a survival setting and default is to consider outcome Y=min(T,t), 
+##' if status has more than two levels, then computes years lost due to that particular cause, thus
+##* using the response \deqn{ (min(T,t)-t) I(status==cause) } 
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ h(X) X ( \Delta (T \leq t)/G_c(T_i-) - exp( X^T beta)) = 0 }
+##' \deqn{ X ( \Delta (min(T , t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+##' for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) I ( min(T ,t) \leq C ) } is indicator of
+##' being uncensored. 
+##'
+##' Can also solve the binomial regresion IPCW response estimating equation: 
+##' \deqn{ h(X) X ( \Delta (min(T, t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 ##' 
 ##' By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
@@ -18,8 +23,8 @@
 ##' Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
 ##' under known censoring model. 
 ##' 
-##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta Ydirect /G_c(T_i-) - exp( X^T beta)) = 0 }
+##' When Ydirect is given it solves : 
+##' \deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
 ##' Censoring model may depend on strata. 
@@ -135,7 +140,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
   statusC <- (status==cens.code) 
   statusE <- (status==cause) & (exit<= time) 
-  if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
+  if ((sum(statusE)==0) & is.null(Ydirect)) warning("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
   statusC <- (status==cens.code) 
@@ -187,7 +192,7 @@ if (model=="exp") p <- exp(lp) else p <- lp
 ploglik <- sum(weights*(Y-p)^2)
 
 if (model=="exp")  {
-if (is.null(h.call)) ph <- p else ph  <- h
+if (is.null(h.call)) ph <- 1 else ph  <- h
 Dlogl <- weights*ph*X*c(Y-p)
 D2logl <- c(weights*ph*p)*X2
 } else {
@@ -256,7 +261,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
     } else Y <- c(Ydirect*obs)/cens.weights
-    if (model=="exp" & is.null(h.call))  ph <- p
+    if (model=="exp" & is.null(h.call))  ph <- 1
     if (model=="exp" & !is.null(h.call)) ph <- h
     if (model!="exp" & is.null(h.call))  ph <- 1 
     if (model!="exp" & !is.null(h.call)) ph <- h 
@@ -289,7 +294,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   lp <- c(X %*% val$coe+offset)
   if (model=="exp") p <- exp(lp) else p <- lp
   if (!is.null(h.call)) ph<- h 
-  if (model=="exp" & is.null(h.call)) ph<- p
+  if (model=="exp" & is.null(h.call)) ph<- 1
   if (model!="exp" & is.null(h.call)) ph<- 1
   if (!is.null(MCaugment)) MGCiid <- MCaugment*ph*X 
   val$MGciid <- MGCiid

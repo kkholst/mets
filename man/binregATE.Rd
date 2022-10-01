@@ -88,6 +88,10 @@ brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
   treat.model=tcell.f~platelet+age)
 summary(brs)
 
+brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
+  treat.model=tcell.f~platelet+age)
+summary(brsi)
+
 }
 \author{
 Thomas Scheike

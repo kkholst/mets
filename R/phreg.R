@@ -149,12 +149,13 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
    dd$nstrata <- nstrata
 	obj <- function(pp,U=FALSE,all=FALSE) {# {{{
-	if (is.null(propodds) & is.null(AddGam)) 
-	  val <- with(dd, .Call("FastCoxPLstrata",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,caseweights,PACKAGE="mets"))
-         else if (is.null(AddGam)) 
-		 val <- with(dd, .Call("FastCoxPLstrataPO",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,propodds,PACKAGE="mets"))
-	 else val <- with(dd, .Call("FastCoxPLstrataAddGam",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,
-		    AddGam$theta,AddGam$dimthetades,AddGam$thetades,AddGam$ags,AddGam$varlink,AddGam$dimjumprv,AddGam$jumprv,AddGam$JumpsCauses,PACKAGE="mets"))
+      if (is.null(propodds) & is.null(AddGam)) {
+        val <- with(dd, .Call("FastCoxPLstrata",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,caseweights,PACKAGE="mets"))
+      } else if (is.null(AddGam))
+        val <- with(dd, .Call("FastCoxPLstrataPO",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,propodds,PACKAGE="mets"))
+      else val <- with(dd, .Call("FastCoxPLstrataAddGam",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,
+                                 AddGam$theta,AddGam$dimthetades,AddGam$thetades,AddGam$ags,AddGam$varlink,AddGam$dimjumprv,AddGam$jumprv,
+                                 AddGam$JumpsCauses,PACKAGE="mets"))
 	 
 
 	  if (all) {
@@ -243,7 +244,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   ## also computing robust variance 
   if (p>0 & no.var==0) {
-  phvar <- crossprod(iid(res))
+  ii <- iid(res)
+  phvar <- crossprod(ii)
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
   } else res$var <- 0
@@ -685,9 +687,9 @@ simCox <- function(n=1000, seed=1, beta=c(1,1), entry=TRUE) {
 ##' @export
 vcov.phreg  <- function(object,...) {    
  if ((length(class(object))==1) & inherits(object,"phreg")) {
-  res <- crossprod(ii <- iid(object,...))
-  attributes(res)$ncluster <- attributes(ii)$ncluster
-  attributes(res)$invhess <- attributes(ii)$invhess
+  res <- as.matrix(object$var)  ### objectcrossprod(ii <- iid(object,...))
+###  attributes(res)$ncluster <- attributes(ii)$ncluster
+###  attributes(res)$invhess <- attributes(ii)$invhess
   colnames(res) <- rownames(res) <- names(coef(object))
 } else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
   res <- as.matrix(object$var)
@@ -1004,7 +1006,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
-    } else  { 
+    } else  {  ## phreg
 	    V <- vcov(object,type=type[1])
             ncluster <- object$n
     }
@@ -2158,10 +2160,15 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
 {# {{{ default is all time-points from the object
 
    ### take baseline and strata from object# {{{
-   strata <- object$strata[object$jumps]
-   nstrata <- object$nstrata
    jumptimes <- object$cumhaz[,1]
    chaz <- object$cumhaz[,2]
+   if (is.null(object$nstrata)) {  ## try to make more robust
+	nstrata <- 1; 
+	strata <- rep(1,length(jumptimes))
+   } else {
+      nstrata <- object$nstrata
+      strata <- object$strata[object$jumps]
+   }
    if (se) {
    if (!robust) { 
 	   se.chaz <- object$se.cumhaz[,2] 
