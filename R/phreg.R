@@ -244,8 +244,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   ## also computing robust variance 
   if (p>0 & no.var==0) {
-  res$iid <- iid(res)
-  phvar <- crossprod(res$iid)
+  ii <- iid(res)
+  phvar <- crossprod(ii)
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
   } else res$var <- 0
