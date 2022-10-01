@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -128,18 +128,6 @@
 
     
     
-<!-- output: -->
-<p><!-- tufte::tufte_html: default --></p>
-<p><!-- prettydoc::html_pretty: --> <!--   theme: leonids --> <!--   toc: true --> <!--   toc_depth: 2     --> <!--   highlight: github --></p>
-<!-- output: -->
-<!--   bookdown::html_document2: -->
-<!--     toc: yes -->
-<!--     toc_float: true -->
-<!--     number_sections: true -->
-<!--     fig_width: 7 -->
-<!--     fig_caption: true -->
-<!--     theme: spacelab -->
-<!--     highlight: pygments -->
 <p>This document provides a brief tutorial to analyzing twin data using the <strong><code>mets</code></strong> package:</p>
 <p><span class="math inline">\(\newcommand{\cov}{\mathbb{C}\text{ov}} \newcommand{\cor}{\mathbb{C}\text{or}} \newcommand{\var}{\mathbb{V}\text{ar}} \newcommand{\E}{\mathbb{E}} \newcommand{\unitfrac}[2]{#1/#2} \newcommand{\n}{}\)</span></p>
 <p><!-- 
@@ -190,7 +178,7 @@
 <code class="sourceCode R"><span><span class="va">mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">scatterdens</span><span class="op">(</span><span class="va">mz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/scatter1-1.png" alt="Scatter plot of logarithmic BMI measurements in MZ twins" width="70%"><p class="caption">
+<img src="quantitative-twin_files/figure-html/scatter1-1.png" alt="Scatter plot of logarithmic BMI measurements in MZ twins" width="600px"><p class="caption">
 Scatter plot of logarithmic BMI measurements in MZ twins
 </p>
 </div>
@@ -198,7 +186,7 @@ Scatter plot of logarithmic BMI measurements in MZ twins
 <code class="sourceCode R"><span><span class="va">dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">scatterdens</span><span class="op">(</span><span class="va">dz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/scatter2-1.png" alt="Scatter plot of logarithmic BMI measurements in DZ twins" width="70%"><p class="caption">
+<img src="quantitative-twin_files/figure-html/scatter2-1.png" alt="Scatter plot of logarithmic BMI measurements in DZ twins" width="600px"><p class="caption">
 Scatter plot of logarithmic BMI measurements in DZ twins
 </p>
 </div>
@@ -255,7 +243,7 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>,<span class="st">"Female"</span><span class="op">)</span>,</span>
 <span>       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="st">"red"</span><span class="op">)</span>, lty<span class="op">=</span><span class="fl">1</span>, bty<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/marg1-1.png" alt="Marginal association between BMI and Age for males and females." width="70%"><p class="caption">
+<img src="quantitative-twin_files/figure-html/marg1-1.png" alt="Marginal association between BMI and Age for males and females." width="600px"><p class="caption">
 Marginal association between BMI and Age for males and females.
 </p>
 </div>

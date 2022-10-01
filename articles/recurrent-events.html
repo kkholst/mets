@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
       <h1 data-toc-skip>Recurrent events</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-09-04</h4>
+            <h4 data-toc-skip class="date">2022-10-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/recurrent-events.Rmd" class="external-link"><code>vignettes/recurrent-events.Rmd</code></a></small>
       <div class="hidden name"><code>recurrent-events.Rmd</code></div>
@@ -289,7 +289,7 @@ Then the intensities are
 <span><span class="co"># marginal mean of expected number of recurrent events </span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-4-1.png" width="600px"></p>
 <p>We can also extract the estimate in different time-points</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span>,times<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
@@ -309,7 +309,7 @@ Then the intensities are
 <span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" width="600px"></p>
 <p>Furhter, if we adjust for covariates for the two rates we can still do predictions of marginal mean, what can be plotted is the baseline marginal mean, that is for the covariates equal to 0 for both models. Predictions for specific covariates can also be obtained with the recmarg (recurren marginal mean used solely for predictions without standard error computation).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># cox case</span></span>
@@ -328,7 +328,7 @@ Then the intensities are
 <span><span class="co"># predictions witout se's </span></span>
 <span><span class="va">outX</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recmarg</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span>,Xr<span class="op">=</span><span class="fl">1</span>,Xd<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">outX</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="improving-efficiency">Improving efficiency<a class="anchor" aria-label="anchor" href="#improving-efficiency"></a>
@@ -402,7 +402,7 @@ Then the intensities are
 <span>    <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">k</span><span class="op">+</span><span class="fl">1</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Eff-pred"</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="600px"></p>
 <p>In the case where covariates might be important but we are still interested in the marginal mean we can also augment wrt these covariates</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">simMarginalMeanCox</span><span class="op">(</span><span class="fl">200</span>,cens<span class="op">=</span><span class="fl">3</span><span class="op">/</span><span class="fl">5000</span>,Lam1<span class="op">=</span><span class="va">base1</span>,LamD<span class="op">=</span><span class="va">ddr</span>,beta1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span><span class="op">)</span>,</span>
@@ -551,20 +551,20 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <span></span>
 <span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceedRecurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">oo</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" width="600px"></p>
 <p>We can also look at the mean and variance based on the estimators just described</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">mu</span>,col<span class="op">=</span><span class="fl">2</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">varN</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-12-1.png" width="600px"></p>
 <p>We could also use the product-limit estimator to estimate the probability of exceeding “k” events, and then standard errors are also returned:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">oop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceed.recurrent</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">oo</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matlines</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">times</span>,<span class="va">oop</span><span class="op">$</span><span class="va">prob</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-13-1.png" width="600px"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">summaryTimeobject</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">times</span>,<span class="va">oop</span><span class="op">$</span><span class="va">prob</span>,se.mu<span class="op">=</span><span class="va">oop</span><span class="op">$</span><span class="va">se.prob</span>,times<span class="op">=</span><span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            times        mean     se-mean     CI-2.5%   CI-97.5%</span></span>
@@ -598,7 +598,7 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">times</span>,<span class="va">oop</span><span class="op">$</span><span class="va">prob</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
 <span>    <span class="fu"><a href="../reference/basehazplot.phreg.html">plotConfRegion</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">times</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">oop</span><span class="op">$</span><span class="va">se.lower</span><span class="op">[</span>,<span class="va">i</span><span class="op">]</span>,<span class="va">oop</span><span class="op">$</span><span class="va">se.upper</span><span class="op">[</span>,<span class="va">i</span><span class="op">]</span><span class="op">)</span>,col<span class="op">=</span><span class="va">i</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="multiple-events">Multiple events<a class="anchor" aria-label="anchor" href="#multiple-events"></a>
@@ -620,7 +620,7 @@ E(N_1(t) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">pe1e2</span>,type<span class="op">=</span><span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">nc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">oo</span><span class="op">$</span><span class="va">pe1e2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>,legend<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">oo</span><span class="op">$</span><span class="va">pe1e2</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nc</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nc</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-16-1.png" width="600px"></p>
 <div class="section level3">
 <h3 id="dependence-between-events-covariance">Dependence between events: Covariance<a class="anchor" aria-label="anchor" href="#dependence-between-events-covariance"></a>
 </h3>
@@ -688,7 +688,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span>                        start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span>,id<span class="op">=</span><span class="st">"id"</span>,names.count<span class="op">=</span><span class="st">"Count"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">covrp</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-17-1.png" width="600px"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># with strata, each strata in matrix column, provides basis for fast Bootstrap</span></span>
@@ -812,7 +812,7 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 20.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
@@ -828,24 +828,24 @@ We here, however, use a simple block bootstrap to get standard errors.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.0     lava_1.6.10    timereg_2.0.2  survival_3.3-1</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.1     lava_1.6.10    timereg_2.0.2  survival_3.3-1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          highr_0.9           bslib_0.4.0        </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.2.1      jquerylib_0.1.4     tools_4.2.1        </span></span>
 <span><span class="co">#&gt;  [7] digest_0.6.29       jsonlite_1.8.0      evaluate_0.16      </span></span>
-<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.5        </span></span>
-<span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.3.0           parallel_4.2.1     </span></span>
+<span><span class="co">#&gt; [10] memoise_2.0.1       lattice_0.20-45     rlang_1.0.6        </span></span>
+<span><span class="co">#&gt; [13] Matrix_1.4-1        cli_3.4.1           parallel_4.2.1     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.5          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.32           fastmap_1.1.0       stringr_1.4.1      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.40          desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [19] xfun_0.33           fastmap_1.1.0       stringr_1.4.1      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.40          desc_1.4.2          fs_1.5.2           </span></span>
 <span><span class="co">#&gt; [25] sass_0.4.2          systemfonts_1.0.4   globals_0.16.1     </span></span>
 <span><span class="co">#&gt; [28] rprojroot_2.0.3     grid_4.2.1          listenv_0.8.0      </span></span>
 <span><span class="co">#&gt; [31] R6_2.5.1            textshaping_0.3.6   parallelly_1.32.1  </span></span>
-<span><span class="co">#&gt; [34] future.apply_1.9.0  rmarkdown_2.16      purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [34] future.apply_1.9.1  rmarkdown_2.16      purrr_0.3.4        </span></span>
 <span><span class="co">#&gt; [37] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.3    </span></span>
 <span><span class="co">#&gt; [40] splines_4.2.1       future_1.28.0       numDeriv_2016.8-1.1</span></span>
-<span><span class="co">#&gt; [43] ragg_1.2.2          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
+<span><span class="co">#&gt; [43] ragg_1.2.3          stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
 
