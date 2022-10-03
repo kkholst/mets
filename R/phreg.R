@@ -203,7 +203,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
   } else II <- matrix(0,p,p)
 
   ### computes Breslow estimator 
-  if (cumhaz==TRUE) { # {{{
+  if (cumhaz==TRUE & (length(val$jumps)>0)) { # {{{
 	 strata <- val$strata[val$jumps]
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
