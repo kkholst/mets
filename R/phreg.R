@@ -148,14 +148,18 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	     trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
 
    dd$nstrata <- nstrata
-	obj <- function(pp,U=FALSE,all=FALSE) {# {{{
-      if (is.null(propodds) & is.null(AddGam)) {
-        val <- with(dd, .Call("FastCoxPLstrata",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,caseweights,PACKAGE="mets"))
-      } else if (is.null(AddGam))
-        val <- with(dd, .Call("FastCoxPLstrataPO",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,propodds,PACKAGE="mets"))
-      else val <- with(dd, .Call("FastCoxPLstrataAddGam",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,
-                                 AddGam$theta,AddGam$dimthetades,AddGam$thetades,AddGam$ags,AddGam$varlink,AddGam$dimjumprv,AddGam$jumprv,
-                                 AddGam$JumpsCauses,PACKAGE="mets"))
+   obj <- function(pp,U=FALSE,all=FALSE) {# {{{
+      if (length(dd$jumps) >0) {
+	      if (is.null(propodds) & is.null(AddGam)) {
+		val <- with(dd, .Call("FastCoxPLstrata",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,caseweights,PACKAGE="mets"))
+	      } else if (is.null(AddGam))
+		val <- with(dd, .Call("FastCoxPLstrataPO",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,propodds,PACKAGE="mets"))
+	      else val <- with(dd, .Call("FastCoxPLstrataAddGam",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,
+					 AddGam$theta,AddGam$dimthetades,AddGam$thetades,AddGam$ags,AddGam$varlink,AddGam$dimjumprv,AddGam$jumprv,
+					 AddGam$JumpsCauses,PACKAGE="mets"))
+      } else {
+	      val <- list(jumps=NULL,ploglik=NULL,U=NULL,gradient=NULL,hessian=NULL,hessiantime=NULL,S2S0=NULL,E=NULL,S0=NULL)
+      }
 	 
 
 	  if (all) {
@@ -172,7 +176,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	      val$strata.jumps <- val$strata[val$jumps]
 	      return(val)
 	  }
-     n <- length(dd$time)
+          n <- length(dd$time)
 	 with(val,structure(-ploglik/n,gradient=-gradient/n,hessian=-hessian/n))
 	}# }}}
 
