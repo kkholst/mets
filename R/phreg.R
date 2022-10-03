@@ -2169,6 +2169,7 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
       nstrata <- object$nstrata
       strata <- object$strata[object$jumps]
    }
+   if (length(jumptimes)==0) se <- FALSE
    if (se) {
    if (!robust) { 
 	   se.chaz <- object$se.cumhaz[,2] 
