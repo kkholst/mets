@@ -854,7 +854,6 @@ iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
  ### \hat A_s-A_s=\sum_{i clusters} \sum_{j: i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_{i,j} - P^s(t) \sum_i \beta_i
  ### = \sum_{i clusters} ( \sum_{j \in i(j)=i, s(j)=s} \int_0^t 1/S_0 dM^s_j - P^s(t) \beta_i ) 
 
-
  ## sum after id's within strata and order 
  MGAiids <- c()
  sus <- sort(unique(xx$strata))
@@ -1780,9 +1779,12 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
-##' data(bmt)
+##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 ##' summary(out)
+##' 
+##' ## out2 <- aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+##' ## summary(out2)
 ##' 
 ##' @export
 aalenMets <- function(formula,data=data,...)
