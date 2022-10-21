@@ -1098,7 +1098,7 @@ val$se.riskDR <- diag(val$var.riskDR)^.5
 val$riskDR.iid <- iidrisk
 
 pdiff <- function(x) lava::contr(lapply(seq(x-1), \(z) seq(z,x)))
-contrast <- -pdiff(3)
+contrast <- -pdiff(length(nlevs))
 nncont <- c()
 for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
 rownames(contrast) <- nncont
