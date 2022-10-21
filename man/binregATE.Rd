@@ -70,11 +70,9 @@ Under the standard causal assumptions  we can estimate the average treatment eff
 }
 \details{
 The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
-then it uses the mlogit for propensity score modelling. If there are no censorings this is performing ordinary logistic regression modelling. 
+then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 
-This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
-then IPCW censoring adjusted using binomial regression. 
-
+Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
 
 The original version of the program with only binary treatment binregATEbin take  binary-numeric as input for the treatment, 

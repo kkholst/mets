@@ -740,11 +740,9 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 ##'
 ##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
-##' then it uses the mlogit for propensity score modelling. If there are no censorings this is performing ordinary logistic regression modelling. 
+##' then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 ##'
-##' This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
-##' then IPCW censoring adjusted using binomial regression. 
-##'
+##' Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 ##' Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
 ##'
 ##' The original version of the program with only binary treatment binregATEbin take  binary-numeric as input for the treatment, 
@@ -1091,28 +1089,35 @@ for (a in nlevs) {
         riskG.iid <- cbind(riskG.iid,riskGa.iid)
 	k <- k+1
 }
-difriskiid <- (iidrisk[,-1]-iidrisk[,1])
-difriskGiid <- (riskG.iid[,-1]-riskG.iid[,1])
 # }}}
 
-# {{{ output variances and se for ate, att, atc
-
+# {{{ output variances and se for ate
+### DR-estimator 
 val$var.riskDR <- crossprod(iidrisk); 
 val$se.riskDR <- diag(val$var.riskDR)^.5
 val$riskDR.iid <- iidrisk
-val$difriskDR <- val$riskDR[-1]-val$riskDR[1]
-names(val$difriskDR) <-  paste("treat:",nlevs[-1],"-",nlevs[1],sep="")
-val$var.difriskDR <- sum(difriskiid^2)
-val$se.difriskDR <- val$var.difriskDR^.5
 
+pdiff <- function(x) lava::contr(lapply(seq(x-1), \(z) seq(z,x)))
+contrast <- -pdiff(3)
+nncont <- c()
+for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
+rownames(contrast) <- nncont
+
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=contrast)
+val$difriskDR <- mm$coef 
+names(val$difriskDR) <-  rownames(contrast) 
+val$var.difriskDR <- mm$vcov 
+val$se.difriskDR <- diag(val$var.difriskDR)^.5
+
+### G-estimator 
 val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
-val$difriskG <-  val$riskG[-1]-val$riskG[1]
-names(val$difriskG) <-  paste("treat:",nlevs[-1],"-",nlevs[1],sep="")
-val$difriskG.iid <- difriskGiid 
-val$var.difriskG <- crossprod(val$difriskG.iid)
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+val$difriskG <- mm$coef 
+names(val$difriskG) <-  rownames(contrast) 
+val$var.difriskG <- mm$vcov 
 val$se.difriskG <- diag(val$var.difriskG)^.5
 # }}}
 
