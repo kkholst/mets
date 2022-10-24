@@ -188,6 +188,9 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
 
+  obs <- (exit<=time & (status !=cens.code)) | (exit>=time)
+  print(sum(obs/cens.weights))
+
 obj <- function(pp,all=FALSE)
 { # {{{
 lp <- c(X %*% pp+offset)
