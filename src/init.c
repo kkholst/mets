@@ -34,7 +34,7 @@ extern SEXP MatxCube(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy(SEXP, SEXP, SEXP);
 extern SEXP _mets_ApplyBy2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _mets_loglikMVN(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _mets_RcppExport_registerCCallable();
+extern SEXP _mets_RcppExport_registerCCallable(void);
 extern SEXP pBhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP pmvn0(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP Dpmvn(SEXP, SEXP, SEXP, SEXP, SEXP);
