@@ -27,6 +27,9 @@ binregATE(
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
+  outcome = c("cif", "rmst", "rmst-cause"),
+  model = "exp",
+  Ydirect = NULL,
   ...
 )
 }
@@ -62,6 +65,10 @@ binregATE(
 \item{method}{for optimization}
 
 \item{augmentation}{to augment binomial regression}
+
+\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
+
+\item{model}{possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)}
 
 \item{...}{Additional arguments to lower level funtions}
 }

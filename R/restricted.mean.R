@@ -377,3 +377,36 @@ Faugment <- apply(X*hh*Mc,2,sum)
 return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=hh,varY=varY,RRMt0=RRMt0))
 }# }}}
 
+
+##' Average Treatment effect for Restricted Mean for censored competing risks data using IPCW 
+##'
+##' Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
+##'
+##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
+##' then it uses the mlogit for propensity score modelling.  We consider the outcome mint(T;tau) or
+##' I(epsion==cause1)(t- min(T;t)) that gives years lost due to cause "cause".  
+##* The default model is the exp(X^ \beta) 
+##'
+##' Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
+##'
+##' @param formula formula with 'Event' outcome 
+##' @param outcome  "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
+##' @param model possible exp model for relevant mean model that is exp(X^t beta) 
+##' @param ... Additional arguments to pass to binregATE 
+##' @author Thomas Scheike
+##' @examples
+##' library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+##' out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
+##' summary(out)
+##' 
+##' out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,outcome="rmst-cause",
+##'                    time=40,treat.model=tcell~platelet)
+##' summary(out1)
+##' 
+##' @export
+resmeanATE <- function(formula,outcome=c("rmst","rmst-cause"),model="exp",...)
+{# {{{
+out <- 	binregATE(formula,...,outcome=outcome,model=model) 
+return(out)
+}# }}}
+

@@ -189,7 +189,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
  nevent <- sum((status==cause)*(exit<=time))
 
   obs <- (exit<=time & (status !=cens.code)) | (exit>=time)
-  print(sum(obs/cens.weights))
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -767,6 +766,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
 ##' @param augmentation to augment binomial regression 
+##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
+##' @param model  possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta) 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -785,7 +786,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
+	   outcome=c("cif","rmst","rmst-cause"),model="exp",Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -873,7 +875,21 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   p <- ncol(X)
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  Y <- c((status==cause)*(exit<=time)/cens.weights)
+  ###
+  ucauses  <-  sort(unique(status))
+  ccc <- which(ucauses==cens.code)
+  Causes <- ucauses[-ccc]
+  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
+###	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
+###	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+###  } else Y <- c(Ydirect*obs)/cens.weights
+
+  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
+     if (outcome[1]=="cif") Y <- c((status==cause)*(exit<=time)/cens.weights)
+     else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+     else if (outcome[1]=="rmst-cause") Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+     else stop("outcome not defined") 
+  }
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status==cause)*(exit<=time))
@@ -882,11 +898,16 @@ obj <- function(pp,all=FALSE)
 { # {{{
 
 lp <- c(X %*% pp+offset)
-p <- expit(lp)
+
+if (outcome[1]!="cif") {
+if (model[1]=="exp") p <- exp(lp) else p <- lp
+} else p <- expit(lp)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
-D2logl <- c(weights*p/(1+exp(lp)))*X2
+if (outcome[1]!="cif") {
+   D2logl <- c(weights*p)*X2
+} else D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
@@ -970,9 +991,6 @@ if (nlev==2) {
    Dp <- c()
    for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
    DPai <- -Dp/pA^2
-
-   ## response and response-model, logistic 
-   Y <- c(1*(exit<time & status==cause)/cens.weights)
    p1lp <-   X %*% val$coef+offset
    p1 <- expit(p1lp)
 
@@ -988,8 +1006,11 @@ for (a in nlevs) {# {{{
 	datA[,treat.name] <- a
 	Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
         lpa <- Xa %*% val$coef+offset
-	ma <- expit(lpa)
-	Dma  <-  Xa*c(ma/(1+exp(lpa)))
+	if (outcome[1]=="cif") {
+	   ma <- expit(lpa); Dma  <-  Xa*c(ma/(1+exp(lpa)))
+	} else {
+	    if (model[1]=="exp") { ma <- exp(lpa);  Dma  <-  Xa*c(ma)} else { ma <- lpa; Dma <- Xa }
+	}
 	paka <- pal[,k]
 	riska <- cbind(riska,((treatvar==a)/paka)*(Y-ma)+ma)
 	riskG <- cbind(riskG,ma)
@@ -1014,8 +1035,12 @@ for (a in nlevs) {# {{{
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
-
+    if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
+        if (outcome[1]=="cif") Y <- c((status==cause)*(exit<=time)/cens.weights)
+        else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+        else if (outcome[1]=="rmst-cause") Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+    }
+    Y <- Y*weights 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
     S0i[xx$jumps+1]  <- 1/resC$S0

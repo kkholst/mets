@@ -29,7 +29,7 @@ the last event time withn a strata the curves are extrapolated using the estimat
 cumulative incidence.
 }
 \examples{
-data(bmt)
+data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 
 rm1 <- resmean.phreg(out1,times=10*(1:6))
