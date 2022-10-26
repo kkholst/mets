@@ -643,7 +643,7 @@ RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata
        // whenever jump compute S_ss(t) = \sum_c G_c(t) S_ss,c(t) 
 	colvec S0res = 0*S0sc; 
 	for (unsigned i=0; i<n; i++) {
-		int ss=strata(i); 
+		// int ss=strata(i);
 		int ss2=(strata2(i)+1);
 		Gct(ss2)=Gc(i); 
 
@@ -925,7 +925,7 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec ressum = a;
 	colvec lagressum = a;
 	colvec ressqu = a;
-	double cumsum=0;
+	// double cumsum=0;
 	int first=0,ss;
 	for (unsigned i=0; i<n; i++) {
 		ss=intstrata(i);
@@ -934,7 +934,7 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 			ressqu(i)=ressqu(i-1)+pow(a(i),2)+2*a(i)*tmpsum(ss);
 			lagressum(i)=tmpsum(ss);
 			tmpsum(ss) += a(i);
-			cumsum+=a(i);
+			// cumsum+=a(i);
 			if (first<0.1) ressqu(i) = pow(a(i),2);
 			first=1;
 		ressum(i) = tmpsum(ss);
@@ -1093,26 +1093,25 @@ RcppExport SEXP cumsumidstratasumR(SEXP ia,SEXP iid,SEXP inid,SEXP istrata, SEXP
 		tmpsqr(ss)=ressqu(i);
 	}
 
-List rres;
-rres["sumsquare"]=ressqu;
-rres["sum"]=ressum;
-rres["lagsum"]=lagressum;
-rres["sumidstrata"]=ressumid;
-rres["lagsumidstrata"]=lagressumid;
-return(rres);
+	List rres;
+	rres["sumsquare"]=ressqu;
+	rres["sum"]=ressum;
+	rres["lagsum"]=lagressum;
+	rres["sumidstrata"]=ressumid;
+	rres["lagsumidstrata"]=lagressumid;
+	return(rres);
 }/*}}}*/
 
 colvec cumsumAS(const colvec &a,IntegerVector strata,int nstrata) {/*{{{*/
-unsigned n = a.n_rows;
-colvec tmpsum(nstrata); tmpsum.zeros();
-colvec ressum = a;
-ressum(0)=0;
-double sums=0;
-for (unsigned i=0; i<n; i++) {
-int ss=strata(i);
-ressum(i)+=a(i)-tmpsum(ss);
-tmpsum(ss)=a(i);
-}
+	unsigned n = a.n_rows;
+	colvec tmpsum(nstrata); tmpsum.zeros();
+	colvec ressum = a;
+	ressum(0)=0;
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(i);
+		ressum(i)+=a(i)-tmpsum(ss);
+		tmpsum(ss)=a(i);
+	}
 return(ressum);
 }/*}}}*/
 
