@@ -3,6 +3,7 @@
 \name{fast.approx}
 \alias{fast.approx}
 \alias{indexstrata}
+\alias{CpredM}
 \title{Fast approximation}
 \usage{
 fast.approx(

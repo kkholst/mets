@@ -17,7 +17,7 @@
 ##' t <- 0:6
 ##' n <- c(-1,0,0.1,0.9,1,1.1,1.2,6,6.5)
 ##' fast.approx(t,n,type="left")
-##' @aliases  indexstrata
+##' @aliases  indexstrata predictCumhaz
 ##' @export
 fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE,...) {
     if (!sorted) {
@@ -48,6 +48,18 @@ fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left
     }
     return(res)
 }
+
+
+##' @export
+predictCumhaz <- function (cum, time, type = c("left", "right", "nearest"), ...)
+{# {{{
+   index <- fast.approx(cum[, 1],time, type = type[1])
+   if (any(index==0))  { warning(" time before first cumhaz time, sets to first element\n"); 
+                       index[index==0] <- 1 
+   }
+   cumtime <- cbind(time, cum[index, 2])
+   return(cumtime)
+}# }}}
 
 
 ##' @export

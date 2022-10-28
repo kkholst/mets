@@ -233,6 +233,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             Gts <- vecAllStrata(cens.model$cumhaz[,2],cens.model$strata.jump,cens.model$nstrata)
             ### back to km product-limit form
             Gts <- apply(rbind(0,Gts),2,diff)
+	    if (is.numeric(Gts)) Gts <- matrix(Gts,1,1)
             ### back to km
             Gts <- suppressWarnings(apply(Gts,2,function(x) exp(cumsum(log(1-x)))))
             Gts <- rbind(1,Gts)[whereaJ,]

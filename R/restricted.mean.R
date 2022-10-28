@@ -172,7 +172,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
   ## if event before time or alive, then uncensored  
-  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
+  obs <- (exit<=time & (status %in% Causes)) | (exit>time)
   if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
