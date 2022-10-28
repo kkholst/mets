@@ -768,7 +768,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @param augmentation to augment binomial regression 
 ##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
 ##' @param model  possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta) 
-##' @param model  Ydirect use this Y for fitting G model set outcome to "rmst" to fit using the model specified by model
+##' @param Ydirect use this Y for fitting G model set outcome to "rmst" to fit using the model specified by model
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
