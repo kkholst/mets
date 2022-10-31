@@ -129,7 +129,8 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
-          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {# {{{ setting up weights, strata, beta and so forth before the action starts# {{{ p <- ncol(X)
+          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {
+# {{{ setting up weights, strata, beta and so forth before the action starts
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
@@ -189,7 +190,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     id.orig <- id+1;
 
     ## }}}
-
 
    ### censoring weights constructed
     whereC <- which( status %in% cens.code)

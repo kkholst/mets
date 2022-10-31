@@ -146,7 +146,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
   statusC <- (status==cens.code) 
   ucauses  <-  sort(unique(status))
   ccc <- which(ucauses==cens.code)
-  Causes <- ucauses[-ccc]
+  if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
   competing  <-  (length(Causes)>1) 
   data$id <- id
   data$exit <- exit
