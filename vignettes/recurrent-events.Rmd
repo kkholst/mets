@@ -338,6 +338,39 @@ dtable(rr,~statusG+status+death,level=2,response=1)
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
+We can also do the Mao-Lin type composite outcome where we both count the cause 1 and deaths for example 
+\begin{align*}
+E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+
+```{r}
+ out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=3,cens.code=0)
+ summary(out)$coef
+```
+
+Also demonstrate that this can be done with competing risks death (change some of the cause 3 deaths to cause 4)
+\begin{align*}
+E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+
+```{r}
+ rr$binf <- rbinom(nrow(rr),1,0.5) 
+ rr$statusGC <- rr$statusG
+ rr <- dtransform(rr,statusGC=4, statusG==3 & binf==0)
+ rr$weight <- 1
+ rr <- dtransform(rr,weight=2,statusGC==3)
+
+ outC  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0)
+ summary(outC)$coef
+
+ outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0,case.weights=rr$weight)
+ summary(outCW)$coef
+
+ bplot(out,ylab="Mean composite")
+ bplot(outC,col=2,add=TRUE)
+ bplot(outCW,col=3,add=TRUE)
+```
+
 
 Other marginal properties 
 =========================
