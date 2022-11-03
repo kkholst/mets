@@ -120,7 +120,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
     res <- c(recreg01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
 		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=NULL,## strataAugment,
 		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
-             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
+             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status %in%cause))
              )
 
     class(res) <- c("phreg","recreg")
@@ -129,15 +129,17 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
-          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,...) {
+          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,
+	  cox.prep=FALSE,...) { # {{{
 # {{{ setting up weights, strata, beta and so forth before the action starts
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
 
-    cause.jumps <- which(status==cause)
+    cause.jumps <- which(status %in% cause)
     max.jump <- max(exit[cause.jumps])
-    other <- which((status %in% death.code ) & (exit< max.jump))
+    other <- which((status %in% death.code ) )
+###    other <- which((status %in% death.code ) & (exit< max.jump))
 
     n <- length(exit)
     if (is.null(strata)) {
@@ -168,7 +170,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
       strataA <- as.integer(factor(strataA,labels=seq(nstrataA)))-1
     }
   }
-
 
     if (is.null(entry)) entry <- rep(0,length(exit))
     trunc <- (any(entry>0))
@@ -232,13 +233,14 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     trunc <- TRUE
     Zcall <- cbind(status,cens.strata,Stime,cens,strata,strataA) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
-    stat1 <- 1*(status==cause)
+    stat1 <- 1*(status %in% cause)
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
     xx2$nstrata <- nstrata
     jumps <- xx2$jumps+1
     jumptimes <- xx2$time[jumps]
     strata1jumptimes <- xx2$strata[jumps]
     Xj <- xx2$X[jumps,,drop=FALSE]
+    mdif <- min(diff(c(0,jumptimes)))
 
     ## G(T_j-) at jumps of type "cause"
     if (length(whereC)>0) {
@@ -264,7 +266,8 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         statuso <- rep(1,length(other))
         Xo <- X[other,,drop=FALSE]
         offseto <- offset[other]
-        entryo <- exit[other]
+	## mdif to avoid double counting for composite where death.code and cause share types
+        entryo <- exit[other]+mdif/10
         ido <- id[other]
         stratao <- strata[other]
         if (nCstrata>1) {
@@ -285,7 +288,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 	### the value 0 means that jumptime has no point in time0, thus S0other=0
         where <- indexstratarightR(timeo,xx$strata,jumptimes,strata1jumptimes,nstrata)
     }# }}}
-
 
     obj <- function(pp,all=FALSE) {# {{{
 

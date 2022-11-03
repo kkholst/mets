@@ -11,7 +11,8 @@ count.history(
   id = "id",
   types = 1:2,
   names.count = "Count",
-  lag = TRUE
+  lag = TRUE,
+  multitype = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ count.history(
 \item{names.count}{name of Counts, for example Count1 Count2 when types=c(1,2)}
 
 \item{lag}{if true counts previously observed, and if lag=FALSE counts up to know}
+
+\item{multitype}{if multitype then count number of types also when types=c(1,2) for example}
 }
 \description{
 Counts the number of previous events of two types for recurrent events processes

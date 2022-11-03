@@ -1,4 +1,4 @@
-##' Fast recurrent marginal mean when death is possible
+## Fast recurrent marginal mean when death is possible
 ##'
 ##' Fast Marginal means of recurrent events. Using the Lin and Ghosh (2000) 
 ##' standard errors.  
@@ -299,18 +299,19 @@ recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.c
  data$status__ <-  status 
  data$id__ <-  id
  ## lave Countcause
- data <- count.history(data,status="status__",id="id__",types=cause)
- data$Count1__ <- data[,paste("Count",cause,sep="")]
- data$death__ <- (status==death.code)*1
+ data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+ data$Count1__ <- data[,paste("Count",cause[1],sep="")]
+ data$death__ <- (status %in% death.code)*1
  data$entry__ <- entry 
  data$exit__ <- exit 
- data$statusC__ <- (status==cens.code)*1
+ data$statusC__ <- (status %in% cens.code)*1
+ data$status__cause <- (status %in% cause)*1
 
-  xr <- phreg(Surv(entry__,exit__,status__==cause)~Count1__+death__+cluster(id__),data=data,no.opt=TRUE,no.var=1)
+  xr <- phreg(Surv(entry__,exit__,status__cause)~Count1__+death__+cluster(id__),data=data,no.opt=TRUE,no.var=1)
 
   formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ . +cluster(id__))
   cr <- phreg(formC,data=data)
-  whereC <- which(status==cens.code)
+  whereC <- which(status %in% cens.code)
 
   if (length(whereC)>0) {# {{{
   ### censoring weights
@@ -330,9 +331,9 @@ recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.c
   ## }}}
 
   
-formD <- as.formula(paste("Surv(entry__,exit__,status__==",death.code,")~cluster(id__)",sep=""))
-form1L <- as.formula(paste("Surv(entry__,exit__,status__==",cause,")~Count1__+death__+statusC__+cluster(id__)",sep=""))
-form1 <- as.formula(paste("Surv(entry__,exit__,status__==",cause,")~cluster(id__)",sep=""))
+formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
+form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
+form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
 
  xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1)
  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
@@ -400,7 +401,7 @@ form1 <- as.formula(paste("Surv(entry__,exit__,status__==",cause,")~cluster(id__
 
   for (i in seq_along(times)) {
      timel <- times[i]
-     data$Hst <- revcumsumstrata((exit<timel)*(status==cause)/Gcdata,id,nid)
+     data$Hst <- revcumsumstrata((exit<timel)*(status %in% cause)/Gcdata,id,nid)
      cr2 <- phreg(form,data=data,no.opt=TRUE,no.var=1)
      nterms <- cr2$p-1
 
@@ -1086,8 +1087,9 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 
   ## extend cumulative for death to full range  of cause 1
   if (!is.null(death.cumhaz)) {
-    out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-    cumhazd <- out$cumB
+    out <- extendCums(cumhaz,death.cumhaz)
+    cumhaz <- out$cum1
+    cumhazd <- out$cum2
   }
 
   ll <- nrow(cumhaz)
@@ -1328,14 +1330,16 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
 
   cumhaz <- rbind(c(0,0),cumhaz)
 
-  ## range max of cumhaz and cumhaz2 
-  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
-  cumhaz <- out$cumA
-  cumhaz2 <- out$cumB
   ## extend cumulative for death to full range  of cause 1
   if (!is.null(death.cumhaz)) {
-     out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-     cumhazd <- out$cumB
+     out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz),NULL)
+     cumhaz <- out$cum1
+     cumhaz2 <- out$cum2
+     cumhazd <- out$cum3
+  } else {
+     out <- extendCums(list(cumhaz,cumhaz2),NULL)
+     cumhaz <- out$cum1
+     cumhaz2 <- out$cum2
   }
 
   ll <- nrow(cumhaz)
@@ -1556,23 +1560,20 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
   haz <- haz2 <- NULL
   ## range max of cumhaz and cumhaz2 
-  out <- extendCums(cumhaz,cumhaz2,both=TRUE)
-  cumhaz <- out$cumA
-  cumhaz2 <- out$cumB
-  ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz,both=FALSE)
-  cumhazd <- out$cumB
- ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz2,both=FALSE)
-  cumhazd2 <- out$cumB
-  max.time <- tail(cumhaz[,1],1)
 
   if (!is.null(cens)) {
 	  if (is.matrix(cens))  {
-                 out <- extendCums(cumhaz,cens,both=FALSE)
-	  cens <- out$cumB
+             out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,cens),NULL)
+   	     cens <- out$cum5
 	  }
+  } else {
+     out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2),NULL)
   }
+  cumhaz <- out$cum1
+  cumhaz2 <- out$cum2
+  cumhazd <- out$cum3
+  cumhazd2 <- out$cum4
+  max.time <- tail(cumhaz[,1],1)
 
   tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
@@ -1663,37 +1664,65 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   }# }}}
 
 ##' @export
-extendCums <- function(cumA,cumB,both=TRUE,hazb=NULL,haza=NULL)
+extendCums <- function(cumA,cumB,haza=NULL)
 {# {{{
-  max1 <- tail(cumA[,1],1)
-  max2 <- tail(cumB[,1],1)
-  ## extend to max of both or max of cumA
-  if (both) mmax <- max(max1,max2) else mmax <- max1
+ ## setup as list to run within loop
+ if (!is.null(cumB)) {cumA <- list(cumA,cumB); } else cumA <- c(cumA,cumB)
 
-  ## extend cumulative for cause 2 to full range of cause 1
-  cumB <- rbind(c(0,0),cumB)
+ maxx <- unlist(lapply(cumA,function(x) tail(x,1)[1]))
+ mm <- which.max(maxx)
+ nn <- length(cumA)
+
+for (i in seq(nn)[-mm]) {
+  cumB <- as.matrix(cumA[[i]]); 
+  cumB <- rbind(c(0,0),cumB); 
+
   ### linear extrapolation of mortality using given dhaz or 
-  if (tail(cumB[,1],1)<mmax) {
-      if (is.null(hazb)) hazb <- tail(cumB[,2],1)/tail(cumB[,1],1)
-      cumlast <- tail(cumB[,2],1)
-      timelast <- tail(cumB[,1],1)
-      cumB <- rbind(cumB,c(mmax,cumlast+hazb*(mmax-timelast))) 
+  if (tail(cumB[,1],1)<maxx[mm]) {
+      tailB <- tail(cumB,1)
+      cumlast <- tailB[2]
+      timelast <- tailB[1]
+      if (is.null(haza)) hazb <- cumlast/timelast else hazb <- haza[i]
+      cumB <- rbind(cumB,c(maxx[mm],cumlast+hazb*(maxx[mm]-timelast))) 
   }
+  cumA[[i]] <- cumB
+}
+ cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
 
-  if (both) { ## extend only cumA if both is TRUE
-  ## extend cumulative for cause 2 to full range of cause 1
-  cumA <- rbind(c(0,0),cumA)
-  ### linear extrapolation of mortality using given dhaz or 
-  if (tail(cumA[,1],1)<mmax) {
-      if (is.null(haza)) haza <- tail(cumA[,2],1)/tail(cumA[,1],1)
-      cumlast <- tail(cumA[,2],1)
-      timelast <- tail(cumA[,1],1)
-      cumA <- rbind(cumA,c(mmax,cumlast+haza*(mmax-timelast))) 
-  }
-  }
-
-  return(list(cumA=cumA,cumB=cumB))
+  return( setNames(cumA,paste("cum",seq(nn),sep="")))
 }# }}}
+
+###extendCums <- function(cumA,cumB,both=TRUE,hazb=NULL,haza=NULL)
+###{# {{{
+###  max1 <- tail(cumA[,1],1)
+###  max2 <- tail(cumB[,1],1)
+###  ## extend to max of both or max of cumA
+###  if (both) mmax <- max(max1,max2) else mmax <- max1
+###
+###  ## extend cumulative for cause 2 to full range of cause 1
+###  cumB <- rbind(c(0,0),cumB)
+###  ### linear extrapolation of mortality using given dhaz or 
+###  if (tail(cumB[,1],1)<mmax) {
+###      if (is.null(hazb)) hazb <- tail(cumB[,2],1)/tail(cumB[,1],1)
+###      cumlast <- tail(cumB[,2],1)
+###      timelast <- tail(cumB[,1],1)
+###      cumB <- rbind(cumB,c(mmax,cumlast+hazb*(mmax-timelast))) 
+###  }
+###
+###  if (both) { ## extend only cumA if both is TRUE
+###  ## extend cumulative for cause 2 to full range of cause 1
+###  cumA <- rbind(c(0,0),cumA)
+###  ### linear extrapolation of mortality using given dhaz or 
+###  if (tail(cumA[,1],1)<mmax) {
+###      if (is.null(haza)) haza <- tail(cumA[,2],1)/tail(cumA[,1],1)
+###      cumlast <- tail(cumA[,2],1)
+###      timelast <- tail(cumA[,1],1)
+###      cumA <- rbind(cumA,c(mmax,cumlast+haza*(mmax-timelast))) 
+###  }
+###  }
+###
+###  return(list(cumA=cumA,cumB=cumB))
+###}# }}}
 
 ##' Simulation of recurrent events data based on cumulative hazards: Two-stage model  
 ##'
@@ -1805,14 +1834,10 @@ zs <- cbind(z1,z2,zd)
  death.cumhaz <- rbind(c(0,0),death.cumhaz)
 
 ## range max of cumhaz and cumhaz2 
-  out <- extendCums(cumhaz,cumhaz2,both=TRUE,hazb=haz2)
-  cumhaz <- out$cumA
-  cumhaz2 <- out$cumB
-  ## extend cumulative for death to full range  of cause 1
-  out <- extendCums(cumhaz,death.cumhaz,hazb=dhaz)
-  cumhazd <- out$cumB
-
-
+  out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz),NULL)
+  cumhaz <- out$cum1
+  cumhaz2 <- out$cum2
+  cumhazd <- out$cum3
   max.time <- tail(cumhaz[,1],1)
 
 ### recurrent first time
@@ -1897,6 +1922,7 @@ zs <- cbind(z1,z2,zd)
 ##' @param types types of the events (code) related to status
 ##' @param names.count name of Counts, for example Count1 Count2 when types=c(1,2)
 ##' @param lag if true counts previously observed, and if lag=FALSE counts up to know
+##' @param multitype if multitype then count number of types also when types=c(1,2) for example
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################
@@ -1921,7 +1947,7 @@ zs <- cbind(z1,z2,zd)
 ##'
 ##' @aliases count.historyVar 
 ##' @export
-count.history <- function(data,status="status",id="id",types=1:2,names.count="Count",lag=TRUE)
+count.history <- function(data,status="status",id="id",types=1:2,names.count="Count",lag=TRUE,multitype=FALSE)
 {# {{{
 stat <- data[,status]
 
@@ -1936,6 +1962,7 @@ else {
 }
 
 data[,"lbnr__id"] <- cumsumstrata(rep(1,nrow(data)),clusters,max.clust+1) 
+if (!multitype) {
 for (i in types)  {
 if (lag==TRUE)
 data[,paste(names.count,i,sep="")] <- 
@@ -1944,6 +1971,15 @@ data[,paste(names.count,i,sep="")] <-
 data[,paste(names.count,i,sep="")] <- 
    cumsumidstratasum((stat==i),rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
 }
+} else {
+if (lag==TRUE)
+data[,paste(names.count,types[1],sep="")] <- 
+   cumsumidstratasum((stat %in% types),rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
+   else 
+data[,paste(names.count,types[1],sep="")] <- 
+   cumsumidstratasum((stat %in% types),rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
+}
+
 
 return(data)
 }# }}}
