@@ -88,7 +88,7 @@ base4 <- base4cumhaz
 ### simulating simple model that mimicks data 
 ### now with two event types and second type has same rate as death rate
 ######################################################################
-
+set.seed(100)
 rr <- simRecurrentII(1000,base1,base4,death.cumhaz=dr)
 dtable(rr,~death+status)
 par(mfrow=c(2,2))

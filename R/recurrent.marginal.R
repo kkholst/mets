@@ -1061,7 +1061,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 	 max.recurrent=100,dhaz=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
 {# {{{
-  fdeath <-  dtime <- NULL ## to avoid R-check 
+  status <- fdeath <-  dtime <- NULL ## to avoid R-check 
 
   ### drawing relative risk frailty terms to generate dependence
   if (dependence==0) { z1 <- z2 <- zd <- rep(1,n) # {{{
@@ -1128,9 +1128,9 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
   tt <- tall
   nrr <- n
   i <- 1; 
-  while (any(tt$time<tt$dtime) & i < max.recurrent) {
+  while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
-	  still <- subset(tt,time<dtime)
+	  still <- subset(tt,time<dtime & status!=0)
 	  ## start at where we are or "0" for gaptime
           tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(1-gap.time)*still$time)
 	  if (gap.time) { 
@@ -1183,7 +1183,7 @@ addCums <- function(cumB,cumA,max=5)
 simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100,var.z=2,times=5000) 
 {# {{{
 
-  dtime <- NULL ## to avoid R-check 
+  status <- dtime <- NULL ## to avoid R-check 
 
   max.time <- times
   cumhaz1 <- rbind(c(0,0),c(times,times*haz))
@@ -1210,9 +1210,9 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
   tall <- dtransform(tall,time=dtime,time>dtime)
   tt <- tall
   i <- 1; 
-  while (any(tt$time<tt$dtime) & i < max.recurrent) {
+  while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
-	  still <- subset(tt,time<dtime)
+	  still <- subset(tt,time<dtime & status!=0)
           tt <- timereg::rchaz(cumhaz,z[still$id],entry=still$time)
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=1,time>dtime)
@@ -1287,7 +1287,7 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
 ##' ### simulating simple model that mimicks data 
 ##' ### now with two event types and second type has same rate as death rate
 ##' ######################################################################
-##'
+##' set.seed(100)
 ##' rr <- simRecurrentII(1000,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
 ##' par(mfrow=c(2,2))
@@ -1298,7 +1298,7 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
     gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
   {# {{{
 
-  fdeath <- dtime <- NULL # to avoid R-check 
+  status <- fdeath <- dtime <- NULL # to avoid R-check 
 
   if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
      } else if (dependence==1) {
@@ -1383,9 +1383,9 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
   ### setting aside memory 
   tt1 <- tt2 <- tt
   i <- 1; 
-  while (any(tt$time<tt$dtime) & i < max.recurrent) {
+  while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
-	  still <- subset(tt,time<dtime)
+	  still <- subset(tt,time<dtime & status!=0)
 	  nn <- nrow(still)
           tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=(1-gap.time)*still$time)
           tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=(1-gap.time)*still$time)
@@ -1799,7 +1799,7 @@ zd <- gamD
 egamma12nu3 <- (gamma(agam12+nu3)/gamma(agam12))*1/(betagam12)^nu3
 zs <- cbind(z1,z2,zd)
 
-  fdeath <- dtime <- NULL # to avoid R-check 
+  status <- fdeath <- dtime <- NULL # to avoid R-check 
   dhaz <- haz2 <- dhaz <- NULL
 
  ll <- nrow(cumhaz)
@@ -1878,9 +1878,9 @@ zs <- cbind(z1,z2,zd)
   ### setting aside memory 
   tt1 <- tt2 <- tt
   i <- 1; 
-  while (any(tt$time<tt$dtime) & i < max.recurrent) {
+  while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
-	  still <- subset(tt,time<dtime)
+	  still <- subset(tt,time<dtime & status!=0)
 	  nn <- nrow(still)
           tt1 <- timereg::rchaz(cumhaz,rr=z1[still$id],entry=still$time)
           tt2 <- timereg::rchaz(cumhaz2,rr=z2[still$id],entry=still$time)
