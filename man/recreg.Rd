@@ -17,6 +17,7 @@ recreg(
   weights = NULL,
   offset = NULL,
   Gc = NULL,
+  wcomp = NULL,
   ...
 )
 }
@@ -38,6 +39,8 @@ recreg(
 \item{offset}{offsets for model}
 
 \item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
+
+\item{wcomp}{weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).}
 
 \item{...}{Additional arguments to lower level funtions}
 }

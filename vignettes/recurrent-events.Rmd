@@ -324,8 +324,7 @@ then Ghost-Lin suggested IPCW score equations that are implemented in the recreg
 
 First we generate data that from a cox model with $\beta=(-0.3,0.3)$
 ```{r}
-rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
-				betad=c(-0.3,0.3))
+rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
 dtable(rr,~statusG+status+death,level=2,response=1)
 
  out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
@@ -352,6 +351,7 @@ Also demonstrate that this can be done with competing risks death (change some o
 \begin{align*}
 E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
+and with weights that follow the causes, here 1 and 2. 
 
 ```{r}
  rr$binf <- rbinom(nrow(rr),1,0.5) 
@@ -363,7 +363,7 @@ E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
  outC  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0)
  summary(outC)$coef
 
- outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0,case.weights=rr$weight)
+ outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0,wcomp=c(1,2))
  summary(outCW)$coef
 
  bplot(out,ylab="Mean composite")

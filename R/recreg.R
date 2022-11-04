@@ -32,6 +32,7 @@
 ##' @param weights weights for score equations
 ##' @param offset offsets for model
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
+##' @param wcomp weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -62,7 +63,8 @@
 ##' 
 ##' @aliases strataAugment scalecumhaz GLprediid
 ##' @export
-recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,...)
+recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,
+		   wcomp=NULL,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -119,7 +121,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 
     res <- c(recreg01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
 		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=NULL,## strataAugment,
-		      death.code=death.code,cens.code=cens.code,Gc=Gc,...),
+		      death.code=death.code,cens.code=cens.code,Gc=Gc,wcomp=wcomp,...),
              list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status %in%cause))
              )
 
@@ -130,7 +132,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,
-	  cox.prep=FALSE,...) { # {{{
+	  cox.prep=FALSE,wcomp=NULL,...) { # {{{
 # {{{ setting up weights, strata, beta and so forth before the action starts
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
@@ -176,6 +178,13 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     if (is.null(offset)) offset <- rep(0,length(exit))
     if (is.null(weights)) weights <- rep(1,length(exit))
     if (is.null(case.weights)) case.weights <- rep(1,length(exit))
+    if (!is.null(wcomp))  {
+	    if (length(wcomp)!=length(cause)) stop("weights follow the causes, and length must be the same\n"); 
+	    wwcomp <- rep(1,length(exit)); 
+	    k <- 1
+	    for (i in cause) { wwcomp[status==i] <- wcomp[k];k <- k+1} 
+	    case.weights <- case.weights* wwcomp
+    }
     strata.call <- strata
 
     if (!is.null(id)) {
