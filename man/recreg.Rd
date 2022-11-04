@@ -67,7 +67,7 @@ The iid decomposition of the beta's are on the form
 and returned as iid.
 
 Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
-and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example.
+and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example and vignette.
 }
 \examples{
 ## data with no ties
