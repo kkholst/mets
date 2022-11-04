@@ -21,7 +21,7 @@
 ##' and returned as iid.
 ##'
 ##' Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
-##' and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example. 
+##' and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example and vignette. 
 ##'
 ##' @param formula formula with 'EventCens' outcome
 ##' @param data data frame
@@ -651,7 +651,7 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
 
  if (is.null(Lam2)) Lam2 <- Lam1; 
 
- rr <- simRecurrentCox(n,t(t(Lam1)*c(1,k1)),cumhaz2=t(t(Lam1)*c(1,k2)),
+ rr <- simRecurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),
 		       death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
  rr <- as.data.frame(cbind(rr$data,rr$X))
  dsort(rr) <- ~id+start
