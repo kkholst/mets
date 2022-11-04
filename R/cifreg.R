@@ -715,7 +715,7 @@ iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 } # }}}
 
 ##' @export
-FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
+FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")
 {# {{{
   des <- readPhreg(iidBase,newdata)
   strata <- des$strata
@@ -731,9 +731,14 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"))
    if (ncol(X)!=p) stop("X and coef does not match \n"); 
 
    Ft <- function(p,Xi=rep(0,length(p)-1),type="log") {
+   if (model=="FG") {
        if (type=="log")     y <- log(1-exp(-p[1]*exp(sum(Xi*p[-1]))))
        if (type=="plain")   y <- 1-exp(-p[1]*exp(sum(Xi*p[-1])))
        if (type=="cloglog") y <- log(-log(1-exp(-p[1]*exp(sum(Xi*p[-1])))))
+   } else { ## Ghosh-Lin model
+       if (type=="log")     y <- log(p[1]*exp(sum(Xi*p[-1])))
+       if (type=="plain")   y <- p[1]*exp(sum(Xi*p[-1]))
+   }
        return(y)
    }
    Ftback <- function(p,type="log")

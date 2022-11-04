@@ -672,70 +672,9 @@ scalecumhaz <- function(cumt,k)
 }# }}}
 
 ##' @export
-GLprediid <- function(iidBase,newdata,conf.type=c("log","plain"))
+GLprediid <- function(conf.type=c("log","plain"),...)
 {# {{{
-  des <- readPhreg(iidBase,newdata)
-  strata <- des$strata
-  if (!is.null(iidBase$beta.iid))  { fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X} else { 
-	  fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); }
-
-   At <- c()
-   for (i in sort(unique(strata))) {
-   At <- c(At,Cpred(iidBase$cumhaz[iidBase$cumhaz.strata==i,],iidBase$time)[,-1])
-   }
-   p <- length(iidBase$coef)
-
-   if (missing(X)) X <- matrix(0,1,p)
-   if (ncol(X)!=p) stop("X and coef does not match \n"); 
-
-
-   Ft <- function(p,Xi=rep(0,length(p)-1),type="log") {
-       if (type=="log")     y <- log(p[1]*exp(sum(Xi*p[-1])))
-       if (type=="plain")   y <- p[1]*exp(sum(Xi*p[-1]))
-       return(y)
-   }
-   Ftback <- function(p,type="log")
-   {
-       if (type=="log")     y <- exp(p)
-       if (type=="plain")   y <- p
-       return(y)
-   }
-
-preds <- matrix(0,length(strata),4)
-
-k <- 0
-for (i in sort(unique(strata))) {
-   k <- k+1
-   wheres <- which(strata==i) 
-if (fixbeta==0)  {
-   iidAB <- cbind(iidBase$base.iid,iidBase$beta.iid)[iidBase$strata==i,]
-   covv <- crossprod(iidAB)
-   coeff <- c(At[k],iidBase$coef)
-   Xs <- X[wheres,,drop=FALSE]
-   for (j in seq(1,nrow(Xs)))  {
-      Xj <- Xs[j,]
-      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=Xj,type=conf.type[1]))
-      cmat <- eud$coefmat
-      cmat <- c(cmat[,-5])
-      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
-      cmat[c(1,3:4)] <- cicmat
-      preds[wheres[j],] <- c(cmat)
-   } 
-} else {
-      iidAB <- cbind(iidBase$base.iid)[iidBase$strata==i,]
-      covv <- crossprod(iidAB)
-      coeff <- c(At[k])
-      eud <- estimate(coef=coeff,vcov=covv,f=function(p) Ft(p,Xi=1,type=conf.type[1]))
-      cmat <- eud$coefmat
-      cmat <- c(cmat[,-5])
-      cicmat <- Ftback(cmat[c(1,3:4)],type=conf.type[1])
-      cmat[c(1,3:4)] <- cicmat
-      preds[wheres,] <- matrix(c(cmat),length(wheres),4,byrow=TRUE)
-}
-}
-
-colnames(preds) <- c("pred",paste("se",conf.type[1],sep="-"),"lower","upper")
-
-return(preds)
+out <- FGprediid(...,conf.type=conf.type,model="GL")
+return(out)
 }# }}}
 
