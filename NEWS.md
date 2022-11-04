@@ -1,3 +1,7 @@
+# mets 1.3.2
+  - Extension of recreg (Ghosh-Lin model) to deal with composite outcomes.
+
+
 # mets 1.3.1
   - Maintenance release
 
