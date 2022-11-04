@@ -37,10 +37,17 @@ studied. We here demonstrate how one can compute
  * the marginal mean 
  * the variance 
  * the probability of exceeding k events
- * do a Cox type regression for the  marginal mean 
+ * do a Cox type regression for the  marginal mean, possibly with composite outcomes. 
+
 
 In addition several tools can be used for simulating recurrent events and
 bivariate recurrent events data, in the case with a possible terminating event. 
+
+ * recurrent events up to two causes and death, given rates of survivors and death on Cox form.
+ * multistate model 
+ * the Ghosh-Lin model when the survival rate is on Cox form.
+ * do a Cox type regression for the  marginal mean 
+
 
 For bivariate recurrent events we also compute summary measures that describe their
 dependence such as 
@@ -322,7 +329,9 @@ E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
 
-First we generate data that from a cox model with $\beta=(-0.3,0.3)$
+First we generate data that from a Ghosh-Lin model with $\beta=(-0.3,0.3)$ and the baseline given by base1, 
+this is done under the assumption that the death rate given covariates are on Cox form with baseline ddr: 
+
 ```{r}
 rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
 dtable(rr,~statusG+status+death,level=2,response=1)
