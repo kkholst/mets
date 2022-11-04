@@ -343,15 +343,16 @@ E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 
 ```{r}
- out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=3,cens.code=0)
+ out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		death.code=3,cens.code=0)
  summary(out)$coef
 ```
 
 Also demonstrate that this can be done with competing risks death (change some of the cause 3 deaths to cause 4)
 \begin{align*}
-E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+E(w_1 N_1(t) + w_2 I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
-and with weights that follow the causes, here 1 and 2. 
+and with weights  $w_1,w_2$ that follow the causes, here 1 and 3. 
 
 ```{r}
  rr$binf <- rbinom(nrow(rr),1,0.5) 
@@ -360,10 +361,12 @@ and with weights that follow the causes, here 1 and 2.
  rr$weight <- 1
  rr <- dtransform(rr,weight=2,statusGC==3)
 
- outC  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0)
+ outC  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		 death.code=c(3,4),cens.code=0)
  summary(outC)$coef
 
- outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),death.code=c(3,4),cens.code=0,wcomp=c(1,2))
+ outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		  death.code=c(3,4),cens.code=0,wcomp=c(1,2))
  summary(outCW)$coef
 
  bplot(out,ylab="Mean composite")
