@@ -672,9 +672,9 @@ scalecumhaz <- function(cumt,k)
 }# }}}
 
 ##' @export
-GLprediid <- function(conf.type=c("log","plain"),...)
+GLprediid <- function(...)
 {# {{{
-out <- FGprediid(...,conf.type=conf.type,model="GL")
+out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
 
