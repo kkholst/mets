@@ -384,6 +384,17 @@ and with weights  $w_1,w_2$ that follow the causes, here 1 and 3.
 ```
 
 
+Predictions and standard errors can be computed via the iid decompositions of the baseline and the regression coefficients. We illustrate this
+for the standard Ghosh-Lin model and it requires that the model is fitted 
+with the option cox.prep=TRUE
+
+```{r}
+out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,cox.prep=TRUE)
+baseiid <- mets:::iid.baseline.cifreg(out,time=3000)
+GLprediid(baseiid,rr[1:5,])
+```
+
+
 Other marginal properties 
 =========================
 
