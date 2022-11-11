@@ -738,7 +738,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
               xjumpcase[i,indexc,]   <- t(Xcase[ids,])
 	      fp <- fp+ncol(X)
 	      ### starting values
-	      Bit <- cbind(Bit,Cpred(a[[i]]$cum,dtimesst)[,-1,drop=FALSE])
+	      Bit <- cbind(Bit,cpred(a[[i]]$cum,dtimesst)[,-1,drop=FALSE])
        } #
        Bit.ini <- Bit
        #
@@ -796,7 +796,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
              if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
 
              if (ncol(Bit)==0) Bit <- Bit.ini
-             Bitcase  <- Cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
+             Bitcase  <- cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
              Bitcase <- .Call("MatxCube",Bitcase,dim(xjumpcase),xjumpcase,PACKAGE="mets")$X
 
              for (j in 1:5) { # profile via iteration
@@ -808,7 +808,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		   Bit <- cncc$B
 		   if (detail>1) print(summary(cncc$caseweights))
 		   cum1 <- cbind(dtimesst,cncc$B)
-		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
+		   Bitcase  <-cbind(cpred(cum1,dtimesstcase)[,-1])
 		   if (detail>1) lines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
 			  if (shut.up==0) cat("Baseline profiler gives missing values\n");
@@ -820,13 +820,13 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
 
 	   nulrow    <- rep(0,ncol(Bit)+1)
-	   pbases    <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
+	   pbases    <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
            X         <- aalen.des(as.formula(cr.models[[1]]),data=data)$X
 	   psurvmarg <- exp(-apply(X*pbases,1,sum))  ## psurv given baseline
 	   if (ascertained==1) {
               Xcase     <- aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
               X         <- aalen.des(as.formula(cr.models[[1]]),data=data1)$X
-	      pba.case  <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
+	      pba.case  <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
 	      ptrunc    <- rep(0,nrow(data))
 	      ### for control probands ptrunc=1, thus no adjustment
 	      ptrunc[pairs[,1]]     <- exp(-apply(X*    pba.case,1,sum)*lstatuscase) ## delayed entry at time of ascertainment proband
@@ -1336,7 +1336,7 @@ if (!is.null(margsurv))  {
          stop("Use cox.aalen function for truncation case \n");
          baseout <- survival::basehaz(margsurv,centered=FALSE);
          cumt <- cbind(baseout$time,baseout$hazard)
-	 cumt <- Cpred(cumt,start.time)[,2]
+	 cumt <- cpred(cumt,start.time)[,2]
 	 ptrunc <- exp(-cumt * RR)
 	}
   } else if (inherits(margsurv,"phreg")) {
@@ -1880,7 +1880,7 @@ if (!is.null(margsurv))  {
          stop("Use cox.aalen function for truncation case \n");
          baseout <- survival::basehaz(margsurv,centered=FALSE);
          cum <- cbind(baseout$time,baseout$hazard)
-	 cum <- Cpred(cum,start.time)[,2]
+	 cum <- cpred(cum,start.time)[,2]
 	 ptrunc <- exp(-cum * RR)
 	}
   } #
@@ -2140,7 +2140,7 @@ if (!is.null(margsurv))  {
               xjumpcase[i,indexc,]   <- t(Xcase[ids,])
 	      fp <- fp+ncol(X)
 	      ### starting values
-	      Bit <- cbind(Bit,Cpred(a[[i]]$cum,dtimesst)[,-1,drop=FALSE])
+	      Bit <- cbind(Bit,cpred(a[[i]]$cum,dtimesst)[,-1,drop=FALSE])
        } #
        Bit.ini <- Bit
        #
@@ -2201,7 +2201,7 @@ if (!is.null(margsurv))  {
              if (detail>1) plot(dtimesst,Bit,type="l",main="Bit")
 
              if (ncol(Bit)==0) Bit <- Bit.ini
-             Bitcase  <- Cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
+             Bitcase  <- cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
              Bitcase <- .Call("MatxCube",Bitcase,dim(xjumpcase),xjumpcase,PACKAGE="mets")$X
 
              for (j in 1:5) { # profile via iteration
@@ -2213,7 +2213,7 @@ if (!is.null(margsurv))  {
 		   Bit <- cncc$B
 		   if (detail>1) print(summary(cncc$caseweights))
 		   cum1 <- cbind(dtimesst,cncc$B)
-		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
+		   Bitcase  <-cbind(cpred(cum1,dtimesstcase)[,-1])
 		   if (detail>1) lines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
 			  if (shut.up==0) cat("Baseline profiler gives missing values\n");
@@ -2225,13 +2225,13 @@ if (!is.null(margsurv))  {
 
 
 	   nulrow    <- rep(0,ncol(Bit)+1)
-	   pbases    <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
+	   pbases    <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
            X         <- aalen.des(as.formula(cr.models[[1]]),data=data)$X
 	   psurvmarg <- exp(-apply(X*pbases,1,sum))  ## psurv given baseline
 	   if (ascertained==1) {
               Xcase     <- aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
               X         <- aalen.des(as.formula(cr.models[[1]]),data=data1)$X
-	      pba.case  <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
+	      pba.case  <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
 	      ptrunc    <- rep(0,nrow(data))
 	      ### for control probands ptrunc=1, thus no adjustment
 	      ptrunc[pairs[,1]]     <- exp(-apply(X*    pba.case,1,sum)*lstatuscase) ## delayed entry at time of ascertainment proband
@@ -2272,7 +2272,7 @@ if (!is.null(margsurv))  {
 	     if (detail>1) print(summary(Bit))
              if (detail>1) matplot(dtimesst,Bit,type="l",main="Bit",ylim=c(0,2))
              if (ncol(Bit)==0) Bit <- Bit.ini
-             Bitcase  <- Cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
+             Bitcase  <- cpred(cbind(dtimesst,Bit),dtimesstcase)[,-1,drop=FALSE]
              Bitcase <- .Call("MatxCube",Bitcase,dim(xjumpcase),xjumpcase,PACKAGE="mets")$X
 
             for (j in 1:10) { # profile via iteration
@@ -2282,7 +2282,7 @@ if (!is.null(margsurv))  {
                    d <- max(abs(Bit-profile.baseline$B))
 		   Bit <- profile.baseline$B
 		   cum1 <- cbind(dtimesst,Bit)
-		   Bitcase  <-cbind(Cpred(cum1,dtimesstcase)[,-1])
+		   Bitcase  <-cbind(cpred(cum1,dtimesstcase)[,-1])
 
 		   if (detail>1) matlines(dtimesst,Bit,col=j+1);
 		   if (is.na(d)) {
@@ -2296,10 +2296,10 @@ if (!is.null(margsurv))  {
 
            ### makes cumulative hazard for all subjects
 	   nulrow <- rep(0,ncol(Bit)+1)
-	   pbases <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
+	   pbases <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
 	   psurvmarg <- c()     ### update psurvmarg
 	   if (ascertained==1 || case.control==1)  { ### sets up truncation probabilities to match situation
-		   pbase.case  <- Cpred(rbind(nulrow,cbind(dtimesst,Bit)),timescase)[,-1,drop=FALSE]
+		   pbase.case  <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),timescase)[,-1,drop=FALSE]
 		   ptrunc <- c() ### update ptrunc
 	   }
            for (i in 1:length(cr.models)) {
@@ -2345,7 +2345,7 @@ if (!is.null(margsurv))  {
 	  }
 
 	   nulrow <- rep(0,ncol(dBaalen)+1)
-	   pbases <- Cpred(rbind(nulrow,cbind(dtimesst,profile.baseline$B)),times)[,-1,drop=FALSE]
+	   pbases <- cpred(rbind(nulrow,cbind(dtimesst,profile.baseline$B)),times)[,-1,drop=FALSE]
 	   psurvmarg <- c()
            for (i in 1:length(cr.models)) {
 	          if (i==1) fp <- 1
@@ -2852,10 +2852,10 @@ predict.mets.twostage <- function(object,X=NULL,Z=NULL,times=NULL,times2=NULL,th
 { #
 time.coef <- data.frame(object$cum)
 if (!is.null(times)) {
-cum <- Cpred(object$cum,times);
-cum2 <- Cpred(object$cum,times);
+cum <- cpred(object$cum,times);
+cum2 <- cpred(object$cum,times);
 } else { cum <- object$cum; cum2 <- object$cum }
-if (!is.null(times2)) cum2 <- Cpred(object$cum,times2);
+if (!is.null(times2)) cum2 <- cpred(object$cum,times2);
 
 if (is.null(X)) X <- 1;
 if (is.null(X) & (!is.null(Z))) { Z <- as.matrix(Z);  X <- matrix(1,nrow(Z),1)}
@@ -3192,7 +3192,7 @@ if (inherits(margsurv,"coxph"))
     X <- model.matrix(coxformula,data=data)[,-1];
     baseout <- survival::basehaz(margsurv,centered=FALSE);
     baseout <- cbind(baseout$time,baseout$hazard)
-    cumh <-  Cpred(baseout,data[,time])[,2]
+    cumh <-  cpred(baseout,data[,time])[,2]
     RR<-exp(X %*% coef(margsurv))
     ps<-exp(-cumh*RR)
     #
@@ -3201,7 +3201,7 @@ if (inherits(margsurv,"coxph"))
 	if (!is.null(margsurv$coef))
 		rr <- c(exp(margsurv$X  %*% margsurv$coef))
 	else rr <- rep(1,nrow(margsurv$X))
-        ps <- exp(-rr * Cpred(margsurv$cumhaz,margsurv$exit)[,2])
+        ps <- exp(-rr * cpred(margsurv$cumhaz,margsurv$exit)[,2])
   } #
   else stop("marginal survival probabilities must be given as marginal.sur or margsurv \n");
 

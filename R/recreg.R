@@ -604,7 +604,8 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  if (is.null(death.cumhaz)) stop("Modification for death, otherwise use simRecurrentII\n")
  if (is.null(X)) stop("X must be given to link with simulated data\n"); 
 
- St <- exp(-Cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2])
+ St <- exp(-cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2])
+
  rds <- unique(rd)
  dtt <- diff(c(0,base1[,1]))
  dbase1 <- diff(c(0,base1[,2]))

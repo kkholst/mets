@@ -1903,10 +1903,10 @@ kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     cif2 <- setup.cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z),
         type = type[1])
     if (restrict==0) 
-    data <- timereg::sim.cifs(list(cif1, cif2), n, Z = Z)
+    data <- sim.cifs(list(cif1, cif2), n, Z = Z)
     else {
     ## keep model 2 on logistic form
-    data <- timereg::sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
+    data <- sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
     data$status21 <- data$status
     data$status21[data$status==1] <- 2
     data$status21[data$status==2] <- 1
@@ -1970,10 +1970,10 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     cif1 <- setup.cif(cbind(tt, Lam1), F1par*beta[1:4], Znames = colnames(Z), type = type[1])
     cif2 <- setup.cif(cbind(tt, Lam2), F2par*beta[5:8], Znames = colnames(Z), type = type[1])
     if (restrict==0) 
-    data <- timereg::sim.cifs(list(cif1, cif2), n, Z = Z)
+    data <- sim.cifs(list(cif1, cif2), n, Z = Z)
     else {
     ## keep model 2 on logistic form
-    data <- timereg::sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
+    data <- sim.cifsRestrict(list(cif2, cif1), n, Z = Z)
     data$status21 <- data$status
     data$status21[data$status==1] <- 2
     data$status21[data$status==2] <- 1

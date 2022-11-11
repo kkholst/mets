@@ -4,6 +4,7 @@
 \alias{fast.approx}
 \alias{indexstrata}
 \alias{predictCumhaz}
+\alias{cpred}
 \title{Fast approximation}
 \usage{
 fast.approx(

@@ -80,9 +80,9 @@ var.gamma <-    Reduce("+", lapply(res,function(x) x$var.gamma))/K^2
 robvar.gamma <-    Reduce("+", lapply(res,function(x) x$robvar.gamma))/K^2 
 
 times <- c(0,sort(unlist(lapply(res,function(x) x$cum[-1,1]))))
-cum <- Reduce("+",lapply(res,function(x) Cpred(x$cum,times)))/K 
-var.cum <-    Reduce("+", lapply(res,function(x)  Cpred(x$var.cum,times)))/K^2
-robvar.cum <-    Reduce("+", lapply(res,function(x) Cpred(x$robvar.cum,times)))/K^2
+cum <- Reduce("+",lapply(res,function(x) cpred(x$cum,times)))/K 
+var.cum <-    Reduce("+", lapply(res,function(x)  cpred(x$var.cum,times)))/K^2
+robvar.cum <-    Reduce("+", lapply(res,function(x) cpred(x$robvar.cum,times)))/K^2
 robvar.cum[,1] <- var.cum[,1] <- times
 
 res <- list(gamma=gamma, var.gamma=var.gamma, robvar.gamma=robvar.gamma,

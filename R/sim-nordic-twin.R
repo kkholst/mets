@@ -62,11 +62,11 @@ if (ptype<=p11[i]) {
 	types[i] <- 1
 	myhazx<-F1addfg(tt,x=x[i,])/F12x[i]
 ###	if (abs(max(myhazx)-1)> 0.001) stop("not dist\n"); 
-	stime[i,2]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+	stime[i,2]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 	f1<- F1addfg(tt,x=x[i,])
        	myhazx<- (F12x[i]/p11[i]) * (thetat*f1/((1-f1)+thetat*f1))
 ###	if (abs(max(myhazx)-1)> 0.001) stop("not dist\n"); 
-	stime[i,1]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+	stime[i,1]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 	causes[i,] <- c(1,1)
 }
 if ((ptype>p11[i]) & (ptype<=p12[i]+p11[i])) {
@@ -75,7 +75,7 @@ if ((ptype>p11[i]) & (ptype<=p12[i]+p11[i])) {
 	myhazx<- ( f1 - thetat*F12x[i]*f1/((1-f1)+thetat*f1))/p12[i]; 
 	myhazx <- f1/F11x[i]
 ###	if (abs(max(myhazx)-1)> 0.001) stop("not dist 2 \n"); 
-	stime[i,1]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+	stime[i,1]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 	causes[i,] <- c(1,2)
 	stime[i,2] <- runif(1)*1
 }
@@ -85,7 +85,7 @@ if ((ptype>p11[i]+p12[i]) && (ptype<=p21[i]+p12[i]+p11[i])) {
 	myhazx <-  (f2 - (thetat*F11x[i]*f2/((1-F11x[i])+thetat*F11x[i])))/p21[i]; 
 	myhazx <- f2/F12x[i]
 ###	if (abs(max(myhazx)-1)> 0.001) stop("not dist3 \n"); 
-	stime[i,2]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+	stime[i,2]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 	causes[i,] <- c(2,1)
 	stime[i,1] <- runif(1)*1
 }
@@ -212,11 +212,11 @@ sim.F1F2<-function(n,theta=1,lam0=0.1,beta=0.3,lam02=0.1,beta2=0,crate=3,cstart=
 			if (cause1e2[i]==1) {
 				cause[i] <- 1
 				myhazx<-F1(tt,x=x[i],beta=beta,lam0=lam0)/F1x[i]
-				stime[i]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+				stime[i]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 			} else  {
 				cause[i] <- 2
 				myhazx<-F2(tt,x=x[i],beta=beta2,lam0=lam02)/F2x[i]
-				stime[i]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+				stime[i]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 			}
 		}
 	}
@@ -241,7 +241,7 @@ sim.F1<-function(n,lam0=0.5,beta=0.3,Cint=c(0,1))
 	for (i in 1:n) {
 		if (cause1[i]==1) {
 			myhazx<-F1(tt,x=x[i],beta=beta,lam0=lam0)/F11x[i]
-			stime[i]<-Cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
+			stime[i]<-cpred(cbind(myhazx,tt),runif(1))[1,2]+runif(1,0,0.001)
 		} 
 	}
 	ctime<-runif(n,Cint)
@@ -273,7 +273,7 @@ sim.F1clust<-function(n,theta=1,lam0=0.5,Clims=c(0,1),
 		for (j in 1:2) {
 			if (cause[j]==1) {
 				myhazx<-F1clust(tt,x=x[j],rtheta=rtheta[i],theta=theta,lam0=lam0)/F11x[j]
-				stime<-c(stime,Cpred(cbind(myhazx,tt),runif(1))[1,2]+ runif(1,0,0.001))
+				stime<-c(stime,cpred(cbind(myhazx,tt),runif(1))[1,2]+ runif(1,0,0.001))
 				cause1 <- c(cause1,1);
 			} else { stime<-c(stime,runif(1)); cause1 <- c(cause1,2);}
 		}
@@ -315,7 +315,7 @@ id<-c(id,rep(i,2)); vtheta<-c(vtheta,rep(rtheta[i],2))
 for (j in 1:2) {
 if (cause[j]==1) {
 myhazx<-F1clust(tt,x=x[j],rtheta=rtheta[i],theta=theta,lam0=lam0)/F11x[j]
-stime<-c(stime,Cpred(cbind(myhazx,tt),runif(1))[1,2]+ runif(1,0,0.001))
+stime<-c(stime,cpred(cbind(myhazx,tt),runif(1))[1,2]+ runif(1,0,0.001))
 cause1 <- c(cause1,1);
 } else { stime<-c(stime,runif(1)); cause1 <- c(cause1,2);}
 }

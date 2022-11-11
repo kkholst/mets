@@ -251,8 +251,9 @@ coarse.clust <- function(clusters,max.clust=100)
 { ## {{{ 
 
 if (is.numeric(clusters)) 
-   clusters <-  sindex.prodlim(unique(clusters),clusters)
-cluster.size <- length(unique(clusters))
+   clusters <-  fast.approx(unique(clusters),clusters)
+
+  cluster.size <- length(unique(clusters))
 
 qq <- unique(quantile(clusters, probs = seq(0, 1, by = 1/max.clust)))
 qqc <- cut(clusters, breaks = qq, include.lowest = TRUE)    

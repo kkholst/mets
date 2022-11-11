@@ -333,15 +333,20 @@ First we generate data that from a Ghosh-Lin model with $\beta=(-0.3,0.3)$ and t
 this is done under the assumption that the death rate given covariates are on Cox form with baseline ddr: 
 
 ```{r}
-rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
-dtable(rr,~statusG+status+death,level=2,response=1)
+ rr <- mets:::simMarginalMeanCox(20000,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3))
+ dtable(rr,~statusG+status+death,level=2,response=1)
 
  out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
  outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
 		cens.model=~strata(X1,X2))
-
  summary(out)$coef
  summary(outs)$coef
+
+ ## checking baseline
+ par(mfrow=c(1,1))
+ bplot(out)
+ bplot(outs,add=TRUE,col=2)
+ lines(scalecumhaz(base1,0.1),col=3,lwd=2)
 ```
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 

@@ -2102,8 +2102,8 @@ predictPhreg <- function(x,jumptimes,S0,beta,time=NULL,X=NULL,surv=FALSE,band=FA
 
     if (!is.null(time)) {
 	### do within strata
-        chaz <- Cpred(chaz,time)
-        se.chaz <- Cpred(se.chaz,time)
+        chaz <- cpred(chaz,time)
+        se.chaz <- cpred(se.chaz,time)
     }
     colnames(chaz) <- c("time","chaz")
     colnames(se.chaz) <- c("time","se.chaz")
@@ -2214,7 +2214,14 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
     hazt <- length(times)
 
     for (j in unique(strataNew)) {
-        where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
+###        where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
+        where <- predictCumhaz(c(0,jumptimes[strata==j]),times,type="left",tminus=tminus)
+###	if (sum(abs(whereO-where))>=1) {
+###	print(c(0,jumptimes[strata==j]))
+###	print(times)
+###	print(cbind(where,whereO,where-whereO,times,c(0,jumptimes[strata==j])[where],c(0,jumptimes[strata==j])[whereO]))
+###	print("sindex.prodlim - phreg-predict"); 
+###	}
 	plhazt <- hazt <- c(0,chaz[strata==j])
 	if (km) { plhazt <- suppressWarnings(c(1,exp(cumsum(log(1-diff(hazt))))));  plhazt[is.na(hazt)] <- 0 }
 	if (se) se.hazt <- c(0,se.chaz[strata==j])

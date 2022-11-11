@@ -50,7 +50,7 @@ aalenfrailty <- function(time,status,X,id,theta,B=NULL,...) {
         BB <- B*time[dix]
     }
     Hij0 <- apply(X[dix,,drop=FALSE]*BB,1,sum)
-    Hij <- Cpred(cbind(time[dix],Hij0),time)[,2,drop=FALSE]
+    Hij <- cpred(cbind(time[dix],Hij0),time)[,2,drop=FALSE]
 ##    if (is.na(Hij[1])) browser()
     res <- .Call("Uhat",as.integer(status),Hij,theta,
                 cc$idclust,as.integer(cc$cluster.size),PACKAGE="mets")

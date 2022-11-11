@@ -394,8 +394,8 @@ for (j in (i+1):(nstrata-1)) {
       ii <- which(strata %in% i)
       ij <- which(strata %in% j)
       dijjumps  <- jumptimes[iij] 
-      cumhazi <- Cpred(cumhaz[ii,],dijjumps,strict=FALSE)
-      cumhazj <- Cpred(cumhaz[ij,],dijjumps,strict=FALSE)
+      cumhazi <- cpred(cumhaz[ii,],dijjumps)
+      cumhazj <- cpred(cumhaz[ij,],dijjumps)
 
       plot(cumhazj[,2],cumhazi[,2],type="s",lwd=2,xlab=stratnames[j+1],ylab=stratnames[i+1])
       graphics::title(paste("Stratified baselines for",stratn))
@@ -410,8 +410,8 @@ for (j in (i+1):(nstrata-1)) {
 	     simU <-simband$simUt
 	     for (k in 1:50)
 	     {
-	      di <- Cpred(cbind(jumptimes[ii],simU[ii,k]),dijjumps,strict=FALSE)[,2]
-	      dj <- Cpred(cbind(jumptimes[ij],simU[ij,k]),dijjumps,strict=FALSE)[,2]
+	      di <- cpred(cbind(jumptimes[ii],simU[ii,k]),dijjumps)[,2]
+	      dj <- cpred(cbind(jumptimes[ij],simU[ij,k]),dijjumps)[,2]
 	      lines(cumhazj[,2]+dj,cumhazi[,2]+di,type="s",lwd=0.1,col=3)
 	     }
       }

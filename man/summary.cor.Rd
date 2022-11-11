@@ -33,19 +33,18 @@ models of the type cor.cif, rr.cif or or.cif for the given cumulative incidences
 measures in the object.
 }
 \examples{
-library("timereg")
-data("multcif",package="mets") # simulated data 
-multcif$cause[multcif$cause==0] <- 2
-
-times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
-add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,
-               n.sim=0,times=times,cause=1)
+## library("timereg")
+## data("multcif",package="mets") # simulated data 
+## multcif$cause[multcif$cause==0] <- 2
+##  
+## times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
+## add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,n.sim=0,times=times,cause=1)
 ###
-out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
-summary(out1)
-
-pad <- predict(add,X=1,se=0,uniform=0)
-summary(out1,marg.cif=pad)
+## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
+## summary(out1)
+## 
+## pad <- predict(add,X=1,se=0,uniform=0)
+## summary(out1,marg.cif=pad)
 }
 \references{
 Cross odds ratio Modelling of dependence for

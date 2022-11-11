@@ -43,7 +43,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
     px2<-ncol(X2);  
     est2<-cif2$cum; 
     if (semi2==1) gamma2<-cif2$gamma  else gamma2<-0; 
-    est2<-Cpred(est2,times,strict=FALSE);
+    est2<-cpred(est2,times);
   } else { 
     X2<-matrix(0,1,1); Z2<-matrix(0,1,1); pg2<-1; px2<-1;  semi2<-0; est2<-matrix(0,1,2); gamma2<-0; 
     npar2<-FALSE; 
@@ -53,11 +53,11 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ### For truncation 
   if (is.null(entry)) entry.call <- NULL else entry.call <- 0
   if (is.null(entry)) entry <- rep(0,antpers); 
-  cum1<-Cpred(rbind(rep(0,px+1),cif$cum),entry)[,-1];
+  cum1<-cpred(rbind(rep(0,px+1),cif$cum),entry)[,-1];
   if (cif.model==1) cif1entry  <-  1-exp(-apply(X*cum1,1,sum)- (Z %*% gamma )*entry)
   else if (cif.model==2) cif1entry  <-  1-exp(-apply(X*cum1,1,sum)*exp(Z %*% gamma ))
   if ((model!="COR") && (cause1[1]!=cause2[1])) {
-    cum2<-Cpred(rbind(rep(0,px2+1),cif2$cum),entry)[,-1];
+    cum2<-cpred(rbind(rep(0,px2+1),cif2$cum),entry)[,-1];
     if (cif.model==1) cif2entry  <-  1-exp(-apply(X2*cum2,1,sum)- (Z2 %*% gamma2 )*entry)
     else if (cif.model==2) cif2entry  <-  1-exp(-apply(X2*cum2,1,sum)*exp(Z2 %*% gamma2 ))
   } else {cum2 <- cum1; cif2entry <- cif1entry;}
@@ -75,19 +75,19 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         ud.cens<-survival::survfit(Surv(time,cause==cens.code)~+1); 
         Gfit<-cbind(ud.cens$time,ud.cens$surv)
         Gfit<-rbind(c(0,1),Gfit); 
-        Gcx<-Cpred(Gfit,time)[,2];
-        if (is.null(entry.call)==FALSE) Gcxe<-Cpred(Gfit,entry)[,2];
+        Gcx<-cpred(Gfit,time)[,2];
+        if (is.null(entry.call)==FALSE) Gcxe<-cpred(Gfit,entry)[,2];
         Gcx <- Gcx/Gcxe; 
         Gctimes<- Gcx ## }}}
       } else if (cens.model=="cox") { ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
         ud.cens<-cox.aalen(Surv(time,cause==cens.code)~prop(XZ),n.sim=0,robust=0);
-        Gcx<-Cpred(ud.cens$cum,time)[,2];
+        Gcx<-cpred(ud.cens$cum,time)[,2];
         RR<-exp(XZ %*% ud.cens$gamma)
         Gcx<-exp(-Gcx*RR)
         Gfit<-rbind(c(0,1),cbind(time,Gcx)); 
         if (is.null(entry.call)==FALSE) {
-          Gcxe<-Cpred(Gfit,entry)[,2];
+          Gcxe<-cpred(Gfit,entry)[,2];
           Gcxe<-exp(-Gcxe*RR)
         }
         Gcx <- Gcx/Gcxe; 
@@ -95,13 +95,13 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
       } else if (cens.model=="aalen") {  ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
         ud.cens<-aalen(Surv(time,cause==cens.code)~XZ,n.sim=0,robust=0);
-        Gcx<-Cpred(ud.cens$cum,time)[,-1];
+        Gcx<-cpred(ud.cens$cum,time)[,-1];
         XZ<-cbind(1,XZ); 
         Gcx<-exp(-apply(Gcx*XZ,1,sum))
         Gcx[Gcx>1]<-1; Gcx[Gcx<0]<-0
         Gfit<-rbind(c(0,1),cbind(time,Gcx)); 
         if (is.null(entry.call)==FALSE) {
-          Gcxe<-Cpred(Gfit,entry)[,-1];
+          Gcxe<-cpred(Gfit,entry)[,-1];
           Gcxe<-exp(-apply(Gcxe*XZ,1,sum))
           Gcxe[Gcxe>1]<-1; Gcxe[Gcxe<0]<-0
         }
@@ -890,19 +890,18 @@ print.summary.cor <- function(x,digits=3,...)
 ##' @author Thomas Scheike
 ##' @keywords survival
 ##' @examples
-##' library("timereg")
-##' data("multcif",package="mets") # simulated data 
-##' multcif$cause[multcif$cause==0] <- 2
-##' 
-##' times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
-##' add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,
-##'                n.sim=0,times=times,cause=1)
+##' ## library("timereg")
+##' ## data("multcif",package="mets") # simulated data 
+##' ## multcif$cause[multcif$cause==0] <- 2
+##' ##  
+##' ## times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
+##' ## add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,n.sim=0,times=times,cause=1)
 ##' ###
-##' out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
-##' summary(out1)
-##' 
-##' pad <- predict(add,X=1,se=0,uniform=0)
-##' summary(out1,marg.cif=pad)
+##' ## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
+##' ## summary(out1)
+##' ## 
+##' ## pad <- predict(add,X=1,se=0,uniform=0)
+##' ## summary(out1,marg.cif=pad)
 ##' @method summary cor
 ##' @export
 summary.cor <- function(object,marg.cif=NULL,marg.cif2=NULL,digits=3,...) { ## {{{

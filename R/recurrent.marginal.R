@@ -339,13 +339,13 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
 
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
- data$Gctrr <- exp(-Cpred(cr$cumhaz,exit)[,2])
+ data$Gctrr <- exp(-cpred(cr$cumhaz,exit)[,2])
 
  ### cook-lawless ghosh-lin
 
  xr0 <- phreg(form1,data=data,no.opt=TRUE)
  clgl  <- recurrentMarginal(xr0,dr)
-### bplot(clgl,se=1); print(Cpred(clgl$cumhaz,times)); print(Cpred(clgl$se.cumhaz,times)); 
+### bplot(clgl,se=1); print(cpred(clgl$cumhaz,times)); print(cpred(clgl$se.cumhaz,times)); 
 
   ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
   x <- xr
@@ -386,7 +386,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
   data$expNt <- exp(-data$Nt)
   data$NtexpNt <- data$Nt*exp(-data$Nt)
 
-  Gcdata <- exp(-Cpred(cr$cumhaz,exit)[,2])
+  Gcdata <- exp(-cpred(cr$cumhaz,exit)[,2])
 
   form <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
   desform <- update.formula(augment.model,~Hst + . + cluster(id__))
@@ -472,7 +472,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
  dr <- phreg(formD,data=rr,no.opt=TRUE,no.var=1)
 
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
- rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr[,stop])[,2])
+ rr$Gctrr <- exp(-cpred(cr$cumhaz,rr[,stop])[,2])
 
  ### cook-lawless ghosh-lin
  xr0 <- phreg(form1,data=rr,no.opt=TRUE)
@@ -615,7 +615,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
 ### dr <- phreg(formD,data=rr,no.opt=TRUE,no.var=1)
 ###
 ### ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
-### rr$Gctrr <- exp(-Cpred(cr$cumhaz,rr[,stop])[,2])
+### rr$Gctrr <- exp(-cpred(cr$cumhaz,rr[,stop])[,2])
 ###
 ### ### cook-lawless ghosh-lin
 ### xr0 <- phreg(form1,data=rr,no.opt=TRUE)
@@ -1056,7 +1056,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'  par(mfrow=c(2,2))
 ##'  showfitsim(causes=1,rr,dr,base1,base1)
 ##'
-##' @aliases showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 squareintHdM addCums 
+##' @aliases showfitsim  simRecurrentGamma covIntH1dM1IntH2dM2 squareintHdM 
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 	 max.recurrent=100,dhaz=NULL,dependence=0,var.z=2,cor.mat=NULL,...) 
@@ -1097,11 +1097,11 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
   rc <- 1
 
 ### recurrent first time
-  tall <- timereg::rchaz(cumhaz,z1)
+  tall <- rchaz(cumhaz,z1)
   tall$id <- 1:n
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::rchaz(cumhazd,zd)
+	  timed   <- rchaz(cumhazd,zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -1132,7 +1132,7 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
 	  i <- i+1
 	  still <- subset(tt,time<dtime & status!=0)
 	  ## start at where we are or "0" for gaptime
-          tt <- timereg::rchaz(cumhaz,z1[still$id],entry=(1-gap.time)*still$time)
+          tt <- rchaz(cumhaz,z1[still$id],entry=(1-gap.time)*still$time)
 	  if (gap.time) { 
 		  tt$entry <- still$time
 		  tt$time <- tt$time+still$time
@@ -1156,28 +1156,29 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
   return(tall)
   }# }}}
 
-lin.approx <- function(x2,xfx,x=1) {# {{{
-   ### x=1   gives  f(x2) 
-   ### x=-1  gives  f^-1(x2) 
-   breaks <- xfx[,x]
-   fx     <- xfx[,-x]
-   ri <- sindex.prodlim(breaks,x2)
-   rrr <- (x2-breaks[ri])/(breaks[ri+1]-breaks[ri])
-   res <- rrr*(fx[ri+1]-fx[ri])+fx[ri]
-   res[is.na(res)] <- tail(fx,1)
-   return(res)
-}# ## }}}
-
-##' @export
-addCums <- function(cumB,cumA,max=5)
-{# {{{
- times <- sort(unique(c(cumB[,1],cumA[,1])))
- times <- times[times<max]
- cumBjx <- lin.approx(times,cumB,x=1)
- cumAjx <- lin.approx(times,cumA,x=1)
- cumBA <- cumBjx+cumAjx
- return(cbind(times,cumBA))
-}# }}}
+###lin.approx <- function(x2,xfx,x=1) {# {{{
+###   ### x=1   gives  f(x2) 
+###   ### x=-1  gives  f^-1(x2) 
+###   breaks <- xfx[,x]
+###   fx     <- xfx[,-x]
+######   ri <- sindex.prodlim(breaks,x2)
+###   ri <- fast.approx(breaks,x2,type="left")
+###   rrr <- (x2-breaks[ri])/(breaks[ri+1]-breaks[ri])
+###   res <- rrr*(fx[ri+1]-fx[ri])+fx[ri]
+###   res[is.na(res)] <- tail(fx,1)
+###   return(res)
+###}# ## }}}
+###
+#####' @export
+###addCums <- function(cumB,cumA,max=5)
+###{# {{{
+### times <- sort(unique(c(cumB[,1],cumA[,1])))
+### times <- times[times<max]
+### cumBjx <- lin.approx(times,cumB,x=1)
+### cumAjx <- lin.approx(times,cumA,x=1)
+### cumBA <- cumBjx+cumAjx
+### return(cbind(times,cumBA))
+###}# }}}
 
 ##' @export
 simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100,var.z=2,times=5000) 
@@ -1194,11 +1195,11 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
   cumhaz <- cbind(times,cumhaz1+cumhaz2)
 
 ### recurrent first time
-  tall <- timereg::rchaz(cumhaz,z)
+  tall <- rchaz(cumhaz,z)
   tall$id <- 1:n
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::rchaz(cumhazd,n)
+	  timed   <- rchaz(cumhazd,n)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
   } else { tall$dtime <- max.time; tall$fdeath <- 0; cumhazd <- NULL }
@@ -1213,7 +1214,7 @@ simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100
   while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime & status!=0)
-          tt <- timereg::rchaz(cumhaz,z[still$id],entry=still$time)
+          tt <- rchaz(cumhaz,z[still$id],entry=still$time)
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
 	  tt <- dtransform(tt,death=1,time>dtime)
 	  tt <- dtransform(tt,status=0,time>dtime)
@@ -1346,8 +1347,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
   max.time <- tail(cumhaz[,1],1)
 
 ### recurrent first time
-  tall1 <- timereg::rchaz(cumhaz,z1*r1)
-  tall2 <- timereg::rchaz(cumhaz2,z2*r2)
+  tall1 <- rchaz(cumhaz,z1*r1)
+  tall2 <- rchaz(cumhaz2,z2*r2)
   tall <- tall1 
   tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
   tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -1355,7 +1356,7 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
   tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {
-	  timed   <- timereg::rchaz(cumhazd,zd*rd)
+	  timed   <- rchaz(cumhazd,zd*rd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -1387,8 +1388,8 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
 	  i <- i+1
 	  still <- subset(tt,time<dtime & status!=0)
 	  nn <- nrow(still)
-          tt1 <- timereg::rchaz(cumhaz,r1[still$id]*z1[still$id],entry=(1-gap.time)*still$time)
-          tt2 <- timereg::rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=(1-gap.time)*still$time)
+          tt1 <- rchaz(cumhaz,r1[still$id]*z1[still$id],entry=(1-gap.time)*still$time)
+          tt2 <- rchaz(cumhaz2,r2[still$id]*z2[still$id],entry=(1-gap.time)*still$time)
 	  tt <- tt1
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
@@ -1575,7 +1576,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   cumhazd2 <- out$cum4
   max.time <- tail(cumhaz[,1],1)
 
-  tall <- timereg::rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
+  tall <- rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
   tall$id <- 1:n
   ### fixing the first time to event
   tall$death <- 0
@@ -1605,7 +1606,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
 	  if (i%%2==0) { ## in state 2
 	  ## out of 2 for those in 2
-          tt1 <- timereg::rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
+          tt1 <- rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 1
 	  tt1 <- dtransform(tt1,status=3,status==2)
@@ -1625,7 +1626,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		  
 	  } else { ## in state 1
 	  ## out of 1 for those in 1
-          tt1 <- timereg::rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
+          tt1 <- rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
 
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 2
@@ -1816,14 +1817,14 @@ zs <- cbind(z1,z2,zd)
  death.cumhaz <- cbind(base1[,1],cumsum(dtt*lams))
 
  base1 <- cumhaz
- dbase1 <- Cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
+ dbase1 <- cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
  dtt <- diff(c(0,base1[,1]))
  gt <- (gamma(agam1+nu1)/gamma(agam1))*(1/(betagam+dbase1))^nu1
  lams <- (diff(c(0,base1[,2]))/dtt)*(1/gt)
  cumhaz <- cbind(base1[,1],cumsum(dtt*lams))
 
  base1 <- cumhaz2
- dbase1 <- Cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
+ dbase1 <- cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
  dtt <- diff(c(0,base1[,1]))
  gt <- (gamma(agam2+nu2)/gamma(agam2))*(1/(betagam+dbase1))^nu2
  lams <-(1/egamma12nu3)*(diff(c(0,base1[,2]))/dtt)*(1/gt)
@@ -1841,8 +1842,8 @@ zs <- cbind(z1,z2,zd)
   max.time <- tail(cumhaz[,1],1)
 
 ### recurrent first time
-  tall1 <- timereg::rchaz(cumhaz,rr=z1)
-  tall2 <- timereg::rchaz(cumhaz2,rr=z2)
+  tall1 <- rchaz(cumhaz,rr=z1)
+  tall2 <- rchaz(cumhaz2,rr=z2)
   tall <- tall1 
   tall$status <- ifelse(tall1$time<tall2$time,tall1$status,2*tall2$status)
   tall$time <- ifelse(tall1$time<tall2$time,tall1$time,tall2$time)
@@ -1850,7 +1851,7 @@ zs <- cbind(z1,z2,zd)
   tall$rr2 <- tall2$rr
 ### death time simulated
   if (!is.null(death.cumhaz)) {# {{{
-	  timed   <- timereg::rchaz(cumhazd,rr=zd)
+	  timed   <- rchaz(cumhazd,rr=zd)
 	  tall$dtime <- timed$time
 	  tall$fdeath <- timed$status
 	  if (!is.null(cens)) { 
@@ -1882,8 +1883,8 @@ zs <- cbind(z1,z2,zd)
 	  i <- i+1
 	  still <- subset(tt,time<dtime & status!=0)
 	  nn <- nrow(still)
-          tt1 <- timereg::rchaz(cumhaz,rr=z1[still$id],entry=still$time)
-          tt2 <- timereg::rchaz(cumhaz2,rr=z2[still$id],entry=still$time)
+          tt1 <- rchaz(cumhaz,rr=z1[still$id],entry=still$time)
+          tt2 <- rchaz(cumhaz2,rr=z2[still$id],entry=still$time)
 	  tt <- tt1
           tt$status <- ifelse(tt1$time<=tt2$time,tt1$status,2*tt2$status)
           tt$time <-   ifelse(tt1$time<=tt2$time,tt1$time,tt2$time)
@@ -2678,8 +2679,8 @@ vals2 <- sort(unique(data[,paste("Count",type2,sep="")]))
 mean2risk <- apply(t(nrisk)*vals2,2,sum)/ntot
 mean2risk[is.na(mean2risk)] <- 0
 
-mu1 <-timereg::Cpred(rbind(c(0,0),marginal.mean1$cumhaz),cc$time)[,2]
-mu2 <-timereg::Cpred(rbind(c(0,0),marginal.mean2$cumhaz),cc$time)[,2]
+mu1 <- cpred(rbind(c(0,0),marginal.mean1$cumhaz),cc$time)[,2]
+mu2 <- cpred(rbind(c(0,0),marginal.mean2$cumhaz),cc$time)[,2]
 
 
 out <- list(based=dr,base1=base1,base2=base2,
@@ -2955,12 +2956,12 @@ i <- 1
 ### going through strata 
 for (i in 1:rm1$nstrata) {
 	j <- i-1
-	mu1[,i]   <- timereg::Cpred(rm1$cumhaz[rm1$strata==j,],times)[,2]
-	mu2[,i]   <- timereg::Cpred(rm2$cumhaz[rm2$strata==j,],times)[,2]
-	mu1.2[,i] <- timereg::Cpred( iN2dN1$cumhaz[rm1$strata==j,],times)[,2]
-	mu1.i[,i] <- timereg::Cpred(iN2dN1$cumhazI[rm1$strata==j,],times)[,2]
-	mu2.1[,i] <- timereg::Cpred( iN1dN2$cumhaz[rm2$strata==j,],times)[,2]
-	mu2.i[,i] <- timereg::Cpred(iN1dN2$cumhazI[rm2$strata==j,],times)[,2]
+	mu1[,i]   <- cpred(rm1$cumhaz[rm1$strata==j,],times)[,2]
+	mu2[,i]   <- cpred(rm2$cumhaz[rm2$strata==j,],times)[,2]
+	mu1.2[,i] <- cpred( iN2dN1$cumhaz[rm1$strata==j,],times)[,2]
+	mu1.i[,i] <- cpred(iN2dN1$cumhazI[rm1$strata==j,],times)[,2]
+	mu2.1[,i] <- cpred( iN1dN2$cumhaz[rm2$strata==j,],times)[,2]
+	mu2.i[,i] <- cpred(iN1dN2$cumhazI[rm2$strata==j,],times)[,2]
 }
 mu1mu2 <- mu1*mu2
 
@@ -3034,7 +3035,7 @@ Bootcovariancerecurrence <- function(data,type1,type2,status="status",death="dea
      rrbs <- subset(rrb,strata==i-1)
      errb <- covarianceRecurrent(rrbs,type1,type2,status=status,death=death,
  	                          start=start,stop=stop,id=id,names.count=names.count)
-     all <- timereg::Cpred(cbind(errb$time,errb$EIN1N2,errb$EN1N2,errb$EN1EN2,
+     all <- cpred(cbind(errb$time,errb$EIN1N2,errb$EN1N2,errb$EN1EN2,
 			errb$mu1.2,errb$mu2.1,errb$mu1.i,errb$mu2.i),times)
      mupi[,i]   <- all[,2]
      mupg[,i]   <- all[,3]
@@ -3066,11 +3067,14 @@ iidCovarianceRecurrent <-  function (rec1,death,xrS,xr,means)
     or <- order(times)
     times <- times[or]
     meano <- cbind(means$time,means$mean2risk)
-    imeano <- sindex.prodlim(means$time, times, strict = FALSE)
+###    imeano <- sindex.prodlim(means$time, times, strict = FALSE)
+    imeano <- fast.approx(means$time, times, type="left")
     meano <- meano[imeano,2]
     keepr <- order(or)[1:length(timesr[-1])]
-    rid <- sindex.prodlim(timesd, times, strict = FALSE)
-    rir <- sindex.prodlim(timesr, times, strict = FALSE)
+###    rid <- sindex.prodlim(timesd, times, strict = FALSE)
+    rid <- fast.approx(timesd, times, type="left")
+###    rir <- sindex.prodlim(timesr, times, strict = FALSE)
+    rir <- fast.approx(timesr, times, type="left")
     Stt <- St[rid]
     ariid <- axr$cum[rir, 2]
     mu <- cumsum(meano * Stt * diff(c(0, ariid)))
@@ -3085,7 +3089,8 @@ iidCovarianceRecurrent <-  function (rec1,death,xrS,xr,means)
    rr  <- apply(rr,2,revcumsumstrata,rep(0,nrow(rr)),1)
    rrs <- apply(rrs,2,revcumsumstrata,rep(0,nrow(rr)),1)
 
-   xrid <- sindex.prodlim(cc$time, times, strict = FALSE)
+###   xrid <- sindex.prodlim(cc$time, times, strict = FALSE)
+   xrid <- fast.approx(cc$time, times, type="left")
    rr <- rr[xrid,]
    rrs <- rrs[xrid,]
    ntot <- ntot[xrid]
@@ -3100,8 +3105,7 @@ iidCovarianceRecurrent <-  function (rec1,death,xrS,xr,means)
         mdiid <- mdiid[rid]
         dmridd <- diff(c(0, mriid))
         dmdidd <- diff(c(0, mdiid))
-        muiid[, i] <- cumsum(Stt * meano* dmridd) - mu * cumsum(dmdidd) +
-            cumsum(mu * dmdidd) +  miid[,i]
+        muiid[, i] <- cumsum(Stt * meano* dmridd) - mu * cumsum(dmdidd) + cumsum(mu * dmdidd) +  miid[,i]
     }
     var1 <- apply(muiid^2, 1, sum)
     se.mu <- var1[keepr]^0.5

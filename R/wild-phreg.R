@@ -231,7 +231,7 @@ coef2 <- do.call("rbind",lapply(b2,function(x) x$coef))
 bcums1 <- do.call("cbind",lapply(b1,function(x) x$cumhaz))
 bcums2 <- do.call("cbind",lapply(b2,function(x) x$cumhaz))
 
-where2 <- sindex.prodlim(c(0,times2),times1,strict=TRUE)
+where2 <- fast.approx(c(0,times2),times1,tminus=TRUE)
 cums2 <- c(0,c2$cumhaz[,2])
 cums2 <- cums2[where2]
 cums1 <- c1$cumhaz[,2]
