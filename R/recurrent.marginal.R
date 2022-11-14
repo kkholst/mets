@@ -91,7 +91,7 @@
 ##'  out <- recurrentMarginal(xr,dr,km=TRUE)
 ##'  bplot(out,se=TRUE,ylab="cumulative incidence")
 ##' 
-##' @aliases tie.breaker recmarg recurrentMarginalIPCW recurrentMarginalAIPCW recurrentMarginalAIPCWdata
+##' @aliases tie.breaker recmarg recurrentMarginalIPCW recurrentMarginalAIPCW recurrentMarginalAIPCWdata 
 ##' @export
 recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 {# {{{
