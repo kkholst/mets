@@ -5,6 +5,7 @@
 \alias{strataAugment}
 \alias{scalecumhaz}
 \alias{GLprediid}
+\alias{recregIPCW}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(
