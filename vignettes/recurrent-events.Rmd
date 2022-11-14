@@ -351,6 +351,18 @@ this is done under the assumption that the death rate given covariates are on Co
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
+Also possible to do IPCW regression at fixed time-point
+
+```{r}
+ outipcw  <- recregIPCW(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+			cens.code=0,times=2000)
+ outipcws <- recregIPCW(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+		    cens.code=0,times=2000,cens.model=~strata(X1,X2))
+ summary(outipcw)$coef
+ summary(outipcws)$coef
+```
+
+
 We can also do the Mao-Lin type composite outcome where we both count the cause 1 and deaths for example 
 \begin{align*}
 E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
