@@ -1156,29 +1156,6 @@ simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,gap.time=FALSE,cens=NULL,
   return(tall)
   }# }}}
 
-###lin.approx <- function(x2,xfx,x=1) {# {{{
-###   ### x=1   gives  f(x2) 
-###   ### x=-1  gives  f^-1(x2) 
-###   breaks <- xfx[,x]
-###   fx     <- xfx[,-x]
-######   ri <- sindex.prodlim(breaks,x2)
-###   ri <- fast.approx(breaks,x2,type="left")
-###   rrr <- (x2-breaks[ri])/(breaks[ri+1]-breaks[ri])
-###   res <- rrr*(fx[ri+1]-fx[ri])+fx[ri]
-###   res[is.na(res)] <- tail(fx,1)
-###   return(res)
-###}# ## }}}
-###
-#####' @export
-###addCums <- function(cumB,cumA,max=5)
-###{# {{{
-### times <- sort(unique(c(cumB[,1],cumA[,1])))
-### times <- times[times<max]
-### cumBjx <- lin.approx(times,cumB,x=1)
-### cumAjx <- lin.approx(times,cumA,x=1)
-### cumBA <- cumBjx+cumAjx
-### return(cbind(times,cumBA))
-###}# }}}
 
 ##' @export
 simRecurrentGamma <- function(n,haz=0.5,death.haz=0.1,haz2=0.1,max.recurrent=100,var.z=2,times=5000) 
@@ -1692,38 +1669,6 @@ for (i in seq(nn)[-mm]) {
 
   return( setNames(cumA,paste("cum",seq(nn),sep="")))
 }# }}}
-
-###extendCums <- function(cumA,cumB,both=TRUE,hazb=NULL,haza=NULL)
-###{# {{{
-###  max1 <- tail(cumA[,1],1)
-###  max2 <- tail(cumB[,1],1)
-###  ## extend to max of both or max of cumA
-###  if (both) mmax <- max(max1,max2) else mmax <- max1
-###
-###  ## extend cumulative for cause 2 to full range of cause 1
-###  cumB <- rbind(c(0,0),cumB)
-###  ### linear extrapolation of mortality using given dhaz or 
-###  if (tail(cumB[,1],1)<mmax) {
-###      if (is.null(hazb)) hazb <- tail(cumB[,2],1)/tail(cumB[,1],1)
-###      cumlast <- tail(cumB[,2],1)
-###      timelast <- tail(cumB[,1],1)
-###      cumB <- rbind(cumB,c(mmax,cumlast+hazb*(mmax-timelast))) 
-###  }
-###
-###  if (both) { ## extend only cumA if both is TRUE
-###  ## extend cumulative for cause 2 to full range of cause 1
-###  cumA <- rbind(c(0,0),cumA)
-###  ### linear extrapolation of mortality using given dhaz or 
-###  if (tail(cumA[,1],1)<mmax) {
-###      if (is.null(haza)) haza <- tail(cumA[,2],1)/tail(cumA[,1],1)
-###      cumlast <- tail(cumA[,2],1)
-###      timelast <- tail(cumA[,1],1)
-###      cumA <- rbind(cumA,c(mmax,cumlast+haza*(mmax-timelast))) 
-###  }
-###  }
-###
-###  return(list(cumA=cumA,cumB=cumB))
-###}# }}}
 
 ##' Simulation of recurrent events data based on cumulative hazards: Two-stage model  
 ##'

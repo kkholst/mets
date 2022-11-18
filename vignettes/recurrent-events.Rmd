@@ -279,8 +279,12 @@ recEFF1 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,
 with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
 times <- 500*(1:10)
+###recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+###death.code=3,cause=1,augment.model=~Nt+Nt2+expNt+NtexpNt)
+###with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
+
 recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
-death.code=3,cause=1,augment.model=~Nt+Nt2+expNt+NtexpNt)
+death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
 bplot(out,se=TRUE,ylab="marginal mean",col=2)
@@ -303,14 +307,11 @@ we can also augment wrt these covariates
 ```{r}
 rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),
 				betad=c(-0.3,0.3))
-dtable(rr,~statusG+status+death,level=2,response=1)
+dtable(rr,~statusD+status+death,level=2,response=1)
 
 times <- seq(500,5000,by=500)
-rr <- transform(rr,statusD=status)
-rr <- dtransform(rr,statusD=2,death==1)
-dtable(rr,~statusD+status+death,level=2)
 recEFF1x <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,
-				   cens.code=0,death.code=2,cause=1,augment.model=~X1+X2)
+				   cens.code=0,death.code=3,cause=1,augment.model=~X1+X2)
 with(recEFF1x, cbind(muP,muPA,muPAt,semuP,semuPA,semuPAt,semuPAt/semuP))
 
 xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
@@ -334,10 +335,10 @@ this is done under the assumption that the death rate given covariates are on Co
 
 ```{r}
  rr <- mets:::simMarginalMeanCox(200,cens=3/5000,Lam1=base1,LamD=ddr,beta1=c(0.3,-0.3),betad=c(-0.3,0.3),k1=0.1)
- dtable(rr,~statusG+status+death,level=2,response=1)
+ dtable(rr,~statusD+status+death,level=2,response=1)
 
- out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
- outs <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+ out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+ outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
 		cens.model=~strata(X1,X2))
  summary(out)$coef
  summary(outs)$coef
@@ -354,9 +355,9 @@ We note that for the extended censoring model we gain a little efficiency and th
 Also possible to do IPCW regression at fixed time-point
 
 ```{r}
- outipcw  <- recregIPCW(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+ outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
 			cens.code=0,times=2000)
- outipcws <- recregIPCW(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+ outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
 		    cens.code=0,times=2000,cens.model=~strata(X1,X2))
  summary(outipcw)$coef
  summary(outipcws)$coef
@@ -369,7 +370,7 @@ E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 
 ```{r}
- out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+ out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		death.code=3,cens.code=0)
  summary(out)$coef
 ```
@@ -382,16 +383,16 @@ and with weights  $w_1,w_2$ that follow the causes, here 1 and 3.
 
 ```{r}
  rr$binf <- rbinom(nrow(rr),1,0.5) 
- rr$statusGC <- rr$statusG
- rr <- dtransform(rr,statusGC=4, statusG==3 & binf==0)
+ rr$statusDC <- rr$statusD
+ rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
  rr$weight <- 1
- rr <- dtransform(rr,weight=2,statusGC==3)
+ rr <- dtransform(rr,weight=2,statusDC==3)
 
- outC  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+ outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		 death.code=c(3,4),cens.code=0)
  summary(outC)$coef
 
- outCW  <- recreg(Event(start,stop,statusGC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+ outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		  death.code=c(3,4),cens.code=0,wcomp=c(1,2))
  summary(outCW)$coef
 
@@ -404,7 +405,7 @@ Predictions and standard errors can be computed via the iid decompositions of th
 for the standard Ghosh-Lin model and it requires that the model is fitted with the option cox.prep=TRUE
 
 ```{r}
-out  <- recreg(Event(start,stop,statusG)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
 	        cens.code=0,cox.prep=TRUE)
 baseiid <- mets:::iid.baseline.cifreg(out,time=3000)
 GLprediid(baseiid,rr[1:5,])
