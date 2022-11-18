@@ -37,17 +37,15 @@ studied. We here demonstrate how one can compute
  * the marginal mean 
  * the variance 
  * the probability of exceeding k events
- * do a Cox type regression for the  marginal mean, possibly with composite outcomes. 
-
+ * do a Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
 
 In addition several tools can be used for simulating recurrent events and
-bivariate recurrent events data, in the case with a possible terminating event. 
+bivariate recurrent events data, also with a possible terminating event. 
 
  * recurrent events up to two causes and death, given rates of survivors and death on Cox form.
  * multistate model 
  * the Ghosh-Lin model when the survival rate is on Cox form.
  * do a Cox type regression for the  marginal mean 
-
 
 For bivariate recurrent events we also compute summary measures that describe their
 dependence such as 
@@ -256,8 +254,9 @@ Improving efficiency
 
 We now simulate some data where there is strong heterogenity such that
 we can improve the efficiency for censored survival data. The augmentation is 
-a regression on the history  for each subject consisting of any of the 
-terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt))
+a regression on the history  for each subject consisting of the specified terms 
+terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt)) or by simply
+specifying these directly. 
 
 
 ```{r}

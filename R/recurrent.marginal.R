@@ -1395,6 +1395,117 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
   return(tall)
   }# }}}
 
+simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
+	    max.recurrent=100,dependence=0,var.z=0.22,cor.mat=NULL,
+	    HistN1=~I(Nt^.5),HistD=~I(Nt^.5),HistN1.beta=c(1.0),HistD.beta=c(1.0),...) 
+{# {{{
+
+  fdeath <- dtime <- NULL # to avoid R-check 
+  status <- dhaz <- NULL; dhaz2 <- NULL
+
+  if (dependence==0) { z <- z1 <- zc <- zd  <-  rep(1,n) # {{{
+     } else if (dependence==1) {
+	      z <- rgamma(n,1/var.z[1])*var.z[1]
+###	      z <- exp(rnorm(n,1)*var.z[1]^.5)
+	      z1 <- z; z2 <- z; zd <- z
+	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
+      } else if (dependence==2) {
+              stdevs <- var.z^.5
+              b <- stdevs %*% t(stdevs)  
+              covv  <- b * cor.mat  
+	      z <- matrix(rnorm(3*n),n,3)
+	      z <- exp(z%*% chol(covv))
+###	      print(summary(z))
+###	      print(cor(z))
+	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
+      } else if (dependence==3) {
+	      z <- matrix(rgamma(3*n,1),n,3)
+              z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3])
+              z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
+              zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
+	      z <- cbind(z1,z2,zd)
+###	      print(summary(z))
+###	      print(cor(z))
+      } else stop("dependence 0-3"); # }}}
+
+  ## covariate adjustment 
+  if (is.null(rr))  rr <- z1; 
+  if (is.null(rc))  rc <- zc; 
+  if (is.null(rd))  rd <- zd; 
+  if (length(rr)!=n) rr <- rep(rr[1],n)
+  if (length(rc)!=n) rc <- rep(rc[1],n)
+  if (length(rd)!=n) rd <- rep(rd[1],n)
+
+  ll <- nrow(cumhaz)
+  ### extend of cumulatives
+  cumhaz <- rbind(c(0,0),cumhaz)
+  death.cumhaz <- rbind(c(0,0),death.cumhaz)
+
+  if (!is.null(cens)) {
+	  if (is.matrix(cens))  {
+             out <- extendCums(list(cumhaz,death.cumhaz,cens),NULL)
+   	     cumcens <- out$cum3
+	  } else {
+             out <- extendCums(list(cumhaz,death.cumhaz),NULL)
+	  }
+  } else {
+     out <- extendCums(list(cumhaz,death.cumhaz),NULL)
+  }
+  cumhaz <- out$cum1
+  cumhazd <- out$cum2
+  max.time <- tail(cumhaz[,1],1)
+
+  ### draw censorting times 
+  if (!is.null(cens)) { 
+	  if (is.matrix(cens)) sdata <- rchaz(cens,rc) else 
+          sdata <- data.frame(entry=0,time=pmin(max.time,rexp(n)/(c(rc)*cens)),
+			      status=0,id=1:n)
+  } else sdata <- data.frame(entry=0,time=rep(max.time,n),status=0,id=1:n)
+  sdata$ctime <- sdata$time
+  sdata$Nt <- 0
+
+  i <- 0; 
+  tall <- c()
+  still <- tt1 <-  sdata
+  ## start at 0
+  tt1$time <- still$time <- 0
+  while (any((still$time<still$ctime) &  (i < max.recurrent))) { ## {{{
+	  still$Nt <- i
+	  nn <- nrow(still)
+	  z1r <- rr[still$id]
+	  zdr <- rd[still$id]
+
+	  m1 <- model.matrix(HistN1,still)[,-1,drop=FALSE]
+	  md <- model.matrix(HistD,still)[,-1,drop=FALSE]
+	  r1h <- c(exp(m1 %*% HistN1.beta))
+	  rdh <- c(exp(md %*% HistN1.beta))
+
+          tt1 <- rcrisk(cumhaz,cumhazd,z1r*r1h,zdr*rdh,entry=still$time)
+	  tt1 <- cbind(tt1,dkeep(still,~id+ctime),row.names=NULL)
+	  tt1 <- dtransform(tt1,status=0,time>ctime)
+	  tt1 <- dtransform(tt1,time=ctime,time>ctime)
+	  tt1$Nt <- i
+          ## remove dead from tt1 to get those still there 
+          deadid <- (tt1$status %in% c(0,2))
+	  ### those that are still under risk 
+	  still <- tt1[!deadid,,drop=FALSE]
+	  ## also keep only those before max.time
+          still <- subset(still,still$time<max.time)
+	  tall <- rbind(tall,tt1,row.names=NULL)
+	  i <- i+1
+  }  # }}}
+
+  dsort(tall) <- ~id+entry+time
+  tall$start <- tall$entry
+  tall$stop  <- tall$time
+  tall <- dkeep(tall,~id+entry+time+status+ctime+Nt+start+stop)
+
+  attr(tall,"death.cumhaz") <- cumhazd
+  attr(tall,"cumhaz") <- cumhaz
+  attr(tall,"cens.cumhaz") <- cens
+
+  return(tall)
+  }# }}}
 
 ##' @export
 showfitsim <- function(causes=2,rr,dr,base1,base4,which=1:3) 
