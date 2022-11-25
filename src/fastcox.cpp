@@ -1768,6 +1768,7 @@ mat CubeVecC(mat XX, vec beta,int dim1) {/*{{{*/
 	return(XXbeta);
 }/*}}}*/
 
+
 RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP,SEXP iinv)
 {/*{{{*/
 	BEGIN_RCPP
@@ -1775,22 +1776,25 @@ RcppExport SEXP CubeVec(SEXP XXSEXP, SEXP betaSEXP,SEXP iinv)
 	mat XX = Rcpp::as<mat>(XXSEXP);
 	mat beta = Rcpp::as<mat>(betaSEXP);
 	unsigned p = beta.n_cols;
+	unsigned pXX = XX.n_cols;
 	unsigned n = XX.n_rows;
 	unsigned inv = Rcpp::as<int>(iinv);
+	unsigned nrowXX=pXX/p; 
 
-	mat XXbeta(n,p);
+	mat XXbeta(n,nrowXX);
 	mat iXXbeta(n,p*p);
-	mat iXX(p,p); 
+	mat iXX(nrowXX,p); 
 	for (unsigned j=0; j<n; j++)  {
-		if (inv==1) iXX= pinv(reshape(XX.row(j),p,p));
-		else iXX=reshape(XX.row(j),p,p); 
-		iXXbeta.row(j)=vectorise(iXX).t();
+		if (inv==1) iXX= pinv(reshape(XX.row(j),p,p)); else iXX=reshape(XX.row(j),nrowXX,p); 
+		if (inv==1) iXXbeta.row(j)=vectorise(iXX).t();
 		XXbeta.row(j)=(iXX*(beta.row(j)).t()).t();
 	}
 
 	return(Rcpp::List::create(Rcpp::Named("XXbeta")=XXbeta,Rcpp::Named("iXX")=iXXbeta));
 	END_RCPP
 }/*}}}*/
+
+
 
 RcppExport SEXP CubeMat(SEXP XXSEXP,SEXP XSEXP)
 {/*{{{*/
@@ -1808,6 +1812,39 @@ RcppExport SEXP CubeMat(SEXP XXSEXP,SEXP XSEXP)
 	return(Rcpp::List::create(Rcpp::Named("XXX")=XXX));
 	END_RCPP
 }/*}}}*/
+
+RcppExport SEXP CubeMattime(SEXP XXSEXP,SEXP XSEXP,SEXP ip,SEXP iinv,SEXP itrans)
+{/*{{{*/
+	BEGIN_RCPP
+	mat XX = Rcpp::as<mat>(XXSEXP);
+	mat X  = Rcpp::as<mat>(XSEXP);
+	unsigned pX = X.n_cols;
+	unsigned pXX = XX.n_cols;
+	unsigned n = XX.n_rows;
+	unsigned inv = Rcpp::as<int>(iinv);
+	unsigned p = Rcpp::as<int>(ip);
+	unsigned tt = Rcpp::as<int>(itrans);
+	unsigned ncolX=pX/p; 
+	unsigned nrowXX=pXX/p; 
+	mat iX(p,ncolX); 
+	unsigned dimXXX=nrowXX*ncolX; 
+	if (tt==1)  dimXXX=p*p;
+	mat XXX(n,dimXXX);
+
+//	printf(" %d %d %d \n",p,ncolX,nrowXX); 
+
+	for (unsigned j=0; j<n; j++)  {
+		if (inv==1) iX= pinv(reshape(X.row(j),p,p)); else iX=reshape(X.row(j),p,ncolX); 
+		if (tt==0) XXX.row(j)=vectorise(reshape(XX.row(j),nrowXX,p)*iX).t();
+		else XXX.row(j)=vectorise(reshape(XX.row(j),p,nrowXX)*iX.t()).t();
+	}
+
+	return(Rcpp::List::create(Rcpp::Named("XXX")=XXX));
+	END_RCPP
+}/*}}}*/
+
+
+
 
 mat  vecmatmat(mat a,mat b)
 {/*{{{*/

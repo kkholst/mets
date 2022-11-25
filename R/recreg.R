@@ -844,12 +844,15 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 strataAugment <- survival:::strata
 
 simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
-                     model=c("not-random","random"),fraily=TRUE,var.z=0.5,death.code=3,alpha=1,...)
+                     model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
 {# {{{
   if (is.null(r1)) r1 <- rep(1,n)
   if (is.null(r2)) r2 <- rep(1,n)
   if (is.null(rd)) rd <- rep(1,n)
   if (is.null(rc)) rc <- rep(1,n)
+
+  ## to avoid error 
+  ctime <- death <- NULL
 
  ################################################################
  ### approximate hazards to make marginals fit (approximately)

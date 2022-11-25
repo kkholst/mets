@@ -18,7 +18,7 @@
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
-##' @param cause cause of interest
+##' @param cause cause of interest (numeric variable)
 ##' @param time  time of interest 
 ##' @param beta starting values 
 ##' @param offset offsets for partial likelihood 
@@ -154,12 +154,12 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status %in% cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in% cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -183,12 +183,12 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  Y <- c((status==cause)*(exit<=time)/cens.weights)
+  Y <- c((status %in% cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum((status %in% cause)*(exit<=time))
 
-  obs <- (exit<=time & (status !=cens.code)) | (exit>time)
+ obs <- (exit<=time & (!statusC)) | (exit>time)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -251,7 +251,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
-    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
+    Y <- c((status %in% cause)*weights*(exit<=time)/cens.weights)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -357,12 +357,12 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause)*outer(exit,time,"<=") 
+  statusC <- (status %in% cens.code) 
+  statusE <- (status %in% cause)*outer(exit,time,"<=") 
   if (any(apply(statusE,2,sum))==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in% cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -386,11 +386,11 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   if (length(time)>1) {
       Yt <- outer(exit,time,"<=") 
-      nevent <- apply(c(status==cause)*Yt,2,sum)
-      Y <- c((status==cause)/cens.weights)*Yt
+      nevent <- apply(c(status %in% cause)*Yt,2,sum)
+      Y <- c((status %in%cause)/cens.weights)*Yt
   } else {
-      Y <- c((status==cause)*(exit<=time)/cens.weights)
-      nevent <- sum((status==cause)*(exit<=time))
+      Y <- c((status %in%cause)*(exit<=time)/cens.weights)
+      nevent <- sum((status %in%cause)*(exit<=time))
   }
 
   ppt <- length(time)
@@ -477,21 +477,11 @@ gradient <- apply(Dlogl,2,sum)+augmentation
     cens.weights <- cens.weights[ord]
     if (length(time)>1) {
          Yt <- outer(exit,time,"<=") 
-         Y <- c((status==cause)/cens.weights)*Yt
+         Y <- c((status%in% cause)/cens.weights)*Yt
 	 Ys <- apply(Y,1,sum)
      } else {
-         Ys <- Y <- c((status==cause)*(exit<=time)/cens.weights)
+         Ys <- Y <- c((status%in%cause)*(exit<=time)/cens.weights)
      }
-###    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
-###   lp <- c(X[,-1,drop=FALSE] %*% pp[-seq(1,ppt)])
-###   lp <- outer(lp,pp[1:ppt],"+")
-###   p <- expit(lp)
-###    lp <- c(X %*% val$coef+offset)
-###    p <- expit(lp)
-
-###Dloglt <- weights*(Y-p)
-###Dloglo <- weights*X[,-1]*apply((Y-p),1,sum)
-###Dlogl <- cbind(Dloglt,Dloglo)
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -598,12 +588,12 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status%in% cens.code) 
+  statusE <- (status%in%cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in%cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -847,12 +837,12 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status %in%cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in%cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -1217,12 +1207,12 @@ binregATEbin <- function(formula,data,cause=1,time=NULL,beta=NULL,
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status %in% cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in% cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -1568,12 +1558,12 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status %in% cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
+  statusC <- (status %in% cens.code) 
   data$id <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -2307,8 +2297,8 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status%in%cens.code) 
+  statusE <- (status%in%cause) & (exit<= time) 
   if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
 
   Zcall <- cbind(status,strata)

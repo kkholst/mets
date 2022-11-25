@@ -30,7 +30,7 @@ binreg(
 
 \item{data}{data frame}
 
-\item{cause}{cause of interest}
+\item{cause}{cause of interest (numeric variable)}
 
 \item{time}{time of interest}
 

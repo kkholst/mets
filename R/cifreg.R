@@ -133,7 +133,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
 
-    cause.jumps <- which(status==cause)
+    cause.jumps <- which(status %in% cause)
     max.jump <- max(exit[cause.jumps])
     other <- which((!(status %in% c(cens.code,cause)) ) & (exit< max.jump))
 
@@ -178,9 +178,9 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     ## }}}
 
     ### censoring weights constructed
-    whereC <- which(status==cens.code)
+    whereC <- which(status %in% cens.code)
     time <- exit
-    statusC <- (status==cens.code)
+    statusC <- (status %in% cens.code)
     data$id <- id
     data$exit <- exit
     data$statusC <- statusC
@@ -217,7 +217,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
-    stat1 <- 1*(status==cause)
+    stat1 <- 1*(status %in% cause)
     trunc <- FALSE
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
     xx2$nstrata <- nstrata
@@ -984,8 +984,8 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     xxstatus  <- dd$Z[,1]
     xxstrata  <- dd$Z[,2]
     other <- which((!(xxstatus %in% c(cens.code,cause)) ) )
-    jumps1 <- which(xxstatus==cause)
-    jumpsD <- which(xxstatus!=cens.code)
+    jumps1 <- which(xxstatus %in% cause)
+    jumpsD <- which(!(xxstatus %in% cens.code))
     rr <- c(dd$sign*exp(dd$offset))
     ## S0 after strata
     S0 = c(revcumsumstrata(rr,xxstrata,nstrata))
