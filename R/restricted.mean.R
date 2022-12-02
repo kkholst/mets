@@ -256,7 +256,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     h <- h[ord]
     lp <- c(X %*% val$coef+offset)
     p <- exp(lp)
-    obs <- (exit<=time & status==cause) | (exit>=time)
+    obs <- (exit<=time & status==cause) | (exit>time)
     if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights

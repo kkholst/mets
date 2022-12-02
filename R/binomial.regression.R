@@ -884,7 +884,6 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 
 obj <- function(pp,all=FALSE)
 { # {{{
-
 lp <- c(X %*% pp+offset)
 
 if (outcome[1]!="cif") {
@@ -986,13 +985,15 @@ if (nlev==2) {
    for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
    DPai <- -Dp/pA^2
    p1lp <-   X %*% val$coef+offset
-   p1 <- expit(p1lp)
+  if (outcome[1]=="cif") { p1 <- expit(p1lp) } else {
+    if (model[1]=="exp") { p1 <- exp(p1lp); } else { p1 <- p1lp;}
+   }
 
 k <- 0
 DePsia <- DariskG <- DaPsia <- list(); 
 Ya <- riskG <- riska <- c(); 
 datA <- dkeep(data,x=all.vars(formula))
-xlev <- lapply( datA,levels)
+xlev <- lapply(datA,levels)
 formulanc <- drop.specials(formula,"cluster")
 a <- nlevs[1]
 for (a in nlevs) {# {{{
@@ -1003,7 +1004,7 @@ for (a in nlevs) {# {{{
 	if (outcome[1]=="cif") {
 	   ma <- expit(lpa); Dma  <-  Xa*c(ma/(1+exp(lpa)))
 	} else {
-	    if (model[1]=="exp") { ma <- exp(lpa);  Dma  <-  Xa*c(ma)} else { ma <- lpa; Dma <- Xa }
+	    if (model[1]=="exp") { ma <- exp(lpa);  Dma<-c(ma)*Xa; } else { ma <- lpa; Dma <- Xa }
 	}
 	paka <- pal[,k]
 	riska <- cbind(riska,((treatvar==a)/paka)*(Y-ma)+ma)
@@ -1028,7 +1029,7 @@ for (a in nlevs) {# {{{
     pal <- pal[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
-    obs <- (exit<=time & status==cause) | (exit>=time)
+    obs <- (exit<=time & status==cause) | (exit>time)
     p <- expit(lp)
     if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
         if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
@@ -1044,7 +1045,7 @@ for (a in nlevs) {# {{{
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     has  <-  apply(Ya,2,revcumsumstrata,xx$strata,xx$nstrata)
-    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+###    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     btime <- 1*(exit<time)
