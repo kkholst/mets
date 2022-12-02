@@ -1023,6 +1023,7 @@ for (a in nlevs) {# {{{
     offset <- offset[ord]
     Ya <- Ya[ord,]
     pal <- pal[ord]
+    obs <- obs[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
