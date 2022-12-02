@@ -871,19 +871,16 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   ccc <- which(ucauses==cens.code)
   Causes <- ucauses[-ccc]
   obs <- (exit<=time & (status %in% Causes)) | (exit>time)
-###	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
-###	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
-###  } else Y <- c(Ydirect*obs)/cens.weights
 
   if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
-     if (outcome[1]=="cif") Y <- c((status==cause)*(exit<=time)/cens.weights)
+     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
      else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
-     else if (outcome[1]=="rmst-cause") Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+     else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      else stop("outcome not defined") 
   }
 
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum((status %in% cause)*(exit<=time))
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -891,14 +888,20 @@ obj <- function(pp,all=FALSE)
 lp <- c(X %*% pp+offset)
 
 if (outcome[1]!="cif") {
-if (model[1]=="exp") p <- exp(lp) else p <- lp
-} else p <- expit(lp)
+     if (model[1]=="exp") {
+	 p <- exp(lp) 
+         D2logl <- c(weights*p)*X2 
+     } else {
+	 p <- lp
+         D2logl <- c(weights)*X2
+       }
+} else { 
+	p <- expit(lp)
+        D2logl <- c(weights*p/(1+exp(lp)))*X2
+}
 ploglik <- sum(weights*(Y-p)^2)
-
 Dlogl <- weights*X*c(Y-p)
-if (outcome[1]!="cif") {
-   D2logl <- c(weights*p)*X2
-} else D2logl <- c(weights*p/(1+exp(lp)))*X2
+
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
@@ -1023,14 +1026,14 @@ for (a in nlevs) {# {{{
     offset <- offset[ord]
     Ya <- Ya[ord,]
     pal <- pal[ord]
-    obs <- obs[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
+    obs <- (exit<=time & status==cause) | (exit>=time)
     p <- expit(lp)
     if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
-        if (outcome[1]=="cif") Y <- c((status==cause)*(exit<=time)/cens.weights)
+        if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
         else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
-        else if (outcome[1]=="rmst-cause") Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+        else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
     }
     Y <- Y*weights 
     xx <- resC$cox.prep
@@ -1044,26 +1047,21 @@ for (a in nlevs) {# {{{
     hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    btime <- 1*(exit<time)
+    IhdLam0 <- apply(h*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
     U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*h[xx$jumps+1,]/c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
-    IhdLamhas <- apply(has*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+    IhdLamhas <- apply(has*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
     Uas <- matrix(0,nrow(xx$X),ncol(has))
-    Uas[xx$jumps+1,] <- has[xx$jumps+1,] /c(resC$S0)
+    Uas[xx$jumps+1,] <- (resC$jumptimes<=time)*has[xx$jumps+1,] /c(resC$S0)
     MGtas <- (Uas[,drop=FALSE]-IhdLamhas)*c(xx$weights)
-
-###    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-###    Uattc <- matrix(0,nrow(xx$X),2)
-###    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
-###    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
     mid <- max(xx$id)+1
     MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
     MGCiidas <- apply(MGtas,2,sumstrata,xx$id,mid)
-###    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
  
   }  else { MGCiid <- MGCiidas <- 0 }
 ## }}}
@@ -1117,7 +1115,7 @@ val$var.riskDR <- crossprod(iidrisk);
 val$se.riskDR <- diag(val$var.riskDR)^.5
 val$riskDR.iid <- iidrisk
 
-pdiff <- function(x) lava::contr(lapply(seq(x-1), \(z) seq(z,x)))
+pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
 contrast <- -pdiff(length(nlevs))
 nncont <- c()
 for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
@@ -1144,6 +1142,7 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 ##' @export
 binregATEbin <- function(formula,data,cause=1,time=NULL,beta=NULL,
