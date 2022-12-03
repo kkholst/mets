@@ -51,6 +51,7 @@ jobs:
       - name: Webpage deployment
         if: ${{ success() }}
         run: |
+          Rscript -e 'remotes::install_github("kkholst/mets")'
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           Rscript -e 'remotes::install_local()'
