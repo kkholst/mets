@@ -148,36 +148,36 @@ cumulative incidence.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean.phreg</span><span class="op">(</span><span class="va">out1</span>,times<span class="op">=</span><span class="fl">10</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    strata times     rmean  se.rmean years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0    10  5.863050 0.2566119   4.136950</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    10  7.631757 0.3424074   2.368243</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       2    10  7.277346 0.7093264   2.722654</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       3    10  7.669918 0.5624944   2.330082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       0    20  9.888631 0.5394004  10.111369</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    20 13.506217 0.8000476   6.493783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       2    20 12.102731 1.5546084   7.897269</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       3    20 12.787468 1.4676323   7.212532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       0    30 13.602617 0.8315574  16.397383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      1    30 18.901035 1.2693520  11.098965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11      2    30 16.190871 2.4006621  13.809129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12      3    30 17.765823 2.4422550  12.234177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13      0    40 17.160100 1.1236398  22.839900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14      1    40 23.883415 1.7373243  16.116585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15      2    40 19.548899 3.2031345  20.451101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16      3    40 22.433031 3.3838904  17.566969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17      0    50 20.483563 1.4111086  29.516437</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18      1    50 28.330437 2.1961970  21.669563</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19      2    50 22.745702 4.0537516  27.254298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20      3    50 26.115307 4.2307326  23.884693</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21      0    60 23.743507 1.7038439  36.256493</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22      1    60 32.770963 2.6865996  27.229037</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23      2    60 25.942506 4.9476464  34.057494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24      3    60 29.671275 5.1599673  30.328725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0    10  5.863354 0.2565966   4.136646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    10  7.631957 0.3423816   2.368043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       2    10  7.277517 0.7093035   2.722483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       3    10  7.670127 0.5624531   2.329873</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       0    20  9.888968 0.5393850  10.111032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    20 13.506447 0.8000209   6.493553</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       2    20 12.102933 1.5545779   7.897067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       3    20 12.787717 1.4675866   7.212283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       0    30 13.602958 0.8315412  16.397042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      1    30 18.901294 1.2693261  11.098706</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      2    30 16.191123 2.4006349  13.808877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      3    30 17.766072 2.4422064  12.233928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      0    40 17.159971 1.1235960  22.840029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      1    40 23.883691 1.7372980  16.116309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      2    40 19.549152 3.2031034  20.450848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16      3    40 22.433310 3.3838446  17.566690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17      0    50 20.482481 1.4110531  29.517519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18      1    50 28.330736 2.1961708  21.669264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19      2    50 22.745956 4.0537189  27.254044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20      3    50 26.115643 4.2306906  23.884357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21      0    60 23.741490 1.7038093  36.258510</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22      1    60 32.771263 2.6865723  27.228737</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23      2    60 25.942759 4.9476129  34.057241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24      3    60 29.671611 5.1599196  30.328389</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>,years.lost<span class="op">=</span><span class="cn">TRUE</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -187,30 +187,30 @@ cumulative incidence.</p>
 <span class="r-in"><span><span class="va">drm1</span> <span class="op">&lt;-</span> <span class="fu">cif.yearslost</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">cause</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">10</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">drm1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    strata times    intF11     intF12 se.intF11 se.intF12 total.years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0    10  3.117942  1.0190078 0.2487326 0.1703753         4.136950</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    10  1.711036  0.6572070 0.3238587 0.1870736         2.368243</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       2    10  1.876269  0.8463846 0.6339430 0.4726707         2.722654</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       3    10  1.358731  0.9713503 0.5303498 0.3617722         2.330082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       0    20  7.517800  2.5935697 0.5441291 0.3861383        10.111369</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    20  4.231070  2.2627132 0.7414284 0.5327789         6.493783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       2    20  4.568577  3.3286923 1.4877180 1.1718793         7.897269</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       3    20  3.569616  3.6429162 1.3003459 1.1907077         7.212532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       0    30 12.105362  4.2920202 0.8508263 0.6161563        16.397383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      1    30  6.884307  4.2146582 1.1741215 0.9057237        11.098965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11      2    30  7.260885  6.5482448 2.3533282 1.9703841        13.809129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12      3    30  5.780500  6.4536769 2.0925434 2.0815688        12.234177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13      0    40 16.718881  6.1210188 1.1626433 0.8510089        22.839900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14      1    40  9.728141  6.3884444 1.6095184 1.2998537        16.116585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15      2    40  9.953192 10.4979084 3.2212466 2.8144549        20.451101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16      3    40  8.302532  9.2644375 2.8718357 2.9841352        17.566969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17      0    50 21.368083  8.1483534 1.4766620 1.0944650        29.516437</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18      1    50 12.979400  8.6901632 2.0475367 1.7124623        21.669563</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19      2    50 12.645500 14.6087975 4.0900040 3.7303078        27.254298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20      3    50 11.809495 12.0751982 3.6737298 3.8902683        23.884693</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21      0    60 26.017285 10.2392080 1.7930574 1.3469902        36.256493</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22      1    60 16.237155 10.9918820 2.5097629 2.1390116        27.229037</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23      2    60 15.337808 18.7196866 4.9591596 4.6874315        34.057494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24      3    60 15.442767 14.8859589 4.5900100 4.7979478        30.328725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0    10  3.117721  1.0189259 0.2487172 0.1703637         4.136646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    10  1.710902  0.6571412 0.3238339 0.1870585         2.368043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       2    10  1.876183  0.8463004 0.6339150 0.4726550         2.722483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       3    10  1.358662  0.9712110 0.5303236 0.3617207         2.329873</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       0    20  7.517555  2.5934768 0.5441131 0.3861256        10.111032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    20  4.230928  2.2626244 0.7414037 0.5327600         6.493553</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       2    20  4.568491  3.3285767 1.4876898 1.1718480         7.897067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       3    20  3.569547  3.6427359 1.3003201 1.1906520         7.212283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       0    30 12.105118  4.2919247 0.8508097 0.6161431        16.397042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      1    30  6.884158  4.2145485 1.1740973 0.9057032        11.098706</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      2    30  7.260798  6.5480781 2.3533001 1.9703499        13.808877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      3    30  5.780431  6.4534965 2.0925180 2.0815111        12.233928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      0    40 16.718626  6.1214025 1.1626269 0.8509974        22.840029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      1    40  9.727989  6.3883195 1.6094939 1.2998319        16.116309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      2    40  9.953106 10.4977415 3.2212185 2.8144166        20.450848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16      3    40  8.302432  9.2642572 2.8718108 2.9840769        17.566690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17      0    50 21.367810  8.1497083 1.4766452 1.0945189        29.517519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18      1    50 12.979225  8.6900383 2.0475120 1.7124395        21.669264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19      2    50 12.645414 14.6086306 4.0899760 3.7302682        27.254044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20      3    50 11.809339 12.0750179 3.6737012 3.8902098        23.884357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21      0    60 26.016995 10.2415156 1.7930396 1.3471498        36.258510</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22      1    60 16.236980 10.9917572 2.5097374 2.1389883        27.228737</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23      2    60 15.337722 18.7195197 4.9591316 4.6873915        34.057241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24      3    60 15.442610 14.8857786 4.5899743 4.7978891        30.328389</span>
 </code></pre></div>
     </div>
   </div>

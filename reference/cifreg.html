@@ -193,7 +193,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## logistic link  OR interpretation</span></span></span>
-<span class="r-in"><span><span class="va">ll</span><span class="op">=</span><span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ll</span><span class="op">=</span><span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
@@ -202,15 +202,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709648  0.331981  0.274926  0.0325</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455292  0.236018  0.187921  0.0537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391175  0.098036  0.083670  0.0001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709596  0.331974  0.274925  0.0326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455392  0.236000  0.187919  0.0537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391201  0.098035  0.083671  0.0001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49182 0.25658 0.9427</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63426 0.39937 1.0073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47872 1.22022 1.7920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49184 0.25660 0.9428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63420 0.39934 1.0072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47876 1.22025 1.7920</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span></span>
@@ -221,7 +221,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-plt img"><img src="cifreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Fine-Gray model</span></span></span>
-<span class="r-in"><span><span class="va">fg</span><span class="op">=</span><span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fg</span><span class="op">=</span><span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
@@ -230,15 +230,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.596978  0.270453  0.275786  0.0273</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425527  0.180751  0.187724  0.0186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343764  0.080258  0.086281  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.597130  0.270403  0.275784  0.0272</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425477  0.180757  0.187724  0.0186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343762  0.080278  0.086288  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55047 0.32399 0.9353</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65343 0.45850 0.9312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41025 1.20498 1.6505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55039 0.32397 0.9351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65346 0.45852 0.9313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41024 1.20493 1.6505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span></span>
@@ -248,7 +248,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cifreg-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">sfg</span> <span class="op">&lt;-</span> <span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sfg</span> <span class="op">&lt;-</span> <span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sfg</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
@@ -257,28 +257,28 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424141  0.180838  0.187825   0.019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341977  0.079852  0.086282   0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424109  0.180845  0.187827   0.019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341929  0.079870  0.086289   0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65433 0.45906 0.9327</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40773 1.20378 1.6462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65435 0.45907 0.9327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40766 1.20368 1.6462</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sfg</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cifreg-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### predictions with CI based on iid decomposition of baseline and beta</span></span></span>
-<span class="r-in"><span><span class="va">fg</span> <span class="op">&lt;-</span> <span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span>,cox.prep<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fg</span> <span class="op">&lt;-</span> <span class="fu">cifreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span>,cox.prep<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Biid</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">iid.baseline.cifreg</span><span class="op">(</span><span class="va">fg</span>,time<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">FGprediid</span><span class="op">(</span><span class="va">Biid</span>,<span class="va">bmt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           pred     se-log     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.4563815 0.07253452 0.3959010 0.5261015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5072094 0.07327865 0.4393518 0.5855476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 0.6064169 0.08622007 0.5121305 0.7180620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 0.6026385 0.08565878 0.5094997 0.7128033</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 0.4287835 0.07564125 0.3697022 0.4973063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.4563797 0.07253368 0.3959000 0.5260985</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5072071 0.07327691 0.4393513 0.5855429</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 0.6064137 0.08622457 0.5121233 0.7180646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 0.6026353 0.08566298 0.5094929 0.7128055</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 0.4287819 0.07564304 0.3696996 0.4973063</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

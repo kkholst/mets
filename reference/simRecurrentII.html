@@ -226,14 +226,14 @@ there is  more flexibility wrt random effects</p>
 <span class="r-in"><span><span class="co">### simulating simple model that mimicks data </span></span></span>
 <span class="r-in"><span><span class="co">### now with two event types and second type has same rate as death rate</span></span></span>
 <span class="r-in"><span><span class="co">######################################################################</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">simRecurrentII</span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       status    0    1    2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> death                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0             133 3000  414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1             867    0    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0             129 2905  394</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             871    0    0</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="simRecurrent.html">showfitsim</a></span><span class="op">(</span>causes<span class="op">=</span><span class="fl">2</span>,<span class="va">rr</span>,<span class="va">dr</span>,<span class="va">base1</span>,<span class="va">base4</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

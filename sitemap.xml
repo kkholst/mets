@@ -76,6 +76,9 @@
     <loc>/reference/Effbinreg.html</loc>
   </url>
   <url>
+    <loc>/reference/Event.html</loc>
+  </url>
+  <url>
     <loc>/reference/EventSplit.html</loc>
   </url>
   <url>
@@ -86,6 +89,9 @@
   </url>
   <url>
     <loc>/reference/LinSpline.html</loc>
+  </url>
+  <url>
+    <loc>/reference/TRACE.html</loc>
   </url>
   <url>
     <loc>/reference/aalenMets.html</loc>
@@ -128,6 +134,9 @@
   </url>
   <url>
     <loc>/reference/blocksample.html</loc>
+  </url>
+  <url>
+    <loc>/reference/bmt.html</loc>
   </url>
   <url>
     <loc>/reference/bptwin.html</loc>
@@ -176,6 +185,9 @@
   </url>
   <url>
     <loc>/reference/dermalridgesMZ.html</loc>
+  </url>
+  <url>
+    <loc>/reference/diabetes.html</loc>
   </url>
   <url>
     <loc>/reference/divide.conquer.html</loc>
@@ -295,6 +307,9 @@
     <loc>/reference/medweight.html</loc>
   </url>
   <url>
+    <loc>/reference/melanoma.html</loc>
+  </url>
+  <url>
     <loc>/reference/mena.html</loc>
   </url>
   <url>
@@ -343,6 +358,12 @@
     <loc>/reference/random.cif.html</loc>
   </url>
   <url>
+    <loc>/reference/rchaz.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rcrisk.html</loc>
+  </url>
+  <url>
     <loc>/reference/recreg.html</loc>
   </url>
   <url>
@@ -352,10 +373,22 @@
     <loc>/reference/resmean.phreg.html</loc>
   </url>
   <url>
+    <loc>/reference/resmeanATE.html</loc>
+  </url>
+  <url>
     <loc>/reference/resmeanIPCW.html</loc>
   </url>
   <url>
     <loc>/reference/rpch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sim.cause.cox.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sim.cif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sim.cox.html</loc>
   </url>
   <url>
     <loc>/reference/simAalenFrailty.html</loc>

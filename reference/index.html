@@ -124,6 +124,10 @@
         </td>
         <td><p>Efficient IPCW for binary data</p></td>
       </tr><tr><td>
+          <p><code><a href="Event.html">Event()</a></code> </p>
+        </td>
+        <td><p>Event history object</p></td>
+      </tr><tr><td>
           <p><code><a href="EventSplit.html">EventSplit()</a></code> </p>
         </td>
         <td><p>Event split with two time-scales, time and gaptime</p></td>
@@ -139,6 +143,10 @@
           <p><code><a href="LinSpline.html">LinSpline()</a></code> </p>
         </td>
         <td><p>Simple linear spline</p></td>
+      </tr><tr><td>
+          <p><code><a href="TRACE.html">TRACE</a></code> <code><a href="TRACE.html">sTRACE</a></code> <code><a href="TRACE.html">tTRACE</a></code> </p>
+        </td>
+        <td><p>The TRACE study group of myocardial infarction</p></td>
       </tr><tr><td>
           <p><code><a href="aalenMets.html">aalenMets()</a></code> </p>
         </td>
@@ -198,6 +206,10 @@ based on all pairwise bivariate models.</p></td>
           <p><code><a href="blocksample.html">blocksample()</a></code> </p>
         </td>
         <td><p>Block sampling</p></td>
+      </tr><tr><td>
+          <p><code><a href="bmt.html">bmt</a></code> </p>
+        </td>
+        <td><p>The Bone Marrow Transplant Data</p></td>
       </tr><tr><td>
           <p><code><a href="bptwin.html">bptwin()</a></code> </p>
         </td>
@@ -262,6 +274,10 @@ based on all pairwise bivariate models.</p></td>
           <p><code><a href="dermalridgesMZ.html">dermalridgesMZ</a></code> </p>
         </td>
         <td><p>Dermal ridges data (monozygotic twins)</p></td>
+      </tr><tr><td>
+          <p><code><a href="diabetes.html">diabetes</a></code> </p>
+        </td>
+        <td><p>The Diabetic Retinopathy Data</p></td>
       </tr><tr><td>
           <p><code><a href="divide.conquer.html">divide.conquer()</a></code> </p>
         </td>
@@ -418,6 +434,10 @@ Useful in particular for family design data.</p></td>
         </td>
         <td><p>Computes mediation weights</p></td>
       </tr><tr><td>
+          <p><code><a href="melanoma.html">melanoma</a></code> </p>
+        </td>
+        <td><p>The Melanoma Survival Data</p></td>
+      </tr><tr><td>
           <p><code><a href="mena.html">mena</a></code> </p>
         </td>
         <td><p>Menarche data set</p></td>
@@ -482,17 +502,37 @@ Useful in particular for family design data.</p></td>
         </td>
         <td><p>Random effects model for competing risks data</p></td>
       </tr><tr><td>
+          <p><code><a href="rchaz.html">rchaz()</a></code> </p>
+        </td>
+        <td><p>Simulation of Piecewise constant hazard model (Cox).</p></td>
+      </tr><tr><td>
+          <p><code><a href="rcrisk.html">rcrisk()</a></code> </p>
+        </td>
+        <td><p>Simulation of Piecewise constant hazard models with two causes (Cox).</p></td>
+      </tr><tr><td>
           <p><code><a href="recreg.html">recreg()</a></code> </p>
         </td>
         <td><p>Recurrent events regression with terminal event</p></td>
       </tr><tr><td>
           <p><code><a href="recurrentMarginal.html">recurrentMarginal()</a></code> </p>
         </td>
-        <td><p>Fast recurrent marginal mean when death is possible</p></td>
+        <td><p>Fast Marginal means of recurrent events. Using the Lin and Ghosh (2000) 
+standard errors.  
+Fitting two models for death and recurent events these are
+combined to prducte the estimator 
+$$ \int_0^t  S(u|x=0) dR(u|x=0) $$ the mean number of recurrent events, here
+$$ S(u|x=0) $$  is the probability of survival for the baseline group, and 
+$$ dR(u|x=0) $$  is the hazard rate of an event among survivors for the baseline. 
+Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with 
+ $$\Lambda_d(u|x=0) $$ being the cumulative baseline for death.</p></td>
       </tr><tr><td>
           <p><code><a href="resmean.phreg.html">resmean.phreg()</a></code> </p>
         </td>
         <td><p>Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors</p></td>
+      </tr><tr><td>
+          <p><code><a href="resmeanATE.html">resmeanATE()</a></code> </p>
+        </td>
+        <td><p>Average Treatment effect for Restricted Mean for censored competing risks data using IPCW</p></td>
       </tr><tr><td>
           <p><code><a href="resmeanIPCW.html">resmeanIPCW()</a></code> </p>
         </td>
@@ -501,6 +541,18 @@ Useful in particular for family design data.</p></td>
           <p><code><a href="rpch.html">rpch()</a></code> </p>
         </td>
         <td><p>Piecewise constant hazard distribution</p></td>
+      </tr><tr><td>
+          <p><code><a href="sim.cause.cox.html">sim(<i>&lt;cause.cox&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Simulation of cause specific from Cox models.</p></td>
+      </tr><tr><td>
+          <p><code><a href="sim.cif.html">sim(<i>&lt;cif&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Simulation of output from Cumulative incidence regression model</p></td>
+      </tr><tr><td>
+          <p><code><a href="sim.cox.html">sim(<i>&lt;cox&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Simulation of output from Cox model.</p></td>
       </tr><tr><td>
           <p><code><a href="simAalenFrailty.html">simAalenFrailty()</a></code> </p>
         </td>

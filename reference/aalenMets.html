@@ -134,7 +134,7 @@ so ordering after $id will give iid in order of data-set.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">aalenMets</span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -144,17 +144,20 @@ so ordering after $id will give iid in order of data-set.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate       S.E.    dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.0129551  0.0041287  0.2303841  0.0017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.0087536  0.0028051  0.1664186  0.0018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.0066176  0.0013879  0.0789182  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.0129550  0.0041289  0.2304014  0.0017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.0087450  0.0028057  0.1664292  0.0018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.0066194  0.0013877  0.0789185  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.98713 0.97917 0.9951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.99128 0.98585 0.9967</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.00664 1.00390 1.0094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.99129 0.98586 0.9968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.00664 1.00391 1.0094</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## out2 &lt;- aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)</span></span></span>
+<span class="r-in"><span><span class="co">## summary(out2)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

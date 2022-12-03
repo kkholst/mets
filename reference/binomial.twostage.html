@@ -502,20 +502,20 @@ here using theta.des to specify these low-dimension association. Default is a di
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)            x  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      0.5097       0.2801  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      0.5234       0.2813  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Degrees of Freedom: 39999 Total (i.e. Null);  39998 Residual</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Null Deviance:	    51470 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Deviance: 51290 	AIC: 51300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Deviance:	    51300 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual Deviance: 51120 	AIC: 51130</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ybin x   type cluster</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    1 0 mother       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1 0 father       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0 0  child       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0 0 father       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1 1  child       1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    1 0  child       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1 0 mother       2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1 0 father       2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1 1 mother       2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1 1 father       2</span>
 <span class="r-in"><span><span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -550,23 +550,23 @@ here using theta.des to specify these low-dimension association. Default is a di
 <span class="r-out co"><span class="r-pr">#&gt;</span> Variance of Gamma distributed random effects </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                theta         se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 1.971865 0.15616292</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 1.004228 0.05493265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 2.382709 0.18872330</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 1.035281 0.08235385</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $h</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err   2.5%  97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1   0.6626 0.02509 0.6134 0.7117 1.183e-153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2   0.3374 0.02509 0.2883 0.3866  3.173e-41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1   0.6971 0.02408 0.6499 0.7443 2.701e-184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2   0.3029 0.02408 0.2557 0.3501  2.745e-36</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vare</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vartot</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1    2.976  0.1442 2.693 3.259 1.408e-94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1    3.418  0.2035 3.019 3.817 2.54e-63</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.mets.twostage"</span>
@@ -597,39 +597,39 @@ here using theta.des to specify these low-dimension association. Default is a di
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Clayton-Oakes model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Variance of Gamma distributed random effects </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 1.909134 0.2398489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 1.186302 0.1614038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 theta        se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 2.1425632 0.2447910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 0.8854234 0.1667251</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $h</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1   0.6168  0.0586 0.5019 0.7316 6.611e-26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2   0.3832  0.0586 0.2684 0.4981 6.144e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1   0.7076 0.05947 0.5910 0.8241 1.204e-32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2   0.2924 0.05947 0.1759 0.4090 8.783e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vare</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vartot</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1    3.095  0.1485 2.804 3.387 1.753e-96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1    3.028  0.1518 2.731 3.325 1.474e-88</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.mets.twostage"</span>
 <span class="r-in"><span><span class="fu"><a href="internal.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MZ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate  Std.Err   2.5%  97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> concordance            0.5222 0.005581 0.5112 0.5331       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> casewise concordance   0.8325 0.004802 0.8231 0.8419       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> marginal               0.6273 0.005397 0.6167 0.6378       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate Std.Err   2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> concordance            0.5228 0.00986 0.5035 0.5421       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> casewise concordance   0.8306 0.00492 0.8210 0.8403       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> marginal               0.6294 0.01072 0.6084 0.6504       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $DZ</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate  Std.Err   2.5%  97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> concordance            0.4785 0.006360 0.4661 0.4910       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> casewise concordance   0.7629 0.005822 0.7515 0.7743       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> marginal               0.6273 0.005397 0.6167 0.6378       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> concordance            0.4739 0.011383 0.4516 0.4962       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> casewise concordance   0.7530 0.007054 0.7391 0.7668       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> marginal               0.6294 0.010723 0.6084 0.6504       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

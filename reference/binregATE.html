@@ -119,6 +119,9 @@
 <span>  no.opt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"nr"</span>,</span>
 <span>  augmentation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cif"</span>, <span class="st">"rmst"</span>, <span class="st">"rmst-cause"</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="st">"exp"</span>,</span>
+<span>  Ydirect <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -189,6 +192,18 @@
 <dd><p>to augment binomial regression</p></dd>
 
 
+<dt>outcome</dt>
+<dd><p>can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)</p></dd>
+
+
+<dt>model</dt>
+<dd><p>possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)</p></dd>
+
+
+<dt>Ydirect</dt>
+<dd><p>use this Y for fitting G model set outcome to "rmst" to fit using the model specified by model</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to lower level funtions</p></dd>
 
@@ -196,10 +211,9 @@
     <div id="details">
     <h2>Details</h2>
     <p>The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
-then it uses the mlogit for propensity score modelling. If there are no censorings this is performing ordinary logistic regression modelling.</p>
-<p>This is then model using a logistic regresssion using  the standard binary double robust estimating equations that are
-then IPCW censoring adjusted using binomial regression.</p>
-<p>Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.</p>
+then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling.</p>
+<p>Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.</p>
 <p>The original version of the program with only binary treatment binregATEbin take  binary-numeric as input for the treatment, 
 and also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively. Experimental version.</p>
     </div>
@@ -213,7 +227,7 @@ and also computes the ATT and ATC, average treatment effect on the treated (ATT)
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>  <span class="op">&lt;-</span>  <span class="op">~</span><span class="va">.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">brs</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span><span class="va">brs</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  treat.model<span class="op">=</span><span class="va">tcell.f</span><span class="op">~</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">brs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -249,7 +263,7 @@ and also computes the ATT and ATC, average treatment effect on the treated (ATT)
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">brsi</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">platelet</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span><span class="va">brsi</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">platelet</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  treat.model<span class="op">=</span><span class="va">tcell.f</span><span class="op">~</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">brsi</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
