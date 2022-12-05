@@ -868,8 +868,8 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   X2  <- .Call("vecMatMat",X,X)$vXZ
   ###
   ucauses  <-  sort(unique(status))
-  ccc <- which(ucauses==cens.code)
-  Causes <- ucauses[-ccc]
+  ccc <- which(ucauses %in% cens.code)
+  if (length(ccc)>=1) Causes <- ucauses[-ccc] else Causes <- ucauses
   obs <- (exit<=time & (status %in% Causes)) | (exit>time)
 
   if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
@@ -2001,7 +2001,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 }# }}}
 
 ##' @export
-logitATE <- function(formula,data,...)
+logitATE <- function(formula,data,binreg=TRUE,...)
 {# {{{
    ## use IPCW machine in no-censoring case
     cl <- match.call()
@@ -2013,7 +2013,7 @@ logitATE <- function(formula,data,...)
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
     if (inherits(Y,"Event")) {
-      out <- logitIPCWATE(formula,data,...)
+    if (binreg) out <- binregATE(formula,data,...) else out <- logitIPCWATE(formula,data,...)
     } else {
       response <- all.vars(formula)[1]
       Ydirect <-  as.numeric(data[,response]) 
@@ -2022,6 +2022,9 @@ logitATE <- function(formula,data,...)
       time <- 2
       Survform <-  update.formula(formula,Event(time,event)~.)
       n <- nrow(data)
+      if (binreg)
+      out <- binregATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
+      else
       out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
     }
 
@@ -2029,9 +2032,12 @@ logitATE <- function(formula,data,...)
 }# }}}
 
 ##' @export
-normalATE <- function(formula,data,...)
+normalATE <- function(formula,data,bireg=TRUE,model="lin",...)
 {# {{{
-   out <- logitATE(formula,data,logitmodel=FALSE,...)
+   if (binreg) 
+   out <- logitATE(formula,data,binreg=binreg,model=model,outcome="rmst",...)
+   else 
+   out <- logitATE(formula,data,binreg=binreg,...)
    return(out)
 }# }}}
 
