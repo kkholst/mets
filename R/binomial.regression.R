@@ -2032,7 +2032,7 @@ logitATE <- function(formula,data,binreg=TRUE,...)
 }# }}}
 
 ##' @export
-normalATE <- function(formula,data,bireg=TRUE,model="lin",...)
+normalATE <- function(formula,data,binreg=TRUE,model="lin",...)
 {# {{{
    if (binreg) 
    out <- logitATE(formula,data,binreg=binreg,model=model,outcome="rmst",...)
