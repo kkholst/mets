@@ -3,6 +3,7 @@
 \name{resmean.phreg}
 \alias{resmean.phreg}
 \alias{cif.yearslost}
+\alias{rmst.phreg}
 \title{Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors}
 \usage{
 resmean.phreg(x, times = NULL, covs = NULL, ...)

@@ -75,6 +75,7 @@
 ##' rmc1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=30)
 ##' summary(rmc1)
 ##' @export
+##' @aliases rmstIPCW 
 resmeanIPCW  <- function(formula,data,cause=1,time=NULL,beta=NULL,
    offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
    kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",model="exp",
@@ -315,6 +316,14 @@ hessian <- matrix(D2log,length(pp),length(pp))
   return(val)
 }# }}}
 
+##' @export
+rmstIPCW <- function(formula,data,...)
+{# {{{
+   out <- resmeanIPCW(formula,data,...)
+   return(out)
+}# }}}
+
+
 preprrm <- function(cs,ss,X,times,data,model="exp") 
 {# {{{
 
@@ -390,6 +399,7 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 ##'
 ##' @param formula formula with 'Event' outcome 
+##' @param data data-frame 
 ##' @param outcome  "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
 ##' @param model possible exp model for relevant mean model that is exp(X^t beta) 
 ##' @param ... Additional arguments to pass to binregATE 
@@ -404,9 +414,17 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' summary(out1)
 ##' 
 ##' @export
-resmeanATE <- function(formula,outcome=c("rmst","rmst-cause"),model="exp",...)
+##' @aliases rmstATE
+resmeanATE <- function(formula,data,outcome=c("rmst","rmst-cause"),model="exp",...)
 {# {{{
-out <- 	binregATE(formula,...,outcome=outcome,model=model) 
+out <- 	binregATE(formula,data,...,outcome=outcome,model=model) 
+return(out)
+}# }}}
+
+##' @export
+rmstATE <- function(formula,data,outcome=c("rmst","rmst-cause"),model="exp",...)
+{# {{{
+out <- 	resmeanATE(formula,data,...,outcome=outcome,model=model) 
 return(out)
 }# }}}
 

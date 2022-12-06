@@ -341,8 +341,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
  data$Gctrr <- exp(-cpred(cr$cumhaz,exit)[,2])
 
- ### cook-lawless ghosh-lin
-
+ ### cook-lawless-ghosh-lin
  xr0 <- phreg(form1,data=data,no.opt=TRUE)
  clgl  <- recurrentMarginal(xr0,dr)
 ### bplot(clgl,se=1); print(cpred(clgl$cumhaz,times)); print(cpred(clgl$se.cumhaz,times)); 

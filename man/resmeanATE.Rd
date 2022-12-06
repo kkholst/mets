@@ -2,12 +2,21 @@
 % Please edit documentation in R/restricted.mean.R
 \name{resmeanATE}
 \alias{resmeanATE}
+\alias{rmstATE}
 \title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
 \usage{
-resmeanATE(formula, outcome = c("rmst", "rmst-cause"), model = "exp", ...)
+resmeanATE(
+  formula,
+  data,
+  outcome = c("rmst", "rmst-cause"),
+  model = "exp",
+  ...
+)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}
+
+\item{data}{data-frame}
 
 \item{outcome}{"rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
 

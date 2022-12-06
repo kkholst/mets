@@ -1343,7 +1343,7 @@ return(res)
 ##' drm1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=10*(1:6))
 ##' summary(drm1)
 ##' @export
-##' @aliases cif.yearslost 
+##' @aliases cif.yearslost  rmst.phreg
 resmean.phreg <- function(x,times=NULL,covs=NULL,...) 
 {# {{{
   ii <- invhess <- x$II
@@ -1437,6 +1437,13 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
        intkmtimes=intkmtimes
        )
 class(out) <- c("resmean_phreg")
+return(out)
+}# }}}
+
+##' @export
+rmst.phreg <- function(x,times=NULL,covs=NULL,...) 
+{# {{{
+out <- resmean.phreg(x,times=NULL,covs=NULL,...) 
 return(out)
 }# }}}
 
