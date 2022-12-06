@@ -280,10 +280,14 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
 ##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' out2 <- phreg(Event(time,status)~vf+chf+strata(wmicat.4),data=TRACE)
 ##' ## tracesim <- timereg::sim.cox(out1,1000)
 ##' ## sout1 <- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)
 ##' ## robust standard errors default 
 ##' summary(out1)
+##' out1 <- phreg(Surv(time,status!=0)~vf+chf+strata(wmicat.4),data=TRACE)
+##' summary(out2)
+
 ##' 
 ##' par(mfrow=c(1,2))
 ##' bplot(out1)
@@ -309,7 +313,8 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   m[[1]] <- as.name("model.frame")
   m <- eval(m, parent.frame())
   Y <- model.extract(m, "response")
-  if (!is.Surv(Y)) stop("Expected a 'Surv'-object")
+###  if (!is.Surv(Y)) stop("Expected a 'Surv'-object")
+  if (!inherits(Y,c("Event","Surv"))) stop("Expected a 'Surv' or 'Event'-object")
   if (ncol(Y)==2) {
     exit <- Y[,1]
     entry <- NULL ## rep(0,nrow(Y))
@@ -1340,7 +1345,7 @@ return(res)
 ##' plot(rm1,years.lost=TRUE,se=1)
 ##' 
 ##' ## years.lost decomposed into causes
-##' drm1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=10*(1:6))
+##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
 ##' summary(drm1)
 ##' @export
 ##' @aliases cif.yearslost  rmst.phreg
@@ -1450,14 +1455,35 @@ return(out)
 ##' @export
 cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 {# {{{
-  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1)
-  causes <- sort(unique(x$cox.prep$X[,1]))
-  ccc <- which(causes==cens.code)
-  causes <- causes[-ccc]
+  cl <- match.call()
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+###  if (!is.Surv(Y)) stop("Expected a 'Surv'-object")
+  if (!inherits(Y,c("Event","Surv"))) stop("Expected a 'Surv' or 'Event'-object")
+  if (ncol(Y)==2) {
+    exit <- Y[,1]
+    entry <- NULL ## rep(0,nrow(Y))
+    status <- Y[,2]
+  } else {
+    entry <- Y[,1]
+    exit <- Y[,2]
+    status <- Y[,3]
+  }
+
+  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1,Z=as.matrix(status,ncol=1))
+  causes <- sort(unique(x$cox.prep$Z[,1]))
+  ccc <- which(causes %in% cens.code)
+  if (length(ccc)>=1) causes <- causes[-ccc] 
 
  if (!is.null(times)) {# {{{
 	   tt <- expand.grid(times,0:(x$nstrata-1))
-           cause.jumps <- x$U+x$E
+###           cause.jumps <- x$U+x$E
+           cause.jumps <- x$cox.prep$Z[x$cox.prep$jumps+1,1]
            mm <- cbind(x$jumptimes,x$strata.jumps,1,cause.jumps)
            mm <- rbind(mm,cbind(tt[,1],tt[,2],0,cens.code))
            ord <- order(mm[,1])

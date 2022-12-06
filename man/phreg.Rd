@@ -32,10 +32,13 @@ so ordering after $id will give iid in order of data-set.
 data(TRACE)
 dcut(TRACE) <- ~.
 out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+out2 <- phreg(Event(time,status)~vf+chf+strata(wmicat.4),data=TRACE)
 ## tracesim <- timereg::sim.cox(out1,1000)
 ## sout1 <- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)
 ## robust standard errors default 
 summary(out1)
+out1 <- phreg(Surv(time,status!=0)~vf+chf+strata(wmicat.4),data=TRACE)
+summary(out2)
 
 par(mfrow=c(1,2))
 bplot(out1)

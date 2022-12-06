@@ -22,7 +22,6 @@ library(mets)
 ```
 
 
-
 RMST 
 ====
 
@@ -55,7 +54,7 @@ set.seed(100)
                                  cens.model=~strata(platelet,tcell),model="lin")
      estimate(out)
      ## same as integrated cumulative incidence 
-     rmc1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=30)
+     rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
      summary(rmc1)
 
 ```

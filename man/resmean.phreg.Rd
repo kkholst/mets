@@ -40,7 +40,7 @@ plot(rm1,se=1)
 plot(rm1,years.lost=TRUE,se=1)
 
 ## years.lost decomposed into causes
-drm1 <- cif.yearslost(Surv(time,cause!=0)~cause+strata(tcell,platelet),data=bmt,times=10*(1:6))
+drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
 summary(drm1)
 }
 \author{
