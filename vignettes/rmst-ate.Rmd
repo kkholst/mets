@@ -25,10 +25,13 @@ library(mets)
 RMST 
 ====
 
-Regression for rmst outcome $E(T \wedge t | X) = exp(X^T \beta)$ for simple case with stratification IPCW estimator
-is equal to integral of Kaplan-Meier. Here also possible to get $\int_0^t S(s|X) ds $ for Cox-model and then Kaplan-Meier in the 
-case of no-covariates. For competing risks the years lost can be computed via cumulative incidence functions or as
-IPCW of outcome $E( I(\epsilon=1) ( t - T \wedge t ) | X)$  that are also equivalent: 
+Regression for rmst outcome $E(T \wedge t | X) = exp(X^T \beta)$ based on IPCW adjustment for censoring. For full
+censoring model this is equal to integral of Kaplan-Meier. Also possible to compute Kaplan-Meier or Cox based 
+estimator or rmst \[ \int_0^t S(s|X) ds \].
+
+For competing risks the years lost can be computed via cumulative incidence functions or as
+IPCW estimator since  \[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \] 
+For full censoring model these estimators are also equivalent.
 
 
 ```{r}
