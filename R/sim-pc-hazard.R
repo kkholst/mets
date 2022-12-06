@@ -476,6 +476,8 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(
   if (!is.null(n)) rr <- rep(1,n)
   entry=NULL
 
+  logit <- function(p) log(p/(1-p))
+
   breaks <- cumhazard[,1]
   rates <- cumhazard[,2][-1]
   mm <- tail(breaks,1)
