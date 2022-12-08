@@ -71,7 +71,7 @@ extern SEXP OutCov(SEXP, SEXP);
 extern SEXP MatxCube(SEXP, SEXP, SEXP);
 extern SEXP Matdoubleindex(SEXP, SEXP, SEXP,SEXP,SEXP,SEXP);
 extern SEXP CubeMat(SEXP, SEXP);
-extern SEXP CubeMattime(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP);
+extern SEXP CubeMattime(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP PropTestCox(SEXP, SEXP,SEXP,SEXP);
 extern SEXP PropTestCoxClust(SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP, SEXP,SEXP);
 extern SEXP ModelMatrixTestCox(SEXP,SEXP,SEXP,SEXP,SEXP);
@@ -130,7 +130,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"cor",                               (DL_FUNC) &cor,                               40},
     {"CubeVec",                           (DL_FUNC) &CubeVec,                            3},
     {"CubeMat",                           (DL_FUNC) &CubeMat,                            2},
-    {"CubeMattime",                       (DL_FUNC) &CubeMattime,                        7},
+    {"CubeMattime",                       (DL_FUNC) &CubeMattime,                        8},
     {"familypairindex",                   (DL_FUNC) &familypairindex,                    3},
     {"FastApprox",                        (DL_FUNC) &FastApprox,                         4},
     {"FastCluster",                       (DL_FUNC) &FastCluster,                        1},
