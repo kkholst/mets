@@ -157,6 +157,12 @@ summary(c2)
 c1 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 		treat.model=gp.f~dnr+preauto+ttt24,time=60)
 summary(c1)
+
+kumar$int <- interaction(kumar$gp,kumar$dnr)
+
+b5 <- binregATE(Event(time,cause)~int+preauto+ttt24,kumar,cause=2,
+		treat.model=int~preauto+ttt24,cens.code=0,time=60)
+summary(b5)
 ```
 
 We note that correct estimates that found using the large censoring model are very different from those
