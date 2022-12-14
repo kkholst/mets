@@ -171,14 +171,20 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
         X <- object$X
         if (response)  Y <- as.numeric(object$Y) 
     } else {
+	pclust <- grep("cluster",names(object$model.frame))
+	if (length(pclust)>=1) {
+	      object$model.frame <- object$model.frame[,-pclust]
+	      formula <- drop.specials(object$formula,"cluster") } else { formula <- object$formula }
+
+    
         xlev <- lapply(object$model.frame, levels)
         ylev <- xlev[[1]]
         ff <- unlist(lapply(object$model.frame, is.factor))
-        upf <- update(object$formula,~.)
+        upf <- update(formula,~.)
         tt <- terms(upf)
         allvar <- all.vars(tt)
 	tt <- delete.response(tt)
-        X <- as.matrix(model.matrix(object$formula, data = newdata, xlev = xlev))
+        X <- as.matrix(model.matrix(formula, data = newdata, xlev = xlev))
         if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
     }
 
@@ -188,6 +194,9 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
   px <- ncol(X)
   Xbeta <- c()
   for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
+
+  X %*% 
+	  object$coef[(1:px)+px]
 
   ppp <- cbind(1,exp(Xbeta))
   spp <- apply(ppp,1,sum)

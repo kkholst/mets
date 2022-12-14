@@ -966,7 +966,8 @@ if (nlev==2) {
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 } else {  
-   treat <- mlogit(treat.model,data)
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat <- mlogit(treat.modelid,data)
    iidalpha <- iid(treat)
    pal <- predictmlogit(treat,data,se=0,response=FALSE)
    ppp <- (pal/pal[,1])
@@ -976,18 +977,19 @@ if (nlev==2) {
    ###########################################################
    ### computes derivative of D (1/Pa) propensity score 
    ###########################################################
-   Xtreat <- model.matrix(treat$formula,data)
+   Xtreat <- model.matrix(treat.model,data)
    tvg2 <- 1*(ntreatvar>=2)
    pA <- c(mdi(pal, 1:length(treatvar), ntreatvar))
    pppy <- c(mdi(ppp,1:length(treatvar), ntreatvar))
    Dppy <-  (spp*tvg2-pppy) 
    Dp <- c()
    for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
-   DPai <- -Dp/pA^2
+   DPai <- -1*Dp/pA^2
    p1lp <-   X %*% val$coef+offset
   if (outcome[1]=="cif") { p1 <- expit(p1lp) } else {
     if (model[1]=="exp") { p1 <- exp(p1lp); } else { p1 <- p1lp;}
    }
+
 
 k <- 0
 DePsia <- DariskG <- DaPsia <- list(); 
@@ -1097,14 +1099,15 @@ k <- 1
 iidrisk <- c()
 riskG.iid <- c()
 for (a in nlevs) {
-	iidbasea <- riska[,k]-val$riskDR[k]
+	iidbasea <- c(sumstrata(riska[,k]-val$riskDR[k],id,nid))
 	iidcifa <- c(DePsia[[k]] %*% t(val$iid))
 	iidpala <- c(DaPsia[[k]] %*% t(iidalpha))
 	if (se)  iidGca <- MGCiidas[,k] else iidGca<-0 
         ###
 	iidriska <- (iidbasea+iidcifa+iidpala+iidGca)/n
         iidrisk <- cbind(iidrisk,iidriska)
-	riskGa.iid <- c(riskG[,k]-val$riskG[k])/n+c(DariskG[[k]] %*% t(val$iid))/n
+	iidriskG <- c(sumstrata(riskG[,k]-val$riskG[k],id,nid))
+	riskGa.iid <- c(iidriskG)/n+c(DariskG[[k]] %*% t(val$iid))/n
         riskG.iid <- cbind(riskG.iid,riskGa.iid)
 	k <- k+1
 }
