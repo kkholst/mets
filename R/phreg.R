@@ -1006,7 +1006,7 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
 ###{{{ summary
 
 ##' @export
-summary.phreg <- function(object,type=c("robust","martingale"),...) {
+summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("var.augment.times","var.augment"),...) {
   expC <- cc <- ncluster <- V <- NULL
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
@@ -1014,6 +1014,8 @@ summary.phreg <- function(object,type=c("robust","martingale"),...) {
     if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
+            if (!is.null(object$augmentation)) { V <- object[[augment.type[1]]]; 
+	    }
     } else  {  ## phreg
 	    V <- vcov(object,type=type[1])
             ncluster <- object$n

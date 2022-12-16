@@ -131,12 +131,14 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
-          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,
+          case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=NULL,
 	  cox.prep=FALSE,wcomp=NULL,augment.model=NULL,...) { # {{{
 # {{{ setting up weights, strata, beta and so forth before the action starts
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
+    augmentation.call <- augmentation
+    if (is.null(augmentation)) augmentation <- 0
 
     cause.jumps <- which(status %in% cause)
     max.jump <- max(exit[cause.jumps])
@@ -636,10 +638,12 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    Uiid.augment.times <- Uiid-iid.augment.times
 # }}}
 
-   var.augment <-  var1  -  iH %*% var.augment %*% iH
-   var.augment.times <-  var1  +  iH %*% var.augment.times %*% iH
+   ## varmc <- var1
+   var.augment <-  varmc  -  iH %*% var.augment %*% iH
+   var.augment.times <-  varmc  +  iH %*% var.augment.times %*% iH
    var.augment.iid <-  crossprod(Uiid.augment) 
    var.augment.times.iid <- crossprod(Uiid.augment.times) 
+###   if (!is.null(augmentation)) varmc <- var.augment.times
 
   } else {
     iid.augment <- iid.augment.times <- augment <- augment.times <- NULL 
@@ -707,7 +711,8 @@ out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
 	Pcens.model=Pcens.model,Gjumps=Gjumps,cens.code=cens.code,
 	death.code=death.code, cause=cause, 
-	strataA=strataA,nstrataA=nstrataA,augment=augment.new,MGAc=MGAc,
+	strataA=strataA,nstrataA=nstrataA,augmentA=augment.new,MGAc=MGAc,
+	augmentation=augmentation.call,
 	var.augment=var.augment,var.augment.times=var.augment.times,
 	var.augment.iid=var.augment.iid,var.augment.times.iid=var.augment.times.iid,
 	lin.augment=c(augment),lindyn.augment=c(augment.times),
