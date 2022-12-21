@@ -599,22 +599,24 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     var.augment.times <-  gain.times 
 
    ###
-   varZdN <- matrix(apply(hesst/c(Gcj^2),2,sum),pXXA,pXXA)
-   covXYdN <- matrix(apply(covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE) 
+   timeC <- xx2$time[jumpsC]
+   ftime <- timeC*(timeC-max.jump)/max.jump^2
+   varZdN <- matrix(apply(ftime^2*hesst/c(Gcj^2),2,sum),pXXA,pXXA)
+   covXYdN <- matrix(apply(ftime*covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE) 
    gamma <- -1*.Call("CubeMattime",matrix(varZdN,nrow=1),matrix(covXYdN,nrow=1),pXXA,pXXA,p,pXXA,1,0,1,PACKAGE="mets")$XXX
    gamma <- matrix(gamma,p,pXXA,byrow=TRUE)
    gamma[is.na(gamma)] <- 0; gamma[gamma==Inf] <- 0
-   augment <- c(gamma %*% apply(UA/c(Gcj),2,sum))
+   augment <- c(gamma %*% apply(ftime*UA/c(Gcj),2,sum))
    var.augment  <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
    #### iid magic  for censoring augmentation martingale{{{
    ### int_0^infty gamma (e_i - ebar(s)) 1/G_c(s) dM_i^c
    S0iG <- S0i <- rep(0,length(xx2$strata))
-   S0iG[jumpsC] <- 1/(S0rrr[jumpsC]*Gcj)
+   S0iG[jumpsC] <- ftime/(S0rrr[jumpsC]*Gcj)
    S0i[jumpsC] <- c(1/S0rrr[jumpsC])
    U <- E <- matrix(0,nrow(xx2$X),pXXA)
    E[jumpsC,] <- EA; 
-   U[jumpsC,] <- UA/Gcj
+   U[jumpsC,] <- ftime*UA/Gcj
    cumhaz <- cumsumstrata(S0iG,strataCxx2,nCstrata)
    EdLam0 <- apply(E*S0iG,2,cumsumstrata,strataCxx2,nCstrata)
    MGCt <- U[,drop=FALSE]-(XXA*c(cumhaz)-EdLam0)*c(rr0)
@@ -638,7 +640,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    Uiid.augment.times <- Uiid-iid.augment.times
 # }}}
 
-   ## varmc <- var1
    var.augment <-  varmc  -  iH %*% var.augment %*% iH
    var.augment.times <-  varmc  +  iH %*% var.augment.times %*% iH
    var.augment.iid <-  crossprod(Uiid.augment) 
