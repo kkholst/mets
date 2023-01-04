@@ -1,7 +1,6 @@
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/kkholst/mets/actions)
-
-[![coverage](https://codecov.io/github/kkholst/mets/coverage.svg?branch=master)](https://codecov.io/github/kkholst/mets?branch=master)
+  [![R-CMD-check](https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/kkholst/mets/actions)
+  [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg?branch=master)](https://codecov.io/github/kkholst/mets?branch=master)
   [![cran](https://www.r-pkg.org/badges/version-last-release/mets)](https://CRAN.R-project.org/package=mets)
   [![cran-dl](https://cranlogs.r-pkg.org/badges/mets)](https://cranlogs.r-pkg.org/downloads/total/last-month/mets)
 <!-- badges: end -->
