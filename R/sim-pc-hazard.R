@@ -260,8 +260,8 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' plot(cox)
 #' plot(cc,add=TRUE,col=2)
 #' 
-#' @export
-#' @aliases read.fit  sim.base
+#' @aliases read.fit sim.base
+#' @export sim.cox
 sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 {# {{{
 	### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -313,7 +313,7 @@ sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 	return(ptt)
 }# }}}
 
-#' @export
+#' @export sim.base
 sim.base <- function(cumhaz,n,data=NULL,strata=NULL,cens=NULL,entry=NULL,...)
 {# {{{
 	### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -421,7 +421,7 @@ sim.base <- function(cumhaz,n,data=NULL,strata=NULL,cens=NULL,entry=NULL,...)
 #' plot(cox1); plot(scox1,add=TRUE); 
 #' plot(cox2); plot(scox2,add=TRUE); 
 #' 
-#' @export
+#' @export sim.cause.cox
 sim.cause.cox <- function(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 ### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -587,7 +587,7 @@ subdist <- function(F1,times)
 #' par(mfrow=c(1,2))   
 #' plot(cif1); plot(scif1,add=TRUE,col=2)
 #' plot(cif2); plot(scif2,add=TRUE,col=2)
-#' @export
+#' @export sim.cif
 #' @aliases sim.cif sim.cifs subdist pre.cifs sim.cifsRestrict simsubdist invsubdist 
 sim.cif <- function(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
 {# {{{
@@ -656,7 +656,7 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
    return(ptt)
 }# }}}
 
-#' @export
+#' @export sim.cifs
 sim.cifs <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),...)
 {# {{{
 
@@ -711,7 +711,7 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
    return(ptt)
 }# }}}
 
-#' @export
+#' @export sim.cifsRestrict
 sim.cifsRestrict <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),...)
 {# {{{
 
@@ -768,7 +768,7 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
    return(ptt)
 }# }}}
 
-#' @export
+#' @export pre.cifs
 pre.cifs <- function(cifs,n,data=NULL,pprint=FALSE,max.times=NULL,...)
 {# {{{
 
@@ -957,6 +957,6 @@ return(out)
 }# }}}
 
 
-##' @export
+##' @export simulate.cox
 simulate.cox <- function(object,...) sim(object,...)
 
