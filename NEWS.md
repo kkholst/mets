@@ -2,7 +2,6 @@
   - Extension of recreg (Ghosh-Lin model) to deal with composite outcomes.
   - recurrent events regression with IPCW adjusment for fixed time point: recregIPCW
 
-
 # mets 1.3.1
   - Maintenance release
 
