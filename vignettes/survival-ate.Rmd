@@ -1,0 +1,70 @@
+---
+title: "Average treatment effect (ATE) based on the Cox and Fine-Gray model"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+ATE 
+====
+
+Using the G-estimation based on the Cox or Fine-Gray model 
+
+```{r}
+set.seed(100)
+
+data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+dfactor(bmt) <- tcell.f~tcell
+bmt$event <- (bmt$cause!=0)*1
+
+fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,cox.prep=TRUE,propodds=NULL)
+survivalG(fg1,bmt,50)
+
+fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,cox.prep=TRUE,propodds=NULL)
+survivalG(fg2,bmt,50)
+
+ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
+survivalG(ss,bmt,50)
+```
+
+Comparing with binomial-regression ATE 
+
+```{r}
+
+br1 <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,time=40,treat.model=tcell.f~platelet+age)
+summary(br1)
+
+sr1 <- binregATE(Event(time,event)~tcell.f+platelet+age,bmt,cause=1,time=40,
+		 treat.model=tcell.f~platelet+age)
+summary(sr1)
+```
+
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

@@ -1800,6 +1800,49 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
+
+##' @export
+survivalG <- function(x,data,time)
+{# {{{
+
+if (inherits(x,"cifreg"))
+Aiid <- mets:::iid.baseline.cifreg(x,time=time) else 
+Aiid <- mets:::iid.baseline.phreg(x,time=time)
+vv <- crossprod(cbind(Aiid$base.iid,Aiid$beta.iid))
+
+data0 <- data[,names(x$coef)]; data0[,names(coef(x))[1]] <- 0 
+data1 <- data[,names(x$coef)]; data1[,names(coef(x))[1]] <- 1 
+
+Gf <- function(p) {# {{{
+if (inherits(x,"cifreg")) {
+        ps0 <- 1- exp(-p[1]*exp(as.matrix(data0) %*% p[-1]))
+        ps1 <- 1- exp(-p[1]*exp(as.matrix(data1) %*% p[-1]))
+} else if (inherits(x,"recreg")) {
+        ps0 <- p[1]*exp(as.matrix(data0) %*% p[-1])
+        ps1 <- p[1]*exp(as.matrix(data1) %*% p[-1])
+}
+else 
+{
+        ps0 <-  exp(-p[1]*exp(as.matrix(data0) %*% p[-1]))
+        ps1 <-  exp(-p[1]*exp(as.matrix(data1) %*% p[-1]))
+}
+
+Gest <- c(mean(ps0),mean(ps1))
+return(Gest)
+}
+# }}}
+
+cumhaz.time <- Cpred(x$cumhaz,time)[-1]
+theta <- c(cumhaz.time,x$coef)
+
+out <-  lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p))
+ed <- estimate(out,function(p) p[2]-p[1])
+rd <- estimate(out,function(p) p[2]/p[1])
+return(list(risk=out,difference=ed,ratio=rd))
+}# }}}
+
+
+
 ##' Fast additive hazards model with robust standard errors 
 ##'
 ##' Fast Lin-Ying additive hazards model with a possibly stratified baseline. 
