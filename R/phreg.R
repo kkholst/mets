@@ -1839,7 +1839,8 @@ if (ic==1) {
 require(numDeriv)
 DG <- jacobian(Gf,theta,ic=0)
 icf <- Gf(theta,ic=1)
-risk.iid <- icf$iid/nrow(data) + cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
+nid <- max(x$id)
+risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid + cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
 } else risk.iid <- NULL
 
 out <-  lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
