@@ -1841,8 +1841,6 @@ rd <- estimate(out,function(p) p[2]/p[1])
 return(list(risk=out,difference=ed,ratio=rd))
 }# }}}
 
-
-
 ##' Fast additive hazards model with robust standard errors 
 ##'
 ##' Fast Lin-Ying additive hazards model with a possibly stratified baseline. 
