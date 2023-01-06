@@ -1800,9 +1800,8 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
-
 ##' @export
-survivalG <- function(x,data,time)
+survivalG <- function(x,data,time,ic=0)
 {# {{{
 
 if (inherits(x,"cifreg"))
@@ -1813,7 +1812,7 @@ vv <- crossprod(cbind(Aiid$base.iid,Aiid$beta.iid))
 data0 <- data[,names(x$coef)]; data0[,names(coef(x))[1]] <- 0 
 data1 <- data[,names(x$coef)]; data1[,names(coef(x))[1]] <- 1 
 
-Gf <- function(p) {# {{{
+Gf <- function(p,ic=ic) {# {{{
 if (inherits(x,"cifreg")) {
         ps0 <- 1- exp(-p[1]*exp(as.matrix(data0) %*% p[-1]))
         ps1 <- 1- exp(-p[1]*exp(as.matrix(data1) %*% p[-1]))
@@ -1828,6 +1827,7 @@ else
 }
 
 Gest <- c(mean(ps0),mean(ps1))
+if (ic==1) Gest <- list(Gest=Gest,iid=t(t(cbind(ps0,ps1))-Gest))
 return(Gest)
 }
 # }}}
@@ -1835,10 +1835,17 @@ return(Gest)
 cumhaz.time <- Cpred(x$cumhaz,time)[-1]
 theta <- c(cumhaz.time,x$coef)
 
-out <-  lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p))
+if (ic==1) {
+require(numDeriv)
+DG <- jacobian(Gf,theta,ic=0)
+icf <- Gf(theta,ic=1)
+risk.iid <- icf$iid/nrow(data) + cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
+} else risk.iid <- NULL
+
+out <-  lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
 ed <- estimate(out,function(p) p[2]-p[1])
 rd <- estimate(out,function(p) p[2]/p[1])
-return(list(risk=out,difference=ed,ratio=rd))
+return(list(risk=out,difference=ed,ratio=rd,risk.iid=risk.iid))
 }# }}}
 
 ##' Fast additive hazards model with robust standard errors 
