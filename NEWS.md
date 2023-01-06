@@ -1,51 +1,51 @@
 # mets 1.3.2
-  - Extension of recreg (Ghosh-Lin model) to deal with composite outcomes.
-  - recurrent events regression with IPCW adjusment for fixed time point: recregIPCW
-
+  - Extension of `recreg` (Ghosh-Lin model) to deal with composite outcomes.
+  - recurrent events regression with IPCW adjustment for fixed time point: `recregIPCW`
 
 # mets 1.3.1
   - Maintenance release
 
 # mets 1.3.0
-  - Efficient IPCW for binary data: Effbinreg 
-  - IPCW restricted mean survival regression: resmeanIPCW 
-  - Lin-Ying additive hazards model with fast robust standard errors: aalenMets 
-  - mediator weighted survial mediation with robust standard errors: mediatorSurv
+  - Efficient IPCW for binary data: `Effbinreg` 
+  - IPCW restricted mean survival regression: `resmeanIPCW` 
+  - Lin-Ying additive hazards model with fast robust standard errors: `aalenMets`  
+  - mediator weighted survival mediation with robust standard errors: `mediatorSurv`
   - Examples updated
-  - dutility function no longer casts warnings when handling formulas
-  - Efficient estimation of recurrent events mean: recurrentMarginalAIPCW 
-  - Average treatment effect for competing risks and binary data: logitATE, binregATE
-  - Recurrent events regression with IPCW adjustment (Ghosh-Lin model) : recreg
+  - `dutility` function no longer casts warnings when handling formulas
+  - Efficient estimation of recurrent events mean: `recurrentMarginalAIPCW` 
+  - Average treatment effect for competing risks and binary data: `logitATE`, `binregATE`
+  - Recurrent events regression with IPCW adjustment (Ghosh-Lin model) : `recreg`
 
 # mets 1.2.8.1
   - Maintenance release
 
 # mets 1.2.8
-  - Augmentation of binomial regression model: BinAugmentCifstrata
-  - Augmentation of Fine-Gray model: FG_AugmentCifstrata
+  - Augmentation of binomial regression model: `BinAugmentCifstrata`
+  - Augmentation of Fine-Gray model: `FG_AugmentCifstrata`
   - Double Fine-Gray model for two causes.
-  - Likelihood evaluation of mvn uses Moore-Penrose pseudo-inverese (threshold set via lava.options(itol=...)
+  - Likelihood evaluation of `mvn` uses Moore-Penrose pseudo-inverese (threshold
+    set via `lava.options(itol=...)`
   - Vignette updates
 
 # mets 1.2.7.1
   - Maintenance release
 
 # mets 1.2.6
-  - Cumulative incidence regression cifreg function
+  - Cumulative incidence regression `cifreg` function
     - Fine-Gray model with cloglog link of (1-F_1(t,x))
     - Logit link
   - Prototype of wildbootstrap for Cox regression with
     - confidence bands for baseline
     - with confidenence bands cumulative incidence for two cox's
-  - Piecewise constant hazard: rpch, ppch
-  - Test-version of multinomial regression model (via phreg): mlogit
-  - Simulation for illness-death model: simMultistate
-  - Haplotype modelling for discrete time-to-pregnancy models:  haplo.surv.discrete
-  - Interval censoring for discrete time logit-survival model: interval.logitsurv.discrete
-  - Binomial Regression for competing risks data with censoring and one time point only: binreg
+  - Piecewise constant hazard: `rpch`, `ppch`
+  - Test-version of multinomial regression model (via phreg): `mlogit`
+  - Simulation for illness-death model: `simMultistate`
+  - Haplotype modelling for discrete time-to-pregnancy models: `haplo.surv.discrete`
+  - Interval censoring for discrete time logit-survival model: `interval.logitsurv.discrete`
+  - Binomial Regression for competing risks data with censoring and one time point only: `binreg`
 
 # mets 1.2.5
-  - Updated predict function for phreg
+  - Updated predict function for `phreg`
     - with plotting functionality
     - with robust standard errors
   - New vignettes started
@@ -53,7 +53,7 @@
     - twostage survival  model
     - multivariate competing risks
     - recurrent events
-  - logitSurv for fitting semiparametric proportional odds model
+  - `logitSurv` for fitting semiparametric proportional odds model
     - gof
     - robust standard errors for clustered case
   - twostageMLE for fast twostage fitting for clustered survival data
@@ -62,7 +62,7 @@
   - cumulative score process test gof now also for marginal Cox models
 
 # mets 1.2.4
-  - functions km (Kaplan-Meier) and cif (cumulative incidence
+  - functions `km` (Kaplan-Meier) and `cif` (cumulative incidence
     probability) with robust standard errors.
   - computation of probability of exceeding "k" events for recurrents
     processs
