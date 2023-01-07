@@ -1890,7 +1890,7 @@ class(out) <- "survivalG"
 return(out)
 }# }}}
 
-###{{{ summary
+###{{{ summary 
 
 ##' @export
 summary.survivalG <- function(object,...) {
@@ -1915,7 +1915,7 @@ print.summary.survivalG  <- function(x,...) {
 
 }
 
-###}}} print.summary
+###}}} summary 
 
 ##' Fast additive hazards model with robust standard errors 
 ##'
