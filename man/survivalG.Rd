@@ -30,10 +30,10 @@ dfactor(bmt) <- tcell~tcell
 
 fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
               cox.prep=TRUE,propodds=NULL)
-survivalG(fg1,bmt,50)
+summary(survivalG(fg1,bmt,50))
 
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt) 
-survivalG(ss,bmt,50)
+summary(survivalG(ss,bmt,50))
 }
 \author{
 Thomas Scheike

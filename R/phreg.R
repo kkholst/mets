@@ -1820,10 +1820,10 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##'
 ##' fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
 ##'               cox.prep=TRUE,propodds=NULL)
-##' survivalG(fg1,bmt,50)
+##' summary(survivalG(fg1,bmt,50))
 ##'
 ##' ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt) 
-##' survivalG(ss,bmt,50)
+##' summary(survivalG(ss,bmt,50))
 ##' @export
 survivalG <- function(x,data,time=NULL)
 {# {{{
@@ -1910,7 +1910,7 @@ print.summary.survivalG  <- function(x,...) {
     cat("\n")
 
     cat("Average Treatment effect ratio (G-estimator) :\n")
-    print(x$ratio,...)
+    print(x$ratio$coefmat,...)
     cat("\n")
 
 }
