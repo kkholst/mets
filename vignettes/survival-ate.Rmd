@@ -46,15 +46,17 @@ bmt$event <- (bmt$cause!=0)*1
 
 fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
 	      cox.prep=TRUE,propodds=NULL)
-survivalG(fg1,bmt,50)
+summary(survivalG(fg1,bmt,50))
 
 fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,
 	      cox.prep=TRUE,propodds=NULL)
-survivalG(fg2,bmt,50)
+summary(survivalG(fg2,bmt,50))
 
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
-survivalG(ss,bmt,50)
+summary(survivalG(ss,bmt,50))
+
 ```
+
 
 Comparing with binomial-regression ATE 
 
