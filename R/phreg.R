@@ -1800,34 +1800,72 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
+##' G-estimator for Cox and Fine-Gray model 
+##'
+##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
+##' for the Cox model based on phreg og the Fine-Gray model based on the
+##' cifreg function. Assumes that the first covariate is $A$ and this is a factor. 
+##' Gives influence functions of these risk estimates and SE's are based on
+##' these. 
+##' @param x phreg or cifreg object
+##' @param data data frame for risk averaging
+##' @param time for estimate
+##' @param ... Additional arguments to phreg 
+##' @author Thomas Scheike
+##' @examples
+##' 
+##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
+##' bmt$event <- (bmt$cause!=0)*1
+##' dfactor(bmt) <- tcell~tcell
+##'
+##' fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+##'               cox.prep=TRUE,propodds=NULL)
+##' survivalG(fg1,bmt,50)
+##'
+##' ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt) 
+##' survivalG(ss,bmt,50)
 ##' @export
-survivalG <- function(x,data,time)
+survivalG <- function(x,data,time=NULL)
 {# {{{
+
+if (is.null(time)) stop("give time for estimation of survival\n")
 
 if (inherits(x,"cifreg"))
 Aiid <- mets:::iid.baseline.cifreg(x,time=time) else 
 Aiid <- mets:::iid.baseline.phreg(x,time=time)
-vv <- crossprod(cbind(Aiid$base.iid,Aiid$beta.iid))
+###vv <- crossprod(cbind(Aiid$base.iid,Aiid$beta.iid))
 
-data0 <- data[,names(x$coef)]; data0[,names(coef(x))[1]] <- 0 
-data1 <- data[,names(x$coef)]; data1[,names(coef(x))[1]] <- 1 
+treat.name <- all.vars(update.formula(x$formula,1~.))[1]
+treatvar <- data[,treat.name]
+if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
+## treatvar, 1,2,...,nlev or 1,2
+nlev <- nlevels(treatvar)
+nlevs <- levels(treatvar)
+###treatvar <- as.numeric(treatvar)
+ntreatvar <- as.numeric(treatvar)
+ytreat <- ntreatvar-1
 
 Gf <- function(p,ic=0) {# {{{
-if (inherits(x,"cifreg")) {
-        ps0 <- 1- exp(-p[1]*exp(as.matrix(data0) %*% p[-1]))
-        ps1 <- 1- exp(-p[1]*exp(as.matrix(data1) %*% p[-1]))
-} else if (inherits(x,"recreg")) {
-        ps0 <- p[1]*exp(as.matrix(data0) %*% p[-1])
-        ps1 <- p[1]*exp(as.matrix(data1) %*% p[-1])
-}
-else 
-{
-        ps0 <-  exp(-p[1]*exp(as.matrix(data0) %*% p[-1]))
-        ps1 <-  exp(-p[1]*exp(as.matrix(data1) %*% p[-1]))
-}
+risks <- c()
+a <- nlevs[1]
+formulaX <- update.formula(x$formula,.~.)
+formulaX <- drop.specials(formulaX,"cluster")
+formulaX[-2]
+datA <- dkeep(data,x=all.vars(formulaX))
+xlev <- lapply(datA,levels)
+for (a in nlevs) {# {{{
+    datA[,treat.name] <- a
+    Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
+   rra <- exp(Xa %*% p[-1])
 
-Gest <- c(mean(ps0),mean(ps1))
-if (ic==1) Gest <- list(Gest=Gest,iid=t(t(cbind(ps0,ps1))-Gest))
+if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
+else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
+else { ps0 <-  exp(-p[1]*rra) }
+risks <- cbind(risks,ps0)
+}# }}}
+
+Gest <- apply(risks,2,mean)
+if (ic==1) Gest <- list(Gest=Gest,iid=t(t(risks)-Gest))
 return(Gest)
 }
 # }}}
@@ -1836,20 +1874,21 @@ cumhaz.time <- Cpred(x$cumhaz,time)[-1]
 theta <- c(cumhaz.time,x$coef)
 
 icf <- Gf(theta,ic=1)
-
+###
 require(numDeriv)
 DG <- jacobian(Gf,theta,ic=0)
 nid <- max(x$id)
-risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid + cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
+risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid+
+            cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
 vv <- crossprod(risk.iid)
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
 out <- estimate(coef=icf$Gest,vcov=vv)
-ed <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[2]-p[1])
-rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[2]/p[1])
-return(list(risk=out,difference=ed,ratio=rd,risk.iid=risk.iid,
-	    G=icf$Gest,vcov=vv))
+ed <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]-p[1])
+rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]/p[1])
+return(list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv))
 }# }}}
+
 
 ##' Fast additive hazards model with robust standard errors 
 ##'
