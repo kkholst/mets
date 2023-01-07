@@ -1885,8 +1885,42 @@ vv <- crossprod(risk.iid)
 out <- estimate(coef=icf$Gest,vcov=vv)
 ed <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]-p[1])
 rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]/p[1])
-return(list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv))
+out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
+class(out) <- "survivalG"
+return(out)
 }# }}}
+
+###{{{ summary
+
+##' @export
+summary.survivalG <- function(object,...) {
+  res <- list(risk=object$risk,difference=ed,ratio=rd)
+  class(res) <- "summary.survivalG"
+  res
+}
+
+##' @export
+print.summary.survivalG  <- function(x,...) {
+
+    cat("risk:\n")
+    printCoefmat(x$risk,...)
+    cat("\n")
+
+    cat("Average Treatment effects (G-estimator) :\n")
+    printCoefmat(x$difference,...)
+    cat("\n")
+
+    cat("Average Treatment effect ratio (G-estimator) :\n")
+    printCoefmat(x$ratio,...)
+    cat("\n")
+
+  cat("\n")
+
+}
+
+###}}} print.summary
+
+
 
 
 ##' Fast additive hazards model with robust standard errors 
