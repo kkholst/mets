@@ -1833,11 +1833,10 @@ if (is.null(time)) stop("give time for estimation of survival\n")
 if (inherits(x,"cifreg"))
 Aiid <- mets:::iid.baseline.cifreg(x,time=time) else 
 Aiid <- mets:::iid.baseline.phreg(x,time=time)
-###vv <- crossprod(cbind(Aiid$base.iid,Aiid$beta.iid))
 
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 treatvar <- data[,treat.name]
-if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
+if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
 ## treatvar, 1,2,...,nlev or 1,2
 nlev <- nlevels(treatvar)
 nlevs <- levels(treatvar)

@@ -25,19 +25,31 @@ library(mets)
 ATE 
 ====
 
-Using the G-estimation based on the Cox or Fine-Gray model 
+Computing the G-estimation based on the Cox or Fine-Gray model :
+\[
+\hat S(t,A=a) = n^{-1} \sum_i S(t,A=a,X_i) 
+\]
+and this estimator has influence function
+\[
+S(t,A=a,X_i) -  S(t,A=a)  + E( D_{A_0(t), \beta} S(t,A=a,X_i)  ) \epsilon_i(t)
+\]
+where $\epsilon_i(t)$ is the iid decomposition of $(\hat A(t) - A(t), \hat \beta- \beta)$.
+
+
 
 ```{r}
 set.seed(100)
 
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
-dfactor(bmt) <- tcell.f~tcell
+dfactor(bmt) <- tcell~tcell
 bmt$event <- (bmt$cause!=0)*1
 
-fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,cox.prep=TRUE,propodds=NULL)
+fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+	      cox.prep=TRUE,propodds=NULL)
 survivalG(fg1,bmt,50)
 
-fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,cox.prep=TRUE,propodds=NULL)
+fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,
+	      cox.prep=TRUE,propodds=NULL)
 survivalG(fg2,bmt,50)
 
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
@@ -48,11 +60,12 @@ Comparing with binomial-regression ATE
 
 ```{r}
 
-br1 <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,time=40,treat.model=tcell.f~platelet+age)
+br1 <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+		 time=40,treat.model=tcell~platelet+age)
 summary(br1)
 
-sr1 <- binregATE(Event(time,event)~tcell.f+platelet+age,bmt,cause=1,time=40,
-		 treat.model=tcell.f~platelet+age)
+sr1 <- binregATE(Event(time,event)~tcell+platelet+age,bmt,cause=1,
+		 time=40, treat.model=tcell~platelet+age)
 summary(sr1)
 ```
 
