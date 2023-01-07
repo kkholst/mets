@@ -1882,7 +1882,7 @@ risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid+
 vv <- crossprod(risk.iid)
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
-out <- estimate(coef=icf$Gest,vcov=vv)
+out <- estimate(coef=icf$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]-p[1])
 rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]/p[1])
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
