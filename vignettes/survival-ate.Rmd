@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5        
 vignette: >
-  %\VignetteIndexEntry{Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks}
+  %\VignetteIndexEntry{Average treatment effect (ATE) based on the Cox and Fine-Gray model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
