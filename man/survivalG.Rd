@@ -12,8 +12,6 @@ survivalG(x, data, time = NULL)
 \item{data}{data frame for risk averaging}
 
 \item{time}{for estimate}
-
-\item{...}{Additional arguments to phreg}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }

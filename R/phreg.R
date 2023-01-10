@@ -275,7 +275,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg 
+##' @aliases phreg phreg.par robust.phreg readPhreg  iid.baseline.phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -806,7 +806,7 @@ if (is.null(x$propodds)) {
 
 } # }}}
 
-##' @export
+##' @export iid.baseline.phreg 
 iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_i int_0^t f(s)/S_0(s) dM_{ki}(s) - P(t) \beta_k
@@ -1810,7 +1810,6 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param x phreg or cifreg object
 ##' @param data data frame for risk averaging
 ##' @param time for estimate
-##' @param ... Additional arguments to phreg 
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -1831,8 +1830,8 @@ survivalG <- function(x,data,time=NULL)
 if (is.null(time)) stop("give time for estimation of survival\n")
 
 if (inherits(x,"cifreg"))
-Aiid <- mets:::iid.baseline.cifreg(x,time=time) else 
-Aiid <- mets:::iid.baseline.phreg(x,time=time)
+Aiid <- iid.baseline.cifreg(x,time=time) else 
+Aiid <- iid.baseline.phreg(x,time=time)
 
 ### dealing with first variable that is a factor 
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
@@ -1876,8 +1875,7 @@ theta <- c(cumhaz.time,x$coef)
 
 icf <- Gf(theta,ic=1)
 ###
-require(numDeriv)
-DG <- jacobian(Gf,theta,ic=0)
+DG <- numDeriv::jacobian(Gf,theta,ic=0)
 nid <- max(x$id)
 risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid+
             cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)

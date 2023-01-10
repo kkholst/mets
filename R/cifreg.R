@@ -536,7 +536,7 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
   return(res)
 }# }}}
 
-##' @export
+##' @export iid.baseline.cifreg 
 iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
