@@ -1834,6 +1834,7 @@ if (inherits(x,"cifreg"))
 Aiid <- mets:::iid.baseline.cifreg(x,time=time) else 
 Aiid <- mets:::iid.baseline.phreg(x,time=time)
 
+### dealing with first variable that is a factor 
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 treatvar <- data[,treat.name]
 if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
@@ -1844,24 +1845,25 @@ nlevs <- levels(treatvar)
 ntreatvar <- as.numeric(treatvar)
 ytreat <- ntreatvar-1
 
-Gf <- function(p,ic=0) {# {{{
-risks <- c()
-a <- nlevs[1]
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
 formulaX[-2]
 datA <- dkeep(data,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
-for (a in nlevs) {# {{{
-    datA[,treat.name] <- a
-    Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
-   rra <- exp(Xa %*% p[-1])
 
-if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
-else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
-else { ps0 <-  exp(-p[1]*rra) }
-risks <- cbind(risks,ps0)
-}# }}}
+Gf <- function(p,ic=0) {# {{{
+   risks <- c()
+   a <- nlevs[1]
+   for (a in nlevs) {# {{{
+      datA[,treat.name] <- a
+      Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
+      rra <- exp(Xa %*% p[-1])
+
+      if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
+      else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
+      else { ps0 <-  exp(-p[1]*rra) } 
+      risks <- cbind(risks,ps0)
+    }# }}}
 
 Gest <- apply(risks,2,mean)
 if (ic==1) Gest <- list(Gest=Gest,iid=t(t(risks)-Gest))
@@ -1888,7 +1890,7 @@ rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]/p[1],null=1)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 class(out) <- "survivalG"
 return(out)
-}# }}}
+}
 
 ###{{{ summary 
 
@@ -1916,6 +1918,7 @@ print.summary.survivalG  <- function(x,...) {
 }
 
 ###}}} summary 
+# }}}
 
 ##' Fast additive hazards model with robust standard errors 
 ##'
