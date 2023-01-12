@@ -217,7 +217,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     data$Nt <- data[,paste("Count",cause[1],sep="")]
  
     ## augmentation model and remove intercept
-    if (!is.null(augment.model)) XXA <- model.matrix(augment.model,data)[,-1] else XXA <- NULL
+    if (!is.null(augment.model)) { XXA <- model.matrix(augment.model,data)[,-1]; namesXXA <- colnames(XXA); } else XXA <- NULL
 
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
@@ -589,9 +589,11 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 
     pXXA <- ncol(XXA)
     gammat <-  .Call("CubeMattime",hesst,covXsYs,pXXA,pXXA,pXXA,p,1,0,0,PACKAGE="mets")$XXX
-###   solve(matrix(hesst[1,],3,3)) %*% matrix(covXsYs[1,],3,2)
+### solve(matrix(hesst[1,],3,3)) %*% matrix(covXsYs[1,],3,2)
     gammat[is.na(gammat)] <- 0
     gammat[gammat==Inf] <- 0
+    namesG <- c(); for (i in 1:p) namesG <- c(namesG,paste(namesXXA,"-e",i,sep=""))
+    colnames(gammat) <- namesG
     augmentt <- .Call("CubeMattime",gammat,UA,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
     augment.times <- -apply(augmentt,2,sum)
     gain.times <- .Call("CubeMattime",covXsYs,gammat,pXXA,p,pXXA,p,0,1,0,PACKAGE="mets")$XXX
@@ -618,6 +620,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    gamma <- -1*.Call("CubeMattime",matrix(varZdN,nrow=1),matrix(covXYdN,nrow=1),pXXA,pXXA,p,pXXA,1,0,1,PACKAGE="mets")$XXX
    gamma <- matrix(gamma,p,pXXA,byrow=TRUE)
    gamma[is.na(gamma)] <- 0; gamma[gamma==Inf] <- 0
+   colnames(gamma) <- namesXXA
    augment <- c(gamma %*% apply(ftime*UA/c(Gcj),2,sum))
    var.augment  <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
