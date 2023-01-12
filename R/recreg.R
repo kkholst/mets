@@ -604,7 +604,14 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         ### simple parabola
 	maxt <- max(timeC)
         ftime <- timeC*(timeC-maxt)/maxt^2
-   } else ftime <- ftime.augment(timeC)
+   } else { 
+	   if (is.list(ftime.augment)) ftime <- ftime.augment[[1]](timeC) else ftime <- ftime.augment(timeC)
+	   if (length(ftime.augment)==2) {
+              timepar <- ftime.augment[[2]](timeC)
+	      parap <- lm(gammat~-1+timepar)
+	      gammat <- parap$fitted.values
+	   }
+   }
    ftime.gamma <- ftime
    varZdN <- matrix(apply(ftime^2*hesst/c(Gcj^2),2,sum),pXXA,pXXA)
    covXYdN <- matrix(apply(ftime*covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE) 
