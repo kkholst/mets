@@ -132,7 +132,7 @@ recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.mo
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=NULL,
-	  cox.prep=FALSE,wcomp=NULL,augment.model=NULL,...) { # {{{
+	  cox.prep=FALSE,wcomp=NULL,augment.model=NULL,ftime.augment=NULL,...) { # {{{
 # {{{ setting up weights, strata, beta and so forth before the action starts
     p <- ncol(X)
     if (missing(beta)) beta <- rep(0,p)
@@ -599,8 +599,13 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     var.augment.times <-  gain.times 
 
    ###
-   timeC <- xx2$time[jumpsC]
-   ftime <- timeC*(timeC-max.jump)/max.jump^2
+   time.gammat <- timeC <- xx2$time[jumpsC]
+   if (is.null(ftime.augment)) {
+        ### simple parabola
+	maxt <- max(timeC)
+        ftime <- timeC*(timeC-maxt)/maxt^2
+   } else ftime <- ftime.augment(timeC)
+   ftime.gamma <- ftime
    varZdN <- matrix(apply(ftime^2*hesst/c(Gcj^2),2,sum),pXXA,pXXA)
    covXYdN <- matrix(apply(ftime*covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE) 
    gamma <- -1*.Call("CubeMattime",matrix(varZdN,nrow=1),matrix(covXYdN,nrow=1),pXXA,pXXA,p,pXXA,1,0,1,PACKAGE="mets")$XXX
@@ -612,11 +617,11 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    #### iid magic  for censoring augmentation martingale{{{
    ### int_0^infty gamma (e_i - ebar(s)) 1/G_c(s) dM_i^c
    S0iG <- S0i <- rep(0,length(xx2$strata))
-   S0iG[jumpsC] <- ftime/(S0rrr[jumpsC]*Gcj)
+   S0iG[jumpsC] <- ftime/(S0rrr[jumpsC]*c(Gcj))
    S0i[jumpsC] <- c(1/S0rrr[jumpsC])
    U <- E <- matrix(0,nrow(xx2$X),pXXA)
    E[jumpsC,] <- EA; 
-   U[jumpsC,] <- ftime*UA/Gcj
+   U[jumpsC,] <- ftime*UA/c(Gcj)
    cumhaz <- cumsumstrata(S0iG,strataCxx2,nCstrata)
    EdLam0 <- apply(E*S0iG,2,cumsumstrata,strataCxx2,nCstrata)
    MGCt <- U[,drop=FALSE]-(XXA*c(cumhaz)-EdLam0)*c(rr0)
@@ -638,6 +643,8 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    iid.augment.times <-  MGCttiid %*% iH
    Uiid.augment <- Uiid-iid.augment
    Uiid.augment.times <- Uiid-iid.augment.times
+   ## scale with G_c(t) to compare with gamma
+   gammat <- gammat * c(Gcj)
 # }}}
 
    var.augment <-  varmc  -  iH %*% var.augment %*% iH
@@ -651,7 +658,9 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     var.augment.times <- var.augment <- NULL
     var.augment.times.iid <- var.augment.iid <- NULL
     Uiid.augment.times <- Uiid.augment <- NULL
-    gamma <- gammat <- NULL
+    time.gammat <- gamma <- gammat <- NULL
+    ftime.gamma <- NULL
+    Gcj <- NULL
    } ## }}}
 
     if (!is.null(orig.strataA)) { ## compute augmentation term based on this beta{{{
@@ -718,7 +727,7 @@ out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	var.augment.iid=var.augment.iid,var.augment.times.iid=var.augment.times.iid,
 	lin.augment=c(augment),lindyn.augment=c(augment.times),
 	iid.augment=Uiid.augment,iid.augment.times=Uiid.augment.times,
-	gamma=gamma, gamma.times=gammat
+	gamma=gamma, gamma.times=gammat, time.gammat=time.gammat,ftime.gamma=ftime.gamma,Gcj=Gcj
 	)
 
 if (cox.prep) out <- c(out,list(cox.prep=xx2))
