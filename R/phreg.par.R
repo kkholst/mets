@@ -2,7 +2,7 @@
 ## m <- lvm(y~x)
 ## distribution(m,~y) <- coxWeibull.lvm(shape=3,scale=5)
 ## transform(m,~status) <- function(...) TRUE
-## d <- sim(m,2e4,p=c("y~x"=2))
+## d <- lava::sim(m,2e4,p=c("y~x"=2))
 ## library(eha)
 ## with(d,phreg.par(y,status,cbind(x)))
 ## weibreg(Surv(y,status)~x,data=d)

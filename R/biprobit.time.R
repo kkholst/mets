@@ -31,7 +31,7 @@ biprobit.time <- function(formula,data,id,...,
         ltimes <- censtime[,1]        
         data$truncsurv <- Surv(ltimes,time,noncens)
         trunc.formula <- update(formula,truncsurv~.)       
-        ud.trunc <- aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1,max.clust=NULL,
+        ud.trunc <- timereg::aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1,max.clust=NULL,
                           clusters=data[,id], ...)
         X <- model.matrix(trunc.formula,data)
         ##dependX0 <- model.matrix(theta.formula,data)
@@ -206,7 +206,7 @@ biprobit.time.trunc.test <- function(formula,data,id,...,
         ltimes <- censtime[,1]        
         data$truncsurv <- Surv(ltimes,time,noncens)
         trunc.formula <- update(formula,truncsurv~.)       
-        ud.trunc <- aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1,max.clust=NULL,
+        ud.trunc <- timereg::aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1,max.clust=NULL,
                           clusters=data[,id], ...)
         X <- model.matrix(trunc.formula,data)
         ##dependX0 <- model.matrix(theta.formula,data)

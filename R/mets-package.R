@@ -8,15 +8,18 @@
 ##' @docType package
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @useDynLib mets, .registration=TRUE
-##' @import stats splines timereg Rcpp mvtnorm
-##' @importFrom lava iid estimate bootstrap compare score information twostage %++% %ni% addvar<- blockdiag cancel Col
-##'                  confband constrain<- constraints covariance covariance<- coxWeibull.lvm devcoords distribution<-
-##'                  endogenous eventTime Expand getoutcome gof intercept<- Inverse kill<- latent latent<- lava.options lvm
-##'                  Model multigroup parameter<- pars regression regression<- revdiag sim trim
-##' @importFrom survival Surv is.Surv concordance
+##' @import stats splines Rcpp mvtnorm
+##' @importFrom lava iid estimate bootstrap compare score information twostage
+##'   %++% %ni% addvar<- blockdiag cancel Col confband constrain<- constraints
+##'   covariance covariance<- coxWeibull.lvm devcoords distribution<- endogenous
+##'   eventTime Expand getoutcome gof intercept<- Inverse kill<- latent latent<-
+##'   lava.options lvm Model multigroup parameter<- pars regression regression<-
+##'   revdiag trim IC
+##' @importFrom timereg two.stage predict.two.stage sindex.prodlim Cpred pc.hazard
+##' @importFrom survival Surv is.Surv concordance strata
 ##' @importFrom utils head tail getS3method glob2rx capture.output
-##' @importFrom graphics matplot lines plot polygon par points abline
-##'     title matlines legend
+##' @importFrom graphics matplot lines plot polygon par points abline title
+##'   matlines legend
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @keywords package
 ##' @examples
@@ -24,6 +27,22 @@
 ##' ## To appear
 ##'
 NULL
+
+##' @export
+lava::IC
+
+##' @export
+lava::iid
+
+##' @export
+lava::twostage
+
+##' @export
+lava::estimate
+
+##' @export
+lava::gof
+
 
 ##' np data set
 ##'

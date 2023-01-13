@@ -269,9 +269,9 @@ if (gplot==1) {
     
     # In fact: here we use the same quantiles independent of log or not log. 
     # Therefore: A division by cumx is required in the definition of the log bands.
-    pcumsdb.EE <- percen(c(apply(abs(zcums),2,max, na.rm=TRUE)),0.95)
-    pcumsdb.EE.log <- percen(apply(abs(zcums),2,max, na.rm=TRUE),0.95)
-    pcumsdb.EE.log.o <- percen(apply(abs(zlogcums),2,max, na.rm=TRUE),0.95)
+    pcumsdb.EE <- timereg::percen(c(apply(abs(zcums),2,max, na.rm=TRUE)),0.95)
+    pcumsdb.EE.log <- timereg::percen(apply(abs(zcums),2,max, na.rm=TRUE),0.95)
+    pcumsdb.EE.log.o <- timereg::percen(apply(abs(zlogcums),2,max, na.rm=TRUE),0.95)
 
     band.EE <-     cbind( cumx - sdcumb * pcumsdb.EE , cumx + sdcumb * pcumsdb.EE)
     band.EE.log <- cbind( cumx*exp(- pcumsdb.EE.log * sdcumb * cumx.inv)  ,cumx*exp( pcumsdb.EE.log * sdcumb * cumx.inv ))

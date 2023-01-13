@@ -20,15 +20,15 @@ URL: https://kkholst.github.io/mets/
 BugReports: https://github.com/kkholst/mets/issues
 Depends:
     R (>= 3.5),
-    timereg (>= 1.9.4),
-    lava (>= 1.6.6)
+    survival (>= 2.43-1)
 Imports:
+    lava (>= 1.7.1),
     mvtnorm,
     numDeriv,
     compiler,
     Rcpp,
     splines,
-    survival (>= 2.43-1),
+    timereg (>= 1.9.4)
 Suggests:
     optimx,
     prodlim,

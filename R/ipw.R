@@ -69,13 +69,13 @@ ipw <- function(formula,data,cluster,
         }
         noncens <- !status
         if (is.null(attr(terms(formula,"prop"),"specials")$prop)) {
-            ud.cens <- aalen(formula,n.sim=0,robust=0,data=data,...)
+            ud.cens <- timereg::aalen(formula,n.sim=0,robust=0,data=data,...)
             XZ <- model.matrix(formula,data)
 ###         Gcx <- ud.cens$cum[prodlim::sindex(ud.cens$cum[,1],otimes),-1]
             Gcx<-cpred(ud.cens$cum,otimes)[,-1];            
             Gcx<-exp(-apply(Gcx*XZ,1,sum))            
         } else {
-            ud.cens <- cox.aalen(formula,n.sim=0,robust=0,data=data,...)
+            ud.cens <- timereg::cox.aalen(formula,n.sim=0,robust=0,data=data,...)
             XZ <- model.matrix(formula,data)
             Gcx<-cpred(ud.cens$cum,otimes)[,-1];
             Gcx<-exp(-apply(Gcx*XZ,1,sum))            
@@ -90,9 +90,9 @@ ipw <- function(formula,data,cluster,
     if (trunc.prob & ncol(censtime)==3) { ## truncation ## {{{ 
         data$truncsurv <- Surv(ltimes,otimes,noncens)
         trunc.formula <- update(formula,truncsurv~.)        
-        ud.trunc <- aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1)
+        ud.trunc <- timereg::aalen(trunc.formula,data=data,robust=0,n.sim=0,residuals=0,silent=1)
         dependX0 <- model.matrix(theta.formula,data)        
-        twostage.fit <-two.stage(ud.trunc,data=data,robust=0,detail=0,
+        twostage.fit <- timereg::two.stage(ud.trunc,data=data,robust=0,detail=0,
 			         clusters=data[,cluster],
 				 theta.des=dependX0)#,Nit=20,step=1.0,notaylor=1)
 	pre.theta <- dependX0 %*% twostage.fit$theta
@@ -102,7 +102,7 @@ ipw <- function(formula,data,cluster,
 	colnames(X)[ncol(X)] <- "pre.theta"
         ww <- fast.reshape(cbind(X,".num"=seq(nrow(X)),".lefttime"=ltimes),varying=c(".num",".lefttime"),id=data[,cluster])
 	if (anyNA(ww)) stop("not balanced for predict two stage\n");  
-        Prob <- predict.two.stage(twostage.fit,X=ww[,Xnam],
+        Prob <- timereg::predict.two.stage(twostage.fit,X=ww[,Xnam],
                                   times=ww[,".lefttime1"],times2=ww[,".lefttime2"],
                                   theta=ww$pre.theta)
         P0 <- numeric(nrow(X))
@@ -282,7 +282,7 @@ ipw2 <- function(data,times=NULL,entrytime=NULL,time="time",cause="cause",
         X <- model.matrix(cens.formula,data=data)[,-1,drop=FALSE]; 
 
 	if (!is.null(entrytime)) {
-###		trunc.model <- cox.aalen(Surv(-data[,time],-entrytime+prec,rep(1,nrow(data))) ~ prop(X)) 
+###		trunc.model <- timereg::cox.aalen(Surv(-data[,time],-entrytime+prec,rep(1,nrow(data))) ~ prop(X))
 		trunc.model <- survival::coxph(Surv(-data[,time],-entrytime+prec,rep(1,nrow(data))) ~ X) 
 ###                baseout <- cens.model$cum 
 		baseout <- survival::basehaz(trunc.model,centered=FALSE); 

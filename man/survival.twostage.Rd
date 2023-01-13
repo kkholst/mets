@@ -234,7 +234,7 @@ ud$intstrata <- factor(ud$intstrata)
 ## se's computed based on the id variable across strata "cluster"
 ud$idstrata <- ud$id+(as.numeric(ud$strata)-1)*2000
 
-marg2 <- aalen(Surv(boxtime,status)~-1+factor(num):factor(intstrata),
+marg2 <- timereg::aalen(Surv(boxtime,status)~-1+factor(num):factor(intstrata),
                data=ud,n.sim=0,robust=0)
 tdes <- model.matrix(~-1+factor(strata),data=ud)
 fitp2 <- survival.twostage(marg2,data=ud,se.clusters=ud$cluster,clusters=ud$idstrata,

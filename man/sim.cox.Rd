@@ -4,9 +4,10 @@
 \alias{sim.cox}
 \alias{read.fit}
 \alias{sim.base}
+\alias{simulate.cox}
 \title{Simulation of output from Cox model.}
 \usage{
-\method{sim}{cox}(cox, n, data = NULL, cens = NULL, rrc = NULL, entry = NULL, ...)
+sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}

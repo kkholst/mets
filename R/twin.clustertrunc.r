@@ -69,7 +69,7 @@ d2 <- na.omit(d2)
 ### only double entry people
 data <- fast.reshape(d2,labelnum=TRUE)
 
-des <- aalen.des(survformula,data=data,model=model)
+des <- timereg::aalen.des(survformula,data=data,model=model)
 factornamesX  <-  !(des$covnamesX %in% Znames)
 colnames(des$X) <- des$covnamesX
 if (sum(factornamesX)>=1) data <- cbind(data,des$X[,factornamesX,drop=FALSE])
@@ -93,10 +93,10 @@ theta.des <- theta.des[data$dataid,]
 
 for (i in 1:Nit)
 { ## {{{
-  if (model=="cox.aalen") { aout <- cox.aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0,beta=0);
+  if (model=="cox.aalen") { aout <- timereg::cox.aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0,beta=0);
                             beta <- c(aout$gamma,aout$cum[,-1])
   }  else  {
-           aout <- aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0);
+           aout <- timereg::aalen(survformula,data=data,weights=1/pweight,robust=0,n.sim=0);
            beta <- aout$cum[,-1]
   }
   if (i==1) {
@@ -138,8 +138,8 @@ for (i in 1:Nit)
 } ## }}}
 
 if (final.fitting==TRUE) {  ## {{{
-  if (model=="cox.aalen") aout <- cox.aalen(survformula,data=data,weights=1/pweight,n.sim=0,...) else
-           aout <- aalen(survformula,data=data,weights=1/pweight,n.sim=0,...)
+  if (model=="cox.aalen") aout <- timereg::cox.aalen(survformula,data=data,weights=1/pweight,n.sim=0,...) else
+           aout <- timereg::aalen(survformula,data=data,weights=1/pweight,n.sim=0,...)
   tout <- twostage(aout,data=data,clusters=nclusters,theta.des=theta.des,var.link=var.link)
 } ## }}}
 
@@ -148,7 +148,6 @@ res <- list(marg=aout,two=tout,marg.weights=pweight,dtheta=dtheta,dmarg=dmarg,mo
 return(res)
 } ## }}}
 
-##' @export
 ###twin.dobdata <- function(survformula,data=data,clusters=NULL,
 ###                         entry="v",exit="time",status="status")
 ###{ ## {{{
@@ -159,7 +158,7 @@ return(res)
 ###d0 <- data[,c(entry,exit,status,clusters)]
 ###
 ###model <- "aalen"
-###des <- aalen.des(survformula,data=data,model=model)
+###des <- timereg::aalen.des(survformula,data=data,model=model)
 ###X <- des$X
 ######med <- des$covnamesX %in% names(data)
 ###   colnames(X) <- des$covnamesX

@@ -88,7 +88,7 @@
 ##'   return(p[1]/p[2])
 ##' }
 ##' 
-##' estimate(cifdob,f=riskratio)
+##' lava::estimate(cifdob,f=riskratio)
 ##'
 ##' @aliases logitIPCW binregt
 ##' @export

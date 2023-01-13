@@ -27,7 +27,7 @@ data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 summary(out)
 
-## out2 <- aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+## out2 <- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
 ## summary(out2)
 
 }

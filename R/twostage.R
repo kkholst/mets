@@ -158,7 +158,7 @@
 ##' ## se's computed based on the id variable across strata "cluster"
 ##' ud$idstrata <- ud$id+(as.numeric(ud$strata)-1)*2000
 ##'
-##' marg2 <- aalen(Surv(boxtime,status)~-1+factor(num):factor(intstrata),
+##' marg2 <- timereg::aalen(Surv(boxtime,status)~-1+factor(num):factor(intstrata),
 ##'                data=ud,n.sim=0,robust=0)
 ##' tdes <- model.matrix(~-1+factor(strata),data=ud)
 ##' fitp2 <- survival.twostage(marg2,data=ud,se.clusters=ud$cluster,clusters=ud$idstrata,
@@ -239,6 +239,7 @@ survival.twostage <- function(margsurv,data=parent.frame(),
     se.clusters=NULL,numDeriv=1,random.design=NULL,pairs=NULL,dim.theta=NULL,
     numDeriv.method="simple",additive.gamma.sum=NULL,var.par=1,no.opt=FALSE,...)
 {#
+  requireNamespace("timereg")
 # seting up design and variables
 iid <- 1
 two.stage <- 1; rate.sim <- 1; sym=1; var.func <- NULL
@@ -714,7 +715,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
         nc <- 0
 	for (i in 1:length(cr.models)) {
-              X <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
+              X <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data1)$X
 	      nc <- nc+ncol(X)
 	}
 	dBaalen    <- matrix(0,length(dtimes),nc)
@@ -726,11 +727,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
         ### starting values for iteration
         Bit <- Bitcase <- c()
 	for (i in 1:length(cr.models)) { #
-	      a[[i]]  <-  aalen(as.formula(cr.models2[[i]]),data=data1,robust=0,weights=weights1)
+	      a[[i]]  <-  timereg::aalen(as.formula(cr.models2[[i]]),data=data1,robust=0,weights=weights1)
 	      da[[i]] <- apply(a[[i]]$cum[,-1,drop=FALSE],2,diff)
 	      jumpsi  <- (1:length(dtimes))[dcauses==i]
-              X       <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
-              Xcase   <- aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
+              X       <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data1)$X
+              Xcase   <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
 	      if (i==1) fp <- 1
 	      indexc  <- fp:(fp+ncol(X)-1)
 	      dBaalen[jumpsi,indexc] <- da[[i]]
@@ -821,11 +822,11 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
 	   nulrow    <- rep(0,ncol(Bit)+1)
 	   pbases    <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
-           X         <- aalen.des(as.formula(cr.models[[1]]),data=data)$X
+           X         <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data)$X
 	   psurvmarg <- exp(-apply(X*pbases,1,sum))  ## psurv given baseline
 	   if (ascertained==1) {
-              Xcase     <- aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
-              X         <- aalen.des(as.formula(cr.models[[1]]),data=data1)$X
+              Xcase     <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
+              X         <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data1)$X
 	      pba.case  <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
 	      ptrunc    <- rep(0,nrow(data))
 	      ### for control probands ptrunc=1, thus no adjustment
@@ -1257,7 +1258,7 @@ if (inherits(margsurv,c("aalen","cox.aalen"))) {
 	 formula<-attr(margsurv,"Formula");
 	 beta.fixed <- attr(margsurv,"beta.fixed")
 	 if (is.null(beta.fixed)) beta.fixed <- 1;
-	 ldata<-aalen.des(formula,data=data,model="cox.aalen");
+	 ldata <- timereg::aalen.des(formula,data=data,model="cox.aalen");
 	 id <- attr(margsurv,"id");
 	 mclusters <- attr(margsurv,"cluster.call")
 	 X<-ldata$X;
@@ -1317,7 +1318,7 @@ if (inherits(margsurv,c("aalen","cox.aalen"))) {
 
 if (!is.null(margsurv))  {
   if (inherits(margsurv,c("aalen","cox.aalen")))  { 
-         resi <- residualsTimereg(margsurv,data=data)
+         resi <- timereg::residualsTimereg(margsurv,data=data)
          RR  <- resi$RR
 	 cum <- resi$cumhaz/RR
 	 psurvmarg <- exp(-resi$cumhaz);
@@ -1797,7 +1798,7 @@ if (inherits(margsurv,c("aalen","cox.aalen"))) { #
 	 formula<-attr(margsurv,"Formula");
 	 beta.fixed <- attr(margsurv,"beta.fixed")
 	 if (is.null(beta.fixed)) beta.fixed <- 1;
-	 ldata<-aalen.des(formula,data=data,model="cox.aalen");
+	 ldata<- timereg::aalen.des(formula,data=data,model="cox.aalen");
 	 id <- attr(margsurv,"id");
 	 mclusters <- attr(margsurv,"cluster.call")
 	 X<-ldata$X;
@@ -1861,7 +1862,7 @@ if (inherits(margsurv,c("aalen","cox.aalen"))) { #
 
 if (!is.null(margsurv))  {
   if (inherits(margsurv,c("aalen","cox.aalen")))  { #
-         resi <- residualsTimereg(margsurv,data=data)
+         resi <- timereg::residualsTimereg(margsurv,data=data)
          RR  <- resi$RR
 	 psurvmarg <- exp(-resi$cumhaz);
          ptrunc <- rep(1,length(psurvmarg));
@@ -2032,7 +2033,7 @@ if (!is.null(margsurv))  {
 
         nc <- 0
 	for (i in 1:length(cr.models)) {
-              a2 <- aalen.des(as.formula(cr.models[[i]]),data=data)
+              a2 <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data)
 	      X <- a2$X
 	      nc <- nc+ncol(X)
 	}
@@ -2042,8 +2043,8 @@ if (!is.null(margsurv))  {
 	## first compute marginal aalen models for all causes
 	a <- list(); da <- list();
 	for (i in 1:length(cr.models)) {
-	      a[[i]] <-  aalen(as.formula(cr.models[[i]]),data=data,robust=0,weights=weights)
-              a2 <- aalen.des(as.formula(cr.models[[i]]),data=data)
+	      a[[i]] <-  timereg::aalen(as.formula(cr.models[[i]]),data=data,robust=0,weights=weights)
+              a2 <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data)
 	      X <- a2$X
 	      da[[i]] <- apply(a[[i]]$cum[,-1,drop=FALSE],2,diff)
 	      jumpsi <- (1:length(dtimes))[dcauses==i]
@@ -2116,7 +2117,7 @@ if (!is.null(margsurv))  {
 
         nc <- 0
 	for (i in 1:length(cr.models)) {
-              X <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
+              X <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data1)$X
 	      nc <- nc+ncol(X)
 	}
 	dBaalen    <- matrix(0,length(dtimes),nc)
@@ -2128,11 +2129,11 @@ if (!is.null(margsurv))  {
         ### starting values for iteration
         Bit <- Bitcase <- c()
 	for (i in 1:length(cr.models)) { #
-	      a[[i]]  <-  aalen(as.formula(cr.models2[[i]]),data=data1,robust=0,weights=weights1)
+	      a[[i]]  <-  timereg::aalen(as.formula(cr.models2[[i]]),data=data1,robust=0,weights=weights1)
 	      da[[i]] <- apply(a[[i]]$cum[,-1,drop=FALSE],2,diff)
 	      jumpsi  <- (1:length(dtimes))[dcauses==i]
-              X       <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
-              Xcase   <- aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
+              X       <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data1)$X
+              Xcase   <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
 	      if (i==1) fp <- 1
 	      indexc  <- fp:(fp+ncol(X)-1)
 	      dBaalen[jumpsi,indexc] <- da[[i]]
@@ -2226,11 +2227,11 @@ if (!is.null(margsurv))  {
 
 	   nulrow    <- rep(0,ncol(Bit)+1)
 	   pbases    <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),alltimes)[,-1,drop=FALSE]
-           X         <- aalen.des(as.formula(cr.models[[1]]),data=data)$X
+           X         <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data)$X
 	   psurvmarg <- exp(-apply(X*pbases,1,sum))  ## psurv given baseline
 	   if (ascertained==1) {
-              Xcase     <- aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
-              X         <- aalen.des(as.formula(cr.models[[1]]),data=data1)$X
+              Xcase     <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data.proband)$X
+              X         <- timereg::aalen.des(as.formula(cr.models[[1]]),data=data1)$X
 	      pba.case  <- cpred(rbind(nulrow,cbind(dtimesst,Bit)),entry)[,-1,drop=FALSE]
 	      ptrunc    <- rep(0,nrow(data))
 	      ### for control probands ptrunc=1, thus no adjustment
@@ -2304,13 +2305,13 @@ if (!is.null(margsurv))  {
 	   }
            for (i in 1:length(cr.models)) {
                   if (i==1) fp <- 1
-                  a2 <- aalen.des(as.formula(cr.models[[i]]),data=data)
+                  a2 <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data)
 	          X <- a2$X
 		  indexc <- fp:(fp+ncol(X)-1)
 	          psurvmarg <- cbind(psurvmarg,apply(X*pbases[,indexc],1,sum))
 	          if (ascertained==1 || case.control==1) {
-                     Xcase     <- aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
-                     X         <- aalen.des(as.formula(cr.models[[i]]),data=data1)$X
+                     Xcase     <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data.proband)$X
+                     X         <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data1)$X
 		     ptrunc.new <- rep(0,length(alltimes))
 		     ## delayed entry at time of ascertainment proband, for case control no adjustment for first
 		     if (ascertained==1) ptrunc.new[pairs[,1]] <- apply(X*pbase.case[,indexc,drop=FALSE],1,sum)*lstatuscase
@@ -2338,8 +2339,8 @@ if (!is.null(margsurv))  {
               Bit <- .Call("MatxCube",Bit,dim(xjump),xjump,PACKAGE="mets")$X
 	      caseweights <- profile.baseline$caseweights
 
-	      pp <- timereg.formula(as.formula(cr.models[[i]]))
-	      profile.cox <- cox.aalen(pp,data=data,robust=0,caseweight=caseweights)
+	      pp <- timereg::timereg.formula(as.formula(cr.models[[i]]))
+	      profile.cox <- timereg::cox.aalen(pp,data=data,robust=0,caseweight=caseweights)
 	      print(summary(profile.cox))
 	      plot(profile.cox)
 	  }
@@ -2349,7 +2350,7 @@ if (!is.null(margsurv))  {
 	   psurvmarg <- c()
            for (i in 1:length(cr.models)) {
 	          if (i==1) fp <- 1
-                  a2 <- aalen.des(as.formula(cr.models[[i]]),data=data)
+                  a2 <- timereg::aalen.des(as.formula(cr.models[[i]]),data=data)
 	          X <- a2$X
 	          indexc <- fp:(fp+ncol(X)-1)
 	          psurvmarg <- cbind(psurvmarg,apply(X*pbases[,indexc],1,sum))
@@ -2974,7 +2975,7 @@ datalr$tsid <- datalr[,id]
 if (is.null(covars))
 f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+factor(",num,")")))
 else f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+factor(",num,"):",covars)))
-marg1 <- aalen(f,data=datalr,n.sim=0,robust=0)
+marg1 <- timereg::aalen(f,data=datalr,n.sim=0,robust=0)
 
 fitlr<-  survival.twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
 Nit=Nit,detail=detail,silent=silent,weights=weights,

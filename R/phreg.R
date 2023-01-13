@@ -275,7 +275,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg  iid.baseline.phreg
+##' @aliases phreg phreg.par robust.phreg readPhreg iid.baseline.phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -678,12 +678,12 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 simCox <- function(n=1000, seed=1, beta=c(1,1), entry=TRUE) {
   if (!is.null(seed))
       set.seed(seed)
-  m <- lvm()
-  regression(m,T~X1+X2) <- beta
-  distribution(m,~T+C) <- coxWeibull.lvm(scale=1/100)
-  distribution(m,~entry) <- coxWeibull.lvm(scale=1/10)
-  m <- eventTime(m,time~min(T,C=0),"status")
-  d <- sim(m,n);
+  m <- lava::lvm()
+  lava::regression(m,T~X1+X2) <- beta
+  lava::distribution(m,~T+C) <- lava::coxWeibull.lvm(scale=1/100)
+  lava::distribution(m,~entry) <- lava::coxWeibull.lvm(scale=1/10)
+  m <- lava::eventTime(m,time~min(T,C=0),"status")
+  d <- lava::sim(m,n);
   if (!entry) d$entry <- 0
   else d <- subset(d, time>entry,select=-c(T,C))
   return(d)
@@ -1936,7 +1936,7 @@ print.summary.survivalG  <- function(x,...) {
 ##' out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 ##' summary(out)
 ##' 
-##' ## out2 <- aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+##' ## out2 <- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
 ##' ## summary(out2)
 ##' 
 ##' @export

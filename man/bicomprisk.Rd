@@ -48,7 +48,7 @@ bicomprisk(
 
 \item{num}{num}
 
-\item{max.clust}{max number of clusters in comp.risk call for iid decompostion, max.clust=NULL uses all clusters otherwise rougher grouping.}
+\item{max.clust}{max number of clusters in timereg::comp.risk call for iid decompostion, max.clust=NULL uses all clusters otherwise rougher grouping.}
 
 \item{marg}{marginal cumulative incidence to make stanard errors for same clusters for subsequent use in casewise.test()}
 
@@ -70,7 +70,7 @@ bicomprisk(
 
 \item{resample.iid}{to return iid residual processes for further computations such as tests.}
 
-\item{...}{Additional arguments to comp.risk function}
+\item{...}{Additional arguments to timereg::comp.risk function}
 }
 \description{
 Estimation of concordance in bivariate competing risks data
@@ -102,7 +102,7 @@ prt22 <- fast.reshape(prt2,id="id")
 
 prt22$event <- (prt22$cause1==1)*(prt22$cause2==1)*1
 prt22$timel <- pmax(prt22$time1,prt22$time2)
-ipwc <- comp.risk(Event(timel,event)~-1+factor(zyg1),
+ipwc <- timereg::comp.risk(Event(timel,event)~-1+factor(zyg1),
   data=prt22,cause=1,n.sim=0,model="rcif2",times=50:90,
   weights=prt22$weights1,cens.weights=rep(1,nrow(prt22)))
 

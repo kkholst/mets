@@ -131,7 +131,7 @@ riskratio <- function(p) {
   return(p[1]/p[2])
 }
 
-estimate(cifdob,f=riskratio)
+lava::estimate(cifdob,f=riskratio)
 
 }
 \author{

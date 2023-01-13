@@ -260,8 +260,9 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' plot(cox)
 #' plot(cc,add=TRUE,col=2)
 #' 
-#' @aliases read.fit sim.base
+#' @aliases read.fit sim.base simulate.cox
 #' @export sim.cox
+#' @usage sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 {# {{{
 	### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -314,6 +315,7 @@ sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 }# }}}
 
 #' @export sim.base
+#' @usage sim.base(cumhaz,n,data=NULL,strata=NULL,cens=NULL,entry=NULL,...)
 sim.base <- function(cumhaz,n,data=NULL,strata=NULL,cens=NULL,entry=NULL,...)
 {# {{{
 	### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -422,6 +424,7 @@ sim.base <- function(cumhaz,n,data=NULL,strata=NULL,cens=NULL,entry=NULL,...)
 #' plot(cox2); plot(scox2,add=TRUE); 
 #' 
 #' @export sim.cause.cox
+#' @usage sim.cause.cox(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
 sim.cause.cox <- function(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 ### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -588,7 +591,8 @@ subdist <- function(F1,times)
 #' plot(cif1); plot(scif1,add=TRUE,col=2)
 #' plot(cif2); plot(scif2,add=TRUE,col=2)
 #' @export sim.cif
-#' @aliases sim.cif sim.cifs subdist pre.cifs sim.cifsRestrict simsubdist invsubdist 
+#' @aliases sim.cif sim.cifs subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
+#' @usage sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
 sim.cif <- function(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
 {# {{{
 ## also extracts coefficients and baseline from coxph, cox.aalen, phreg
@@ -955,8 +959,4 @@ if (inherits(cox,"phreg"))
 return(out)
 
 }# }}}
-
-
-##' @export simulate.cox
-simulate.cox <- function(object,...) sim(object,...)
 

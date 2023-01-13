@@ -24,9 +24,8 @@ dreshape <- function(data,...) fast.reshape(data,...)
 ##' @aliases fast.reshape dreshape
 ##' @export
 ##' @examples
-##' library("lava")
-##' m <- lvm(c(y1,y2,y3,y4)~x)
-##' d <- sim(m,5)
+##' m <- lava::lvm(c(y1,y2,y3,y4)~x)
+##' d <- lava::sim(m,5)
 ##' d
 ##' fast.reshape(d,"y")
 ##' fast.reshape(fast.reshape(d,"y"),id="id")
@@ -64,7 +63,7 @@ dreshape <- function(data,...) fast.reshape(data,...)
 ##' fast.reshape(d,var="y")
 ##' fast.reshape(d,varying=list(c("ym","yf","yb1","yb2")))
 ##' 
-##' d <- sim(lvm(~y1+y2+ya),10)
+##' d <- lava::sim(lava::lvm(~y1+y2+ya),10)
 ##' d
 ##' (dd <- fast.reshape(d,"y"))
 ##' fast.reshape(d,"y",labelnum=TRUE)
@@ -74,8 +73,8 @@ dreshape <- function(data,...) fast.reshape(data,...)
 ##' 
 ##' 
 ##' ##### Unbalanced data
-##' m <- lvm(c(y1,y2,y3,y4)~ x+z1+z3+z5)
-##' d <- sim(m,3)
+##' m <- lava::lvm(c(y1,y2,y3,y4)~ x+z1+z3+z5)
+##' d <- lava::sim(m,3)
 ##' d
 ##' fast.reshape(d,c("y","z"))
 ##' 

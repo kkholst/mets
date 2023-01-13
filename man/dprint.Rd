@@ -24,9 +24,8 @@ dprint(data, y = NULL, n = 0, ..., x = NULL)
 listing for data frames
 }
 \examples{
-n <- 20
 m <- lava::lvm(letters)
-d <- lava::sim(m,n)
+d <- lava::sim(m, 20)
 
 dlist(d,~a+b+c)
 dlist(d,~a+b+c|a<0 & b>0)

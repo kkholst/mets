@@ -10,7 +10,7 @@
 ##' @param strata Strata
 ##' @param id Clustering variable
 ##' @param num num
-##' @param max.clust max number of clusters in comp.risk call for iid decompostion, max.clust=NULL uses all clusters otherwise rougher grouping.
+##' @param max.clust max number of clusters in timereg::comp.risk call for iid decompostion, max.clust=NULL uses all clusters otherwise rougher grouping.
 ##' @param marg marginal cumulative incidence to make stanard errors for same clusters for subsequent use in casewise.test()
 ##' @param se.clusters to specify clusters for standard errors. Either a vector of cluster indices or a column name in \code{data}. Defaults to the \code{id} variable.
 ##' @param wname name of additonal weight used for paired competing risks data.
@@ -21,7 +21,7 @@
 ##' @param uniform to compute uniform standard errors for concordance estimates based on resampling.
 ##' @param conservative for conservative standard errors, recommended for larger data-sets.
 ##' @param resample.iid to return iid residual processes for further computations such as tests.
-##' @param ... Additional arguments to comp.risk function
+##' @param ... Additional arguments to timereg::comp.risk function
 ##' @author Thomas Scheike, Klaus K. Holst
 ##' @aliases bicompriskData
 ##' @export
@@ -57,7 +57,7 @@
 ##'
 ##' prt22$event <- (prt22$cause1==1)*(prt22$cause2==1)*1
 ##' prt22$timel <- pmax(prt22$time1,prt22$time2)
-##' ipwc <- comp.risk(Event(timel,event)~-1+factor(zyg1),
+##' ipwc <- timereg::comp.risk(Event(timel,event)~-1+factor(zyg1),
 ##'   data=prt22,cause=1,n.sim=0,model="rcif2",times=50:90,
 ##'   weights=prt22$weights1,cens.weights=rep(1,nrow(prt22)))
 ##'
@@ -254,11 +254,11 @@ bicomprisk <- function(formula, data, cause=c(1,1), cens=0, causes, indiv,
 ###    if (!(is.null(wname))) mydata <- ipw2(mydata,time=timevar,cause=causes) #,cens.code=cens)
 
     if (is.null(wname)) {
-	    add<-comp.risk(as.formula(ff),data=mydata,
+	    add<- timereg::comp.risk(as.formula(ff),data=mydata,
 	    cause=1,n.sim=0,resample.iid=resample.iid,model=model,conservative=conservative,
 	    clusters=lse.clusters, max.clust=max.clust,...)
     } else {
-	    add<-comp.risk(as.formula(ff),data=mydata,
+	    add<-timereg::comp.risk(as.formula(ff),data=mydata,
 	    cause=1,n.sim=0,resample.iid=resample.iid,model=model,conservative=conservative,
 	    clusters=lse.clusters, max.clust=max.clust,
 	    weights=mydata[,wname]*mydata$indi.weights,cens.weights=rep(1,nrow(mydata)),...)

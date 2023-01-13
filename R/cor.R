@@ -17,7 +17,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   delta<-(cause!=cens.code)
   if (length(cause)!=length(time)) stop("cause and time not of same length\n"); 
   formula <- attr(cif,"Formula")
-  ldata <- aalen.des2(formula(delete.response(terms(formula))),data=data,model="aalen")
+  ldata <- timereg::aalen.des2(formula(delete.response(terms(formula))),data=data,model="aalen")
   X<-ldata$X;  Z<-ldata$Z;  
 
   antpers<-nrow(X); 
@@ -36,7 +36,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
   if ((cause1[1]!=cause2[1])) {
     if (is.null(cif2)==TRUE) stop("Must provide marginal model for both causes"); 
     formula2<-attr(cif2,"Formula"); 
-    ldata2 <- aalen.des2(formula(delete.response(terms(formula2))),data=data,model="aalen");
+    ldata2 <- timereg::aalen.des2(formula(delete.response(terms(formula2))),data=data,model="aalen");
     X2<-ldata2$X; Z2<-ldata$Z;  
     if (is.null(Z2)==TRUE) {npar2<-TRUE; semi2<-0;}  else {Z2<-as.matrix(Z2); npar2<-FALSE; semi2<-1;}
     if (npar2==TRUE) {Z2<-matrix(0,antpers,1); pg2<-1; fixed2<-0;} else {fixed2<-1;pg2<-ncol(Z2);} 
@@ -81,7 +81,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         Gctimes<- Gcx ## }}}
       } else if (cens.model=="cox") { ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
-        ud.cens<-cox.aalen(Surv(time,cause==cens.code)~prop(XZ),n.sim=0,robust=0);
+        ud.cens<-timereg::cox.aalen(Surv(time,cause==cens.code)~prop(XZ),n.sim=0,robust=0);
         Gcx<-cpred(ud.cens$cum,time)[,2];
         RR<-exp(XZ %*% ud.cens$gamma)
         Gcx<-exp(-Gcx*RR)
@@ -94,7 +94,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         Gctimes<- Gcx  ## }}}
       } else if (cens.model=="aalen") {  ## {{{
         if (npar==TRUE) XZ<-X[,-1] else XZ<-cbind(X,Z)[,-1];
-        ud.cens<-aalen(Surv(time,cause==cens.code)~XZ,n.sim=0,robust=0);
+        ud.cens<-timereg::aalen(Surv(time,cause==cens.code)~XZ,n.sim=0,robust=0);
         Gcx<-cpred(ud.cens$cum,time)[,-1];
         XZ<-cbind(1,XZ); 
         Gcx<-exp(-apply(Gcx*XZ,1,sum))

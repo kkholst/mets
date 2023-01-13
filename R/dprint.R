@@ -49,9 +49,8 @@ print.Print <- function(x,quote=FALSE,...) {
 ##' @param x possible group variable
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @examples
-##' n <- 20
 ##' m <- lava::lvm(letters)
-##' d <- lava::sim(m,n)
+##' d <- lava::sim(m, 20)
 ##'
 ##' dlist(d,~a+b+c)
 ##' dlist(d,~a+b+c|a<0 & b>0)
