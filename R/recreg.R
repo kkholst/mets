@@ -217,7 +217,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     data$Nt <- data[,paste("Count",cause[1],sep="")]
  
     ## augmentation model and remove intercept
-    if (!is.null(augment.model)) { XXA <- model.matrix(augment.model,data)[,-1]; namesXXA <- colnames(XXA); } else XXA <- NULL
+    if (!is.null(augment.model)) { XXA <- model.matrix(augment.model,data)[,-1,drop=FALSE]; namesXXA <- colnames(XXA); } else XXA <- NULL
 
     if (length(whereC)>0) {# {{{
     if (is.null(Gc)) {
@@ -521,6 +521,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     ## compute regression augmentation for censoring martingale 
     if ((!is.null(augment.model)) & (length(other)>1)  & (length(whereC)>0)) {## {{{
 
+	    print("hej")
 	CovZXstrata <- function(X,Ej,Z,Sign,strata,nstrata,jumps) 
 	{# {{{
 		strata  <- c(strata); Sign <- c(Sign)
@@ -556,17 +557,17 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     ## Gc(t) computed  as exp(- Cumhaz) to avoid some "0"s
     Gcj <- Gcxx2 <- exp(-cumsumstrata(S0iC,strataCxx2,nCstrata))[jumpsC]
 
-    XXA <- xx2$Z[,-(1:6)]
+    XXA <- xx2$Z[,-(1:6),drop=FALSE]
     EXXA <- apply(XXA*c(rr0),2,revcumsumstrata,strataCxx2,nCstrata)
-    EA <- EXXA[jumpsC,]/S0rrr[jumpsC]
-    UA <- (XXA[jumpsC,]-EA)
+    EA <- EXXA[jumpsC,,drop=FALSE]/S0rrr[jumpsC]
+    UA <- (XXA[jumpsC,,drop=FALSE]-EA)
 
     ###
     E2A <- .Call("vecMatMat",EA,EA)$vXZ;  
     XX2A <- .Call("vecMatMat",XXA,XXA)$vXZ;  
     S2A <- apply(XX2A*c(rr0),2,revcumsumstrata,strataCxx2,nCstrata)
     ###
-    hessiant <- -(S2A[jumpsC,]/S0c-E2A)
+    hessiant <- -(S2A[jumpsC,,drop=FALSE]/S0c-E2A)
     hesst <- hessiant
 
     ### X fra GL + tail-death 
@@ -579,7 +580,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     covXsUs3 <- .Call("vecMatMat",covXsrr,EdLam0[jumpsC,,drop=FALSE])$vXZ;  
     covXsUs2 <- covXsZ*cumhaz[jumpsC]-covXsUs3 
     ### U(infty)= UU
-    Uinfiid <- UU[xx2$id+1,]
+    Uinfiid <- UU[xx2$id+1,,drop=FALSE]
     fid <- headstrata(xx2$id,nid)
     cZEdN <- ZEdN[fid,,drop=FALSE][xx2$id+1,,drop=FALSE]-ZEdN
     Us1 <- Uinfiid-cZEdN
@@ -603,7 +604,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    ###
    time.gammat <- timeC <- xx2$time[jumpsC]
    if (is.null(ftime.augment)) {
-        ### simple parabola
+        ### simple default parabola
 	maxt <- max(timeC)
         ftime <- timeC*(timeC-maxt)/maxt^2
    } else { 
