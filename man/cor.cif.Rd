@@ -34,7 +34,7 @@ cor.cif(
 )
 }
 \arguments{
-\item{cif}{a model object from the comp.risk function with the 
+\item{cif}{a model object from the timereg::comp.risk function with the
 marginal cumulative incidence of cause1, i.e., the event of interest, and whose
 odds the comparision is compared to the conditional odds given cause2}
 
@@ -163,18 +163,18 @@ zyg <- rep(rbinom(200,1,0.5),each=2)
 theta.des <- model.matrix(~-1+factor(zyg))
 
 times=seq(0.05,1,by=0.05) # to speed up computations use only these time-points
-add<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,cause=1,
+add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,cause=1,
                n.sim=0,times=times,model="fg",max.clust=NULL)
-add2<-comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,cause=2,
+add2 <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,cause=2,
                n.sim=0,times=times,model="fg",max.clust=NULL)
 
-out1<-cor.cif(add,data=multcif,cause1=1,cause2=1)
+out1 <- cor.cif(add,data=multcif,cause1=1,cause2=1)
 summary(out1)
 
-out2<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta.des=theta.des)
+out2 <- cor.cif(add,data=multcif,cause1=1,cause2=1,theta.des=theta.des)
 summary(out2)
 
-##out3<-cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)
+##out3 <- cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)
 ##summary(out3)
 ###########################################################
 # investigating further models using parfunc and dparfunc
@@ -186,7 +186,7 @@ prt$status <-prt$cause
 table(prt$status)
 
 times <- seq(40,100,by=10)
-cifmod <- comp.risk(Event(time,cause)~+1+cluster(id),data=prt,
+cifmod <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),data=prt,
                     cause=1,n.sim=0,
                     times=times,conservative=1,max.clust=NULL,model="fg")
 theta.des <- model.matrix(~-1+factor(zyg),data=prt)

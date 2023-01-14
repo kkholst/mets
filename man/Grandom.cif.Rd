@@ -36,7 +36,7 @@ Grandom.cif(
 )
 }
 \arguments{
-\item{cif}{a model object from the comp.risk function with the 
+\item{cif}{a model object from the timereg::comp.risk function with the
 marginal cumulative incidence of cause2, i.e., the event that is conditioned on, and whose
 odds the comparision is made with respect to}
 
@@ -143,7 +143,7 @@ with the (k) underlying \eqn{\theta} parameters
  d <- simnordic.random(5000,delayed=TRUE,
        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
  times <- seq(50,90,by=10)
- addm<-comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
+ addm <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
  times=times,cause=1,max.clust=NULL)
 
  ### making group indidcator 

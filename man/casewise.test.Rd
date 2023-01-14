@@ -33,7 +33,7 @@ prt <- force.same.cens(prt,cause="status")
 prt <- prt[which(prt$id \%in\% sample(unique(prt$id),7500)),]
 ### marginal cumulative incidence of prostate cancer
 times <- seq(60,100,by=2)
-outm <- comp.risk(Event(time,status)~+1,data=prt,cause=2,times=times)
+outm <- timereg::comp.risk(Event(time,status)~+1,data=prt,cause=2,times=times)
 
 cifmz <- predict(outm,X=1,uniform=0,resample.iid=1)
 cifdz <- predict(outm,X=1,uniform=0,resample.iid=1)
@@ -46,10 +46,10 @@ cmz <- cc$model$"MZ"
 
 ### To compute casewise cluster argument must be passed on,
 ###  here with a max of 100 to limit comp-time
-outm <-comp.risk(Event(time,status)~+1,data=prt,
+outm <- timereg::comp.risk(Event(time,status)~+1,data=prt,
                  cause=2,times=times,max.clust=100)
-cifmz <-predict(outm,X=1,uniform=0,resample.iid=1)
-cc <-bicomprisk(Event(time,status)~strata(zyg)+id(id),data=prt,
+cifmz <- predict(outm,X=1,uniform=0,resample.iid=1)
+cc <- bicomprisk(Event(time,status)~strata(zyg)+id(id),data=prt,
                 cause=c(2,2),se.clusters=outm$clusters)
 cdz <- cc$model$"DZ"
 cmz <- cc$model$"MZ"

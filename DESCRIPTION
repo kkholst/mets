@@ -20,9 +20,9 @@ URL: https://kkholst.github.io/mets/
 BugReports: https://github.com/kkholst/mets/issues
 Depends:
     R (>= 3.5),
+    lava (>= 1.7.1),
     survival (>= 2.43-1)
 Imports:
-    lava (>= 1.7.1),
     mvtnorm,
     numDeriv,
     compiler,
