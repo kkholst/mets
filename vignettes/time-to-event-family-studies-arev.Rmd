@@ -511,9 +511,9 @@ concMZ <- Reduce(rbind, lapply(bt0$coef, function(x) x$probMZ["Concordance",,dro
 ```{r}
 par(mfrow=c(1,2))
 plot(tt, h2[,1], type="s", lty=1, col=cols[3], xlab="Age", ylab="Heritability", ylim=c(0,1))
-confband(tt, h2[,2], h2[,3],polygon=TRUE, step=TRUE, col=Col(cols[3], 0.1), border=NA)
+lava::confband(tt, h2[,2], h2[,3],polygon=TRUE, step=TRUE, col=lava::Col(cols[3], 0.1), border=NA)
 plot(tt, concMZ[,1], type="s", lty=1, col=cols[1], xlab="Age", ylab="Concordance", ylim=c(0,.1))
-confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=Col(cols[1], 0.1), border=NA)
+lava::confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=lava::Col(cols[1], 0.1), border=NA)
 ```
 
 

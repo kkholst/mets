@@ -38,7 +38,8 @@ measures in the object.
 ## multcif$cause[multcif$cause==0] <- 2
 ##  
 ## times=seq(0.1,3,by=0.1) # to speed up computations use only these time-points
-## add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,n.sim=0,times=times,cause=1)
+## add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),
+##                           data=multcif,n.sim=0,times=times,cause=1)
 ###
 ## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
 ## summary(out1)

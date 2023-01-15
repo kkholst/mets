@@ -290,17 +290,17 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
 ##' 
 ##' pp <- predict(a,data.frame(x=seq(-1,1,by=.1)),which=c(1))
 ##' plot(pp[,1]~pp$x, type="l", xlab="x", ylab="Concordance", lwd=2, xaxs="i")
-##' confband(pp$x,pp[,2],pp[,3],polygon=TRUE,lty=0,col=Col(1))
+##' lava::confband(pp$x,pp[,2],pp[,3],polygon=TRUE,lty=0,col=lava::Col(1))
 ##' 
 ##' pp <- predict(a,data.frame(x=seq(-1,1,by=.1)),which=c(9)) ## rho
 ##' plot(pp[,1]~pp$x, type="l", xlab="x", ylab="Correlation", lwd=2, xaxs="i")
-##' confband(pp$x,pp[,2],pp[,3],polygon=TRUE,lty=0,col=Col(1))
+##' lava::confband(pp$x,pp[,2],pp[,3],polygon=TRUE,lty=0,col=lava::Col(1))
 ##' with(pp, lines(x,tanh(-x),lwd=2,lty=2))
 ##' 
 ##' xp <- seq(-1,1,length.out=6); delta <- mean(diff(xp))
 ##' a2 <- biprobit(y~1+x,rho=~1+I(cut(x,breaks=xp)),data=dd,id="id")
 ##' pp2 <- predict(a2,data.frame(x=xp[-1]-delta/2),which=c(9)) ## rho
-##' confband(pp2$x,pp2[,2],pp2[,3],center=pp2[,1])
+##' lava::confband(pp2$x,pp2[,2],pp2[,3],center=pp2[,1])
 ##' 
 ##' 
 ##' }
