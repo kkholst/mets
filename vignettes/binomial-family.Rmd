@@ -184,6 +184,7 @@ head(outid$des.rv)
 Now fitting the model with the data set up 
 
 ```{r}
+aa <- glm(ybin~x,data=dataid,family=binomial())
 tsdid <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
          theta=c(2,1),random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdid)
