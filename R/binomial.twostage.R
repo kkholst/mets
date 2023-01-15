@@ -207,7 +207,7 @@ binomial.twostage <- function(margbin,data=parent.frame(),
         cause <- data[,all.vars(margbin$formula)[1]]
 
 	if (!is.numeric(cause)) stop(paste("response in data",margbin$formula)[1],"not numeric\n");
-	if (is.null(beta.iid))   beta.iid <- iid(margbin,id=clusters)
+	if (is.null(beta.iid))   beta.iid <- lava::iid(margbin,id=clusters)
 	if (is.null(Dbeta.iid)) Dbeta.iid <- model.matrix(margbin$formula,data=data) * ps
 	if (twostage==0)            Xbeta <- model.matrix(margbin$formula,data=data)
     }

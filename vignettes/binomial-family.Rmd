@@ -156,7 +156,7 @@ tsd <- binomial.twostage(aa,data=data,clusters=data$cluster,
 summary(tsd)
 ```
 
-To specify such a model when only the pairs are availble we show
+To specify such a model when only the pairs are available we show
 how to specify the model. We here use the same marginal "aa"
 to make the results comparable. 
 The marginal can also be fitted based on available data. 
@@ -319,7 +319,7 @@ head(pairs,12)
 Now with the pairs we fit the model 
 
 ```{r}
-aa <- margbin <- glm(ybin~x,data=data,family=binomial())
+aa <- glm(ybin~x,data=data,family=binomial())
 
 tsp <- binomial.twostage(aa,data=data, clusters=data$cluster,
 		 theta.des=dm,pairs=cbind(pairs,1:nrow(dm)))
