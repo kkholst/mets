@@ -86,7 +86,7 @@ association with the risk of death for the other twin, and vice-versa.
 First looking at the data
 
 ```{r, label=data-prt}
- library(mets)
+library(mets)
  set.seed(122)
  data(prt)
  
@@ -299,8 +299,8 @@ of the association.
  summary(cdz)
  summary(cmz)
 
- Cpred(cmz$casewise,80)
- Cpred(cdz$casewise,80)
+ timereg::Cpred(cmz$casewise,80)
+ timereg::Cpred(cdz$casewise,80)
 ```
 
 

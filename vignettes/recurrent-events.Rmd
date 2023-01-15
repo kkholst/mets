@@ -159,6 +159,7 @@ We start by generating some data to illustrate the computation of the marginal m
 
 ```{r}
 library(mets)
+library(timereg)
 set.seed(1000) # to control output in simulatins for p-values below.
 ```
 
