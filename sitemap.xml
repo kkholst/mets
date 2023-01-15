@@ -43,6 +43,12 @@
     <loc>/articles/recurrent-events.html</loc>
   </url>
   <url>
+    <loc>/articles/rmst-ate.html</loc>
+  </url>
+  <url>
+    <loc>/articles/survival-ate.html</loc>
+  </url>
+  <url>
     <loc>/articles/time-to-event-family-studies-arev.html</loc>
   </url>
   <url>
@@ -370,6 +376,9 @@
     <loc>/reference/recurrentMarginal.html</loc>
   </url>
   <url>
+    <loc>/reference/reexports.html</loc>
+  </url>
+  <url>
     <loc>/reference/resmean.phreg.html</loc>
   </url>
   <url>
@@ -422,6 +431,9 @@
   </url>
   <url>
     <loc>/reference/survival.twostageCC.html</loc>
+  </url>
+  <url>
+    <loc>/reference/survivalG.html</loc>
   </url>
   <url>
     <loc>/reference/test.conc.html</loc>

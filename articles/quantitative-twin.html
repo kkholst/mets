@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -86,6 +86,12 @@
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
     <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+    </li>
+    <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
@@ -114,7 +120,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="quantitative-twin_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Twin models</h1>
@@ -218,19 +224,19 @@ Scatter plot of logarithmic BMI measurements in DZ twins
 <code class="sourceCode R"><span><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">-</span><span class="fl">40</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l0</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate  Std.Err    2.5%   97.5%    P-value</span></span>
-<span><span class="co">#&gt; (Intercept)  23.3687 0.053385 23.2641 23.4734  0.000e+00</span></span>
-<span><span class="co">#&gt; gendermale    1.4077 0.074257  1.2621  1.5532  3.885e-80</span></span>
-<span><span class="co">#&gt; I(age - 40)   0.1177 0.004759  0.1084  0.1271 4.192e-135</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)  23.3687 0.054534 23.2618 23.4756  0.000e+00</span></span>
+<span><span class="co">#&gt; gendermale    1.4077 0.073216  1.2642  1.5512  2.230e-82</span></span>
+<span><span class="co">#&gt; I(age - 40)   0.1177 0.004787  0.1083  0.1271 1.499e-133</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"splines"</span><span class="op">)</span></span>
 <span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">3</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
 <span><span class="va">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l1</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
+<code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
 <span>        bmi<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span><span class="op">)</span>,</span>
 <span>        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
 <span>        bmi<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"female"</span><span class="op">)</span>,</span>
 <span>        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
@@ -322,7 +328,7 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 <span><span class="co">#&gt; atanh(rhoDZ)@2         0.2987 0.020953  0.2576  0.3397  4.288e-46</span></span></code></pre></div>
 <p>A formal test of genetic effects can be obtained by comparing the MZ and DZ correlation:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
 <span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -335,7 +341,7 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 <span><span class="co">#&gt;                   Estimate  Std. Error Z value Pr(&gt;|z|)</span></span>
 <span><span class="co">#&gt; bmi             1.8599e+01  2.5576e-01  72.720   &lt;2e-16</span></span>
 <span><span class="co">#&gt; sd(A)           2.7270e+00  4.2658e-02  63.927   &lt;2e-16</span></span>
-<span><span class="co">#&gt; sd(C)          -1.7074e-06  3.1064e-01   0.000        1</span></span>
+<span><span class="co">#&gt; sd(C)          -1.7119e-06  3.1064e-01   0.000        1</span></span>
 <span><span class="co">#&gt; sd(E)           2.0276e+00  3.4787e-02  58.286   &lt;2e-16</span></span>
 <span><span class="co">#&gt; bmi~age         1.1892e-01  5.6246e-03  21.142   &lt;2e-16</span></span>
 <span><span class="co">#&gt; bmi~gendermale  1.3846e+00  8.8748e-02  15.601   &lt;2e-16</span></span>
@@ -365,8 +371,8 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 <div class="section level2">
 <h2 id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
 </h2>
-<p><a id="korkeila_bmi_1991"></a>[korkeila_bmi_1991] Korkeila, Kaprio, Rissanen &amp; Koskenvuo, Effects of gender and age on the heritability of body mass index, <i>Int J Obes</i>, <b>15(10)</b>, 647-654 (1991). <a href="#b71edfd9bc946c317f4a732845bcaf93">↩</a></p>
-<p><a id="hjelmborg_bmi_2008"></a>[hjelmborg_bmi_2008] Hjelmborg, Fagnani, Silventoinen, McGue, Korkeila, Christensen, Rissanen &amp; Kaprio, Genetic influences on growth traits of BMI: a longitudinal study of adult twins, <i>Obesity (Silver Spring)</i>, <b>16(4)</b>, 847-852 (2008). <a href="#718839fcb6ade82ebb2d7de853582b80">↩</a></p>
+<p><a id="korkeila_bmi_1991"></a>[korkeila_bmi_1991] Korkeila, Kaprio, Rissanen &amp; Koskenvuo, Effects of gender and age on the heritability of body mass index, <i>Int J Obes</i>, <b>15(10)</b>, 647-654 (1991). <a href="#b71edfd9bc946c317f4a732845bcaf93">↩︎</a></p>
+<p><a id="hjelmborg_bmi_2008"></a>[hjelmborg_bmi_2008] Hjelmborg, Fagnani, Silventoinen, McGue, Korkeila, Christensen, Rissanen &amp; Kaprio, Genetic influences on growth traits of BMI: a longitudinal study of adult twins, <i>Obesity (Silver Spring)</i>, <b>16(4)</b>, 847-852 (2008). <a href="#718839fcb6ade82ebb2d7de853582b80">↩︎</a></p>
 </div>
   </div>
 
@@ -387,7 +393,7 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

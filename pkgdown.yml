@@ -1,5 +1,5 @@
-pandoc: '2.5'
-pkgdown: 2.0.6
+pandoc: 2.9.2.1
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
@@ -14,7 +14,9 @@ articles:
   mediation-survival: mediation-survival.html
   quantitative-twin: quantitative-twin.html
   recurrent-events: recurrent-events.html
+  rmst-ate: rmst-ate.html
+  survival-ate: survival-ate.html
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
-last_built: 2022-12-03T20:37Z
+last_built: 2023-01-15T20:45Z
 

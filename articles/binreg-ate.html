@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -86,6 +86,12 @@
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
     <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+    </li>
+    <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
@@ -114,13 +120,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="binreg-ate_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Average treatment effect (ATE) for Competing risks and binary outcomes</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-12-03</h4>
+            <h4 data-toc-skip class="date">2023-01-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/binreg-ate.Rmd" class="external-link"><code>vignettes/binreg-ate.Rmd</code></a></small>
       <div class="hidden name"><code>binreg-ate.Rmd</code></div>
@@ -290,7 +296,61 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
 <span><span class="co">#&gt; treat0     0.432878  0.053526  0.327969  0.537787  0.0000</span></span>
 <span><span class="co">#&gt; treat1     0.467654  0.040089  0.389081  0.546228  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0  0.034777  0.068783 -0.100035  0.169589  0.6131</span></span></code></pre></div>
+<span><span class="co">#&gt; treat:1-0  0.034777  0.068783 -0.100035  0.169589  0.6131</span></span>
+<span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">gp</span>,<span class="va">kumar</span><span class="op">$</span><span class="va">dnr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">b5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">int</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
+<span>        treat.model<span class="op">=</span><span class="va">int</span><span class="op">~</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,cens.code<span class="op">=</span><span class="fl">0</span>,time<span class="op">=</span><span class="fl">60</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400    150</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  400 clusters</span></span>
+<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt;             Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; (Intercept) -0.72864  0.26508 -1.24819 -0.20909  0.0060</span></span>
+<span><span class="co">#&gt; int1.0       0.20908  0.32235 -0.42272  0.84088  0.5166</span></span>
+<span><span class="co">#&gt; int0.1       0.77385  0.52369 -0.25256  1.80027  0.1395</span></span>
+<span><span class="co">#&gt; int1.1       0.62077  0.42765 -0.21741  1.45896  0.1466</span></span>
+<span><span class="co">#&gt; preauto      0.16950  0.30222 -0.42285  0.76184  0.5749</span></span>
+<span><span class="co">#&gt; ttt24        0.62752  0.33149 -0.02218  1.27722  0.0584</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
+<span><span class="co">#&gt; (Intercept)  0.48256 0.28702 0.8113</span></span>
+<span><span class="co">#&gt; int1.0       1.23254 0.65526 2.3184</span></span>
+<span><span class="co">#&gt; int0.1       2.16811 0.77681 6.0513</span></span>
+<span><span class="co">#&gt; int1.1       1.86037 0.80460 4.3015</span></span>
+<span><span class="co">#&gt; preauto      1.18471 0.65518 2.1422</span></span>
+<span><span class="co">#&gt; ttt24        1.87296 0.97806 3.5867</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
+<span><span class="co">#&gt;                Estimate   Std.Err      2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0.0       0.396357  0.058181  0.282324  0.510390  0.0000</span></span>
+<span><span class="co">#&gt; treat1.0       0.445884  0.046086  0.355558  0.536210  0.0000</span></span>
+<span><span class="co">#&gt; treat0.1       0.582308  0.110770  0.365204  0.799412  0.0000</span></span>
+<span><span class="co">#&gt; treat1.1       0.545665  0.079180  0.390474  0.700856  0.0000</span></span>
+<span><span class="co">#&gt; treat:1.0-0.0  0.049527  0.075967 -0.099367  0.198420  0.5144</span></span>
+<span><span class="co">#&gt; treat:0.1-0.0  0.185951  0.123715 -0.056526  0.428428  0.1328</span></span>
+<span><span class="co">#&gt; treat:1.1-0.0  0.149308  0.103236 -0.053030  0.351646  0.1481</span></span>
+<span><span class="co">#&gt; treat:0.1-1.0  0.136424  0.123217 -0.105078  0.377926  0.2682</span></span>
+<span><span class="co">#&gt; treat:1.1-1.0  0.099781  0.095044 -0.086501  0.286063  0.2938</span></span>
+<span><span class="co">#&gt; treat:1.1-0.1 -0.036643  0.139744 -0.310536  0.237249  0.7932</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
+<span><span class="co">#&gt;                Estimate   Std.Err      2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0.0       0.343660  0.056787  0.232359  0.454960  0.0000</span></span>
+<span><span class="co">#&gt; treat1.0       0.463458  0.059948  0.345962  0.580954  0.0000</span></span>
+<span><span class="co">#&gt; treat0.1       0.622022  0.226104  0.178866  1.065178  0.0059</span></span>
+<span><span class="co">#&gt; treat1.1       0.563471  0.180951  0.208813  0.918129  0.0018</span></span>
+<span><span class="co">#&gt; treat:1.0-0.0  0.119798  0.083150 -0.043174  0.282770  0.1497</span></span>
+<span><span class="co">#&gt; treat:0.1-0.0  0.278362  0.233179 -0.178661  0.735384  0.2326</span></span>
+<span><span class="co">#&gt; treat:1.1-0.0  0.219811  0.190384 -0.153334  0.592957  0.2483</span></span>
+<span><span class="co">#&gt; treat:0.1-1.0  0.158564  0.247795 -0.327106  0.644233  0.5222</span></span>
+<span><span class="co">#&gt; treat:1.1-1.0  0.100013  0.199201 -0.290413  0.490440  0.6156</span></span>
+<span><span class="co">#&gt; treat:1.1-0.1 -0.058550  0.254591 -0.557539  0.440438  0.8181</span></span></code></pre></div>
 <p>We note that correct estimates that found using the large censoring model are very different from those using the simple Kaplan-Meier weights that are severely biased for these data. This is due to a stong censoring dependence.</p>
 <p>The average treatment is around <span class="math inline">\(0.17 = E(Y(1) - Y(0))\)</span> at time 60 for the transplant period, under the standard causal assumptions. We here use the logistic model and a treat model that is also logistic. The 1/0 variable used for the causal computation is found as the rhs of the treat.model.</p>
 </div>
@@ -306,17 +366,17 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <code class="sourceCode R"><span></span>
 <span><span class="va">kumar</span><span class="op">$</span><span class="va">cause2</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">logitATE</a></span><span class="op">(</span><span class="va">cause2</span><span class="op">~</span><span class="va">gp</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
+<span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">logitATE</a></span><span class="op">(</span><span class="va">cause2</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  400    152</span></span>
+<span><span class="co">#&gt;  400    400</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;                Estimate     Std.Err        2.5%       97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept) -1.07282963  0.19388190 -1.45283117 -0.69282808  0.0000</span></span>
-<span><span class="co">#&gt; gp           0.26229718  0.23212023 -0.19265012  0.71724448  0.2585</span></span>
+<span><span class="co">#&gt; gp.f1        0.26229718  0.23212023 -0.19265012  0.71724448  0.2585</span></span>
 <span><span class="co">#&gt; dnr          0.47162640  0.24030425  0.00063871  0.94261408  0.0497</span></span>
 <span><span class="co">#&gt; preauto      0.26934293  0.24156220 -0.20411028  0.74279614  0.2648</span></span>
 <span><span class="co">#&gt; ttt24        0.40066829  0.24437556 -0.07829902  0.87963559  0.1011</span></span>
@@ -324,76 +384,35 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
 <span><span class="co">#&gt; (Intercept)  0.34204 0.23391 0.5002</span></span>
-<span><span class="co">#&gt; gp           1.29991 0.82477 2.0488</span></span>
+<span><span class="co">#&gt; gp.f1        1.29991 0.82477 2.0488</span></span>
 <span><span class="co">#&gt; dnr          1.60260 1.00064 2.5667</span></span>
 <span><span class="co">#&gt; preauto      1.30910 0.81537 2.1018</span></span>
 <span><span class="co">#&gt; ttt24        1.49282 0.92469 2.4100</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;             Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat-1     0.404802  0.033367  0.339404  0.470200  0.0000</span></span>
-<span><span class="co">#&gt; treat-0     0.345704  0.037959  0.271306  0.420102  0.0000</span></span>
-<span><span class="co">#&gt; Difference  0.059098  0.052111 -0.043037  0.161232  0.2568</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
-<span><span class="co">#&gt;             Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat-1     0.398074  0.034407  0.330637  0.465511  0.0000</span></span>
-<span><span class="co">#&gt; treat-0     0.331726  0.039466  0.254375  0.409078  0.0000</span></span>
-<span><span class="co">#&gt; Difference  0.066348  0.052260 -0.036080  0.168775  0.2042</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects on Treated/Non-Treated (DR) :</span></span>
-<span><span class="co">#&gt;      Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; ATT  0.083954  0.059846 -0.033341  0.201250  0.1607</span></span>
-<span><span class="co">#&gt; ATC -0.138652  0.047566 -0.231879 -0.045425  0.0036</span></span>
-<span></span>
-<span></span>
-<span><span class="va">b4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,cens.code<span class="op">=</span><span class="fl">2</span>,time<span class="op">=</span><span class="fl">200</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  400    126</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;               Estimate    Std.Err       2.5%      97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.0099482  0.2232233 -0.4474579  0.4275614  0.9645</span></span>
-<span><span class="co">#&gt; gp.f1       -0.5995432  0.2741111 -1.1367910 -0.0622954  0.0287</span></span>
-<span><span class="co">#&gt; dnr          1.0238905  0.3339733  0.3693149  1.6784660  0.0022</span></span>
-<span><span class="co">#&gt; preauto     -1.1572342  0.3016626 -1.7484820 -0.5659863  0.0001</span></span>
-<span><span class="co">#&gt; ttt24        0.0538186  0.3051924 -0.5443475  0.6519847  0.8600</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.99010 0.63925 1.5335</span></span>
-<span><span class="co">#&gt; gp.f1        0.54906 0.32085 0.9396</span></span>
-<span><span class="co">#&gt; dnr          2.78400 1.44674 5.3573</span></span>
-<span><span class="co">#&gt; preauto      0.31435 0.17404 0.5678</span></span>
-<span><span class="co">#&gt; ttt24        1.05529 0.58022 1.9193</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.444417  0.045953  0.354350  0.534484  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.316492  0.035319  0.247268  0.385715  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.127925  0.059120 -0.243798 -0.012053  0.0305</span></span>
+<span><span class="co">#&gt; treat0     0.345704  0.037959  0.271306  0.420102  0.0000</span></span>
+<span><span class="co">#&gt; treat1     0.404802  0.033367  0.339404  0.470200  0.0000</span></span>
+<span><span class="co">#&gt; treat:1-0  0.059098  0.052111 -0.043037  0.161232  0.2568</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
-<span><span class="co">#&gt;             Estimate    Std.Err       2.5%      97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.4258846  0.0457851  0.3361475  0.5156217  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.3147927  0.0360216  0.2441917  0.3853938  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.1110919  0.0576191 -0.2240232  0.0018394  0.0539</span></span></code></pre></div>
+<span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0     0.331726  0.039466  0.254375  0.409078  0.0000</span></span>
+<span><span class="co">#&gt; treat1     0.398074  0.034407  0.330637  0.465511  0.0000</span></span>
+<span><span class="co">#&gt; treat:1-0  0.066348  0.052260 -0.036080  0.168775  0.2042</span></span></code></pre></div>
 <p>Or with continuous response using normal estiamating equations</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">normalATE</a></span><span class="op">(</span><span class="va">time</span><span class="op">~</span><span class="va">gp</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">normalATE</a></span><span class="op">(</span><span class="va">time</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    n   events</span></span>
-<span><span class="co">#&gt;  400 6804.193</span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  400    400</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  27.80015   3.30304  21.32631  34.27399  0.0000</span></span>
-<span><span class="co">#&gt; gp          -16.06100   3.25515 -22.44098  -9.68102  0.0000</span></span>
+<span><span class="co">#&gt; gp.f1       -16.06100   3.25515 -22.44098  -9.68102  0.0000</span></span>
 <span><span class="co">#&gt; dnr          -6.51649   3.16550 -12.72075  -0.31223  0.0395</span></span>
 <span><span class="co">#&gt; preauto       1.66745   2.93033  -4.07590   7.41080  0.5693</span></span>
 <span><span class="co">#&gt; ttt24        -1.12151   3.27807  -7.54640   5.30338  0.7323</span></span>
@@ -401,27 +420,22 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;               Estimate       2.5%      97.5%</span></span>
 <span><span class="co">#&gt; (Intercept) 1.1843e+12 1.8277e+09 7.6737e+14</span></span>
-<span><span class="co">#&gt; gp          1.0588e-07 1.7948e-10 1.0000e-04</span></span>
+<span><span class="co">#&gt; gp.f1       1.0588e-07 1.7948e-10 1.0000e-04</span></span>
 <span><span class="co">#&gt; dnr         1.4788e-03 2.9885e-06 7.3180e-01</span></span>
 <span><span class="co">#&gt; preauto     5.2986e+00 1.6977e-02 1.6537e+03</span></span>
 <span><span class="co">#&gt; ttt24       3.2579e-01 5.2801e-04 2.0102e+02</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;            Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; treat-1     10.1846   1.0464   8.1336  12.2355       0</span></span>
-<span><span class="co">#&gt; treat-0     26.2456   2.9998  20.3660  32.1251       0</span></span>
-<span><span class="co">#&gt; Difference -16.0610   3.2552 -22.4410  -9.6810       0</span></span>
+<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0     26.2456   2.9998  20.3660  32.1251       0</span></span>
+<span><span class="co">#&gt; treat1     10.1846   1.0464   8.1336  12.2355       0</span></span>
+<span><span class="co">#&gt; treat:1-0 -16.0610   3.2552 -22.4410  -9.6810       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
-<span><span class="co">#&gt;            Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; treat-1     10.7094   1.0007   8.7481  12.6707       0</span></span>
-<span><span class="co">#&gt; treat-0     28.0289   3.2124  21.7328  34.3251       0</span></span>
-<span><span class="co">#&gt; Difference -17.3195   3.3652 -23.9153 -10.7238       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects on Treated/Non-Treated (DR) :</span></span>
-<span><span class="co">#&gt;     Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; ATT -19.1625   4.2750 -27.5414 -10.7836       0</span></span>
-<span><span class="co">#&gt; ATC -20.7176   3.1222 -26.8371 -14.5981       0</span></span></code></pre></div>
+<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0     28.0289   3.2124  21.7328  34.3251       0</span></span>
+<span><span class="co">#&gt; treat1     10.7094   1.0007   8.7481  12.6707       0</span></span>
+<span><span class="co">#&gt; treat:1-0 -17.3195   3.3652 -23.9153 -10.7238       0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
@@ -430,11 +444,11 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.2 (2022-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.5 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.1 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
@@ -446,25 +460,26 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.1     lava_1.7.0     timereg_2.0.4  survival_3.4-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.2     survival_3.4-0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.1         compiler_4.2.2     </span></span>
-<span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.2         digest_0.6.30      </span></span>
-<span><span class="co">#&gt;  [7] jsonlite_1.8.3      evaluate_0.18       memoise_2.0.1      </span></span>
+<span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.2         compiler_4.2.2     </span></span>
+<span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.2         digest_0.6.31      </span></span>
+<span><span class="co">#&gt;  [7] jsonlite_1.8.4      evaluate_0.19       memoise_2.0.1      </span></span>
 <span><span class="co">#&gt; [10] lifecycle_1.0.3     lattice_0.20-45     rlang_1.0.6        </span></span>
-<span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.4.1           parallel_4.2.2     </span></span>
-<span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.35           fastmap_1.1.0       stringr_1.5.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.41          desc_1.4.2          fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [25] vctrs_0.5.1         sass_0.4.4          systemfonts_1.0.4  </span></span>
-<span><span class="co">#&gt; [28] globals_0.16.2      rprojroot_2.0.3     grid_4.2.2         </span></span>
-<span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.8.0       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [34] textshaping_0.3.6   parallelly_1.32.1   future.apply_1.10.0</span></span>
-<span><span class="co">#&gt; [37] rmarkdown_2.18      purrr_0.3.5         magrittr_2.0.3     </span></span>
-<span><span class="co">#&gt; [40] codetools_0.2-18    htmltools_0.5.3     splines_4.2.2      </span></span>
-<span><span class="co">#&gt; [43] future_1.29.0       numDeriv_2016.8-1.1 ragg_1.2.4         </span></span>
-<span><span class="co">#&gt; [46] stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
+<span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.6.0           parallel_4.2.2     </span></span>
+<span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.7      </span></span>
+<span><span class="co">#&gt; [19] xfun_0.36           fastmap_1.1.0       stringr_1.5.0      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.41          globals_0.16.2      desc_1.4.2         </span></span>
+<span><span class="co">#&gt; [25] fs_1.5.2            vctrs_0.5.1         sass_0.4.4         </span></span>
+<span><span class="co">#&gt; [28] systemfonts_1.0.4   rprojroot_2.0.3     grid_4.2.2         </span></span>
+<span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.9.0       R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [34] timereg_2.0.4       textshaping_0.3.6   parallelly_1.34.0  </span></span>
+<span><span class="co">#&gt; [37] future.apply_1.10.0 rmarkdown_2.19      lava_1.7.1         </span></span>
+<span><span class="co">#&gt; [40] purrr_1.0.1         magrittr_2.0.3      codetools_0.2-18   </span></span>
+<span><span class="co">#&gt; [43] htmltools_0.5.4     splines_4.2.2       future_1.30.0      </span></span>
+<span><span class="co">#&gt; [46] numDeriv_2016.8-1.1 ragg_1.2.5          stringi_1.7.12     </span></span>
+<span><span class="co">#&gt; [49] cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
 
@@ -485,7 +500,7 @@ P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

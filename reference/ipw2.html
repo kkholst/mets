@@ -19,7 +19,7 @@ Weights and adds them to a data.frame"><!-- mathjax --><script src="https://cdnj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -68,6 +68,12 @@ Weights and adds them to a data.frame"><!-- mathjax --><script src="https://cdnj
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -225,7 +231,7 @@ Weights and adds them to a data.frame</p>
 <span class="r-in"><span>      cordz<span class="op">=</span><span class="fl">0.5</span>,cormz<span class="op">=</span><span class="fl">2</span>,lam0<span class="op">=</span><span class="fl">0.3</span>,country<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">strata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">country</span><span class="op">)</span><span class="op">+</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span></span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">60</span>,<span class="fl">100</span>,by<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">c1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span><span class="va">c1</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  model<span class="op">=</span><span class="st">"fg"</span>,times<span class="op">=</span><span class="va">times</span>,max.clust<span class="op">=</span><span class="cn">NULL</span>,n.sim<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mm</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">zyg</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">out1</span><span class="op">&lt;-</span><span class="fu"><a href="random.cif.html">random.cif</a></span><span class="op">(</span><span class="va">c1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span>,theta.des<span class="op">=</span><span class="va">mm</span><span class="op">)</span></span></span>
@@ -244,7 +250,7 @@ Weights and adds them to a data.frame</p>
 <span class="r-in"><span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">[</span><span class="op">!</span><span class="va">d</span><span class="op">$</span><span class="va">truncated</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu">ipw2</span><span class="op">(</span><span class="va">dl</span>,cluster<span class="op">=</span><span class="st">"id"</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span>,time<span class="op">=</span><span class="st">"time"</span>,entrytime<span class="op">=</span><span class="st">"entry"</span>,cause<span class="op">=</span><span class="st">"cause"</span>,</span></span>
 <span class="r-in"><span>           strata<span class="op">=</span><span class="st">"strata"</span>,prec.factor<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span></span></span>
+<span class="r-in"><span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    data<span class="op">=</span><span class="va">dl</span>,cause<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"fg"</span>,</span></span>
 <span class="r-in"><span>    weights<span class="op">=</span><span class="va">dl</span><span class="op">$</span><span class="va">indi.weights</span>,cens.weights<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dl</span><span class="op">)</span><span class="op">)</span>,</span></span>
@@ -281,7 +287,7 @@ Weights and adds them to a data.frame</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

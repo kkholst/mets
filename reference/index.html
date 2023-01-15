@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -66,6 +66,12 @@
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -542,15 +548,15 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
         </td>
         <td><p>Piecewise constant hazard distribution</p></td>
       </tr><tr><td>
-          <p><code><a href="sim.cause.cox.html">sim(<i>&lt;cause.cox&gt;</i>)</a></code> </p>
+          <p><code><a href="sim.cause.cox.html">sim.cause.cox()</a></code> </p>
         </td>
         <td><p>Simulation of cause specific from Cox models.</p></td>
       </tr><tr><td>
-          <p><code><a href="sim.cif.html">sim(<i>&lt;cif&gt;</i>)</a></code> </p>
+          <p><code><a href="sim.cif.html">sim.cif()</a></code> </p>
         </td>
         <td><p>Simulation of output from Cumulative incidence regression model</p></td>
       </tr><tr><td>
-          <p><code><a href="sim.cox.html">sim(<i>&lt;cox&gt;</i>)</a></code> </p>
+          <p><code><a href="sim.cox.html">sim.cox()</a></code> </p>
         </td>
         <td><p>Simulation of output from Cox model.</p></td>
       </tr><tr><td>
@@ -597,6 +603,10 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
           <p><code><a href="survival.twostageCC.html">survival.twostageCC()</a></code> </p>
         </td>
         <td><p>Twostage survival model for multivariate survival data</p></td>
+      </tr><tr><td>
+          <p><code><a href="survivalG.html">survivalG()</a></code> </p>
+        </td>
+        <td><p>G-estimator for Cox and Fine-Gray model</p></td>
       </tr><tr><td>
           <p><code><a href="test.conc.html">test.conc()</a></code> </p>
         </td>
@@ -646,7 +656,7 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -68,6 +68,12 @@
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
     <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+    </li>
+    <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
@@ -102,18 +108,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for cif</span></span>
-<span><span class="fu"><a href="internal.html">sim</a></span><span class="op">(</span></span>
-<span>  <span class="va">cif</span>,</span>
-<span>  <span class="va">n</span>,</span>
-<span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Z <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  drawZ <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  cens <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rrc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cumstart <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sim.cif</span><span class="op">(</span><span class="va">cif</span>,<span class="va">n</span>,data<span class="op">=</span><span class="cn">NULL</span>,Z<span class="op">=</span><span class="cn">NULL</span>,drawZ<span class="op">=</span><span class="cn">TRUE</span>,cens<span class="op">=</span><span class="cn">NULL</span>,rrc<span class="op">=</span><span class="cn">NULL</span>,cumstart<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -218,7 +213,7 @@ given then takes average rate of in simulated data from cox model.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

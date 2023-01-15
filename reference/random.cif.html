@@ -25,7 +25,7 @@ cluster covariates."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -74,6 +74,12 @@ cluster covariates."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -273,7 +279,7 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="internal.html">simnordic.random</a></span><span class="op">(</span><span class="fl">5000</span>,delayed<span class="op">=</span><span class="cn">TRUE</span>,cordz<span class="op">=</span><span class="fl">0.5</span>,cormz<span class="op">=</span><span class="fl">2</span>,lam0<span class="op">=</span><span class="fl">0.3</span>,country<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">90</span>,by<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="va">add1</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span> <span class="va">add1</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,</span></span>
 <span class="r-in"><span> times<span class="op">=</span><span class="va">times</span>,cause<span class="op">=</span><span class="fl">1</span>,max.clust<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co">### making group indidcator </span></span></span>
@@ -308,9 +314,9 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-in"><span><span class="co">##### 2 different causes</span></span></span>
 <span class="r-in"><span><span class="co">#########################################</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="va">add2</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span> <span class="va">add2</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,</span></span>
 <span class="r-in"><span>                  times<span class="op">=</span><span class="va">times</span>,cause<span class="op">=</span><span class="fl">2</span>,max.clust<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="va">out3</span><span class="op">&lt;-</span><span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">2</span>,cif2<span class="op">=</span><span class="va">add2</span>,sym<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">out3</span> <span class="op">&lt;-</span> <span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">2</span>,cif2<span class="op">=</span><span class="va">add2</span>,sym<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out3</span><span class="op">)</span> <span class="co">## negative dependence</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random effect variance for variation due to clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -322,7 +328,7 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   SE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> intercept 0.03071535</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="va">out4</span><span class="op">&lt;-</span><span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">2</span>,cif2<span class="op">=</span><span class="va">add2</span>,theta.des<span class="op">=</span><span class="va">mm</span>,sym<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">out4</span> <span class="op">&lt;-</span> <span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">2</span>,cif2<span class="op">=</span><span class="va">add2</span>,theta.des<span class="op">=</span><span class="va">mm</span>,sym<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out4</span><span class="op">)</span> <span class="co">## negative dependence</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random effect variance for variation due to clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -350,7 +356,7 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

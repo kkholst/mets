@@ -46,7 +46,7 @@ Here \(B^c\) is the complement event of \(B\),
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -95,6 +95,12 @@ Here \(B^c\) is the complement event of \(B\),
     </li>
     <li>
       <a href="../articles/recurrent-events.html">Recurrent events</a>
+    </li>
+    <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -191,7 +197,7 @@ Here \(B^c\) is the complement event of \(B\),
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>cif</dt>
-<dd><p>a model object from the comp.risk function with the 
+<dd><p>a model object from the timereg::comp.risk function with the
 marginal cumulative incidence of cause1, i.e., the event of interest, and whose
 odds the comparision is compared to the conditional odds given cause2</p></dd>
 
@@ -361,12 +367,12 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-in"><span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">times</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">1</span>,by<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span> <span class="co"># to speed up computations use only these time-points</span></span></span>
-<span class="r-in"><span><span class="va">add</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">multcif</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span><span class="va">add</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">multcif</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>               n.sim<span class="op">=</span><span class="fl">0</span>,times<span class="op">=</span><span class="va">times</span>,model<span class="op">=</span><span class="st">"fg"</span>,max.clust<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">add2</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">multcif</span>,cause<span class="op">=</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span><span class="va">add2</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">multcif</span>,cause<span class="op">=</span><span class="fl">2</span>,</span></span>
 <span class="r-in"><span>               n.sim<span class="op">=</span><span class="fl">0</span>,times<span class="op">=</span><span class="va">times</span>,model<span class="op">=</span><span class="st">"fg"</span>,max.clust<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">out1</span><span class="op">&lt;-</span><span class="fu">cor.cif</span><span class="op">(</span><span class="va">add</span>,data<span class="op">=</span><span class="va">multcif</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">cor.cif</span><span class="op">(</span><span class="va">add</span>,data<span class="op">=</span><span class="va">multcif</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cross odds ratio dependence for competing risks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -376,7 +382,7 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> intercept      1.04 9.33 0.111 0.911             2.82 26.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">out2</span><span class="op">&lt;-</span><span class="fu">cor.cif</span><span class="op">(</span><span class="va">add</span>,data<span class="op">=</span><span class="va">multcif</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span>,theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">cor.cif</span><span class="op">(</span><span class="va">add</span>,data<span class="op">=</span><span class="va">multcif</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span>,theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cross odds ratio dependence for competing risks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -387,7 +393,7 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)1     1.300 20.70 0.0627  0.95             3.66 75.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">##out3&lt;-cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)</span></span></span>
+<span class="r-in"><span><span class="co">##out3 &lt;- cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)</span></span></span>
 <span class="r-in"><span><span class="co">##summary(out3)</span></span></span>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
 <span class="r-in"><span><span class="co"># investigating further models using parfunc and dparfunc</span></span></span>
@@ -402,7 +408,7 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2102  597 5301 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">40</span>,<span class="fl">100</span>,by<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cifmod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">prt</span>,</span></span>
+<span class="r-in"><span><span class="va">cifmod</span> <span class="op">&lt;-</span> <span class="fu">timereg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/comp.risk.html" class="external-link">comp.risk</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">prt</span>,</span></span>
 <span class="r-in"><span>                    cause<span class="op">=</span><span class="fl">1</span>,n.sim<span class="op">=</span><span class="fl">0</span>,</span></span>
 <span class="r-in"><span>                    times<span class="op">=</span><span class="va">times</span>,conservative<span class="op">=</span><span class="fl">1</span>,max.clust<span class="op">=</span><span class="cn">NULL</span>,model<span class="op">=</span><span class="st">"fg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span>,data<span class="op">=</span><span class="va">prt</span><span class="op">)</span></span></span>
@@ -448,49 +454,49 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  4.4038139 -0.5697823 11.6772977 -1.6949449</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -2.380951  0.000000  -6.184041   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.262648   0.000000  -8.285154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.262648   0.000000  -8.285153</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -6.184041  0.000000 -17.409502   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -8.285154   0.000000 -23.052048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -8.285153   0.000000 -23.052048</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.98846483  1.23830300  0.27754527 -0.02323445</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -1.25603525 -0.01146766 -2.79344744 -0.04626783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -1.25603526 -0.01146765 -2.79344748 -0.04626782</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.955147  0.000000  -9.393342   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.009163   0.000000  -7.530575</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.393342  0.000000 -25.237970   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.530575   0.000000 -20.789841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.530575   0.000000 -20.789840</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 3"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51716907  1.25710704  0.34227293 -0.03227122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  0.0084015704  0.0001720174  0.0266071031 -0.0006890359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51716906  1.25710704  0.34227293 -0.03227122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  0.0084015655  0.0001720198  0.0266070854 -0.0006890310</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.976728  0.000000  -9.711857   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.004696   0.000000  -7.507249</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.711857  0.000000 -26.396636   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.711857  0.000000 -26.396637   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507249   0.000000 -20.707731</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 4"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373019  1.25859721  0.34454613 -0.03284473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  1.000423e-04  1.638102e-05  2.675999e-04 -3.827783e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373019  1.25859722  0.34454613 -0.03284474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  1.000468e-04  1.637494e-05  2.676174e-04 -3.828923e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.974979  0.000000  -9.707329   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.004947   0.000000  -7.507026</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.707329  0.000000 -26.382387   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507026   0.000000 -20.705898</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 5"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373411  1.25870404  0.34455484 -0.03288532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  8.055071e-08  1.179946e-06  1.314044e-06 -2.699063e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373411  1.25870404  0.34455484 -0.03288531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  6.878177e-08  1.185096e-06  1.282341e-06 -2.692616e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.974972  0.000000  -9.707299   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.004967   0.000000  -7.507016</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.707299  0.000000 -26.382278   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507016   0.000000 -20.705785</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507016   0.000000 -20.705784</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 6"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373311  1.25871166  0.34455525 -0.03288821</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  1.926553e-08  8.694846e-08  3.069134e-08 -1.875468e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1]  1.51373311  1.25871167  0.34455525 -0.03288821</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  3.610042e-08  8.773713e-08  7.403171e-08 -1.818906e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:          [,1]      [,2]       [,3]       [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.974972  0.000000  -9.707298   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.000000 -3.004969   0.000000  -7.507015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.707298  0.000000 -26.382277   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507015   0.000000 -20.705777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -9.707298  0.000000 -26.382276   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.000000 -7.507015   0.000000 -20.705776</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">or1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> OR for dependence for competing risks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -508,20 +514,20 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-in"><span>                 control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,detail<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     764.39429: 0.500000  1.00000 0.100000 0.100000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     760.41547: 0.638110 0.960514 0.467772 -0.0132205</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:     760.40387: 0.653395 0.974160 0.451036 0.0181985</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:     760.38389: 0.690757 0.972238 0.448591 0.00142104</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:     760.37606: 0.718637 0.978903 0.420008 0.00837748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:     760.25920:  1.06308  1.01089 0.300306 -0.0207997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   6:     760.25068:  1.17095  1.03357 0.291057 0.00476415</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   7:     760.21955:  1.26957  1.04549 0.238342 -0.0108132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   8:     760.21001:  1.37413  1.06352 0.203103 -0.0305819</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   9:     760.20960:  1.45522  1.09168 0.167526 -0.0343140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  10:     760.20850:  1.41964  1.09024 0.182566 -0.0388281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  11:     760.20845:  1.41813  1.09721 0.183339 -0.0412570</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  12:     760.20842:  1.41722  1.11055 0.183672 -0.0460117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  13:     760.20842:  1.41733  1.11051 0.183623 -0.0459848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:     760.40387: 0.653394 0.974160 0.451035 0.0181984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:     760.38389: 0.690756 0.972240 0.448590 0.00142097</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:     760.37606: 0.718637 0.978904 0.420007 0.00837365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:     760.25916:  1.06312  1.01090 0.300315 -0.0207679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   6:     760.25064:  1.17064  1.03352 0.291115 0.00473714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   7:     760.21960:  1.26895  1.04539 0.238584 -0.0108209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   8:     760.21003:  1.37319  1.06333 0.203433 -0.0304068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   9:     760.20961:  1.45534  1.09170 0.167447 -0.0342645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  10:     760.20850:  1.41966  1.09026 0.182561 -0.0388517</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  11:     760.20845:  1.41814  1.09721 0.183334 -0.0412582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  12:     760.20842:  1.41723  1.11054 0.183667 -0.0460041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  13:     760.20842:  1.41733  1.11051 0.183623 -0.0459840</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $par</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.41733324  1.11051386  0.18362322 -0.04598481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.41733334  1.11051165  0.18362302 -0.04598399</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $objective</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 760.2084</span>
@@ -547,7 +553,7 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        log-Coef.   SE        z P-val Cross odds ratio  SE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R-func     1.420 66.5  0.02130 0.983            4.130 274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R-func     1.110 71.4  0.01560 0.988            3.040 217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R-func     1.110 71.3  0.01560 0.988            3.040 217</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R-func     0.184 23.3  0.00789 0.994            1.200  28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R-func    -0.046 22.0 -0.00209 0.998            0.955  21</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -600,17 +606,17 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  0.00000000  0.0000000  0.0000000  0.00000000  0.0000000 -0.8603209</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1] 2.517359 3.152333 3.935235 2.367380 1.650497 1.426992</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -0.4338385 -1.0147952 -2.5460328 -0.3722739 -0.3313216 -0.7014266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -0.4338385 -1.0147952 -2.5460334 -0.3722739 -0.3313216 -0.7014266</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:           [,1]       [,2]      [,3]       [,4]       [,5]      [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.4976024  0.0000000  0.000000  0.0000000  0.0000000  0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.8549108  0.000000  0.0000000  0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.8549109  0.000000  0.0000000  0.0000000  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  0.0000000  0.0000000 -1.600519  0.0000000  0.0000000  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.0000000  0.0000000  0.000000 -0.4751796  0.0000000  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  0.0000000  0.0000000  0.000000  0.0000000 -0.8248922  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.408282</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 3"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1] 1.645501 1.965314 2.344480 1.583942 1.248842 1.135736</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -0.02982301  0.04411757  0.63062528 -0.02738202 -0.01381586 -0.01990217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -0.02982302  0.04411753  0.63062440 -0.02738202 -0.01381585 -0.01990217</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:           [,1]       [,2]      [,3]      [,4]       [,5]      [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.3202401  0.0000000  0.000000  0.000000  0.0000000  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.9097494  0.000000  0.000000  0.0000000  0.000000</span>
@@ -620,8 +626,8 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  0.0000000  0.0000000  0.000000  0.000000  0.0000000 -2.098342</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 4"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1] 1.552374 2.013808 2.572392 1.494288 1.228243 1.126251</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -4.297265e-04 -1.168387e-04  3.731022e-03 -5.158182e-04 -4.497369e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  2.253821e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -4.297262e-04 -1.168380e-04  3.731023e-03 -5.158185e-04 -4.497370e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  2.257345e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:           [,1]       [,2]      [,3]       [,4]       [,5]      [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.2978324  0.0000000  0.000000  0.0000000  0.0000000  0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.9191812  0.000000  0.0000000  0.0000000  0.000000</span>
@@ -631,19 +637,19 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.087228</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 5"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1] 1.550931 2.013681 2.573776 1.492471 1.228175 1.126252</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  1.116180e-06 -7.347215e-10  1.587856e-06 -1.109826e-06 -4.893145e-10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] -4.601634e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1]  1.115720e-06 -7.362229e-10  1.586936e-06 -1.109555e-06 -4.887707e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] -4.546997e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:           [,1]       [,2]      [,3]       [,4]       [,5]     [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.2974862  0.0000000  0.000000  0.0000000  0.0000000  0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.9191578  0.000000  0.0000000  0.0000000  0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.9191579  0.000000  0.0000000  0.0000000  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  0.0000000  0.0000000 -2.695165  0.0000000  0.0000000  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  0.0000000  0.0000000  0.000000 -0.2835044  0.0000000  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  0.0000000  0.0000000  0.000000  0.0000000 -0.6618966  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  0.0000000  0.0000000  0.000000  0.0000000  0.0000000 -2.08723</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Fisher-Scoring ===================: it= 6"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> theta:[1] 1.550935 2.013681 2.573776 1.492467 1.228175 1.126252</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -2.846686e-09 -3.398974e-15 -1.035387e-10 -1.750221e-09 -1.311451e-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  3.469968e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> score:[1] -3.212719e-09 -6.107094e-15  4.534257e-09 -1.957429e-09 -2.185535e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  1.474506e-10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hess:           [,1]       [,2]      [,3]       [,4]       [,5]     [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.2974871  0.0000000  0.000000  0.0000000  0.0000000  0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0000000 -0.9191578  0.000000  0.0000000  0.0000000  0.00000</span>
@@ -690,7 +696,7 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

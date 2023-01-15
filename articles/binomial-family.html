@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -86,6 +86,12 @@
       <a href="../articles/recurrent-events.html">Recurrent events</a>
     </li>
     <li>
+      <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
+    </li>
+    <li>
+      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+    </li>
+    <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
     </li>
     <li>
@@ -114,13 +120,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="binomial-family_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analysis of multivariate binomial data: family analysis</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2022-12-03</h4>
+            <h4 data-toc-skip class="date">2023-01-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/binomial-family.Rmd" class="external-link"><code>vignettes/binomial-family.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-family.Rmd</code></div>
@@ -139,13 +145,15 @@
 <p>in the mets package you can fit the</p>
 <ul>
 <li><p>Pairwise odds ratio model</p></li>
-<li>Bivariate Probit model
+<li>
+<p>Bivariate Probit model</p>
 <ul>
 <li>With random effects</li>
 <li>Special functionality for polygenic random effects modelling such as ACE, ADE ,AE and so forth.</li>
 </ul>
 </li>
-<li>Additive gamma random effects model
+<li>
+<p>Additive gamma random effects model</p>
 <ul>
 <li>Special functionality for polygenic random effects modelling such as ACE, ADE ,AE and so forth.</li>
 </ul>
@@ -159,7 +167,15 @@
 </h2>
 <p>We start by simulating family data with and additive gamma structure on ACE form. Here 10000 families consisting of two parents and two children. The response is ybin and there is one covariate x.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/scheike/timereg" class="external-link">timereg</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'timereg'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:mets':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Event, invsubdist, pre.cifs, rchaz, rcrisk, sim.base,</span></span>
+<span><span class="co">#&gt;     sim.cause.cox, sim.cif, sim.cifs, sim.cifsRestrict, sim.cox,</span></span>
+<span><span class="co">#&gt;     simrchaz, simsubdist, subdist</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simbinClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span>
@@ -350,7 +366,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-<p>To specify such a model when only the pairs are availble we show how to specify the model. We here use the same marginal “aa” to make the results comparable. The marginal can also be fitted based on available data.</p>
+<p>To specify such a model when only the pairs are available we show how to specify the model. We here use the same marginal “aa” to make the results comparable. The marginal can also be fitted based on available data.</p>
 <p>We start by selecting the data related to the pairs, and sets up new id’s and to start we specify the model using the full design with 9 random effects. Below we show how one can use with only the random effects needed for each pair, which is typically simpler.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span></span>
@@ -397,30 +413,31 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; [6,]  0  0  0  0  1  1  1  1   1</span></span></code></pre></div>
 <p>Now fitting the model with the data set up</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">ybin</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">dataid</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>         theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                 theta        se</span></span>
-<span><span class="co">#&gt; dependence1 1.9018993 0.7573240</span></span>
-<span><span class="co">#&gt; dependence2 0.9473264 0.2464157</span></span>
+<span><span class="co">#&gt; dependence1 1.8988989 0.7589513</span></span>
+<span><span class="co">#&gt; dependence2 0.9469586 0.2573599</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $h</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; dependence1   0.6675  0.1211 0.4302 0.9048 3.514e-08</span></span>
-<span><span class="co">#&gt; dependence2   0.3325  0.1211 0.0952 0.5698 6.027e-03</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; dependence1   0.6673  0.1215 0.42907 0.9054 4.004e-08</span></span>
+<span><span class="co">#&gt; dependence2   0.3327  0.1215 0.09457 0.5709 6.179e-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vare</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vartot</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1    2.849  0.7111 1.455 4.243 6.161e-05</span></span>
+<span><span class="co">#&gt; p1    2.846  0.7236 1.428 4.264 8.393e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
@@ -493,23 +510,23 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                 theta        se</span></span>
-<span><span class="co">#&gt; dependence1 1.9018993 0.7573240</span></span>
-<span><span class="co">#&gt; dependence2 0.9473264 0.2464157</span></span>
+<span><span class="co">#&gt; dependence1 1.8988989 0.7589513</span></span>
+<span><span class="co">#&gt; dependence2 0.9469586 0.2573599</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $h</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; dependence1   0.6675  0.1211 0.4302 0.9048 3.514e-08</span></span>
-<span><span class="co">#&gt; dependence2   0.3325  0.1211 0.0952 0.5698 6.027e-03</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; dependence1   0.6673  0.1215 0.42907 0.9054 4.004e-08</span></span>
+<span><span class="co">#&gt; dependence2   0.3327  0.1215 0.09457 0.5709 6.179e-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vare</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vartot</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1    2.849  0.7111 1.455 4.243 6.161e-05</span></span>
+<span><span class="co">#&gt; p1    2.846  0.7236 1.428 4.264 8.393e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
@@ -530,23 +547,23 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                 theta        se</span></span>
-<span><span class="co">#&gt; dependence1 1.9018993 0.7573240</span></span>
-<span><span class="co">#&gt; dependence2 0.9473264 0.2464157</span></span>
+<span><span class="co">#&gt; dependence1 1.8988989 0.7589513</span></span>
+<span><span class="co">#&gt; dependence2 0.9469586 0.2573599</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $h</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; dependence1   0.6675  0.1211 0.4302 0.9048 3.514e-08</span></span>
-<span><span class="co">#&gt; dependence2   0.3325  0.1211 0.0952 0.5698 6.027e-03</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; dependence1   0.6673  0.1215 0.42907 0.9054 4.004e-08</span></span>
+<span><span class="co">#&gt; dependence2   0.3327  0.1215 0.09457 0.5709 6.179e-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vare</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vartot</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1    2.849  0.7111 1.455 4.243 6.161e-05</span></span>
+<span><span class="co">#&gt; p1    2.846  0.7236 1.428 4.264 8.393e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
@@ -598,7 +615,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span> <span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dtypes</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now with the pairs we fit the model</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="va">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">ybin</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">data</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">ybin</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">data</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>, clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>         theta.des<span class="op">=</span><span class="va">dm</span>,pairs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -676,11 +693,11 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.2 (2022-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.5 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.1 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
@@ -692,25 +709,25 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.1     lava_1.7.0     timereg_2.0.4  survival_3.4-0</span></span>
+<span><span class="co">#&gt; [1] timereg_2.0.4  mets_1.3.2     survival_3.4-0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.1         compiler_4.2.2     </span></span>
-<span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.2         digest_0.6.30      </span></span>
-<span><span class="co">#&gt;  [7] jsonlite_1.8.3      evaluate_0.18       memoise_2.0.1      </span></span>
+<span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.2         compiler_4.2.2     </span></span>
+<span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.2         digest_0.6.31      </span></span>
+<span><span class="co">#&gt;  [7] jsonlite_1.8.4      evaluate_0.19       memoise_2.0.1      </span></span>
 <span><span class="co">#&gt; [10] lifecycle_1.0.3     lattice_0.20-45     rlang_1.0.6        </span></span>
-<span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.4.1           parallel_4.2.2     </span></span>
-<span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.6      </span></span>
-<span><span class="co">#&gt; [19] xfun_0.35           fastmap_1.1.0       stringr_1.5.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.41          desc_1.4.2          fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [25] vctrs_0.5.1         sass_0.4.4          systemfonts_1.0.4  </span></span>
-<span><span class="co">#&gt; [28] globals_0.16.2      rprojroot_2.0.3     grid_4.2.2         </span></span>
-<span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.8.0       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [34] textshaping_0.3.6   parallelly_1.32.1   future.apply_1.10.0</span></span>
-<span><span class="co">#&gt; [37] rmarkdown_2.18      purrr_0.3.5         magrittr_2.0.3     </span></span>
-<span><span class="co">#&gt; [40] codetools_0.2-18    htmltools_0.5.3     splines_4.2.2      </span></span>
-<span><span class="co">#&gt; [43] future_1.29.0       numDeriv_2016.8-1.1 ragg_1.2.4         </span></span>
-<span><span class="co">#&gt; [46] stringi_1.7.8       cachem_1.0.6</span></span></code></pre></div>
+<span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.6.0           parallel_4.2.2     </span></span>
+<span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.7      </span></span>
+<span><span class="co">#&gt; [19] xfun_0.36           fastmap_1.1.0       stringr_1.5.0      </span></span>
+<span><span class="co">#&gt; [22] knitr_1.41          globals_0.16.2      desc_1.4.2         </span></span>
+<span><span class="co">#&gt; [25] fs_1.5.2            vctrs_0.5.1         sass_0.4.4         </span></span>
+<span><span class="co">#&gt; [28] systemfonts_1.0.4   rprojroot_2.0.3     grid_4.2.2         </span></span>
+<span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.9.0       R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [34] textshaping_0.3.6   parallelly_1.34.0   future.apply_1.10.0</span></span>
+<span><span class="co">#&gt; [37] rmarkdown_2.19      lava_1.7.1          purrr_1.0.1        </span></span>
+<span><span class="co">#&gt; [40] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.4    </span></span>
+<span><span class="co">#&gt; [43] splines_4.2.2       future_1.30.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [46] ragg_1.2.5          stringi_1.7.12      cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
 
@@ -731,7 +748,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
