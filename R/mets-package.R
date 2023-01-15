@@ -32,9 +32,6 @@ NULL
 lava::IC
 
 ##' @export
-lava::iid
-
-##' @export
 lava::twostage
 
 ##' @export

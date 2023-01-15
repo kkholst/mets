@@ -2045,8 +2045,8 @@ normalATE <- function(formula,data,binreg=TRUE,model="lin",...)
 }# }}}
 
 ##' @export
-iid.binreg  <- function(x,...) {# {{{
-  x$iid
+IC.binreg  <- function(x,...) {# {{{
+  x$iid*NROW(x$iid)
 }# }}}
 
 ##' @export

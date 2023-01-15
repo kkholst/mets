@@ -298,7 +298,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' bplot(rob1,se=TRUE,robust=TRUE)
 ##' 
 ##' ## making iid decomposition of regression parameters
-##' betaiiid <- iid(out1)
+##' betaiiid <- lava::iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
 ##' Aiiid <- mets:::iid.baseline.phreg(out1,time=30)
@@ -721,11 +721,19 @@ coef.phreg  <- function(object,...) {
 ###{{{ iid & Robust variances 
 
 ##' @export
-iid.phreg  <- function(x,type="robust",all=FALSE,...) {# {{{
-classes1 <- "mlogit"
-if ((length(class(x))==1) || inherits(x, classes1)) {
- invhess <- -solve(x$hessian)
- orig.order <- FALSE
+IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
+  if (baseline) {
+    if (inherits(x, "cifreg")) {
+      res <- iid.baseline.cifreg(x, ...)$base.iid
+    } else {
+      res <- iid.baseline.phreg(x, ...)$base.iid
+    }
+    return(res*NROW(res))
+  }
+  classes1 <- "mlogit"
+  if ((length(class(x))==1) || inherits(x, classes1)) {
+    invhess <- -solve(x$hessian)
+    orig.order <- FALSE
 
 if (is.null(x$propodds)) {
   if (type=="robust") {	# {{{ cox model 
@@ -801,9 +809,13 @@ if (is.null(x$propodds)) {
   } else {
      UU <- MGt
   }
-  return(structure(UU%*%invhess,invhess=invhess,ncluster=ncluster))
-} else if (inherits(x,c("cifreg","recreg"))) return(x$iid)
-
+ res <-  structure(UU%*%invhess,invhess=invhess,ncluster=ncluster)
+ res <- res*NROW(res)
+ return(res)
+} else if (inherits(x,c("cifreg","recreg"))) {
+  res <- x$iid*NROW(x$iid)
+  return(res)
+}
 } # }}}
 
 ##' @export iid.baseline.phreg 
@@ -991,7 +1003,7 @@ robust.phreg  <- function(x,fixbeta=NULL,...) {
   if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
  if (fixbeta==0)  {
-    beta.iid <- iid.phreg(x) 
+    beta.iid <- iid(x)
     robvar <- crossprod(beta.iid)
  } else robvar <- beta.iid <- NULL
  baseline <- robust.basehaz.phreg(x,fixbeta=fixbeta,...); 
