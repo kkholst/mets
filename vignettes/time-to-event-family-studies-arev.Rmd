@@ -386,7 +386,7 @@ Here we do the cumulative incidence random effects modelling
 
 ```{r, label=additive_gamma, eval=fullVignette}
   times <- seq(50,90,length.out=5)
-  cif1 <- comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
+  cif1 <- timereg::comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
 		   cause=2,times=times,max.clust=NULL)
 
   mm <- model.matrix(~-1+factor(zyg),prt)
@@ -428,7 +428,7 @@ Here we do the cumulative incidence random effects modelling
  # estimate(coef=outaem$theta,vcov=outaem$var.theta,f=function(p) p/sum(p)^2)
 
   times <- 90
-  cif1 <- comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
+  cif1 <- timereg::comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
 		   cause=2,times=times,max.clust=NULL)
 
   mm <- model.matrix(~-1+factor(zyg),prt)
