@@ -5,7 +5,7 @@
 \alias{phreg.par}
 \alias{robust.phreg}
 \alias{readPhreg}
-\alias{iid.baseline.phreg}
+\alias{IIDbaseline.phreg}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)
@@ -53,7 +53,7 @@ bplot(rob1,se=TRUE,robust=TRUE)
 betaiiid <- lava::iid(out1)
 
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- mets:::iid.baseline.phreg(out1,time=30)
+Aiiid <- mets:::IIDbaseline.phreg(out1,time=30)
 
 }
 \author{
