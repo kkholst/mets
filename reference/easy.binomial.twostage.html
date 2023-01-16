@@ -248,7 +248,7 @@ fast.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">twinstut</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">twinstut0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>, <span class="va">tvparnr</span><span class="op">&lt;</span><span class="fl">10000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">twinstut0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>, <span class="va">tvparnr</span><span class="op">&lt;</span><span class="fl">4000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">twinstut</span> <span class="op">&lt;-</span> <span class="va">twinstut0</span></span></span>
 <span class="r-in"><span><span class="va">twinstut</span><span class="op">$</span><span class="va">binstut</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">twinstut</span><span class="op">$</span><span class="va">stutter</span><span class="op">==</span><span class="st">"yes"</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span></span>
@@ -260,16 +260,16 @@ fast.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz 0.4592786 0.3724594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz 3.3313275 0.3219407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os 0.5097220 0.4815677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    theta        se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz -0.2853738 0.9894082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz  3.3391390 0.5590195</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os  0.4920396 0.7634939</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $or</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz    1.583  0.5896  0.42738  2.738 0.007256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz   27.975  9.0064 10.32316 45.628 0.001895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os    1.665  0.8017  0.09347  3.236 0.037843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err   2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz   0.7517  0.7438 -0.706  2.209 0.31216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz  28.1948 15.7615 -2.697 59.087 0.07364</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os   1.6356  1.2488 -0.812  4.083 0.19027</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plackett"</span>
@@ -277,10 +277,10 @@ fast.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.mets.twostage"</span>
 <span class="r-in"><span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">bin</span><span class="op">$</span><span class="va">theta</span>,vcov<span class="op">=</span><span class="va">bin</span><span class="op">$</span><span class="va">var.theta</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate Std.Err     2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NA      1.583  0.5896  0.42738  2.738 0.007256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NA.1   27.975  9.0064 10.32316 45.628 0.001895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NA.2    1.665  0.8017  0.09347  3.236 0.037843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate Std.Err   2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NA     0.7517  0.7438 -0.706  2.209 0.31216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NA.1  28.1948 15.7615 -2.697 59.087 0.07364</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NA.2   1.6356  1.2488 -0.812  4.083 0.19027</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">twinstut</span><span class="op">$</span><span class="va">cage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">twinstut</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="va">cage</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span></span>
@@ -290,18 +290,18 @@ fast.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz 0.5059022 0.3880797</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz 3.3650106 0.3263683</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os 0.5070644 0.4882211</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cage          0.1501763 0.2551689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    theta        se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz -0.2684851 0.9930894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz  3.4239727 0.5773886</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os  0.4778091 0.7628390</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cage           0.2519096 0.4821619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $or</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz    1.658  0.6436  0.39700  2.920 9.972e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz   28.934  9.4431 10.42572 47.442 2.184e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os    1.660  0.8106  0.07157  3.249 4.054e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cage             1.162  0.2965  0.58088  1.743 8.893e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std.Err     2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz   0.7645  0.7593 -0.72357  2.253 0.31395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz  30.6911 17.7207 -4.04082 65.423 0.08328</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os   1.6125  1.2301 -0.79843  4.024 0.18989</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cage            1.2865  0.6203  0.07073  2.502 0.03808</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plackett"</span>
@@ -316,22 +316,22 @@ fast.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz       0.3037310 0.4586524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz       3.4143434 0.3301659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os       0.4804629 0.5073920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cage               -0.3547975 0.5124653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz:cage  0.7245451 0.6254771</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os:cage  0.6798778 0.7714539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          theta        se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz      -0.27701246 1.0713974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz       3.52484148 0.5951743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os       0.48859941 0.7644050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cage                0.06420907 3.6225641</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz:cage  0.49441325 3.6865646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os:cage -0.12312666 3.6921748</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $or</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate Std.Err      2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz        1.3549  0.6214  0.136924  2.573 0.029235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz       30.3970 10.0360 10.726691 50.067 0.002455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os        1.6168  0.8204  0.008941  3.225 0.048740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cage                 0.7013  0.3594 -0.003095  1.406 0.051015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz:cage   2.0638  1.2909 -0.466236  4.594 0.109870</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os:cage   1.9736  1.5226 -1.010545  4.958 0.194888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate Std.Err     2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)dz        0.7580  0.8122  -0.8338  2.350 0.35063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz       33.9484 20.2052  -5.6531 73.550 0.09292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os        1.6300  1.2460  -0.8121  4.072 0.19080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cage                 1.0663  3.8628  -6.5046  8.637 0.78251</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)mz:cage   1.6395  6.0443 -10.2070 13.486 0.78619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)os:cage   0.8842  3.2644  -5.5140  7.282 0.78651</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plackett"</span>
@@ -346,16 +346,16 @@ fast.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Odds-Ratio (Plackett) model </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)dz 0.4592786 0.3724594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)mz 3.3313275 0.3219407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)os 0.5097220 0.4815677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     theta        se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)dz -0.2853738 0.9894082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)mz  3.3391390 0.5590195</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)os  0.4920396 0.7634939</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $or</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err     2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)dz    1.583  0.5896  0.42738  2.738 0.007256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)mz   27.975  9.0064 10.32316 45.628 0.001895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)os    1.665  0.8017  0.09347  3.236 0.037843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Err   2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)dz   0.7517  0.7438 -0.706  2.209 0.31216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)mz  28.1948 15.7615 -2.697 59.087 0.07364</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg1)os   1.6356  1.2488 -0.812  4.083 0.19027</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plackett"</span>
@@ -365,33 +365,15 @@ fast.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## refers to zygosity of first subject in eash pair : zyg1</span></span></span>
 <span class="r-in"><span><span class="co">## could also use zyg2 (since zyg2=zyg1 within twinpair's))</span></span></span>
-<span class="r-in"><span><span class="va">desfs</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">num1</span><span class="op">=</span><span class="st">"zyg1"</span>,<span class="va">namesdes</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mz"</span>,<span class="st">"dz"</span>,<span class="st">"os"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"mz"</span>,<span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"dz"</span>,<span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"os"</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">out3</span> <span class="op">&lt;-</span> <span class="fu">easy.binomial.twostage</span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">+</span><span class="va">age</span>,</span></span>
-<span class="r-in"><span>                               data<span class="op">=</span><span class="va">twinstut</span>, response<span class="op">=</span><span class="st">"binstut"</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,</span></span>
-<span class="r-in"><span>                               var.link<span class="op">=</span><span class="fl">1</span>,theta.formula<span class="op">=</span><span class="va">desfs</span>,</span></span>
-<span class="r-in"><span>                               desnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mz"</span>,<span class="st">"dz"</span>,<span class="st">"os"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Odds-Ratio (Plackett) model </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        theta        se</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mz 3.3313275 0.3219407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dz 0.4592786 0.3724594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> os 0.5097220 0.4815677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $or</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err     2.5%  97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mz   27.975  9.0064 10.32316 45.628 0.001895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dz    1.583  0.5896  0.42738  2.738 0.007256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> os    1.665  0.8017  0.09347  3.236 0.037843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plackett"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.mets.twostage"</span>
+<span class="r-in"><span><span class="co">## do not run t save time</span></span></span>
+<span class="r-in"><span><span class="co"># desfs &lt;- function(x,num1="zyg1",namesdes=c("mz","dz","os"))</span></span></span>
+<span class="r-in"><span><span class="co">#     c(x[num1]=="mz",x[num1]=="dz",x[num1]=="os")*1</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">#out3 &lt;- easy.binomial.twostage(binstut~factor(sex)+age,</span></span></span>
+<span class="r-in"><span><span class="co">#                               data=twinstut, response="binstut",id="tvparnr",</span></span></span>
+<span class="r-in"><span><span class="co">#                               var.link=1,theta.formula=desfs,</span></span></span>
+<span class="r-in"><span><span class="co">#                               desnames=c("mz","dz","os"))</span></span></span>
+<span class="r-in"><span><span class="co">#summary(out3)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5000</span></span></span>

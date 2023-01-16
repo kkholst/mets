@@ -126,7 +126,7 @@
       <h1 data-toc-skip>Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2023-01-15</h4>
+            <h4 data-toc-skip class="date">2023-01-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/rmst-ate.Rmd" class="external-link"><code>vignettes/rmst-ate.Rmd</code></a></small>
       <div class="hidden name"><code>rmst-ate.Rmd</code></div>
@@ -145,7 +145,7 @@
 <span></span>
 <span>     <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span>
 <span>     <span class="co"># E( min(T;t) | X ) = exp( a+b X) with IPCW estimation </span></span>
-<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,</span>
+<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,</span>
 <span>                     time<span class="op">=</span><span class="fl">50</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"exp"</span><span class="op">)</span></span>
 <span>     <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -169,7 +169,7 @@
 <span>     </span>
 <span>      <span class="co">### same as Kaplan-Meier for full censoring model </span></span>
 <span>     <span class="va">bmt</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">bmt</span>,<span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span><span class="op">)</span></span>
-<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,</span>
+<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,</span>
 <span>                                  cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span>,<span class="va">tcell</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"lin"</span><span class="op">)</span></span>
 <span>     <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                        Estimate Std.Err  2.5% 97.5%   P-value</span></span>
@@ -187,7 +187,7 @@
 <span><span class="co">#&gt; 4      3    30 17.76617 2.4421866   12.23383</span></span>
 <span>     </span>
 <span>     <span class="co">## competing risks years-lost for cause 1  </span></span>
-<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span>,</span>
+<span>     <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                                 cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span>,<span class="va">tcell</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"lin"</span><span class="op">)</span></span>
 <span>     <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                        Estimate Std.Err   2.5%  97.5%   P-value</span></span>
@@ -196,7 +196,7 @@
 <span><span class="co">#&gt; inttcell=1, platelet=0    7.261  2.3533  2.648 11.873 2.033e-03</span></span>
 <span><span class="co">#&gt; inttcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.737e-03</span></span>
 <span>     <span class="co">## same as integrated cumulative incidence </span></span>
-<span>     <span class="va">rmc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmean.phreg.html">cif.yearslost</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span>     <span class="va">rmc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmean.phreg.html">cif.yearslost</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span>     <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rmc1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   strata times    intF11   intF12 se.intF11 se.intF12 total.years.lost</span></span>
 <span><span class="co">#&gt; 1      0    30 12.105127 4.291933 0.8508102 0.6161447         16.39706</span></span>
@@ -212,7 +212,7 @@
 <code class="sourceCode R"><span></span>
 <span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tcell</span><span class="op">~</span><span class="va">tcell</span></span>
 <span> <span class="va">bmt</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bmt</span><span class="op">$</span><span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
-<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,time<span class="op">=</span><span class="fl">40</span>,treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span>
+<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,time<span class="op">=</span><span class="fl">40</span>,treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
@@ -243,7 +243,7 @@
 <span><span class="co">#&gt; treat1     21.5622  3.8017 14.1111 29.0133  0.0000</span></span>
 <span><span class="co">#&gt; treat:1-0   2.2369  4.1991 -5.9932 10.4670  0.5942</span></span>
 <span> </span>
-<span> <span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,outcome<span class="op">=</span><span class="st">"rmst-cause"</span>,</span>
+<span> <span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,outcome<span class="op">=</span><span class="st">"rmst-cause"</span>,</span>
 <span>            time<span class="op">=</span><span class="fl">40</span>,treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -275,7 +275,7 @@
 <span><span class="co">#&gt; treat1      9.4567098   2.4051143   4.7427723  14.1706473  0.0001</span></span>
 <span><span class="co">#&gt; treat:1-0  -5.0635694   2.5856565 -10.1313629   0.0042241  0.0502</span></span>
 <span></span>
-<span> <span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span>,outcome<span class="op">=</span><span class="st">"rmst-cause"</span>,</span>
+<span> <span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resmeanATE.html">resmeanATE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span>,outcome<span class="op">=</span><span class="st">"rmst-cause"</span>,</span>
 <span>            time<span class="op">=</span><span class="fl">40</span>,treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -330,7 +330,7 @@
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.2     survival_3.4-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.2     timereg_2.0.4  survival_3.4-0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.2         compiler_4.2.2     </span></span>
@@ -340,16 +340,15 @@
 <span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.6.0           parallel_4.2.2     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.7      </span></span>
 <span><span class="co">#&gt; [19] xfun_0.36           fastmap_1.1.0       stringr_1.5.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.41          globals_0.16.2      desc_1.4.2         </span></span>
-<span><span class="co">#&gt; [25] fs_1.5.2            vctrs_0.5.1         sass_0.4.4         </span></span>
-<span><span class="co">#&gt; [28] systemfonts_1.0.4   rprojroot_2.0.3     grid_4.2.2         </span></span>
+<span><span class="co">#&gt; [22] knitr_1.41          desc_1.4.2          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] vctrs_0.5.1         sass_0.4.4          systemfonts_1.0.4  </span></span>
+<span><span class="co">#&gt; [28] globals_0.16.2      rprojroot_2.0.3     grid_4.2.2         </span></span>
 <span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.9.0       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [34] timereg_2.0.4       textshaping_0.3.6   parallelly_1.34.0  </span></span>
-<span><span class="co">#&gt; [37] future.apply_1.10.0 rmarkdown_2.19      lava_1.7.1         </span></span>
-<span><span class="co">#&gt; [40] purrr_1.0.1         magrittr_2.0.3      codetools_0.2-18   </span></span>
-<span><span class="co">#&gt; [43] htmltools_0.5.4     splines_4.2.2       future_1.30.0      </span></span>
-<span><span class="co">#&gt; [46] numDeriv_2016.8-1.1 ragg_1.2.5          stringi_1.7.12     </span></span>
-<span><span class="co">#&gt; [49] cachem_1.0.6</span></span></code></pre></div>
+<span><span class="co">#&gt; [34] textshaping_0.3.6   parallelly_1.34.0   future.apply_1.10.0</span></span>
+<span><span class="co">#&gt; [37] rmarkdown_2.19      lava_1.7.1          purrr_1.0.1        </span></span>
+<span><span class="co">#&gt; [40] magrittr_2.0.3      codetools_0.2-18    htmltools_0.5.4    </span></span>
+<span><span class="co">#&gt; [43] splines_4.2.2       future_1.30.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [46] ragg_1.2.5          stringi_1.7.12      cachem_1.0.6</span></span></code></pre></div>
 </div>
   </div>
 

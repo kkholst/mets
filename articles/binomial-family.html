@@ -126,7 +126,7 @@
       <h1 data-toc-skip>Analysis of multivariate binomial data: family analysis</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2023-01-15</h4>
+            <h4 data-toc-skip class="date">2023-01-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/binomial-family.Rmd" class="external-link"><code>vignettes/binomial-family.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-family.Rmd</code></div>
@@ -169,13 +169,6 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/scheike/timereg" class="external-link">timereg</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'timereg'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:mets':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Event, invsubdist, pre.cifs, rchaz, rcrisk, sim.base,</span></span>
-<span><span class="co">#&gt;     sim.cause.cox, sim.cif, sim.cifs, sim.cifsRestrict, sim.cox,</span></span>
-<span><span class="co">#&gt;     simrchaz, simsubdist, subdist</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simbinClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span>
@@ -709,7 +702,7 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] timereg_2.0.4  mets_1.3.2     survival_3.4-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.2     timereg_2.0.4  survival_3.4-0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.2         compiler_4.2.2     </span></span>
@@ -719,9 +712,9 @@ The random effecs structure is typically simpler when just looking at pairs, but
 <span><span class="co">#&gt; [13] Matrix_1.5-1        cli_3.6.0           parallel_4.2.2     </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.6          mvtnorm_1.1-3       pkgdown_2.0.7      </span></span>
 <span><span class="co">#&gt; [19] xfun_0.36           fastmap_1.1.0       stringr_1.5.0      </span></span>
-<span><span class="co">#&gt; [22] knitr_1.41          globals_0.16.2      desc_1.4.2         </span></span>
-<span><span class="co">#&gt; [25] fs_1.5.2            vctrs_0.5.1         sass_0.4.4         </span></span>
-<span><span class="co">#&gt; [28] systemfonts_1.0.4   rprojroot_2.0.3     grid_4.2.2         </span></span>
+<span><span class="co">#&gt; [22] knitr_1.41          desc_1.4.2          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [25] vctrs_0.5.1         sass_0.4.4          systemfonts_1.0.4  </span></span>
+<span><span class="co">#&gt; [28] globals_0.16.2      rprojroot_2.0.3     grid_4.2.2         </span></span>
 <span><span class="co">#&gt; [31] glue_1.6.2          listenv_0.9.0       R6_2.5.1           </span></span>
 <span><span class="co">#&gt; [34] textshaping_0.3.6   parallelly_1.34.0   future.apply_1.10.0</span></span>
 <span><span class="co">#&gt; [37] rmarkdown_2.19      lava_1.7.1          purrr_1.0.1        </span></span>
