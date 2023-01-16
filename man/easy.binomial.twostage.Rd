@@ -120,14 +120,15 @@ summary(out)
 
 ## refers to zygosity of first subject in eash pair : zyg1
 ## could also use zyg2 (since zyg2=zyg1 within twinpair's))
-desfs <- function(x,num1="zyg1",namesdes=c("mz","dz","os"))
-    c(x[num1]=="mz",x[num1]=="dz",x[num1]=="os")*1
-
-out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
-                               data=twinstut, response="binstut",id="tvparnr",
-                               var.link=1,theta.formula=desfs,
-                               desnames=c("mz","dz","os"))
-summary(out3)
+## do not run t save time
+# desfs <- function(x,num1="zyg1",namesdes=c("mz","dz","os"))
+#     c(x[num1]=="mz",x[num1]=="dz",x[num1]=="os")*1
+#
+#out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
+#                               data=twinstut, response="binstut",id="tvparnr",
+#                               var.link=1,theta.formula=desfs,
+#                               desnames=c("mz","dz","os"))
+#summary(out3)
 
 \donttest{ ## Reduce Ex.Timings
 n <- 5000
