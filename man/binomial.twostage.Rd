@@ -201,6 +201,7 @@ bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
 		         clusters=twinstut$tvparnr,theta.des=theta.des)
 summary(bina)
 
+\donttest{ ## Reduce Ex.Timings
 ## refers to zygosity of first subject in eash pair : zyg1
 ## could also use zyg2 (since zyg2=zyg1 within twinpair's))
 out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
@@ -217,6 +218,7 @@ out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
       data=twinstut,response="binstut",id="tvparnr",var.link=1,
       theta.formula=desfs,desnames=c("mz","dz","os"))
 summary(out3)
+}
 
 ### use of clayton oakes binomial additive gamma model
 ###########################################################
