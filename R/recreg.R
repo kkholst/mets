@@ -521,7 +521,6 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     ## compute regression augmentation for censoring martingale 
     if ((!is.null(augment.model)) & (length(other)>1)  & (length(whereC)>0)) {## {{{
 
-	    print("hej")
 	CovZXstrata <- function(X,Ej,Z,Sign,strata,nstrata,jumps) 
 	{# {{{
 		strata  <- c(strata); Sign <- c(Sign)
