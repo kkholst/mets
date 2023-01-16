@@ -7,6 +7,7 @@
 \alias{twostage}
 \alias{estimate}
 \alias{gof}
+\alias{Event}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -15,5 +16,7 @@ below to see their documentation.
 
 \describe{
   \item{lava}{\code{\link[lava:estimate.default]{estimate}}, \code{\link[lava]{gof}}, \code{\link[lava]{IC}}, \code{\link[lava]{twostage}}}
+
+  \item{timereg}{\code{\link[timereg]{Event}}}
 }}
 
