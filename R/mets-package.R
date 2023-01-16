@@ -40,9 +40,6 @@ lava::estimate
 ##' @export
 lava::gof
 
-##' @export
-timereg::Event
-
 ##' np data set
 ##'
 ##' @name np
