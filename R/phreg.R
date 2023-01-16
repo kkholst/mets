@@ -275,7 +275,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg iid.baseline.phreg
+##' @aliases phreg phreg.par robust.phreg readPhreg IIDbaseline.phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -301,7 +301,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 ##' betaiiid <- lava::iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- mets:::iid.baseline.phreg(out1,time=30)
+##' Aiiid <- mets:::IIDbaseline.phreg(out1,time=30)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -724,9 +724,9 @@ coef.phreg  <- function(object,...) {
 IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
   if (baseline) {
     if (inherits(x, "cifreg")) {
-      res <- iid.baseline.cifreg(x, ...)$base.iid
+      res <- IIDbaseline.cifreg(x, ...)$base.iid
     } else {
-      res <- iid.baseline.phreg(x, ...)$base.iid
+      res <- IIDbaseline.phreg(x, ...)$base.iid
     }
     return(res*NROW(res))
   }
@@ -818,8 +818,8 @@ if (is.null(x$propodds)) {
 }
 } # }}}
 
-##' @export iid.baseline.phreg 
-iid.baseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
+##' @export IIDbaseline.phreg 
+IIDbaseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_i int_0^t f(s)/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
@@ -1842,8 +1842,8 @@ survivalG <- function(x,data,time=NULL)
 if (is.null(time)) stop("give time for estimation of survival\n")
 
 if (inherits(x,"cifreg"))
-Aiid <- iid.baseline.cifreg(x,time=time) else 
-Aiid <- iid.baseline.phreg(x,time=time)
+Aiid <- IIDbaseline.cifreg(x,time=time) else 
+Aiid <- IIDbaseline.phreg(x,time=time)
 
 ### dealing with first variable that is a factor 
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]

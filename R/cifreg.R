@@ -62,10 +62,10 @@
 ##'
 ##' ### predictions with CI based on iid decomposition of baseline and beta
 ##' fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
-##' Biid <- mets:::iid.baseline.cifreg(fg,time=20)
+##' Biid <- IIDbaseline.cifreg(fg,time=20)
 ##' FGprediid(Biid,bmt[1:5,])
 ##'
-##' @aliases vecAllStrata diffstrata iid.baseline.cifreg FGprediid indexstratarightR
+##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
             weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
@@ -536,8 +536,8 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
   return(res)
 }# }}}
 
-##' @export iid.baseline.cifreg 
-iid.baseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
+##' @export IIDbaseline.cifreg 
+IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 

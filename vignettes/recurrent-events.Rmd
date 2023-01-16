@@ -407,7 +407,7 @@ for the standard Ghosh-Lin model and it requires that the model is fitted with t
 ```{r}
 out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
 	        cens.code=0,cox.prep=TRUE)
-baseiid <- mets:::iid.baseline.cifreg(out,time=3000)
+baseiid <- IIDbaseline.cifreg(out,time=3000)
 GLprediid(baseiid,rr[1:5,])
 ```
 
