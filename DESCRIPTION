@@ -28,8 +28,7 @@ Imports:
     compiler,
     Rcpp,
     splines,
-    survival (>= 2.43-1)R
-
+    survival (>= 2.43-1)
 Suggests:
     optimx,
     prodlim,
