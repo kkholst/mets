@@ -76,7 +76,7 @@
 ##' Two-stage binomial modelling
 ##' @examples
 ##' data(twinstut)
-##' twinstut0 <- subset(twinstut, tvparnr<5000)
+##' twinstut0 <- subset(twinstut, tvparnr<4000)
 ##' twinstut <- twinstut0
 ##' twinstut$binstut <- (twinstut$stutter=="yes")*1
 ##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
@@ -685,7 +685,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 ##'
 ##' @examples
 ##' data(twinstut)
-##' twinstut0 <- subset(twinstut, tvparnr<10000)
+##' twinstut0 <- subset(twinstut, tvparnr<5000)
 ##' twinstut <- twinstut0
 ##' twinstut$binstut <- (twinstut$stutter=="yes")*1
 ##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)

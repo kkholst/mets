@@ -63,7 +63,7 @@ Lams <- cbind(base1[,1],cumsum(dtt*lams))
 
 if (is.null(entry)) entry <- rep(0,n*k)
 gamma <- rep(rgamma(n,1/vargam)*vargam,each=k)
-ddd <- pc.hazard(rbind(c(0,0),Lams),rr=gamma,entry=entry)
+ddd <- rchaz(rbind(c(0,0),Lams),rr=gamma,entry=entry)
 ddd$cluster <- rep(1:n,each=k)
 ddd$gamma <- gamma
 

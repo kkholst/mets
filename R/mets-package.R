@@ -15,7 +15,7 @@
 ##'   eventTime Expand getoutcome gof intercept<- Inverse kill<- latent latent<-
 ##'   lava.options lvm Model multigroup parameter<- pars regression regression<-
 ##'   revdiag trim IC
-##' @importFrom timereg two.stage predict.two.stage sindex.prodlim Cpred pc.hazard
+##' @importFrom timereg two.stage predict.two.stage sindex.prodlim Cpred 
 ##' @importFrom survival Surv is.Surv concordance strata
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline title
