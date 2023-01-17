@@ -239,6 +239,7 @@ twinstut$binstut <- 1*(twinstut$stutter=="yes")
 twinsall <- twinstut
 twinstut <- subset(twinstut,zyg%in%c("mz","dz"))
 head(twinstut)
+twinstut <- subset(twinstut,tvparnr < 3000)
 ```
 
 
@@ -343,6 +344,7 @@ data(twinstut)
 twinstut <- subset(twinstut,zyg%in%c("mz","dz"))
 twinstut$binstut <- 1*(twinstut$stutter=="yes")
 head(twinstut)
+twinstut <- subset(twinstut,tvparnr < 2000)
 ```
 
 First testing for same dependence in MZ and DZ  that we recommend doing by 
