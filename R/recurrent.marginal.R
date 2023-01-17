@@ -1,4 +1,4 @@
-## Fast recurrent marginal mean when death is possible
+##' Fast recurrent marginal mean when death is possible
 ##'
 ##' Fast Marginal means of recurrent events. Using the Lin and Ghosh (2000) 
 ##' standard errors.  
