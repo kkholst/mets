@@ -758,6 +758,28 @@ RcppExport SEXP vecAllStrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	return(rres);
 }/*}}}*/
 
+RcppExport SEXP vecAllStrataRevcumsumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
+	colvec a = Rcpp::as<colvec>(ia);
+	IntegerVector strata(istrata);
+	int nstrata = Rcpp::as<int>(instrata);
+	unsigned n = a.n_rows;
+
+	colvec tmpsum(nstrata); tmpsum.zeros();
+	mat Ss(n,nstrata);
+	colvec res = a;
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1);
+		tmpsum(ss) += a(n-i-1);
+		for (int k=0;k<nstrata;k++) Ss(n-i-1,k)= tmpsum(k);
+		res(n-i-1) = tmpsum(ss);
+	}
+
+	List rres;
+	rres["mres"]=Ss;
+	rres["vres"]=res;
+	return(rres);
+}/*}}}*/
+
 RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata,SEXP iright) {/*{{{*/
 //	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector strata(istrata);
@@ -1840,8 +1862,7 @@ RcppExport SEXP CubeMattime(SEXP XSEXP,SEXP XXSEXP,SEXP irX,SEXP icX,SEXP irXX,S
 	mat XXi(rXX,cXX); 
 
 	for (unsigned j=0; j<n; j++)  {
-		if (inv==1) iX= pinv(reshape(X.row(j),rX,cX)); else iX=reshape(X.row(j),rX,cX); 
-
+		if (inv==1) iX= pinv(reshape(X.row(j),rX,cX),0.0001); else iX=reshape(X.row(j),rX,cX); 
 //		if (j==0) { XXi=reshape(XX.row(j),rXX,cXX); XXi.print(); iX.print(); }
 
 		if ((transX==0) && (transXX==0))  XXX.row(j)=vectorise(iX    *reshape(XX.row(j),rXX,cXX)).t();

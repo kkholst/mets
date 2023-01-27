@@ -1,5 +1,5 @@
 ---
-title: "Binomial Regression"
+title: "Binomial Regression for Survival and Competing Risks Data"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5 
 vignette: >
-  %\VignetteIndexEntry{Binomial Regression}
+  %\VignetteIndexEntry{Binomial Regression for Survival and Competing Risks Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

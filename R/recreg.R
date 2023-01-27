@@ -898,15 +898,15 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     obj <- function(pp, all = FALSE) {# {{{
         lp <- c(X %*% pp + offset)
         if (model == "exp") p <- exp(lp) else p <- lp
+        if (model == "dexp") p <- exp(lp) 
         ploglik <- sum(weights * (Y - p)^2)
-        if (model == "exp") {
+        if (model == "dexp") {
+            Dlogl <- weights * X *p * c(Y - p)
+            D2logl <- c(weights) *p^2* X2
+        } else {
             Dlogl <- weights *  X * c(Y - p)
-            D2logl <- c(weights * p) * X2
-        }
-        else {
-            Dlogl <- weights * X * c(Y - p)
-            D2logl <- c(weights) * X2
-        }
+	if (model=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
+	}
         D2log <- apply(D2logl, 2, sum)
         gradient <- apply(Dlogl, 2, sum) 
         hessian <- matrix(D2log, length(pp), length(pp))
@@ -960,7 +960,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
        Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
        Gcdata[Gcdata<0.000001] <- 0.00001
        data$Hst <- revcumsumstrata((dexit<times)*(dstatus %in% cause)/Gcdata,data$id__,nid)
-       HstX <- Xorig*c(data$Hst)
+       if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
        ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
        colnames(HstX) <- ccn
        nncovs <- c()
