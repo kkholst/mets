@@ -1862,7 +1862,7 @@ RcppExport SEXP CubeMattime(SEXP XSEXP,SEXP XXSEXP,SEXP irX,SEXP icX,SEXP irXX,S
 	mat XXi(rXX,cXX); 
 
 	for (unsigned j=0; j<n; j++)  {
-		if (inv==1) iX= pinv(reshape(X.row(j),rX,cX),0.0001); else iX=reshape(X.row(j),rX,cX); 
+		if (inv==1) iX= pinv(reshape(X.row(j),rX,cX)); else iX=reshape(X.row(j),rX,cX); 
 //		if (j==0) { XXi=reshape(XX.row(j),rXX,cXX); XXi.print(); iX.print(); }
 
 		if ((transX==0) && (transXX==0))  XXX.row(j)=vectorise(iX    *reshape(XX.row(j),rXX,cXX)).t();
