@@ -20,13 +20,13 @@ extern SEXP cor(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP
 extern SEXP familypairindex(SEXP, SEXP, SEXP);
 extern SEXP FastApprox(SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCluster(SEXP);
-extern SEXP FastCoxPL(SEXP, SEXP, SEXP, SEXP, SEXP);
+//extern SEXP FastCoxPL(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCoxPLstrata(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP FastCoxPLstrataPO(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP FastCoxPLstrataAddGam(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,
 		SEXP, SEXP, SEXP, SEXP,
 		SEXP, SEXP, SEXP, SEXP, SEXP );
-extern SEXP FastCoxPrep(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+//extern SEXP FastCoxPrep(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastCoxPrepStrata(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 extern SEXP FastLong2(SEXP, SEXP, SEXP, SEXP);
 extern SEXP FastPattern(SEXP, SEXP, SEXP);
@@ -112,7 +112,7 @@ extern SEXP covrfstrataR(             SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP covrfstrataCovR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP sumstrataR(SEXP,SEXP, SEXP);
 extern SEXP XBmindex(SEXP,SEXP, SEXP);
-extern SEXP RVpairs2DIMRV(SEXP, SEXP);
+//extern SEXP RVpairs2DIMRV(SEXP, SEXP);
 //extern SEXP backfitEaEt(SEXP,SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP,SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -135,11 +135,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"familypairindex",                   (DL_FUNC) &familypairindex,                    3},
     {"FastApprox",                        (DL_FUNC) &FastApprox,                         4},
     {"FastCluster",                       (DL_FUNC) &FastCluster,                        1},
-    {"FastCoxPL",                         (DL_FUNC) &FastCoxPL,                          5},
+//    {"FastCoxPL",                         (DL_FUNC) &FastCoxPL,                          5},
     {"FastCoxPLstrata",                   (DL_FUNC) &FastCoxPLstrata,                   11},
     {"FastCoxPLstrataPO",                 (DL_FUNC) &FastCoxPLstrataPO,                 11},
     {"FastCoxPLstrataAddGam",             (DL_FUNC) &FastCoxPLstrataAddGam,             18},
-    {"FastCoxPrep",                       (DL_FUNC) &FastCoxPrep,                        6},
+//  {"FastCoxPrep",                       (DL_FUNC) &FastCoxPrep,                        6},
     {"FastCoxPrepStrata",                 (DL_FUNC) &FastCoxPrepStrata,                 11},
     {"FastLong2",                         (DL_FUNC) &FastLong2,                          4},
     {"FastPattern",                       (DL_FUNC) &FastPattern,                        3},
@@ -203,7 +203,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"vecMatMat",                         (DL_FUNC) &vecMatMat,                          2},
     {"OutCov",                            (DL_FUNC) &OutCov,                             2},
     {"XBmindex",                          (DL_FUNC) &XBmindex,                           3},
-    {"RVpairs2DIMRV",                     (DL_FUNC) &RVpairs2DIMRV,                      2},
+//    {"RVpairs2DIMRV",                     (DL_FUNC) &RVpairs2DIMRV,                      2},
     {NULL, NULL, 0}
 };
 
