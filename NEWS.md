@@ -1,3 +1,7 @@
+# mets 1.3.3
+  - Development version
+  
+
 # mets 1.3.2
   - Extension of `recreg` (Ghosh-Lin model) to deal with composite outcomes.
   - recurrent events regression with IPCW adjustment for fixed time point: `recregIPCW`

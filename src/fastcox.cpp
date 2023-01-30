@@ -1842,8 +1842,6 @@ RcppExport SEXP CubeMattime(SEXP XSEXP,SEXP XXSEXP,SEXP irX,SEXP icX,SEXP irXX,S
 	BEGIN_RCPP
 	mat XX = Rcpp::as<mat>(XXSEXP);
 	mat X  = Rcpp::as<mat>(XSEXP);
-	unsigned pX = X.n_cols;
-	unsigned pXX = XX.n_cols;
 	unsigned n = XX.n_rows;
 	unsigned cX = Rcpp::as<int>(icX);
 	unsigned rX = Rcpp::as<int>(irX);
