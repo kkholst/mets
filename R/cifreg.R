@@ -215,10 +215,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     }# }}}
 
 
+    trunc <- FALSE
     Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status %in% cause)
-    trunc <- FALSE
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
     xx2$nstrata <- nstrata
     jumps <- xx2$jumps+1
@@ -239,7 +239,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             Gts <- rbind(1,Gts)[whereaJ,]
             Gts[is.na(Gts)] <- 0
             Gjumps <- Gts
-        } else Gts <- Gjumps <- c(1,Pcens.model$surv)[fast.approx(c(0,Pcens.model$time),jumptimes)]
+        } else Gts <- Gjumps <- c(1,Pcens.model$surv)[fast.approx(c(0,Pcens.model$time),jumptimes,type="left")]
     } else {
         Gts <-   Gjumps <- rep(1,length(jumptimes))
     }
