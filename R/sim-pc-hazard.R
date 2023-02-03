@@ -93,7 +93,7 @@ lin.approx <- function(x2,xfx,x=1)
    ### x=-1  gives  f^-1(x2) 
    breaks <- xfx[,x]
    fx     <- xfx[,-x]
-   ri <- sindex.prodlim(breaks,x2)
+   ri <- fast.approx(breaks,x2,type="left")
    maxindex <- which(ri==length(breaks))
    rip1 <- ri+1
    rip1[maxindex] <- length(breaks)

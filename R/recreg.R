@@ -704,7 +704,15 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 # }}}
 
     ### end if (p>0)
-    } else {varmc <- var1 <- 0; augment.new <- MGAc <- MGc <- iH <- UUiid <- Uiid <- NULL}
+    } else {
+          iid.augment <- iid.augment.times <- augment <- augment.times <- NULL 
+          var.augment.times <- var.augment <- NULL
+          var.augment.times.iid <- var.augment.iid <- NULL
+          Uiid.augment.times <- Uiid.augment <- NULL
+          time.gammat <- gamma <- gammat <- NULL
+          ftime.gamma <- NULL
+          Gcj <- NULL
+	    varmc <- var1 <- 0; augment.new <- MGAc <- MGc <- iH <- UUiid <- Uiid <- NULL}
     strata <- xx2$strata[jumps]
     cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
     colnames(cumhaz)    <- c("time","cumhaz")
