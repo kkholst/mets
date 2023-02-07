@@ -38,7 +38,9 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
 {# {{{
 ### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
 ### cumh=cbind(breaks,cumhazard) if cumh=TRUE
+###  if (is.null(rr) & is.null(n)) stop("must give rr or n\n"); 
   if (!is.null(n)) rr <- rep(1,n)
+  n <- length(rr)
 
   breaks <- cumhazard[,1]
   rates <- cumhazard[,2][-1]
@@ -47,7 +49,6 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
         cumh <- cumsum(c(0,diff(breaks)*rates))
         cumhazard <- cbind(breaks,cumh)
   } else cumh <- cumhazard[,2] 
-   n <- length(rr)
    ttt <- rexp(n)/rr
    if (cumhazard[1,2]>0)  { ## start cumulative hazard with a 0
 ###	   warning("Safest to start with cumulative hazard 0 to avoid problems\n"); 
@@ -93,7 +94,7 @@ lin.approx <- function(x2,xfx,x=1)
    ### x=-1  gives  f^-1(x2) 
    breaks <- xfx[,x]
    fx     <- xfx[,-x]
-   ri <- sindex.prodlim(breaks,x2)
+   ri <- fast.approx(breaks,x2,type="left")
    maxindex <- which(ri==length(breaks))
    rip1 <- ri+1
    rip1[maxindex] <- length(breaks)

@@ -130,6 +130,69 @@ namespace mets {
         return Rcpp::as<arma::vec >(rcpp_result_gen);
     }
 
+    inline arma::colvec _rchazC(const arma::mat& cum, const arma::colvec rr, const arma::colvec entry) {
+        typedef SEXP(*Ptr__rchazC)(SEXP,SEXP,SEXP);
+        static Ptr__rchazC p__rchazC = NULL;
+        if (p__rchazC == NULL) {
+            validateSignature("arma::colvec(*_rchazC)(const arma::mat&,const arma::colvec,const arma::colvec)");
+            p__rchazC = (Ptr__rchazC)R_GetCCallable("mets", "_mets__rchazC");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__rchazC(Shield<SEXP>(Rcpp::wrap(cum)), Shield<SEXP>(Rcpp::wrap(rr)), Shield<SEXP>(Rcpp::wrap(entry)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::colvec >(rcpp_result_gen);
+    }
+
+    inline arma::mat _simGL(const arma::mat& dcum, const arma::colvec& St, const arma::colvec& rr, const arma::colvec& rd, const arma::colvec& z, const arma::colvec& fz, const arma::colvec& tc, const int type, const double theta, const int maxit) {
+        typedef SEXP(*Ptr__simGL)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__simGL p__simGL = NULL;
+        if (p__simGL == NULL) {
+            validateSignature("arma::mat(*_simGL)(const arma::mat&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const int,const double,const int)");
+            p__simGL = (Ptr__simGL)R_GetCCallable("mets", "_mets__simGL");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__simGL(Shield<SEXP>(Rcpp::wrap(dcum)), Shield<SEXP>(Rcpp::wrap(St)), Shield<SEXP>(Rcpp::wrap(rr)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(fz)), Shield<SEXP>(Rcpp::wrap(tc)), Shield<SEXP>(Rcpp::wrap(type)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(maxit)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::mat >(rcpp_result_gen);
+    }
+
+    inline arma::mat _simSurvZ(const arma::mat& St, const arma::colvec& rd, const arma::colvec& z, const double theta, const int type) {
+        typedef SEXP(*Ptr__simSurvZ)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__simSurvZ p__simSurvZ = NULL;
+        if (p__simSurvZ == NULL) {
+            validateSignature("arma::mat(*_simSurvZ)(const arma::mat&,const arma::colvec&,const arma::colvec&,const double,const int)");
+            p__simSurvZ = (Ptr__simSurvZ)R_GetCCallable("mets", "_mets__simSurvZ");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__simSurvZ(Shield<SEXP>(Rcpp::wrap(St)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(type)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::mat >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_mets_RCPPEXPORTS_H_GEN_
