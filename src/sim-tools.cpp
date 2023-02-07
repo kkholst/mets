@@ -1,3 +1,5 @@
+// [[Rcpp::interfaces(cpp)]]
+// [[Rcpp::plugins(cpp11)]]
 #include <RcppArmadillo.h>
 #include <Rmath.h>
 #include <vector>
@@ -106,7 +108,6 @@ arma::colvec pminv(const arma::colvec& y,const double  N) {/*{{{*/
   }
 /*}}}*/
 
-// [[Rcpp::export]]
   double interpolate3(const arma::mat& input, const double dtau) {/*{{{*/
     vec time = input.col(0);
     vec ftime = input.col(1);
@@ -167,7 +168,7 @@ return(simss);
 }
 /*}}}*/
 
-// [[Rcpp::export]]
+// [[Rcpp::export(name=".rchazC")]]
 arma::colvec rchazC(const arma::mat& cum,const arma::colvec rr,const arma::colvec entry)
 {/*{{{*/
 	arma::mat cumi=cum;
@@ -184,7 +185,7 @@ return(rrx);
 }
 /*}}}*/
 
-// [[Rcpp::export]]
+// [[Rcpp::export(name=".simGL")]]
 arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colvec& rr,
 		const  arma::colvec& rd, const 	arma::colvec& z,const arma::colvec& fz,
 		const  arma::colvec& tc,
@@ -224,7 +225,7 @@ return(outsims);
 }
 /*}}}*/
 
-// [[Rcpp::export]]
+// [[Rcpp::export(name=".simSurvZ")]]
 arma::mat simSurvZ(const arma::mat& St, const arma::colvec& rd,const arma::colvec& z,
 		const double theta, const int type)
 {/*{{{*/

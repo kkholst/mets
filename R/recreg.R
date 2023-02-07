@@ -1020,6 +1020,59 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
+simGLcox <- function(n,base1,drcumhaz,var.z=0,r1,rd,rc,fz,model=c("frailty","twostage"),cens=NULL)
+{# {{{
+## setting up baselines for simulations 
+base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
+cumD <- predictCumhaz(rbind(0,as.matrix(drcumhaz)),base1[,1])
+St <- exp(-cumD[,2])
+Stm <- cbind(base1[,1],St)
+###
+dbase1 <- diff(c(0,base1[,2]))
+dcum <- cbind(base1[,1],dbase1)
+maxtime <- tail(base1[,1],1)
+
+if (is.null(fz)) fz <- function(x) x
+
+ if (var.z>0) {
+	 z <- rgamma(n,1/var.z)*var.z 
+	 fzz <- fz(z)
+	 mza <- mean(fzz)
+	 if (n<10000) {
+	    zl <- rgamma(100000,1/var.z)*var.z 
+	    fzl <- fz(z)
+	    mza <- mean(fzl)
+	 } 
+	 fzz <- fzz/mza
+ }  else fzz <- z <- rep(1,n)
+
+if (var.z==0) model <- "frailty"
+if (model[1]=="twostage") type <- 2 else type <- 1
+
+ ## survival censoring given X, Z, either twostage or frailty-model 
+ dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z,type)
+ dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
+ if (!is.null(cens)) cens <- rexp(n)/(rc*cens)
+ dd$status <- ifelse(dd$time<cens,dd$status,0)
+ dd$time <- pmin(dd$time,cens)
+
+ ## draw recurrent process given X,Z with rate:
+ ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
+ dcum <- cbind(base1[,1],dbase1)
+ ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z,fzz,dd$time,type,var.z,100)
+ colnames(ll) <- c("id","start","stop","death")
+ ll <- data.frame(ll)
+ ll$status <- 1; 
+ ll$death <- dd$status[ll$id+1]
+ ids <- countID(ll)
+ ll <- cbind(ll,ids[,c(2,4,5)]); 
+ ll <- dtransform(ll,status=0,reverseCountid==1)
+ ll$statusD <- ll$status
+ ll <- dtransform(ll,statusD=3,reverseCountid==1 & death==1)
+
+ return(ll)
+}# }}}
+
 simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
                      model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
 {# {{{
@@ -1119,7 +1172,6 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  return(data)
 }# }}}
 
-
 simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
 			       beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),X=NULL,...)
 {# {{{
@@ -1139,8 +1191,7 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
 
  if (is.null(Lam2)) Lam2 <- Lam1; 
 
- rr <- simRecurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),
-		       death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
+ rr <- simRecurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
 
  if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
  if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2
