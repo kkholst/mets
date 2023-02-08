@@ -1020,7 +1020,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1,rd,rc,fz,model=c("frailty","twostage"),cens=NULL)
+simGLcox <- function(n,base1,drcumhaz,var.z=0,r1,rd,rc,fz,fdz=NULL,model=c("frailty","twostage"),cens=NULL)
 {# {{{
 ## setting up baselines for simulations 
 base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
@@ -1048,6 +1048,8 @@ if (is.null(fz)) fz <- function(x) x
 
 if (var.z==0) model <- "frailty"
 if (model[1]=="twostage") type <- 2 else type <- 1
+## for frailty setting we also consider any function of z 
+if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
 
  ## survival censoring given X, Z, either twostage or frailty-model 
  dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z,type)
@@ -1062,10 +1064,10 @@ if (model[1]=="twostage") type <- 2 else type <- 1
  ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z,fzz,dd$time,type,var.z,100)
  colnames(ll) <- c("id","start","stop","death")
  ll <- data.frame(ll)
- ll$status <- 1; 
  ll$death <- dd$status[ll$id+1]
  ids <- countID(ll)
  ll <- cbind(ll,ids[,c(2,4,5)]); 
+ ll$status <- 1; 
  ll <- dtransform(ll,status=0,reverseCountid==1)
  ll$statusD <- ll$status
  ll <- dtransform(ll,statusD=3,reverseCountid==1 & death==1)
