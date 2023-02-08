@@ -43,6 +43,5 @@ Suggests:
 VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
-SystemRequirements: C++11
 Encoding: UTF-8
 RoxygenNote: 7.2.3
