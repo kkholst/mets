@@ -182,7 +182,9 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
   p <- ncol(X)
 
   X <-  as.matrix(X)
-  X2  <- .Call("vecMatMat",X,X)$vXZ
+###  X2  <- .Call("vecMatMat",X,X)$vXZ
+###  X2  <- .Call("vecMatMat",X,X)$vXZ
+  X2  <- .Call("vecCPMat",X)$XX
   Y <- c((status %in% cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
@@ -200,7 +202,13 @@ Dlogl <- weights*X*c(Y-p)
 D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
-hessian <- matrix(D2log,length(pp),length(pp))
+###hessian <- matrix(D2log,length(pp),length(pp))
+###
+hessian <- matrix(0,length(pp),length(pp))
+###
+hessian[lower.tri(hessian,diag=TRUE)] <- D2log
+hessian <- hessian+t(hessian)
+diag(hessian) <- diag(hessian)/2
 
   if (all) {
       ihess <- solve(hessian)
@@ -865,7 +873,8 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   if (is.null(beta)) beta <- rep(0,ncol(X))
   p <- ncol(X)
   X <-  as.matrix(X)
-  X2  <- .Call("vecMatMat",X,X)$vXZ
+###  X2  <- .Call("vecMatMat",X,X)$vXZ
+  X2  <- .Call("vecCPMat",X)$XX
   ###
   ucauses  <-  sort(unique(status))
   ccc <- which(ucauses %in% cens.code)
@@ -903,7 +912,13 @@ Dlogl <- weights*X*c(Y-p)
 
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
-hessian <- matrix(D2log,length(pp),length(pp))
+###hessian <- matrix(D2log,length(pp),length(pp))
+hessian <- matrix(0,length(pp),length(pp))
+###
+hessian[lower.tri(hessian,diag=TRUE)] <- D2log
+hessian <- hessian+t(hessian)
+diag(hessian) <- diag(hessian)/2
+
 
   if (all) {
       ihess <- solve(hessian)

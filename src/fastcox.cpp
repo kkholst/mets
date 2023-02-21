@@ -1895,10 +1895,39 @@ mat  vecmatmat(mat a,mat b)
 	return(res);
 } /*}}}*/
 
+mat  vecmatCP(mat a)
+{/*{{{*/
+	unsigned n = a.n_rows;
+	unsigned p1 = a.n_cols;
+	unsigned kj=0; 
+
+	mat res(n,p1*(p1+1)/2);
+	for (unsigned i=0; i<n; i++) {
+             kj=0;
+	     for (unsigned j=0; j<p1; j++) 
+	     for (unsigned k=j; k<p1; k++)  {
+		res(i,kj)=a(i,j)*a(i,k);
+		kj=kj+1; 
+	     }
+	}
+	return(res);
+} /*}}}*/
+
+RcppExport SEXP  vecCPMat(SEXP iX) { //
+	BEGIN_RCPP/*{{{*/
+
+	mat X = Rcpp::as<mat>(iX);
+	mat res=vecmatCP(X);
+	return(Rcpp::List::create(Rcpp::Named("XX")=res));
+	END_RCPP
+} /*}}}*/
+
+
+
 RcppExport SEXP  vecMatMat(SEXP iX,SEXP iZ) { //
 	BEGIN_RCPP/*{{{*/
 
-		mat X = Rcpp::as<mat>(iX);
+	mat X = Rcpp::as<mat>(iX);
 	mat Z = Rcpp::as<mat>(iZ);
 	mat res=vecmatmat(X,Z);
 	return(Rcpp::List::create(Rcpp::Named("vXZ")=res));
