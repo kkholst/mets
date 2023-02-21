@@ -1058,6 +1058,9 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  dd$status <- ifelse(dd$time<cens,dd$status,0)
  dd$time <- pmin(dd$time,cens)
 
+ ## to avoid R check error
+ reverseCountid  <-  death  <- NULL
+
  ## draw recurrent process given X,Z with rate:
  ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
  dcum <- cbind(base1[,1],dbase1)

@@ -1710,8 +1710,8 @@ zd <- gamD
 egamma12nu3 <- (gamma(agam12+nu3)/gamma(agam12))*1/(betagam12)^nu3
 zs <- cbind(z1,z2,zd)
 
-  status <- fdeath <- dtime <- NULL # to avoid R-check 
-  dhaz <- haz2 <- dhaz <- NULL
+ status <- fdeath <- dtime <- NULL # to avoid R-check 
+ dhaz <- haz2 <- dhaz <- NULL
 
  ll <- nrow(cumhaz)
  max.time <- tail(cumhaz[,1],1)
@@ -1719,14 +1719,18 @@ zs <- cbind(z1,z2,zd)
  ################################################################
  ### approximate hazards to make marginals fit (approximately)
  ################################################################
- orig.death <- death.cumhaz
- base1 <- death.cumhaz
- gt <- exp(vargam*base1[,2]) 
- dtt <- diff(c(0,base1[,1]))
- lams <- (diff(c(0,base1[,2]))/dtt)*gt
- death.cumhaz <- cbind(base1[,1],cumsum(dtt*lams))
+ ## step-size set to one and range to that of base1
+ base1 <- predictCumhaz(rbind(0,as.matrix(cumhaz)),1:round(tail(cumhaz[,1],1)) )
+ if (!is.null(death.cumhaz)) 
+     death.cumhaz <- predictCumhaz(rbind(0,as.matrix(death.cumhaz)),base1[,1])
 
- base1 <- cumhaz
+ orig.death <- death.cumhaz
+ dbase1 <- death.cumhaz
+ gt <- exp(vargam*dbase1[,2]) 
+ dtt <- diff(c(0,dbase1[,1]))
+ lams <- (diff(c(0,dbase1[,2]))/dtt)*gt
+ death.cumhaz <- cbind(dbase1[,1],cumsum(dtt*lams))
+
  dbase1 <- cpred(rbind(c(0,0),death.cumhaz),base1[,1])[,2]
  dtt <- diff(c(0,base1[,1]))
  gt <- (gamma(agam1+nu1)/gamma(agam1))*(1/(betagam+dbase1))^nu1
@@ -1780,7 +1784,7 @@ zs <- cbind(z1,z2,zd)
 	  }
   }# }}}
 
-### fixing the first time to event
+  ### fixing the first time to event
   tall$death <- 0
   tall <- dtransform(tall,death=fdeath,time>dtime)
   tall <- dtransform(tall,status=0,time>dtime)
@@ -1822,6 +1826,12 @@ zs <- cbind(z1,z2,zd)
   return(tall)
   }# }}}
 
+##### @param r1 exp(X^T beta_1) for Cox structure of events of type 1 
+##### @param rd exp(X^T beta_d) for Cox structure for death
+##### @param r2 exp(X^T beta_2) for Cox structure of events of type 2 
+###if (is.null(r1)) r1 <- rep(1,n)
+###if (is.null(r2)) r2 <- rep(1,n)
+###if (is.null(rd)) rd <- rep(1,n)
 
 ##' Counts the number of previous events of two types for recurrent events processes
 ##'
