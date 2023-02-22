@@ -1827,7 +1827,7 @@ iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
 iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
-iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
+###iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
 iidbase0 <- c(risk0-val$riskDR[2])
