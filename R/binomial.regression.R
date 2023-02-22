@@ -1350,8 +1350,8 @@ riskG1 <- p11
 riskG0 <- p10
 
 ntreat <- sum(ytreat)
-att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
-atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
+###att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
+###atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
 
 Dp1 <- X * c(p1/(1+exp(p1lp)))
 Dp11 <- X1 * c(p11/(1+exp(p11lp)))
@@ -1364,11 +1364,11 @@ DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,sum)
 DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,sum)
 DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,sum)
 
-DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
-DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
-
-DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
-DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
+###DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
+###DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
+###
+###DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
+###DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
 
 DriskG1 <- apply(Dp11,2,sum)
 DriskG0 <- apply(Dp10,2,sum)
@@ -1410,16 +1410,16 @@ DdifriskG <- DriskG1-DriskG0
     U10[xx$jumps+1,] <- h10[xx$jumps+1,] /c(resC$S0)
     MGt10 <- (U10[,drop=FALSE]-IhdLamh10)*c(xx$weights)
 
-    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-    Uattc <- matrix(0,nrow(xx$X),2)
-    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
-    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
+###    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+###    Uattc <- matrix(0,nrow(xx$X),2)
+###    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
+###    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
     mid <- max(xx$id)+1
     MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
-    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
+###    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
  
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
@@ -1443,11 +1443,12 @@ val$se.coef <- diag(val$var)^.5
 ### estimates risk, att, atc
 val$riskDR <- c(mean(risk1),mean(risk0))
 val$riskG<- c(mean(riskG1),mean(riskG0))
-val$att <- sum(att)/ntreat
-val$atc <- sum(atc)/(n-ntreat)
 
-val$attc <- c(val$att,val$atc)
-names(val$attc) <- c("ATT","ATC")
+###val$att <- sum(att)/ntreat
+###val$atc <- sum(atc)/(n-ntreat)
+###val$attc <- c(val$att,val$atc)
+###names(val$attc) <- c("ATT","ATC")
+
 names(val$riskDR) <- paste("treat",1:0,sep="-")
 names(val$riskG) <- paste("treat",1:0,sep="-")
 
@@ -1457,7 +1458,7 @@ iidcif1 <- c(c(DePsi1) %*% t(val$iid))
 iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
 if (se)  {
 iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
-iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
+###iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
 }  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
 
 iidbase0 <- c(risk0-val$riskDR[2])
@@ -1469,16 +1470,16 @@ iidrisk0 <- iidbase0+iidcif0+iidpal0+iidGc0
 difriskiid <- (iidrisk1-iidrisk0)/n
 
 iidrisk <- cbind(iidrisk1,iidrisk0)/n
-iidatt <- att-ytreat*val$att
-iidatc <- atc-(1-ytreat)*val$atc
-
-iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
-iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
-iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
-iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
-
-iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
-iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
+###iidatt <- att-ytreat*val$att
+###iidatc <- atc-(1-ytreat)*val$atc
+###
+###iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
+###iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
+###iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
+###iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
+###
+###iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
+###iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 
 # }}}
 
@@ -1503,9 +1504,9 @@ val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
 val$var.difriskG <- sum(val$difriskG.iid^2)
 val$se.difriskG <- val$var.difriskG^.5
 
-val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
-val$var.attc <- crossprod(val$attc.iid)
-val$se.attc <- diag(val$var.attc)^.5
+###val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
+###val$var.attc <- crossprod(val$attc.iid)
+###val$se.attc <- diag(val$var.attc)^.5
 # }}}
 
   class(val) <- "binreg"
@@ -1710,8 +1711,8 @@ riskG1 <- p11
 riskG0 <- p10
 
 ntreat <- sum(ytreat)
-att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
-atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
+###att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
+###atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
 
 if (logitmodel) {
 Dp1 <- X * c(p1/(1+exp(p1lp)))
@@ -1730,11 +1731,11 @@ DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,sum)
 DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,sum)
 DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,sum)
 
-DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
-DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
-
-DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
-DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
+###DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
+###DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
+###
+###DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
+###DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
 
 DriskG1 <- apply(Dp11,2,sum)
 DriskG0 <- apply(Dp10,2,sum)
@@ -1765,7 +1766,7 @@ DdifriskG <- DriskG1-DriskG0
     ## to make \int h(s)/Ys  dM_i^C(s) 
     h  <-  apply(X*Yglm,2,revcumsumstrata,xx$strata,xx$nstrata)
     h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+###  hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply((exit<=time)*h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -1778,16 +1779,16 @@ DdifriskG <- DriskG1-DriskG0
     U10[xx$jumps+1,] <- h10[xx$jumps+1,] /c(resC$S0)
     MGt10 <- (U10[,drop=FALSE]-IhdLamh10)*c(xx$weights)
 
-    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-    Uattc <- matrix(0,nrow(xx$X),2)
-    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
-    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
+###    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
+###    Uattc <- matrix(0,nrow(xx$X),2)
+###    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
+###    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
 
     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
     mid <- max(id)+1
     MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
     MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
-    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
+###    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
 
   }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
 ## }}}
@@ -1804,18 +1805,19 @@ robvar <- crossprod(val$iid)
 val$var <-  val$robvar <- robvar
 val$se.robust <- diag(robvar)^.5
 val$se.coef <- diag(val$var)^.5
-  val$cause <- cause
-  val$cens.code <- cens.code 
+val$cause <- cause
+val$cens.code <- cens.code 
 
 
 ### estimates risk, att, atc
 val$riskDR <- c(mean(risk1),mean(risk0))
 val$riskG<- c(mean(riskG1),mean(riskG0))
-val$att <- sum(att)/ntreat
-val$atc <- sum(atc)/(n-ntreat)
 
-val$attc <- c(val$att,val$atc)
-names(val$attc) <- c("ATT","ATC")
+###val$att <- sum(att)/ntreat
+###val$atc <- sum(atc)/(n-ntreat)
+###val$attc <- c(val$att,val$atc)
+###names(val$attc) <- c("ATT","ATC")
+
 names(val$riskDR) <- paste("treat",1:0,sep="-")
 names(val$riskG) <- paste("treat",1:0,sep="-")
 
@@ -1837,16 +1839,17 @@ iidrisk0 <- iidbase0+iidcif0+iidpal0+iidGc0
 difriskiid <- (iidrisk1-iidrisk0)/n
 
 iidrisk <- cbind(iidrisk1,iidrisk0)/n
-iidatt <- att-ytreat*val$att
-iidatc <- atc-(1-ytreat)*val$atc
 
-iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
-iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
-iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
-iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
+###iidatt <- att-ytreat*val$att
+###iidatc <- atc-(1-ytreat)*val$atc
 
-iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
-iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
+###iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
+###iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
+###iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
+###iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
+
+###iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
+###iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 
 # }}}
 
@@ -1872,9 +1875,9 @@ val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
 val$var.difriskG <- sum(val$difriskG.iid^2)
 val$se.difriskG <- val$var.difriskG^.5
 
-val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
-val$var.attc <- crossprod(val$attc.iid)
-val$se.attc <- diag(val$var.attc)^.5
+###val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
+###val$var.attc <- crossprod(val$attc.iid)
+###val$se.attc <- diag(val$var.attc)^.5
 # }}}
 
 

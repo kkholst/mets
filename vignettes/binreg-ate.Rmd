@@ -45,8 +45,7 @@ The two score equations are quite similar, and exactly the same when the censori
 
  - It seems that the binreg estimating equations most often the preferable ones to use. 
 
-Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
-the average effect on non-treated (ATC). We demonstrate their use below. 
+Additional functions logitATE, and binregATE computes the average treatment effect. We demonstrate their use below. 
 
 The functions binregATE (recommended) and logitATE also works when there is no censoring and we thus have simple binary outcome. 
 

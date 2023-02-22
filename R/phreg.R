@@ -1089,11 +1089,11 @@ print.summary.phreg  <- function(x,max.strata=5,...) {
     printCoefmat(x$ateDR,...)
     cat("\n")
 
-    if (!is.null(x$attc)) {
-    cat("Average Treatment effects on Treated/Non-Treated (DR) :\n")
-    printCoefmat(x$attc,...)
-    cat("\n")
-    }
+###    if (!is.null(x$attc)) {
+###    cat("Average Treatment effects on Treated/Non-Treated (DR) :\n")
+###    printCoefmat(x$attc,...)
+###    cat("\n")
+###    }
 
   }
   cat("\n")
