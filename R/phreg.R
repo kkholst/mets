@@ -1869,45 +1869,61 @@ formulaX[-2]
 datA <- dkeep(data,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
 
-Gf <- function(p,ic=0) {# {{{
-   risks <- c()
-   a <- nlevs[1]
-   for (a in nlevs) {# {{{
-      datA[,treat.name] <- a
-      Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
-      rra <- exp(Xa %*% p[-1])
-
-      if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
-      else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
-      else { ps0 <-  exp(-p[1]*rra) } 
-      risks <- cbind(risks,ps0)
-    }# }}}
-
-Gest <- apply(risks,2,mean)
-if (ic==1) Gest <- list(Gest=Gest,iid=t(t(risks)-Gest))
-return(Gest)
-}
-# }}}
+###
+###Gf <- function(p,ic=0) {# {{{
+###   risks <- c()
+###   a <- nlevs[1]
+###   for (a in nlevs) {# {{{
+###      datA[,treat.name] <- a
+###      Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
+###      rra <- exp(Xa %*% p[-1])
+###
+###      if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
+###      else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
+###      else { ps0 <-  exp(-p[1]*rra) } 
+###      risks <- cbind(risks,ps0)
+###    }# }}}
+###
+###Gest <- apply(risks,2,mean)
+###if (ic==1) Gest <- list(Gest=Gest,iid=t(t(risks)-Gest))
+###return(Gest)
+###}
+#### }}}
+###
 
 cumhaz.time <- Cpred(x$cumhaz,time)[-1]
-theta <- c(cumhaz.time,x$coef)
+k <- 1; risks <- c(); DariskG <- list()
+for (a in nlevs) { ## {{{
+ datA[,treat.name] <- a
+ Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
+ rra <- c(exp(Xa %*% x$coef))
+ if (inherits(x,"phreg"))  { ps0 <- exp(-cumhaz.time*rra); Dma  <- -cbind(rra*ps0,ps0*cumhaz.time*rra*Xa);    }
+ if (inherits(x,"cifreg")) { ps0 <- 1- exp(-cumhaz.time*rra); Dma  <- cbind(rra*(1-ps0),(1-ps0)*cumhaz.time*rra*Xa);    }
+  else if (inherits(x,"recreg")) { ps0 <- cumhaz.time*rra ; Dma <-  cbind(rra,cumhaz.time*rra*Xa) }
+ risks <- cbind(risks,ps0)
+ DariskG[[k]] <- apply(Dma,2,sum)
+ k <- k+1
+} ## }}}
 
-icf <- Gf(theta,ic=1)
-###
-DG <- numDeriv::jacobian(Gf,theta,ic=0)
+Grisk <- apply(risks,2,mean)
+risk.iid  <- t(t(risks)-Grisk)
+###icf <- Gf(theta,ic=1)
+######
+###DG <- numDeriv::jacobian(Gf,theta,ic=0)
 nid <- max(x$id)
-risk.iid <- apply(icf$iid,2,sumstrata,x$id-1,nid)/nid+
-            cbind(Aiid$base.iid,Aiid$beta.iid) %*% t(DG)
+risk.iid <- apply(risk.iid,2,sumstrata,x$id-1,nid)/nid 
+for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
 vv <- crossprod(risk.iid)
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
-out <- estimate(coef=icf$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
-ed <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]-p[1])
-rd <- estimate(coef=icf$Gest,vcov=vv,out,function(p) p[-1]/p[1],null=1)
+out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
+ed <- estimate(coef=Grisk,vcov=vv,out,function(p) p[-1]-p[1])
+rd <- estimate(coef=Grisk,vcov=vv,out,function(p) p[-1]/p[1],null=1)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 class(out) <- "survivalG"
 return(out)
-}
+} ## }}}
+
 
 ###{{{ summary 
 
@@ -1936,6 +1952,8 @@ print.summary.survivalG  <- function(x,...) {
 
 ###}}} summary 
 # }}}
+
+
 
 ##' Fast additive hazards model with robust standard errors 
 ##'
