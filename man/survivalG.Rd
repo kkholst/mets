@@ -18,10 +18,9 @@ survivalG(x, data, time = NULL, Avalues = c(0, 1))
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
 for the Cox model based on phreg og the Fine-Gray model based on the
-cifreg function. Assumes that the first covariate is $A$ and this is a factor. 
-Gives influence functions of these risk estimates and SE's are based on ' these.  
-If first covariate is a factor then all contrast are computed, and if continuous 
-then considered covariate values are given by Avalues.
+cifreg function. Gives influence functions of these risk estimates and SE's are 
+based on  these.  If first covariate is a factor then all contrast are computed, 
+and if continuous then considered covariate values are given by Avalues.
 }
 \examples{
 
