@@ -1826,6 +1826,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param data data frame for risk averaging
 ##' @param time for estimate
 ##' @param Avalues values to compare for first covariate A
+##' @param varname if given then averages for this variable, default is first variable
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -1840,7 +1841,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 ##' summary(survivalG(ss,bmt,50))
 ##' @export
-survivalG <- function(x,data,time=NULL,Avalues=c(0,1))
+survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL)
 {# {{{
 
 if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
@@ -1849,8 +1850,12 @@ if (inherits(x,"cifreg"))
 Aiid <- IIDbaseline.cifreg(x,time=time) else Aiid <- IIDbaseline.phreg(x,time=time)
 
 ### dealing with first variable that is a factor 
+
+if (is.null(varname))  {
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 treatvar <- data[,treat.name]
+} else treatvar <- varname
+
 if (is.factor(treatvar)) {
 ###if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
 ## treatvar, 1,2,...,nlev or 1,2

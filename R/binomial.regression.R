@@ -1197,6 +1197,7 @@ print.summary.survivalG  <- function(x,...) {
 ##' @param x phreg or cifreg object
 ##' @param data data frame for risk averaging
 ##' @param Avalues values to compare for first covariate A
+##' @param varname if given then averages for this variable, default is first variable
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -1207,11 +1208,14 @@ print.summary.survivalG  <- function(x,...) {
 ##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 ##' summary(sb1)
 ##' @export
-binregG <- function(x,data,Avalues=c(0,1))
+binregG <- function(x,data,Avalues=c(0,1),varnname=NULL)
 {# {{{
 
+if (is.null(varname))  {
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 treatvar <- data[,treat.name]
+} else treatvar <- varname
+
 if (is.factor(treatvar)) {
    nlevs <- levels(treatvar)
 } else {
