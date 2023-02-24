@@ -1213,8 +1213,8 @@ binregG <- function(x,data,Avalues=c(0,1),varnname=NULL)
 
 if (is.null(varname))  {
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
+} else treat.name <- varname
 treatvar <- data[,treat.name]
-} else treatvar <- varname
 
 if (is.factor(treatvar)) {
    nlevs <- levels(treatvar)

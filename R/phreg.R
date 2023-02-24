@@ -1853,8 +1853,8 @@ Aiid <- IIDbaseline.cifreg(x,time=time) else Aiid <- IIDbaseline.phreg(x,time=ti
 
 if (is.null(varname))  {
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
+} else treat.name <- varname
 treatvar <- data[,treat.name]
-} else treatvar <- varname
 
 if (is.factor(treatvar)) {
 ###if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
