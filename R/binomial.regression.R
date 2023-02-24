@@ -1203,7 +1203,7 @@ print.summary.survivalG  <- function(x,...) {
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
 ##'
-##' b1 <- binreg(Event(time,cause)~age+tcell.f+platelet,bmt,cause=1,time=50)
+##' b1 <- binreg(Event(time,cause)~age+tcell+platelet,bmt,cause=1,time=50)
 ##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 ##' summary(sb1)
 ##' @export
