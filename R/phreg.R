@@ -1819,44 +1819,50 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
 ##' for the Cox model based on phreg og the Fine-Gray model based on the
 ##' cifreg function. Assumes that the first covariate is $A$ and this is a factor. 
-##' Gives influence functions of these risk estimates and SE's are based on
-##' these. 
+##' Gives influence functions of these risk estimates and SE's are based on ' these.  
+##' If first covariate is a factor then all contrast are computed, and if continuous 
+##' then considered covariate values are given by Avalues.
+##'
 ##' @param x phreg or cifreg object
 ##' @param data data frame for risk averaging
 ##' @param time for estimate
+##' @param Avalues values to compare for first covariate A
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
-##' dfactor(bmt) <- tcell~tcell
+##' dfactor(bmt) <- tcell.f~tcell
 ##'
-##' fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+##' fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
 ##'               cox.prep=TRUE,propodds=NULL)
 ##' summary(survivalG(fg1,bmt,50))
 ##'
-##' ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt) 
+##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 ##' summary(survivalG(ss,bmt,50))
 ##' @export
-survivalG <- function(x,data,time=NULL)
+survivalG <- function(x,data,time=NULL,Avalues=c(0,1))
 {# {{{
 
-if (is.null(time)) stop("give time for estimation of survival\n")
+if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
 
 if (inherits(x,"cifreg"))
-Aiid <- IIDbaseline.cifreg(x,time=time) else 
-Aiid <- IIDbaseline.phreg(x,time=time)
+Aiid <- IIDbaseline.cifreg(x,time=time) else Aiid <- IIDbaseline.phreg(x,time=time)
 
 ### dealing with first variable that is a factor 
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 treatvar <- data[,treat.name]
-if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
+if (is.factor(treatvar)) {
+###if (!is.factor(treatvar)) stop(paste("treatment=",treat.name,"must be coded as factor \n",sep="")); 
 ## treatvar, 1,2,...,nlev or 1,2
 nlev <- nlevels(treatvar)
 nlevs <- levels(treatvar)
 ###treatvar <- as.numeric(treatvar)
 ntreatvar <- as.numeric(treatvar)
 ytreat <- ntreatvar-1
+} else {
+   nlevs <- Avalues
+}
 
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
