@@ -4,7 +4,7 @@
 \alias{survivalG}
 \title{G-estimator for Cox and Fine-Gray model}
 \usage{
-survivalG(x, data, time = NULL)
+survivalG(x, data, time = NULL, Avalues = c(0, 1))
 }
 \arguments{
 \item{x}{phreg or cifreg object}
@@ -12,25 +12,28 @@ survivalG(x, data, time = NULL)
 \item{data}{data frame for risk averaging}
 
 \item{time}{for estimate}
+
+\item{Avalues}{values to compare for first covariate A}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
 for the Cox model based on phreg og the Fine-Gray model based on the
 cifreg function. Assumes that the first covariate is $A$ and this is a factor. 
-Gives influence functions of these risk estimates and SE's are based on
-these.
+Gives influence functions of these risk estimates and SE's are based on ' these.  
+If first covariate is a factor then all contrast are computed, and if continuous 
+then considered covariate values are given by Avalues.
 }
 \examples{
 
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 bmt$event <- (bmt$cause!=0)*1
-dfactor(bmt) <- tcell~tcell
+dfactor(bmt) <- tcell.f~tcell
 
-fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
               cox.prep=TRUE,propodds=NULL)
 summary(survivalG(fg1,bmt,50))
 
-ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt) 
+ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 summary(survivalG(ss,bmt,50))
 }
 \author{
