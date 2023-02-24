@@ -4,7 +4,7 @@
 \alias{survivalG}
 \title{G-estimator for Cox and Fine-Gray model}
 \usage{
-survivalG(x, data, time = NULL, Avalues = c(0, 1))
+survivalG(x, data, time = NULL, Avalues = c(0, 1), varname = NULL)
 }
 \arguments{
 \item{x}{phreg or cifreg object}
@@ -14,6 +14,8 @@ survivalG(x, data, time = NULL, Avalues = c(0, 1))
 \item{time}{for estimate}
 
 \item{Avalues}{values to compare for first covariate A}
+
+\item{varname}{if given then averages for this variable, default is first variable}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
