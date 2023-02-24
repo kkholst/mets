@@ -1,5 +1,5 @@
 ---
-title: "Average treatment effect (ATE) based on the Cox and Fine-Gray model"
+title: "Average treatment effect (ATE) based on the G-computation for Cox and Fine-Gray model"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -35,6 +35,7 @@ S(t,A=a,X_i) -  S(t,A=a)  + E( D_{A_0(t), \beta} S(t,A=a,X_i)  ) \epsilon_i(t)
 \]
 where $\epsilon_i(t)$ is the iid decomposition of $(\hat A(t) - A(t), \hat \beta- \beta)$.
 
+Without causal assumptions this standardization can still be a useful summary measure. 
 
 
 ```{r}

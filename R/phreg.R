@@ -1818,10 +1818,9 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##'
 ##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
 ##' for the Cox model based on phreg og the Fine-Gray model based on the
-##' cifreg function. Assumes that the first covariate is $A$ and this is a factor. 
-##' Gives influence functions of these risk estimates and SE's are based on ' these.  
-##' If first covariate is a factor then all contrast are computed, and if continuous 
-##' then considered covariate values are given by Avalues.
+##' cifreg function. Gives influence functions of these risk estimates and SE's are 
+##' based on  these.  If first covariate is a factor then all contrast are computed, 
+##' and if continuous then considered covariate values are given by Avalues.
 ##'
 ##' @param x phreg or cifreg object
 ##' @param data data frame for risk averaging
@@ -2388,7 +2387,8 @@ if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
 
     for (j in unique(strataNew)) {
 ###        where <- sindex.prodlim(c(0,jumptimes[strata==j]),times,strict=tminus)
-        where <- predictCumhaz(c(0,jumptimes[strata==j]),times,type="left",tminus=tminus)
+       where <- predictCumhaz(c(0,jumptimes[strata==j]),times,type="left",tminus=tminus)
+
 ###	if (sum(abs(whereO-where))>=1) {
 ###	print(c(0,jumptimes[strata==j]))
 ###	print(times)

@@ -171,7 +171,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -183,13 +183,11 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
 ###  X2  <- .Call("vecMatMat",X,X)$vXZ
-###  X2  <- .Call("vecMatMat",X,X)$vXZ
   X2  <- .Call("vecCPMat",X)$XX
   Y <- c((status %in% cause)*(exit<=time)/cens.weights)
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status %in% cause)*(exit<=time))
-
  obs <- (exit<=time & (!statusC)) | (exit>time)
 
 obj <- function(pp,all=FALSE)
@@ -300,7 +298,6 @@ diag(hessian) <- diag(hessian)/2
   class(val) <- "binreg"
   return(val)
 }# }}}
-
 
 ##' @export
 binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -613,7 +610,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv)
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv)
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
@@ -873,7 +870,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   if (is.null(beta)) beta <- rep(0,ncol(X))
   p <- ncol(X)
   X <-  as.matrix(X)
-###  X2  <- .Call("vecMatMat",X,X)$vXZ
+  ###  X2  <- .Call("vecMatMat",X,X)$vXZ
   X2  <- .Call("vecCPMat",X)$XX
   ###
   ucauses  <-  sort(unique(status))
@@ -1162,6 +1159,101 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   return(val)
 }# }}}
 
+###{{{ summary 
+
+##' @export
+summary.survivalG <- function(object,...) {
+  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio)
+  class(res) <- "summary.survivalG"
+  res
+}
+
+##' @export
+print.summary.survivalG  <- function(x,...) {
+    cat("risk:\n")
+    print(x$risk,...)
+    cat("\n")
+
+    cat("Average Treatment effects (G-estimator) :\n")
+    print(x$difference,...)
+    cat("\n")
+
+    cat("Average Treatment effect ratio (G-estimator) :\n")
+    print(x$ratio$coefmat,...)
+    cat("\n")
+
+}
+
+###}}} summary 
+
+##' G-estimator for binomial regression model (Standardized estimates) 
+##'
+##' Computes G-estimator \deqn{ \hat F(t,A=a) = n^{-1} \sum_i \hat F(t,A=a,Z_i) }.
+##' Assumes that the first covariate is $A$.
+##' Gives influence functions of these risk estimates and SE's are based on these.  
+##' If first covariate is a factor then all contrast are computed, and if continuous 
+##' then considered covariate values are given by Avalues.
+##'
+##' @param x phreg or cifreg object
+##' @param data data frame for risk averaging
+##' @param Avalues values to compare for first covariate A
+##' @author Thomas Scheike
+##' @examples
+##' 
+##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
+##' bmt$event <- (bmt$cause!=0)*1
+##'
+##' b1 <- binreg(Event(time,cause)~age+tcell.f+platelet,bmt,cause=1,time=50)
+##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
+##' summary(sb1)
+##' @export
+binregG <- function(x,data,Avalues=c(0,1))
+{# {{{
+
+treat.name <- all.vars(update.formula(x$formula,1~.))[1]
+treatvar <- data[,treat.name]
+if (is.factor(treatvar)) {
+   nlevs <- levels(treatvar)
+} else {
+   nlevs <- Avalues
+}
+
+formulaX <- update.formula(x$formula,.~.)
+formulanc <- drop.specials(formulaX,"cluster")
+
+datA <- dkeep(data,x=all.vars(formulaX))
+xlev <- lapply(datA,levels)
+expit <- function(x) 1/(1+exp(-x))
+
+DariskG <- list()
+risks <- c()
+k <- 0
+for (a in nlevs) {# {{{
+k <- k+1
+datA[,treat.name] <- a
+Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
+lpa <- Xa %*% x$coef
+pa <- expit(lpa)
+risks <- cbind(risks,pa)
+Dma  <-  Xa*c(pa/(1+exp(lpa)))
+DariskG[[k]] <- apply(Dma,2,sum)
+}# }}}
+
+Grisk <- apply(risks,2,mean)
+Gest <- list(Gest=Grisk,iid=t(t(risks)-Grisk))
+
+nid <- max(x$id)+1
+risk.iid <- apply(Gest$iid,2,sumstrata,x$id,nid)/nid 
+for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[a]])/nid
+vv <- crossprod(risk.iid)
+
+Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
+ed <-  estimate(coef=Gest$Gest,vcov=vv,Gout,function(p) p[-1]-p[1])
+rd <- estimate(coef=Gest$Gest,vcov=vv,Gout,function(p) p[-1]/p[1],null=1)
+out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv)
+class(out) <- "survivalG"
+return(out)
+} ## }}}
 
 ##' @export
 binregATEbin <- function(formula,data,cause=1,time=NULL,beta=NULL,
