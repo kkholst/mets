@@ -188,7 +188,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status %in% cause)*(exit<=time))
- obs <- (exit<=time & (!statusC)) | (exit>time)
+ obs <- (exit<=time & (!statusC)) | (exit>=time)
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -622,7 +622,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  obs <- (exit<=time & status!=cens.code) | (exit>time)
+  obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
   Y <- c((status==cause)*(exit<=time))
@@ -876,7 +876,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   ucauses  <-  sort(unique(status))
   ccc <- which(ucauses %in% cens.code)
   if (length(ccc)>=1) Causes <- ucauses[-ccc] else Causes <- ucauses
-  obs <- (exit<=time & (status %in% Causes)) | (exit>time)
+  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
 
   if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
      if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
@@ -1043,7 +1043,7 @@ for (a in nlevs) {# {{{
     pal <- pal[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
-    obs <- (exit<=time & status==cause) | (exit>time)
+    obs <- (exit<=time & status==cause) | (exit>=time)
     p <- expit(lp)
     if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
         if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
@@ -1706,7 +1706,7 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  obs <- (exit<=time & status!=cens.code) | (exit>time)
+  obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
 
