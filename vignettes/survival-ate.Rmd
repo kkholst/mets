@@ -1,5 +1,5 @@
 ---
-title: "Average treatment effect (ATE) based on the G-computation for Cox and Fine-Gray model"
+title: "G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data" 
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -22,10 +22,10 @@ library(mets)
 ```
 
 
-ATE 
-====
+G-computation for the Cox and Fine-Gray models 
+==============================================
 
-Computing the G-estimation based on the Cox or Fine-Gray model :
+Computing the stanaridized estimate (G-estimation) based on the Cox or Fine-Gray model :
 \[
 \hat S(t,A=a) = n^{-1} \sum_i S(t,A=a,X_i) 
 \]
@@ -33,9 +33,12 @@ and this estimator has influence function
 \[
 S(t,A=a,X_i) -  S(t,A=a)  + E( D_{A_0(t), \beta} S(t,A=a,X_i)  ) \epsilon_i(t)
 \]
-where $\epsilon_i(t)$ is the iid decomposition of $(\hat A(t) - A(t), \hat \beta- \beta)$.
+where $\epsilon_i(t)$ is the iid decomposition 
+of $(\hat A(t) - A(t), \hat \beta- \beta)$.
 
-Without causal assumptions this standardization can still be a useful summary measure. 
+These estimates have a causal interpration under the assumption
+of no-unmeasured confounders, and even without the 
+causal assumptions this standardization can still be a useful summary measure. 
 
 
 ```{r}
@@ -58,20 +61,39 @@ summary(survivalG(ss,bmt,50))
 
 ```
 
+G-computation for the binomial regression
+==============================================
 
-Comparing with binomial-regression ATE 
+We compare with the similar estimates using the Doubly Robust
+estimating equations using binregATE. The standardization from the
+G-computation can also be computed using a specialized function that 
+takes less memory and is quicker (for large data).
 
 ```{r}
 
+## survival situation
+sr1 <- binregATE(Event(time,event)~tcell+platelet+age,bmt,cause=1,
+		 time=40, treat.model=tcell~platelet+age)
+summary(sr1)
+
+## competing risks 
 br1 <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
 		 time=40,treat.model=tcell~platelet+age)
 summary(br1)
 
-sr1 <- binregATE(Event(time,event)~tcell+platelet+age,bmt,cause=1,
-		 time=40, treat.model=tcell~platelet+age)
-summary(sr1)
 ```
 
+and using the specialized function 
+
+```{r}
+br1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=40)
+Gbr1 <- binregG(br1,data=bmt)
+summary(Gbr1)
+
+## contrasting average age to +2-sd age, Avalues
+Gbr2 <- binregG(br1,data=bmt,varname="age",Avalues=c(0,2))
+summary(Gbr2)
+```
 
 
 

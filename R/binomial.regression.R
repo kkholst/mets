@@ -1208,7 +1208,7 @@ print.summary.survivalG  <- function(x,...) {
 ##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 ##' summary(sb1)
 ##' @export
-binregG <- function(x,data,Avalues=c(0,1),varnname=NULL)
+binregG <- function(x,data,Avalues=c(0,1),varname=NULL)
 {# {{{
 
 if (is.null(varname))  {
@@ -1237,6 +1237,7 @@ k <- k+1
 datA[,treat.name] <- a
 Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
 lpa <- Xa %*% x$coef
+## only for logit link so far 
 pa <- expit(lpa)
 risks <- cbind(risks,pa)
 Dma  <-  Xa*c(pa/(1+exp(lpa)))
