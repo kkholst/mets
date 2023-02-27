@@ -1253,8 +1253,8 @@ for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[
 vv <- crossprod(risk.iid)
 
 Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
-ed <-  estimate(coef=Gest$Gest,vcov=vv,Gout,function(p) p[-1]-p[1])
-rd <- estimate(coef=Gest$Gest,vcov=vv,Gout,function(p) p[-1]/p[1],null=1)
+ed <-  estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]-p[1])
+rd <- estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]/p[1],null=1)
 out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv)
 class(out) <- "survivalG"
 return(out)

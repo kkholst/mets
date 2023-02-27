@@ -76,6 +76,9 @@ sr1 <- binregATE(Event(time,event)~tcell+platelet+age,bmt,cause=1,
 		 time=40, treat.model=tcell~platelet+age)
 summary(sr1)
 
+## relative risk effect 
+estimate(coef=sr1$riskDR,vcov=sr1$var.riskDR,f=function(p) p[2]/p[1])
+
 ## competing risks 
 br1 <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
 		 time=40,treat.model=tcell~platelet+age)
