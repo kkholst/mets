@@ -123,14 +123,21 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 	//  unsigned p = X.n_cols;
 	unsigned n = Exit.n_elem;
 	if (Truncation) n *= 2;
+        unsigned kj=0;
 
 	//Rcout << "n=" << X.n_rows << ", p=" << X.n_cols << std::endl;
 
-	mat XX(n, X.n_cols*X.n_cols); // Calculate XX' at each time-point
+	mat XX(n, X.n_cols*(X.n_cols+1)/2); // Calculate XX' at each time-point
 	for (unsigned i=0; i<X.n_rows; i++) {
 		rowvec Xi = X.row(i);
 		//    XX.row(i) = reshape(Xi.t()*Xi,1,XX.n_cols);
-		XX.row(i) = vectorise(Xi.t()*Xi,1);
+//		XX.row(i) = vectorise(Xi.t()*Xi,1);
+             kj=0;
+	     for (unsigned j=0; j<X.n_cols; j++) 
+	     for (unsigned k=j; k<X.n_cols; k++)  {
+		XX(i,kj)=X(i,j)*X(i,k);
+		kj=kj+1; 
+	     }
 		if (Truncation) XX.row(i+n/2) = XX.row(i);
 	}
 
@@ -1416,6 +1423,65 @@ RcppExport SEXP covrfstrataCovR(SEXP ia,SEXP ib,SEXP ia2,SEXP ib2,SEXP iid,SEXP 
 //}/*}}}*/
 //
 
+mat  vecmatCP(mat a)
+{/*{{{*/
+	unsigned n = a.n_rows;
+	unsigned p1 = a.n_cols;
+	unsigned kj=0; 
+
+	mat res(n,p1*(p1+1)/2);
+	for (unsigned i=0; i<n; i++) {
+             kj=0;
+	     for (unsigned j=0; j<p1; j++) 
+	     for (unsigned k=j; k<p1; k++)  {
+		res(i,kj)=a(i,j)*a(i,k);
+		kj=kj+1; 
+	     }
+	}
+	return(res);
+} /*}}}*/
+
+mat lower2fullXX(rowvec a, int p)
+{/*{{{*/
+	mat XX(p,p); 
+	unsigned kj=0;
+	for (unsigned i=0; i<p; i++) 
+	for (unsigned j=i; j<p; j++) { XX(j,i)=a(kj);  kj=kj+1; }
+
+        for (unsigned i=0; i<p-1; i++) 
+	for (unsigned j=i+1; j<p; j++) XX(i,j)=XX(j,i);
+	return(XX);
+} /*}}}*/
+
+RcppExport SEXP XXMatFULL(SEXP XXSEXP,SEXP XP)
+{/*{{{*/
+	BEGIN_RCPP
+        mat XX = Rcpp::as<mat>(XXSEXP);
+	int p = Rcpp::as<int>(XP);
+	unsigned xxp = XX.n_cols;
+	unsigned n = XX.n_rows;
+
+	mat XXf(n,p*p);
+	for (unsigned j=0; j<n; j++)  {
+		XXf.row(j)=vectorise(lower2fullXX(XX.row(j),p)).t();
+	}
+	return(Rcpp::List::create(Rcpp::Named("XXf")=XXf));
+	END_RCPP
+}/*}}}*/
+
+mat xxMatFULL(mat XX,int p)
+{/*{{{*/
+	unsigned n = XX.n_rows;
+
+	mat XXf(n,p*p);
+	for (unsigned j=0; j<n; j++)  {
+		XXf.row(j)=vectorise(lower2fullXX(XX.row(j),p)).t();
+	}
+	return(XXf); 
+}/*}}}*/
+
+
+
 RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 		SEXP XSEXP,
 		SEXP XXSEXP,
@@ -1452,11 +1518,12 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 	mat E=revcumsumstrataMatCols(X,eXb,S0,strata,nstrata);
 
 	E = E.rows(Jumps);
-	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
-	for (unsigned i=0; i<E.n_rows; i++) {
-		rowvec Xi = E.row(i);
-		E2.row(i) = vectorise(Xi.t()*Xi,1);
-	}
+	mat E2=vecmatCP(E); 
+//	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
+//	for (unsigned i=0; i<E.n_rows; i++) {
+//		rowvec Xi = E.row(i);
+//		E2.row(i) = vectorise(Xi.t()*Xi,1);
+//	}
 
 	mat XX2=revcumsumstrataMatCols(XX,eXb,S0,strata,nstrata);
 
@@ -1473,20 +1540,23 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 	vec val =  (Xb.elem(Jumps)-log(S0)); // Partial log-likelihood
 
 	//  colvec iweightsJ=1/weightsJ;
-	colvec S02 = S0/(caseweightsJ%weightsJ);            // S0 with weights to estimate baseline
+	colvec S02 = S0/(caseweightsJ%weightsJ);          // S0 with weights to estimate baseline
 	// mat grad2= vecmatrow(caseweightsJ%weightsJ,grad); // score  with weights
 	mat grad2 = grad.each_col() % (caseweightsJ%weightsJ);
 	vec val2 = caseweightsJ%weightsJ%val;             // Partial log-likelihood with weights
 
 	mat hesst = -(XX2-E2);               // hessian contributions in jump times
-	mat hess  = reshape(sum(hesst),p,p);
+//	mat hess  = reshape(sum(hesst),p,p);
+	mat hess  = lower2fullXX(sum(hesst),p);
+
 	if (ZX.n_rows==X.n_rows) {
 		ZX2 = ZX2.rows(Jumps);
 	}
 
 	// mat hesst2 = vecmatrow(caseweightsJ%weightsJ,hesst); // hessian over time with weights
 	mat hesst2 = hesst.each_col() % (caseweightsJ%weightsJ); // hessian over time with weights
-	mat hess2 = reshape(sum(hesst2),p,p);  // hessian with weights
+//	mat hess2 = reshape(sum(hesst2),p,p);  // hessian with weights
+	mat hess2  = lower2fullXX(sum(hesst2),p);
 
 	//  hesst2.print("hessiantime"); hess2.print("hessian");
 	//  if (hess.has_nan()) {
@@ -1505,8 +1575,8 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 				Rcpp::Named("E")=E,
 				Rcpp::Named("S0")=S02,
 				Rcpp::Named("ZXeXb")=ZX2
-				//			    Rcpp::Named("weightsJ")=weightsJ,
-				//			    Rcpp::Named("caseweights")=caseweightsJ
+				//	    Rcpp::Named("weightsJ")=weightsJ,
+				//	    Rcpp::Named("caseweights")=caseweightsJ
 				));
 	END_RCPP
 }/*}}}*/
@@ -1539,11 +1609,12 @@ RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP, SEXP XSEXP, SEXP XXSEXP, SEXP S
 	mat E=revcumsumstrataMatCols(X,eXb,S0,strata,nstrata);
 
 	E = E.rows(Jumps);
-	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
-	for (unsigned i=0; i<E.n_rows; i++) {
-		rowvec Xi = E.row(i);
-		E2.row(i) = vectorise(Xi.t()*Xi,1);
-	}
+	mat E2=vecmatCP(E); 
+//	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
+//	for (unsigned i=0; i<E.n_rows; i++) {
+//		rowvec Xi = E.row(i);
+//		E2.row(i) = vectorise(Xi.t()*Xi,1);
+//	}
 
 	mat XX2=revcumsumstrataMatCols(XX,eXb,S0,strata,nstrata);
 
@@ -1585,13 +1656,15 @@ RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP, SEXP XSEXP, SEXP XXSEXP, SEXP S
 	mat hesst = -(XX2-E2);               // hessian contributions in jump times
 	// hesst = vecmatrow(pow,hesst);
 	hesst.each_col() %= pow;
-	hesst = hesst+ gradAdjt;
+	mat hesstf=xxMatFULL(hesst,p); 
+	hesstf = hesstf+ gradAdjt;
 	if (ZX.n_rows==X.n_rows) {
 		ZX2 = ZX2.rows(Jumps);
 	}
 
 	// mat hesst2 = vecmatrow(weightsJ,hesst); // hessian over time with weights
-	mat hesst2 = hesst.each_col() % weightsJ;
+	mat hesst2 = hesstf.each_col() % weightsJ;
+//	mat hess2  = lower2fullXX(sum(hesst2),p);
 	mat hess2 = reshape(sum(hesst2),p,p);  // hessian with weights
 
 	return(Rcpp::List::create(Rcpp::Named("jumps")=Jumps,
@@ -1610,7 +1683,6 @@ RcppExport SEXP FastCoxPLstrataPO(SEXP betaSEXP, SEXP XSEXP, SEXP XXSEXP, SEXP S
 				));
 	END_RCPP
 } /*}}}*/
-
 
 RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 		SEXP XSEXP,
@@ -1685,11 +1757,12 @@ RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 	//  }
 
 	E = E.rows(Jumps);
-	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
-	for (unsigned i=0; i<E.n_rows; i++) {
-		rowvec Xi = E.row(i);
-		E2.row(i) = vectorise(Xi.t()*Xi,1);
-	}
+	mat E2=vecmatCP(E); 
+//	mat E2(E.n_rows, E.n_cols*E.n_cols); // Calculate E' E at each time-point
+//	for (unsigned i=0; i<E.n_rows; i++) {
+//		rowvec Xi = E.row(i);
+//		E2.row(i) = vectorise(Xi.t()*Xi,1);
+//	}
 
 	mat XX2=revcumsumstrataMatCols(XX,eXb,S0,strata,nstrata);
 	//  mat XX2 = XX;
@@ -1732,7 +1805,8 @@ RcppExport SEXP FastCoxPLstrataAddGam(SEXP betaSEXP,
 
 	// mat hesst2 = vecmatrow(weightsJ,hesst); // hessian over time with weights
 	mat hesst2 = hesst.each_col() % weightsJ;
-	mat hess2 = reshape(sum(hesst2),p,p);  // hessian with weights
+//	mat hess2 = reshape(sum(hesst2),p,p);  // hessian with weights
+	mat hess2  = lower2fullXX(sum(hesst2),p);
 
 	//  if (hess.has_nan()) {
 	//	printf("============================ \n");
@@ -1876,8 +1950,6 @@ RcppExport SEXP CubeMattime(SEXP XSEXP,SEXP XXSEXP,SEXP irX,SEXP icX,SEXP irXX,S
 }/*}}}*/
 
 
-
-
 mat  vecmatmat(mat a,mat b)
 {/*{{{*/
 	unsigned n = b.n_rows;
@@ -1895,23 +1967,7 @@ mat  vecmatmat(mat a,mat b)
 	return(res);
 } /*}}}*/
 
-mat  vecmatCP(mat a)
-{/*{{{*/
-	unsigned n = a.n_rows;
-	unsigned p1 = a.n_cols;
-	unsigned kj=0; 
 
-	mat res(n,p1*(p1+1)/2);
-	for (unsigned i=0; i<n; i++) {
-             kj=0;
-	     for (unsigned j=0; j<p1; j++) 
-	     for (unsigned k=j; k<p1; k++)  {
-		res(i,kj)=a(i,j)*a(i,k);
-		kj=kj+1; 
-	     }
-	}
-	return(res);
-} /*}}}*/
 
 RcppExport SEXP  vecCPMat(SEXP iX) { //
 	BEGIN_RCPP/*{{{*/

@@ -113,6 +113,7 @@ extern SEXP covrfstrataR(             SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP covrfstrataCovR(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP, SEXP);
 extern SEXP sumstrataR(SEXP,SEXP, SEXP);
 extern SEXP XBmindex(SEXP,SEXP, SEXP);
+extern SEXP XXMatFULL(SEXP,SEXP);
 //extern SEXP RVpairs2DIMRV(SEXP, SEXP);
 //extern SEXP backfitEaEt(SEXP,SEXP, SEXP,SEXP,SEXP, SEXP, SEXP, SEXP,SEXP);
 
@@ -205,7 +206,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"vecCPMat",                          (DL_FUNC) &vecCPMat,                           1},
     {"OutCov",                            (DL_FUNC) &OutCov,                             2},
     {"XBmindex",                          (DL_FUNC) &XBmindex,                           3},
-//    {"RVpairs2DIMRV",                     (DL_FUNC) &RVpairs2DIMRV,                      2},
+    {"XXMatFULL",                         (DL_FUNC) &XXMatFULL,                          2},
+//    {"RVpairs2DIMRV",                   (DL_FUNC) &RVpairs2DIMRV,                      2},
     {NULL, NULL, 0}
 };
 

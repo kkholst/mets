@@ -405,6 +405,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
      nterms <- cr2$p-1
 
      dhessian <- cr2$hessianttime
+     dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
      ###  matrix(apply(dhessian,2,sum),3,3)
      timeb <- which(cr$cumhaz[,1]<timel)
      ### take relevant \sum H_i(s,t) (e_i - \bar e)
@@ -550,6 +551,7 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
      nterms <- cr2$p-1
 
      dhessian <- cr2$hessianttime
+     dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
      ###  matrix(apply(dhessian,2,sum),3,3)
      timeb <- which(cr$cumhaz[,1]<timel)
      ### take relevant \sum H_i(s,t) (e_i - \bar e)

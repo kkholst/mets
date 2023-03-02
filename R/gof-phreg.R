@@ -49,6 +49,7 @@ Pt <- apply(Pt,2,cumsum)
 Ut <- apply(U,2,cumsum)
 
 nd <- nrow(object$U)
+Pt <-  .Call("XXMatFULL",Pt,p,PACKAGE="mets")$XXf
 Pt <-  .Call("CubeMat",Pt,ii,PACKAGE="mets")$XXX
 sup <- matrix(0,n.sim,nrow(ii))
 hatti <- matrix(0,nd,nrow(ii))

@@ -367,6 +367,9 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	XX22=apply(XX2*eXb2,2,revcumsumstrata,strata,nstrata)/S02;
 	XX21 = XX21[Jumps1,,drop=FALSE];
 	XX22 = XX22[Jumps2,,drop=FALSE];
+        ## back to full dimension
+        XX21 <-  .Call("XXMatFULL",XX21,ncol(E1),PACKAGE="mets")$XXf
+        XX22 <-  .Call("XXMatFULL",XX22,ncol(E2),PACKAGE="mets")$XXf
 
 	weightsJ=weights[Jumps];
 	caseweightsJ=caseweights[Jumps];

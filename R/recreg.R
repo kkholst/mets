@@ -368,7 +368,8 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 
         Ut <- caseweightsJ*weightsJ*U
         ## E^2, as n x (pxp)
-        Et2 <-  .Call("vecMatMat",E,E,PACKAGE="mets")$vXZ
+###        Et2 <-  .Call("vecMatMat",E,E,PACKAGE="mets")$vXZ
+        Et2  <- .Call("vecCPMat",E)$XX
         S2S0 <-  (S2oo+S2no)/S0
         DUt <-  -(S2S0-Et2)
 
@@ -377,6 +378,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
             S0 <- S0/pow
             DUt <- pow*DUt
             DUt <- DUt+DUadj
+            DUt <-  .Call("XXMatFULL",DUt,p,PACKAGE="mets")$XXf
             if (profile==1) {
 		Ut <- Ut+c(ploglik)*Dwbeta
 		## not implemented
@@ -387,7 +389,13 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 
         U  <- apply(Ut,2,sum)
         DUt <- caseweightsJ*weightsJ*DUt
-        DU <- -matrix(apply(DUt,2,sum),p,p)
+###        DU <- -matrix(apply(DUt,2,sum),p,p)
+	if (ncol(DUt)!=p*p) {
+        DU <- matrix(0,p,p);
+        DU[lower.tri(DU,diag=TRUE)] <- -apply(DUt,2,sum)
+        DU<- DU+t(DU)
+        diag(DU) <- diag(DU)/2
+	} else  DU <- -matrix(apply(DUt,2,sum),p,p)
         ploglik <- sum(ploglik)
         U <- U+augmentation
 
