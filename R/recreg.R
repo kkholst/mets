@@ -1028,7 +1028,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1,rd,rc,fz,fdz=NULL,model=c("frailty","twostage"),cens=NULL)
+simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,model=c("twostage","frailty"),type=NULL,cens=NULL,nmax=100)
 {# {{{
 ## setting up baselines for simulations 
 base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
@@ -1039,6 +1039,10 @@ Stm <- cbind(base1[,1],St)
 dbase1 <- diff(c(0,base1[,2]))
 dcum <- cbind(base1[,1],dbase1)
 maxtime <- tail(base1[,1],1)
+
+if (is.null(r1)) r1 <- rep(1,n)
+if (is.null(rd)) rd <- rep(1,n)
+if (is.null(rc)) rc <- rep(1,n)
 
 if (is.null(fz)) fz <- function(x) x
 
@@ -1055,12 +1059,14 @@ if (is.null(fz)) fz <- function(x) x
  }  else fzz <- z <- rep(1,n)
 
 if (var.z==0) model <- "frailty"
+if (is.null(type)) 
 if (model[1]=="twostage") type <- 2 else type <- 1
 ## for frailty setting we also consider any function of z 
 if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
 
  ## survival censoring given X, Z, either twostage or frailty-model 
- dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z,type)
+ if (type>=2) stype <- 2 else stype <- 1
+ dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z,stype)
  dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
  if (!is.null(cens)) cens <- rexp(n)/(rc*cens)
  dd$status <- ifelse(dd$time<cens,dd$status,0)
@@ -1071,8 +1077,9 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
 
  ## draw recurrent process given X,Z with rate:
  ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
+ ## type=3, observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
- ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z,fzz,dd$time,type,var.z,100)
+ ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z,fzz,dd$time,type,var.z,nmax)
  colnames(ll) <- c("id","start","stop","death")
  ll <- data.frame(ll)
  ll$death <- dd$status[ll$id+1]

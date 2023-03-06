@@ -204,6 +204,10 @@ arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colve
                   colvec Stt =exp(-z[i]*ilapC(1/theta,pow(St,rd[i])));
                   base1=fz[i]*cumsum((dbase1/Stt)); 
 	       }
+               if (type==3)  {
+                  colvec gtt =exp(theta*log(St)*rd[i]);
+                  base1=fz[i]*cumsum((dbase1/gtt)); 
+	       }
 	       basei.col(1)=base1; 
 
 	       arma::colvec simi=simbase(basei,rr(i),tc(i),0,maxit); 

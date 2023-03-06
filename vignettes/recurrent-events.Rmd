@@ -313,7 +313,7 @@ r1 <- exp( X %*% c(0.3,-0.3))
 rd <- exp( X %*% c(0.3,-0.3))
 rc <- exp( X %*% c(0,0))
 fz <- NULL
-rr <- mets:::simGLcox(n,base1,ddr,var.z=0,r1,rd,rc,fz,model=model,cens=3/5000)
+rr <- mets:::simGLcox(n,base1,ddr,var.z=0,r1=r1,rd=rd,rc=rc,fz,model="twostage",cens=3/5000) 
 rr <- cbind(rr,X[rr$id+1,])
 
 dtable(rr,~statusD+status+death,level=2,response=1)
@@ -328,7 +328,6 @@ dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
 out <- recurrentMarginal(xr,dr)
 mets::summaryTimeobject(out$times,out$mu,times=times,se.mu=out$se.mu)
 ```
-
 
 Regression models for the marginal mean 
 ========================================
