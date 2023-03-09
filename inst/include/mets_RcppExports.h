@@ -193,6 +193,27 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
+    inline arma::mat _tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& rdtheta, const IntegerVector id) {
+        typedef SEXP(*Ptr__tildeLambda1)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__tildeLambda1 p__tildeLambda1 = NULL;
+        if (p__tildeLambda1 == NULL) {
+            validateSignature("arma::mat(*_tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
+            p__tildeLambda1 = (Ptr__tildeLambda1)R_GetCCallable("mets", "_mets__tildeLambda1");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__tildeLambda1(Shield<SEXP>(Rcpp::wrap(dLambda1)), Shield<SEXP>(Rcpp::wrap(LambdaD)), Shield<SEXP>(Rcpp::wrap(rdtheta)), Shield<SEXP>(Rcpp::wrap(id)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::mat >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_mets_RCPPEXPORTS_H_GEN_

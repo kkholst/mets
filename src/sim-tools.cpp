@@ -253,6 +253,36 @@ return(sims);
 }
 /*}}}*/
 
+// [[Rcpp::export(name=".tildeLambda1")]]
+arma::mat tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, 
+		const arma::colvec& rdtheta,
+		       const IntegerVector id)
+{/*{{{*/
+    unsigned n = rdtheta.n_elem;
+    unsigned N = dLambda1.n_elem;
+
+    mat res(N,3);
+    colvec resi(n); colvec Dresi(n); colvec D2resi(n);
+    colvec inc(n); colvec Dinc(n); colvec D2inc(n);
+
+   for (unsigned i=0; i<N; i++) {
+	   if (dLambda1(i)>0.0000000000001) { 
+		   resi=exp(rdtheta*LambdaD(i))*dLambda1(i); 
+		   Dresi=LambdaD(i)*exp(LambdaD(i)*rdtheta)*dLambda1(i); 
+		   D2resi=LambdaD(i)*LambdaD(i)*exp(LambdaD(i)*rdtheta)*dLambda1(i); 
+		   inc=inc+resi;
+		   Dinc=Dinc+Dresi;
+		   D2inc=D2inc+D2resi;
+	   }
+	   res(i,0)=inc(id(i)); 
+	   res(i,1)=Dinc(id(i)); 
+	   res(i,2)=D2inc(id(i)); 
+   }
+   return(res); 
+}
+/*}}}*/
+
+
 //
 //RcppExport SEXP simSurvZ(SEXP iSt,SEXP ird, SEXP iz, SEXP itheta, SEXP itype ) {/*{{{*/
 //	arma::colvec z = Rcpp::as<arma::colvec>(iz);

@@ -1337,6 +1337,7 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
     years.lost <- intkmtimes[,1]-intkmtimes[,2]
     intkmtimes <- cbind(skmtimes,intkmtimes,se.intkmtimes,years.lost)
     colnames(intkmtimes) <- c("strata","times","rmean","se.rmean","years.lost")
+    rownames(intkmtimes) <- rep(x$strata.level,length(times)); 
     intkmtimes=data.frame(intkmtimes)
 ###    logintkmtimes=cbind(intkmtimes[,1:2],log(intkmtimes[,3]),se.intkmtimes/intkmtimes[,3])
 ###    colnames(logintkmtimes) <- c("strata","times","log-rmean","log-se.rmean")
@@ -1547,6 +1548,7 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
     intF1mtimes <- cbind(stratatimes,intF1times,se.intF1mtimes,years.lost)
     colnames(intF1mtimes) <- c("strata","times",
 			      paste0("intF1",causes),paste0("se.intF1",causes),"total-years-lost")
+    rownames(intF1mtimes) <- rep(x$strata.level,length(times)); 
     intF1mtimes=data.frame(intF1mtimes)
     if (pka==1) { 
 	    intF1pkatimes <- cbind(stratatimes,intF1times,se.intF1times)
