@@ -273,8 +273,8 @@ RcppExport SEXP _mets_rchazC(SEXP cumSEXP, SEXP rrSEXP, SEXP entrySEXP) {
     return rcpp_result_gen;
 }
 // simGL
-arma::mat simGL(const arma::mat& dcum, const arma::colvec& St, const arma::colvec& rr, const arma::colvec& rd, const arma::colvec& z, const arma::colvec& fz, const arma::colvec& tc, const int type, const double theta, const int maxit);
-static SEXP _mets_simGL_try(SEXP dcumSEXP, SEXP StSEXP, SEXP rrSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP fzSEXP, SEXP tcSEXP, SEXP typeSEXP, SEXP thetaSEXP, SEXP maxitSEXP) {
+arma::mat simGL(const arma::mat& dcum, const arma::colvec& St, const arma::colvec& rr, const arma::colvec& rd, const arma::colvec& z, const arma::colvec& fz, const arma::colvec& tc, const int type, const double theta, const int maxit, const double share);
+static SEXP _mets_simGL_try(SEXP dcumSEXP, SEXP StSEXP, SEXP rrSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP fzSEXP, SEXP tcSEXP, SEXP typeSEXP, SEXP thetaSEXP, SEXP maxitSEXP, SEXP shareSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type dcum(dcumSEXP);
@@ -287,15 +287,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type type(typeSEXP);
     Rcpp::traits::input_parameter< const double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< const int >::type maxit(maxitSEXP);
-    rcpp_result_gen = Rcpp::wrap(simGL(dcum, St, rr, rd, z, fz, tc, type, theta, maxit));
+    Rcpp::traits::input_parameter< const double >::type share(shareSEXP);
+    rcpp_result_gen = Rcpp::wrap(simGL(dcum, St, rr, rd, z, fz, tc, type, theta, maxit, share));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _mets_simGL(SEXP dcumSEXP, SEXP StSEXP, SEXP rrSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP fzSEXP, SEXP tcSEXP, SEXP typeSEXP, SEXP thetaSEXP, SEXP maxitSEXP) {
+RcppExport SEXP _mets_simGL(SEXP dcumSEXP, SEXP StSEXP, SEXP rrSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP fzSEXP, SEXP tcSEXP, SEXP typeSEXP, SEXP thetaSEXP, SEXP maxitSEXP, SEXP shareSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_mets_simGL_try(dcumSEXP, StSEXP, rrSEXP, rdSEXP, zSEXP, fzSEXP, tcSEXP, typeSEXP, thetaSEXP, maxitSEXP));
+        rcpp_result_gen = PROTECT(_mets_simGL_try(dcumSEXP, StSEXP, rrSEXP, rdSEXP, zSEXP, fzSEXP, tcSEXP, typeSEXP, thetaSEXP, maxitSEXP, shareSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -354,23 +355,25 @@ RcppExport SEXP _mets_simSurvZ(SEXP StSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP thetaS
     return rcpp_result_gen;
 }
 // tildeLambda1
-arma::mat tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& rdtheta, const IntegerVector id);
-static SEXP _mets_tildeLambda1_try(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP rdthetaSEXP, SEXP idSEXP) {
+arma::mat tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& r1, const arma::colvec& rd, const arma::colvec& theta, const IntegerVector id);
+static SEXP _mets_tildeLambda1_try(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1SEXP, SEXP rdSEXP, SEXP thetaSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const arma::colvec& >::type dLambda1(dLambda1SEXP);
     Rcpp::traits::input_parameter< const arma::colvec& >::type LambdaD(LambdaDSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type rdtheta(rdthetaSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type r1(r1SEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type rd(rdSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< const IntegerVector >::type id(idSEXP);
-    rcpp_result_gen = Rcpp::wrap(tildeLambda1(dLambda1, LambdaD, rdtheta, id));
+    rcpp_result_gen = Rcpp::wrap(tildeLambda1(dLambda1, LambdaD, r1, rd, theta, id));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _mets_tildeLambda1(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP rdthetaSEXP, SEXP idSEXP) {
+RcppExport SEXP _mets_tildeLambda1(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1SEXP, SEXP rdSEXP, SEXP thetaSEXP, SEXP idSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_mets_tildeLambda1_try(dLambda1SEXP, LambdaDSEXP, rdthetaSEXP, idSEXP));
+        rcpp_result_gen = PROTECT(_mets_tildeLambda1_try(dLambda1SEXP, LambdaDSEXP, r1SEXP, rdSEXP, thetaSEXP, idSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -401,9 +404,9 @@ static int _mets_RcppExport_validate(const char* sig) {
         signatures.insert("arma::vec(*.rpch)(unsigned,std::vector<double>,std::vector<double>)");
         signatures.insert("arma::vec(*.cpch)(arma::vec&,std::vector<double>,std::vector<double>)");
         signatures.insert("arma::colvec(*.rchazC)(const arma::mat&,const arma::colvec,const arma::colvec)");
-        signatures.insert("arma::mat(*.simGL)(const arma::mat&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const int,const double,const int)");
+        signatures.insert("arma::mat(*.simGL)(const arma::mat&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const int,const double,const int,const double)");
         signatures.insert("arma::mat(*.simSurvZ)(const arma::mat&,const arma::colvec&,const arma::colvec&,const double,const int)");
-        signatures.insert("arma::mat(*.tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
+        signatures.insert("arma::mat(*.tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
     }
     return signatures.find(sig) != signatures.end();
 }

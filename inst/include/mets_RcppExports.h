@@ -151,17 +151,17 @@ namespace mets {
         return Rcpp::as<arma::colvec >(rcpp_result_gen);
     }
 
-    inline arma::mat _simGL(const arma::mat& dcum, const arma::colvec& St, const arma::colvec& rr, const arma::colvec& rd, const arma::colvec& z, const arma::colvec& fz, const arma::colvec& tc, const int type, const double theta, const int maxit) {
-        typedef SEXP(*Ptr__simGL)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+    inline arma::mat _simGL(const arma::mat& dcum, const arma::colvec& St, const arma::colvec& rr, const arma::colvec& rd, const arma::colvec& z, const arma::colvec& fz, const arma::colvec& tc, const int type, const double theta, const int maxit, const double share) {
+        typedef SEXP(*Ptr__simGL)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__simGL p__simGL = NULL;
         if (p__simGL == NULL) {
-            validateSignature("arma::mat(*_simGL)(const arma::mat&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const int,const double,const int)");
+            validateSignature("arma::mat(*_simGL)(const arma::mat&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const int,const double,const int,const double)");
             p__simGL = (Ptr__simGL)R_GetCCallable("mets", "_mets__simGL");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__simGL(Shield<SEXP>(Rcpp::wrap(dcum)), Shield<SEXP>(Rcpp::wrap(St)), Shield<SEXP>(Rcpp::wrap(rr)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(fz)), Shield<SEXP>(Rcpp::wrap(tc)), Shield<SEXP>(Rcpp::wrap(type)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(maxit)));
+            rcpp_result_gen = p__simGL(Shield<SEXP>(Rcpp::wrap(dcum)), Shield<SEXP>(Rcpp::wrap(St)), Shield<SEXP>(Rcpp::wrap(rr)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(z)), Shield<SEXP>(Rcpp::wrap(fz)), Shield<SEXP>(Rcpp::wrap(tc)), Shield<SEXP>(Rcpp::wrap(type)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(maxit)), Shield<SEXP>(Rcpp::wrap(share)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -193,17 +193,17 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
-    inline arma::mat _tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& rdtheta, const IntegerVector id) {
-        typedef SEXP(*Ptr__tildeLambda1)(SEXP,SEXP,SEXP,SEXP);
+    inline arma::mat _tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& r1, const arma::colvec& rd, const arma::colvec& theta, const IntegerVector id) {
+        typedef SEXP(*Ptr__tildeLambda1)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__tildeLambda1 p__tildeLambda1 = NULL;
         if (p__tildeLambda1 == NULL) {
-            validateSignature("arma::mat(*_tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
+            validateSignature("arma::mat(*_tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
             p__tildeLambda1 = (Ptr__tildeLambda1)R_GetCCallable("mets", "_mets__tildeLambda1");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__tildeLambda1(Shield<SEXP>(Rcpp::wrap(dLambda1)), Shield<SEXP>(Rcpp::wrap(LambdaD)), Shield<SEXP>(Rcpp::wrap(rdtheta)), Shield<SEXP>(Rcpp::wrap(id)));
+            rcpp_result_gen = p__tildeLambda1(Shield<SEXP>(Rcpp::wrap(dLambda1)), Shield<SEXP>(Rcpp::wrap(LambdaD)), Shield<SEXP>(Rcpp::wrap(r1)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(id)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

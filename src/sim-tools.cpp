@@ -189,7 +189,7 @@ return(rrx);
 arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colvec& rr,
 		const  arma::colvec& rd, const 	arma::colvec& z,const arma::colvec& fz,
 		const  arma::colvec& tc,
-		const int type, const double theta,const  int maxit)
+		const int type, const double theta,const  int maxit,const double share)
 {/*{{{*/
     unsigned n = rr.n_elem;
      arma:mat basei=dcum; 
@@ -206,7 +206,7 @@ arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colve
 	       }
                if (type==3)  {
                   colvec gtt =exp(theta*log(St)*rd[i]);
-                  base1=fz[i]*cumsum((dbase1/gtt)); 
+                  base1=fz[i]*cumsum((dbase1/gtt))/share; 
 	       }
 	       basei.col(1)=base1; 
 
@@ -255,21 +255,25 @@ return(sims);
 
 // [[Rcpp::export(name=".tildeLambda1")]]
 arma::mat tildeLambda1(const arma::colvec& dLambda1, const arma::colvec& LambdaD, 
-		const arma::colvec& rdtheta,
+		const arma::colvec& r1,
+		const arma::colvec& rd,
+		const arma::colvec& theta,
 		       const IntegerVector id)
 {/*{{{*/
-    unsigned n = rdtheta.n_elem;
+    unsigned n = rd.n_elem;
     unsigned N = dLambda1.n_elem;
 
     mat res(N,3);
     colvec resi(n); colvec Dresi(n); colvec D2resi(n);
     colvec inc(n); colvec Dinc(n); colvec D2inc(n);
+    colvec rdtheta=rd%theta; 
+    colvec rd2=rd%rd; 
 
    for (unsigned i=0; i<N; i++) {
 	   if (dLambda1(i)>0.0000000000001) { 
-		   resi=exp(rdtheta*LambdaD(i))*dLambda1(i); 
-		   Dresi=LambdaD(i)*exp(LambdaD(i)*rdtheta)*dLambda1(i); 
-		   D2resi=LambdaD(i)*LambdaD(i)*exp(LambdaD(i)*rdtheta)*dLambda1(i); 
+		   resi=r1%exp((rdtheta)*LambdaD(i))*dLambda1(i); 
+		   Dresi=rd%(r1*LambdaD(i))%exp(LambdaD(i)*rdtheta)*dLambda1(i); 
+		   D2resi=rd2%(r1*LambdaD(i)*LambdaD(i))%exp(LambdaD(i)*rdtheta)*dLambda1(i); 
 		   inc=inc+resi;
 		   Dinc=Dinc+Dresi;
 		   D2inc=D2inc+D2resi;

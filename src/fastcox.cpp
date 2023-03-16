@@ -1481,7 +1481,6 @@ mat xxMatFULL(mat XX,int p)
 }/*}}}*/
 
 
-
 RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 		SEXP XSEXP,
 		SEXP XXSEXP,

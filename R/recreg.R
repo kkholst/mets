@@ -1028,7 +1028,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,model=c("twostage","frailty"),type=NULL,cens=NULL,nmax=100)
+simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmax=100)
 {# {{{
 ## setting up baselines for simulations 
 base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
@@ -1044,19 +1044,24 @@ if (is.null(r1)) r1 <- rep(1,n)
 if (is.null(rd)) rd <- rep(1,n)
 if (is.null(rc)) rc <- rep(1,n)
 
+fz.orig <- fz
 if (is.null(fz)) fz <- function(x) x
 
  if (var.z>0) {
-	 z <- rgamma(n,1/var.z)*var.z 
-	 fzz <- fz(z)
+	 z1 <- z <- rgamma(n,share/var.z)*var.z 
+	 if (share<1) { 
+		 z2 <- rgamma(n,(1-share)/var.z)*var.z 
+		 z <- z+z2
+	 } 
+	 fzz <- fz(z1)
+	 if (share<1) fzz <- fzz/share; 
 	 mza <- mean(fzz)
-	 if (n<10000) {
-	    zl <- rgamma(100000,1/var.z)*var.z 
+	 if (n<10000 & (!is.null(fz.orig))) {
+	    zl <- rgamma(100000,share/var.z)*var.z 
 	    fzl <- fz(z)
 	    mza <- mean(fzl)
 	 } 
-	 fzz <- fzz/mza
- }  else fzz <- z <- rep(1,n)
+ }  else fzz <- z <- z1 <- rep(1,n)
 
 if (var.z==0) model <- "frailty"
 if (is.null(type)) 
@@ -1078,8 +1083,9 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ## draw recurrent process given X,Z with rate:
  ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
  ## type=3, observed hazards on Cox form among survivors
+ ## type=1,  W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
- ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z,fzz,dd$time,type,var.z,nmax)
+ ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z,nmax,1)
  colnames(ll) <- c("id","start","stop","death")
  ll <- data.frame(ll)
  ll$death <- dd$status[ll$id+1]
@@ -1230,4 +1236,344 @@ GLprediid <- function(...)
 out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
+
+boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",...) 
+{# {{{
+n <- max(margsurv$id)
+K <- bootstrap
+  formid <- as.formula(paste("~",id))
+  rrb <- blocksample(data, size = n*K, formid)
+  rrb$strata <- floor((rrb[,id]-0.01)/n)
+
+  outb <- c()
+  for (i in 1:K)
+  {
+     rrbs <- subset(rrb,strata==i-1)
+     drb <- phreg(margsurv$formula,data=rrbs)
+     xrb <- phreg(recurrent$formula,data=rrbs)
+     outb <- rbind(outb,twostageREC(drb,xrb,rrbs,...)$coef)
+  }
+  var <- var(outb)
+
+  list(var=var, se=diag(var)^.5,outb=outb)
+}# }}}
+
+
+twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared"),
+  theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
+  nufix=0,nu=NULL,...)
+{# {{{
+    if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
+    if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
+    clusters <- margsurv$cox.prep$id
+    n <-  max(clusters)+1
+    if (is.null(theta.des) == TRUE) ptheta <- 1
+    if (is.null(theta.des) == TRUE) theta.des <- matrix(1, n, ptheta) else theta.des <- as.matrix(theta.des)
+    ptheta <- ncol(theta.des)
+    if (nrow(theta.des) != n) stop("Theta design does not have correct dim")
+    if (is.null(theta) == TRUE) {
+        if (var.link == 1) theta <- rep(0, ptheta)
+        if (var.link == 0) theta <- rep(1, ptheta)
+    }
+    if (is.null(nu)  & (nufix==0)) nu <- 0 
+    if (length(theta) != ptheta) theta <- rep(theta[1], ptheta)
+    if (length(nu) != ptheta) nu <- rep(nu,ptheta)
+    theta.score <- rep(0, ptheta)
+    Stheta <- var.theta <- matrix(0, ptheta, ptheta)
+    max.clust <- length(unique(clusters))
+    theta.iid <- matrix(0, max.clust, ptheta)
+    xx <- margsurv$cox.prep
+    xr <- recurrent$cox.prep
+    nn <- length(xx$strata)
+    if (is.null(weights)) weights <- rep(1, nn)
+    if (length(weights) != nn) stop("Weights do not have right length")
+    statusxx <- rep(0, length(xx$strata))
+    statusxx[xx$jumps + 1] <- 1
+    xx$status <- statusxx
+    mid <- max(xx$id) + 1
+    Nsum <- cumsumstratasum(statusxx, xx$id, mid, type = "all")
+    Ni.tau <- sumstrata(statusxx, xx$id, mid)
+    S0i2 <- S0i <- rep(0, length(xx$strata))
+    S0i[xx$jumps + 1] <- 1/margsurv$S0
+    cumhazD <- cumsumstratasum(S0i, xx$strata, xx$nstrata)$lagsum
+    if (!is.null(margsurv$coef)) RR <- exp(xx$X %*% margsurv$coef) else RR <- rep(1, nn)
+    HD <- c(cumhazD * RR)
+    HDi <- cumsumstrata(HD*xx$sign,xx$id,mid)
+    statusx1 <- rep(0, length(xx$strata))
+    statusx1[xr$jumps + 1] <- 1
+    xr$status <- statusx1
+    N1sum <- cumsumstratasum(statusx1, xr$id, mid, type = "all")
+    N1i.tau <- sumstrata(statusx1, xr$id, mid)
+    S01i2 <- S01i <- rep(0, length(xr$strata))
+    S01i[xr$jumps + 1] <- 1/recurrent$S0
+    cumhaz1 <- cumsumstratasum(S01i, xr$strata, xr$nstrata)$lagsum
+    if (!is.null(recurrent$coef)) RR1 <- exp(xr$X %*% recurrent$coef) else RR1 <- rep(1, nn)
+    H1 <- c(cumhaz1 * RR1)
+###
+    ## designs of fixed time covariates and weights
+    cc <- cluster.index(xx$id)
+    firstid <- cc$firstclustid + 1
+    if (max(cc$cluster.size) == 1) stop("No clusters !, maxclust size=1\n")
+###
+    theta.des <- theta.des[xx$id+ 1, , drop = FALSE]
+    theta.des <- theta.des[xx$ord + 1, , drop = FALSE]
+    weightsid <- weights <- weights[xx$ord + 1]
+    weights <- weights[firstid]
+    thetaX <- as.matrix(theta.des[firstid, , drop = FALSE])
+    Xdeath <- as.matrix(xx$X[firstid,,drop = FALSE])
+    Xrecurrent <- as.matrix(xr$X[firstid,,drop = FALSE])
+    statusxb <- statusxx+statusx1
+    ###
+    Nsumb <- Nsum$lagsum+N1sum$lagsum
+    rd <- RR[firstid]
+    r1 <- RR1[firstid]
+    lastid <- tailstrata(xx$id,mid)
+###
+    cumDL <- HD[lastid]
+    nuX <- thetaX
+
+    obj <- function(par, all = FALSE) {# {{{
+        if (var.link == 1) epar <- c(exp(c(par))) else epar <- c(par)
+        thetav <- c(as.matrix(theta.des) %*% c(epar))
+        thetai <- thetav[firstid]
+	###
+        tildeL <- .Call("_mets_tildeLambda1",S01i,cumhazD,r1,rd,thetai,xx$id)
+	tildeLast <- tildeL[lastid,]
+	Ht <- thetav*tildeL[,1]+exp(thetav*HD)
+	Hr <- thetai*tildeLast[,1]+exp(thetai*cumDL)
+	DHt <- tildeL[,1]+thetav*tildeL[,2]+HD*exp(thetav*HD)
+	DHr <- tildeLast[,1]+thetai*tildeLast[,2]+cumDL*exp(thetai*cumDL)
+        ###
+	D2Ht <- 2*tildeL[,2]+thetav*tildeL[,3]+HD^2*exp(thetav*HD)
+	D2Hr <- 2*tildeLast[,2]+thetai*tildeLast[,3]+cumDL^2*exp(thetai*cumDL)
+        ###
+        l1 <- sumstrata(log(1 + thetav * N1sum$lagsum) * statusxb, xx$id, mid)
+        l2 <- sumstrata(statusxb * HD, xx$id, mid)
+        l3 <- -(1/thetai + N1i.tau) * log(Hr) 
+        l4 <- -sumstrata(log(Ht)*statusxx,xx$id,mid)
+        logliid <- (l1 + thetai * l2 + l3 + l4) * c(weights)
+        logl <- sum(logliid)
+        ploglik <- logl
+        ###
+        l1s <- sumstrata(N1sum$lagsum/(1 + thetav * N1sum$lagsum) * statusxb, xx$id, mid)
+        l3s <- -(1/thetai + N1i.tau) * DHr/Hr + (thetai^{ -2 }) * log(Hr) 
+        l4s <-  -sumstrata((DHt/Ht)*statusxx, xx$id, mid)
+        Dltheta <- (l1s+l2+l3s+l4s)*c(weights)
+        scoreiid <- thetaX * c(Dltheta)
+        D2N <- -sumstrata(N1sum$lagsum^2/(1 + thetav * N1sum$lagsum)^2 * statusxb, xx$id, mid)
+        Dhes <- (2/thetai^2) * DHr/Hr -(1/thetai + N1i.tau)*(D2Hr*Hr-DHr^2)/Hr^2 - (2/thetai^3) * log(Hr) 
+	D2l4 <- -sumstrata(((D2Ht*Ht-DHt^2)/Ht^2)*statusxx, xx$id, mid)
+        Dhes <- c(Dhes+D2N+D2l4) * c(weights)
+        if (var.link == 1) {
+            scoreiid <- scoreiid * c(thetai)
+            Dhes <- Dhes * thetai^2 + thetai * Dltheta
+        }
+        gradient <- apply(scoreiid, 2, sum)
+        hessian <- crossprod(thetaX, thetaX * c(Dhes))
+        hess2 <- crossprod(scoreiid)
+        val <- list(id = xx$id, score.iid = scoreiid, logl.iid = logliid,
+            ploglik = ploglik, gradient = gradient, hessian = hessian,
+            hess2 = hess2)
+        if (all)
+            return(val)
+        with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
+    }
+# }}}
+
+   fw <- function(x) 1/(1+exp(x))
+   nudes <- theta.des  
+   p <- ncol(theta.des)
+
+    objShared <- function(par, all = FALSE) {# {{{
+        if (var.link == 1) epar <- c(exp(par[1:p])) else epar <- c(par[1:p])
+        thetav <- c(as.matrix(theta.des) %*% epar)
+	if (nufix==1) nu1 <- c(as.matrix(nudes) %*% nu)
+	else nu1 <- c(as.matrix(nudes) %*% par[(p+1):2*p])
+        nu1i <-nu1[firstid]
+	tbeta1 <- fw(nu1); tbeta2 <- 1-tbeta1; 
+        thetai <- thetav[firstid]; tbeta1i <- tbeta1[firstid]; tbeta2i <- tbeta2[firstid]
+	###
+	R <-  exp( - thetav*HD);  DR <- -HD*exp( - thetav* HD); D2R <-  HD^2*exp( - thetav* HD) 
+        tildeL <- .Call("_mets_tildeLambda1",S01i,cumhazD,r1,rd,thetai,xx$id)
+	tildeLast <- tildeL[lastid,]
+	Ht <- (thetav/tbeta1)*tildeL[,1]+exp(thetav*HD)
+	Hr <- (thetai/tbeta1i)*tildeLast[,1]+exp(thetai*cumDL)
+	DHt <- (tildeL[,1]+thetav*tildeL[,2])/tbeta1+HD*exp(thetav*HD)
+	DHr <- (tildeLast[,1]+thetai*tildeLast[,2])/tbeta1i+cumDL*exp(thetai*cumDL)
+	DHtn <- -(thetav/tbeta1^2)*tildeL[,1]
+	DHrn <- -(thetai/tbeta1i^2)*tildeLast[,1]
+        ###
+	D2Ht <- (2*tildeL[,2]+thetav*tildeL[,3])/tbeta1+HD^2*exp(thetav*HD)
+	D2Hr <- (2*tildeLast[,2]+thetai*tildeLast[,3])/tbeta1i+cumDL^2*exp(thetai*cumDL)
+        ###
+        N <- (tbeta1 + thetav * N1sum$lagsum)/Ht + tbeta2*R
+        l1d <- sumstrata(log(N) * statusxx, xx$id, mid)
+        l11 <- sumstrata(log(tbeta1 + thetav * N1sum$lagsum) * statusx1, xx$id, mid)
+	l1 <- l1d+l11
+        l2 <- sumstrata(statusxb * HD, xx$id, mid) 
+	l22 <-  -log(tbeta1i)*N1i.tau 
+        l3 <- -(tbeta1i/thetai + N1i.tau)*log(Hr) 
+        l4 <-  (tbeta1i)*cumDL
+        logliid <- (l1 + thetai*l2+ l22 + l3 + l4) * c(weights)
+        logl <- sum(logliid)
+        ploglik <- logl
+        ###
+	DN1tt <- (Ht*N1sum$lagsum-DHt*(tbeta1+thetav*N1sum$lagsum))
+	DN1t <-  DN1tt/Ht^2 
+	DNt <- c(DN1t+tbeta2*DR)
+        l1ds <- sumstrata((DNt/N)*statusxx,xx$id,mid)
+        l11s <- sumstrata((N1sum$lagsum/(tbeta1 + thetav * N1sum$lagsum)) * statusx1, xx$id, mid)
+	l1s <- l1ds+l11s
+        l3s <- -(tbeta1i/thetai + N1i.tau) * (DHr/Hr) + (tbeta1i/thetai^{2}) * log(Hr) 
+        Dltheta <- (l1s+l2+l3s)*c(weights)
+        ###
+	DNtn <- (Ht-DHtn*(tbeta1+thetav*N1sum$lagsum))
+	DNn <- DNtn/Ht^2 
+        l1dn <- sumstrata( c(DNn-R)/N * statusxx, xx$id, mid)
+        l11n <- sumstrata(1/(tbeta1 + thetav * N1sum$lagsum) * statusx1, xx$id, mid)
+	l1n <- l1dn+l11n
+	l22n <-  -N1i.tau/tbeta1i 
+        l3n <- -(tbeta1i/thetai + N1i.tau) * (DHrn/Hr) -(1/thetai) * log(Hr)
+        Dlnu <- (l1n+l22n+l3n+cumDL)*c(weights)
+        ###
+	if (nufix==1)
+        scoreiid <- thetaX * c(Dltheta)
+        else  scoreiid <- cbind(thetaX * c(Dltheta),nuX*c(Dlnu)*(-exp(nu1i)*tbeta1i^2))
+        ###   ###
+        Dl11s <- -sumstrata(N1sum$lagsum^2/(tbeta1 + thetav * N1sum$lagsum)^2 * statusxb, xx$id, mid)
+        Dl3s <- (2*tbeta1i/thetai^2) * DHr/Hr -(tbeta1i/thetai+ N1i.tau)*(D2Hr*Hr-DHr^2)/Hr^2 - (2*tbeta1i/thetai^3) * log(Hr) 
+        ###
+	D2N1t <- (Ht^2*(DHt*N1sum$lagsum-D2Ht*(tbeta1+thetav*N1sum$lagsum)-DHt*N1sum$lagsum)-2*DHt*DN1tt)/Ht^4 
+	D2Nt <-  D2N1t+tbeta2*D2R
+	Dl1ds <- -sumstrata(((D2Nt*N-DNt^2)/N^2)*statusxx, xx$id, mid)
+        Dhes <- c(Dl1ds+Dl11s+Dl3s) * c(weights)
+        if (var.link == 1) {
+            scoreiid[,1:p] <- scoreiid[,1:p] * c(thetai)
+            Dhes <- Dhes * thetai^2 + thetai * Dltheta
+        }
+        gradient <- apply(scoreiid, 2, sum)
+        hessian <- crossprod(thetaX, thetaX * c(Dhes))
+	if (nufix==0) {
+###	    hessiann <- crossprod(nuX, nuX* c(D2nu))
+###	    hessiannp <- crossprod(thetaX,nuX*Dtn)
+###	    hessian <- cbind(hessian,hessianp)
+###	    hessian <- rbind(hessian,cbind(t(hessianp),hessiann))
+	}
+        hess2 <- crossprod(scoreiid)
+        val <- list(id = xx$id, score.iid = scoreiid, logl.iid = logliid,
+            ploglik = ploglik, gradient = gradient, hessian = -hess2,
+            hess2 = hess2)
+        if (all)
+            return(val)
+###        with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
+        with(val, structure(-ploglik, gradient = -gradient, hessian = hess2))
+    }
+# }}}
+
+   if (model[1]=="shared") obj <- objShared
+   if (nufix==0 & model[1]=="shared") par <- c(theta,nu) else par <- theta
+
+    opt <- NULL
+    if (no.opt == FALSE) {
+        if (tolower(method) == "nr") {
+            opt <- lava::NR(par, obj, ...)
+            opt$estimate <- opt$par
+        }
+        else {
+            opt <- nlm(obj, par, ...)
+            opt$method <- "nlm"
+        }
+        cc <- opt$estimate
+        val <- c(list(coef = cc), obj(opt$estimate, all = TRUE))
+    }
+    else val <- c(list(coef = par), obj(par, all = TRUE))
+    val$score <- val$gradient
+    theta <- matrix(c(val$coef), length(c(val$coef)), 1)
+
+    if (!is.null(colnames(theta.des)))
+        thetanames <- colnames(theta.des)
+    else thetanames <- paste("dependence", 1:length(c(theta)), sep = "")
+    if (nufix==0 & model[1]=="shared") thetanames <-
+     thetanames <- c(paste("dependence", 1:p, sep = ""),paste("share", 1:p,sep = ""))
+
+    if (length(thetanames) == length(c(theta))) {
+        rownames(theta) <- thetanames
+        names(val$coef)  <- thetanames
+###        rownames(var.theta) <- colnames(var.theta) <- thetanames
+    }
+    hessianI <- solve(val$hessian)
+    val$theta.iid.naive <- val$score.iid %*% hessianI
+
+    if (!is.null(se.cluster))
+        if (length(se.cluster) != length(clusters))
+            stop("Length of seclusters and clusters must be same\n")
+    if (!is.null(se.cluster)) {
+        iids <- unique(se.cluster)
+        nseclust <- length(iids)
+        if (is.numeric(se.cluster))
+            se.cluster <- fast.approx(iids, se.cluster) - 1
+        else se.cluster <- as.integer(factor(se.cluster, labels = seq(nseclust))
+) -
+            1
+        val$theta.iid <- apply(val$theta.iid, se.cluster, nseclust)
+        val$theta.iid.naive <- apply(val$theta.iid.naive, se.cluster,
+            nseclust)
+    }
+    var <- robvar.theta <- var.theta <- crossprod(val$theta.iid)
+    naive.var <- crossprod(val$theta.iid.naive)
+    val <- c(val, list(theta = theta, var.theta = var,n=mid,p=ncol(thetaX),var.link=var.link,
+        robvar.theta = var, var = var, thetanames = thetanames,
+        model = model[1], se = diag(var)^0.5), var.naive = naive.var,no.opt=no.opt)
+    class(val) <- "twostageREC"
+    attr(val, "clusters") <- clusters
+    attr(val, "secluster") <- c(se.cluster)
+    attr(val, "var.link") <- var.link
+    attr(val, "ptheta") <- ptheta
+    attr(val, "n") <- n
+    attr(val, "response") <- "survival"
+    attr(val, "additive-gamma") <- 0
+    attr(val, "twostage") <- "two.stage"
+    return(val)
+}
+# }}}
+
+##' @export
+summary.twostageREC <- function(object,...) {# {{{
+    I <- -solve(object$hessian)
+    V <- object$var
+    ncluster <- object$n
+    cc <- cbind(object$coef,diag(V)^0.5,diag(I)^0.5)
+    cc  <- cbind(cc,2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE)))
+    colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
+    if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
+    rownames(cc) <- names(coef(object))
+    pd <- object$p
+    if (object$var.link==1 & object$model=="full") f <- function(p) exp(p)
+    if (object$var.link==0 & object$model=="full") f <- function(p) p
+    if (object$var.link==1 & object$model=="shared") f <- function(p) c(exp(p[1:pd]),1/(1+exp(p[(pd+1):2*pd])))
+    if (object$var.link==0 & object$model=="shared") f <- function(p) c(p[1:pd],1/(1+exp(p[(pd+1):2*pd])))
+    expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat[,c(1,3,4),drop=FALSE]
+  n <- object$n
+  res <- list(coef=cc,n=n,nevent=object$nevent,ncluster=ncluster,var=V,exp.coef=expC,var.link=object$var.link)
+  class(res) <- "summary.twostageREC"
+  res
+}
+# }}}
+
+
+##' @export
+print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
+  if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
+  if (!is.null(x$coef)) {
+    cat("coeffients:\n")
+    printCoefmat(x$coef,...)
+    cat("\n")
+    if (x$var.link==1) cat("var (exp(coeffients)),shared:\n")
+    if (x$var.link==0) cat("var,shared:\n")
+    printCoefmat(x$exp.coef,...)
+  }
+  cat("\n")
+} # }}}
+
+
 
