@@ -1251,7 +1251,8 @@ K <- bootstrap
      rrbs <- subset(rrb,strata==i-1)
      drb <- phreg(margsurv$formula,data=rrbs)
      xrb <- phreg(recurrent$formula,data=rrbs)
-     outb <- rbind(outb,twostageREC(drb,xrb,rrbs,...)$coef)
+     outbl <- tryCatch(twostageREC(drb,xrb,rrbs,...),error=function(x) NULL)
+     if (!is.null(outbl)) outb <- rbind(outb,outbl$coef)
   }
   var <- var(outb)
 
