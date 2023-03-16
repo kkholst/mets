@@ -1569,7 +1569,7 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
     cat("coeffients:\n")
     printCoefmat(x$coef,...)
     cat("\n")
-    if (x$var.link==1) cat("var (exp(coeffients)),shared:\n")
+    if (x$var.link==1) cat("var=exp(coeffients),shared:\n")
     if (x$var.link==0) cat("var,shared:\n")
     printCoefmat(x$exp.coef,...)
   }
