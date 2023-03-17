@@ -1080,10 +1080,12 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ## to avoid R check error
  reverseCountid  <-  death  <- NULL
 
- ## draw recurrent process given X,Z with rate:
+ ## type=2 draw recurrent process given X,Z with rate:
  ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
+ ## such that GL model holds with exp(X^t beta_1) \Lambda_1(t)
  ## type=3, observed hazards on Cox form among survivors
- ## type=1,  W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
+ ## W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
+ ## or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
  ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z,nmax,1)
  colnames(ll) <- c("id","start","stop","death")
@@ -1261,8 +1263,7 @@ K <- bootstrap
 
 
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared"),
-  theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
-  nufix=0,nu=NULL,...)
+  theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL,nufix=0,nu=NULL,...)
 {# {{{
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
@@ -1500,7 +1501,6 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     if (length(thetanames) == length(c(theta))) {
         rownames(theta) <- thetanames
         names(val$coef)  <- thetanames
-###        rownames(var.theta) <- colnames(var.theta) <- thetanames
     }
     hessianI <- solve(val$hessian)
     val$theta.iid.naive <- val$score.iid %*% hessianI
@@ -1513,18 +1513,16 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
         nseclust <- length(iids)
         if (is.numeric(se.cluster))
             se.cluster <- fast.approx(iids, se.cluster) - 1
-        else se.cluster <- as.integer(factor(se.cluster, labels = seq(nseclust))
-) -
-            1
-        val$theta.iid <- apply(val$theta.iid, se.cluster, nseclust)
-        val$theta.iid.naive <- apply(val$theta.iid.naive, se.cluster,
-            nseclust)
+        else se.cluster <- as.integer(factor(se.cluster, labels = seq(nseclust))) - 1
+        val$theta.iid <- apply(val$theta.iid,2,sumstrata,se.cluster, nseclust)
+        val$theta.iid.naive <- apply(val$theta.iid.naive,2,sumstrata,se.cluster, nseclust)
     }
     var <- robvar.theta <- var.theta <- crossprod(val$theta.iid)
     naive.var <- crossprod(val$theta.iid.naive)
     val <- c(val, list(theta = theta, var.theta = var,n=mid,p=ncol(thetaX),var.link=var.link,
-        robvar.theta = var, var = var, thetanames = thetanames,
-        model = model[1], se = diag(var)^0.5), var.naive = naive.var,no.opt=no.opt)
+                       robvar.theta = var, var = var, thetanames = thetanames,
+                       model = model[1], se = diag(var)^0.5), 
+	     var.naive = naive.var,no.opt=no.opt)
     class(val) <- "twostageREC"
     attr(val, "clusters") <- clusters
     attr(val, "secluster") <- c(se.cluster)
