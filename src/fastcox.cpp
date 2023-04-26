@@ -801,12 +801,16 @@ RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata,S
 	for (unsigned i=0; i<n; i++) ntype+=type(i); 
 	mat res(ntype,2); 
 	int j=ntype; 
+	colvec fmax0(nstrata); colvec max0index(nstrata);
 
 	if (right==1)  {
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1);
 		int typel=type(n-i-1); 
-		if (typel==0) tmpsum(ss)=index(n-i-1);
+		if (typel==0) { 
+			tmpsum(ss)=index(n-i-1);
+			if (fmax0(ss)==0)  { max0index(ss)=index(n-i-1);  fmax0(ss)=1;}
+		}
 		if (typel==1) { 
 			j=j-1; 
 			res(j,0)=tmpsum(ss);
@@ -817,7 +821,10 @@ RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata,S
         for (unsigned i=0; i<n; i++) {
 		int ss=strata(i);
 		int typel=type(i); 
-		if (typel==0) tmpsum(ss)=index(i);
+		if (typel==0) { 
+			tmpsum(ss)=index(i);
+			if (fmax0(ss)==0)  { max0index(ss)=index(n-i-1);  fmax0(ss)=1;}
+		}
 		if (typel==1) { 
 			j=j-1; 
 			res(j,0)=tmpsum(ss);
@@ -828,6 +835,7 @@ RcppExport SEXP indexstrataR(SEXP istrata,SEXP iindex,SEXP itype,SEXP instrata,S
 
 	List rres;
 	rres["res"]=res;
+	rres["maxmin"]=max0index;
 	return(rres);
 }/*}}}*/
 

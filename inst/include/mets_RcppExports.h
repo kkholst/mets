@@ -214,6 +214,27 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
+    inline arma::mat _tildeLambda1R(const arma::colvec& dLambda1, const arma::colvec& LambdaD, const arma::colvec& r1, const arma::colvec& rd, const arma::colvec& theta, const IntegerVector id, const arma::colvec& sign) {
+        typedef SEXP(*Ptr__tildeLambda1R)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__tildeLambda1R p__tildeLambda1R = NULL;
+        if (p__tildeLambda1R == NULL) {
+            validateSignature("arma::mat(*_tildeLambda1R)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector,const arma::colvec&)");
+            p__tildeLambda1R = (Ptr__tildeLambda1R)R_GetCCallable("mets", "_mets__tildeLambda1R");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__tildeLambda1R(Shield<SEXP>(Rcpp::wrap(dLambda1)), Shield<SEXP>(Rcpp::wrap(LambdaD)), Shield<SEXP>(Rcpp::wrap(r1)), Shield<SEXP>(Rcpp::wrap(rd)), Shield<SEXP>(Rcpp::wrap(theta)), Shield<SEXP>(Rcpp::wrap(id)), Shield<SEXP>(Rcpp::wrap(sign)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::mat >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_mets_RCPPEXPORTS_H_GEN_
