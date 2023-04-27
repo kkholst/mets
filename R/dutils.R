@@ -1003,3 +1003,40 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
     return(lspline)
 }# }}}
 
+
+##' Simple prediction based on glm with binomial link
+##' 
+##' Simple prediction based on glm with binomial link
+##' 
+##' @param object glm output 
+##' @param newdata possible newdata 
+##' @param id possible id for cluster corrected standard errors
+##' @param fun possible function for non-standard predictions based on object
+##' @author Thomas Scheike
+##' @export
+predictGLM <- function(object,newdata,id=NULL,fun=NULL) {# {{{
+    tt <- terms(object)
+    if (missing(newdata) || is.null(newdata)) {
+        mm <- X <- model.matrix(object)
+        mmDone <- TRUE
+        offset <- object$offset
+    }
+    else {
+        Terms <- delete.response(tt)
+        m <- model.frame(Terms, newdata, xlev = object$xlevels)
+        X <- model.matrix(Terms, m, contrasts.arg = object$contrasts)
+	print(X)
+    }
+
+expit <- function(x) 1/(1+exp(-x))
+f <- function(p) { pp <- X %*% p; return(expit(pp)); }
+if (!is.null(fun))  f <- fun
+
+if (!is.null(id)) coef <- estimate(object,id=id) else coef <- estimate(object)
+if (!is.null(id)) res <- estimate(object,f=f,id=id) else res <- estimate(object,f=f)
+
+return(list(coef=coef,pred=res))
+}
+# }}}
+
+
