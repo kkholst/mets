@@ -1014,7 +1014,7 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
 ##' @param fun possible function for non-standard predictions based on object
 ##' @author Thomas Scheike
 ##' @export
-predictGLM <- function(object,newdata,id=NULL,fun=NULL) {# {{{
+predictGLM <- function(object,newdata,id=NULL,fun=NULL,logit.conf=TRUE) {# {{{
     tt <- terms(object)
     if (missing(newdata) || is.null(newdata)) {
         mm <- X <- model.matrix(object)
@@ -1025,18 +1025,26 @@ predictGLM <- function(object,newdata,id=NULL,fun=NULL) {# {{{
         Terms <- delete.response(tt)
         m <- model.frame(Terms, newdata, xlev = object$xlevels)
         X <- model.matrix(Terms, m, contrasts.arg = object$contrasts)
-	print(X)
     }
 
 expit <- function(x) 1/(1+exp(-x))
 f <- function(p) { pp <- X %*% p; return(expit(pp)); }
+fl <- function(p) { pp <- X %*% p; return(pp); }
 if (!is.null(fun))  f <- fun
 
 if (!is.null(id)) coef <- estimate(object,id=id) else coef <- estimate(object)
-if (!is.null(id)) res <- estimate(object,f=f,id=id) else res <- estimate(object,f=f)
 
-return(list(coef=coef,pred=res))
+if (logit.conf) { 
+     if (!is.null(id)) resl <- estimate(object,f=fl,id=id) else resl <- estimate(object,f=fl)
+     res <- expit(resl$coefmat[,c(1,3,4)]) 
+} else {
+if (!is.null(id)) res <- estimate(object,f=f,id=id) else res <- estimate(object,f=f)
+}
+
+return(list(coef=coef,pred=res$coefmat))
 }
 # }}}
+
+
 
 
