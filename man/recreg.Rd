@@ -6,6 +6,7 @@
 \alias{scalecumhaz}
 \alias{GLprediid}
 \alias{recregIPCW}
+\alias{twostageREC}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(

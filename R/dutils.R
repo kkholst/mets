@@ -1012,11 +1012,11 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
 ##' @param newdata possible newdata 
 ##' @param id possible id for cluster corrected standard errors
 ##' @param fun possible function for non-standard predictions based on object
-##' @param logit.conf logit transformation used 
+##' @param link.conf link transformation used 
 ##' @param ... arguments of estimate of lava for example level=0.95 
 ##' @author Thomas Scheike
 ##' @export
-predictGLM <- function(object,newdata,id=NULL,fun=NULL,logit.conf=TRUE,...) {# {{{
+predictGLM <- function(object,newdata,id=NULL,fun=NULL,link.conf=TRUE,...) {# {{{
     tt <- terms(object)
     if (missing(newdata) || is.null(newdata)) {
         mm <- X <- model.matrix(object)
@@ -1029,21 +1029,23 @@ predictGLM <- function(object,newdata,id=NULL,fun=NULL,logit.conf=TRUE,...) {# {
         X <- model.matrix(Terms, m, contrasts.arg = object$contrasts)
     }
 
-expit <- function(x) 1/(1+exp(-x))
-f <- function(p) { pp <- X %*% p; return(expit(pp)); }
+linkinv <- object$family$linkinv 
+f <- function(p) { pp <- X %*% p; return(linkinv(pp)); }
 fl <- function(p) { pp <- X %*% p; return(pp); }
 if (!is.null(fun))  f <- fun
 
 if (!is.null(id)) coef <- estimate(object,id=id,...) else coef <- estimate(object,...)
 
-if (logit.conf) { 
+if (link.conf) { 
      if (!is.null(id)) resl <- estimate(object,f=fl,id=id,...) else resl <- estimate(object,f=fl,...)
-     res <- expit(resl$coefmat[,c(1,3,4)]) 
+     res <- linkinv(resl$coefmat[,c(1,3,4)]) 
 } else {
 if (!is.null(id)) res <- estimate(object,f=f,id=id,...) else res <- estimate(object,f=f,...)
+res <- res$coefmat
 }
 
-return(list(coef=coef,pred=res$coefmat))
+return(list(coef=coef,pred=res))
 }
 # }}}
+
 
