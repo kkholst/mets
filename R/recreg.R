@@ -61,7 +61,7 @@
 ##'               death.code=3,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases strataAugment scalecumhaz GLprediid recregIPCW
+##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC
 ##' @export
 recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,
 		   wcomp=NULL,...)
@@ -1606,6 +1606,5 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
   }
   cat("\n")
 } # }}}
-
 
 
