@@ -1012,6 +1012,7 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
 ##' @param newdata possible newdata 
 ##' @param id possible id for cluster corrected standard errors
 ##' @param fun possible function for non-standard predictions based on object
+##' @param logit.conf logit transformation used 
 ##' @param ... arguments of estimate of lava for example level=0.95 
 ##' @author Thomas Scheike
 ##' @export
@@ -1036,7 +1037,7 @@ if (!is.null(fun))  f <- fun
 if (!is.null(id)) coef <- estimate(object,id=id,...) else coef <- estimate(object,...)
 
 if (logit.conf) { 
-     if (!is.null(id)) resl <- estimate(object,f=fl,id=i,...) else resl <- estimate(object,f=fl,...)
+     if (!is.null(id)) resl <- estimate(object,f=fl,id=id,...) else resl <- estimate(object,f=fl,...)
      res <- expit(resl$coefmat[,c(1,3,4)]) 
 } else {
 if (!is.null(id)) res <- estimate(object,f=f,id=id,...) else res <- estimate(object,f=f,...)
