@@ -1048,4 +1048,32 @@ return(list(coef=coef,pred=res))
 }
 # }}}
 
+##' Reporting OR from glm with binomial link
+##' 
+##' Reporting OR from glm with binomial link
+##' 
+##' @param object glm output 
+##' @param id possible id for cluster corrected standard errors
+##' @param fun possible function for non-standard predictions based on object
+##' @param ... arguments of estimate of lava for example level=0.95 
+##' @author Thomas Scheike
+##' @export
+summaryGLM <- function(object,id=NULL,fun=NULL,...) {# {{{
+
+f <- function(p) { pp <- exp(pp); return(pp); }
+
+if (!is.null(id)) coef <- estimate(object,id=id,...) else coef <- estimate(object,...)
+
+if (!is.null(id)) resl <- estimate(object,id=id,...) else resl <- estimate(object,...)
+res <- exp(resl$coefmat[,c(1,3,4)]) 
+
+if (!is.null(fun))  {
+if (!is.null(id)) resl <- estimate(object,id=id,f=fun,...) else resl <- estimate(object,f=fun,...)
+fout <- resl$coefmat
+} else fout <- NULL
+
+return(list(coef=coef,or=res,fout=NULL))
+}
+# }}}
+
 
