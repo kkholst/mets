@@ -1029,7 +1029,7 @@ predictGLM <- function(object,newdata,id=NULL,fun=NULL,link.conf=TRUE,...) {# {{
         X <- model.matrix(Terms, m, contrasts.arg = object$contrasts)
     }
 
-linkinv <- object$family$linkinv 
+if (!is.null(object$family$linkinv)) linkinv <- object$family$linkinv  else linkinv <- function(x) x
 f <- function(p) { pp <- X %*% p; return(linkinv(pp)); }
 fl <- function(p) { pp <- X %*% p; return(pp); }
 if (!is.null(fun))  f <- fun
