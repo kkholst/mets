@@ -295,15 +295,14 @@ arma::mat tildeLambda1R(const arma::colvec& dLambda1, const arma::colvec& Lambda
     colvec resi(n); colvec Dresi(n); colvec D2resi(n);
     colvec inc(n); colvec Dinc(n); colvec D2inc(n);
     colvec atrisk(n); 
-    colvec rdtheta=rd%theta; 
-    colvec rd2=rd%rd; 
+    colvec rdtheta=rd%theta; colvec rd2=rd%rd; colvec rdr1=rd%r1; colvec rd2r1=rd2%r1; 
 
    for (unsigned i=0; i<N; i++) {
 	   if (sign(i)<0) atrisk(id(i))=1; 
 	   if (dLambda1(i)>0.0000000000001) { 
 		   resi=r1%exp((rdtheta)*LambdaD(i))*dLambda1(i); 
-		   Dresi=rd%(r1*LambdaD(i))%exp(LambdaD(i)*rdtheta)*dLambda1(i); 
-		   D2resi=rd2%(r1*LambdaD(i)*LambdaD(i))%exp(LambdaD(i)*rdtheta)*dLambda1(i); 
+		   Dresi=rdr1%exp(LambdaD(i)*rdtheta)*dLambda1(i)*LambdaD(i);
+		   D2resi=rd2r1%exp(LambdaD(i)*rdtheta)*dLambda1(i)*LambdaD(i)*LambdaD(i); 
 		   inc=inc+resi%atrisk;
 		   Dinc=Dinc+Dresi%atrisk;
 		   D2inc=D2inc+D2resi%atrisk;
