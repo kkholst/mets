@@ -131,7 +131,7 @@ summary(out)
 #summary(out3)
 
 \donttest{ ## Reduce Ex.Timings
-n <- 5000
+n <- 1000
 set.seed(100)
 dd <- simBinFam(n,beta=0.3)
 binfam <- fast.reshape(dd,varying=c("age","x","y"))

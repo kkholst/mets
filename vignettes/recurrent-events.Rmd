@@ -45,8 +45,8 @@ In addition several tools can be used for simulating recurrent events and
 bivariate recurrent events data, also with a possible terminating event. 
 
  * recurrent events up to two causes and death, given rates of survivors and death on Cox form.
- * multistate model 
  * the Ghosh-Lin model when the survival rate is on Cox form.
+ * The general illness death model with  cox models for all hazards. 
 
 For bivariate recurrent events we also compute summary measures that describe their
 dependence such as 
@@ -62,8 +62,7 @@ Simulation of recurrents events
 ==============================
 
 
-We start by simulating some recurrent events data with two type of events with
-cumulative hazards 
+We start by simulating some recurrent events data with two type of events with cumulative hazards 
 
  * $\Lambda_1(t)$ (rate among survivors)
  * $\Lambda_2(t)$ (rate among survivors)
@@ -95,8 +94,28 @@ cumulative hazards
     + $\tilde Z_2 \lambda_2(t)$
     + $\tilde Z_3 \lambda_D(t)$
 
-
  We return to how to run the different set-ups later and start by simulating independent processes. 
+
+The key functions are 
+
+ * simRecurrent
+   * simple simulation with only one event type and death 
+ * simRecurrentII 
+   * extended version with possibly multiple types of recurrent events (but rates can be 0) 
+   * Allows Cox types rates with subject specific rates 
+
+In addition we can simulate data from the Ghosh-Lin model and where marginals of the rates among survivors are on
+on Cox form 
+
+ * simGLcox 
+   * can simulate data from Ghosh-Lin model  (also simRecurrentCox)
+   * with frailties
+      * where survival model for terminal event is on Cox form 
+   * can simulate data where rates among survivors are are con Cox form 
+     * with frailties
+
+see examples below for specific models. 
+
 
 Utility functions 
 =================
@@ -163,7 +182,6 @@ library(timereg)
 set.seed(1000) # to control output in simulatins for p-values below.
 ```
 
-
 ```{r}
 data(base1cumhaz)
 data(base4cumhaz)
@@ -210,7 +228,6 @@ summary(out,times=c(1000,2000))
 
 The marginal mean can also be estimated in a stratified case:
 
-
 ```{r}
 xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
 dr <- phreg(Surv(entry,time,death)~strata(strata)+cluster(id),data=rr)
@@ -225,7 +242,7 @@ out <- recurrentMarginal(xr,dr)
 bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
-Furhter, if we adjust for covariates for the two rates we can still do
+Further, if we adjust for covariates for the two rates we can still do
 predictions of marginal mean, what can be plotted is the baseline marginal mean, 
 that is for the covariates equal to 0 for both models. Predictions for specific 
 covariates can also be obtained with the recmarg (recurren marginal mean used 
@@ -432,6 +449,52 @@ then in a second step the augmented estimator (Cortese and Scheike (2023)):
 
 We note that the simple augmentation improves the standard errors as expected. The data was generated assuming independence with
 previous number of events so it would suffice to augment only with the covariates. 
+
+
+Simulations with specific structure
+===================================
+
+The function simGLcox can simulate data where the recurrent process has mean on Ghosh-Lin form. The key is that
+\begin{align*}
+E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta) = \int_0^t S(t|X,Z) dR(t|X,Z)
+\end{align*}
+where $Z$ is a possible frailty. Without the frailty
+\begin{align*}
+ R(t|X,Z) & = \frac{Z \Lambda_0(t)  \exp(X^T \beta) }{S(t|X,Z)}
+\end{align*}
+leads to a Ghosh-Lin model.  We can choose the survival model to have Cox form among survivors by the option
+model="twostage", otherwise model="frailty" uses the survival model with rate $Z \lambda_d(t) \cdot rd $.
+
+```{r}
+n <- 100
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+rr <- mets:::simGLcox(n,base1,ddr,var.z=0,r1=r1,rd=rd,rc=rc,model="twostage",cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
+```
+
+We can also simulate from models where the terminal event is on Cox form and the rate among survivors is on Cox form. 
+
+ * $E(dN_1 | D>t, X) = \lambda_1(t) r_1$
+ * $E(dN_d | D>t, X) = \lambda_d(t) r_d$
+
+underlying these models we have a shared frailty model
+
+```{r}
+rr <- mets:::simGLcox(100,base1,ddr,var.z=1,r1=r1,rd=rd,rc=rc,type=3,cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
+margsurv <- phreg(Surv(start,stop,statusD==3)~X1+X2+cluster(id),rr)
+recurrent <- phreg(Surv(start,stop,statusD==1)~X1+X2+cluster(id),rr)
+estimate(margsurv)
+estimate(recurrent)
+par(mfrow=c(1,2)); 
+plot(margsurv); lines(ddr,col=3); 
+plot(recurrent); lines(base1,col=3)
+```
 
 
 Other marginal properties 

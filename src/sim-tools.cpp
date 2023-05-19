@@ -316,7 +316,6 @@ arma::mat tildeLambda1R(const arma::colvec& dLambda1, const arma::colvec& Lambda
 }
 /*}}}*/
 
-
 //
 //RcppExport SEXP simSurvZ(SEXP iSt,SEXP ird, SEXP iz, SEXP itheta, SEXP itype ) {/*{{{*/
 //	arma::colvec z = Rcpp::as<arma::colvec>(iz);

@@ -1030,7 +1030,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmax=100)
+simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
+		     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200)
 {# {{{
 ## setting up baselines for simulations 
 base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
@@ -1049,23 +1050,23 @@ if (is.null(rc)) rc <- rep(1,n)
 fz.orig <- fz
 if (is.null(fz)) fz <- function(x) x
 
- if (var.z>0) {
-	 z1 <- z <- rgamma(n,share/var.z)*var.z 
+ if (var.z[1]>0) {
+	 z1 <- z <- rgamma(n,share/var.z[1])*var.z[1] 
 	 if (share<1) { 
-		 z2 <- rgamma(n,(1-share)/var.z)*var.z 
+		 z2 <- rgamma(n,(1-share)/var.z[1])*var.z[1] 
 		 z <- z+z2
 	 } 
 	 fzz <- fz(z1)
 	 if (share<1) fzz <- fzz/share; 
 	 mza <- mean(fzz)
 	 if (n<10000 & (!is.null(fz.orig))) {
-	    zl <- rgamma(100000,share/var.z)*var.z 
+	    zl <- rgamma(100000,share/var.z[1])*var.z[1] 
 	    fzl <- fz(z)
 	    mza <- mean(fzl)
 	 } 
  }  else fzz <- z <- z1 <- rep(1,n)
 
-if (var.z==0) model <- "frailty"
+if (var.z[1]==0) model <- "frailty"
 if (is.null(type)) 
 if (model[1]=="twostage") type <- 2 else type <- 1
 ## for frailty setting we also consider any function of z 
@@ -1073,7 +1074,7 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
 
  ## survival censoring given X, Z, either twostage or frailty-model 
  if (type>=2) stype <- 2 else stype <- 1
- dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z,stype)
+ dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z[1],stype)
  dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
  if (!is.null(cens)) cens <- rexp(n)/(rc*cens) else cens <- rep(maxtime,n)
  dd$status <- ifelse(dd$time<cens,dd$status,0)
@@ -1082,14 +1083,21 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ## to avoid R check error
  reverseCountid  <-  death  <- NULL
 
+ if (model[1]=="multiplicative") {
+    ## other random effect 
+     z2 <- rgamma(n,share/var.z[2])*var.z[2] 
+     fzz <- z1*z2
+     type <- 3
+ }
  ## type=2 draw recurrent process given X,Z with rate:
  ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
  ## such that GL model holds with exp(X^t beta_1) \Lambda_1(t)
  ## type=3, observed hazards on Cox form among survivors
  ## W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
  ## or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
+ ## or W_2 * W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
- ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z,nmax,1)
+ ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
  colnames(ll) <- c("id","start","stop","death")
  ll <- data.frame(ll)
  ll$death <- dd$status[ll$id+1]
@@ -1266,7 +1274,6 @@ K <- bootstrap
 
   list(var=var, se=diag(var)^.5,outb=outb)
 }# }}}
-
 
 ##' @export
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared"),
@@ -1454,9 +1461,9 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
         l1ds <- sumstrata((DNt/N)*statusxx,xx$id,mid)
         l11s <- sumstrata((N1sum$lagsum/(tbeta1 + thetav * N1sum$lagsum)) * statusx1, xx$id, mid)
 	l1s <- l1ds+l11s
-if (at.risk==0) 
+        if (at.risk==0) 
         l3s <- -(tbeta1i/thetai + N1i.tau) * (DHr/Hr) + (tbeta1i/thetai^{2}) * log(Hr) 
-if (at.risk==1) 
+        if (at.risk==1) 
 	l3s <- sumstrata(c(xr$sign)*(-(tbeta1/thetav+N1sum$sum)*DHt/Ht+log(Ht)*tbeta1/thetav^2),xr$id,mid);
         Dltheta <- (l1s+l2+l3s)*c(weights)
         ### 
@@ -1606,5 +1613,4 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
   }
   cat("\n")
 } # }}}
-
 
