@@ -883,7 +883,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   jump1 <- xx$jumps+1
   timeJ <- xx$time[jump1]
   strataN1J <- xx$strata[jump1]
- ### Partitioned estimator , same as Lin, Lawless & Cook estimator
+ ### Partitioned estimator , same as Ghosh-Lin+Lawless-Cook estimator
  cumhazP <- c(cumsum(1/Gc[jump1])/nid)
  cumhazP <- cbind(timeJ,cumhazP)
 # }}}
