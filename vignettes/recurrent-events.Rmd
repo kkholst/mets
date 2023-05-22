@@ -31,21 +31,25 @@ Overview
 ========
 
 For recurrent events data it is often of interest to compute basic descriptive
-quantities as a first go at getting some basic understanding of the phenonmenon
-studied. We here demonstrate how one can compute 
+quantities to get some basic understanding of the phenonmenon studied. 
+We here demonstrate how one can compute: 
 
  * the marginal mean 
    * efficient marginal mean estimation
- * the variance 
- * the probability of exceeding k events
  * the Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
    * efficient regression augmentation of the Ghosh-Lin model
+ * the variance of a recurrent events process
+ * the probability of exceeding k events
+
+We also show how to improve the efficiency of recurrents events marginal mean. 
 
 In addition several tools can be used for simulating recurrent events and
-bivariate recurrent events data, also with a possible terminating event. 
+bivariate recurrent events data, also with a possible terminating event: 
 
  * recurrent events up to two causes and death, given rates of survivors and death on Cox form.
+   * frailty extenstions
  * the Ghosh-Lin model when the survival rate is on Cox form.
+   * frailty extenstions
  * The general illness death model with  cox models for all hazards. 
 
 For bivariate recurrent events we also compute summary measures that describe their
@@ -54,13 +58,10 @@ dependence such as
  * the covariance 
  * directional dependence 
  * the bivariate probability of exceeding $(k_1,k_2)$ events
- 
-We also show how to improve the efficiency of recurrents events marginal mean. 
 
 
 Simulation of recurrents events
 ==============================
-
 
 We start by simulating some recurrent events data with two type of events with cumulative hazards 
 
@@ -458,11 +459,11 @@ The function simGLcox can simulate data where the recurrent process has mean on 
 \begin{align*}
 E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta) = \int_0^t S(t|X,Z) dR(t|X,Z)
 \end{align*}
-where $Z$ is a possible frailty. Without the frailty
+where $Z$ is a possible frailty. Therefore 
 \begin{align*}
  R(t|X,Z) & = \frac{Z \Lambda_0(t)  \exp(X^T \beta) }{S(t|X,Z)}
 \end{align*}
-leads to a Ghosh-Lin model.  We can choose the survival model to have Cox form among survivors by the option
+leads to a Ghosh-Lin model. We can choose the survival model to have Cox form among survivors by the option
 model="twostage", otherwise model="frailty" uses the survival model with rate $Z \lambda_d(t) \cdot rd $.
 
 ```{r}
