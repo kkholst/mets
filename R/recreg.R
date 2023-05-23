@@ -1276,7 +1276,7 @@ K <- bootstrap
 }# }}}
 
 ##' @export
-twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared"),
+twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, nufix=0,nu=NULL,at.risk=1,...)
 {# {{{
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
@@ -1413,6 +1413,57 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     }
 # }}}
 
+    objNonShared <- function(par, all = FALSE) {# {{{
+        if (var.link == 1) epar <- c(exp(c(par))) else epar <- c(par)
+        thetav <- c(as.matrix(theta.des) %*% c(epar))
+        thetai <- thetav[firstid]
+	###
+	Ht <- 1+thetav*H1 
+	Hr <- Ht[lastid]
+	DHt <- H1
+	DHr <- H1[lastid]
+        ###
+	D2Ht <- 0
+	D2Hr <- 0
+	aHt <- abs(Ht)
+	aDHt <- abs(DHt)
+	aHr <- abs(Hr)
+        ###
+        l1 <- sumstrata(log(1 + thetav * N1sum$lagsum) * statusx1, xx$id, mid)
+	if (at.risk==0) l3 <- -(1/thetai + N1i.tau) * log(Hr) 
+	if (at.risk==1) l3 <- - sumstrata(c(xr$sign)*(1/thetav+N1sum$sum)*log(aHt),xr$id,mid) 
+        logliid <- (l1 + l3) * c(weights)
+        logl <- sum(logliid)
+        ploglik <- logl
+        ###
+        l1s <- sumstrata(N1sum$lagsum/(1 + thetav * N1sum$lagsum) * statusx1, xx$id, mid)
+	if (at.risk==0) l3s <- -(1/thetai + N1i.tau) * DHr/Hr + log(Hr)/thetai^2;
+	if (at.risk==1) l3s <- sumstrata(c(xr$sign)*(-(1/thetav+N1sum$sum)*DHt/Ht+log(aHt)/thetav^2),xr$id,mid);
+	Dltheta <- (l1s+l3s)*c(weights) 
+	scoreiid <- thetaX * c(Dltheta)
+        D2N <- -sumstrata(N1sum$lagsum^2/(1 + thetav * N1sum$lagsum)^2 * statusx1, xx$id, mid)
+	if (at.risk==0) 
+        Dhes <- (2/thetai^2) * DHr/Hr -(1/thetai + N1i.tau)*(-DHr^2)/Hr^2 - (2/thetai^3) * log(Hr) 
+	if (at.risk==1) 
+        Dhes <- sumstrata(c(xr$sign)* (
+	(2/thetav^2) * aDHt/aHt -(1/thetav + N1sum$sum)*(-aDHt^2)/aHt^2 -(2/thetav^3) * log(aHt)) ,xr$id,mid)
+        Dhes <- c(Dhes+D2N) * c(weights)
+        if (var.link == 1) {
+            scoreiid <- scoreiid * c(thetai)
+            Dhes <- Dhes * thetai^2 + thetai * Dltheta
+        }
+        gradient <- apply(scoreiid, 2, sum)
+        hessian <- crossprod(thetaX, thetaX * c(Dhes))
+        hess2 <- crossprod(scoreiid)
+        val <- list(id = xx$id, score.iid = scoreiid, logl.iid = logliid,
+            ploglik = ploglik, gradient = gradient, hessian = hessian,
+            hess2 = hess2)
+        if (all)
+            return(val)
+        with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
+    }
+# }}}
+
    fw <- function(x) 1/(1+exp(x))
    nudes <- theta.des  
    p <- ncol(theta.des)
@@ -1514,6 +1565,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 # }}}
 
    if (model[1]=="shared") obj <- objShared
+   if (model[1]=="non-shared") obj <- objNonShared
    if (nufix==0 & model[1]=="shared") par <- c(theta,nu) else par <- theta
 
     opt <- NULL
