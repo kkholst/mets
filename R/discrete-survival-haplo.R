@@ -286,10 +286,10 @@ if (!design.only) {
 } ## }}} 
 
 ##' @export
-summary.survd <- function(object,...) return(lava::estimate(object,...)) 
+summary.survd <- function(object,...) return(lava::estimate(coef=coef(object),vcov=vcov(object),...)) 
 
 ##' @export
-print.survd <- function(x,...) return(lava::estimate(x,...)) 
+print.survd <- function(x,...) return(lava::estimate(coef=coef(object),vcov=vcov(object),...)) 
 
 ##' @export
 vcov.survd <- function(object,...) return(object$var) 
@@ -490,7 +490,7 @@ plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
 ##' pred <- predictlogitSurvd(out,se=FALSE)
 ##' plotSurvd(pred)
 ##' 
-##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd
+##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumODDS
 ##' @export
 interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)
@@ -701,8 +701,8 @@ hessian <- D2log
       beta.iid <- apply(beta.iid,2,sumstrata,id,nid)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-		  iid=beta.iid,robvar=robvar,var=-ihess,id=id,
-		  se=diag(-ihess)^.5,se.robust=diag(robvar)^.5)
+		  iid=beta.iid,robvar=robvar,var=robvar,ihessian=ihess,id=id,
+		  se=diag(robvar)^.5,coef=pp,se.coef=diag(robvar)^.5)
       return(val)
   }  
  structure(-ploglik,gradient=-gradient,hessian=-hessian)
@@ -733,6 +733,30 @@ hessian <- D2log
   class(val) <- c("survd","logistic.survd")
   return(val)
 } ## }}} 
+
+##' @export
+cumODDS <- function (formula,data,...)
+{ ## {{{ 
+  cl <- match.call()
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+  nt <- nlevels(Y)
+  time2__ <- as.numeric(Y)
+  entrytime__ <- time2__-1
+  time2__[time2__==7] <- Inf
+
+  xf <- update.formula(formula,Interval(entrytime__,time2__)~.)
+  data$entrytime__ <- entrytime__
+  data$time2__ <- time2__
+  out <- interval.logitsurv.discrete(xf,data,...)
+
+ return(out)
+} ## }}}
 
 ##' @export
 Interval <- function (time, time2 , ...)

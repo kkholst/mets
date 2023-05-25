@@ -6,6 +6,7 @@
 \alias{dInterval}
 \alias{simlogitSurvd}
 \alias{predictlogitSurvd}
+\alias{cumODDS}
 \title{Discrete time to event interval censored data}
 \usage{
 interval.logitsurv.discrete(
