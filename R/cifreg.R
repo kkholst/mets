@@ -215,9 +215,8 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 	cens.strata <- rep(0,length(exit))
     }# }}}
 
-
     trunc <- FALSE
-    Zcall <- cbind(status,cens.strata,Stime) ## to keep track of status and Censoring strata
+    Zcall <- cbind(status,cens.strata,Stime,adm.cens.time) ## to keep track of status and Censoring strata
     ## setting up all jumps of type "cause", need S0, S1, S2 at jumps of "cause"
     stat1 <- 1*(status %in% cause)
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
@@ -433,8 +432,9 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     mid <- max(xx2$id)
     UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
 
+    if (is.null(adm.cens.time)) {
     if (length(other)>=1) { ## martingale part for type-2 after T
-        ### xx2 data all data
+    ### xx2 data all data
         otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code,adm.cens.code)))
         rr0 <- xx2$sign
         jumpsC <-  which(xx2$Z[,1] %in% cens.code)
@@ -463,16 +463,57 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         UU2 <- apply(MGt2,2,sumstrata,xx2$id[otherxx2],mid+1)
         UU  <-  UU+UU2
     }
+    }
+
+    if (!is.null(adm.cens.time)) {
+    if (length(other)>=1) { ## martingale part for type-2 after T
+        otherxx2 <- which(!(xx2$Z[,1] %in% c(cause,cens.code,adm.cens.code)))
+        rr0 <- xx2$sign
+        jumpsC <-  which(xx2$Z[,1] %in% cens.code)
+        strataCxx2 <- xx2$Z[,2]
+        S0iC2  <-  S0iC <- rep(0,length(xx2$status))
+        S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
+        S0iC[jumpsC] <- 1/S0rrr[jumpsC]
+        S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
+        Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
+        Gstart <- rep(1,nCstrata)
+
+        dstrata <- mystrata(data.frame(strataCxx2,xx2$strata))
+        ndstrata <- attr(dstrata,"nlevel")
+        lastt <- tailstrata(dstrata-1,ndstrata)
+	if (!is.null(adm.cens.time)) {
+            act <- xx2$Z[otherxx2,4] 
+	    dact <- dstrata[otherxx2]
+            wherea <- indexstratarightR(xx2$time,dstrata-1,act,dact-1,ndstrata,type="left")
+	} else wherea <- lastt[dstrata][otherxx2]
+        ll <-  cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
+        Htsj <- ll$res[wherea]-ll$res[otherxx2]
+        fff <- function(x) {
+            cx  <- cumsum2strata(Gcxx2,x*S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
+            cx <- cx$res[wherea]-cx$res[otherxx2]
+            return(cx)
+        }
+        EHtsj  <- apply(E,2,fff)
+        rrx2 <- rr[otherxx2]*xx2$weights[otherxx2]/xx2$Z[otherxx2,3]
+        MGt2  <- -(Z[otherxx2,,drop=FALSE]*Htsj-EHtsj)*rrx2
+        UU2 <- apply(MGt2,2,sumstrata,xx2$id[otherxx2],mid+1)
+        UU  <-  UU+UU2
+    }
+    }
     ## }}}
 
-    if ((length(other)>=1) & (length(whereC)>0)) { ### Censoring adjustment for jumps of other type but only for KM-case {{{
 
-        Xos <- matrix(0,nrow(Z),ncol(Z));
+    if ((length(other)>=1) & (length(whereC)>0) & (is.null(adm.cens.time))) { ### Censoring adjustment for jumps of other type but only for KM-case {{{
+
+        EHtsja <- Xos <- matrix(0,nrow(Z),ncol(Z));
         Xos[otherxx2,] <- Z[otherxx2,]*rrx2
         rrx <- rep(0,nrow(Z))
         rrx[otherxx2] <- rrx2
         rrsx <- cumsumstrata(rrx,strataCxx2,nCstrata)
         Xos <- apply(Xos,2,cumsumstrata,strataCxx2,nCstrata)
+	Htsja <- rep(0,nrow(Z))
+###	Htsja[otherxx2] <- Htsj
+###	EHtsja[otherxx2,] <- EHtsj
         q2 <- (Xos*c(Htsj)-EHtsj*c(rrsx))
 
         sss <- headstrata(dstrata-1,ndstrata)
@@ -553,7 +594,6 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
     }
     return(res)
 } ## }}}
-
 
 ##' @export IIDbaseline.cifreg 
 IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
