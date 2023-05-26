@@ -1097,7 +1097,7 @@ colnames(test.matrix) <- c("Chisq","df","p.value")
 rownames(test.matrix) <- Vars
 k <- 1
 for (ff in Vars) {
-	pos <- agrep(ff,txtVar)
+	pos <- grep(ff,txtVar,fixed=TRUE)
         wt <- estimate(out,as.list(pos),...)$compare
 ###	wt <- estimate(out,as.list(3:5))
 	test.matrix[k,] <- unlist(wt[1:3])
