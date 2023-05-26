@@ -1003,7 +1003,6 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
     return(lspline)
 }# }}}
 
-
 ##' Simple prediction based on glm with binomial link
 ##' 
 ##' Simple prediction based on glm with binomial link
@@ -1075,5 +1074,36 @@ fout <- resl$coefmat
 return(list(coef=coef,or=res,fout=NULL))
 }
 # }}}
+
+##' Wald test for model (type III test)
+##' 
+##' Wald test for model (type III test)
+##' 
+##' @param object, for example glm object
+##' @param ... arguments for estimate of lava for example id=data$id for cluster correction
+##' @author Thomas Scheike
+##' @export
+waldTest <- function(out,...)
+{# {{{
+Vars <-attr(terms(formula(out)),"term.labels")
+## remove possible cluster term
+clusterTerm<- grep("^cluster[(][A-z0-9._:]*",Vars,perl=TRUE)
+if (length(clusterTerm)==1) Vars <- Vars[-clusterTerm]
+Varf <- names(attr(attr(out$model,"terms"),"dataClasses"))[grep("factor",attr(attr(out$model,"terms"),"dataClasses"))]
+txtVar<-names(coef(out))
+###
+test.matrix <- matrix(0,length(Vars),3)
+colnames(test.matrix) <- c("Chisq","df","p.value")
+rownames(test.matrix) <- Vars
+k <- 1
+for (ff in Vars) {
+	pos <- agrep(ff,txtVar)
+        wt <- estimate(out,as.list(pos),...)$compare
+###	wt <- estimate(out,as.list(3:5))
+	test.matrix[k,] <- unlist(wt[1:3])
+	k <- k+1
+}
+return(test.matrix)
+}# }}}
 
 
