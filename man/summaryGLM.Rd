@@ -2,7 +2,8 @@
 % Please edit documentation in R/dutils.R
 \name{summaryGLM}
 \alias{summaryGLM}
-\title{Reporting OR from glm with binomial link}
+\alias{predictGLM}
+\title{Reporting OR from glm with binomial link and glm predictions}
 \usage{
 summaryGLM(object, id = NULL, fun = NULL, ...)
 }
@@ -16,7 +17,18 @@ summaryGLM(object, id = NULL, fun = NULL, ...)
 \item{...}{arguments of estimate of lava for example level=0.95}
 }
 \description{
-Reporting OR from glm with binomial link
+Reporting OR from glm with binomial link  and glm predictions
+}
+\examples{
+data(sTRACE)
+sTRACE$id <- sample(1:100,nrow(sTRACE),replace=TRUE)
+
+model <- glm(I(status==9)~sex+factor(diabetes)+age,data=sTRACE,family=binomial)
+summaryGLM(model)
+summaryGLM(model,id=sTRACE$id)
+
+nd <- data.frame(sex=c(0,1),age=67,diabetes=1)
+predictGLM(model,nd)
 }
 \author{
 Thomas Scheike

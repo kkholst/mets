@@ -1003,17 +1003,6 @@ else if (!is.null(signif)) names(lspline) <- paste(name,round(c(knots),signif),s
     return(lspline)
 }# }}}
 
-##' Simple prediction based on glm with binomial link
-##' 
-##' Simple prediction based on glm with binomial link
-##' 
-##' @param object glm output 
-##' @param newdata possible newdata 
-##' @param id possible id for cluster corrected standard errors
-##' @param fun possible function for non-standard predictions based on object
-##' @param link.conf link transformation used 
-##' @param ... arguments of estimate of lava for example level=0.95 
-##' @author Thomas Scheike
 ##' @export
 predictGLM <- function(object,newdata,id=NULL,fun=NULL,link.conf=TRUE,...) {# {{{
     tt <- terms(object)
@@ -1047,9 +1036,9 @@ return(list(coef=coef,pred=res))
 }
 # }}}
 
-##' Reporting OR from glm with binomial link
+##' Reporting OR from glm with binomial link and glm predictions
 ##' 
-##' Reporting OR from glm with binomial link
+##' Reporting OR from glm with binomial link  and glm predictions
 ##' 
 ##' @param object glm output 
 ##' @param id possible id for cluster corrected standard errors
@@ -1057,6 +1046,17 @@ return(list(coef=coef,pred=res))
 ##' @param ... arguments of estimate of lava for example level=0.95 
 ##' @author Thomas Scheike
 ##' @export
+##' @examples
+##' data(sTRACE)
+##' sTRACE$id <- sample(1:100,nrow(sTRACE),replace=TRUE)
+##'
+##' model <- glm(I(status==9)~sex+factor(diabetes)+age,data=sTRACE,family=binomial)
+##' summaryGLM(model)
+##' summaryGLM(model,id=sTRACE$id)
+##'
+##' nd <- data.frame(sex=c(0,1),age=67,diabetes=1)
+##' predictGLM(model,nd)
+##' @aliases predictGLM 
 summaryGLM <- function(object,id=NULL,fun=NULL,...) {# {{{
 
 f <- function(p) { pp <- exp(pp); return(pp); }
