@@ -1079,18 +1079,18 @@ return(list(coef=coef,or=res,fout=NULL))
 ##' 
 ##' Wald test for model (type III test)
 ##' 
-##' @param object, for example glm object
+##' @param object, for example glm object that can be used with estimate
 ##' @param ... arguments for estimate of lava for example id=data$id for cluster correction
 ##' @author Thomas Scheike
 ##' @export
-waldTest <- function(out,...)
+waldTest <- function(object,...)
 {# {{{
-Vars <-attr(terms(formula(out)),"term.labels")
+Vars <-attr(terms(formula(object)),"term.labels")
 ## remove possible cluster term
 clusterTerm<- grep("^cluster[(][A-z0-9._:]*",Vars,perl=TRUE)
 if (length(clusterTerm)==1) Vars <- Vars[-clusterTerm]
-Varf <- names(attr(attr(out$model,"terms"),"dataClasses"))[grep("factor",attr(attr(out$model,"terms"),"dataClasses"))]
-txtVar<-names(coef(out))
+Varf <- names(attr(attr(object$model,"terms"),"dataClasses"))[grep("factor",attr(attr(object$model,"terms"),"dataClasses"))]
+txtVar<-names(coef(object))
 ###
 test.matrix <- matrix(0,length(Vars),3)
 colnames(test.matrix) <- c("Chisq","df","p.value")
@@ -1098,8 +1098,8 @@ rownames(test.matrix) <- Vars
 k <- 1
 for (ff in Vars) {
 	pos <- grep(ff,txtVar,fixed=TRUE)
-        wt <- estimate(out,as.list(pos),...)$compare
-###	wt <- estimate(out,as.list(3:5))
+        wt <- estimate(object,as.list(pos),...)$compare
+###	wt <- estimate(object,as.list(3:5))
 	test.matrix[k,] <- unlist(wt[1:3])
 	k <- k+1
 }

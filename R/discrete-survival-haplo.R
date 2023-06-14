@@ -289,7 +289,7 @@ if (!design.only) {
 summary.survd <- function(object,...) return(lava::estimate(coef=coef(object),vcov=vcov(object),...)) 
 
 ##' @export
-print.survd <- function(x,...) return(lava::estimate(coef=coef(object),vcov=vcov(object),...)) 
+print.survd <- function(x,...) return(lava::estimate(coef=coef(x),vcov=vcov(x),...)) 
 
 ##' @export
 vcov.survd <- function(object,...) return(object$var) 
