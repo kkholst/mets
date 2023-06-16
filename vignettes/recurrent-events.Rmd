@@ -464,7 +464,7 @@ where $Z$ is a possible frailty. Therefore
  R(t|X,Z) & = \frac{Z \Lambda_0(t)  \exp(X^T \beta) }{S(t|X,Z)}
 \end{align*}
 leads to a Ghosh-Lin model. We can choose the survival model to have Cox form among survivors by the option
-model="twostage", otherwise model="frailty" uses the survival model with rate $Z \lambda_d(t) \cdot rd $.
+model="twostage", otherwise model="frailty" uses the survival model with rate \( Z \lambda_d(t) rd \).
 The $Z$ is gamma distributed  with a variance that can be specified. The simulations are based on 
 a piecwise-linear approximation of the hazard functions for $S(t|X,Z)$ and $R(t|X,Z)$.
 
