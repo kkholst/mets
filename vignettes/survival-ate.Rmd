@@ -25,7 +25,7 @@ library(mets)
 G-computation for the Cox and Fine-Gray models 
 ==============================================
 
-Computing the stanaridized estimate (G-estimation) based on the Cox or Fine-Gray model :
+Computing the standardized estimate (G-estimation) based on the Cox or Fine-Gray model :
 \[
 \hat S(t,A=a) = n^{-1} \sum_i S(t,A=a,X_i) 
 \]
