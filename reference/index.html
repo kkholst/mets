@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -71,7 +71,7 @@
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -200,6 +200,10 @@ based on all pairwise bivariate models.</p></td>
           <p><code><a href="binregCasewise.html">binregCasewise()</a></code> </p>
         </td>
         <td><p>Estimates the casewise concordance based on Concordance and marginal estimate using binreg</p></td>
+      </tr><tr><td>
+          <p><code><a href="binregG.html">binregG()</a></code> </p>
+        </td>
+        <td><p>G-estimator for binomial regression model (Standardized estimates)</p></td>
       </tr><tr><td>
           <p><code><a href="biprobit.html">biprobit()</a></code> </p>
         </td>
@@ -335,10 +339,6 @@ based on all pairwise bivariate models.</p></td>
 using marginals that are on logistic form using the binomial.twostage funcion, but
 call is different and easier and the data manipulation is build into the function.
 Useful in particular for family design data.</p></td>
-      </tr><tr><td>
-          <p><code><a href="easy.survival.twostage.html">easy.survival.twostage()</a></code> </p>
-        </td>
-        <td><p>Wrapper for easy fitting of Clayton-Oakes or bivariate Plackett models for bivariate survival data</p></td>
       </tr><tr><td>
           <p><code><a href="eventpois.html">eventpois()</a></code> </p>
         </td>
@@ -508,6 +508,10 @@ Useful in particular for family design data.</p></td>
         </td>
         <td><p>Simulation of Piecewise constant hazard model (Cox).</p></td>
       </tr><tr><td>
+          <p><code><a href="rchazC.html">rchazC()</a></code> </p>
+        </td>
+        <td><p>Piecewise constant hazard distribution</p></td>
+      </tr><tr><td>
           <p><code><a href="rcrisk.html">rcrisk()</a></code> </p>
         </td>
         <td><p>Simulation of Piecewise constant hazard models with two causes (Cox).</p></td>
@@ -518,15 +522,7 @@ Useful in particular for family design data.</p></td>
       </tr><tr><td>
           <p><code><a href="recurrentMarginal.html">recurrentMarginal()</a></code> </p>
         </td>
-        <td><p>Fast Marginal means of recurrent events. Using the Lin and Ghosh (2000) 
-standard errors.  
-Fitting two models for death and recurent events these are
-combined to prducte the estimator 
-$$ \int_0^t  S(u|x=0) dR(u|x=0) $$ the mean number of recurrent events, here
-$$ S(u|x=0) $$  is the probability of survival for the baseline group, and 
-$$ dR(u|x=0) $$  is the hazard rate of an event among survivors for the baseline. 
-Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with 
- $$\Lambda_d(u|x=0) $$ being the cumulative baseline for death.</p></td>
+        <td><p>Fast recurrent marginal mean when death is possible</p></td>
       </tr><tr><td>
           <p><code><a href="resmean.phreg.html">resmean.phreg()</a></code> </p>
         </td>
@@ -572,10 +568,6 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
         </td>
         <td><p>Simulation of illness-death model</p></td>
       </tr><tr><td>
-          <p><code><a href="simRecurrent.html">simRecurrent()</a></code> </p>
-        </td>
-        <td><p>Simulation of recurrent events data based on cumulative hazards</p></td>
-      </tr><tr><td>
           <p><code><a href="simRecurrentII.html">simRecurrentII()</a></code> </p>
         </td>
         <td><p>Simulation of recurrent events data based on cumulative hazards II</p></td>
@@ -588,15 +580,11 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
         </td>
         <td><p>Summary for dependence models for competing risks</p></td>
       </tr><tr><td>
-          <p><code><a href="survival.iterative.html">survival.iterative()</a></code> </p>
+          <p><code><a href="summaryGLM.html">summaryGLM()</a></code> </p>
         </td>
-        <td><p>Survival model for multivariate survival data</p></td>
+        <td><p>Reporting OR from glm with binomial link and glm predictions</p></td>
       </tr><tr><td>
           <p><code><a href="survival.twostage.html">survival.twostage()</a></code> </p>
-        </td>
-        <td><p>Twostage survival model for multivariate survival data</p></td>
-      </tr><tr><td>
-          <p><code><a href="survival.twostageCC.html">survival.twostageCC()</a></code> </p>
         </td>
         <td><p>Twostage survival model for multivariate survival data</p></td>
       </tr><tr><td>
@@ -639,6 +627,10 @@ Here $$ S(u|x=0) $$  is estimated by $$ exp(-\Lambda_d(u|x=0) $$  with
           <p><code><a href="twostageMLE.html">twostageMLE()</a></code> </p>
         </td>
         <td><p>Twostage survival model fitted by pseudo MLE</p></td>
+      </tr><tr><td>
+          <p><code><a href="waldTest.html">waldTest()</a></code> </p>
+        </td>
+        <td><p>Wald test for model (type III test)</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

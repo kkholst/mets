@@ -83,7 +83,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -137,7 +137,7 @@ of the estimating equations. Here it is assumed that the second subject of each 
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -522,31 +522,25 @@ Eriksson and Scheike (2015),</p>
 <span class="r-in"><span>                          id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,</span></span>
 <span class="r-in"><span>                          status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data-set  1 out of  4 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 547 of  2000</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 542 of  2000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data-set  2 out of  4 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 250 of  1197</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 244 of  1188</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data-set  3 out of  4 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 253 of  1201</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 265 of  1213</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data-set  4 out of  4 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 596 of  945</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Number of joint events: 613 of  943</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">udp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Clayton-Oakes model </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Score of log-likelihood for parameter estimates (too large?)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             0 - 0.5       0.5 - 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0 - 0.5 0.002121503 -0.0002057768</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5 - 2 0.002206213  0.0026644929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log-coefficient for dependence parameter (SE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          0 - 0.5        0.5 - 2      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0 - 0.5  0.684 (0.067)  0.822 (0.102)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5 - 2  0.762 (0.094)  0.741 (0.060)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0 - 0.5  0.724 (0.065)  0.754 (0.088)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5 - 2  0.626 (0.097)  0.59  (0.065)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Kendall's tau (SE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          0 - 0.5        0.5 - 2      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0 - 0.5  0.498 (0.017)  0.532 (0.025)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5 - 2  0.517 (0.023)  0.512 (0.015)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0 - 0.5  0.508 (0.016)  0.515 (0.022)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5 - 2  0.483 (0.024)  0.474 (0.016)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
@@ -578,22 +572,22 @@ Eriksson and Scheike (2015),</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           log-Coef.         SE         z        P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0-0.5 0.8733145 0.06784135 12.872895 0.000000e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0.5-2 0.5544671 0.10335501  5.364686 8.109032e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0-0.5 0.5161567 0.10837158  4.762842 1.908855e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0.5-2 0.6901340 0.05963508 11.572619 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0-0.5 0.8974824 0.06601337 13.595465 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0.5-2 0.5007013 0.10511215  4.763496 1.902677e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0-0.5 0.3849839 0.10900019  3.531956 4.124975e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0.5-2 0.5423840 0.06434127  8.429799 0.000000e+00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           Kendall tau         SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0-0.5   0.5449204 0.01682344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0.5-2   0.4653854 0.02571492</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0-0.5   0.4558675 0.02688182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0.5-2   0.4992467 0.01490874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0-0.5   0.5509068 0.01633227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0-0.5,0.5-2   0.4520365 0.02603623</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0-0.5   0.4235631 0.02661320</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)0.5-2,0.5-2   0.4623804 0.01599426</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vargam</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.395  0.1625 2.076 2.713 3.553e-49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.741  0.1799 1.388 2.094 3.836e-22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.676  0.1816 1.320 2.031 2.770e-20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence4    1.994  0.1189 1.761 2.227 4.138e-63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.453  0.1620 2.136 2.771 7.758e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.650  0.1734 1.310 1.990 1.841e-21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.470  0.1602 1.156 1.784 4.545e-20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence4    1.720  0.1107 1.503 1.937 1.799e-54</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
@@ -613,19 +607,19 @@ Eriksson and Scheike (2015),</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            log-Coef.         SE         z        P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5 0.8733145 0.06784135 12.872895 0.000000e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2 0.5351228 0.08516769  6.283167 3.317446e-10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2 0.6901340 0.05963508 11.572619 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5 0.8974824 0.06601337 13.595465 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2 0.4398282 0.08492830  5.178818 2.232961e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2 0.5423840 0.06434127  8.429799 0.000000e+00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            Kendall tau         SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5   0.5449204 0.01682344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2   0.4605759 0.02115955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2   0.4992467 0.01490874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5   0.5509068 0.01633227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2   0.4370068 0.02089507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2   0.4623804 0.01599426</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vargam</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.395  0.1625 2.076 2.713 3.553e-49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.708  0.1454 1.423 1.993 7.805e-32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.994  0.1189 1.761 2.227 4.138e-63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.453  0.1620 2.136 2.771 7.758e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.552  0.1318 1.294 1.811 5.274e-32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.720  0.1107 1.503 1.937 1.799e-54</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
@@ -642,19 +636,19 @@ Eriksson and Scheike (2015),</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> With log-link </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            log-Coef.         SE         z        P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5 0.8733145 0.06784135 12.872895 0.000000e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2 0.5351228 0.08516769  6.283167 3.317446e-10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2 0.6901340 0.05963508 11.572619 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5 0.8974824 0.06601337 13.595465 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2 0.4398282 0.08492830  5.178818 2.232961e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2 0.5423840 0.06434127  8.429799 0.000000e+00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            Kendall tau         SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5   0.5449204 0.01682344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2   0.4605759 0.02115955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2   0.4992467 0.01490874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0-0.5   0.5509068 0.01633227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0-0.5,0.5-2   0.4370068 0.02089507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(stratas)0.5-2,0.5-2   0.4623804 0.01599426</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vargam</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.395  0.1625 2.076 2.713 3.553e-49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.708  0.1454 1.423 1.993 7.805e-32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.994  0.1189 1.761 2.227 4.138e-63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1    2.453  0.1620 2.136 2.771 7.758e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2    1.552  0.1318 1.294 1.811 5.274e-32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence3    1.720  0.1107 1.503 1.937 1.799e-54</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
@@ -693,24 +687,24 @@ Eriksson and Scheike (2015),</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameter for Clayton-Oakes model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Variance of Gamma distributed random effects </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Coef.        SE         z       P-val Kendall tau         SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 2.1849813 0.1521874 14.357179 0.00000e+00   0.5221006 0.01737887</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 0.8956807 0.1223704  7.319423 2.49134e-13   0.3093161 0.02918805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Coef.        SE         z        P-val Kendall tau         SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence1 2.0686552 0.1488964 13.893256 0.000000e+00   0.5084371 0.01798922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dependence2 0.9452688 0.1186084  7.969663 1.554312e-15   0.3209448 0.02734611</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "clayton.oakes"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $h</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]   0.7093 0.04037 0.6301 0.7884 4.196e-69</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   0.2907 0.04037 0.2116 0.3699 5.920e-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]   0.6864 0.04003 0.6079 0.7648 6.776e-66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   0.3136 0.04003 0.2352 0.3921 4.701e-15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vare</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $vartot</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5% 97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1    3.081 0.09572 2.893 3.268 2.863e-227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1    3.014 0.09764 2.823 3.205 3.157e-209</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.mets.twostage"</span>

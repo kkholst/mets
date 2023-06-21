@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -89,7 +89,7 @@
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -126,7 +126,7 @@
       <h1 data-toc-skip>Analysis of bivariate binomial data: Twin analysis</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2023-01-16</h4>
+            <h4 data-toc-skip class="date">2023-06-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/binomial-twin.Rmd" class="external-link"><code>vignettes/binomial-twin.Rmd</code></a></small>
       <div class="hidden name"><code>binomial-twin.Rmd</code></div>
@@ -260,7 +260,8 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; 3        2  dz      no female  71  1       0</span></span>
 <span><span class="co">#&gt; 8        5  mz      no female  71  1       0</span></span>
 <span><span class="co">#&gt; 9        5  mz      no female  71  2       0</span></span>
-<span><span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></span></code></pre></div>
+<span><span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></span>
+<span><span class="va">twinstut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>,<span class="va">tvparnr</span> <span class="op">&lt;</span> <span class="fl">3000</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="pairwise-odds-ratio-model-1">Pairwise odds ratio model<a class="anchor" aria-label="anchor" href="#pairwise-odds-ratio-model-1"></a>
@@ -275,23 +276,19 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; glm(formula = binstut ~ factor(sex) + age, family = binomial(), </span></span>
 <span><span class="co">#&gt;     data = twinstut)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Deviance Residuals: </span></span>
-<span><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">#&gt; -0.4419  -0.4078  -0.2842  -0.2672   2.6395  </span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;                  Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept)     -3.027625   0.104012 -29.108  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; factor(sex)male  0.869826   0.062197  13.985  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; age             -0.005983   0.002172  -2.754  0.00588 ** </span></span>
+<span><span class="co">#&gt;                 Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; (Intercept)      0.03033    2.16166   0.014   0.9888    </span></span>
+<span><span class="co">#&gt; factor(sex)male  0.80288    0.20272   3.961 7.48e-05 ***</span></span>
+<span><span class="co">#&gt; age             -0.05471    0.03295  -1.660   0.0968 .  </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Null deviance: 9328.6  on 21287  degrees of freedom</span></span>
-<span><span class="co">#&gt; Residual deviance: 9117.0  on 21285  degrees of freedom</span></span>
-<span><span class="co">#&gt; AIC: 9123</span></span>
+<span><span class="co">#&gt;     Null deviance: 940.43  on 2650  degrees of freedom</span></span>
+<span><span class="co">#&gt; Residual deviance: 921.01  on 2648  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 927.01</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Number of Fisher Scoring iterations: 6</span></span></code></pre></div>
 <p>Now estimating the OR parameter. We see a strong dependence with an OR at around 8 that is clearly significant.</p>
@@ -302,12 +299,12 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;                theta        se</span></span>
-<span><span class="co">#&gt; dependence1 2.085347 0.1274536</span></span>
+<span><span class="co">#&gt;                theta       se</span></span>
+<span><span class="co">#&gt; dependence1 1.859712 0.481585</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; dependence1    8.047   1.026 6.037 10.06 4.295e-15</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err   2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; dependence1    6.422   3.093 0.3603 12.48 0.03785</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "plackett"</span></span>
@@ -325,13 +322,13 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                   theta        se</span></span>
-<span><span class="co">#&gt; factor(zyg)dz 0.5221651 0.2401355</span></span>
-<span><span class="co">#&gt; factor(zyg)mz 3.4853933 0.1866076</span></span>
+<span><span class="co">#&gt; factor(zyg)dz 0.1624942 1.0050473</span></span>
+<span><span class="co">#&gt; factor(zyg)mz 3.7460315 0.7259771</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;               Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; factor(zyg)dz    1.686  0.4048  0.8923  2.479 3.123e-05</span></span>
-<span><span class="co">#&gt; factor(zyg)mz   32.635  6.0900 20.6991 44.571 8.376e-08</span></span>
+<span><span class="co">#&gt;               Estimate Std.Err    2.5%   97.5% P-value</span></span>
+<span><span class="co">#&gt; factor(zyg)dz    1.176   1.182  -1.141   3.494  0.3197</span></span>
+<span><span class="co">#&gt; factor(zyg)mz   42.353  30.747 -17.910 102.616  0.1684</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "plackett"</span></span>
@@ -348,16 +345,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;                      theta        se</span></span>
-<span><span class="co">#&gt; factor(zyg)dz    0.8098841 0.3138423</span></span>
-<span><span class="co">#&gt; factor(zyg)mz    3.7318076 0.2632250</span></span>
-<span><span class="co">#&gt; factor(sex)male -0.4075409 0.3055349</span></span>
+<span><span class="co">#&gt;                     theta       se</span></span>
+<span><span class="co">#&gt; factor(zyg)dz    1.238547 1.118919</span></span>
+<span><span class="co">#&gt; factor(zyg)mz    6.078248 1.536564</span></span>
+<span><span class="co">#&gt; factor(sex)male -3.233772 1.776972</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;                 Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; factor(zyg)dz     2.2476  0.7054  0.8651  3.630 0.0014410</span></span>
-<span><span class="co">#&gt; factor(zyg)mz    41.7545 10.9908 20.2129 63.296 0.0001453</span></span>
-<span><span class="co">#&gt; factor(sex)male   0.6653  0.2033  0.2669  1.064 0.0010643</span></span>
+<span><span class="co">#&gt;                  Estimate   Std.Err       2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; factor(zyg)dz     3.45059   3.86094   -4.11670   11.0179  0.3715</span></span>
+<span><span class="co">#&gt; factor(zyg)mz   436.26434 670.34797 -877.59353 1750.1222  0.5152</span></span>
+<span><span class="co">#&gt; factor(sex)male   0.03941   0.07003   -0.09784    0.1767  0.5736</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "plackett"</span></span>
@@ -381,13 +378,13 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                    theta        se</span></span>
-<span><span class="co">#&gt; factor(zyg1)dz 0.5221651 0.2401355</span></span>
-<span><span class="co">#&gt; factor(zyg1)mz 3.4853933 0.1866076</span></span>
+<span><span class="co">#&gt; factor(zyg1)dz 0.1624942 1.0050473</span></span>
+<span><span class="co">#&gt; factor(zyg1)mz 3.7460315 0.7259771</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;                Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; factor(zyg1)dz    1.686  0.4048  0.8923  2.479 3.123e-05</span></span>
-<span><span class="co">#&gt; factor(zyg1)mz   32.635  6.0900 20.6991 44.571 8.376e-08</span></span>
+<span><span class="co">#&gt;                Estimate Std.Err    2.5%   97.5% P-value</span></span>
+<span><span class="co">#&gt; factor(zyg1)dz    1.176   1.182  -1.141   3.494  0.3197</span></span>
+<span><span class="co">#&gt; factor(zyg1)mz   42.353  30.747 -17.910 102.616  0.1684</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "plackett"</span></span>
@@ -442,41 +439,42 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; 3        2  dz      no female  71  1       0</span></span>
 <span><span class="co">#&gt; 8        5  mz      no female  71  1       0</span></span>
 <span><span class="co">#&gt; 9        5  mz      no female  71  2       0</span></span>
-<span><span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></span></code></pre></div>
+<span><span class="co">#&gt; 11       7  dz      no   male  71  1       0</span></span>
+<span><span class="va">twinstut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>,<span class="va">tvparnr</span> <span class="op">&lt;</span> <span class="fl">2000</span><span class="op">)</span></span></code></pre></div>
 <p>First testing for same dependence in MZ and DZ that we recommend doing by comparing the correlations of MZ and DZ twins. Apart from regression correction in the mean this is an un-structured model, and the useful concordance and casewise concordance estimates can be reported from this analysis.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"un"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                Estimate   Std.Err        Z p-value    </span></span>
-<span><span class="co">#&gt; (Intercept)   -1.794823  0.023289 -77.0667 &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; sexmale        0.401432  0.030179  13.3018 &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; atanh(rho) MZ  1.096916  0.073574  14.9091 &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; atanh(rho) DZ  0.132458  0.062516   2.1188 0.03411 *  </span></span>
+<span><span class="co">#&gt;               Estimate  Std.Err        Z   p-value    </span></span>
+<span><span class="co">#&gt; (Intercept)   -2.04432  0.10246 -19.9532 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; sexmale        0.41203  0.12392   3.3249 0.0008844 ***</span></span>
+<span><span class="co">#&gt; atanh(rho) MZ  1.11748  0.43188   2.5875 0.0096683 ** </span></span>
+<span><span class="co">#&gt; atanh(rho) DZ  0.23000  0.25889   0.8884 0.3743295    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Total MZ/DZ Complete pairs MZ/DZ</span></span>
-<span><span class="co">#&gt;  8777/12511  3255/4058           </span></span>
+<span><span class="co">#&gt;  583/1192    212/354             </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                            Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Tetrachoric correlation MZ 0.79939  0.74101 0.84577</span></span>
-<span><span class="co">#&gt; Tetrachoric correlation DZ 0.13169  0.00993 0.24960</span></span>
+<span><span class="co">#&gt;                            Estimate 2.5%     97.5%   </span></span>
+<span><span class="co">#&gt; Tetrachoric correlation MZ  0.80669  0.26456  0.96139</span></span>
+<span><span class="co">#&gt; Tetrachoric correlation DZ  0.22603 -0.27052  0.62759</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MZ:</span></span>
 <span><span class="co">#&gt;                      Estimate 2.5%     97.5%   </span></span>
-<span><span class="co">#&gt; Concordance           0.01698  0.01411  0.02042</span></span>
-<span><span class="co">#&gt; Casewise Concordance  0.46730  0.40383  0.53185</span></span>
-<span><span class="co">#&gt; Marginal              0.03634  0.03287  0.04016</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       12.85882 10.87510 14.84253</span></span>
-<span><span class="co">#&gt; log(OR)               3.75632  3.37975  4.13289</span></span>
+<span><span class="co">#&gt; Concordance           0.00886  0.00272  0.02840</span></span>
+<span><span class="co">#&gt; Casewise Concordance  0.43282  0.13214  0.79272</span></span>
+<span><span class="co">#&gt; Marginal              0.02046  0.01258  0.03312</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk       21.15321  2.70681 39.59960</span></span>
+<span><span class="co">#&gt; log(OR)               4.15336  1.96005  6.34666</span></span>
 <span><span class="co">#&gt; DZ:</span></span>
-<span><span class="co">#&gt;                      Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Concordance          0.00235  0.00140 0.00393</span></span>
-<span><span class="co">#&gt; Casewise Concordance 0.06456  0.03937 0.10413</span></span>
-<span><span class="co">#&gt; Marginal             0.03634  0.03287 0.04016</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       1.77662  0.92746 2.62577</span></span>
-<span><span class="co">#&gt; log(OR)              0.63527  0.09013 1.18040</span></span>
+<span><span class="co">#&gt;                      Estimate 2.5%     97.5%   </span></span>
+<span><span class="co">#&gt; Concordance           0.00128  0.00013  0.01240</span></span>
+<span><span class="co">#&gt; Casewise Concordance  0.06251  0.00705  0.38497</span></span>
+<span><span class="co">#&gt; Marginal              0.02046  0.01258  0.03312</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk        3.05481 -3.12067  9.23029</span></span>
+<span><span class="co">#&gt; log(OR)               1.20535 -1.09090  3.50161</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                          Estimate 2.5% 97.5%</span></span>
 <span><span class="co">#&gt; Broad-sense heritability   1      NaN  NaN</span></span></code></pre></div>
@@ -488,82 +486,79 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span></span>
-<span></span>
-<span><span class="co">#&gt; Warning in sqrt(diag(vcovACDE)): NaNs produced</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Estimate   Std.Err         Z   p-value    </span></span>
-<span><span class="co">#&gt; (Intercept)  -3.70371   0.24449  -15.1485 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; sexmale       0.83310   0.08255   10.0920 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; log(var(A))   1.18278   0.17179    6.8851 5.774e-12 ***</span></span>
-<span><span class="co">#&gt; log(var(C)) -31.88101   0.14929 -213.5454 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt;              Estimate   Std.Err       Z p-value   </span></span>
+<span><span class="co">#&gt; (Intercept)  -4.20958   1.55369 -2.7094 0.00674 **</span></span>
+<span><span class="co">#&gt; sexmale       0.85990   0.36387  2.3632 0.01812 * </span></span>
+<span><span class="co">#&gt; log(var(A))   1.17018   0.99695  1.1738 0.24049   </span></span>
+<span><span class="co">#&gt; log(var(C)) -23.53038       NaN     NaN     NaN   </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Total MZ/DZ Complete pairs MZ/DZ</span></span>
-<span><span class="co">#&gt;  8777/12511  3255/4058           </span></span>
+<span><span class="co">#&gt;  583/1192    212/354             </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                    Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; A                  0.76545  0.70500 0.82590</span></span>
-<span><span class="co">#&gt; C                  0.00000      NaN     NaN</span></span>
-<span><span class="co">#&gt; E                  0.23455  0.17410 0.29500</span></span>
-<span><span class="co">#&gt; MZ Tetrachoric Cor 0.76545  0.69793 0.81948</span></span>
-<span><span class="co">#&gt; DZ Tetrachoric Cor 0.38272  0.35210 0.41253</span></span>
+<span><span class="co">#&gt;                    Estimate 2.5%     97.5%   </span></span>
+<span><span class="co">#&gt; A                   0.76318  0.41002  1.11633</span></span>
+<span><span class="co">#&gt; C                   0.00000  0.00000  0.00000</span></span>
+<span><span class="co">#&gt; E                   0.23682 -0.11633  0.58998</span></span>
+<span><span class="co">#&gt; MZ Tetrachoric Cor  0.76318  0.15672  0.95170</span></span>
+<span><span class="co">#&gt; DZ Tetrachoric Cor  0.38159  0.19280  0.54313</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MZ:</span></span>
 <span><span class="co">#&gt;                      Estimate 2.5%     97.5%   </span></span>
-<span><span class="co">#&gt; Concordance           0.01560  0.01273  0.01912</span></span>
-<span><span class="co">#&gt; Casewise Concordance  0.42830  0.36248  0.49677</span></span>
-<span><span class="co">#&gt; Marginal              0.03643  0.03294  0.04027</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       11.75741  9.77237 13.74246</span></span>
-<span><span class="co">#&gt; log(OR)               3.52382  3.13466  3.91298</span></span>
+<span><span class="co">#&gt; Concordance           0.00768  0.00201  0.02893</span></span>
+<span><span class="co">#&gt; Casewise Concordance  0.37943  0.09711  0.77658</span></span>
+<span><span class="co">#&gt; Marginal              0.02025  0.01241  0.03289</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk       18.73516 -0.13385 37.60417</span></span>
+<span><span class="co">#&gt; log(OR)               3.85127  1.58182  6.12072</span></span>
 <span><span class="co">#&gt; DZ:</span></span>
 <span><span class="co">#&gt;                      Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Concordance          0.00558  0.00465 0.00670</span></span>
-<span><span class="co">#&gt; Casewise Concordance 0.15327  0.13749 0.17050</span></span>
-<span><span class="co">#&gt; Marginal             0.03643  0.03294 0.04027</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       4.20744  3.78588 4.62900</span></span>
-<span><span class="co">#&gt; log(OR)              1.69996  1.57262 1.82730</span></span>
+<span><span class="co">#&gt; Concordance          0.00230  0.00077 0.00688</span></span>
+<span><span class="co">#&gt; Casewise Concordance 0.11369  0.05266 0.22841</span></span>
+<span><span class="co">#&gt; Marginal             0.02025  0.01241 0.03289</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk       5.61371  2.19257 9.03484</span></span>
+<span><span class="co">#&gt; log(OR)              1.92764  1.16374 2.69154</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                          Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span></span></code></pre></div>
+<span><span class="co">#&gt; Broad-sense heritability 0.76318  0.41002 1.11633</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Estimate  Std.Err        Z   p-value    </span></span>
-<span><span class="co">#&gt; (Intercept) -3.70371  0.24449 -15.1485 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; sexmale      0.83310  0.08255  10.0920 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; log(var(A))  1.18278  0.17179   6.8851 5.774e-12 ***</span></span>
+<span><span class="co">#&gt;             Estimate  Std.Err       Z p-value   </span></span>
+<span><span class="co">#&gt; (Intercept) -4.20958  1.55369 -2.7094 0.00674 **</span></span>
+<span><span class="co">#&gt; sexmale      0.85990  0.36387  2.3632 0.01812 * </span></span>
+<span><span class="co">#&gt; log(var(A))  1.17018  0.99695  1.1738 0.24049   </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Total MZ/DZ Complete pairs MZ/DZ</span></span>
-<span><span class="co">#&gt;  8777/12511  3255/4058           </span></span>
+<span><span class="co">#&gt;  583/1192    212/354             </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                    Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; A                  0.76545  0.70500 0.82590</span></span>
-<span><span class="co">#&gt; E                  0.23455  0.17410 0.29500</span></span>
-<span><span class="co">#&gt; MZ Tetrachoric Cor 0.76545  0.69793 0.81948</span></span>
-<span><span class="co">#&gt; DZ Tetrachoric Cor 0.38272  0.35210 0.41253</span></span>
+<span><span class="co">#&gt;                    Estimate 2.5%     97.5%   </span></span>
+<span><span class="co">#&gt; A                   0.76318  0.41002  1.11633</span></span>
+<span><span class="co">#&gt; E                   0.23682 -0.11633  0.58998</span></span>
+<span><span class="co">#&gt; MZ Tetrachoric Cor  0.76318  0.15672  0.95170</span></span>
+<span><span class="co">#&gt; DZ Tetrachoric Cor  0.38159  0.19280  0.54313</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MZ:</span></span>
 <span><span class="co">#&gt;                      Estimate 2.5%     97.5%   </span></span>
-<span><span class="co">#&gt; Concordance           0.01560  0.01273  0.01912</span></span>
-<span><span class="co">#&gt; Casewise Concordance  0.42830  0.36248  0.49677</span></span>
-<span><span class="co">#&gt; Marginal              0.03643  0.03294  0.04027</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       11.75741  9.77237 13.74246</span></span>
-<span><span class="co">#&gt; log(OR)               3.52382  3.13466  3.91298</span></span>
+<span><span class="co">#&gt; Concordance           0.00768  0.00201  0.02893</span></span>
+<span><span class="co">#&gt; Casewise Concordance  0.37943  0.09711  0.77658</span></span>
+<span><span class="co">#&gt; Marginal              0.02025  0.01241  0.03289</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk       18.73517 -0.13386 37.60419</span></span>
+<span><span class="co">#&gt; log(OR)               3.85127  1.58182  6.12072</span></span>
 <span><span class="co">#&gt; DZ:</span></span>
 <span><span class="co">#&gt;                      Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Concordance          0.00558  0.00465 0.00670</span></span>
-<span><span class="co">#&gt; Casewise Concordance 0.15327  0.13749 0.17050</span></span>
-<span><span class="co">#&gt; Marginal             0.03643  0.03294 0.04027</span></span>
-<span><span class="co">#&gt; Rel.Recur.Risk       4.20744  3.78588 4.62900</span></span>
-<span><span class="co">#&gt; log(OR)              1.69996  1.57262 1.82730</span></span>
+<span><span class="co">#&gt; Concordance          0.00230  0.00077 0.00688</span></span>
+<span><span class="co">#&gt; Casewise Concordance 0.11369  0.05266 0.22841</span></span>
+<span><span class="co">#&gt; Marginal             0.02025  0.01241 0.03289</span></span>
+<span><span class="co">#&gt; Rel.Recur.Risk       5.61371  2.19257 9.03484</span></span>
+<span><span class="co">#&gt; log(OR)              1.92764  1.16374 2.69154</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                          Estimate 2.5%    97.5%  </span></span>
-<span><span class="co">#&gt; Broad-sense heritability 0.76545  0.70500 0.82590</span></span></code></pre></div>
+<span><span class="co">#&gt; Broad-sense heritability 0.76318  0.41002 1.11633</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="additive-gamma-random-effects">Additive gamma random effects<a class="anchor" aria-label="anchor" href="#additive-gamma-random-effects"></a>
@@ -581,13 +576,13 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                     theta        se</span></span>
-<span><span class="co">#&gt; factor(zyg)dz -2.61194495 0.4854454</span></span>
-<span><span class="co">#&gt; factor(zyg)mz -0.01817181 0.1030735</span></span>
+<span><span class="co">#&gt; factor(zyg)dz -2.13348460 1.0821489</span></span>
+<span><span class="co">#&gt; factor(zyg)mz -0.07740026 0.5790839</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vargam</span></span>
-<span><span class="co">#&gt;               Estimate Std.Err     2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; factor(zyg)dz  0.07339 0.03563 0.003563 0.1432 3.940e-02</span></span>
-<span><span class="co">#&gt; factor(zyg)mz  0.98199 0.10122 0.783610 1.1804 2.962e-22</span></span>
+<span><span class="co">#&gt;               Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; factor(zyg)dz   0.1184  0.1282 -0.1327 0.3696 0.35544</span></span>
+<span><span class="co">#&gt; factor(zyg)mz   0.9255  0.5360 -0.1249 1.9760 0.08419</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "gamma"</span></span>
@@ -606,14 +601,14 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; Variance of Gamma distributed random effects </span></span>
 <span><span class="co">#&gt; With log-link</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;                   theta        se</span></span>
-<span><span class="co">#&gt; (Intercept)   -2.611945 0.4854454</span></span>
-<span><span class="co">#&gt; factor(zyg)mz  2.593773 0.4962675</span></span>
+<span><span class="co">#&gt;                   theta       se</span></span>
+<span><span class="co">#&gt; (Intercept)   -2.133485 1.082149</span></span>
+<span><span class="co">#&gt; factor(zyg)mz  2.056084 1.227348</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vargam</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err     2.5%   97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept)    0.07339 0.03563 0.003563  0.1432  0.0394</span></span>
-<span><span class="co">#&gt; factor(zyg)mz 13.38016 6.64014 0.365728 26.3946  0.0439</span></span>
+<span><span class="co">#&gt; (Intercept)     0.1184  0.1282  -0.1327  0.3696  0.3554</span></span>
+<span><span class="co">#&gt; factor(zyg)mz   7.8153  9.5921 -10.9849 26.6155  0.4152</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "gamma"</span></span>
@@ -657,23 +652,23 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                  theta        se</span></span>
-<span><span class="co">#&gt; dependence1  1.5261839 0.2475371</span></span>
-<span><span class="co">#&gt; dependence2 -0.5447955 0.1958921</span></span>
+<span><span class="co">#&gt; dependence1  1.1700713 0.9350041</span></span>
+<span><span class="co">#&gt; dependence2 -0.2552978 0.5910697</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $h</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err    2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; dependence1   1.5551  0.1906  1.1817  1.9286 3.318e-16</span></span>
-<span><span class="co">#&gt; dependence2  -0.5551  0.1906 -0.9286 -0.1817 3.577e-03</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err     2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; dependence1   1.2791  0.6039  0.09552 2.4626 0.03416</span></span>
+<span><span class="co">#&gt; dependence2  -0.2791  0.6039 -1.46265 0.9045 0.64397</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vare</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vartot</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err   2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1   0.9814  0.1038 0.7778 1.185 3.383e-21</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; p1   0.9148  0.5352 -0.1343 1.964 0.08744</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
@@ -681,16 +676,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin1</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $MZ</span></span>
-<span><span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; concordance           0.01822 0.001773 0.01474 0.02169 9.075e-25</span></span>
-<span><span class="co">#&gt; casewise concordance  0.50334 0.033005 0.43865 0.56803 1.630e-52</span></span>
-<span><span class="co">#&gt; marginal              0.03620 0.002859 0.03059 0.04180 9.821e-37</span></span>
+<span><span class="co">#&gt;                      Estimate  Std.Err     2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; concordance          0.009738 0.004010 0.001878 0.01760 1.517e-02</span></span>
+<span><span class="co">#&gt; casewise concordance 0.476141 0.190613 0.102547 0.84974 1.249e-02</span></span>
+<span><span class="co">#&gt; marginal             0.020452 0.005083 0.010489 0.03041 5.733e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $DZ</span></span>
-<span><span class="co">#&gt;                      Estimate   Std.Err    2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; concordance          0.002353 0.0006191 0.00114 0.003567 1.443e-04</span></span>
-<span><span class="co">#&gt; casewise concordance 0.065007 0.0160426 0.03356 0.096450 5.075e-05</span></span>
-<span><span class="co">#&gt; marginal             0.036197 0.0028591 0.03059 0.041801 9.821e-37</span></span></code></pre></div>
+<span><span class="co">#&gt;                      Estimate  Std.Err       2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; concordance          0.001301 0.001158 -0.0009681 0.00357 2.611e-01</span></span>
+<span><span class="co">#&gt; casewise concordance 0.063604 0.057255 -0.0486137 0.17582 2.666e-01</span></span>
+<span><span class="co">#&gt; marginal             0.020452 0.005083  0.0104894 0.03041 5.733e-05</span></span></code></pre></div>
 <p>The E component was not consistent with the fit of the data and we now consider instead the AE model.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,zyg<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
@@ -702,8 +697,8 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;                 theta         se</span></span>
-<span><span class="co">#&gt; dependence1 0.9094847 0.09770402</span></span>
+<span><span class="co">#&gt;                 theta        se</span></span>
+<span><span class="co">#&gt; dependence1 0.8485392 0.4941264</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
@@ -716,8 +711,8 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $vartot</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1   0.9095  0.0977 0.718 1.101 1.296e-20</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; p1   0.8485  0.4941 -0.1199 1.817 0.08593</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
@@ -725,16 +720,16 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $MZ</span></span>
-<span><span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; concordance           0.01736 0.001696 0.01403 0.02068 1.394e-24</span></span>
-<span><span class="co">#&gt; casewise concordance  0.47954 0.033430 0.41402 0.54506 1.154e-46</span></span>
-<span><span class="co">#&gt; marginal              0.03620 0.002859 0.03059 0.04180 9.821e-37</span></span>
+<span><span class="co">#&gt;                      Estimate  Std.Err     2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; concordance          0.009236 0.003778 0.001831 0.01664 1.450e-02</span></span>
+<span><span class="co">#&gt; casewise concordance 0.451605 0.189131 0.080916 0.82229 1.695e-02</span></span>
+<span><span class="co">#&gt; marginal             0.020452 0.005083 0.010489 0.03041 5.733e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $DZ</span></span>
-<span><span class="co">#&gt;                      Estimate   Std.Err     2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; concordance          0.004769 0.0005661 0.003659 0.005878 3.616e-17</span></span>
-<span><span class="co">#&gt; casewise concordance 0.131750 0.0064368 0.119134 0.144366 4.122e-93</span></span>
-<span><span class="co">#&gt; marginal             0.036197 0.0028591 0.030593 0.041801 9.821e-37</span></span></code></pre></div>
+<span><span class="co">#&gt;                      Estimate   Std.Err      2.5%    97.5%   P-value</span></span>
+<span><span class="co">#&gt; concordance          0.001966 0.0007099 0.0005741 0.003357 5.628e-03</span></span>
+<span><span class="co">#&gt; casewise concordance 0.096106 0.0196561 0.0575803 0.134631 1.012e-06</span></span>
+<span><span class="co">#&gt; marginal             0.020452 0.0050831 0.0104894 0.030415 5.733e-05</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -742,13 +737,13 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 </h2>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.2.2 (2022-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 22.04.1 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3</span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
@@ -756,30 +751,33 @@ logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\la
 <span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
 <span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attached base packages:</span></span>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.2     timereg_2.0.4  survival_3.4-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.3     timereg_2.0.5  survival_3.5-5</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Rcpp_1.0.9          bslib_0.4.2         compiler_4.2.2     </span></span>
-<span><span class="co">#&gt;  [4] jquerylib_0.1.4     tools_4.2.2         digest_0.6.31      </span></span>
-<span><span class="co">#&gt;  [7] jsonlite_1.8.4      evaluate_0.19       memoise_2.0.1      </span></span>
-<span><span class="co">#&gt; [10] lifecycle_1.0.3     lattice_0.20-45     ucminf_1.1-4.1     </span></span>
-<span><span class="co">#&gt; [13] rlang_1.0.6         Matrix_1.5-1        cli_3.6.0          </span></span>
-<span><span class="co">#&gt; [16] parallel_4.2.2      yaml_2.3.6          mvtnorm_1.1-3      </span></span>
-<span><span class="co">#&gt; [19] pkgdown_2.0.7       xfun_0.36           fastmap_1.1.0      </span></span>
-<span><span class="co">#&gt; [22] stringr_1.5.0       knitr_1.41          desc_1.4.2         </span></span>
-<span><span class="co">#&gt; [25] fs_1.5.2            vctrs_0.5.1         sass_0.4.4         </span></span>
-<span><span class="co">#&gt; [28] systemfonts_1.0.4   globals_0.16.2      rprojroot_2.0.3    </span></span>
-<span><span class="co">#&gt; [31] grid_4.2.2          glue_1.6.2          listenv_0.9.0      </span></span>
-<span><span class="co">#&gt; [34] R6_2.5.1            textshaping_0.3.6   parallelly_1.34.0  </span></span>
-<span><span class="co">#&gt; [37] future.apply_1.10.0 rmarkdown_2.19      lava_1.7.1         </span></span>
-<span><span class="co">#&gt; [40] purrr_1.0.1         magrittr_2.0.3      codetools_0.2-18   </span></span>
-<span><span class="co">#&gt; [43] htmltools_0.5.4     splines_4.2.2       future_1.30.0      </span></span>
-<span><span class="co">#&gt; [46] numDeriv_2016.8-1.1 ragg_1.2.5          stringi_1.7.12     </span></span>
-<span><span class="co">#&gt; [49] cachem_1.0.6</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] Matrix_1.5-4.1      future.apply_1.11.0 jsonlite_1.8.5     </span></span>
+<span><span class="co">#&gt;  [4] ucminf_1.2.0        compiler_4.3.1      Rcpp_1.0.10        </span></span>
+<span><span class="co">#&gt;  [7] stringr_1.5.0       parallel_4.3.1      jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt; [10] globals_0.16.2      splines_4.3.1       systemfonts_1.0.4  </span></span>
+<span><span class="co">#&gt; [13] textshaping_0.3.6   yaml_2.3.7          fastmap_1.1.1      </span></span>
+<span><span class="co">#&gt; [16] lattice_0.21-8      R6_2.5.1            knitr_1.43         </span></span>
+<span><span class="co">#&gt; [19] future_1.32.0       desc_1.4.2          rprojroot_2.0.3    </span></span>
+<span><span class="co">#&gt; [22] bslib_0.5.0         rlang_1.1.1         cachem_1.0.8       </span></span>
+<span><span class="co">#&gt; [25] stringi_1.7.12      xfun_0.39           fs_1.6.2           </span></span>
+<span><span class="co">#&gt; [28] sass_0.4.6          memoise_2.0.1       cli_3.6.1          </span></span>
+<span><span class="co">#&gt; [31] pkgdown_2.0.7       magrittr_2.0.3      digest_0.6.31      </span></span>
+<span><span class="co">#&gt; [34] grid_4.3.1          mvtnorm_1.2-2       lifecycle_1.0.3    </span></span>
+<span><span class="co">#&gt; [37] lava_1.7.2.1        vctrs_0.6.3         evaluate_0.21      </span></span>
+<span><span class="co">#&gt; [40] glue_1.6.2          listenv_0.9.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [43] codetools_0.2-19    ragg_1.2.5          parallelly_1.36.0  </span></span>
+<span><span class="co">#&gt; [46] rmarkdown_2.22      purrr_1.0.1         tools_4.3.1        </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.5</span></span></code></pre></div>
 </div>
   </div>
 

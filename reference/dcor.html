@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -71,7 +71,7 @@
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -190,15 +190,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> vf       -0.090037003</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> time2     0.302021849</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> wmi2      1.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dcor</span><span class="op">(</span><span class="va">dt</span>,<span class="op">~</span><span class="va">time</span><span class="op">+</span><span class="va">wmi</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           time       wmi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> time 1.0000000 0.3285823</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> wmi  0.3285823 1.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dcor</span><span class="op">(</span><span class="va">dt</span>,<span class="op">~</span><span class="va">time</span><span class="op">+</span><span class="va">wmi</span>,<span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> vf: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chf: 0</span>

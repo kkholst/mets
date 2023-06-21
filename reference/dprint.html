@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -71,7 +71,7 @@
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -156,8 +156,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18  -0.82486  0.2590 1.7123 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19   0.07372 -0.9789 0.4202 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20  -2.29330 -0.4640 0.2744 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7261 1.4414 -0.44706</span>
@@ -166,8 +164,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547  0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042  0.74982</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 -0.8249 0.2590  1.71231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="co">## listing all : </span></span></span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              a         b           c</span>
@@ -184,15 +180,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 -0.0372 0.2945 0.70289</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547 0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 -0.8249 0.2590 1.71231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(d &gt; 0): TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7261 1.4414 -0.4471</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042  0.7498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="va">.</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">d</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(d &gt; 0): FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       d       e       f      g        h        i     </span>
@@ -210,8 +202,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 -1.2386 -0.4348 -1.759 -1.112  1.3054  0.3068 -1.4668 -0.3754  0.77101</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.3742  2.6493 -1.494 -1.192 -0.4637 -0.5253  0.1489  0.1824 -0.06913</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 -0.7965 -0.4974 -1.493 -1.024  1.5341  1.0366  0.1178 -0.3869 -2.61595</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(d &gt; 0): TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       d      e       f      g        h     i       j      </span>
@@ -223,8 +213,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>    u      v      w         x       y       z      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.196 0.1644 -0.008021 -0.1785 -0.0229 -0.6447</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.466 0.3714  0.390801  0.1460 -0.2638  0.3281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, nlast<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7261 1.4414 -0.44706</span>
@@ -232,8 +220,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 -0.0372 0.2945  0.70289</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547  0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042  0.74982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, nfirst<span class="op">=</span><span class="fl">3</span>, nlast<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7261 1.4414 -0.44706</span>
@@ -242,8 +228,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547  0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042  0.74982</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 -0.8249 0.2590  1.71231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7261 1.4414 -0.44706</span>
@@ -251,8 +235,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 -0.0372 0.2945  0.70289</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547  0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042  0.74982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, <span class="op">-</span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a       b      c      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.8162 0.4133 0.05604</span>
@@ -260,8 +242,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.5002 1.5547 0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17 -1.6085 0.9042 0.74982</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 -0.8249 0.2590 1.71231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dlist</span><span class="op">(</span><span class="va">d</span>,<span class="op">~</span><span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span><span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">50</span><span class="op">:</span><span class="fl">55</span>,<span class="op">-</span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     a       b      c       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   -0.7261 1.4414 -0.44706</span>
@@ -276,8 +256,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15  -0.5002 1.5547 0.38196 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17  -1.6085 0.9042 0.74982 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18  -0.8249 0.2590 1.71231 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-in"><span><span class="fu">dprint</span><span class="op">(</span><span class="va">d</span>,<span class="va">a</span><span class="op">+</span><span class="va">b</span><span class="op">+</span><span class="va">c</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">d</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">|</span><span class="va">a</span><span class="op">&lt;</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">b</span><span class="op">&gt;</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">50</span><span class="op">:</span><span class="fl">55</span>,<span class="op">-</span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(d &gt; 0): FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     a       b      c      </span>
@@ -291,8 +269,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14  -0.0372 0.2945 0.70289</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15  -0.5002 1.5547 0.38196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18  -0.8249 0.2590 1.71231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(d &gt; 0): TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     a       b      c      </span>
@@ -302,8 +278,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   -0.7261 1.4414 -0.4471</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17  -1.6085 0.9042  0.7498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] matrix array </span>
 </code></pre></div>
     </div>
   </div>

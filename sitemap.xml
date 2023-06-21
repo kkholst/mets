@@ -133,6 +133,9 @@
     <loc>/reference/binregCasewise.html</loc>
   </url>
   <url>
+    <loc>/reference/binregG.html</loc>
+  </url>
+  <url>
     <loc>/reference/biprobit.html</loc>
   </url>
   <url>
@@ -230,9 +233,6 @@
   </url>
   <url>
     <loc>/reference/easy.binomial.twostage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/easy.survival.twostage.html</loc>
   </url>
   <url>
     <loc>/reference/eventpois.html</loc>
@@ -364,6 +364,9 @@
     <loc>/reference/rchaz.html</loc>
   </url>
   <url>
+    <loc>/reference/rchazC.html</loc>
+  </url>
+  <url>
     <loc>/reference/rcrisk.html</loc>
   </url>
   <url>
@@ -409,9 +412,6 @@
     <loc>/reference/simMultistate.html</loc>
   </url>
   <url>
-    <loc>/reference/simRecurrent.html</loc>
-  </url>
-  <url>
     <loc>/reference/simRecurrentII.html</loc>
   </url>
   <url>
@@ -421,13 +421,10 @@
     <loc>/reference/summary.cor.html</loc>
   </url>
   <url>
-    <loc>/reference/survival.iterative.html</loc>
+    <loc>/reference/summaryGLM.html</loc>
   </url>
   <url>
     <loc>/reference/survival.twostage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/survival.twostageCC.html</loc>
   </url>
   <url>
     <loc>/reference/survivalG.html</loc>
@@ -458,5 +455,8 @@
   </url>
   <url>
     <loc>/reference/twostageMLE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/waldTest.html</loc>
   </url>
 </urlset>

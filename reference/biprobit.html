@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -71,7 +71,7 @@
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -244,15 +244,15 @@
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">biprobit</span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>,rho<span class="op">=</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>,data<span class="op">=</span><span class="va">dd</span>,id<span class="op">=</span><span class="st">"id"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">a</span>, mean.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span>, cor.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate   Std.Err       Z p-value    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.0021908 0.0197511  0.1109  0.9117    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x             0.0471934 0.0313266  1.5065  0.1319    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) 0.0096319 0.0393736  0.2446  0.8067    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:x           1.1849488 0.0736096 16.0978  &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    Std.Err       Z p-value    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   -0.0021135  0.0194301 -0.1088 0.91338    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x              0.0238693  0.0313981  0.7602 0.44713    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) -0.0663523  0.0390735 -1.6981 0.08948 .  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:x            1.1260766  0.0731065 15.4032 &lt; 2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2613.559  mean(score^2): 1.445e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2623.337  mean(score^2): 1.002e-08 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n pairs </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4000  2000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -261,13 +261,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Mean          [(Intercept)] + 0.5[x] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.34742  1.28387 1.41097</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      4.55917  3.50812 5.92512</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.53855  0.45895 0.60956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.29922  1.23610 1.36234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.50950  2.72158 4.52552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.45951  0.37537 0.53614</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.35086  0.32395 0.37875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.68757  0.65523 0.71818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.51029  0.48708 0.53345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.32991  0.30323 0.35774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.65470  0.62120 0.68673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.50392  0.48090 0.52692</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">a</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,by<span class="op">=</span><span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p00</span><span class="op">~</span><span class="va">x</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="biprobit-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

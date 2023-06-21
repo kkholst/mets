@@ -18,7 +18,7 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL"><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL"><!-- mathjax --><script sr
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -72,7 +72,7 @@ CIF Fine-Gray (cloglog) regression for propodds=NULL"><!-- mathjax --><script sr
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -208,15 +208,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709596  0.331974  0.274925  0.0326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455392  0.236000  0.187919  0.0537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391201  0.098035  0.083671  0.0001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709606  0.331976  0.274926  0.0326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455294  0.236020  0.187920  0.0537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391173  0.098036  0.083670  0.0001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49184 0.25660 0.9428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63420 0.39934 1.0072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47876 1.22025 1.7920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49184 0.25659 0.9428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63426 0.39936 1.0073</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47871 1.22022 1.7920</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span></span>
@@ -236,15 +236,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.597130  0.270403  0.275784  0.0272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425477  0.180757  0.187724  0.0186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343762  0.080278  0.086288  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.596986  0.270444  0.275785  0.0273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425661  0.180744  0.187723  0.0185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343779  0.080256  0.086280  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55039 0.32397 0.9351</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65346 0.45852 0.9313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41024 1.20493 1.6505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55047 0.32399 0.9353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65334 0.45845 0.9311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41027 1.20500 1.6505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span></span>
@@ -263,13 +263,13 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424109  0.180845  0.187827   0.019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341929  0.079870  0.086289   0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424232  0.180834  0.187824   0.019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341939  0.079847  0.086280   0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65435 0.45907 0.9327</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40766 1.20368 1.6462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65427 0.45902 0.9326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40767 1.20375 1.6461</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sfg</span><span class="op">)</span></span></span>
@@ -280,11 +280,11 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-in"><span><span class="va">Biid</span> <span class="op">&lt;-</span> <span class="fu">IIDbaseline.cifreg</span><span class="op">(</span><span class="va">fg</span>,time<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">FGprediid</span><span class="op">(</span><span class="va">Biid</span>,<span class="va">bmt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           pred     se-log     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.4563797 0.07253368 0.3959000 0.5260985</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5072071 0.07327691 0.4393513 0.5855429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 0.6064137 0.08622457 0.5121233 0.7180646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 0.6026353 0.08566298 0.5094929 0.7128055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 0.4287819 0.07564304 0.3696996 0.4973063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.4564003 0.07253880 0.3959139 0.5261275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5072314 0.07328233 0.4393677 0.5855772</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 0.6064445 0.08622002 0.5121538 0.7180946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 0.6026658 0.08565890 0.5095228 0.7128359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 0.4288004 0.07564522 0.3697140 0.4973298</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

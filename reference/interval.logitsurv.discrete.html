@@ -22,7 +22,7 @@ $$"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ $$"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg.html">Binomial Regression</a>
+      <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
@@ -76,7 +76,7 @@ $$"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/
       <a href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a>
     </li>
     <li>
-      <a href="../articles/survival-ate.html">Average treatment effect (ATE) based on the Cox and Fine-Gray model</a>
+      <a href="../articles/survival-ate.html">G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data</a>
     </li>
     <li>
       <a href="../articles/time-to-event-family-studies-arev.html">A practical guide to Human Genetics with Lifetime Data</a>
@@ -216,16 +216,16 @@ $$</p>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">interval.logitsurv.discrete</span><span class="op">(</span><span class="fu">Interval</span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate Std.Err     2.5%   97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time1  -2.0064  0.1461 -2.29277 -1.7201 6.466e-43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time2  -2.1749  0.1543 -2.47725 -1.8725 3.869e-45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time3  -1.4581  0.1496 -1.75132 -1.1648 1.936e-22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time4  -2.9260  0.2436 -3.40344 -2.4486 3.078e-33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time5  -1.2051  0.1655 -1.52935 -0.8808 3.267e-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time6  -0.9102  0.1790 -1.26103 -0.5594 3.671e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1      0.9913  0.1171  0.76175  1.2208 2.557e-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2      0.6962  0.1156  0.46953  0.9228 1.739e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3      0.3466  0.1150  0.12110  0.5721 2.590e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4      0.3223  0.1147  0.09749  0.5470 4.952e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time1  -2.0064  0.1523 -2.30496 -1.7079 1.273e-39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time2  -2.1749  0.1599 -2.48838 -1.8614 4.118e-42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time3  -1.4581  0.1544 -1.76071 -1.1554 3.636e-21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time4  -2.9260  0.2453 -3.40677 -2.4453 8.379e-33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time5  -1.2051  0.1706 -1.53946 -0.8706 1.633e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time6  -0.9102  0.1860 -1.27468 -0.5457 9.843e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1      0.9913  0.1179  0.76024  1.2223 4.100e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2      0.6962  0.1162  0.46847  0.9238 2.064e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3      0.3466  0.1159  0.11941  0.5738 2.788e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4      0.3223  0.1151  0.09668  0.5478 5.111e-03</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu">predictlogitSurvd</span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="haplo.surv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span></span>
