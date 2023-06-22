@@ -37,7 +37,7 @@ in the context of mediation analysis using mediation weights as in the medFlex p
 We thus fit natural effects models, that for example on the binary scale might state
 that
 \begin{align*}
-\mbox{logit}(P(Y(x,M(x^*))=1| Z)  = \beta_0+ \beta_1 x + \beta_1^* x^* + \beta_3^T Z,
+\mbox{logit}(P(Y(x,M(x^*))=1| Z)  = \beta_0+ \beta_1 x + \beta_2 x^* + \beta_3^T Z,
 \end{align*}
 in this case the the Natural Direct Effect (NDE) for fixed covariates $Z$ is 
 \begin{align*}
