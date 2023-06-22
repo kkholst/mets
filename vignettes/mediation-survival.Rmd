@@ -157,13 +157,15 @@ We here also illustrate how to use the other models mentioned above.
 
 ```{r, label=multiplemodels}
 ### lin-ying model ################################################################
-aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights)
+aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		   weights=wdata$weights)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### cox model ###############################################################################
-aaMss <- phreg(Surv(time,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights)
+aaMss <- phreg(Surv(time,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+	       weights=wdata$weights)
 summary(aaMss)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
