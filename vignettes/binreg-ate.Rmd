@@ -123,7 +123,7 @@ transplantation from the Center for International Blood and Marrow Transplant Re
 analysis".  The data used in this paper consist of patients transplanted from 1995 to
 2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
 versus 1995-2000 (N=375). The two competing events were
-relapse and treatment-related mortality (TRM) defined as death without relapse.
+relapse (cause 2) and treatment-related mortality (TRM, cause 1) defined as death without relapse.
 \cite{kumar-2012} considered the following risk covariates: 
 transplant time period (gp (main interest of the study): 1 for transplanted in
 2001-2005 versus 0 for transplanted in 1995-2000), donor type (dnr: 1 for Unrelated or

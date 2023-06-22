@@ -49,11 +49,10 @@ and the Natural Inderect Effect (NIE) for fixed covariates $Z$ is
 \end{align*}
 See the medFlex package for additional discussion of the parametrization.
 
-
-The mediator can 
+The mediator can  be
 
  * binomial using glm-binomial.
- * multnomial via the mlogit function 
+ * multnomial via the mlogit function of mets
 
 Both mediator and exposure must be coded as factors.
 
@@ -68,6 +67,30 @@ The key is that the standard errors are computed using the i.i.d influence
 functions and a Taylor expansion to deal with the uncertainty from the
 mediation weights. 
 
+
+Simulated Data 
+==============
+
+First we simulate some data that mimics that of Kumar et al 2012. 
+This is data from multiple myeloma patients treated with allogeneic stem cell
+transplantation from the Center for International Blood and Marrow Transplant Research
+(CIBMTR) Kumar et al (2012), "Trends in allogeneic stem cell transplantation for multiple myeloma: a CIBMTR
+analysis".  The data used in this paper consist of patients transplanted from 1995 to
+2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
+versus 1995-2000 (N=375). The two competing events were
+relapse (cause 2) and treatment-related mortality (TRM, cause 1)) 
+defined as death without relapse.
+\cite{kumar-2012} considered the following risk covariates: 
+transplant time period (gp (main interest of the study): 1 for transplanted in
+2001-2005 versus 0 for transplanted in 1995-2000), donor type (dnr: 1 for Unrelated or
+other related donor (N=280) versus 0 for HLA-identical sibling (N=584)), prior
+autologous transplant (preauto: 1 for Auto+Allo transplant (N=399) versus 0 for
+allogeneic transplant alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months (N=289) versus 0 for less than or
+equal to 24 months (N=575))). 
+
+The interest is then on the effect of the period (gp) and the possible mediation
+via the amount of unrealted or related donors (dnr). A somewhat artificial example ! 
+All adjusted for other important counfounders. 
 
 ```{r}
  library(mets)
@@ -87,28 +110,52 @@ dat$id <- 1:n
 dat$ftime <- 1
 ```
 
-Compute mediation weights   based on fitted  model 
+
+Mediation Weights 
+=================
+
+Then  compute the mediation weights  based on a mediation model
 
 ```{r}
 weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
 wdata <- medweight(fit,data=dat)
-
-aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
-summary(aaMss2)
-aaMss22 <- binreg(Event(time,status)~dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
-summary(aaMss22)
 ```
 
+Binomial Regression 
+===================
 
-```{r, label=multiplemodels}
+A simple multvariate regression of the probaibility of relapse at 50 months with both
+exposure and mediator (given the other covariates)
+
+```{r}
+aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
+summary(aaMss2)
+```
+
+Binomial regression IPCW Mediation Analysis 
+===========================================
+
+We first look at the probability of  relapse at 50 months
+
+```{r, label=firstmodel}
 ### binomial regression ###########################################################
-aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cause=2)
+aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		time=50,weights=wdata$weights,cause=2)
 summary(aaMss)
 
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+```
 
+So the  NDE is $1.40 (0.72,2.76)$ and the NIE is $1.32 (1.05,1.66)$. 
+
+Mediation Analysis 
+====================
+
+We here also illustrate how to use the other models mentioned above. 
+
+```{r, label=multiplemodels}
 ### lin-ying model ################################################################
 aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
@@ -123,22 +170,24 @@ summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### Fine-Gray #############################################################3
-aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights,propodds=NULL,cause=2)
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		weights=wdata$weights,propodds=NULL,cause=2)
 summary(aaMss)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
-
 ### logit model  #############################################################3
-aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,weights=wdata$weights,cause=2)
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		weights=wdata$weights,cause=2)
 summary(aaMss)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### binomial outcome  ############################
-aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,time=50,weights=wdata$weights,cens.weights=1,cause=2)
+aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		time=50,weights=wdata$weights,cens.weights=1,cause=2)
 summary(aaMss)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
@@ -161,7 +210,8 @@ dcut(tTRACE) <- ~.
 weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
 wdata <- medweight(fit,data=tTRACE)
 
-aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,time=7,weights=wdata$weights,cause=9)
+aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
+		time=7,weights=wdata$weights,cause=9)
 summary(aaMss)
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
 ```
