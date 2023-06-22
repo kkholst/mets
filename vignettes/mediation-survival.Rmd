@@ -41,11 +41,11 @@ that
 \end{align*}
 in this case the the Natural Direct Effect (NDE) for fixed covariates $Z$ is 
 \begin{align*}
- \mbox{OR}_{1,0|Z}^{NDE} = \frac{\mbox{odds}(Y(1,M(x))|Z)}{\mbox{odds}(Y(0,M(x))|Z)}  = \exp(\beta_1),
+ \mbox{OR}_{1,0|Z}^{\mbox{NDE}} = \frac{\mbox{odds}(Y(1,M(x))|Z)}{\mbox{odds}(Y(0,M(x))|Z)}  = \exp(\beta_1),
 \end{align*}
 and the Natural Inderect Effect (NIE) for fixed covariates $Z$ is 
 \begin{align*}
- \mbox{OR}_{1,0|Z}^{NDE} = \frac{\mbox{odds}(Y(x,M(1))|Z)}{\mbox{odds}(Y(x,M(0))|Z)} = \exp(\beta_2).
+ \mbox{OR}_{1,0|Z}^{\mbox{NIE}} = \frac{\mbox{odds}(Y(x,M(1))|Z)}{\mbox{odds}(Y(x,M(0))|Z)} = \exp(\beta_2).
 \end{align*}
 See the medFlex package for additional discussion of the parametrization.
 
