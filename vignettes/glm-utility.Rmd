@@ -1,0 +1,59 @@
+---
+title: "GEE cluster standard errors and predictions for glm objects" 
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{GEE cluster standard errors and predictions for glm objects}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Utility functions for GLM objects
+=================================
+
+Getting the OR with confidence intervals  using the GEE (sandwhich) 
+standard errors
+
+```{r}
+set.seed(100)
+
+library(mets)
+data(bmt); 
+bmt$id <- sample(1:100,408,replace=TRUE)
+
+glm1 <- glm(tcell~platelet+age,bmt,family=binomial)
+summaryGLM(glm1)
+
+## GEE robust standard errors
+summaryGLM(glm1,id=bmt$id)
+```
+
+Predictions also simple 
+
+```{r}
+nd <- data.frame(platelet=0,age=c(-1,0,1,2))
+predictGLM(glm1,nd)
+```
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+
