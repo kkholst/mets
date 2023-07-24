@@ -184,7 +184,7 @@ simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,...)
 #' cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 #' 
 #' @export 
-#' @aliases cause.pchazard.sim 
+#' @aliases cause.pchazard.sim  rcrisks
 rcrisk <-function(cumhaz1,cumhaz2,rr1,rr2,n=NULL,cens=NULL,rrc=NULL,...)
 {#'# {{{
  
@@ -212,6 +212,44 @@ if (!is.null(cens)) {
 
 return(ptt)
 }# }}}
+
+#' @export 
+rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,...)
+{#'# {{{
+ 
+  status <- NULL
+  if (!is.null(n)) rrs <- matrix(1,n,length(cumhazs)) 
+  n <- nrow(rrs); 
+
+  if (!is.null(cens)) cens <- list(cens)
+  if (!is.null(cens)) { 
+	  if (is.null(rrc)) rrc <- rep(1,n); 
+	  rrs <- cbind(rrs,rrc)
+  }
+  cumss  <-  c(cumhazs,cens)
+  for (i in seq_along(cumss))  cumss[[i]] <- rbind(0,cumss[[i]])
+  cumss <- extendCums(cumss,NULL)
+
+  ## first time
+  ptt <- rchaz(cumss[[1]],rrs[,1],entry=entry)
+
+  ## other times and always min 
+  if (length(cumss)>=2)
+  for (i in 2:length(cumss)) {
+  cum <- cumss[[i]]
+  ptt1 <- rchaz(cumss[[i]],rrs[,i],entry=entry)
+  ptt <- data.frame(time=pmin(ptt$time,ptt1$time),entry=ptt1$entry,
+                    status=ifelse(ptt$time<=ptt1$time,ptt$status,ptt1$status*i))
+  }
+  if (!is.null(cens)) ptt <- dtransform(ptt,status=0,status==length(cumss))
+
+  if (!is.null(causes))  {
+	  ptt$status <- c(0,causes)[ptt$status+1]
+  }
+
+return(ptt)
+}# }}}
+
 
 #' @export 
 cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)

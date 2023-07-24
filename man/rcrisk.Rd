@@ -3,6 +3,7 @@
 \name{rcrisk}
 \alias{rcrisk}
 \alias{cause.pchazard.sim}
+\alias{rcrisks}
 \title{Simulation of Piecewise constant hazard models with two causes (Cox).}
 \usage{
 rcrisk(cumhaz1, cumhaz2, rr1, rr2, n = NULL, cens = NULL, rrc = NULL, ...)

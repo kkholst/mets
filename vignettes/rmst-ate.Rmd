@@ -25,13 +25,23 @@ library(mets)
 RMST 
 ====
 
-Regression for rmst outcome $E(T \wedge t | X) = exp(X^T \beta)$ based on IPCW adjustment for censoring. For full
-censoring model this is equal to integral of Kaplan-Meier. Also possible to compute Kaplan-Meier or Cox based 
-estimator or rmst \[ \int_0^t S(s|X) ds \].
+Regression for rmst outcome $E(T \wedge t | X) = exp(X^T \beta)$ based on IPCW adjustment for censoring, thus solving
+the estimating equation 
+\begin{align*}
+ & X^T [ (T \wedge t) \frac{I(C > T \wedge t)}{G_C(T \wedge t,X)} - exp(X^T \beta) ] = 0 .
+\end{align*}
+This is done with the resmeanIPCW function. 
+For fully saturated model with full censoring model this is equal to the integrals of the Kaplan-Meier estimators as
+illustrated below. 
 
-For competing risks the years lost can be computed via cumulative incidence functions or as
-IPCW estimator since  \[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \] 
-For full censoring model these estimators are also equivalent.
+We can also compute the integral of the Kaplan-Meier or Cox based  survival estimator to
+get the RMST (with the resmean.phreg function)
+\[ \int_0^t S(s|X) ds \].
+
+For competing risks the years lost can be computed via cumulative incidence functions (cif.yearslost)
+or as IPCW estimator since  
+\[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \] 
+For fully saturated model with full censoring model these estimators are equivalent as illustrated below.
 
 
 ```{r}
@@ -65,7 +75,7 @@ set.seed(100)
 Average treatment effect 
 =========================
 
-Computes average treatment effect for restricted mean survival 
+Computes average treatment effect for restricted mean survival and years lost in competing risks situation
 
 ```{r}
 
