@@ -3,7 +3,7 @@
 \name{summaryGLM}
 \alias{summaryGLM}
 \alias{predictGLM}
-\title{Reporting OR from glm with binomial link and glm predictions}
+\title{Reporting OR (exp(coef)) from glm with binomial link and glm predictions}
 \usage{
 summaryGLM(object, id = NULL, fun = NULL, ...)
 }

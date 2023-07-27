@@ -1016,10 +1016,12 @@ predictGLM <- function(object,newdata,id=NULL,fun=NULL,link.conf=TRUE,...) {# {{
         m <- model.frame(Terms, newdata, xlev = object$xlevels)
         X <- model.matrix(Terms, m, contrasts.arg = object$contrasts)
     }
+    offsets <- rep(0,nrow(X))
+    if (!is.null(object$offset)) offsets <- m[, grep("offset", names(m))] 
 
 if (!is.null(object$family$linkinv)) linkinv <- object$family$linkinv  else linkinv <- function(x) x
-f <- function(p) { pp <- X %*% p; return(linkinv(pp)); }
-fl <- function(p) { pp <- X %*% p; return(pp); }
+f <- function(p) { pp <- X %*% p+offsets; return(linkinv(pp)); }
+fl <- function(p) { pp <- X %*% p+offsets; return(pp); }
 if (!is.null(fun))  f <- fun
 
 if (!is.null(id)) coef <- estimate(object,id=id,...) else coef <- estimate(object,...)
@@ -1036,7 +1038,7 @@ return(list(coef=coef,pred=res))
 }
 # }}}
 
-##' Reporting OR from glm with binomial link and glm predictions
+##' Reporting OR (exp(coef)) from glm with binomial link and glm predictions
 ##' 
 ##' Reporting OR from glm with binomial link  and glm predictions
 ##' 
