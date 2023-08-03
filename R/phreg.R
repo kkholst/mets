@@ -3,7 +3,7 @@
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	   offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
              beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
-	     case.weights=NULL,no.var=0,...) {
+	     case.weights=NULL,no.var=0,augmentation=0,...) {
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(exit)))
@@ -51,6 +51,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 	      else val <- with(dd, .Call("FastCoxPLstrataAddGam",pp,X,XX,sign,jumps, strata,nstrata,weights,offset,ZX,
 					 AddGam$theta,AddGam$dimthetades,AddGam$thetades,AddGam$ags,AddGam$varlink,AddGam$dimjumprv,AddGam$jumprv,
 					 AddGam$JumpsCauses,PACKAGE="mets"))
+	      val$gradient <- val$gradient+augmentation
       } else {
 	      val <- list(jumps=NULL,ploglik=NULL,U=NULL,gradient=NULL,hessian=NULL,hessiantime=NULL,S2S0=NULL,E=NULL,S0=NULL)
       }
@@ -735,13 +736,13 @@ IIDbaseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
   U <- E <- matrix(0,nrow(xx$X),x$p)
   E[xx$jumps+1,] <- x$E
   U[xx$jumps+1,] <- x$U
-  ###    
-  cumhaz <- c(cumsumstrata(S0i,xx$strata,xx$nstrata))
-  ### only up to time t
+  ### only up to time t for A
   if (is.null(ft))  ft <- rep(1,length(xx$time))
+  if (is.matrix(ft)) ft <- c(ft)
+  cumhaz <- c(cumsumstrata(ft*S0i,xx$strata,xx$nstrata))
   cumS0i2 <- c(cumsumstrata(ft*S0i2*btimexx,xx$strata,xx$nstrata))
   if (fixbeta==0) {
-	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+	  EdLam0 <- apply(ft*E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
 	  Ht <- apply(ft*E*S0i*btimexx,2,cumsumstrata,xx$strata,xx$nstrata)
   } else Ht <- NULL
   if (fixbeta==0) rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset)) else rr <- c(xx$sign*exp(xx$offset))
@@ -752,7 +753,7 @@ IIDbaseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,...)
   MGtiid <- NULL
   if (fixbeta==0) {# {{{
      invhess <- -solve(x$hessian)
-     MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
+     MGt <- ft*U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
      MGt <- MGt %*% invhess
      MGtiid <- apply(MGt,2,sumstrata,id,mid)
      ## Ht efter strata
