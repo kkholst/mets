@@ -417,7 +417,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
      S0 <- cr$S0[timeb]
      gammahat[is.na(gammahat)] <- 0
      gammahat[gammahat==Inf] <- 0
-     Gctb <- Gc[cr$jumps][timeb]
+     Gctb <- Gc[cr$cox.prep$jumps+1][timeb]
      augment.times <- sum(apply(gammahat*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum))/nid
      mterms <- length(terms)
      mterms <- nterms
