@@ -2869,6 +2869,7 @@ print.phreg  <- function(x,...) {
 ##' @param km use Kaplan-Meier for the censoring weights (stratified on treatment)
 ##' @param cens.code censoring code 
 ##' @param level of confidence intervals 
+##' @param cens.model=NULL, default is censoring model ~strata(treatment) but any model can be used to make censoring martingales
 ##' @param typeII if 1 then computes also alternative formulae that are based on the censoring martingale rather than the robust processes of  Lu-Tsiatis computations. 
 ##' @param ... Additional arguments to phreg function 
 ##' @author Thomas Scheike
@@ -2883,7 +2884,7 @@ print.phreg  <- function(x,...) {
 ##' out$coefs
 ##' @export
 logrank_lt <- function(formula,data,augmentR=NULL,augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
-		       typeII=NULL,...) {# {{{
+		       cens.model=NULL,typeII=NULL,...) {# {{{
 
 ### ... for phreg
 fit0 <- phreg(formula, data=data,...)
@@ -2892,7 +2893,8 @@ varss <- all.vars(formula)
 ## last variable
 treat.name <-  varss[length(varss)]
 Z <- data[,treat.name]
-pi <-  mean(Z)
+ptreat <- glm(Z~+1,data=data,family=binomial)
+pi0 <- lava::expit(coef(ptreat))
 
 ea <- (lava::iid(fit0) %*% fit0$hessian)
 
@@ -2900,19 +2902,30 @@ AugR <- AugR.iid <- 0
 if (!is.null(augmentR)) {
    ## design without intercept
    XR <- model.matrix(augmentR,data)[,-1]
-   XR <- XR* (Z-pi)
-   AugR.iid <- XR %*% solve(crossprod(XR)) %*% crossprod(XR, ea)
+   gamma.R <- solve(crossprod(XR)) %*% crossprod(XR, ea)
+   XR <- XR %*% gamma.R
+   AugR.iid <- (Z-pi0)* XR
    AugR <- sum(AugR.iid)
+
+   ## iid term for predicted P(treat=1)
+   explp <- exp(coef(ptreat))
+   iid.treat <- lava::iid(ptreat,id=fit0$id)
+   iid.treat <- -sum(XR)*(pi0/(1+explp))*iid.treat
+   AugR.iid <- AugR.iid + iid.treat
 }
 
 AugC <- AugC.times <- AugC.iid <- varC.improve <- 0
 AugClt <- AugClt.iid <- 0
 if (!is.null(augmentC)) {# {{{
+
   ## formulaC with or without start,stop formulation
+  if (is.null(cens.model)) cens.model <- as.formula(paste("~strata(",treat.name,")"))
+
   if (length(varss)==3) 
-  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],"==",cens.code,")~strata(",varss[3],")"))
+  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],"==",cens.code,")~."))
   else 
-  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],",",varss[3],"==",cens.code,")~strata(",varss[4],")"))
+  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],",",varss[3],"==",cens.code,")~."))
+  formulaC <- update.formula(formulaC,cens.model)
 
   varsC <- attr(terms(augmentC),"term.labels")
   formCC <- update(formulaC, reformulate(c(".", varsC)))
@@ -2966,34 +2979,33 @@ if (!is.null(augmentC)) {# {{{
 }
 # }}}
 
-
-fit0lt <- phreg(formula,data=data,augmentation=AugR+AugClt,no.var=1)
+fit0lt <- phreg(formula,data=data,augmentation=AugR+AugClt,no.var=1,...)
 iidlt <- (ea-AugClt.iid-AugR.iid ) %*% fit0$ihessian
 var.betalt <- crossprod(iidlt)
 
 if (!is.null(typeII)) {
-fit0rc <- phreg(formula,data=data,augmentation=AugR+AugC,no.var=1)
+fit0rc <- phreg(formula,data=data,augmentation=AugR+AugC,no.var=1,...)
 iid <- (ea-AugC.iid-AugR.iid ) %*% fit0$ihessian
 var.beta <- crossprod(iid)
 coefAugCR <- estimate(coef=coef(fit0rc),vcov=var.beta,level=level)$coefmat
 } else coefAugCR <- NULL
 
 if (!is.null(typeII)) {
-fit0c <- phreg(formula,data=data,augmentation=AugC,no.var=1)
+fit0c <- phreg(formula,data=data,augmentation=AugC,no.var=1,...)
 iidc <- (ea-AugC.iid ) %*% fit0$ihessian
 var.betac <- crossprod(iidc)
 coefaugc <- estimate(coef=coef(fit0c),vcov=var.betac,level=level)$coefmat
 } else coefAugC <- NULL
 
-fit0clt <- phreg(formula,data=data,augmentation=AugClt,no.var=1)
+fit0clt <- phreg(formula,data=data,augmentation=AugClt,no.var=1,...)
 iidclt <- (ea-AugClt.iid ) %*% fit0$ihessian
 var.betaClt <- crossprod(iidclt)
 
-fit0r <- phreg(formula,data=data,augmentation=AugR,no.var=1)
+fit0r <- phreg(formula,data=data,augmentation=AugR,no.var=1,...)
 iidR <- (ea-AugR.iid ) %*% fit0$ihessian
 var.betaR <- crossprod(iidR)
 
-fit0rct <- phreg(formula,data=data,augmentation=AugR+AugC.times,no.var=1)
+fit0rct <- phreg(formula,data=data,augmentation=AugR+AugC.times,no.var=1,...)
 var.betat <- var.betaR + varC.improve * fit0$ihessian^2
 if (var.betat<0)  var.betat <- var.betaR
 
