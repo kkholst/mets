@@ -70,7 +70,7 @@ binregATE(
 
 \item{model}{possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)}
 
-\item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, \epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
+\item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
 
 \item{...}{Additional arguments to lower level funtions}
 }
