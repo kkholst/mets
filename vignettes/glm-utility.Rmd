@@ -44,8 +44,12 @@ summaryGLM(glm1,id=bmt$id)
 Predictions also simple 
 
 ```{r}
-nd <- data.frame(platelet=0,age=c(-1,0,1,2))
-predictGLM(glm1,nd)
+age <- seq(-2,2,by=0.1)
+nd <- data.frame(platelet=0,age=seq(-2,2,by=0.1))
+pnd <- predictGLM(glm1,nd)
+head(pnd$pred)
+plot(age,pnd$pred[,1],type="l",ylab="predictions",xlab="age",ylim=c(0,0.3))
+matlines(age,pnd$pred[,-1],col=2)
 ```
 
 SessionInfo
