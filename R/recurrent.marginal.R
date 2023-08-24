@@ -20,8 +20,8 @@
 ##' @author Thomas Scheike
 ##' 
 ##' @references 
-##'             Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, 
-##'             Biometrics, 554--562.
+##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
+##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @examples
 ##'
 ##' data(base1cumhaz)

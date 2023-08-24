@@ -360,6 +360,16 @@ First we generate data that from a Ghosh-Lin model with $\beta=(-0.3,0.3)$ and t
 this is done under the assumption that the death rate given covariates are on Cox form with baseline ddr: 
 
 ```{r}
+n <- 200
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+fz <- NULL
+rr <- mets:::simGLcox(n,base1,ddr,var.z=0,r1=r1,rd=rd,rc=rc,fz,model="twostage",cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
 
  out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
  outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
