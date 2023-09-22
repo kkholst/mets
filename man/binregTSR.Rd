@@ -109,12 +109,13 @@ Standard errors are estimated using the influence function  of all estimators an
 subsequently.
 }
 \examples{
-ddf <- gsim(n,covs=covs,null=null,cens=cens,ce=ce)
+
+ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),
 		cens.code=0,treat.model0=A0.f~+1, treat.model1=A1.f~A0.f,
 		augmentR1=~X11+X12+TR, augmentR0=~X01+X02,augmentC=~A0+X01+X02+A1+X11+X12+TR,
-		response.code=2,...)
+		response.code=2)
 summary(bb) 
 }
 \author{
