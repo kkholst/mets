@@ -2,7 +2,6 @@
 % Please edit documentation in R/binregTSR.R
 \name{binregTSR}
 \alias{binregTSR}
-\alias{simMultistateII}
 \title{2 Stage Randomization for Survival Data or competing Risks Data}
 \usage{
 binregTSR(
@@ -94,7 +93,7 @@ The treatment's must be given as factors.
 }
 \details{
 The solved estimating eqution is 
-\deqn{  (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 - AUG_C  -  p(i,j)) = 0 }
+\deqn{  (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 }
 where  using the covariates from augmentR0
 \deqn{ AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0}
 and  using the covariates from augmentR1
@@ -129,7 +128,7 @@ subsequently.
  dfactor(iddata) <- A1.f~A1
 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),iddata,time=3000,cause=c(4),cens.code=0,
-	treat.model0=A0.f~+1, treat.model1=A1.f~A0.f,
+	treat.model0=A0.f~+1,treat.model1=A1.f~A0.f,
 	augmentR1=~X11+X12+R4, augmentR0=~X01+X02, augmentC=~A0+X01+X02+A1+X11+X12+R4, response.code=2)
 }
 \author{
