@@ -32,11 +32,11 @@ logrank_lt(
 
 \item{level}{of confidence intervals}
 
+\item{cens.model, }{default is censoring model ~strata(treatment) but any model can be used to make censoring martingales}
+
 \item{typeII}{if 1 then computes also alternative formulae that are based on the censoring martingale rather than the robust processes of  Lu-Tsiatis computations.}
 
 \item{...}{Additional arguments to phreg function}
-
-\item{cens.model=NULL, }{default is censoring model ~strata(treatment) but any model can be used to make censoring martingales}
 }
 \description{
 Efficient implementation of the Lu-Tsiatis improvement using baseline covariates. Results

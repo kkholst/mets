@@ -243,6 +243,7 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   if (!is.null(intpos  <- attributes(Terms)$intercept))
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
   res <- c(phreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
    list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
 	cluster.pos=pos.cluster,n=length(exit)))
@@ -2869,7 +2870,7 @@ print.phreg  <- function(x,...) {
 ##' @param km use Kaplan-Meier for the censoring weights (stratified on treatment)
 ##' @param cens.code censoring code 
 ##' @param level of confidence intervals 
-##' @param cens.model=NULL, default is censoring model ~strata(treatment) but any model can be used to make censoring martingales
+##' @param cens.model, default is censoring model ~strata(treatment) but any model can be used to make censoring martingales
 ##' @param typeII if 1 then computes also alternative formulae that are based on the censoring martingale rather than the robust processes of  Lu-Tsiatis computations. 
 ##' @param ... Additional arguments to phreg function 
 ##' @author Thomas Scheike
