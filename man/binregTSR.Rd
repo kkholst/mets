@@ -109,27 +109,13 @@ Standard errors are estimated using the influence function  of all estimators an
 subsequently.
 }
 \examples{
- data(base1cumhaz)
- data(base4cumhaz)
- data(drcumhaz)
- dr <- scalecumhaz(drcumhaz,0.5)
- base1 <- scalecumhaz(base1cumhaz,0.1)
- base4 <- scalecumhaz(base4cumhaz,0.5)
- cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
+ddf <- gsim(n,covs=covs,null=null,cens=cens,ce=ce)
 
- n <- 100
- iddata <- mets:::simdataTSR(n,base1,list(dr,base4),list(base4,dr),cens=cens)
- idd <- subset(iddata,tid==1 | ((tid==2) & cid==2))
- idd$R <- 1*(idd$entry > 0)
- ## sets up fake response
- response <- rbinom(n,1,0.5)
- iddata$response <- as.factor(response[iddata$id]*iddata$Count2)
- dfactor(iddata) <- A0.f~A0
- dfactor(iddata) <- A1.f~A1
-
-bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),iddata,time=3000,cause=c(4),cens.code=0,
-	treat.model0=A0.f~+1,treat.model1=A1.f~A0.f,
-	augmentR1=~X11+X12+R4, augmentR0=~X01+X02, augmentC=~A0+X01+X02+A1+X11+X12+R4, response.code=2)
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),
+		cens.code=0,treat.model0=A0.f~+1, treat.model1=A1.f~A0.f,
+		augmentR1=~X11+X12+TR, augmentR0=~X01+X02,augmentC=~A0+X01+X02+A1+X11+X12+TR,
+		response.code=2,...)
+summary(bb) 
 }
 \author{
 Thomas Scheike
