@@ -1817,14 +1817,23 @@ for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ cbind(Aiid$base.iid,Ai
 vv <- crossprod(risk.iid)
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
+
+if (inherits(x,"phreg"))  { 
+out <- estimate(coef=1-Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
+sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
+ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])/(1-p[1]),null=1)
+out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,vcov=vv)
+} 
+if (inherits(x,"cifreg")) { 
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
-ed <- estimate(coef=Grisk,vcov=vv,f=function(p) p[-1]-p[1])
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) p[-1]/p[1],null=1)
+ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])-(p[1]))
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
+}
 class(out) <- "survivalG"
 return(out)
 } ## }}}
-
 
 ###{{{ summary 
 
@@ -1853,7 +1862,6 @@ print.summary.survivalG  <- function(x,...) {
 
 ###}}} summary 
 # }}}
-
 
 
 ##' Fast additive hazards model with robust standard errors 

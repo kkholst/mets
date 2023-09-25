@@ -799,6 +799,8 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 	    beta0=c(0.1,0.5,-0.5),beta1=c(0.4,0.3,0.5,-0.5),betaR=c(-0.3,-0.5,0.5)) 
    {# {{{
  
+	    Count2 <- TR <- NULL
+
    X0 <- matrix(rbinom(2*n,1,0.5),n,2)
    expit <- function(x)  return(1/(1+exp(-x)))
    betaX1 <- 0*c(2.7,-2.7)
@@ -866,7 +868,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
   data <- data.frame(time=time,T10=T10,Tt11=Tt11,Tt12=Tt12,TT=TT,status=status,A1=A1,A0=A0,R1=R1,R2=R2,R=(A0==1)*R1+(A0==2)*R2,id=1:n,TR=(A0==1)*TR1+(A0==2)*TR2)
   dfactor(data) <- A0.f~A0
   dfactor(data) <- A1.f~A1
-  datat <- event.split(data,cuts="TR",name.start="entry")
+  datat <- timereg::event.split(data,cuts="TR",name.start="entry")
 
   datat <- dtransform(datat,status=2,time==TR)
   datat  <-  count.history(datat,types=2)
