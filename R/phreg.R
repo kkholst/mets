@@ -1723,6 +1723,8 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param time for estimate
 ##' @param Avalues values to compare for first covariate A
 ##' @param varname if given then averages for this variable, default is first variable
+##' @param same.data assumes that same data is used for fitting of survival model and averaging. 
+##' @param id might be given to link to data to iid decomposition of survival data
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -1737,7 +1739,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 ##' summary(survivalG(ss,bmt,50))
 ##' @export
-survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL)
+survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRUE,id=NULL)
 {# {{{
 
 if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
@@ -1806,15 +1808,25 @@ for (a in nlevs) { ## {{{
  k <- k+1
 } ## }}}
 
+predictAiid <- NULL
+###
 Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
-###icf <- Gf(theta,ic=1)
-######
-###DG <- numDeriv::jacobian(Gf,theta,ic=0)
 nid <- max(x$id)
-risk.iid <- apply(risk.iid,2,sumstrata,x$id-1,nid)/nid 
-for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
-vv <- crossprod(risk.iid)
+if (same.data) {
+   risk.iid <- apply(risk.iid,2,sumstrata,x$id-1,nid)/nid 
+   for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
+   vv <- crossprod(risk.iid)
+} else {
+   nid <- nrow(Xa) 
+   nidcox <- max(x$id)
+   predictAiid <- matrix(0,nid,ncol(risks))
+   for (a in seq_along(nlevs))  {
+	risk.iid[,a] <- risk.iid[,a] 
+	predictAiid[,a] <- cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
+        vv <- crossprod(risk.iid)+crossprod(predictAiid)
+   }
+}
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
 
@@ -1825,12 +1837,13 @@ ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
 rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])/(1-p[1]),null=1)
 out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,vcov=vv)
 } 
-if (inherits(x,"cifreg")) { 
+if (inherits(x,"cifreg") | inherits(x,"recreg")) { 
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])-(p[1]))
 rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 }
+
 class(out) <- "survivalG"
 return(out)
 } ## }}}
