@@ -1883,7 +1883,6 @@ print.summary.survivalG  <- function(x,...) {
 }
 
 ###}}} summary 
-# }}}
 
 
 ##' Fast additive hazards model with robust standard errors 
