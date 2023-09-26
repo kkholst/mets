@@ -4,7 +4,15 @@
 \alias{survivalG}
 \title{G-estimator for Cox and Fine-Gray model}
 \usage{
-survivalG(x, data, time = NULL, Avalues = c(0, 1), varname = NULL)
+survivalG(
+  x,
+  data,
+  time = NULL,
+  Avalues = c(0, 1),
+  varname = NULL,
+  same.data = TRUE,
+  id = NULL
+)
 }
 \arguments{
 \item{x}{phreg or cifreg object}
@@ -16,6 +24,10 @@ survivalG(x, data, time = NULL, Avalues = c(0, 1), varname = NULL)
 \item{Avalues}{values to compare for first covariate A}
 
 \item{varname}{if given then averages for this variable, default is first variable}
+
+\item{same.data}{assumes that same data is used for fitting of survival model and averaging.}
+
+\item{id}{might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }

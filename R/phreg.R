@@ -1724,7 +1724,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param Avalues values to compare for first covariate A
 ##' @param varname if given then averages for this variable, default is first variable
 ##' @param same.data assumes that same data is used for fitting of survival model and averaging. 
-##' @param id might be given to link to data to iid decomposition of survival data
+##' @param id might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,  
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -1812,20 +1812,29 @@ predictAiid <- NULL
 ###
 Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
-nid <- max(x$id)
+###
+nid <- nrow(Xa) 
+nidcox <- max(x$id)
+mnid <- max(nid,nidcox)
+
+coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
+if (nid!=nidcox) {
+    coxiid <- apply(coxiid,2,sumstrata,x$id-1,mnid)
+} 
+
+
 if (same.data) {
-   risk.iid <- apply(risk.iid,2,sumstrata,x$id-1,nid)/nid 
-   for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
+   if (is.null(id)) id <- 1:nrow(Xa) else id <- data[,id];  
+   risk.iid <- apply(risk.iid,2,sumstrata,id-1,mnid)/nid 
+   for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/nid
    vv <- crossprod(risk.iid)
 } else {
-   nid <- nrow(Xa) 
-   nidcox <- max(x$id)
-   predictAiid <- matrix(0,nid,ncol(risks))
+   predictAiid <- matrix(0,nidcox,ncol(risks))
    for (a in seq_along(nlevs))  {
 	risk.iid[,a] <- risk.iid[,a] 
-	predictAiid[,a] <- cbind(Aiid$base.iid,Aiid$beta.iid)%*% DariskG[[a]]/nid
-        vv <- crossprod(risk.iid)+crossprod(predictAiid)
+	predictAiid[,a] <- coxiid %*% DariskG[[a]]/nid
    }
+   vv <- crossprod(risk.iid)+crossprod(predictAiid)
 }
 
 ###estimate(lava::estimate(coef=theta,vcov=vv,f=function(p) Gf(p,ic=0))
