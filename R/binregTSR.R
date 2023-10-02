@@ -370,7 +370,7 @@ for (v in seq(nc))  {
 	dataij$W0 <- ((A0==i)-pA0i)/pA0i
 	dataij$W1 <- ((A0==i)/pA0i)*(response!=0)*((A1j)-pA1j)/pA1j
 	dataij$W11 <- ((A0==i)/pA0i)*((A1j))/pA1j
-	dataij$A0i <- A0i
+	dataij$A0i <- (A0==i)*1
 	dataij$A1j <- A1j
 	dataij$i__  <-  i
 	dataij$j__  <-  v
