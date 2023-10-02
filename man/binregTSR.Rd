@@ -30,6 +30,7 @@ binregTSR(
   outcome = c("cif", "rmst", "rmst-cause"),
   model = "exp",
   Ydirect = NULL,
+  return.dataw = 0,
   ...
 )
 }
@@ -83,6 +84,8 @@ binregTSR(
 \item{model}{not implemented, uses linear regression for augmentation}
 
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), see binreg for more on this}
+
+\item{return.dataw}{to return weighted data for all treatment regimes}
 
 \item{...}{Additional arguments to lower level funtions}
 }

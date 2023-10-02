@@ -45,6 +45,7 @@
 ##' @param outcome can be c("cif","rmst","rmst-cause")
 ##' @param model  not implemented, uses linear regression for augmentation
 ##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), see binreg for more on this
+##' @param return.dataw to return weighted data for all treatment regimes
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -63,7 +64,8 @@ binregTSR <- function(formula,data,cause=1,time=NULL,
       augmentC=NULL, cens.model=~+1, estpr=c(1,1),response.name=NULL,
       offset=NULL,weights=NULL,cens.weights=NULL,beta=NULL,
       kaplan.meier=TRUE,no.opt=FALSE,method="nr",augmentation=NULL,
-      outcome=c("cif","rmst","rmst-cause"),model="exp",Ydirect=NULL,...)
+      outcome=c("cif","rmst","rmst-cause"),model="exp",Ydirect=NULL,
+      return.dataw=0,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -337,8 +339,8 @@ nc <- nrow(combo)
 Augment <- Augment.times <-  c()
 dynCgammat <- list()
 
+dataW <- c()
 DA1 <- c()
-
 rnames <- c()
 cown <- 0
 ### looping over A0.f response*A1.f
@@ -368,6 +370,11 @@ for (v in seq(nc))  {
 	dataij$W0 <- ((A0==i)-pA0i)/pA0i
 	dataij$W1 <- ((A0==i)/pA0i)*(response!=0)*((A1j)-pA1j)/pA1j
 	dataij$W11 <- ((A0==i)/pA0i)*((A1j))/pA1j
+	dataij$A0i <- A0i
+	dataij$A1j <- A1j
+	dataij$i__  <-  i
+	dataij$j__  <-  v
+	if (return.dataw==1) dataW <- rbind(dataW,dataij)
 
        ### possibly estimate censoring weights depending on A0.f and A1.f, with weights
 
@@ -645,7 +652,7 @@ riskG.iid <- list(riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG0
 		  riskG.iid=riskG.iid)
 varG <- list(varG=varG, varG0=varG0, varG1=varG1, varG01=varG01)
 val <- list( riskG.iid=riskG.iid,CensAugment.times=Augment.times,
-             dynCens.coef=dynCgammat, riskG=riskG,varG=varG)
+             dynCens.coef=dynCgammat, riskG=riskG,varG=varG,dataW=dataW)
 
   class(val) <- "binregTSR"
   return(val)

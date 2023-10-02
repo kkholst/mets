@@ -1235,7 +1235,7 @@ return(res)
 ##' different causes using the cif.yearslost function that is based on  
 ##' integrating the cumulative incidence functions.  
 ##' One particular feature of these functions are that the restricted mean and years-lost are 
-##' computed for all event times as functions and can be viewed.  When times are given and beyond
+##' computed for all event times as functions and can be plotted/viewed.  When times are given and beyond
 ##' the last event time withn a strata the curves are extrapolated using the estimates of 
 ##' cumulative incidence. 
 ##' 
@@ -1604,6 +1604,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
 	if (inherits(x,"cif") & is.null(ylab)) ylab <- "Probability"
 	if (inherits(x,"resmean_phreg") & is.null(ylab)) ylab <- "Restricted residual mean life"
+	if (inherits(x,"resmean_phreg") & !is.null(x$intF1times)) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (years.lost) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)

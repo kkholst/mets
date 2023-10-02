@@ -70,6 +70,12 @@ set.seed(100)
      rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
      summary(rmc1)
 
+     ## plotting the years lost for different horizon's and the two causes 
+     par(mfrow=c(1,3))
+     plot(rm1,years.lost=TRUE,se=1)
+     ## cause refers to column of cumhaz for the different causes
+     plot(rmc1,cause=1,se=1)
+     plot(rmc1,cause=2,se=1)
 ```
 
 Average treatment effect 
