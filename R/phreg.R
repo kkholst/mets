@@ -101,20 +101,27 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
              function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
   } else II <- matrix(0,p,p)
 
+  ## Brewslow estimator, to handle also possible weights, caseweights that are 0
+  ww <- val$caseweightsJ * val$weightsJ
+  val$S0[abs(ww)<.00000001] <- 0 
+
   ### computes Breslow estimator 
   if (cumhaz==TRUE & (length(val$jumps)>0)) { # {{{
 	 strata <- val$strata[val$jumps]
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
 
-	 ## Brewslow estimator
-	 cumhaz <- cbind(jumptimes,cumsumstrata(1/val$S0,strata,nstrata))
+	 ## Brewslow estimator, to handle also possible weights, caseweights that are 0
+	 S0i2 <- S0i <- rep(0,length(val$S0))
+	 S0i[val$S0>0] <- 1/val$S0[val$S0>0]
+	 S0i2[val$S0>0] <- 1/val$S0[val$S0>0]
+	 cumhaz <- cbind(jumptimes,cumsumstrata(S0i,strata,nstrata))
 	 if ((no.opt==FALSE & p!=0)) { 
-	     DLambeta.t <- apply(val$E/c(val$S0),2,cumsumstrata,strata,nstrata)
+	     DLambeta.t <- apply(val$E*S0i,2,cumsumstrata,strata,nstrata)
 	     varbetat <-   rowSums((DLambeta.t %*% II)*DLambeta.t)
 	 ### covv <-  apply(covv*DLambeta.t,1,sum) Covariance is "0" by construction
 	 } else varbetat <- 0
-	 var.cumhaz <- cumsumstrata(1/val$S0^2,strata,nstrata)+varbetat
+	 var.cumhaz <- cumsumstrata(S0i2,strata,nstrata)+varbetat
 	 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 
 	 colnames(cumhaz)    <- c("time","cumhaz")
@@ -2004,7 +2011,7 @@ return(x)
 ##' @export
 km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 {# {{{
- coxo <- phreg(formula,data=data)
+ coxo <- phreg(formula,data=data,...)
  coxo <- robust.phreg(coxo)
 
  chaz <-     coxo$cumhaz[,2]
@@ -2013,7 +2020,9 @@ km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
  else std.err <-  coxo$se.cumhaz[,2]
  strat <-    coxo$strata[coxo$jumps]
 
- S0i  <-  1/coxo$S0
+ S0i <- rep(0,length(coxo$S0))
+ S0i[coxo$S0>0] <- 1/coxo$S0[coxo$S0>0]
+
  kmt <- exp(cumsumstrata(log(1-S0i),strat,coxo$nstrata))
  temp <- list(surv=kmt)
 
@@ -2292,8 +2301,9 @@ predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus
 {# {{{ default is all time-points from the object
 
    ### take baseline and strata from object# {{{
-   jumptimes <- object$cumhaz[,1]
-   chaz <- object$cumhaz[,2]
+   ocumhaz <- object$cumhaz
+   jumptimes <- ocumhaz[,1]
+   chaz <- ocumhaz[,2]
    if (is.null(object$nstrata)) {  ## try to make more robust
 	nstrata <- 1; 
 	strata <- rep(1,length(jumptimes))

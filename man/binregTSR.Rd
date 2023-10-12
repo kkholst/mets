@@ -31,6 +31,9 @@ binregTSR(
   model = "exp",
   Ydirect = NULL,
   return.dataw = 0,
+  pi0 = 0.5,
+  pi1 = 0.5,
+  cens.time.fixed = 1,
   ...
 )
 }
@@ -86,6 +89,12 @@ binregTSR(
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), see binreg for more on this}
 
 \item{return.dataw}{to return weighted data for all treatment regimes}
+
+\item{pi0}{set up known randomization probabilities}
+
+\item{pi1}{set up known randomization probabilities}
+
+\item{cens.time.fixed}{to use time-dependent weights for censoring estimation using weights}
 
 \item{...}{Additional arguments to lower level funtions}
 }

@@ -11,5 +11,5 @@
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('_mets_RcppExport_registerCCallable', PACKAGE = 'mets')
+    .Call(`_mets_RcppExport_registerCCallable`)
 })

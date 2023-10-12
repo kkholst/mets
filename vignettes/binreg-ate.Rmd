@@ -191,14 +191,16 @@ consequence no-censoring adjustment is done
 First binnary outcome  (can also use binregATE koding cause without censorings values, so setting cens.code=2, and time large)
 
 ```{r}
-
 kumar$cause2 <- 1*(kumar$cause==2)
 
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
+
+## calculate also relative risk
+estimate(coef=b3$riskDR,vcov=b3$var.riskDR,f=function(p) p[1]/p[2])
 ```
 
-Or with continuous response using normal estiamating equations
+Or with continuous response using normal estimating equations
 
 ```{r}
 b3 <- normalATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)

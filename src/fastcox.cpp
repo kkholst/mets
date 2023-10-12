@@ -1581,9 +1581,9 @@ RcppExport SEXP FastCoxPLstrata(SEXP betaSEXP,/*{{{*/
 				Rcpp::Named("S2S0")=XX2,
 				Rcpp::Named("E")=E,
 				Rcpp::Named("S0")=S02,
-				Rcpp::Named("ZXeXb")=ZX2
-				//	    Rcpp::Named("weightsJ")=weightsJ,
-				//	    Rcpp::Named("caseweights")=caseweightsJ
+				Rcpp::Named("ZXeXb")=ZX2,
+				Rcpp::Named("weightsJ")=weightsJ,
+				Rcpp::Named("caseweightsJ")=caseweightsJ
 				));
 	END_RCPP
 }/*}}}*/
