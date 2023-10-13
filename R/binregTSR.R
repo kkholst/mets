@@ -121,7 +121,6 @@ binregTSR <- function(formula,data,cause=1,time=NULL,
   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
   ### id from call coded as numeric 1 -> 
   id <- id+1
-  orig.id <- id.orig <- id;
   nid <- length(unique(id))
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
@@ -211,15 +210,15 @@ binregTSR <- function(formula,data,cause=1,time=NULL,
   obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
   p <- 1
 
-  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
-    if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-    else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
-    else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+  if (!is.null(Ydirect)) Y <-  Ydirect*obs else {
+    if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time))
+    else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs) 
+    else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)
     else stop("outcome not defined") 
   }
+  Yorig <- Y
+  Y <- Y/cens.weights
   dataiid$Y__ <- Y
-  Yorig <- Y*cens.weights
-###  print(cbind(Y,cens.weights,Yorig))
 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status %in% cause)*(exit<=time))
@@ -396,9 +395,9 @@ for (v in seq(nc))  {
        ### using data with time-dependent weights for second treatment only 
 	if (treat.specific.cens==1) {
             data$WW1__ <- 1
-	    data$WW1__[data$response__lag>=1] <- W1k[orig.id][data$response__lag>=1]
+	    data$WW1__[data$response__lag>=1] <- W1k[data$id__][data$response__lag>=1]
             ## use time-fixed weights instead,  
-	    if (cens.time.fixed==1) data$WW1__  <-  W1k[orig.id]
+	    if (cens.time.fixed==1) data$WW1__  <-  W1k[data$id__]
             formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ . +cluster(id__))
             formC <- update.formula(formC,.~.+status__) 
 ###	    print(formC)
@@ -569,12 +568,7 @@ for (v in seq(nc))  {
     btime <- 1*(xx$time<time)
     Yt <- Yt*Wt
     ## compute function h(s) = \sum_i I(s \leq T_i \leq t), \int h(s)/Ys  dM_i^C(s) 
-###    h  <-  revcumsumstrata(Yt*(xx$X[,1] %in% cause)*(xx$sign==1),xx$strata,xx$nstrata)
     h  <-  revcumsumstrata(Yt*xx$sign,xx$strata,xx$nstrata)
-###    summary(h2-h)
-###    browser()
-###    print(xxx)
-###    print(cbind(h,xx$strata,Yt,Wt,Y[xx$id+1],Yorig[xx$id+1],xx$time))
     ### Cens-Martingale as a function of time and for all subjects to handle strata 
     ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
     IhdLam0 <- apply(h*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
@@ -583,9 +577,7 @@ for (v in seq(nc))  {
     MGt <- U[,drop=FALSE]-IhdLam0*xx$sign*c(xx$weights)
     ### Censoring Variance Adjustment  
     MGCiid <- apply(MGt,2,sumstrata,xx$id,nid)
-###    print(summary(MGCiid))
 
-###    print(cbind(riskG.iid[,cown],MGCiid))
     riskG.iid[,cown] <-     riskG.iid[,cown]+MGCiid/nid 
     riskG0.iid[,cown] <-   riskG0.iid[,cown]+MGCiid/nid 
     riskG1.iid[,cown] <-   riskG1.iid[,cown]+MGCiid/nid 
@@ -720,11 +712,9 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 
 riskG <- list( riskG=riskG, riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
 riskG.iid <- list(riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
-		  riskG.iid=riskG.iid)
+		  riskG.iid=riskG.iid,id=id,orig.id=orig.id)
 varG <- list(varG=varG, varG0=varG0, varG1=varG1, varG01=varG01)
-val <- list( riskG.iid=riskG.iid,
-	    MGc=MGc,Ht=Ht,
-	    CensAugment.times=Augment.times,
+val <- list( riskG.iid=riskG.iid, MGc=MGc, CensAugment.times=Augment.times,
             dynCens.coef=dynCgammat,riskG=riskG,varG=varG,dataW=dataW)
 
   class(val) <- "binregTSR"
