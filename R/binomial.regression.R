@@ -957,6 +957,11 @@ diag(hessian) <- diag(hessian)/2
 # {{{ computation of ate, att, atc and their influence functions
 
 ### treatment is rhs of treat.model 
+if (length(all.vars(treat.model))==0) 
+{ respformula  <-  as.formula( paste(all.vars(formula)[3],"~."))
+  treat.model  <- update.formula(treat.model,respformula)
+###  cat("Using propensity score model :\n "); print(treat.model)
+}
 treat.name <-  all.vars(treat.model)[1]
 treatvar <- data[,treat.name]
 if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
@@ -1767,6 +1772,11 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
   
 # {{{ computation of ate, att, atc and their influence functions
+if (length(all.vars(treat.model))==0) 
+{ respformula  <-  as.formula( paste(all.vars(formula)[3],"~."))
+  treat.model  <- update.formula(treat.model,respformula)
+###  cat("Using propensity score model :\n "); print(treat.model)
+}
 
 ## dropping cluster here 
 treat.model <- drop.specials(treat.model,"cluster")
