@@ -281,7 +281,7 @@ if (!is.factor(treatvar0))  treatvar0 <- as.factor(treatvar0)
 treats0 <- treats(treatvar0)
 
 ## fit treatment model for first randomization
-idR0 <-  id.orig[data$Count1__==1] ## first record with first randomization info
+idR0 <-  id[data$Count1__==1] ## first record with first randomization info
 idR0 <- dataiid[,"id__"]
 fitt0 <- fittreat(treat.model0,dataR0,idR0,treats0$ntreatvar,treats0$nlev)
 iidalpha0 <- fitt0$iidalpha
@@ -295,7 +295,7 @@ if (!is.factor(treatvar1))  treatvar1 <- factor(treatvar1)
 
 ## fit treatment model for second randomization   using combined model
 treats1 <- treats(treatvar1)
-###idR1 <- id.orig[data$response__==1 & data$rid__==1] ## first record with first randomization info
+###idR1 <- id[data$response__==1 & data$rid__==1] ## first record with first randomization info
 idR1 <- dataR1[,"id__"]
 dataR1[,treat.name1] <- treatvar1
 fit1 <- fittreat(treat.model1,dataR1,idR1,treats1$ntreatvar,treats1$nlev)
