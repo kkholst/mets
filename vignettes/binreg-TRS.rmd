@@ -39,17 +39,17 @@ using IPCW weighted estimating equations : \\
 
  The solved estimating eqution is 
  \begin{align*}
- (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 
+ \sum_i  \frac{I(min(T_i,t) < G_i)}{G_c(min(T_i ,t))} I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 
  \end{align*}
- where  using the covariates from augmentR0
+ using the covariates from augmentR0 to augment with 
  \begin{align*}
  AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0
  \end{align*}
- and  using the covariates from augmentR1
+ and  using the covariates from augmentR1 to augment with 
  \begin{align*}
  AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1
  \end{align*}
- and   the censoring augmentation is 
+ and  censoring augmenting  with 
  \begin{align*}
   AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) 
  \end{align*}
