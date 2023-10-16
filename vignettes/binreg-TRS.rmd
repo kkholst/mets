@@ -1,0 +1,179 @@
+---
+title: "Two-Stage Randomization for for Competing risks and Survival outcomes"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{Two-Stage Randomization for for Competing risks and Survival outcomes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Two-Stage Randomization for for Competing risks and Survival outcomes
+=====================================================================
+
+ Under two-stage randomization we can estimate the average treatment effect $E(Y(i,\bar k))$ of treatment regime $(i,\bar k)$. 
+
+   - treatment A0=i
+and 
+     -  for all responses, randomization A1 = (k_1), so treatment k_1 
+     -  response*A1 = (k_1, k_2), so treatment k_1 if response 1, and treatment k_2 if response 2.
+
+ The estimator can be agumented in different ways: using the two randomizations and the dynamic censoring augmentatation.
+
+Estimating  $\mu_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) <= t)$, restricted mean
+$E( \min(Y(i,\bar k),\tau))$  or years lost $E( I(\epsilon=v) \cdot (\tau  -  \min(Y(i,\bar k),\tau)))$ 
+using IPCW weighted estimating equations : \\
+
+ The solved estimating eqution is 
+ \begin{align*}
+ (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 
+ \end{align*}
+ where  using the covariates from augmentR0
+ \begin{align*}
+ AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0
+ \end{align*}
+ and  using the covariates from augmentR1
+ \begin{align*}
+ AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1
+ \end{align*}
+ and   the censoring augmentation is 
+ \begin{align*}
+  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) 
+ \end{align*}
+ where $\gamma_c(s)$ is chosen to minimize the variance given the dynamic covariates specified by augmentC.
+
+
+  - The treatment's must be given as factors. 
+  - Treatment for 2nd randomization may depend on response.
+      - Treatment probabilities are estimated by default and uncertainty from this adjusted for.
+  - Randomization augmentation for 1'st and 2'nd randomization possible. 
+  - Censoring model possibly stratified on observed covariates (at time 0). 
+  - Censoring augmentation done dynamically over time  with time-dependent covariates. 
+
+ Standard errors are estimated using the influence function  of all estimators and tests of differences can therefore be computed
+ subsequently.
+
+
+Data must be given on start,stop,status survival format with
+
+ - one code of status indicating response, that is 2nd randomization
+ - other codes defines the outcome of interest
+
+
+```{r}
+library(mets) 
+set.seed(100)
+
+n <- 200
+ddf <- mets:::gsim(n,covs=1,null=0,cens=1,ce=1,betac=c(0.3,1))
+true <- apply(ddf$TTt<2,2,mean)
+true
+datat <- ddf$datat
+## set-random response on data, only relevant after status==2 
+response <- rbinom(n,1,0.5)
+datat$response <- as.factor(response[datat$id]*datat$Count2)
+datat$A000 <- as.factor(1)
+datat$A111 <- as.factor(1)
+
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.f~A0.f,
+		augmentR1=~X11+X12+TR, augmentR0=~X01+X02,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f))
+bb
+
+estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01))
+
+estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01),f=function(p) c(p[1]/p[2],p[3]/p[4]))
+estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01),f=function(p) c(p[1]-p[2],p[3]-p[4]))
+
+```
+
+
+
+
+```{r}
+## 2 levels for each response , fixed weights 
+datat$response.f <- as.factor(datat$response)
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
+		estpr=c(0,0),pi0=0.5,pi1=0.5)
+bb
+
+## 2 levels for each response ,  estimated treat probabilities
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+bb
+
+
+## 2 and 3 levels for each response , fixed weights 
+datat$A1.23.f <- as.numeric(datat$A1.f)
+dtable(datat,~A1.23.f+response)
+datat <- dtransform(datat,A1.23.f=2+rbinom(nrow(datat),1,0.5),
+		    Count2==1 & A1.23.f==2 & response==0)
+dtable(datat,~A1.23.f+response)
+datat$A1.23.f <- as.factor(datat$A1.23.f)
+dtable(datat,~A1.23.f+response|Count2==1)
+###
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
+		estpr=c(1,0),pi1=c(0.3,0.5))
+bb
+
+## 2 and 3 levels for each response , estimated 
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+bb
+
+## 2 and 1 level for each response 
+datat$A1.21.f <- as.numeric(datat$A1.f)
+dtable(datat,~A1.21.f+response|Count2==1)
+datat <- dtransform(datat,A1.21.f=1,Count2==1 & response==1)
+dtable(datat,~A1.21.f+response|Count2==1)
+datat$A1.21.f <- as.factor(datat$A1.21.f)
+dtable(datat,~A1.21.f+response|Count2==1)
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+bb
+
+## known weights 
+bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
+		treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+		augmentR0=~X01+X02, augmentR1=~X11+X12,
+		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
+bb
+```
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+
