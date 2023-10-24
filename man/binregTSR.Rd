@@ -34,6 +34,7 @@ binregTSR(
   pi0 = 0.5,
   pi1 = 0.5,
   cens.time.fixed = 1,
+  outcome.iid = 1,
   ...
 )
 }
@@ -95,6 +96,8 @@ binregTSR(
 \item{pi1}{set up known randomization probabilities}
 
 \item{cens.time.fixed}{to use time-dependent weights for censoring estimation using weights}
+
+\item{outcome.iid}{to get iid contribution from outcome model (here linear regression working models).}
 
 \item{...}{Additional arguments to lower level funtions}
 }
