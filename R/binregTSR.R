@@ -632,10 +632,6 @@ for (v in seq(nc))  {
             cumhazD <- c(cumsumstratasum(S0i, xx$strata, xx$nstrata)$lagsum)
             St <- exp(-cumhazD)
         } else St <- c(exp(cumsumstratasum(log(1 - S0i), xx$strata, xx$nstrata)$lagsum))
-###	plot(cr2)
-###	    abline(a=0,b=1/(2*exp(0)))
-###	    abline(a=0,b=1/(2*exp(0.3)))
-###	    abline(a=0,b=1/(2*exp(0.6)))
 
      nterms <- cr2$p-1
      dhessian <- cr2$hessianttime
@@ -704,7 +700,6 @@ rownames(riskG) <-  rnames
 colnames(riskG) <-  c("coef","se","se-fixed-Gc")[1:2]
 
 
-if (MG.se) {
    varG <- crossprod(riskG.iid)
    riskG <- cbind(riskG,diag(varG)^.5)[,c(1,3)]
 if ((!is.null(augmentR0))) {
@@ -725,7 +720,6 @@ if ((!is.null(augmentR0)) & (!is.null(augmentR1)) ) {
    varG01 <- crossprod(riskG01.iid)
    riskG01 <- cbind(riskG01,diag(varG01)^.5)[,c(1,3)]
 }
-}
 
 if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 
@@ -734,12 +728,6 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###nncont <- c()
 ###for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
 ###rownames(contrast) <- nncont
-###
-###mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=contrast)
-###val$difriskDR <- mm$coef 
-###names(val$difriskDR) <-  rownames(contrast) 
-###val$var.difriskDR <- mm$vcov 
-###val$se.difriskDR <- diag(val$var.difriskDR)^.5
 ###
 
 riskG <- list( riskG=riskG, riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
