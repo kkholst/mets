@@ -494,7 +494,7 @@ for (v in seq(nc))  {
 		      miid <- estimate(llR0) 
 		      miid <-  miid$IC[,-1]/nid
 		      Dma <-  apply(dataij[,newnR0,drop=FALSE],2,sum,drop=FALSE)
-		      miid <-  -c(Dma %*% t(miid))
+		      miid <-  c(Dma %*% t(miid))
 	      } else miid <- 0
 
               risk.iid <- (iid0+estpr[1]*iidpala0+estpr[2]*iidpala1+outcome.iid*miid)/nid
@@ -533,7 +533,7 @@ for (v in seq(nc))  {
 	      if (outcome.iid!=0) {
 		      miid <-  sllR1$IC[,-1]/nid
 		      Dma <-  apply(dataij[,newnR1,drop=FALSE],2,sum,drop=FALSE)
-		      miid <-  -c(Dma %*% t(miid))
+		      miid <-  c(Dma %*% t(miid))
 	      } else miid <- 0
 
               risk.iid <- (iid0+estpr[1]*iidpala0+estpr[2]*iidpala1+outcome.iid*miid)/nid
@@ -570,7 +570,7 @@ for (v in seq(nc))  {
 		      miid <- estimate(llR01) 
 		      miid <-  miid$IC[,-1]/nid
 		      Dma <-  apply(dataij[,c(newnR0,newnR1),drop=FALSE],2,sum,drop=FALSE)
-		      miid <-  -c(Dma %*% t(miid))
+		      miid <-  c(Dma %*% t(miid))
 	      } else miid <- 0
 
               risk.iid <- (iid0+estpr[1]*iidpala0+estpr[2]*iidpala1+outcome.iid*miid)/nid
@@ -1575,10 +1575,11 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
   }# }}}
 
 gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
-	    beta0=c(0.1,0.5,-0.5),beta1=c(0.4,0.3,0.5,-0.5),betaR=c(-0.3,-0.5,0.5),betac=c(0.3,0.3)) 
+	    beta0=c(0.1,0.5,-0.5),beta1=c(0.4,0.3,0.5,-0.5),betaR=c(-0.3,-0.5,0.5),betac=c(0.3,0.3), 
+            beta0R=c(0,0.5,-0.5),beta1R=c(0,0.5,-0.5),tsr=1)
    {# {{{
 
-	   Count2 <- TR <- NULL
+   Count2 <- TR <- NULL
 
    X0 <- matrix(rbinom(2*n,1,0.5),n,2)
    expit <- function(x)  return(1/(1+exp(-x)))
@@ -1596,9 +1597,11 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
    pr1 <- 0.5
    pr2 <- 0.5
    ###
-   p0 <- 0.5
+   expit <- function(x)  1/(1+exp(-x))
+   if (tsr==0) p0 <- expit(cbind(1,X0) %*% beta0R) else p0 <- 0.5
    A0 <- rbinom(n,1,p0)+1
-   A1 <- rbinom(n,1,p0)+1
+   if (tsr==0) p1 <- expit(cbind(1,X1) %*% beta1R) else p1 <- 0.5
+   A1 <- rbinom(n,1,p1)+1
    ###
    if (covs==1) {
    rr01 <- exp( cbind(0,X0) %*% beta0)
@@ -1713,5 +1716,6 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
   res <- list(data=data,datat=datat,TTt=TTt,CCt=CCt)
   return(res)
   } # }}}
+
 
 
