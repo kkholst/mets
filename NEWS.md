@@ -1,5 +1,7 @@
 # mets 1.3.3
   - Development version
+  - Inverse Probability of treatment weighted Cox model: `phregIPTW`
+  - Twostage randomization for survival outcome: `binregTSR`
   
 
 # mets 1.3.2
