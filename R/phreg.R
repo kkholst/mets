@@ -1718,6 +1718,205 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
+##' IPTW Cox, Inverse Probaibilty of treatment weighted Cox regression 
+##'
+##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
+##' stanard errors via influence functions that are returned as the IID argument of the.
+##'
+##' @param formula for phreg 
+##' @param data data frame for risk averaging
+##' @param treat.model propensity score model (binary or multinomial) 
+##' @param weights may be given, and then uses weights*w(A) as the weights
+##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
+##' @param pi0 fixed simple weights 
+##' @param ...  arguments for phreg call
+##' @author Thomas Scheike
+##' @examples
+##' data(bmt)
+##' dfactor(bmt) <- tcell~tcell
+##' out <- phregIPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
+##' summary(out)
+##'
+##' @export
+phregIPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
+  cl <- match.call()
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+  if (!inherits(Y,c("Event","Surv"))) stop("Expected a 'Surv' or 'Event'-object")
+  if (ncol(Y)==2) {
+    exit <- Y[,1]
+    entry <- NULL ## rep(0,nrow(Y))
+    status <- Y[,2]
+  } else {
+    entry <- Y[,1]
+    exit <- Y[,2]
+    status <- Y[,3]
+  }
+  id <- strata <- NULL
+  if (!is.null(attributes(Terms)$specials$cluster)) {
+    ts <- survival::untangle.specials(Terms, "cluster")
+    pos.cluster <- ts$terms
+    Terms  <- Terms[-ts$terms]
+    id <- m[[ts$vars]]
+  } else pos.cluster <- NULL
+###  if (!is.null(attributes(Terms)$specials$strata)) {
+###    ts <- survival::untangle.specials(Terms, "strata")
+###    pos.strata <- ts$terms
+###    Terms  <- Terms[-ts$terms]
+###    strata <- m[[ts$vars]]
+###    strata.name <- ts$vars
+###  }  else { strata.name <- NULL; pos.strata <- NULL}
+###     X <- model.matrix(Terms, m)
+###  if (!is.null(intpos  <- attributes(Terms)$intercept))
+###    X <- X[,-intpos,drop=FALSE]
+###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+  ### possible handling of id to code from 0:(antid-1)
+  ### same processing inside phreg call 
+  if (!is.null(id)) {
+          orig.id <- id
+	  ids <- sort(unique(id))
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+  } else { orig.id <- NULL; nid <- length(exit); id <- 0:(nid-1); ids <- NULL}
+  ### id from call coded as numeric 1 -> 
+  id <- id+1
+  nid <- length(unique(id))
+
+treats <- function(treatvar) {# {{{
+treatvar <- droplevels(treatvar)
+nlev <- nlevels(treatvar)
+nlevs <- levels(treatvar)
+###treatvar <- as.numeric(treatvar)
+ntreatvar <- as.numeric(treatvar)
+return(list(nlev=nlev,nlevs=nlevs,ntreatvar=ntreatvar))
+}
+# }}}
+
+## fitting treatment model
+fittreat <- function(treat.model,data,id,ntreatvar,nlev) {# {{{
+if (nlev==2) {
+   treat.model <- drop.specials(treat.model,"cluster")
+   treat <- glm(treat.model,data,family="binomial")
+   iidalpha <- lava::iid(treat,id=id)
+   lpa <- treat$linear.predictors 
+   pal <- expit(lpa)
+   pal <-cbind(1-pal,pal)
+   ppp <- (pal/pal[,1])
+   spp <- 1/pal[,1]
+} else {  
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat <- mlogit(treat.modelid,data)
+   iidalpha <- lava::iid(treat)
+   pal <- predictmlogit(treat,data,se=0,response=FALSE)
+   ppp <- (pal/pal[,1])
+   spp <- 1/pal[,1]
+}
+
+   ###########################################################
+   ### computes derivative of D (1/Pa) propensity score 
+   ###########################################################
+   Xtreat <- model.matrix(treat.model,data)
+   tvg2 <- 1*(ntreatvar>=2)
+   pA <- c(mdi(pal, 1:length(ntreatvar), ntreatvar))
+   pppy <- c(mdi(ppp,1:length(ntreatvar), ntreatvar))
+   Dppy <-  (spp*tvg2-pppy) 
+   Dp <- c()
+   for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
+   DPai <- -1*Dp/pA^2
+
+out <- list(iidalpha=iidalpha,pA=pA,pal=pal,ppp=ppp,spp=spp,id=id,DPai=DPai)
+return(out)
+} # }}}
+
+expit <- function(x) 1/(1+exp(-x))
+
+treat.name <-  all.vars(treat.model)[1]
+treatvar <- data[,treat.name]
+if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
+
+treats <- treats(treatvar)
+if (estpr[1]==1) {
+   fitt <- fittreat(treat.model,data,id,treats$ntreatvar,treats$nlev)
+   iidalpha0 <- fitt$iidalpha
+} else {
+   ## assumes constant fixed prob over groups
+   pi0 <- rep(pi0,treats0$nlev)
+}
+
+wPA <- c(1/fitt$pA)
+if (is.null(weights)) ww <- wPA else ww <- weights*wPA
+
+## fit the weighted model and bring the derivatives to bring them along
+phw <- phreg(formula,data,weights=ww,Z=fitt$DPai,...)
+
+check.derivative <- 0
+if (check.derivative==1) {
+### for checking derivative 
+###fpar <- glm(treat.model,data,family=binomial)
+###mm <- model.matrix(treat.model,data)
+###cpar <- coef(fpar)
+###library(numDeriv)
+###
+###ff <- function(par) {
+###pa <- 	expit(mm %*% par)
+###www <- 1/ifelse(data$Trt == 1, pa, 1 - pa)
+###pp <- phreg(formula,data,weights=www,no.opt=TRUE,beta=coef(phw))
+###return(pp$gradient)
+###}
+###
+###ff(par)
+###gf <- grad(ff,par)
+###
+###print(gf)
+}
+
+
+### iid after propensity model 
+### computing  derivatives 
+if (estpr[1]==1) {
+xx <- phw$cox.prep
+nid <- max(xx$id)
+S0i <- rep(0,length(xx$strata))
+wPAJ <- xx$weights[xx$jumps+1]
+## remove w from S0
+Xt <- xx$X
+S0 <- phw$S0*wPAJ
+S0i[xx$jumps+1] <- 1/S0
+
+U <- E <- matrix(0,nrow(xx$X),phw$p)
+## U is multiplied 1/w  to remove weights
+U[xx$jumps+1,] <- phw$U/wPAJ
+rr <- c(xx$sign*exp(Xt %*% coef(phw) + xx$offset)*xx$weights)
+rrnw <- c(xx$sign*exp(Xt %*% coef(phw) + xx$offset))
+
+DWX=.Call("vecMatMat",xx$Z,Xt)$vXZ;  
+S1=apply(Xt*rr,2,revcumsumstrata,xx$strata,xx$nstrata); 
+DS1=apply(DWX*rrnw,2,revcumsumstrata,xx$strata,xx$nstrata); 
+DS0=apply(xx$Z*rrnw,2,revcumsumstrata,xx$strata,xx$nstrata); 
+DS0S1=.Call("vecMatMat",DS0[xx$jumps+1,,drop=FALSE],S1[xx$jumps+1,,drop=FALSE])$vXZ;  
+
+DUa2 <- apply(wPAJ*DS1[xx$jumps+1,]/c(S0),2,sum) - apply(wPAJ*DS0S1/c(S0^2),2,sum)
+DUa1 <-  t(xx$Z[xx$jumps+1,]) %*% (phw$U/wPAJ)
+DUa  <-  DUa1-matrix(DUa2,ncol(fitt$DPai),phw$p)
+iidpal <- iidalpha0 %*% DUa ## /nid
+iid <-   lava::iid(phw) + iidpal %*% phw$ihess
+phw$IID <- iid
+phw$naive.var  <- phw$var
+phw$var  <-  crossprod(iid)
+} 
+
+return(phw)
+}# }}}
+
+
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
 ##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
