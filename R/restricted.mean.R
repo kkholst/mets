@@ -6,8 +6,8 @@
 ##' cause.
 ##'
 ##' When the status is binary assumes it is a survival setting and default is to consider outcome Y=min(T,t), 
-##' if status has more than two levels, then computes years lost due to that particular cause, thus
-##* using the response \deqn{ (min(T,t)-t) I(status==cause) } 
+##' if status has more than two levels, then computes years lost due to the specified cause, thus
+##* using the response \deqn{ (min(T,t)-t) I(status==cause) }
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
 ##' \deqn{ X ( \Delta (min(T , t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
