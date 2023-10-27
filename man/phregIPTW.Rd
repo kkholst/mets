@@ -32,7 +32,7 @@ phregIPTW(
 \description{
 Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
 standard errors via influence functions that are returned as the IID argument. 
-Propensity scores are fitted using either logistic regression or the multinomial model when more
+Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
 of the "treat.model".
 }

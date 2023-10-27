@@ -1722,7 +1722,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##'
 ##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
 ##' standard errors via influence functions that are returned as the IID argument. 
-##' Propensity scores are fitted using either logistic regression or the multinomial model when more
+##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
 ##' of the "treat.model". 
 ##'
@@ -1794,6 +1794,7 @@ phregIPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5
   ### id from call coded as numeric 1 -> 
   id <- id+1
   nid <- length(unique(id))
+  data$id__  <-  id
 
 treats <- function(treatvar) {# {{{
 treatvar <- droplevels(treatvar)
@@ -1817,7 +1818,7 @@ if (nlev==2) {
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 } else {  
-   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
    treat <- mlogit(treat.modelid,data)
    iidalpha <- lava::iid(treat)
    pal <- predictmlogit(treat,data,se=0,response=FALSE)
@@ -1853,7 +1854,7 @@ if (estpr[1]==1) {
    iidalpha0 <- fitt$iidalpha
 } else {
    ## assumes constant fixed prob over groups
-   pi0 <- rep(pi0,treats$nlev)
+   pi0 <- rep(pi0,treats0$nlev)
 }
 
 wPA <- c(1/fitt$pA)
