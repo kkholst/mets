@@ -339,6 +339,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   val$cens.code <- cens.code
   val$model.type <- model
   val$type <- type[1]
+  val$augmentation <- augmentation
 
   class(val) <- c("binreg","resmean")
   return(val)
