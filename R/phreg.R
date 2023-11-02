@@ -1854,7 +1854,7 @@ if (estpr[1]==1) {
    iidalpha0 <- fitt$iidalpha
 } else {
    ## assumes constant fixed prob over groups
-   pi0 <- rep(pi0,treats0$nlev)
+   pi0 <- rep(pi0,treats$nlev)
 }
 
 wPA <- c(1/fitt$pA)
