@@ -27,8 +27,7 @@
 ##' \deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
-##' The actual influence (type="II") function is one suggested by Overgaard based on pseudo-values, that 
-##  augments with \deqn{ - \int_0^t E(XY | T>s)/G_c(s) dM_c(s) +  X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) }
+##' The actual influence (type="II") function is based on augmenting with \deqn{ X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) }
 ##' and alternatively just solved directly (type="I") without any additional terms. 
 ##'
 ##' Censoring model may depend on strata. 
@@ -165,7 +164,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
-      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt)$surv
+      cens.weights <- predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
