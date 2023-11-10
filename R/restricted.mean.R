@@ -234,7 +234,6 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 
 	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
 	    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-	    htdN <- apply(htdN,2,sumstrata,xx$id,max(id)+1)
 
            if (type[1]=="II") { ## psedo-value type augmentation
 	    hYt  <-  revcumsumstrata(Y,xx$strata,xx$nstrata)
@@ -245,10 +244,8 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 	    MGtiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
 
 	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-	    MGCiid <- -MGCiid+ MGtiid
-	    augmentation  <-  apply(MGCiid,2,sum) + augmentation
-	    ## to use for iid 
 	    MGCiid <- MGtiid
+	    augmentation  <-  apply(MGCiid,2,sum) + augmentation
            }
    }  else {
 	  MGCiid <- 0

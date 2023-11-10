@@ -100,7 +100,7 @@ When Ydirect is given it solves :
 \deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
-The actual influence (type="II") function is one suggested by Overgaard based on pseudo-values, that 
+The actual influence (type="II") function is based on augmenting with \deqn{ X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) }
 and alternatively just solved directly (type="I") without any additional terms. 
 
 Censoring model may depend on strata.
