@@ -361,9 +361,11 @@ for (nnresp in seq(nlevresp)) {
 }
 if (nlevresp==1) { combof <- expand.grid(combof); combo <- expand.grid(combo) }
 
-
 A0 <- as.numeric(dataiid[,treat.name0])
 A1 <- as.numeric(dataiid[,treat.name1])
+## code possible NA as 0, to avoid problems
+A1[is.na(A1)] <- 0
+
 llR0 <- llR <- llR1 <- llR01 <- c()
 riskG0 <- riskG <- riskG1 <- riskG01 <- c()
 riskG0C <- riskGC <- riskG1C <- riskG01C <- c()
