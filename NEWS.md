@@ -2,7 +2,7 @@
   - Development version
   - Inverse Probability of treatment weighted Cox model: `phregIPTW`
   - Twostage randomization for survival outcome: `binregTSR`
-  
+  - Lu-Tsiatis efficient logrank test and dynamic censoring augmentation: `phreg_lt`
 
 # mets 1.3.2
   - Extension of `recreg` (Ghosh-Lin model) to deal with composite outcomes.

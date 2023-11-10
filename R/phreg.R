@@ -3126,10 +3126,10 @@ print.phreg  <- function(x,...) {
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,200)
 ##'
-##' out <- logrank_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
+##' out <- phreg_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
 ##' out$coefs
 ##' @export
-logrank_lt <- function(formula,data,augmentR=NULL,augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
+phreg_lt <- function(formula,data,augmentR=NULL,augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
 		       cens.model=NULL,typeII=NULL,...) {# {{{
 
 ### ... for phreg
