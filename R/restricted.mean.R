@@ -230,23 +230,21 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 	    IhdLam0 <- apply(ht*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 	    U <- matrix(0,nrow(xx$X),ncol(X))
 	    U[xx$jumps+1,] <- (resC$jumptimes<=time)*ht[xx$jumps+1,]/c(resC$S0)
-	    htdN <- U
 	    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
 	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
 	    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
 	    htdN <- apply(htdN,2,sumstrata,xx$id,max(id)+1)
 
-           if (type[1]=="II") { ## psedo-value augmentation, ala Overgaard
-	      hYt  <-  revcumsumstrata(Y,xx$strata,xx$nstrata)
-	      IhdLam0 <- cumsumstrata(hYt*S0i2*btime,xx$strata,xx$nstrata)
-	      U <- rep(0,length(xx$strata))
-	      U[xx$jumps+1] <- (resC$jumptimes<=time)*hYt[xx$jumps+1]/c(resC$S0)
-	      htdN <- U
-	      MGt <- Xd*c(U-IhdLam0)*c(xx$weights)
-	      MGtiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
+           if (type[1]=="II") { ## psedo-value type augmentation
+	    hYt  <-  revcumsumstrata(Y,xx$strata,xx$nstrata)
+	    IhdLam0 <- cumsumstrata(hYt*S0i2*btime,xx$strata,xx$nstrata)
+	    U <- rep(0,length(xx$strata))
+	    U[xx$jumps+1] <- (resC$jumptimes<=time)*hYt[xx$jumps+1]/c(resC$S0)
+	    MGt <- Xd*c(U-IhdLam0)*c(xx$weights)
+	    MGtiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
 
-	     ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
+	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
 	    MGCiid <- -MGCiid+ MGtiid
 	    augmentation  <-  apply(MGCiid,2,sum) + augmentation
 	    ## to use for iid 
