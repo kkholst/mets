@@ -62,7 +62,8 @@
 ##' 		response.code=2)
 ##' summary(bb) 
 ##' @export
-binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,response.code=NULL,
+binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
+		      response.code=NULL,
       augmentR0=NULL,treat.model0=~+1,augmentR1=NULL,treat.model1=~+1, 
       augmentC=NULL,cens.model=~+1,estpr=c(1,1),response.name=NULL,
       offset=NULL,weights=NULL,cens.weights=NULL,beta=NULL,
@@ -137,7 +138,6 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,response.code=N
   kmt <- kaplan.meier
 
   response__  <-  rid__  <- Count1__ <- NULL
-
 
   data$status__ <-  status 
   data$id__ <-  id

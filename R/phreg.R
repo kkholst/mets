@@ -3135,9 +3135,12 @@ phreg_lt <- function(formula,data,augmentR=NULL,augmentC=NULL,km=TRUE,cens.code=
 ### ... for phreg
 fit0 <- phreg(formula, data=data,...)
 
-varss <- all.vars(formula)
-## last variable
-treat.name <-  varss[length(varss)]
+rhs <- update(formula,.~+1)
+lhs <- update(formula,-1~.)
+varss <- all.vars(rhs)
+
+## first varaible on lhs 
+treat.name <-  all.vars(lhs)[1] 
 Z <- data[,treat.name]
 ptreat <- glm(Z~+1,data=data,family=binomial)
 pi0 <- lava::expit(coef(ptreat))
@@ -3156,7 +3159,7 @@ if (!is.null(augmentR)) {
    ## iid term for predicted P(treat=1)
    explp <- exp(coef(ptreat))
    iid.treat <- lava::iid(ptreat,id=fit0$id)
-   iid.treat <- -sum(XR)*(pi0/(1+explp))*iid.treat
+   iid.treat <- - ((pi0/(1+explp))*iid.treat)%*%t(apply(XR,2,sum) )
    AugR.iid <- AugR.iid + iid.treat
 }
 
@@ -3167,7 +3170,8 @@ if (!is.null(augmentC)) {# {{{
   ## formulaC with or without start,stop formulation
   if (is.null(cens.model)) cens.model <- as.formula(paste("~strata(",treat.name,")"))
 
-  if (length(varss)==3) 
+  varssrhs <- all.vars(rhs)
+  if (length(varss)==2) 
   formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],"==",cens.code,")~."))
   else 
   formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],",",varss[3],"==",cens.code,")~."))
@@ -3233,15 +3237,17 @@ if (!is.null(typeII)) {
 fit0rc <- phreg(formula,data=data,augmentation=AugR+AugC,no.var=1,...)
 iid <- (ea-AugC.iid-AugR.iid ) %*% fit0$ihessian
 var.beta <- crossprod(iid)
-coefAugCR <- estimate(coef=coef(fit0rc),vcov=var.beta,level=level)$coefmat
-} else coefAugCR <- NULL
+coefAugCRII <- estimate(coef=coef(fit0rc),vcov=var.beta,level=level)$coefmat
+rownames(coefAugCRII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCRII),sep="-")
+} else coefAugCRII <- NULL
 
 if (!is.null(typeII)) {
 fit0c <- phreg(formula,data=data,augmentation=AugC,no.var=1,...)
 iidc <- (ea-AugC.iid ) %*% fit0$ihessian
 var.betac <- crossprod(iidc)
-coefaugc <- estimate(coef=coef(fit0c),vcov=var.betac,level=level)$coefmat
-} else coefAugC <- NULL
+coefAugCII <- estimate(coef=coef(fit0c),vcov=var.betac,level=level)$coefmat
+rownames(coefAugCII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCII),sep="-")
+} else coefAugCII <- NULL
 
 fit0clt <- phreg(formula,data=data,augmentation=AugClt,no.var=1,...)
 iidclt <- (ea-AugClt.iid ) %*% fit0$ihessian
@@ -3253,25 +3259,24 @@ var.betaR <- crossprod(iidR)
 
 fit0rct <- phreg(formula,data=data,augmentation=AugR+AugC.times,no.var=1,...)
 var.betat <- var.betaR + varC.improve * fit0$ihessian^2
-if (var.betat<0)  var.betat <- var.betaR
+###if (var.betat<0)  var.betat <- var.betaR
 
 coefMarg <- estimate(fit0,level=level)$coefmat
+rownames(coefMarg) <- paste("Marginal",rownames(coefMarg),sep="-")
 coefAuglt <- estimate(coef=coef(fit0lt),vcov=var.betalt,level=level)$coefmat
+rownames(coefAuglt) <- paste("Lu-Tsiatis",rownames(coefAuglt),sep="-")
 coefAugR <- estimate(coef=coef(fit0r),vcov=var.betaR,level=level)$coefmat
+rownames(coefAugR) <- paste("LT-AugR",rownames(coefAugR),sep="-")
 coefLTAugC <- estimate(coef=coef(fit0clt),vcov=var.betaClt,level=level)$coefmat
-coefAug.times <- estimate(coef=coef(fit0rct),vcov=var.betat,level=level)$coefmat
-coefs <- rbind(coefMarg,
-	       coefAuglt,
-	       coefAugCR,
-	       coefAugR,
-	       coefLTAugC,
-	       coefAugC,
-	       coefAug.times)
+rownames(coefLTAugC) <- paste("LT-AugC",rownames(coefLTAugC),sep="-")
+coefAugC.dyn <- estimate(coef=coef(fit0rct),vcov=var.betat,level=level)$coefmat
+rownames(coefAugC.dyn) <- paste("Dynamic-LT",rownames(coefAugC.dyn),sep="-")
+
+## take out two of them 
+if (is.null(typeII)) { coefAugC  <- coefAugCR <- NULL }
+coefs <- rbind(coefMarg, coefAuglt, coefAugCRII, coefAugR, coefLTAugC, coefAugCII, coefAugC.dyn)
 coefs <- cbind(coefs,(coefs[,2]/coefs[1,2])^2)
 colnames(coefs)[6] <- "Var-Ratio"
-if (is.null(typeII)) these <- c(1,2,4,5,7) else these <- 1:7
-rownames(coefs) <- c("Marginal", "Lu-Tsiatis", "Lu-Tsiatis-II", "LT-AugR", "LT-AugC", "LT-AugC-II", "Dynamic-LT")[these]
-
 out <- list(marginal=fit0,augmented=fit0lt,
 	    betaLT.iid=iidlt,AugR=AugR,AugC=AugC,AugC.times=AugC.times,AugClt=AugClt,
 	    coefs=coefs)
