@@ -3111,6 +3111,7 @@ print.phreg  <- function(x,...) {
 ##' @param formula formula with 'Surv' outcome (see \code{coxph}) and treatment (randomization 0/1)
 ##' @param data data frame
 ##' @param augmentR formula for the randomization augmentation  (~age+sex)
+##' @param treat.model propensity score model, default is ~+1, assuming RCT study
 ##' @param augmentC formula for the censoring augmentation  (~age+sex)
 ##' @param km use Kaplan-Meier for the censoring weights (stratified on treatment)
 ##' @param cens.code censoring code 
@@ -3129,7 +3130,8 @@ print.phreg  <- function(x,...) {
 ##' out <- phreg_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
 ##' out$coefs
 ##' @export
-phreg_lt <- function(formula,data,augmentR=NULL,augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
+phreg_lt <- function(formula,data,augmentR=NULL,treat.model=~+1,
+		     augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
 		       cens.model=NULL,typeII=NULL,...) {# {{{
 
 ### ... for phreg
@@ -3142,8 +3144,9 @@ varss <- all.vars(rhs)
 ## first varaible on lhs 
 treat.name <-  all.vars(lhs)[1] 
 Z <- data[,treat.name]
-ptreat <- glm(Z~+1,data=data,family=binomial)
-pi0 <- lava::expit(coef(ptreat))
+treat.formula <- update.formula(treat.model,Z~.)
+ptreat <- glm(treat.formula,data=data,family=binomial)
+pi0 <- lava:::expit(ptreat$linear.predictors)
 
 ea <- (lava::iid(fit0) %*% fit0$hessian)
 
@@ -3151,15 +3154,16 @@ AugR <- AugR.iid <- 0
 if (!is.null(augmentR)) {
    ## design without intercept
    XR <- model.matrix(augmentR,data)[,-1]
-   gamma.R <- solve(crossprod(XR)) %*% crossprod(XR, ea)
-   XR <- XR %*% gamma.R
-   AugR.iid <- (Z-pi0)* XR
-   AugR <- sum(AugR.iid)
+   XRpi <- (Z-pi0)*XR
+   gamma.R <- solve(crossprod(XRpi)) %*% crossprod(XRpi, ea)
+   XRgamma <- XR %*% gamma.R
+   AugR.iid <- (Z-pi0)*XRgamma
+   AugR <- apply(AugR.iid,2,sum)
 
    ## iid term for predicted P(treat=1)
-   explp <- exp(coef(ptreat))
+   explp <- exp(ptreat$linear.predictors)
    iid.treat <- lava::iid(ptreat,id=fit0$id)
-   iid.treat <- - ((pi0/(1+explp))*iid.treat)%*%t(apply(XR,2,sum) )
+   iid.treat <- -((pi0/(1+explp))*iid.treat)%*%t(apply(XRgamma,2,sum) )
    AugR.iid <- AugR.iid + iid.treat
 }
 
@@ -3283,6 +3287,7 @@ out <- list(marginal=fit0,augmented=fit0lt,
 class(out) <- "Lu-Tsiatis"
 return(out)
 } ## }}} 
+
 
 simLT <- function(rho,n,beta=0,betac=0,ce=1)
 {# {{{

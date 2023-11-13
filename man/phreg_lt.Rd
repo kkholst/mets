@@ -8,6 +8,7 @@ phreg_lt(
   formula,
   data,
   augmentR = NULL,
+  treat.model = ~+1,
   augmentC = NULL,
   km = TRUE,
   cens.code = 0,
@@ -23,6 +24,8 @@ phreg_lt(
 \item{data}{data frame}
 
 \item{augmentR}{formula for the randomization augmentation  (~age+sex)}
+
+\item{treat.model}{propensity score model, default is ~+1, assuming RCT study}
 
 \item{augmentC}{formula for the censoring augmentation  (~age+sex)}
 
