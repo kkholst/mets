@@ -1718,7 +1718,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
-##' IPTW Cox, Inverse Probaibilty of treatment weighted Cox regression 
+##' IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression 
 ##'
 ##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
 ##' standard errors via influence functions that are returned as the IID argument. 
@@ -1739,11 +1739,11 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @examples
 ##' data(bmt)
 ##' dfactor(bmt) <- tcell~tcell
-##' out <- phregIPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
+##' out <- phreg_IPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
 ##' summary(out)
 ##'
 ##' @export
-phregIPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
+phreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -1838,7 +1838,7 @@ if (nlev==2) {
    for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
    DPai <- -1*Dp/pA^2
 
-out <- list(iidalpha=iidalpha,pA=pA,pal=pal,ppp=ppp,spp=spp,id=id,DPai=DPai)
+out <- list(iidalpha=iidalpha,pA=pA,Dp=Dp,pal=pal,ppp=ppp,spp=spp,id=id,DPai=DPai)
 return(out)
 } # }}}
 
@@ -1852,12 +1852,13 @@ treats <- treats(treatvar)
 if (estpr[1]==1) {
    fitt <- fittreat(treat.model,data,id,treats$ntreatvar,treats$nlev)
    iidalpha0 <- fitt$iidalpha
+   wPA <- c(1/fitt$pA)
 } else {
    ## assumes constant fixed prob over groups
+   wPA <- 1/ifelse(pi0,1-pi0,treats$ntreatvar==2)
    pi0 <- rep(pi0,treats$nlev)
 }
 
-wPA <- c(1/fitt$pA)
 if (is.null(weights)) ww <- wPA else ww <- weights*wPA
 
 ## fit the weighted model and bring the derivatives to bring them along
@@ -1909,19 +1910,19 @@ DS1=apply(DWX*rrnw,2,revcumsumstrata,xx$strata,xx$nstrata);
 DS0=apply(xx$Z*rrnw,2,revcumsumstrata,xx$strata,xx$nstrata); 
 DS0S1=.Call("vecMatMat",DS0[xx$jumps+1,,drop=FALSE],S1[xx$jumps+1,,drop=FALSE])$vXZ;  
 
-DUa2 <- apply(wPAJ*DS1[xx$jumps+1,]/c(S0),2,sum) - apply(wPAJ*DS0S1/c(S0^2),2,sum)
+DUa2 <- apply(wPAJ*DS1[xx$jumps+1,,drop=FALSE]/c(S0),2,sum) - apply(wPAJ*DS0S1/c(S0^2),2,sum)
 DUa1 <-  t(xx$Z[xx$jumps+1,]) %*% (phw$U/wPAJ)
 DUa  <-  DUa1-matrix(DUa2,ncol(fitt$DPai),phw$p)
 iidpal <- iidalpha0 %*% DUa ## /nid
 iid <-   lava::iid(phw) + iidpal %*% phw$ihess
+phw$DUa <- DUa
 phw$IID <- iid
-phw$naive.var  <- phw$var
+phw$naive.var <- phw$var
 phw$var  <-  crossprod(iid)
 } 
 
 return(phw)
 }# }}}
-
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
