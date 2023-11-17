@@ -703,20 +703,25 @@ if (is.null(x$propodds)) {
   }# }}}
 
   ncluster <- NULL
-  if (type=="robust" & (!is.null(x$id) | any(x$entry>0))) {
-    if (type=="martingale") id <- x$id[x$jumps]
-    ###  ii <- mets::cluster.index(id)
-    UU <- apply(MGt,2,sumstrata,id,max(id)+1)
-    ### names of clusters given in call 
-    ncluster <- nrow(UU)
+  if (type == "robust" & (!is.null(x$id) | any(x$entry > 0))) {
+      if (type == "martingale") id <- x$id[x$jumps]
+      ###  ii <- mets::cluster.index(id)
+      UU <- apply(MGt, 2, sumstrata, id, max(id) + 1)
+      ### names of clusters given in call
+      ncluster <- nrow(UU)
   } else {
-     UU <- MGt
+      UU <- MGt
   }
- res <-  structure(UU%*%invhess,invhess=invhess,ncluster=ncluster)
+ res <- structure(UU %*% invhess, invhess = invhess, ncluster = ncluster)
+ if (is.null(colnames(res)))
+   colnames(res) <- names(coef(x))
  res <- res*NROW(res)
  return(res)
 } else if (inherits(x,c("cifreg","recreg"))) {
-  res <- x$iid*NROW(x$iid)
+  res <- x$iid * NROW(x$iid)
+  if (is.null(colnames(res)))
+    colnames(res) <- names(coef(x))
+  res <- res*NROW(res)
   return(res)
 }
 } # }}}
@@ -2818,7 +2823,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 
 ##' Plotting the baslines of stratified Cox 
 ##'
-##' Plotting the baslines of stratified Cox 
+##' Plotting the baselines of stratified Cox
 ##' @param x phreg object
 ##' @param se to include standard errors
 ##' @param time to plot for specific time variables
