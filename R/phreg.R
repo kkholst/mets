@@ -631,6 +631,7 @@ IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
     } else {
       res <- IIDbaseline.phreg(x, ...)$base.iid
     }
+    tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
     return(res*NROW(res))
   }
   classes1 <- "mlogit"
@@ -715,6 +716,7 @@ if (is.null(x$propodds)) {
  res <- structure(UU %*% invhess, invhess = invhess, ncluster = ncluster)
  if (is.null(colnames(res)))
    colnames(res) <- names(coef(x))
+tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
  res <- res*NROW(res)
  return(res)
 } else if (inherits(x,c("cifreg","recreg"))) {
