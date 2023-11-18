@@ -3296,8 +3296,7 @@ class(out) <- "Lu-Tsiatis"
 return(out)
 } ## }}} 
 
-
-simLT <- function(rho,n,beta=0,betac=0,ce=1)
+simLT <- function(rho,n,beta=0,betac=0,ce=1,betao=0)
 {# {{{
 Sigma <- matrix(c(1,rho,rho,1),2,2)
 M <- t(chol(Sigma))
@@ -3307,7 +3306,8 @@ XY <- t(M %*% Z)
 ###
 X <- XY[,1]
 Y <- XY[,2]
-Z <- rbinom(n,1,0.5)
+if (betao!=0) px <- lava:::expit(X*betao) else px <- 0.5
+Z <- rbinom(n,1,px)
 TT <- -exp(Z*beta)*log(1-pnorm(Y))
 C <- exp(Z*betac)*rexp(n)*ce
 status <- (TT<C)
@@ -3316,4 +3316,6 @@ time <- pmin(TT,C)
 data <- data.frame(time=time,status=status,X=X,Z=Z)
 return(data)
 }# }}}
+
+
 

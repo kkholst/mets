@@ -68,7 +68,7 @@ basehazplot.phreg(
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Plotting the baslines of stratified Cox
+Plotting the baselines of stratified Cox
 }
 \examples{
 data(TRACE)
