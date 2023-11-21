@@ -48,7 +48,7 @@ censoring augmentation regression is also computed to gain even more from the ce
 }
 \examples{
 ## Lu, Tsiatis simulation
-data <- mets:::simLT(0.7,200)
+data <- mets:::simLT(0.7,100)
 
 out <- phreg_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
 out$coefs

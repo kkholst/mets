@@ -12,6 +12,7 @@ R/old-bicomprisksim.R
 src/minimake
 inst/doc
 inst/misc/workshop*.org
+inst/documentation/
 inst/misc/mena.org
 vignettes/templates
 vignettes/test?.Rmd
@@ -31,6 +32,7 @@ vignettes/auto
 vignettes/runRmd
 vignettes/makePDF
 *.o
+*.txt
 *.so
 *~
 test
