@@ -1750,6 +1750,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' ##summary(out)
 ##'
 ##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
+##' dfactor(data) <- Z.f~Z
 ##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 ##' summary(out)
 ##'
@@ -3166,7 +3167,7 @@ print.phreg  <- function(x,...) {
 ##' @examples
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,100)
-##'
+##' 
 ##' out <- phreg_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
 ##' out$coefs
 ##' @export
@@ -3186,7 +3187,7 @@ treat.name <-  all.vars(lhs)[1]
 Z <- data[,treat.name]
 treat.formula <- update.formula(treat.model,Z~.)
 ptreat <- glm(treat.formula,data=data,family=binomial)
-pi0 <- lava:::expit(ptreat$linear.predictors)
+pi0 <- lava::expit(ptreat$linear.predictors)
 
 ea <- (lava::iid(fit0) %*% fit0$hessian)
 
@@ -3338,7 +3339,7 @@ XY <- t(M %*% Z)
 ###
 X <- XY[,1]
 Y <- XY[,2]
-if (betao!=0) px <- lava:::expit(X*betao) else px <- 0.5
+if (betao!=0) px <- lava::expit(X*betao) else px <- 0.5
 Z <- rbinom(n,1,px)
 TT <- -exp(Z*beta)*log(1-pnorm(Y))
 C <- exp(Z*betac)*rexp(n)*ce
