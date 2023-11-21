@@ -1731,24 +1731,31 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
 ##' of the "treat.model". 
 ##'
-##' Also works with cluster argument. 
+##' Also works with cluster argument. Time-dependent propensity score weights can also be computed when weight.var is 1
+##' and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment. 
 ##'
 ##' @param formula for phreg 
 ##' @param data data frame for risk averaging
 ##' @param treat.model propensity score model (binary or multinomial) 
+##' @param weight.var a 1/0 variable that indicates when propensity score is computed over time 
 ##' @param weights may be given, and then uses weights*w(A) as the weights
 ##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
 ##' @param pi0 fixed simple weights 
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
-##' data(bmt)
-##' dfactor(bmt) <- tcell~tcell
-##' out <- phreg_IPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
+##' ##data(bmt)
+##' ##dfactor(bmt) <- tcell~tcell
+##' ##out <- phreg_IPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
+##' ##summary(out)
+##'
+##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
+##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 ##' summary(out)
 ##'
 ##' @export
-phreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
+phreg_IPTW <- function(formula,data,treat.model=NULL,weight.var=NULL,
+		       weights=NULL,estpr=1,pi0=0.5,...) {# {{{
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -1774,17 +1781,6 @@ phreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.
     Terms  <- Terms[-ts$terms]
     id <- m[[ts$vars]]
   } else pos.cluster <- NULL
-###  if (!is.null(attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###     X <- model.matrix(Terms, m)
-###  if (!is.null(intpos  <- attributes(Terms)$intercept))
-###    X <- X[,-intpos,drop=FALSE]
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
   ### same processing inside phreg call 
@@ -1800,6 +1796,7 @@ phreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.
   id <- id+1
   nid <- length(unique(id))
   data$id__  <-  id
+  data$cid__ <- cumsumstrata(rep(1,length(id)),id-1,nid)
 
 treats <- function(treatvar) {# {{{
 treatvar <- droplevels(treatvar)
@@ -1849,25 +1846,61 @@ return(out)
 
 expit <- function(x) 1/(1+exp(-x))
 
+if (!is.null(weight.var)) { 
+	## time-changing weights
+	weightWT <- data[,weight.var]
+	whereW <- which(weightWT==1)
+	CountW <- cumsumstrata(weightWT,id-1,nid)
+        dataW <- data[whereW,]; 
+        idW <- id[whereW]; } else { 
+	## constant weights 
+	weightWT <- 1*(data$cid__ ==1)
+	whereW <- which(weightWT==1)
+	dataW <- data[whereW,]; 
+	idW <- id; 
+	CountW <- rep(1,nrow(data))
+}
+
 treat.name <-  all.vars(treat.model)[1]
-treatvar <- data[,treat.name]
+treatvar <- dataW[,treat.name]
 if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
 
 treats <- treats(treatvar)
+wlPA <- ww <-  rep(1,nrow(data))
+## id and CountW
+idWW <-   mystrata2index(cbind(id,CountW))
+
 if (estpr[1]==1) {
-   fitt <- fittreat(treat.model,data,id,treats$ntreatvar,treats$nlev)
+   fitt <- fittreat(treat.model,dataW,idW,treats$ntreatvar,treats$nlev)
    iidalpha0 <- fitt$iidalpha
-   wPA <- c(1/fitt$pA)
+   wPA <- c(fitt$pA)
+   DPai <- fitt$DPai
 } else {
    ## assumes constant fixed prob over groups
    wPA <- 1/ifelse(pi0,1-pi0,treats$ntreatvar==2)
    pi0 <- rep(pi0,treats$nlev)
+   DPai <- matrix(0,nrow(data),1)
 }
 
-if (is.null(weights)) ww <- wPA else ww <- weights*wPA
+
+## construct multiplicative weights, with possible start stop structure
+## put propensity score weights at time of weight change 
+ww <-  rep(1,nrow(data))
+ww[whereW] <- wPA
+###
+wlPA <- exp(cumsumstrata(log(ww),idWW-1,attr(idWW,"nlevel")))
+## total weights
+wwt <- exp(cumsumstrata(log(ww),id-1,nid))
+if (estpr[1]==1) {
+	DPait <- matrix(0,nrow(data),ncol(DPai))
+	DPait[whereW,] <- DPai
+	DPait <- apply( DPait*c(wlPA/wwt),2,cumsumstrata,id-1,nid)
+} else DPait <- matrix(0,1,1)
+
+if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
 
 ## fit the weighted model and bring the derivatives to bring them along
-phw <- phreg(formula,data,weights=ww,Z=fitt$DPai,...)
+phw <- phreg(formula,data,weights=ww,Z=DPait,...)
 
 check.derivative <- 0
 if (check.derivative==1) {
@@ -1928,6 +1961,7 @@ phw$var  <-  crossprod(iid)
 
 return(phw)
 }# }}}
+
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
@@ -3131,7 +3165,7 @@ print.phreg  <- function(x,...) {
 ##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
 ##' @examples
 ##' ## Lu, Tsiatis simulation
-##' data <- mets:::simLT(0.7,200)
+##' data <- mets:::simLT(0.7,100)
 ##'
 ##' out <- phreg_lt(Surv(time,status)~Z,data=data,augmentR=~X,augmentC=~factor(Z):X)
 ##' out$coefs
