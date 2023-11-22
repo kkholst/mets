@@ -1855,11 +1855,17 @@ if (!is.null(weight.var)) {
 	whereW <- which(weightWT==1)
 	CountW <- cumsumstrata(weightWT,id-1,nid)
         dataW <- data[whereW,]; 
-        idW <- id[whereW]; } else { 
-	## constant weights 
-	weightWT <- 1*(data$cid__ ==1)
-	whereW <- which(weightWT==1)
-	dataW <- data[whereW,]; 
+        idW <- id[whereW]; } 
+else { 
+	## all data 
+###	weightWT <- 1*(data$cid__ ==1)
+###	whereW <- which(weightWT==1)
+###	dataW <- data[whereW,]; 
+###	idW <- id; 
+###	CountW <- rep(1,nrow(data))
+###     weightWT <- 1*(data$cid__ ==1)
+	whereW <- 1:nrow(data)
+	dataW <- data
 	idW <- id; 
 	CountW <- rep(1,nrow(data))
 }
