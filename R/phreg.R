@@ -3385,19 +3385,20 @@ tt <- ifelse(tt0<tr,tt0,tr)+(tt0>tr)*(tt1)
 c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
-data <- data.frame(time=time,status=status,x=x,x1=x1,z0=z0,z1=z1,tr=tr)
-data <- event.split(data,cuts="tr")
-data <- dtransform(data,status=2,tr==time)
-data <- dtransform(data,z1=0,start<tr)
-data$count2 <- 1*(data$start==data$tr)
+data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
+data <- event.split(data,cuts="TR")
+data <- dtransform(data,status=2,TR==time)
+data <- dtransform(data,Z1=0,start<TR)
+data$count2 <- 1*(data$start==data$TR)
 data$cw <- 1
-data$zt.f <- factor(data$z0)
-data$z0.f <- factor(data$z0)
-data$z1.f <- factor(data$z1)
-data$xt <- data$x
-data <- dtransform(data,zt.f=z1.f,count2==1)
-data <- dtransform(data,xt=x1,count2==1)
+data$Zt.f <- factor(data$Z0)
+data$Z0.f <- factor(data$Z0)
+data$Z1.f <- factor(data$Z1)
+data$Xt <- data$X
+data <- dtransform(data,Zt.f=Z1.f,count2==1)
+data <- dtransform(data,Xt=X1,count2==1)
 
 return(data)
 }# }}}
+
 
