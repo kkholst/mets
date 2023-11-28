@@ -13,6 +13,9 @@
     <loc>/articles/binomial-twin.html</loc>
   </url>
   <url>
+    <loc>/articles/binreg-TRS.html</loc>
+  </url>
+  <url>
     <loc>/articles/binreg-ate.html</loc>
   </url>
   <url>
@@ -20,6 +23,9 @@
   </url>
   <url>
     <loc>/articles/cifreg.html</loc>
+  </url>
+  <url>
+    <loc>/articles/glm-utility.html</loc>
   </url>
   <url>
     <loc>/articles/haplo-discrete-ttp.html</loc>
@@ -134,6 +140,9 @@
   </url>
   <url>
     <loc>/reference/binregG.html</loc>
+  </url>
+  <url>
+    <loc>/reference/binregTSR.html</loc>
   </url>
   <url>
     <loc>/reference/biprobit.html</loc>
@@ -338,6 +347,12 @@
   </url>
   <url>
     <loc>/reference/phregR.html</loc>
+  </url>
+  <url>
+    <loc>/reference/phreg_IPTW.html</loc>
+  </url>
+  <url>
+    <loc>/reference/phreg_lt.html</loc>
   </url>
   <url>
     <loc>/reference/plack.cif.html</loc>

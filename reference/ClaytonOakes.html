@@ -41,6 +41,9 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -48,6 +51,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -177,15 +183,15 @@
 <span class="r-in"><span>                  cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate     2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log-Var:(Intercept) -0.92227 -1.16927 -0.6753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x                    2.88805  2.58175  3.2307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (0,0.5]              1.07891  0.95530  1.2185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (0.5,1]              1.21696  1.06966  1.3846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-Var:(Intercept) -0.92226 -1.16926 -0.6753</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x                    2.88805  2.58174  3.2307</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (0,0.5]              1.07892  0.95530  1.2185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (0.5,1]              1.21696  1.06966  1.3845</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (1,2]                1.16268  1.01451  1.3325</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dependence parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.39761 0.31059 0.50902       0.16584 0.13442 0.2029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.39762 0.31060 0.50902       0.16584 0.13442 0.2029</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu"><a href="simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">4</span>,<span class="fl">2</span>,<span class="fl">1</span>,stoptime<span class="op">=</span><span class="fl">2</span>,left<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d2</span><span class="op">$</span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d2</span><span class="op">)</span><span class="op">)</span>; <span class="va">d2</span><span class="op">$</span><span class="va">z</span><span class="op">[</span><span class="va">d2</span><span class="op">$</span><span class="va">cluster</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">d2</span><span class="op">$</span><span class="va">cluster</span>,<span class="fl">100</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
@@ -200,7 +206,7 @@
 <span class="r-in"><span>                   cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate     2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log-Var:factor(z)0 -0.58294 -0.95494 -0.2109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-Var:factor(z)0 -0.58294 -0.95495 -0.2109</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log-Var:factor(z)1 -0.52286 -0.71031 -0.3354</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x                   2.57827  2.37165  2.8029</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (0,0.5]             1.03878  0.94306  1.1442</span>

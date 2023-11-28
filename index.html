@@ -16,9 +16,8 @@
     event history data &lt;doi:10.1007/s10985-013-9244-x&gt;. Including multivariate
     cumulative incidence models &lt;doi:10.1002/sim.6016&gt;, and  bivariate random
     effects probit models (Liability models) &lt;doi:10.1016/j.csda.2015.01.014&gt;.
-    Also contains two-stage binomial modelling that can do pairwise odds-ratio
-    dependence modelling based marginal logistic regression models. This is an
-    alternative to the alternating logistic regression approach (ALR).">
+    Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
+    Ghosh-Lin, Binomial regression) with fast computation of influence functions. ">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -65,6 +64,9 @@
       <a href="articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -72,6 +74,9 @@
     </li>
     <li>
       <a href="articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -259,7 +264,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/kkholst/mets/actions" class="external-link"><img src="https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg?branch=master" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/github/kkholst/mets?branch=master" class="external-link"><img src="https://codecov.io/github/kkholst/mets/coverage.svg?branch=master" alt="coverage"></a></li>
+<li><a href="https://app.codecov.io/github/kkholst/mets?branch=master" class="external-link"><img src="https://codecov.io/github/kkholst/mets/coverage.svg" alt="coverage"></a></li>
 <li><a href="https://CRAN.R-project.org/package=mets" class="external-link"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
 <li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/mets" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>
 </ul>

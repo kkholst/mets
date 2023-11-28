@@ -59,6 +59,9 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -66,6 +69,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -126,7 +132,7 @@
       <h1 data-toc-skip>Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2023-06-21</h4>
+            <h4 data-toc-skip class="date">2023-11-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/rmst-ate.Rmd" class="external-link"><code>vignettes/rmst-ate.Rmd</code></a></small>
       <div class="hidden name"><code>rmst-ate.Rmd</code></div>
@@ -138,8 +144,11 @@
 <div class="section level2">
 <h2 id="rmst">RMST<a class="anchor" aria-label="anchor" href="#rmst"></a>
 </h2>
-<p>Regression for rmst outcome <span class="math inline">\(E(T \wedge t | X) = exp(X^T \beta)\)</span> based on IPCW adjustment for censoring. For full censoring model this is equal to integral of Kaplan-Meier. Also possible to compute Kaplan-Meier or Cox based estimator or rmst <span class="math display">\[ \int_0^t S(s|X) ds \]</span>.</p>
-<p>For competing risks the years lost can be computed via cumulative incidence functions or as IPCW estimator since <span class="math display">\[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \]</span> For full censoring model these estimators are also equivalent.</p>
+<p>Regression for rmst outcome <span class="math inline">\(E(T \wedge t | X) = exp(X^T \beta)\)</span> based on IPCW adjustment for censoring, thus solving the estimating equation <span class="math display">\[\begin{align*}
+ &amp; X^T [ (T \wedge t) \frac{I(C &gt; T \wedge t)}{G_C(T \wedge t,X)} - exp(X^T \beta) ] = 0 .
+\end{align*}\]</span> This is done with the resmeanIPCW function. For fully saturated model with full censoring model this is equal to the integrals of the Kaplan-Meier estimators as illustrated below.</p>
+<p>We can also compute the integral of the Kaplan-Meier or Cox based survival estimator to get the RMST (with the resmean.phreg function) <span class="math display">\[ \int_0^t S(s|X) ds \]</span>.</p>
+<p>For competing risks the years lost can be computed via cumulative incidence functions (cif.yearslost) or as IPCW estimator since<br><span class="math display">\[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \]</span> For fully saturated model with full censoring model these estimators are equivalent as illustrated below.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
@@ -155,17 +164,17 @@
 <span><span class="co">#&gt;  408 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;              Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept)  3.029039  0.068026  2.895710  3.162368  0.0000</span></span>
-<span><span class="co">#&gt; tcell       -0.084278  0.265484 -0.604616  0.436060  0.7509</span></span>
-<span><span class="co">#&gt; platelet     0.264828  0.104368  0.060271  0.469386  0.0112</span></span>
-<span><span class="co">#&gt; age         -0.200527  0.082898 -0.363004 -0.038051  0.0156</span></span>
+<span><span class="co">#&gt; (Intercept)  3.014348  0.063466  2.889956  3.138740  0.0000</span></span>
+<span><span class="co">#&gt; tcell        0.106223  0.142443 -0.172960  0.385406  0.4558</span></span>
+<span><span class="co">#&gt; platelet     0.246994  0.098833  0.053285  0.440704  0.0125</span></span>
+<span><span class="co">#&gt; age         -0.185946  0.043533 -0.271270 -0.100622  0.0000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;             Estimate     2.5%   97.5%</span></span>
-<span><span class="co">#&gt; (Intercept) 20.67736 18.09635 23.6265</span></span>
-<span><span class="co">#&gt; tcell        0.91918  0.54628  1.5466</span></span>
-<span><span class="co">#&gt; platelet     1.30321  1.06212  1.5990</span></span>
-<span><span class="co">#&gt; age          0.81830  0.69558  0.9627</span></span>
+<span><span class="co">#&gt; (Intercept) 20.37580 17.99252 23.0748</span></span>
+<span><span class="co">#&gt; tcell        1.11207  0.84117  1.4702</span></span>
+<span><span class="co">#&gt; platelet     1.28017  1.05473  1.5538</span></span>
+<span><span class="co">#&gt; age          0.83032  0.76241  0.9043</span></span>
 <span>     </span>
 <span>      <span class="co">### same as Kaplan-Meier for full censoring model </span></span>
 <span>     <span class="va">bmt</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">bmt</span>,<span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span><span class="op">)</span></span>
@@ -207,12 +216,20 @@
 <span><span class="co">#&gt; tcell=0, platelet=0         16.39706</span></span>
 <span><span class="co">#&gt; tcell=0, platelet=1         11.09871</span></span>
 <span><span class="co">#&gt; tcell=1, platelet=0         13.80881</span></span>
-<span><span class="co">#&gt; tcell=1, platelet=1         12.23383</span></span></code></pre></div>
+<span><span class="co">#&gt; tcell=1, platelet=1         12.23383</span></span>
+<span></span>
+<span>     <span class="co">## plotting the years lost for different horizon's and the two causes </span></span>
+<span>     <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span>     <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>,years.lost<span class="op">=</span><span class="cn">TRUE</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span>     <span class="co">## cause refers to column of cumhaz for the different causes</span></span>
+<span>     <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rmc1</span>,cause<span class="op">=</span><span class="fl">1</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span>     <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rmc1</span>,cause<span class="op">=</span><span class="fl">2</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="rmst-ate_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="average-treatment-effect">Average treatment effect<a class="anchor" aria-label="anchor" href="#average-treatment-effect"></a>
 </h2>
-<p>Computes average treatment effect for restricted mean survival</p>
+<p>Computes average treatment effect for restricted mean survival and years lost in competing risks situation</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tcell</span><span class="op">~</span><span class="va">tcell</span></span>
@@ -317,9 +334,9 @@
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span><span class="co">#&gt; R version 4.3.2 (2023-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -338,25 +355,26 @@
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.3     timereg_2.0.5  survival_3.5-5</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.3     timereg_2.0.5  survival_3.5-7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.5-4.1      future.apply_1.11.0 jsonlite_1.8.5     </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.3.1      Rcpp_1.0.10         stringr_1.5.0      </span></span>
-<span><span class="co">#&gt;  [7] parallel_4.3.1      jquerylib_0.1.4     globals_0.16.2     </span></span>
-<span><span class="co">#&gt; [10] splines_4.3.1       systemfonts_1.0.4   textshaping_0.3.6  </span></span>
-<span><span class="co">#&gt; [13] yaml_2.3.7          fastmap_1.1.1       lattice_0.21-8     </span></span>
-<span><span class="co">#&gt; [16] R6_2.5.1            knitr_1.43          future_1.32.0      </span></span>
-<span><span class="co">#&gt; [19] desc_1.4.2          rprojroot_2.0.3     bslib_0.5.0        </span></span>
-<span><span class="co">#&gt; [22] rlang_1.1.1         cachem_1.0.8        stringi_1.7.12     </span></span>
-<span><span class="co">#&gt; [25] xfun_0.39           fs_1.6.2            sass_0.4.6         </span></span>
-<span><span class="co">#&gt; [28] memoise_2.0.1       cli_3.6.1           pkgdown_2.0.7      </span></span>
-<span><span class="co">#&gt; [31] magrittr_2.0.3      digest_0.6.31       grid_4.3.1         </span></span>
-<span><span class="co">#&gt; [34] mvtnorm_1.2-2       lifecycle_1.0.3     lava_1.7.2.1       </span></span>
-<span><span class="co">#&gt; [37] vctrs_0.6.3         evaluate_0.21       glue_1.6.2         </span></span>
-<span><span class="co">#&gt; [40] listenv_0.9.0       numDeriv_2016.8-1.1 codetools_0.2-19   </span></span>
-<span><span class="co">#&gt; [43] ragg_1.2.5          parallelly_1.36.0   rmarkdown_2.22     </span></span>
-<span><span class="co">#&gt; [46] purrr_1.0.1         tools_4.3.1         htmltools_0.5.5</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] Matrix_1.6-1.1      future.apply_1.11.0 jsonlite_1.8.7     </span></span>
+<span><span class="co">#&gt;  [4] highr_0.10          compiler_4.3.2      Rcpp_1.0.11        </span></span>
+<span><span class="co">#&gt;  [7] stringr_1.5.1       parallel_4.3.2      jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt; [10] globals_0.16.2      splines_4.3.2       systemfonts_1.0.5  </span></span>
+<span><span class="co">#&gt; [13] textshaping_0.3.7   yaml_2.3.7          fastmap_1.1.1      </span></span>
+<span><span class="co">#&gt; [16] lattice_0.21-9      R6_2.5.1            knitr_1.45         </span></span>
+<span><span class="co">#&gt; [19] future_1.33.0       desc_1.4.2          rprojroot_2.0.4    </span></span>
+<span><span class="co">#&gt; [22] bslib_0.6.0         rlang_1.1.2         cachem_1.0.8       </span></span>
+<span><span class="co">#&gt; [25] stringi_1.8.2       xfun_0.41           fs_1.6.3           </span></span>
+<span><span class="co">#&gt; [28] sass_0.4.7          memoise_2.0.1       cli_3.6.1          </span></span>
+<span><span class="co">#&gt; [31] pkgdown_2.0.7       magrittr_2.0.3      digest_0.6.33      </span></span>
+<span><span class="co">#&gt; [34] grid_4.3.2          mvtnorm_1.2-4       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [37] lava_1.7.3          vctrs_0.6.4         evaluate_0.23      </span></span>
+<span><span class="co">#&gt; [40] glue_1.6.2          listenv_0.9.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [43] codetools_0.2-19    ragg_1.2.6          parallelly_1.36.0  </span></span>
+<span><span class="co">#&gt; [46] rmarkdown_2.25      purrr_1.0.2         tools_4.3.2        </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.7</span></span></code></pre></div>
 </div>
   </div>
 

@@ -42,6 +42,9 @@ for highest value of the event times by using cumulative hazard."><!-- mathjax -
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -49,6 +52,9 @@ for highest value of the event times by using cumulative hazard."><!-- mathjax -
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -160,15 +166,15 @@ given then takes average rate of in simulated data from cox model.</p></dd>
 <span class="r-in"><span><span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2970218  0.2636560</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.8018334  0.6733555</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8920005 -0.8847773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2970218  0.1590096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.8018334  0.7139049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8920005 -0.8078489</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             vf        chf        wmi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf   1.0000000  0.1572609 -0.1071176</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.1572609  1.0000000 -0.3938071</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.1071176 -0.3938071  1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              vf        chf         wmi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf   1.00000000  0.1074448 -0.08333678</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.10744485  1.0000000 -0.36547384</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.08333678 -0.3654738  1.00000000</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sTRACE</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              vf        chf         wmi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> vf   1.00000000  0.1346711 -0.08966805</span>
@@ -180,9 +186,9 @@ given then takes average rate of in simulated data from cox model.</p></dd>
 <span class="r-in"><span><span class="va">cc</span> <span class="op">&lt;-</span>  <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2970218  0.3395819</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.8018334  0.7551916</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8920005 -0.7901883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2970218  0.3077531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chf  0.8018334  0.7595908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8920005 -0.8719623</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sim.cox-1.png" alt="" width="700" height="433"></span>
@@ -192,8 +198,8 @@ given then takes average rate of in simulated data from cox model.</p></dd>
 <span class="r-in"><span><span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span><span class="op">)</span><span class="op">+</span><span class="va">vf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2907750  0.6543587</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8905339 -0.6755947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf   0.2907750  0.4395369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wmi -0.8905339 -0.7248157</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sim.cox-2.png" alt="" width="700" height="433"></span>

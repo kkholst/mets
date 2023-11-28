@@ -41,6 +41,9 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -48,6 +51,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -222,15 +228,13 @@
 <span class="r-in"><span><span class="va">iddata</span> <span class="op">&lt;-</span> <span class="fu">simMultistate</span><span class="op">(</span><span class="fl">10000</span>,<span class="va">base1</span>,<span class="va">base1</span>,<span class="va">dr</span>,<span class="va">dr2</span>,cens<span class="op">=</span><span class="va">cens</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dprint.html">dlist</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">id</span><span class="op">&lt;</span><span class="fl">3</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           time status    entry death from to    start     stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     341.7066      2   0.0000     0    1  2   0.0000 341.7066</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10001 756.8334      3 341.7066     1    2  3 341.7066 756.8334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            time status    entry death from to    start      stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      785.5638      2   0.0000     0    1  2   0.0000  785.5638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10001 1045.9743      3 785.5638     1    2  3 785.5638 1045.9743</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             time status     entry death from to     start       stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       81.47232      2   0.00000     0    1  2   0.00000   81.47232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10002  250.93096      1  81.47232     0    2  1  81.47232  250.93096</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16128 1135.01856      3 250.93096     1    1  3 250.93096 1135.01856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time status entry death from to start     stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 133.6361      0     0     0    1  0     0 133.6361</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co">### estimating rates from simulated data  </span></span></span>
 <span class="r-in"><span><span class="va">c0</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">iddata</span><span class="op">)</span></span></span>

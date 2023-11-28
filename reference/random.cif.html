@@ -49,6 +49,9 @@ cluster covariates."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -56,6 +59,9 @@ cluster covariates."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -293,7 +299,7 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Coef.        SE        z        P-val Cross odds ratio        SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> intercept 1.258522 0.1555203 8.092337 6.661338e-16         2.258522 0.1555203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> intercept 1.226821 0.1520889 8.066471 6.661338e-16         2.226821 0.1520889</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">out2</span><span class="op">&lt;-</span><span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">1</span>,theta<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>       theta.des<span class="op">=</span><span class="va">mm</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -304,11 +310,11 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   Coef.        SE        z        P-val Cross odds ratio</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 2.3223644 0.3293399 7.051573 1.769029e-12         3.322364</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.4508251 0.1451091 3.106801 1.891239e-03         1.450825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 2.2934222 0.3267745 7.018363 2.244871e-12         3.293422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.4308398 0.1401646 3.073812 2.113423e-03         1.430840</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.3293399</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.1451091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.3267745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.1401646</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#########################################</span></span></span>
 <span class="r-in"><span><span class="co">##### 2 different causes</span></span></span>
@@ -324,9 +330,9 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Coef.         SE         z        P-val Cross odds ratio</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> intercept -0.2139523 0.03071535 -6.965647 3.268941e-12        0.7860477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> intercept -0.2235706 0.03021707 -7.398816 1.374456e-13        0.7764294</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> intercept 0.03071535</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> intercept 0.03021707</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">out4</span> <span class="op">&lt;-</span> <span class="fu">random.cif</span><span class="op">(</span><span class="va">add1</span>,data<span class="op">=</span><span class="va">d</span>,cause1<span class="op">=</span><span class="fl">1</span>,cause2<span class="op">=</span><span class="fl">2</span>,cif2<span class="op">=</span><span class="va">add2</span>,theta.des<span class="op">=</span><span class="va">mm</span>,sym<span class="op">=</span><span class="fl">1</span>,same.cens<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out4</span><span class="op">)</span> <span class="co">## negative dependence</span></span></span>
@@ -336,11 +342,11 @@ Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     Coef.         SE          z     P-val Cross odds ratio</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ -0.35667343 0.03570215 -9.9902514 0.0000000        0.6433266</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ -0.04884293 0.05301425 -0.9213172 0.3568849        0.9511571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ -0.46488910 0.02998657 -15.503242 0.0000000        0.5351109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ  0.08958262 0.06140977   1.458768 0.1446289        1.0895826</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.03570215</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.05301425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.02998657</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.06140977</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

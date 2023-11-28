@@ -59,6 +59,9 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -66,6 +69,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -338,13 +344,13 @@ E_i \sim\mathcal{N}(0,\sigma_E^2)
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ace0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                   Estimate  Std. Error Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; bmi             1.8599e+01  2.5576e-01  72.720   &lt;2e-16</span></span>
-<span><span class="co">#&gt; sd(A)           2.7270e+00  4.2658e-02  63.927   &lt;2e-16</span></span>
-<span><span class="co">#&gt; sd(C)          -1.7119e-06  3.1064e-01   0.000        1</span></span>
-<span><span class="co">#&gt; sd(E)           2.0276e+00  3.4787e-02  58.286   &lt;2e-16</span></span>
-<span><span class="co">#&gt; bmi~age         1.1892e-01  5.6246e-03  21.142   &lt;2e-16</span></span>
-<span><span class="co">#&gt; bmi~gendermale  1.3846e+00  8.8748e-02  15.601   &lt;2e-16</span></span>
+<span><span class="co">#&gt;                  Estimate Std. Error Z value Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; bmi            1.8599e+01 2.5576e-01  72.720   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(A)          2.7270e+00 4.2658e-02  63.927   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(C)          1.7140e-06 3.1064e-01   0.000        1</span></span>
+<span><span class="co">#&gt; sd(E)          2.0276e+00 3.4787e-02  58.286   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~age        1.1892e-01 5.6246e-03  21.142   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~gendermale 1.3846e+00 8.8748e-02  15.601   &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MZ-pairs DZ-pairs </span></span>
 <span><span class="co">#&gt;     1483     2788 </span></span>

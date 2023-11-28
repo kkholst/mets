@@ -5,9 +5,11 @@ articles:
   basic-dutils: basic-dutils.html
   binomial-family: binomial-family.html
   binomial-twin: binomial-twin.html
+  binreg-TRS: binreg-TRS.html
   binreg-ate: binreg-ate.html
   binreg: binreg.html
   cifreg: cifreg.html
+  glm-utility: glm-utility.html
   haplo-discrete-ttp: haplo-discrete-ttp.html
   interval-discrete-survival: interval-discrete-survival.html
   marginal-cox: marginal-cox.html
@@ -18,5 +20,5 @@ articles:
   survival-ate: survival-ate.html
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
-last_built: 2023-06-21T10:47Z
+last_built: 2023-11-28T19:58Z
 

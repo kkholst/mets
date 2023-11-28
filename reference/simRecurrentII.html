@@ -41,6 +41,9 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+    </li>
+    <li>
       <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
@@ -48,6 +51,9 @@
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
     </li>
     <li>
       <a href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a>
@@ -234,46 +240,34 @@ there is  more flexibility wrt random effects</p>
 <span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">simRecurrent</span><span class="op">(</span><span class="fl">5</span>,<span class="va">base1</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dprint.html">dlist</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         entry       time status rr rr2 dtime fdeath death      start       stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.00000   93.91416      1  1   1  5110      0     0    0.00000   93.91416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    93.91416  819.67302      1  1   1  5110      0     0   93.91416  819.67302</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  819.67302 2220.90002      1  1   1  5110      0     0  819.67302 2220.90002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 2220.90002 2526.56282      1  1   1  5110      0     0 2220.90002 2526.56282</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 2526.56282 3312.17629      1  1   1  5110      0     0 2526.56282 3312.17629</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 3312.17629 5110.00000      0  1   1  5110      0     0 3312.17629 5110.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      entry      time status rr rr2    dtime fdeath death    start      stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.0000  188.1052      1  1   1 1234.455      1     0   0.0000  188.1052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 188.1052  764.6736      1  1   1 1234.455      1     0 188.1052  764.6736</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 764.6736 1234.4552      0  1   1 1234.455      1     1 764.6736 1234.4552</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   entry     time status rr rr2    dtime fdeath death start     stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0 558.0217      0  1   1 558.0217      1     1     0 558.0217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      entry     time status rr rr2    dtime fdeath death    start     stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.0000 281.1719      1  1   1 653.3115      1     0   0.0000 281.1719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 281.1719 653.3115      0  1   1 653.3115      1     1 281.1719 653.3115</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        entry      time status rr rr2    dtime fdeath death     start      stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.0000  106.9749      1  1   1 4649.121      1     0    0.0000  106.9749</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   106.9749  160.9804      1  1   1 4649.121      1     0  106.9749  160.9804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  160.9804  990.0974      1  1   1 4649.121      1     0  160.9804  990.0974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  990.0974 1539.0278      1  1   1 4649.121      1     0  990.0974 1539.0278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 1539.0278 1545.4561      1  1   1 4649.121      1     0 1539.0278 1545.4561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 1545.4561 2655.2978      1  1   1 4649.121      1     0 1545.4561 2655.2978</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 2655.2978 2722.9196      1  1   1 4649.121      1     0 2655.2978 2722.9196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 2722.9196 2933.2977      1  1   1 4649.121      1     0 2722.9196 2933.2977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 2933.2977 3116.8880      1  1   1 4649.121      1     0 2933.2977 3116.8880</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 3116.8880 3914.6646      1  1   1 4649.121      1     0 3116.8880 3914.6646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 3914.6646 4619.1027      1  1   1 4649.121      1     0 3914.6646 4619.1027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 4619.1027 4649.1215      0  1   1 4649.121      1     1 4619.1027 4649.1215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   entry     time status rr rr2    dtime fdeath death start     stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0 205.7768      0  1   1 205.7768      1     1     0 205.7768</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      entry      time status rr rr2   dtime fdeath death    start      stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.00000  84.17475      1  1   1 305.202      1     0  0.00000  84.17475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 84.17475 305.20201      0  1   1 305.202      1     1 84.17475 305.20201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   entry     time status rr rr2    dtime fdeath death start     stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0 565.3315      0  1   1 565.3315      1     1     0 565.3315</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       entry     time status rr rr2    dtime fdeath death    start     stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.000  584.655      1  1   1 3423.009      1     0    0.000  584.655</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   584.655 1590.400      1  1   1 3423.009      1     0  584.655 1590.400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 1590.400 2059.123      1  1   1 3423.009      1     0 1590.400 2059.123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 2059.123 3184.304      1  1   1 3423.009      1     0 2059.123 3184.304</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 3184.304 3390.721      1  1   1 3423.009      1     0 3184.304 3390.721</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 3390.721 3423.009      0  1   1 3423.009      1     1 3390.721 3423.009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        entry      time status rr rr2 dtime fdeath death     start      stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.0000  205.0684      1  1   1  5110      0     0    0.0000  205.0684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   205.0684  526.9975      1  1   1  5110      0     0  205.0684  526.9975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  526.9975 2221.5067      1  1   1  5110      0     0  526.9975 2221.5067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2221.5067 2547.8011      1  1   1  5110      0     0 2221.5067 2547.8011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 2547.8011 3354.1839      1  1   1  5110      0     0 2547.8011 3354.1839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 3354.1839 4122.6045      1  1   1  5110      0     0 3354.1839 4122.6045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 4122.6045 4265.8557      1  1   1  5110      0     0 4122.6045 4265.8557</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 4265.8557 5110.0000      0  1   1  5110      0     0 4265.8557 5110.0000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">simRecurrent</span><span class="op">(</span><span class="fl">100</span>,<span class="va">base1</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
