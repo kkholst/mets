@@ -177,7 +177,6 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
 ###  print(cens.model)
 
   MG.se <- (sum(data$statusC__ & (data$exit__ < time))>0)*1
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   ################################################################
   ### iid data consisting of last record, ordered after id   #####
@@ -778,9 +777,8 @@ print.summary.binregTSR  <- function(x,...) {# {{{
    A0 <- rbinom(n,1,0.5)
    A1 <- rbinom(n,1,0.5)
    X0 <- matrix(rbinom(2*n,1,0.5),n,2)
-   expit <- function(x)  return(1/(1+exp(-x)))
    betaX1 <- c(2.7,-2.7)
-   X1 <- matrix(rbinom(2*n,1,expit(X0 %*% betaX1)),n,2)
+   X1 <- matrix(rbinom(2*n,1, expit(X0 %*% betaX1)),n,2)
    cov(cbind(X0,X1))
    ###
    beta13 <- c(-0.3,0.4,-0.5)
@@ -894,7 +892,6 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
    Count2 <- TR <- NULL
 
    X0 <- matrix(rbinom(2*n,1,0.5),n,2)
-   expit <- function(x)  return(1/(1+exp(-x)))
    betaX1 <- 0*c(2.7,-2.7)
    X1 <- matrix(rbinom(2*n,1,expit(X0 %*% betaX1)),n,2)
 
@@ -909,7 +906,6 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
    pr1 <- 0.5
    pr2 <- 0.5
    ###
-   expit <- function(x)  1/(1+exp(-x))
    if (tsr==0) p0 <- expit(cbind(1,X0) %*% beta0R) else p0 <- 0.5
    A0 <- rbinom(n,1,p0)+1
    if (tsr==0) p1 <- expit(cbind(1,X1) %*% beta1R) else p1 <- 0.5

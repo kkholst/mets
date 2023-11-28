@@ -78,13 +78,10 @@
 ##' 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
 ##' summary(cifdob)
 ##' 
-##' expit  <- function(z) 1/(1+exp(-z)) 
-##' 
 ##' riskratio <- function(p) {
-##'   expit  <- function(z) 1/(1+exp(-z)) ## expit
 ##'   Z <- rbind(c(1,0,1,1,0,0,0,0), c(0,1,1,1,0,1,1,0))
 ##'   lp <- c(Z %*% p)
-##'   p <- expit(lp)
+##'   p <- lava::expit(lp)
 ##'   return(p[1]/p[2])
 ##' }
 ##' 
@@ -1232,7 +1229,6 @@ formulanc <- drop.specials(formulaX,"cluster")
 
 datA <- dkeep(data,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
-expit <- function(x) 1/(1+exp(-x))
 
 DariskG <- list()
 risks <- c()
@@ -1351,7 +1347,6 @@ binregATEbin <- function(formula,data,cause=1,time=NULL,beta=NULL,
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
   } else formC <- NULL
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   if (is.null(beta)) beta <- rep(0,ncol(X))
   p <- ncol(X)
@@ -1704,7 +1699,6 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
   } else formC <- NULL
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   if (is.null(beta)) beta <- rep(0,ncol(X))
   p <- ncol(X)
@@ -1804,7 +1798,7 @@ p11lp <- X1 %*% val$coef+offset
 p10lp <- X0 %*% val$coef+offset
 p1lp <-   X %*% val$coef+offset
 if (logitmodel) {
-p1 <- expit(p1lp); p10 <- expit(p10lp); p11 <- expit(p11lp); 
+p1 <- expit(p1lp); p10 <- expit(p10lp); p11 <- expit(p11lp);
 } else {
 p1 <- p1lp; p10 <- p10lp; p11 <- p11lp; 
 }
@@ -2074,7 +2068,6 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
                0.02430556, 0.05555556, 0.01273148, 0.10879630)
     Zs <- expand.grid(gp=c(0,1),dnr=c(0,1),preauto=c(0,1),ttt24=c(0,1))
     Zs <- dsort(Zs,~ttt24+gp+dnr+preauto)
-    expit  <- function(z) 1/(1+exp(-z)) ## expit
 
     samn <- sample(1:16,n,replace=TRUE,prob=c(Zdist))
     Z <- Zs[samn,]
@@ -2083,7 +2076,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     ## randomized gp given other covariates 
     if (rct==2) {
 	    lp <- as.matrix(cbind(1,Z[,-1])) %*% treatmodel 
-	    Z[,1] <- rbinom(n,1,expit(lp))
+	    Z[,1] <- rbinom(n,1, expit(lp))
     }
     colnames(Z) <- labels
     cif1 <- setup.cif(cbind(tt, Lam1), F1par*beta[1:4], Znames = colnames(Z), type = type[1])
@@ -2239,7 +2232,6 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
 	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
 
   if (!inherits(object,"resmean")) {
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
   preds <- p

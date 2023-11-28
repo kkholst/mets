@@ -14,7 +14,7 @@
 ##'   covariance covariance<- coxWeibull.lvm devcoords distribution<- endogenous
 ##'   eventTime Expand getoutcome gof intercept<- Inverse kill<- latent latent<-
 ##'   lava.options lvm Model multigroup parameter<- pars regression regression<-
-##'   revdiag trim IC
+##'   revdiag trim IC expit logit
 ##' @importFrom timereg two.stage predict.two.stage sindex.prodlim Cpred Event
 ##' @importFrom survival Surv is.Surv concordance strata
 ##' @importFrom utils head tail getS3method glob2rx capture.output

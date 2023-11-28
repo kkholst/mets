@@ -3195,7 +3195,7 @@ treat.name <-  all.vars(lhs)[1]
 Z <- data[,treat.name]
 treat.formula <- update.formula(treat.model,Z~.)
 ptreat <- glm(treat.formula,data=data,family=binomial)
-pi0 <- lava::expit(ptreat$linear.predictors)
+pi0 <- expit(ptreat$linear.predictors)
 
 ea <- (lava::iid(fit0) %*% fit0$hessian)
 
@@ -3347,7 +3347,7 @@ XY <- t(M %*% Z)
 ###
 X <- XY[,1]
 Y <- XY[,2]
-if (betao!=0) px <- lava::expit(X*betao) else px <- 0.5
+if (betao!=0) px <- expit(X*betao) else px <- 0.5
 Z <- rbinom(n,1,px)
 TT <- -exp(Z*beta)*log(1-pnorm(Y))
 C <- exp(Z*betac)*rexp(n)*ce
@@ -3374,8 +3374,8 @@ y <- xy[,2]
 tr <- xy[,3]
 x1 <- xyz[,1]
 y1 <- xyz[,2]
-if (betao!=0) px <- lava:::expit(x*betao) else px <- 0.5
-if (betao!=0) px1 <- lava:::expit(x1*betao+tr) else px1 <- 0.5
+if (betao!=0) px <- expit(x*betao) else px <- 0.5
+if (betao!=0) px1 <- expit(x1*betao+tr) else px1 <- 0.5
 z0 <- rbinom(n,1,px)
 z1 <- rbinom(n,1,px1)
 tt0 <- -exp(z0*beta[1])*log(1-pnorm(y))
@@ -3386,18 +3386,21 @@ c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
-data <- event.split(data,cuts="TR")
-data <- dtransform(data,status=2,TR==time)
-data <- dtransform(data,Z1=0,start<TR)
+data <- timereg::event.split(data,cuts="TR")
+data <- data$status[data$TR==time] <- 2
+##data <- dtransform(data,status=2,TR==time)
+##data <- dtransform(data,Z1=0,start<TR)
+dasta$Z1[data$start<data$TR] <- 0
 data$count2 <- 1*(data$start==data$TR)
 data$cw <- 1
 data$Zt.f <- factor(data$Z0)
 data$Z0.f <- factor(data$Z0)
 data$Z1.f <- factor(data$Z1)
 data$Xt <- data$X
-data <- dtransform(data,Zt.f=Z1.f,count2==1)
-data <- dtransform(data,Xt=X1,count2==1)
-
+##data <- dtransform(data,Zt.f=Z1.f,count2==1)
+data$Zt.f[data$count2==1] <- data$Z1.f
+#data <- dtransform(data,Xt=X1,count2==1)
+data$Xt[data$count2==1] <- data$X1
 return(data)
 }# }}}
 
