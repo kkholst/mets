@@ -3385,10 +3385,10 @@ status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
 data <- timereg::event.split(data,cuts="TR")
-data <- data$status[data$TR==time] <- 2
+data$status <- data$status[data$TR==data$time] <- 2
 ##data <- dtransform(data,status=2,TR==time)
 ##data <- dtransform(data,Z1=0,start<TR)
-dasta$Z1[data$start<data$TR] <- 0
+data$Z1[data$start<data$TR] <- 0
 data$count2 <- 1*(data$start==data$TR)
 data$cw <- 1
 data$Zt.f <- factor(data$Z0)
