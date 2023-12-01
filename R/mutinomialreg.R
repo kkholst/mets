@@ -188,7 +188,6 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
         if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
     }
 
-  expit <- function(z) 1/(1 + exp(-z))
   refg <- 1  ### else refg <- match(ref,types)
   nrefs <- (1:(object$nlev-1))
   px <- ncol(X)
@@ -246,7 +245,6 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
 ###        if (response) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
 ###    }
 ###
-###  expit <- function(z) 1/(1 + exp(-z))
 ###  refg <- 1  ### else refg <- match(ref,types)
 ###  nrefs <- (1:(object$nlev-1))
 ###  px <- ncol(X)

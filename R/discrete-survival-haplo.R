@@ -205,7 +205,6 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
 if (!design.only) {
 
 	if (is.null(beta)) beta <- rep(0,ncol(X))
-	expit  <- function(z) 1/(1+exp(-z)) ## expit
 
 	obj <- function(pp,all=FALSE)
 	{ # {{{
@@ -314,8 +313,6 @@ simTTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
      Z <- cbind(mt,data[,-nm])
   }
 
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
-
   p <- c(expit(as.matrix(Z) %*% coef))
   y <- rbinom(length(p),1,p)
 
@@ -366,7 +363,6 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 # }}}
   } else {# {{{
 
-    expit <- function(p) exp(p)/(1+exp(p))
     Ft <- function(p)
     {
 	   xp <- as.matrix(Zi) %*% p
@@ -580,8 +576,6 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   ## weights/offets will follow id 
   if (is.null(weights))  weights <- rep(1,n); #  else wiid <- weights
   if (is.null(offsets))  offsets <- rep(0,n); # else offsets <- offsets
-  expit  <- function(z) 1/(1+exp(-z)) ## expit
-  logit  <- function(p) log(p/(1-p))  ## logit
 
   if (is.null(beta)) {
      beta <- rep(0,ncol(X)+mutimes)
