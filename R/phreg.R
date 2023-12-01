@@ -3356,7 +3356,7 @@ data <- data.frame(time=time,status=status,X=X,Z=Z)
 return(data)
 }# }}}
 
-simLTTS <- function(rho,n,beta=c(0,0),betac=0,ce=1,cr=0.5,betao=0)
+simLTTS <- function(rho,n,beta=c(0,0),betac=0,ce=1,cr=0.5,betao=0.4)
 {# {{{
 sigma <- matrix(rho,4,4)
 diag(sigma) <- 1
@@ -3372,8 +3372,8 @@ y <- xy[,2]
 tr <- xy[,3]
 x1 <- xyz[,1]
 y1 <- xyz[,2]
-if (betao!=0) px <- expit(x*betao) else px <- 0.5
-if (betao!=0) px1 <- expit(x1*betao+tr) else px1 <- 0.5
+if (betao!=0) px <- lava:::expit(x*betao) else px <- 0.5
+if (betao!=0) px1 <- lava:::expit(x1*betao+tr) else px1 <- 0.5
 z0 <- rbinom(n,1,px)
 z1 <- rbinom(n,1,px1)
 tt0 <- -exp(z0*beta[1])*log(1-pnorm(y))
@@ -3384,11 +3384,9 @@ c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
-data <- timereg::event.split(data,cuts="TR")
-data$status <- data$status[data$TR==data$time] <- 2
-##data <- dtransform(data,status=2,TR==time)
-##data <- dtransform(data,Z1=0,start<TR)
-data$Z1[data$start<data$TR] <- 0
+data <- event.split(data,cuts="TR")
+data <- dtransform(data,status=2,TR==time)
+data <- dtransform(data,Z1=0,start<TR)
 data$count2 <- 1*(data$start==data$TR)
 data$cw <- 1
 data$Zt.f <- factor(data$Z0)
