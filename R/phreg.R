@@ -1971,7 +1971,6 @@ phw$var  <-  crossprod(iid)
 return(phw)
 }# }}}
 
-
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
 ##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
@@ -2145,7 +2144,6 @@ print.summary.survivalG  <- function(x,...) {
 }
 
 ###}}} summary 
-
 
 ##' Fast additive hazards model with robust standard errors 
 ##'
@@ -3358,7 +3356,7 @@ data <- data.frame(time=time,status=status,X=X,Z=Z)
 return(data)
 }# }}}
 
-simLTTS <- function(rho,n,beta=c(0,0),betac=0,ce=1,betao=0.4)
+simLTTS <- function(rho,n,beta=c(0,0),betac=0,ce=1,cr=0.5,betao=0)
 {# {{{
 sigma <- matrix(rho,4,4)
 diag(sigma) <- 1
@@ -3380,7 +3378,7 @@ z0 <- rbinom(n,1,px)
 z1 <- rbinom(n,1,px1)
 tt0 <- -exp(z0*beta[1])*log(1-pnorm(y))
 tt1 <- -exp(z0*beta[1]+z1*beta[2])*log(1-pnorm(y1))  ## log(1-pnorm(y1))
-tr <- exp(z0*beta[1])*rexp(n) 
+tr <- exp(z0*beta[1])*rexp(n)*cr 
 tt <- ifelse(tt0<tr,tt0,tr)+(tt0>tr)*(tt1)
 c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
@@ -3397,8 +3395,10 @@ data$Z1.f <- factor(data$Z1)
 data$Xt <- data$X
 data <- dtransform(data,Zt.f=Z1.f,count2==1)
 data <- dtransform(data,Xt=X1,count2==1)
+data$X0 <- data$X
+data$X1t <- 0
+data <- dtransform(data,X1t=X1,count2==1)
 
 return(data)
 }# }}}
-
 
