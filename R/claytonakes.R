@@ -225,7 +225,3 @@ plot.claytonoakes <- function(x,chaz=TRUE,add=!is.null(dev.list()),col="darkblue
   }
   invisible(x)  
 }
-
-predict.claytonoakes <- function(x,...) {
-
-}
