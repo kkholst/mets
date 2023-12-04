@@ -132,7 +132,7 @@
       <h1 data-toc-skip>A practical guide to Human Genetics with Lifetime Data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2023-11-28</h4>
+            <h4 data-toc-skip class="date">2023-12-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/time-to-event-family-studies-arev.Rmd" class="external-link"><code>vignettes/time-to-event-family-studies-arev.Rmd</code></a></small>
       <div class="hidden name"><code>time-to-event-family-studies-arev.Rmd</code></div>
@@ -890,12 +890,12 @@
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.271   0.280   0.222</span></span>
+<span><span class="co">#&gt;   0.258   0.276   0.222</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">a.dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,</span>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.339   0.278   0.289</span></span>
+<span><span class="co">#&gt;   0.357   0.257   0.287</span></span>
 <span></span>
 <span><span class="co">#system.time(a.zyg &lt;- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, </span></span>
 <span><span class="co">#                               cens.formula = Event(time,status==0)~1,</span></span>
@@ -1116,12 +1116,12 @@
 <span><span class="co">#&gt; [13] textshaping_0.3.7   yaml_2.3.7          fastmap_1.1.1      </span></span>
 <span><span class="co">#&gt; [16] lattice_0.21-9      R6_2.5.1            knitr_1.45         </span></span>
 <span><span class="co">#&gt; [19] future_1.33.0       desc_1.4.2          rprojroot_2.0.4    </span></span>
-<span><span class="co">#&gt; [22] bslib_0.6.0         rlang_1.1.2         cachem_1.0.8       </span></span>
+<span><span class="co">#&gt; [22] bslib_0.6.1         rlang_1.1.2         cachem_1.0.8       </span></span>
 <span><span class="co">#&gt; [25] stringi_1.8.2       xfun_0.41           fs_1.6.3           </span></span>
 <span><span class="co">#&gt; [28] sass_0.4.7          memoise_2.0.1       cli_3.6.1          </span></span>
 <span><span class="co">#&gt; [31] pkgdown_2.0.7       magrittr_2.0.3      digest_0.6.33      </span></span>
 <span><span class="co">#&gt; [34] grid_4.3.2          mvtnorm_1.2-4       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [37] lava_1.7.3          vctrs_0.6.4         data.table_1.14.8  </span></span>
+<span><span class="co">#&gt; [37] lava_1.7.3          vctrs_0.6.5         data.table_1.14.8  </span></span>
 <span><span class="co">#&gt; [40] evaluate_0.23       glue_1.6.2          listenv_0.9.0      </span></span>
 <span><span class="co">#&gt; [43] numDeriv_2016.8-1.1 codetools_0.2-19    ragg_1.2.6         </span></span>
 <span><span class="co">#&gt; [46] parallelly_1.36.0   rmarkdown_2.25      purrr_1.0.2        </span></span>
