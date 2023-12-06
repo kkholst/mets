@@ -10,13 +10,12 @@
 
 # Multivariate Event Times (`mets`) <img src=man/figures/timerrr.png align="right" height="150">
 
-Implementation of various statistical models for multivariate
-event history data <10.1007/s10985-013-9244-x>. Including multivariate
-cumulative incidence models <10.1002/sim.6016>, and  bivariate random
-effects probit models (Liability models) <10.1016/j.csda.2015.01.014>.
-Also contains two-stage binomial modelling that can do pairwise odds-ratio
-dependence modelling based marginal logistic regression models. This is an
-alternative to the alternating logistic regression approach (ALR).
+ Implementation of various statistical models for multivariate
+    event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
+    cumulative incidence models <doi:10.1002/sim.6016>, and  bivariate random
+    effects probit models (Liability models) <doi:10.1016/j.csda.2015.01.014>.
+    Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
+    Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
 
 
 ## Installation
