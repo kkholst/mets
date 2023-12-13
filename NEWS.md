@@ -1,5 +1,5 @@
 # mets 1.3.3
-  - Inverse Probability of treatment weighted Cox model: `phregIPTW`
+  - Inverse Probability of treatment weighted Cox model: `phreg_IPTW`
   - Twostage randomization for survival outcome: `binregTSR`
   - Lu-Tsiatis efficient logrank test and dynamic censoring augmentation: `phreg_lt`
 

@@ -91,6 +91,30 @@ using namespace arma;
 //}/*}}}*/
 //
 
+
+uvec arma_sort(vec y,Col<int> z,Col<int> x,Col<int> id) {
+    // Order the elements of x by sorting y and z;
+    // we order by y unless there's a tie, then order by z.
+    // First create a vector of indices
+    uvec idx = regspace<uvec>(0, y.size() - 1);
+    // Then sort that vector by the values of y and z
+    std::sort(idx.begin(), idx.end(), [&](int i, int j){
+        if ( y[i] == y[j] ) {
+	    if (z[i]==z[j])  {
+	       if (x[i]==x[j])  {
+	           return id[i] < id[j];
+	       } 
+	       return x[j] < x[i]; 
+	    } 
+	    return z[j] < z[i];
+        }
+        return y[i] < y[j];
+    });
+    // And return x in that order
+    return idx;
+}
+
+
 RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP, SEXP XSEXP, SEXP IdSEXP, SEXP TruncationSEXP, SEXP strataSEXP, SEXP weightsSEXP, SEXP offsetsSEXP, SEXP ZSEXP, SEXP caseweightsSEXP
 		) {/*{{{*/
 	BEGIN_RCPP
@@ -152,7 +176,6 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 			if (Truncation) ZX.row(i+n/2) = ZX.row(i);
 		}
 
-
 	arma::Col<int> Sign;
 	Sign.reshape(n,1); Sign.fill(1);
 	if (Truncation) {
@@ -174,20 +197,22 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 	// also sorting after id to use multiple phregs together
 	// ts 20/3-2018
 	arma::uvec idx00 = sort_index(Id,"ascend");
-	arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend");
+	// 12/12-2023
+	arma::uvec idx0 = stable_sort_index(Sign.elem(idx00),"descend");
+	idx00 = idx00.elem(idx0);
+	idx0 = stable_sort_index(Status.elem(idx00),"descend");
 	idx0 = idx00.elem(idx0);
 	arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
 	idx = idx0.elem(idx);
 
-	//  arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend");
+	// ts 20/3-2018
+//	arma::uvec idx00 = sort_index(Id,"ascend");
+//	arma::uvec idx0 = stable_sort_index(Status.elem(idx00),"descend");
+//	idx0 = idx00.elem(idx0);
+//	arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
+//	idx = idx0.elem(idx);
 
-	//  arma::uvec idx0 = sort_index(Status,"descend");
-	//  arma::uvec idx = stable_sort_index(Exit.elem(idx0),"ascend");
-	//  idx = idx0.elem(idx);
-
-	//  arma::uvec idx00 = stable_sort_index(Id.elem(idx),"ascend");
-	//  idx = idx00.elem(idx);
-
+//      arma::uvec idx=arma_sort(Exit,Status,Sign,Id); 
 
 	//Rcout << "idx=" << idx << std::endl;
 	if (Truncation) {
