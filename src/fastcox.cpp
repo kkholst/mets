@@ -620,7 +620,7 @@ RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata, SEXP instr
 
 	unsigned n = a.n_rows;
 	vec at(nstrata); at.zeros();
-	for (unsigned i=0; i<nstrata; i++) at(i)=starta(i);
+	for (int i=0; i<nstrata; i++) at(i)=starta(i);
 
 	mat tmpsum(nstrata,nstrata2); tmpsum.zeros();
 	colvec res = a;
@@ -629,7 +629,7 @@ RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata, SEXP instr
 		int ss=strata(n-i-1); int ss2=strata2(n-i-1);
 		at(ss)=a(n-i-1);
 		lagres(n-i-1)=tmpsum(ss,ss2);
-	        for (unsigned k=0;k<nstrata; k++) tmpsum(k,ss2)+=at(k)*dN(n-i-1);
+	        for (int k=0;k<nstrata; k++) tmpsum(k,ss2)+=at(k)*dN(n-i-1);
 //		printf(" %lf %lf \n",at(ss),dN(n-i-1));
 //		tmpsum.print("tmpsum");
 		res(n-i-1)=tmpsum(ss,ss2);
@@ -1478,11 +1478,11 @@ mat lower2fullXX(rowvec a, int p)
 {/*{{{*/
 	mat XX(p,p); 
 	unsigned kj=0;
-	for (unsigned i=0; i<p; i++) 
-	for (unsigned j=i; j<p; j++) { XX(j,i)=a(kj);  kj=kj+1; }
+	for (int i=0; i<p; i++) 
+	for (int j=i; j<p; j++) { XX(j,i)=a(kj);  kj=kj+1; }
 
-        for (unsigned i=0; i<p-1; i++) 
-	for (unsigned j=i+1; j<p; j++) XX(i,j)=XX(j,i);
+        for (int i=0; i<p-1; i++) 
+	for (int j=i+1; j<p; j++) XX(i,j)=XX(j,i);
 	return(XX);
 } /*}}}*/
 
@@ -1491,7 +1491,7 @@ RcppExport SEXP XXMatFULL(SEXP XXSEXP,SEXP XP)
 	BEGIN_RCPP
         mat XX = Rcpp::as<mat>(XXSEXP);
 	int p = Rcpp::as<int>(XP);
-	unsigned xxp = XX.n_cols;
+//	unsigned xxp = XX.n_cols;
 	unsigned n = XX.n_rows;
 
 	mat XXf(n,p*p);
