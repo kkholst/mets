@@ -91,13 +91,11 @@ using namespace arma;
 //}/*}}}*/
 //
 
-
-uvec arma_sort(vec y,Col<int> z,Col<int> x,Col<int> id) {
-    // Order the elements of x by sorting y and z;
-    // we order by y unless there's a tie, then order by z.
+uvec arma_sort(vec y,Col<int> z,Col<int> x,Col<int> id) {/*{{{*/
+    // we order by y unless there's a tie, then order by z,x,id
     // First create a vector of indices
     uvec idx = regspace<uvec>(0, y.size() - 1);
-    // Then sort that vector by the values of y and z
+    // Then sort that vector by the values of y,z,x,id
     std::sort(idx.begin(), idx.end(), [&](int i, int j){
         if ( y[i] == y[j] ) {
 	    if (z[i]==z[j])  {
@@ -110,10 +108,10 @@ uvec arma_sort(vec y,Col<int> z,Col<int> x,Col<int> id) {
         }
         return y[i] < y[j];
     });
-    // And return x in that order
+    // And return that order
     return idx;
 }
-
+/*}}}*/
 
 RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP, SEXP XSEXP, SEXP IdSEXP, SEXP TruncationSEXP, SEXP strataSEXP, SEXP weightsSEXP, SEXP offsetsSEXP, SEXP ZSEXP, SEXP caseweightsSEXP
 		) {/*{{{*/

@@ -201,12 +201,15 @@ arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colve
 	for (unsigned i=0; i<n; i++) {
                if (type==1) base1=fz[i]*cumsum(dbase1/pow(St,z[i]*rd[i]));  
                if (type==2)  {
-                  colvec Stt =exp(-z[i]*ilapC(1/theta,pow(St,rd[i])));
-                  base1=fz[i]*cumsum((dbase1/Stt)); 
+//                  colvec Stt =exp(-z[i]*ilapC(1/theta,pow(St,rd[i])));
+                  colvec Stt = pow(St,rd[i]);
+                  colvec gtt =exp(theta*log(St)*rd[i]);
+//                  base1=fz[i]*cumsum((dbase1/Stt)); 
+                  base1=fz[i]*cumsum(dbase1/(Stt%gtt))/share; 
 	       }
                if (type==3)  {
                   colvec gtt =exp(theta*log(St)*rd[i]);
-                  base1=fz[i]*cumsum((dbase1/gtt))/share; 
+                  base1=fz[i]*cumsum(dbase1/gtt)/share; 
 	       }
 	       basei.col(1)=base1; 
 

@@ -277,6 +277,8 @@ diag(hessian) <- diag(hessian)/2
 	  MGCiid <- 0
   }## }}}
 
+
+  val$call <- cl
   val$MGciid <- MGCiid
   val$MGtid <- id
   val$orig.id <- orig.id
@@ -506,6 +508,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 	  MGCiid <- 0
   }## }}}
 
+  val$call <- cl
   val$MGciid <- MGCiid
   val$MGtid <- id
   val$orig.id <- orig.id
@@ -709,6 +712,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  MGCiid <- 0
   }## }}}
 
+  val$call <- cl
     val$MGciid <- MGCiid
     val$MGtid <- id
     val$orig.id <- orig.id
@@ -722,8 +726,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$se.coef <- diag(val$var)^.5
   val$cause <- cause
   val$cens.code <- cens.code 
-
-
 
   class(val) <- "binreg"
   return(val)

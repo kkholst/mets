@@ -529,7 +529,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
     varmc <-  crossprod(Uiid)
 
     ## compute regression augmentation for censoring martingale 
-    if ((!is.null(augment.model)) & (length(other)>1)  & (length(whereC)>0)) {## {{{
+    if ((!is.null(augment.model)) & (length(whereC)>0)) {## {{{
 
 	CovZXstrata <- function(X,Ej,Z,Sign,strata,nstrata,jumps) 
 	{# {{{
@@ -557,6 +557,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
 	###    Gcj <- exp(-cr2$cumhaz[,2])
 
     rr0 <- c(xx2$sign)
+    jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1)
     strataCxx2 <- xx2$Z[,2]
     S0iC2  <-  S0iC <- rep(0,length(xx2$status))
     S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
@@ -1090,7 +1091,7 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
      type <- 3
  }
  ## type=2 draw recurrent process given X,Z with rate:
- ##  1/S(t|X,Z) exp(X^t beta_1) d \Lambda_1(t)
+ ##  Z exp(X^t beta_1) d \Lambda_1(t)/S(t|X,Z) 
  ## such that GL model holds with exp(X^t beta_1) \Lambda_1(t)
  ## type=3, observed hazards on Cox form among survivors
  ## W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
