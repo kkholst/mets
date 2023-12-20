@@ -1277,7 +1277,7 @@ K <- bootstrap
 }# }}}
 
 ##' @export
-twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),
+twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=0,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, nufix=0,nu=NULL,at.risk=1,...)
 {# {{{
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
@@ -1359,7 +1359,8 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 ###        tildeL <- .Call("_mets_tildeLambda1",S01i,cumhazD,r1,rd,thetai,xx$id)
 ###	if (at.risk==1)  
 ###		tildeL <- apply(tildeL*c(xr$sign),2,cumsumstrata,xr$id,mid)
-        tildeL <- .Call("_mets_tildeLambda1R",S01i,cumhazD,r1,rd,thetai,xr$id,xr$sign)
+        tildeL <- .Call("_mets_tildeLambda1R",S01i,cumhazD,r1,rd,thetai+1*ghosh.lin,
+			xr$id,xr$sign)
         tildeLast <- tildeL[lastid,]
 	Ht <- thetav*tildeL[,1]+exp(thetav*HD)
 	Hr <- thetai*tildeLast[,1]+exp(thetai*cumDL)
@@ -1482,7 +1483,8 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 ###        tildeL <- .Call("_mets_tildeLambda1",S01i,cumhazD,r1,rd,thetai,xx$id)
 ###	if (at.risk==1)  
 ###		tildeL <- apply(tildeL*c(xr$sign),2,cumsumstrata,xr$id,mid)
-        tildeL <- .Call("_mets_tildeLambda1R",S01i,cumhazD,r1,rd,thetai,xr$id,xr$sign)
+        tildeL <- .Call("_mets_tildeLambda1R",S01i,cumhazD,r1,rd,
+			thetai+1*ghosh.lin,xr$id,xr$sign)
 	tildeLast <- tildeL[lastid,]
 	Ht <- (thetav/tbeta1)*tildeL[,1]+exp(thetav*HD)
 	Hr <- (thetai/tbeta1i)*tildeLast[,1]+exp(thetai*cumDL)
