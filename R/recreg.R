@@ -1254,7 +1254,6 @@ out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
 
-
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",...) 
 {# {{{
 n <- max(margsurv$id)
@@ -1270,7 +1269,7 @@ rrb$strata <- floor((rrb[,id]-0.01)/n)
      drb <- phreg(margsurv$formula,data=rrbs)
     if (inherits(recurrent,"recreg")) {
 	 xrb <- recreg(recurrent$formula,data=rrbs,
-      cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code)
+      cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code,cox.prep=TRUE)
     } else xrb <- phreg(recurrent$formula,data=rrbs)
      outbl <- tryCatch(twostageREC(drb,xrb,rrbs,...),error=function(x) NULL)
      if (!is.null(outbl)) outb <- rbind(outb,outbl$coef)
@@ -1661,7 +1660,8 @@ summary.twostageREC <- function(object,...) {# {{{
     if (object$var.link==0 & object$model=="shared") f <- function(p) c(p[1:pd],1/(1+exp(p[(pd+1):2*pd])))
     expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat[,c(1,3,4),drop=FALSE]
   n <- object$n
-  res <- list(coef=cc,n=n,nevent=object$nevent,ncluster=ncluster,var=V,exp.coef=expC,var.link=object$var.link)
+  res <- list(coef=cc,n=n,nevent=object$nevent,ncluster=ncluster,var=V,exp.coef=expC,var.link=object$var.link,
+	      ghosh.lin=object$ghosh.lin)
   class(res) <- "summary.twostageREC"
   res
 }
@@ -1669,6 +1669,8 @@ summary.twostageREC <- function(object,...) {# {{{
 
 ##' @export
 print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
+  if (x$ghosh.lin==0) cat("Cox(recurrent)-Cox(terminal) intensity model\n"); 
+  if (x$ghosh.lin==1) cat("Ghosh-Lin(recurrent)-Cox(terminal) mean model\n"); 
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
   if (!is.null(x$coef)) {
     cat("coeffients:\n")
@@ -1683,8 +1685,5 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
 
 ##' @export
 print.twostageREC  <- function(x,...) {# {{{
-  if (x$ghosh.lin==0) cat("Cox(recurrent)-Cox(terminal) intensity model\n"); 
-  if (x$ghosh.lin==0) cat("Ghosh-Lin(recurrent)-Cox(terminal) mean model\n"); 
   print(summary(x),...)
-}
-# }}}
+} # }}}
