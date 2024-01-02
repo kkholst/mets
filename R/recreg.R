@@ -1630,7 +1630,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     val <- c(val, list(theta = theta, var.theta = var,n=mid,p=ncol(thetaX),var.link=var.link,
                        robvar.theta = var, var = var, thetanames = thetanames,
                        model = model[1], se = diag(var)^0.5), 
-	     var.naive = naive.var,no.opt=no.opt)
+	     var.naive = naive.var,no.opt=no.opt,ghosh.lin=ghosh.lin)
     class(val) <- "twostageREC"
     attr(val, "clusters") <- clusters
     attr(val, "secluster") <- c(se.cluster)
@@ -1681,3 +1681,10 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
   cat("\n")
 } # }}}
 
+##' @export
+print.twostageREC  <- function(x,...) {# {{{
+  if (x$ghosh.lin==0) cat("Cox(recurrent)-Cox(terminal) intensity model\n"); 
+  if (x$ghosh.lin==0) cat("Ghosh-Lin(recurrent)-Cox(terminal) mean model\n"); 
+  print(summary(x),...)
+}
+# }}}
