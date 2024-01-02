@@ -1254,34 +1254,46 @@ out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
 
+
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",...) 
 {# {{{
 n <- max(margsurv$id)
 K <- bootstrap
-  formid <- as.formula(paste("~",id))
-  rrb <- blocksample(data, size = n*K, formid)
-  rrb$strata <- floor((rrb[,id]-0.01)/n)
+formid <- as.formula(paste("~",id))
+rrb <- blocksample(data, size = n*K, formid)
+rrb$strata <- floor((rrb[,id]-0.01)/n)
 
-  outb <- c()
+  outb <- outd <- outr <- c()
   for (i in 1:K)
   {
      rrbs <- subset(rrb,strata==i-1)
      drb <- phreg(margsurv$formula,data=rrbs)
-     xrb <- phreg(recurrent$formula,data=rrbs)
+    if (inherits(recurrent,"recreg")) {
+	 xrb <- recreg(recurrent$formula,data=rrbs,
+      cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code)
+    } else xrb <- phreg(recurrent$formula,data=rrbs)
      outbl <- tryCatch(twostageREC(drb,xrb,rrbs,...),error=function(x) NULL)
      if (!is.null(outbl)) outb <- rbind(outb,outbl$coef)
+     outd <- rbind(outd,coef(drb))
+     outr <- rbind(outr,coef(xrb))
   }
-  var <- var(outb)
+  varb <- cov(outb)
+  vard <- cov(outd)
+  varr <- cov(outr)
 
-  list(var=var, se=diag(var)^.5,outb=outb)
+  list(outb=outb,var=varb,se=diag(varb)^.5,
+       se.coxD=diag(vard)^.5,se.coxR=diag(varr)^.5)
 }# }}}
 
 ##' @export
-twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=0,
+twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=NULL,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, nufix=0,nu=NULL,at.risk=1,...)
 {# {{{
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
+    if (is.null(recurrent$cox.prep)) stop("recreg must be called with cox.prep=TRUE\n")
+    if (inherits(recurrent, "recreg") & is.null(ghosh.lin))  ghosh.lin <- 1 
+    if ((!inherits(recurrent, "recreg")) & is.null(ghosh.lin))  ghosh.lin <- 0 
     clusters <- margsurv$cox.prep$id
     n <-  max(clusters)+1
     if (is.null(theta.des) == TRUE) ptheta <- 1
