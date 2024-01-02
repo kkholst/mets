@@ -1644,9 +1644,9 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 # }}}
 
 ##' @export
-summary.twostageREC <- function(object,...) {# {{{
+summary.twostageREC <- function(object,vcov=NULL,...) {# {{{
     I <- -solve(object$hessian)
-    V <- object$var
+    if (!is.null(vcov)) V <- vcov else V <- object$var
     ncluster <- object$n
     cc <- cbind(object$coef,diag(V)^0.5,diag(I)^0.5)
     cc  <- cbind(cc,2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE)))
