@@ -1648,26 +1648,21 @@ summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
     I <- -solve(object$hessian)
     if (!is.null(vcov)) V <- vcov else V <- object$var
     ncluster <- object$n
-    cc <- cbind(object$coef,diag(V)^0.5,diag(I)^0.5)
-    cc  <- cbind(cc,2*(pnorm(abs(cc[,1]/cc[,2]),lower.tail=FALSE)))
-    colnames(cc) <- c("Estimate","S.E.","dU^-1/2","P-value")
-    if (length(class(object))==1) if (!is.null(ncluster <- attributes(V)$ncluster))
-    rownames(cc) <- names(coef(object))
+    cc <- estimate(coef=object$coef,vcov=V)$coefmat
     pd <- object$p
     if (object$var.link==1 & object$model=="full") f <- function(p) exp(p)
     if (object$var.link==0 & object$model=="full") f <- function(p) p
     if (object$var.link==1 & object$model=="shared") f <- function(p) c(exp(p[1:pd]),1/(1+exp(p[(pd+1):2*pd])))
     if (object$var.link==0 & object$model=="shared") f <- function(p) c(p[1:pd],1/(1+exp(p[(pd+1):2*pd])))
-    if (delta==1) 
+    if (delta==1 | object$model=="full") 
     expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat ##[,c(1,3,4),drop=FALSE]
-    else expC <- apply(cc[,c(1,3,4)],2,f) 
+    else expC <- apply(cc[,c(1,3,4),drop=FALSE],2,f) 
   n <- object$n
   res <- list(coef=cc,n=n,nevent=object$nevent,ncluster=ncluster,var=V,exp.coef=expC,var.link=object$var.link,
 	      ghosh.lin=object$ghosh.lin)
   class(res) <- "summary.twostageREC"
   res
-}
-# }}}
+} # }}}
 
 ##' @export
 print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
