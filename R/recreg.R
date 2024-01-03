@@ -1644,7 +1644,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 # }}}
 
 ##' @export
-summary.twostageREC <- function(object,vcov=NULL,...) {# {{{
+summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
     I <- -solve(object$hessian)
     if (!is.null(vcov)) V <- vcov else V <- object$var
     ncluster <- object$n
@@ -1658,7 +1658,9 @@ summary.twostageREC <- function(object,vcov=NULL,...) {# {{{
     if (object$var.link==0 & object$model=="full") f <- function(p) p
     if (object$var.link==1 & object$model=="shared") f <- function(p) c(exp(p[1:pd]),1/(1+exp(p[(pd+1):2*pd])))
     if (object$var.link==0 & object$model=="shared") f <- function(p) c(p[1:pd],1/(1+exp(p[(pd+1):2*pd])))
-    expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat[,c(1,3,4),drop=FALSE]
+    if (delta==1) 
+    expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat ##[,c(1,3,4),drop=FALSE]
+    else expC <- apply(cc[,c(1,3,4)],2,f) 
   n <- object$n
   res <- list(coef=cc,n=n,nevent=object$nevent,ncluster=ncluster,var=V,exp.coef=expC,var.link=object$var.link,
 	      ghosh.lin=object$ghosh.lin)

@@ -3335,6 +3335,165 @@ class(out) <- "Lu-Tsiatis"
 return(out)
 } ## }}} 
 
+## smart-cif lu-tsiatis WIP ...
+phreg_ltE <- function(formula,data,augmentR=NULL,treat.model=~+1,
+		     augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
+		       cens.model=NULL,typeII=NULL,...) {# {{{
+
+### ... for phreg
+fit0 <- phreg(formula, data=data,...)
+
+rhs <- update(formula,.~+1)
+lhs <- update(formula,-1~.)
+varss <- all.vars(rhs)
+
+## first varaible on lhs 
+treat.name <-  all.vars(lhs)[1] 
+Z <- data[,treat.name]
+treat.formula <- update.formula(treat.model,Z~.)
+ptreat <- glm(treat.formula,data=data,family=binomial)
+pi0 <- expit(ptreat$linear.predictors)
+
+ea <- (lava::iid(fit0) %*% fit0$hessian)
+
+AugR <- AugR.iid <- 0
+if (!is.null(augmentR)) {
+   ## design without intercept
+   XR <- model.matrix(augmentR,data)[,-1]
+   XRpi <- (Z-pi0)*XR
+   gamma.R <- solve(crossprod(XRpi)) %*% crossprod(XRpi, ea)
+   XRgamma <- XR %*% gamma.R
+   AugR.iid <- (Z-pi0)*XRgamma
+   AugR <- apply(AugR.iid,2,sum)
+
+   ## iid term for predicted P(treat=1)
+   explp <- exp(ptreat$linear.predictors)
+   iid.treat <- lava::iid(ptreat,id=fit0$id)
+   iid.treat <- -((pi0/(1+explp))*iid.treat)%*%t(apply(XRgamma,2,sum) )
+   AugR.iid <- AugR.iid + iid.treat
+}
+
+AugC <- AugC.times <- AugC.iid <- varC.improve <- 0
+AugClt <- AugClt.iid <- 0
+if (!is.null(augmentC)) {# {{{
+
+  ## formulaC with or without start,stop formulation
+  if (is.null(cens.model)) cens.model <- as.formula(paste("~strata(",treat.name,")"))
+
+  varssrhs <- all.vars(rhs)
+  if (length(varss)==2) 
+  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],"==",cens.code,")~."))
+  else 
+  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],",",varss[3],"==",cens.code,")~."))
+  formulaC <- update.formula(formulaC,cens.model)
+
+  varsC <- attr(terms(augmentC),"term.labels")
+  formCC <- update(formulaC, reformulate(c(".", varsC)))
+  Cfit0 <- phreg(formCC, data=data,no.opt=TRUE,no.var=1,...)
+
+  ### computing weights for censoring terms
+  x <- Cfit0
+  xx <- x$cox.prep
+  S0i <- rep(0,length(xx$strata))
+  S0i[xx$jumps+1] <-  1/x$S0
+  ## G_c survival at t- 
+  if (!km) {
+    cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
+    St      <- exp(-cumhazD)
+  } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
+
+  ## Lu-Tsiatis formula from program and biometrika paper
+  out1 <- IIDbaseline.phreg(Cfit0,ft=1/St,time=0,fixbeta=0)
+  Hiid <- (out1$beta.iid %*% Cfit0$hessian)
+  ###
+  gamma <- solve(crossprod(Hiid)) %*% crossprod(Hiid, ea)
+  AugClt.iid <- Hiid %*%  gamma
+  AugClt <- sum(AugClt.iid)
+
+  ### dynamic regression, id to deal with start,stop notation 
+  data$ea__ <- ea[fit0$id]
+  formCCC <- update(formulaC, reformulate(c(".","ea__",varsC)))
+  cr2 <- phreg(formCCC,data=data,no.opt=TRUE,no.var=1,...)
+  ####
+  nterms <- cr2$p-1
+  dhessian <- cr2$hessianttime
+  ## going to full pxp version from more lower triangle 
+  dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
+  ### take relevant \sum H_i(s,t) (e_i - \bar e)
+  covts <- dhessian[,1+1:nterms,drop=FALSE]
+  ### construct relevant \sum (e_i - \bar e)^2
+  Pt <- dhessian[,-c((1:(nterms+1)),(1:(nterms))*(nterms+1)+1),drop=FALSE]
+  gammahat <- .Call("CubeVec",Pt,covts,1,PACKAGE="mets")$XXbeta
+  gammahat[is.na(gammahat)] <- 0
+  gammahat[gammahat==Inf] <- 0
+  Stj <- St[cr2$cox.prep$jumps+1]
+  AugC.times <- -sum(apply(gammahat*cr2$U[,1+1:nterms,drop=FALSE],1,sum))
+  varC.improve <- sum(gammahat*.Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)
+
+  ###
+  varZ <- matrix(apply(Pt/Stj^2,2,sum),nterms,nterms)
+  gamma2 <- .Call("CubeVec",matrix(c(varZ),nrow=1),matrix(apply(covts/Stj,2,sum),nrow=1),1,PACKAGE="mets")$XXbeta
+  AugC <- -sum(apply(c(gamma2)*t(cr2$U[,1+1:nterms,drop=FALSE])/Stj,2,sum))
+  AugC.iid <- Hiid %*%  t(gamma2)
+###  AugC2 <- sum(AugC.iid); print(c(augC,AugC,AugC3,AugC2)); print("________")
+}
+# }}}
+
+fit0lt <- phreg(formula,data=data,augmentation=AugR+AugClt,no.var=1,...)
+iidlt <- (ea-AugClt.iid-AugR.iid ) %*% fit0$ihessian
+var.betalt <- crossprod(iidlt)
+
+if (!is.null(typeII)) {
+fit0rc <- phreg(formula,data=data,augmentation=AugR+AugC,no.var=1,...)
+iid <- (ea-AugC.iid-AugR.iid ) %*% fit0$ihessian
+var.beta <- crossprod(iid)
+coefAugCRII <- estimate(coef=coef(fit0rc),vcov=var.beta,level=level)$coefmat
+rownames(coefAugCRII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCRII),sep="-")
+} else coefAugCRII <- NULL
+
+if (!is.null(typeII)) {
+fit0c <- phreg(formula,data=data,augmentation=AugC,no.var=1,...)
+iidc <- (ea-AugC.iid ) %*% fit0$ihessian
+var.betac <- crossprod(iidc)
+coefAugCII <- estimate(coef=coef(fit0c),vcov=var.betac,level=level)$coefmat
+rownames(coefAugCII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCII),sep="-")
+} else coefAugCII <- NULL
+
+fit0clt <- phreg(formula,data=data,augmentation=AugClt,no.var=1,...)
+iidclt <- (ea-AugClt.iid ) %*% fit0$ihessian
+var.betaClt <- crossprod(iidclt)
+
+fit0r <- phreg(formula,data=data,augmentation=AugR,no.var=1,...)
+iidR <- (ea-AugR.iid ) %*% fit0$ihessian
+var.betaR <- crossprod(iidR)
+
+fit0rct <- phreg(formula,data=data,augmentation=AugR+AugC.times,no.var=1,...)
+var.betat <- var.betaR + varC.improve * fit0$ihessian^2
+###if (var.betat<0)  var.betat <- var.betaR
+
+coefMarg <- estimate(fit0,level=level)$coefmat
+rownames(coefMarg) <- paste("Marginal",rownames(coefMarg),sep="-")
+coefAuglt <- estimate(coef=coef(fit0lt),vcov=var.betalt,level=level)$coefmat
+rownames(coefAuglt) <- paste("Lu-Tsiatis",rownames(coefAuglt),sep="-")
+coefAugR <- estimate(coef=coef(fit0r),vcov=var.betaR,level=level)$coefmat
+rownames(coefAugR) <- paste("LT-AugR",rownames(coefAugR),sep="-")
+coefLTAugC <- estimate(coef=coef(fit0clt),vcov=var.betaClt,level=level)$coefmat
+rownames(coefLTAugC) <- paste("LT-AugC",rownames(coefLTAugC),sep="-")
+coefAugC.dyn <- estimate(coef=coef(fit0rct),vcov=var.betat,level=level)$coefmat
+rownames(coefAugC.dyn) <- paste("Dynamic-LT",rownames(coefAugC.dyn),sep="-")
+
+## take out two of them 
+if (is.null(typeII)) { coefAugC  <- coefAugCR <- NULL }
+coefs <- rbind(coefMarg, coefAuglt, coefAugCRII, coefAugR, coefLTAugC, coefAugCII, coefAugC.dyn)
+coefs <- cbind(coefs,(coefs[,2]/coefs[1,2])^2)
+colnames(coefs)[6] <- "Var-Ratio"
+out <- list(marginal=fit0,augmented=fit0lt,
+	    betaLT.iid=iidlt,AugR=AugR,AugC=AugC,AugC.times=AugC.times,AugClt=AugClt,
+	    coefs=coefs)
+class(out) <- "Lu-Tsiatis"
+return(out)
+} ## }}} 
+
 simLT <- function(rho,n,beta=0,betac=0,ce=1,betao=0)
 {# {{{
 Sigma <- matrix(c(1,rho,rho,1),2,2)
