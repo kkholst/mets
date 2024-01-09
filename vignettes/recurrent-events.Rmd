@@ -369,7 +369,7 @@ r1 <- exp( X %*% c(0.3,-0.3))
 rd <- exp( X %*% c(0.3,-0.3))
 rc <- exp( X %*% c(0,0))
 fz <- NULL
-rr <- mets:::simGLcox(n,base1,ddr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=3/5000,type=2) 
+rr <- mets:::simGLcox(n,base1,ddr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
 rr <- cbind(rr,X[rr$id+1,])
 
  out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
@@ -474,10 +474,9 @@ Now we fit the two-stage model (the recreg must be called with cox.prep=TRUE)
 ```{r}
  out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,
 		cause=1,death.code=3,cens.code=0,cox.prep=TRUE)
- outs <- phreg(Event(start,stop,statusD==1)~X1+X2+cluster(id),data=rr)
+ outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
 
- tsout <- twostageREC(outs,out,data=rr,ghosh.lin=1,model="shared",theta=1,
-		      nu=-lava::logit(0.5))
+ tsout <- twostageREC(outs,out,data=rr)
  summary(tsout)
 ```
 
