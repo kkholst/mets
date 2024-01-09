@@ -1271,7 +1271,7 @@ rrb$strata <- floor((rrb[,id]-0.01)/n)
 	 xrb <- recreg(recurrent$formula,data=rrbs,
       cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code,cox.prep=TRUE)
     } else xrb <- phreg(recurrent$formula,data=rrbs)
-     outbl <- tryCatch(twostageREC(drb,xrb,rrbs,control=list(stepsize=stepsize),...),error=function(x) NULL)
+     outbl <- tryCatch(twostageREC(drb,xrb,rrbs,numderiv=0,control=list(stepsize=stepsize),...),error=function(x) NULL)
      if (!is.null(outbl)) outb <- rbind(outb,outbl$coef)
      outd <- rbind(outd,coef(drb))
      outr <- rbind(outr,coef(xrb))
