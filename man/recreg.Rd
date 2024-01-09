@@ -24,7 +24,7 @@ recreg(
 )
 }
 \arguments{
-\item{formula}{formula with 'EventCens' outcome}
+\item{formula}{formula with 'Event' outcome}
 
 \item{data}{data frame}
 
@@ -78,7 +78,7 @@ data(base4cumhaz)
 data(drcumhaz)
 Lam1 <- base1cumhaz;  Lam2 <- base4cumhaz;  LamD <- drcumhaz
 ## simulates recurrent events of types 1 and 2 and with terminal event D and censoring
-rr <- simRecurrentII(1000,Lam1,cumhaz2=Lam2,death.cumhaz=LamD,cens=3/5000)
+rr <- simRecurrentII(100,Lam1,cumhaz2=Lam2,death.cumhaz=LamD,cens=3/5000)
 rr <- count.history(rr)
 rr$cens <- 0
 nid <- max(rr$id)
