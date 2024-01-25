@@ -21,7 +21,6 @@
 ##' @author Thomas Scheike
 ##' @export
 glm_IPTW <- function(formula,data,treat.model=NULL,family=binomial(),id=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
-
   if (!is.null(id)) {
           orig.id <- id
 	  ids <- sort(unique(id))
@@ -92,7 +91,7 @@ if (estpr[1]==1) {
    iidalpha0 <- fitt$iidalpha
 } else {
    ## assumes constant fixed prob over groups
-   pi0 <- rep(pi0,treats0$nlev)
+   pi0 <- rep(pi0,treats$nlev)
 }
 
 wPA <- c(1/fitt$pA)

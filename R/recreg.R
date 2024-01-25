@@ -1032,11 +1032,14 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 strataAugment <- survival:::strata
 
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
-		     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200)
+	     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
 {# {{{
 ## setting up baselines for simulations 
-base1 <- predictCumhaz(rbind(0,as.matrix(base1)),1:round(tail(base1[,1],1)) )
-cumD <- predictCumhaz(rbind(0,as.matrix(drcumhaz)),base1[,1])
+maxt <- tail(base1[,1],1)
+seqt <- seq(by,maxt,by=by)
+base1 <- predictCumhaz(rbind(0, as.matrix(base1)), seqt)
+cumD <- predictCumhaz(rbind(0, as.matrix(drcumhaz)), seqt)
+###
 St <- exp(-cumD[,2])
 Stm <- cbind(base1[,1],St)
 ###
@@ -1606,12 +1609,11 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     }
 
     if (numderiv==1 & model[1]=="shared") {
-	    require(numDeriv)
 	    dobj <- function(p) {
 		    oo <- obj(p)
 		    return(attr(oo,"gradient"))
 	    }
-	    hessian <- jacobian(dobj,val$coef,method=derivmethod[1])
+	    hessian <- numDeriv::jacobian(dobj,val$coef,method=derivmethod[1])
 	    val$hessian <- -hessian
     }
 
