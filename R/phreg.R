@@ -1757,6 +1757,199 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' summary(out)
 ##'
 ##' @export
+phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5, ...)
+{# {{{
+    cl <- match.call()
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster", "offset")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (!inherits(Y, c("Event", "Surv")))
+        stop("Expected a 'Surv' or 'Event'-object")
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
+        entry <- NULL
+        status <- Y[, 2]
+    }
+    else {
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
+    }
+    id <- strata <- NULL
+    if (!is.null(attributes(Terms)$specials$cluster)) {
+        ts <- survival::untangle.specials(Terms, "cluster")
+        pos.cluster <- ts$terms
+        Terms <- Terms[-ts$terms]
+        id <- m[[ts$vars]]
+    }
+    else pos.cluster <- NULL
+    if (!is.null(id)) {
+        orig.id <- id
+        ids <- sort(unique(id))
+        nid <- length(ids)
+        if (is.numeric(id))
+            id <- fast.approx(ids, id) - 1
+        else {
+            id <- as.integer(factor(id, labels = seq(nid))) -
+                1
+        }
+    }
+    else {
+        orig.id <- NULL
+        nid <- length(exit)
+        id <- 0:(nid - 1)
+        ids <- NULL
+    }
+    id <- id + 1
+    nid <- length(unique(id))
+    data$id__ <- id
+    data$cid__ <- cumsumstrata(rep(1, length(id)), id - 1, nid)
+    treats <- function(treatvar) {
+        treatvar <- droplevels(treatvar)
+        nlev <- nlevels(treatvar)
+        nlevs <- levels(treatvar)
+        ntreatvar <- as.numeric(treatvar)
+        return(list(nlev = nlev, nlevs = nlevs, ntreatvar = ntreatvar))
+    }
+    fittreat <- function(treat.model, data, id, ntreatvar, nlev) {
+        if (nlev == 2) {
+            treat.model <- drop.specials(treat.model, "cluster")
+            treat <- glm(treat.model, data, family = "binomial")
+            iidalpha <- lava::iid(treat, id = id)
+            lpa <- treat$linear.predictors
+            pal <- expit(lpa)
+            pal <- cbind(1 - pal, pal)
+            ppp <- (pal/pal[, 1])
+            spp <- 1/pal[, 1]
+        }
+        else {
+            treat.modelid <- update.formula(treat.model, . ~
+                . + cluster(id__))
+            treat <- mlogit(treat.modelid, data)
+            iidalpha <- lava::iid(treat)
+            pal <- predictmlogit(treat, data, se = 0, response = FALSE)
+            ppp <- (pal/pal[, 1])
+            spp <- 1/pal[, 1]
+        }
+        Xtreat <- model.matrix(treat.model, data)
+        tvg2 <- 1 * (ntreatvar >= 2)
+        pA <- c(mdi(pal, 1:length(ntreatvar), ntreatvar))
+        pppy <- c(mdi(ppp, 1:length(ntreatvar), ntreatvar))
+        Dppy <- (spp * tvg2 - pppy)
+        Dp <- c()
+        for (i in seq(nlev - 1)) Dp <- cbind(Dp, Xtreat * ppp[,
+            i + 1] * Dppy/spp^2)
+        DPai <- -1 * Dp/pA^2
+        out <- list(iidalpha = iidalpha, pA = pA, Dp = Dp, pal = pal,
+            ppp = ppp, spp = spp, id = id, DPai = DPai)
+        return(out)
+    }
+    expit <- function(x) 1/(1 + exp(-x))
+    if (!is.null(weight.var)) {
+        weightWT <- data[, weight.var]
+        whereW <- which(weightWT == 1)
+        CountW <- cumsumstrata(weightWT, id - 1, nid)
+        dataW <- data[whereW, ]
+        idW <- id[whereW]
+    } else {
+        whereW <- 1:nrow(data)
+        dataW <- data
+        idW <- id
+        CountW <- cumsumstrata(rep(1,nrow(data)), id-1,nid)
+    }
+    treat.name <- all.vars(treat.model)[1]
+    treatvar <- dataW[, treat.name]
+    if (!is.factor(treatvar))
+        stop(paste("treatment=", treat.name, " must be coded as factor \n",
+            sep = ""))
+    treats <- treats(treatvar)
+    wlPA <- ww <- rep(1, nrow(data))
+    idWW <- mystrata2index(cbind(id, CountW))
+    if (estpr[1] == 1) {
+        fitt <- fittreat(treat.model, dataW, idW, treats$ntreatvar, treats$nlev)
+        iidalpha0 <- fitt$iidalpha
+        wPA <- c(fitt$pA)
+        DPai <- fitt$DPai
+    }
+    else {
+        wPA <- 1/ifelse(pi0, 1 - pi0, treats$ntreatvar == 2)
+        pi0 <- rep(pi0, treats$nlev)
+        DPai <- matrix(0, nrow(data), 1)
+    }
+    ww <- rep(1, nrow(data))
+    ww[whereW] <- wPA
+    wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
+    wwt <- c(exp(cumsumstrata(log(ww), id - 1, nid)))
+    if (estpr[1] == 1) {
+        DPait <- matrix(0, nrow(data), ncol(DPai))
+        DPait[whereW, ] <- DPai
+        DPait <- apply(DPait * c(wlPA), 2, cumsumstrata, id - 1, nid)/wwt
+    } else DPait <- matrix(0, 1, 1)
+    if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
+    phw <- phreg(formula, data, weights = ww, Z = DPait, ...)
+###    check.derivative <- 0
+###	if (check.derivative == 1) {
+###	### for checking derivative 
+###	fpar <- glm(treat.model,dataW,family=binomial)
+###	mm <- model.matrix(treat.model,dataW)
+###	cpar <- coef(fpar)
+###	library(numDeriv)
+###
+###	ff <- function(par) {
+###	pa <-        expit(mm %*% par)
+###	www <- ifelse(dataW[,treat.name] == "1", pa, 1 - pa)
+###	ww <- rep(1, nrow(data))
+###	ww[whereW] <- www
+###	wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
+###	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
+###
+###	pp <- phreg(formula,data,weights=1/wwwt,no.opt=TRUE,beta=coef(phw))
+###	return(pp$gradient)
+###	}
+###	print(ff(cpar))
+###	gf <- jacobian(ff,cpar)
+###	print(t(gf))
+###	}
+
+if (estpr[1] == 1) {
+xx <- phw$cox.prep
+nid <- max(xx$id)
+S0i <- rep(0, length(xx$strata))
+wPAJ <- xx$weights[xx$jumps + 1]
+Xt <- xx$X
+S0 <- phw$S0 * wPAJ
+S0i[xx$jumps + 1] <- 1/S0
+U <- E <- matrix(0, nrow(xx$X), phw$p)
+U[xx$jumps + 1, ] <- phw$U/wPAJ
+rr <- c(xx$sign * exp(Xt %*% coef(phw) + xx$offset) * xx$weights)
+rrnw <- c(xx$sign * exp(Xt %*% coef(phw) + xx$offset))
+DWX = .Call("vecMatMat", xx$Z, Xt)$vXZ
+S1 = apply(Xt * rr, 2, revcumsumstrata, xx$strata, xx$nstrata)
+###S00 = revcumsumstrata( rr, xx$strata, xx$nstrata)
+DS1 = apply(DWX * rrnw, 2, revcumsumstrata, xx$strata, xx$nstrata)
+DS0 = apply(xx$Z * rrnw, 2, revcumsumstrata, xx$strata, xx$nstrata)
+DS0S1 = .Call("vecMatMat", DS0[xx$jumps + 1, , drop = FALSE],S1[xx$jumps + 1, , drop = FALSE])$vXZ
+DUa2 <- apply(wPAJ * DS1[xx$jumps + 1, , drop = FALSE]/c(S0),2, sum) - apply(wPAJ * DS0S1/c(S0^2), 2, sum)
+DUa2 <- matrix(DUa2, ncol(fitt$DPai), phw$p)
+DUa1 <- t(xx$Z[xx$jumps + 1, ]) %*% (phw$U/wPAJ)
+DUa <- DUa1 - DUa2
+iidpal <- iidalpha0 %*% DUa
+iid <- lava::iid(phw) + iidpal %*% phw$ihess
+phw$DUa <- DUa
+phw$IID <- iid
+phw$naive.var <- phw$var
+phw$var <- crossprod(iid)
+}
+return(phw)
+}# }}}
+
+
+
+
 phreg_IPTW <- function(formula,data,treat.model=NULL,weight.var=NULL,
 		       weights=NULL,estpr=1,pi0=0.5,...) {# {{{
   cl <- match.call()
