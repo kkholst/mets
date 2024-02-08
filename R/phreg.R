@@ -1746,10 +1746,6 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
-##' ##data(bmt)
-##' ##dfactor(bmt) <- tcell~tcell
-##' ##out <- phreg_IPTW(Surv(time,cause==1)~tcell+platelet+age,bmt,tcell~platelet+age)
-##' ##summary(out)
 ##'
 ##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 ##' dfactor(data) <- Z.f~Z
@@ -1884,6 +1880,8 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,wei
     ww[whereW] <- wPA
     wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
     wwt <- c(exp(cumsumstrata(log(ww), id - 1, nid)))
+    ## P(t) = P_0 * P_1^(I(t>T1)), time-dependent weights
+    ## DP = P(t) \sum_j P_j I(t> TJ) (-DP_j/P_j^2)
     if (estpr[1] == 1) {
         DPait <- matrix(0, nrow(data), ncol(DPai))
         DPait[whereW, ] <- DPai
