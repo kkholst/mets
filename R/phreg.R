@@ -2213,7 +2213,6 @@ class(x) <- c(class(x),"aalenMets")
 return(x)
 }# }}}
 
-
 ##' Kaplan-Meier with robust standard errors 
 ##'
 ##' Kaplan-Meier with robust standard errors 
@@ -2399,7 +2398,6 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
   class(cifo) <- c("cif","phreg")
   return(cifo)
 }# }}}
-
 
 ##' Proportional odds survival model
 ##'
@@ -2998,7 +2996,6 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 
 }# }}}
 
-
 ##' @export
 plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,type="s",...)
 {# {{{
@@ -3123,12 +3120,15 @@ print.phreg  <- function(x,...) {
 }
 ###}}} print
 
+
+## }}}
+
 ##' Lu-Tsiatis More Efficient Log-Rank for Randomized studies with baseline covariates
 ##'
 ##' Efficient implementation of the Lu-Tsiatis improvement using baseline covariates, extended to competing risks and recurrent events. Results
 ##' almost equivalent with the speffSurv function of the speff2trial function in the survival case. A dynamic 
 ##' censoring augmentation regression is also computed to gain even more from the censoring augmentation. Furhter, we also deal with twostage
-##' randomizations. More examples in vignette. 
+##' randomizations. The function was implemented to deal with recurrent events (start,stop) + cluster, and  more examples in vignette. 
 ##'
 ##' @param formula formula with 'Surv' or 'Event' outcome (see \code{coxph}) and treatment (randomization 0/1)
 ##' @param data data frame
@@ -3158,10 +3158,10 @@ print.phreg  <- function(x,...) {
 ##' data <- mets:::simLT(0.7,100)
 ##' dfactor(data) <- Z.f~Z
 ##' 
-##' out <- phreg_lt(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
+##' out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
 ##' out$coefs
 ##' @export
-phreg_lt <- function(formula,data,cause=1,cens.code=0,
+phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL, treat.model=~+1,RCT=TRUE,
      weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,...) {# {{{
@@ -3344,7 +3344,6 @@ ea <- ea.iid <- fit0$IID %*% fit0$hessian
 eaM <- (lava::iid(fit0) %*% fit0$hessian)
 }
 
-
 AugR0 <- AugR1 <- AugR01 <- rep(0,ncol(ea))
 AugR0.iid <-  AugR1.iid <-  AugR01.iid <- matrix(0,nrow(ea),ncol(ea))
 if (!is.null(augmentR0)) {# {{{
@@ -3352,7 +3351,7 @@ if (!is.null(augmentR0)) {# {{{
    ff0 <- sides(augmentR0,all.vars(ssform$rhs)[1])
    dataW0 <- subset(dataW,CountWW==1)
    idW0 <- idW[CountWW==1]
-   XR <- model.matrix(augmentR0,dataW0)[,-1,drop=FALSE]
+   XR <- model.matrix(augmentR0,dataW0) # [,-1,drop=FALSE]
    Z0 <- dataW0[,all.vars(ff0$formula)[1]]
    if (is.factor(Z0)) Z0 <- as.numeric(Z0)-1
    ## order after idW0
@@ -3363,6 +3362,11 @@ if (!is.null(augmentR0)) {# {{{
 
    XRpi <- (Z0-piW0)*XR
    xxi <- solve(crossprod(XRpi)) 
+   if (estpr[1]==1) {
+       Dp0 <- matrix(0,nid,ncol(fitt$Dp))
+       Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
+    }
+
    for (i in 1:ncol(ea)) {
       gamma.R <- xxi %*% crossprod(XRpi,ea[,i])
       XRgamma <- XR %*% gamma.R
@@ -3371,8 +3375,6 @@ if (!is.null(augmentR0)) {# {{{
 
       ## iid term for predicted P(treat=1)
       if (estpr[1]==1) {
-	 Dp0 <- matrix(0,nid,ncol(fitt$Dp))
-	 Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
 	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
          iid.treat <- Dp0f %*% t(fitt$iidalpha)
          AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
@@ -3397,6 +3399,12 @@ if (!is.null(augmentR1)) {# {{{
    Z1p1[idW1] <- Z1p
    XR1pi <- Z1p1*XR1
    xxi <- solve(crossprod(XR1pi)) 
+
+   if (estpr[1]==1) {
+	 Dp1 <- matrix(0,nid,ncol(fitt$Dp))
+	 Dp1[idW1,]  <- fitt$Dp[CountWW==2,]
+   }
+
    for (i in 1:ncol(ea)) {
       gamma.R <- xxi %*% crossprod(XR1pi,ea[,i])
       XRgamma <- XR1 %*% gamma.R
@@ -3405,11 +3413,8 @@ if (!is.null(augmentR1)) {# {{{
 
       ## iid term for predicted P(treat=1)
       if (estpr[1]==1) {
-         ## check  
-	 Dp1 <- matrix(0,nid,ncol(fitt$Dp))
-	 Dp1[idW1,]  <- fitt$Dp[CountWW==2,]
 	 Dp1f <- apply(Dp1*c(XRgamma),2,sum) 
-         iid.treat1 <- Dp1f %*% t(fitt$iidalpha)
+         iid.treat <- Dp1f %*% t(fitt$iidalpha)
          AugR1.iid[,i] <- AugR1.iid[,i] - iid.treat
       } 
    }
@@ -3440,113 +3445,6 @@ if (!is.null(augmentR0) & !is.null(augmentR1)) {# {{{
 varC.improve <- 0; formulaC <- NULL
 AugC <- AugC.times <- AugClt <- rep(0,ncol(ea)) 
 AugC.iid <- AugClt.iid <- matrix(0,nrow(ea),ncol(ea))
-
-test <- 0
-if (!is.null(augmentC) & test==1) {# {{{
-
-  ## formulac with or without start,stop formulation
-  if (is.null(cens.model)) 
-	  cens.model <- as.formula(paste("~strata(",treat.name,")+cluster(id__)"))
-  else cens.model <- update.formula(cens.model,.~.+cluster(id__))
-  rrss <- all.vars(ssform$lhs)
-  if (length(rrss)==2) 
-  formulaC <-as.formula( paste("Surv(",rrss[1],",",rrss[2],"==",cens.code,")~."))
-  else 
-  formulaC <-as.formula( paste("Surv(",rrss[1],",",rrss[2],",",rrss[3],"==",cens.code,")~."))
-  formulaC <- update.formula(formulaC,cens.model)
-
-  varsC <- attr(terms(augmentC),"term.labels")
-  formCC <- update(formulaC, reformulate(c(".",varsC)))
-###  print(formCC)
-###  Cfit0 <- phreg(formCC,data=data,no.opt=TRUE,no.var=1,...)
-  eat <- ea[fit0$id,,drop=FALSE]
-  cr2 <- phreg(formCC,data=data,no.opt=TRUE,no.var=1,Z=eat,...)
-
-  ### computing weights for censoring terms
-  x <- cr2
-  xx <- x$cox.prep
-  S0i <- rep(0,length(xx$strata))
-  S0i[xx$jumps+1] <-  1/x$S0
-  ## G_c survival at t- 
-  if (!km) {
-    cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
-    St      <- exp(-cumhazD)
-  } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-
-  ## Lu-Tsiatis formula from program and biometrika paper
-  out1 <- IIDbaseline.phreg(cr2,ft=1/St,time=0,fixbeta=0)
-  Hiid <- (out1$beta.iid %*% cr2$hessian)
-  xxi <- solve(crossprod(Hiid))
-  ###
-  for (i in 1:ncol(ea)) {
-     gamma <- xxi %*% crossprod(Hiid, ea[,i])
-     AugClt.iid[,i] <- Hiid %*%  gamma
-     AugClt[i] <- sum(AugClt.iid[,i])
-  }
-
-###  formCCC
-###  formCCC <- update(formulaC, reformulate(c(".",varsC)))
-###  eat <- ea[fit0$id,,drop=FALSE]
-###  cr2 <- phreg(formCCC,data=data,no.opt=TRUE,no.var=1,Z=eat,...)
-  dhessian <- cr2$hessianttime
-  Pt <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
-  xx <- cr2$cox.prep
-  jumpsC <- xx$jumps+1
-  rr <- c(xx$sign)
-  ###
-  EZ <- apply(xx$Z*rr,2,revcumsumstrata,xx$strata,xx$nstrata)[jumpsC,,drop=FALSE]; 
-  XZ  <- .Call("vecMatMat",xx$X,xx$Z)$vXZ;  
-  XZ <- apply(XZ*rr,2,revcumsumstrata,xx$strata,xx$nstrata)[jumpsC,,drop=FALSE]; 
-  EXEZ  <- .Call("vecMatMat",cr2$E,EZ)$vXZ;  
-  covts  <-  (XZ-EXEZ)/c(cr2$S0)
-###  covts2 <- CovZXstrata(xx$X,cr2$E,xx$Z,xx$sign,xx$strata,xx$nstrata,jumpsC)/c(cr2$S0); 
-  UA <- cr2$U
-  pXXA <- cr2$p
-  p <- ncol(ea)
-  ccovts <- covts
-  gammat <-  -.Call("CubeMattime",Pt,covts,pXXA,pXXA,pXXA,p,1,0,0,PACKAGE="mets")$XXX
-  gammat[is.na(gammat)] <- 0
-  gammat[gammat==Inf] <- 0
-###
-  Gammat <- gammat
-###  
-  augmentt <- .Call("CubeMattime",gammat,UA,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
-  AugCdyn  <- -apply(augmentt,2,sum)
-  ###
-  gain.times <- .Call("CubeMattime",covts,gammat,pXXA,p,pXXA,p,0,1,0,PACKAGE="mets")$XXX
-  varC.improve <- matrix(apply(gain.times,2,sum),p,p)
-
-  print(varC.improve)
-
-  #### iid magic  for censoring augmentation martingale{{{
-  ### int_0^infty gamma (e_i - ebar(s)) 1/G_c(s) dM_i^c
-  Stj <- St[jumpsC]
-  S0i2 <- S0i <- rep(0,length(xx$strata))
-  S0i[jumpsC] <- c(1/cr2$S0)
-  S0i2[jumpsC] <- c(1/(cr2$S0^2))
-
-   fgammasEs <- .Call("CubeMattime",gammat,cr2$E,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
-   fgammasE <- matrix(0,nrow(xx$X),p)
-   fgammatt  <-    matrix(0,nrow(xx$X),pXXA*p)
-   fgammasE[jumpsC,] <- fgammasEs
-   fgammatt[jumpsC,] <- gammat
-   fgammaEsdLam0 <- apply(fgammasE*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-   fgammadLam0 <-   apply(fgammatt*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-   fXgammadLam0 <- .Call("CubeMattime",fgammadLam0,xx$X,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
-   fUt <- Et <- matrix(0,nrow(xx$X),p)
-   fUt[jumpsC,] <- augmentt
-   fMGCtt <- fUt[,drop=FALSE]-(fXgammadLam0-fgammaEsdLam0)*c(rr)
-   fMGCttiid <- apply(fMGCtt,2,sumstrata,xx$id,nid)
-###   print(head(fMGCttiid))
-   fAugCdyn.iid <-  fMGCttiid ## %*% iH
-# }}}
-
-###   var.augment <-  varmc  -  iH %*% var.augment %*% iH
-###   var.augment.times <-  iH %*% var.augment.times %*% iH
-###   var.augment.iid <-  crossprod(Uiid.augment) 
-###   var.augment.times.iid <- crossprod(Uiid.augment.times) 
-
-} # }}}
 
 ## compute regression augmentation for censoring martingale 
 if ((!is.null(augmentC))) {## {{{
@@ -3860,164 +3758,6 @@ class(out) <- "Lu-Tsiatis"
 return(out)
 } ## }}} 
 
-## da old one 
-phreg_ltO <- function(formula,data,augmentR=NULL,treat.model=~+1,augmentC=NULL,km=TRUE,cens.code=0,level=0.95,
-		       cens.model=NULL,typeII=NULL,...) {# {{{
-
-### ... for phreg
-fit0 <- phreg(formula, data=data,...)
-
-rhs <- update(formula,.~+1)
-lhs <- update(formula,-1~.)
-varss <- all.vars(rhs)
-
-## first varaible on lhs 
-treat.name <-  all.vars(lhs)[1] 
-Z <- data[,treat.name]
-treat.formula <- update.formula(treat.model,Z~.)
-ptreat <- glm(treat.formula,data=data,family=binomial)
-pi0 <- expit(ptreat$linear.predictors)
-
-ea <- (lava::iid(fit0) %*% fit0$hessian)
-
-AugR <- AugR.iid <- 0
-if (!is.null(augmentR)) {
-   ## design without intercept
-   XR <- model.matrix(augmentR,data)[,-1]
-   XRpi <- (Z-pi0)*XR
-   gamma.R <- solve(crossprod(XRpi)) %*% crossprod(XRpi, ea)
-   XRgamma <- XR %*% gamma.R
-   AugR.iid <- (Z-pi0)*XRgamma
-   AugR <- apply(AugR.iid,2,sum)
-
-   ## iid term for predicted P(treat=1)
-   explp <- exp(ptreat$linear.predictors)
-   iid.treat <- lava::iid(ptreat,id=fit0$id)
-   iid.treat <- -((pi0/(1+explp))*iid.treat)%*%t(apply(XRgamma,2,sum) )
-   AugR.iid <- AugR.iid + iid.treat
-}
-
-AugC <- AugC.times <- AugC.iid <- varC.improve <- 0
-AugClt <- AugClt.iid <- 0
-if (!is.null(augmentC)) {# {{{
-
-  ## formulaC with or without start,stop formulation
-  if (is.null(cens.model)) cens.model <- as.formula(paste("~strata(",treat.name,")"))
-
-  varssrhs <- all.vars(rhs)
-  if (length(varss)==2) 
-  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],"==",cens.code,")~."))
-  else 
-  formulaC <-as.formula( paste("Surv(",varss[1],",",varss[2],",",varss[3],"==",cens.code,")~."))
-  formulaC <- update.formula(formulaC,cens.model)
-
-  varsC <- attr(terms(augmentC),"term.labels")
-  formCC <- update(formulaC, reformulate(c(".", varsC)))
-  Cfit0 <- phreg(formCC, data=data,no.opt=TRUE,no.var=1,...)
-
-  ### computing weights for censoring terms
-  x <- Cfit0
-  xx <- x$cox.prep
-  S0i <- rep(0,length(xx$strata))
-  S0i[xx$jumps+1] <-  1/x$S0
-  ## G_c survival at t- 
-  if (!km) {
-    cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
-    St      <- exp(-cumhazD)
-  } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-
-  ## Lu-Tsiatis formula from program and biometrika paper
-  out1 <- IIDbaseline.phreg(Cfit0,ft=1/St,time=0,fixbeta=0)
-  Hiid <- (out1$beta.iid %*% Cfit0$hessian)
-  ###
-  gamma <- solve(crossprod(Hiid)) %*% crossprod(Hiid, ea)
-  AugClt.iid <- Hiid %*%  gamma
-  AugClt <- sum(AugClt.iid)
-
-  ### dynamic regression, id to deal with start,stop notation 
-  data$ea__ <- ea[fit0$id]
-  formCCC <- update(formulaC, reformulate(c(".","ea__",varsC)))
-  cr2 <- phreg(formCCC,data=data,no.opt=TRUE,no.var=1,...)
-  ####
-  nterms <- cr2$p-1
-  dhessian <- cr2$hessianttime
-  ## going to full pxp version from more lower triangle 
-  dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
-  ### take relevant \sum H_i(s,t) (e_i - \bar e)
-  covts <- dhessian[,1+1:nterms,drop=FALSE]
-  ### construct relevant \sum (e_i - \bar e)^2
-  Pt <- dhessian[,-c((1:(nterms+1)),(1:(nterms))*(nterms+1)+1),drop=FALSE]
-  gammahat <- .Call("CubeVec",Pt,covts,1,PACKAGE="mets")$XXbeta
-  gammahat[is.na(gammahat)] <- 0
-  gammahat[gammahat==Inf] <- 0
-  Stj <- St[cr2$cox.prep$jumps+1]
-  AugC.times <- -sum(apply(gammahat*cr2$U[,1+1:nterms,drop=FALSE],1,sum))
-  varC.improve <- sum(gammahat*.Call("CubeVec",Pt,gammahat,0,PACKAGE="mets")$XXbeta)
-
-  ###
-  varZ <- matrix(apply(Pt/Stj^2,2,sum),nterms,nterms)
-  gamma2 <- .Call("CubeVec",matrix(c(varZ),nrow=1),matrix(apply(covts/Stj,2,sum),nrow=1),1,PACKAGE="mets")$XXbeta
-  AugC <- -sum(apply(c(gamma2)*t(cr2$U[,1+1:nterms,drop=FALSE])/Stj,2,sum))
-  AugC.iid <- Hiid %*%  t(gamma2)
-###  AugC2 <- sum(AugC.iid); print(c(augC,AugC,AugC3,AugC2)); print("________")
-}
-# }}}
-
-fit0lt <- phreg(formula,data=data,augmentation=AugR+AugClt,no.var=1,...)
-iidlt <- (ea-AugClt.iid-AugR.iid ) %*% fit0$ihessian
-var.betalt <- crossprod(iidlt)
-
-if (!is.null(typeII)) {
-fit0rc <- phreg(formula,data=data,augmentation=AugR+AugC,no.var=1,...)
-iid <- (ea-AugC.iid-AugR.iid ) %*% fit0$ihessian
-var.beta <- crossprod(iid)
-coefAugCRII <- estimate(coef=coef(fit0rc),vcov=var.beta,level=level)$coefmat
-rownames(coefAugCRII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCRII),sep="-")
-} else coefAugCRII <- NULL
-
-if (!is.null(typeII)) {
-fit0c <- phreg(formula,data=data,augmentation=AugC,no.var=1,...)
-iidc <- (ea-AugC.iid ) %*% fit0$ihessian
-var.betac <- crossprod(iidc)
-coefAugCII <- estimate(coef=coef(fit0c),vcov=var.betac,level=level)$coefmat
-rownames(coefAugCII) <- paste("Lu-Tsiatis-type-II",rownames(coefAugCII),sep="-")
-} else coefAugCII <- NULL
-
-fit0clt <- phreg(formula,data=data,augmentation=AugClt,no.var=1,...)
-iidclt <- (ea-AugClt.iid ) %*% fit0$ihessian
-var.betaClt <- crossprod(iidclt)
-
-fit0r <- phreg(formula,data=data,augmentation=AugR,no.var=1,...)
-iidR <- (ea-AugR.iid ) %*% fit0$ihessian
-var.betaR <- crossprod(iidR)
-
-fit0rct <- phreg(formula,data=data,augmentation=AugR+AugC.times,no.var=1,...)
-var.betat <- var.betaR + varC.improve * fit0$ihessian^2
-###if (var.betat<0)  var.betat <- var.betaR
-
-coefMarg <- estimate(fit0,level=level)$coefmat
-rownames(coefMarg) <- paste("Marginal",rownames(coefMarg),sep="-")
-coefAuglt <- estimate(coef=coef(fit0lt),vcov=var.betalt,level=level)$coefmat
-rownames(coefAuglt) <- paste("Lu-Tsiatis",rownames(coefAuglt),sep="-")
-coefAugR <- estimate(coef=coef(fit0r),vcov=var.betaR,level=level)$coefmat
-rownames(coefAugR) <- paste("LT-AugR",rownames(coefAugR),sep="-")
-coefLTAugC <- estimate(coef=coef(fit0clt),vcov=var.betaClt,level=level)$coefmat
-rownames(coefLTAugC) <- paste("LT-AugC",rownames(coefLTAugC),sep="-")
-coefAugC.dyn <- estimate(coef=coef(fit0rct),vcov=var.betat,level=level)$coefmat
-rownames(coefAugC.dyn) <- paste("Dynamic-LT",rownames(coefAugC.dyn),sep="-")
-
-## take out two of them 
-if (is.null(typeII)) { coefAugC  <- coefAugCR <- NULL }
-coefs <- rbind(coefMarg, coefAuglt, coefAugCRII, coefAugR, coefLTAugC, coefAugCII, coefAugC.dyn)
-coefs <- cbind(coefs,(coefs[,2]/coefs[1,2])^2)
-colnames(coefs)[6] <- "Var-Ratio"
-out <- list(marginal=fit0,augmented=fit0lt,
-	    betaLT.iid=iidlt,AugR=AugR,AugC=AugC,AugC.times=AugC.times,AugClt=AugClt,
-	    coefs=coefs)
-class(out) <- "Lu-Tsiatis"
-return(out)
-} ## }}} 
-
 simLT <- function(rho,n,beta=0,betac=0,ce=1,betao=0)
 {# {{{
 Sigma <- matrix(c(1,rho,rho,1),2,2)
@@ -4089,5 +3829,3 @@ data <- dtransform(data,X1t=X1,count2==1)
 
 return(data)
 }# }}}
-
-
