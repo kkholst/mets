@@ -3765,13 +3765,10 @@ print.phreg_rct <- function(x,...) {# {{{
 
 ##' @export
 summary.phreg_rct <- function(object,...) {# {{{
-res  <- out$coefs
+res  <- object$coefs
 class(res) <- "summary.phreg_rct"
 return(res)
 }# }}}
-
-
-
 
 simLT <- function(rho,n,beta=0,betac=0,ce=1,betao=0)
 {# {{{
