@@ -3754,7 +3754,7 @@ names(iid) <- iidn# }}}
 out <- list(marginal=fit0, AugR0=AugR0,AugR1=AugR1,AugR01=AugR01, AugCdyn=AugCdyn,AugClt=AugClt,
 	    coefs=coefs,iid=iid,
 	    formula=formula,formulaC=formulaC,treat.model=treat.model)
-class(out) <- "Lu-Tsiatis"
+class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
 
