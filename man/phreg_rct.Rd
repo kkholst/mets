@@ -74,7 +74,7 @@ data <- mets:::simLT(0.7,100)
 dfactor(data) <- Z.f~Z
 
 out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
-out$coefs
+summary(out)
 }
 \references{
 Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
