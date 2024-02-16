@@ -3159,7 +3159,7 @@ print.phreg  <- function(x,...) {
 ##' dfactor(data) <- Z.f~Z
 ##' 
 ##' out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
-##' out$coefs
+##' summary(out)
 ##' @export
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
@@ -3757,6 +3757,21 @@ out <- list(marginal=fit0, AugR0=AugR0,AugR1=AugR1,AugR01=AugR01, AugCdyn=AugCdy
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
+
+##' @export
+print.phreg_rct <- function(x,...) {# {{{
+  print(summary(x),...)
+}# }}}
+
+##' @export
+summary.phreg_rct <- function(object,...) {# {{{
+res  <- out$coefs
+class(res) <- "summary.phreg_rct"
+return(res)
+}# }}}
+
+
+
 
 simLT <- function(rho,n,beta=0,betac=0,ce=1,betao=0)
 {# {{{
