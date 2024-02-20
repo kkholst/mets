@@ -265,6 +265,9 @@
     <loc>/reference/ghaplos.html</loc>
   </url>
   <url>
+    <loc>/reference/glm_IPTW.html</loc>
+  </url>
+  <url>
     <loc>/reference/gof.phreg.html</loc>
   </url>
   <url>
@@ -352,7 +355,7 @@
     <loc>/reference/phreg_IPTW.html</loc>
   </url>
   <url>
-    <loc>/reference/phreg_lt.html</loc>
+    <loc>/reference/phreg_rct.html</loc>
   </url>
   <url>
     <loc>/reference/plack.cif.html</loc>
@@ -470,8 +473,5 @@
   </url>
   <url>
     <loc>/reference/twostageMLE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/waldTest.html</loc>
   </url>
 </urlset>

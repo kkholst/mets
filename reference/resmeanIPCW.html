@@ -20,7 +20,7 @@ cause."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
       </span>
     </div>
 
@@ -272,17 +272,17 @@ and alternatively just solved directly (type="I") without any additional terms.<
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  3.014373  0.063583  2.889754  3.138993  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.107058  0.140883 -0.169068  0.383184  0.4473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.246771  0.098758  0.053210  0.440333  0.0125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.185984  0.043717 -0.271669 -0.100299  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  3.014391  0.063784  2.889376  3.139406  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.106875  0.139461 -0.166463  0.380212  0.4435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.246943  0.098921  0.053061  0.440825  0.0125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.185972  0.043746 -0.271712 -0.100231  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate     2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 20.37632 17.98888 23.0806</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        1.11300  0.84445  1.4669</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     1.27989  1.05465  1.5532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.83029  0.76211  0.9046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 20.37668 17.98209 23.0901</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        1.11279  0.84665  1.4626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     1.28011  1.05449  1.5540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.83030  0.76207  0.9046</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -292,18 +292,18 @@ and alternatively just solved directly (type="I") without any additional terms.<
 <span class="r-in"><span>                             cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span>,<span class="va">tcell</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"lin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        Estimate Std.Err  2.5% 97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=0    13.60  0.8316 11.97 15.23 3.826e-60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=1    18.90  1.2696 16.41 21.39 3.998e-50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=0    13.60  0.8316 11.97 15.23 3.829e-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=1    18.90  1.2696 16.41 21.39 4.004e-50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=0    16.19  2.4061 11.48 20.91 1.705e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=1    17.77  2.4536 12.96 22.58 4.462e-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=1    17.77  2.4536 12.96 22.58 4.464e-13</span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu"><a href="resmean.phreg.html">resmean.phreg</a></span><span class="op">(</span><span class="va">out1</span>,times<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     strata times    rmean se.rmean years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0      0    30 13.60294 0.831542   16.39706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1      1    30 18.90106 1.269315   11.09894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0      2    30 16.19115 2.400633   13.80885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1      3    30 17.76613 2.442196   12.23387</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     strata times    rmean  se.rmean years.lost</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0      0    30 13.60292 0.8315433   16.39708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1      1    30 18.90123 1.2693327   11.09877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0      2    30 16.19119 2.4006162   13.80881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1      3    30 17.76608 2.4422050   12.23392</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## competing risks years-lost for cause 1  </span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">resmeanIPCW</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
@@ -311,22 +311,22 @@ and alternatively just solved directly (type="I") without any additional terms.<
 <span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        Estimate Std.Err   2.5%  97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=0   12.105  0.8508 10.438 13.773 6.162e-46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=1    6.884  1.1741  4.583  9.186 4.530e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=0, platelet=1    6.884  1.1741  4.583  9.185 4.536e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=0    7.261  2.3533  2.648 11.873 2.033e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.737e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inttcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.738e-03</span>
 <span class="r-in"><span><span class="co">## same as integrated cumulative incidence </span></span></span>
 <span class="r-in"><span><span class="va">rmc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="resmean.phreg.html">cif.yearslost</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rmc1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     strata times    intF11   intF12 se.intF11 se.intF12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0      0    30 12.105130 4.291930 0.8508105 0.6161439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1      1    30  6.884354 4.214585 1.1740906 0.9057091</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0      2    30  7.260779 6.548075 2.3532954 1.9703507</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1      3    30  5.780371 6.453499 2.0924976 2.0815119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0      0    30 12.105159 4.291923 0.8508126 0.6161430</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1      1    30  6.884176 4.214597 1.1741014 0.9057117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0      2    30  7.260734 6.548077 2.3532796 1.9703431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1      3    30  5.780373 6.453549 2.0924990 2.0815267</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     total.years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0         16.39706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1         11.09894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0         13.80885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1         12.23387</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0         16.39708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1         11.09877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0         13.80881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1         12.23392</span>
 </code></pre></div>
     </div>
   </div>

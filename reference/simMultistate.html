@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
       </span>
     </div>
 
@@ -228,13 +228,20 @@
 <span class="r-in"><span><span class="va">iddata</span> <span class="op">&lt;-</span> <span class="fu">simMultistate</span><span class="op">(</span><span class="fl">10000</span>,<span class="va">base1</span>,<span class="va">base1</span>,<span class="va">dr</span>,<span class="va">dr2</span>,cens<span class="op">=</span><span class="va">cens</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dprint.html">dlist</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">id</span><span class="op">&lt;</span><span class="fl">3</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            time status    entry death from to    start      stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      785.5638      2   0.0000     0    1  2   0.0000  785.5638</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10001 1045.9743      3 785.5638     1    2  3 785.5638 1045.9743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             time status    entry death from to    start       stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       3.672676      2 0.000000     0    1  2 0.000000   3.672676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10001 217.689153      3 3.672676     1    2  3 3.672676 217.689153</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       time status entry death from to start     stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 133.6361      0     0     0    1  0     0 133.6361</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            time status     entry death from to     start      stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      801.6571      2    0.0000     0    1  2    0.0000  801.6571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10002  974.8304      1  801.6571     0    2  1  801.6571  974.8304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16215 1398.5644      2  974.8304     0    1  2  974.8304 1398.5644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19688 1422.6580      1 1398.5644     0    2  1 1398.5644 1422.6580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22113 3081.1661      2 1422.6580     0    1  2 1422.6580 3081.1661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23679 3718.5016      1 3081.1661     0    2  1 3081.1661 3718.5016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24762 3878.9507      2 3718.5016     0    1  2 3718.5016 3878.9507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25440 3995.5113      0 3878.9507     0    2  0 3878.9507 3995.5113</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co">### estimating rates from simulated data  </span></span></span>
 <span class="r-in"><span><span class="va">c0</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">iddata</span><span class="op">)</span></span></span>
