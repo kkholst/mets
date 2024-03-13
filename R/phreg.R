@@ -2129,6 +2129,7 @@ print.summary.survivalG  <- function(x,...) {
 ##'
 ##' @param formula formula with 'Surv' outcome (see \code{coxph})
 ##' @param data data frame
+##' @param no.baseline to fit model without baseline hazard
 ##' @param ... Additional arguments to phreg 
 ##' @author Thomas Scheike
 ##' @examples
@@ -2141,7 +2142,96 @@ print.summary.survivalG  <- function(x,...) {
 ##' ## summary(out2)
 ##' 
 ##' @export
-aalenMets <- function(formula,data=data,...)
+aalenMets <- function(formula,data=data,no.baseline=FALSE,...)
+{# {{{
+formula.call <- formula
+x <- phreg(formula,data=data,no.opt=TRUE,...)
+xx <- x$cox.prep
+
+### computation of intZHZ matrix, and gamma and baseline ##################
+# {{{
+eXb <- c(xx$sign) * c(xx$weights)
+S0 = c(revcumsumstrata(eXb,xx$strata,xx$nstrata))
+S0[S0==0] <- 1
+E=apply(eXb*xx$X,2,revcumsumstrata,xx$strata,xx$nstrata)/S0; 
+if (no.baseline) E <- 0*E
+###if (!no.int) E <- cbind(1,E)
+###if (no.int) X <-  xx$X else X <- cbind(1,xx$X)
+###if (no.int) XX <-  xx$XX else { XX <- .Call("vecCPMat",X)$XX }
+X <- xx$X; XX <- xx$XX
+###
+S2=apply(eXb*XX,2,revcumsumstrata,xx$strata,xx$nstrata)
+E2  <- .Call("vecCPMat",E)$XX
+###
+dts <- c(diffstrata(xx$time,xx$strata,xx$nstrata))
+dt <- diff(c(0,xx$time))
+###
+intZbar <- apply(E*dts,2,cumsumstrata,xx$strata,xx$nstrata) 
+intZHZt <- apply((S2-S0*E2)*dts,2,cumsum) 
+p <- ncol(E)
+intZHZ <-  matrix(.Call("XXMatFULL",tail(intZHZt,1),p,PACKAGE="mets")$XXf,p,p)
+
+IintZHZ  <-  solve(intZHZ)
+intZHdN <- matrix(x$gradient,ncol(E),1)
+XJ <- X[xx$jumps+1,]
+if (no.baseline) intZHdN <- matrix(apply(XJ,2,sum),ncol(E),1)
+gamma <- IintZHZ %*% intZHdN
+###if (!no.int) nn <- c("int",colnames(x$X)) else 
+nn <- colnames(x$X)
+rownames(gamma)  <-  nn
+x$cumhaz[,2] <- x$cumhaz[,2]- intZbar[xx$jumps+1,] %*% gamma
+# }}}
+
+### iid gamma #########################################
+# {{{
+id <- xx$id
+if (no.baseline==FALSE) {
+  mm <-  X * c(X %*% gamma) * c(xx$time)+ apply( E* c(E %*% gamma)*dts,2,cumsumstrata,xx$strata,xx$nstrata) -  X* c(intZbar %*% gamma) - c(X %*% gamma)* intZbar 
+  mm <- c(xx$weights*xx$sign) * mm
+  mm <- apply(mm,2,sumstrata,id,max(id)+1)
+  ###
+  MGt <- t(x$hessian %*% t(lava::iid(x))) + mm 
+  XJ2l  <- .Call("vecCPMat",x$U)$XX
+  XJ2l <- matrix(apply(XJ2l,2,sum),nrow=1)
+  varmg <-  matrix(.Call("XXMatFULL",XJ2l,p,PACKAGE="mets")$XXf,p,p)
+  varmg <- IintZHZ %*% varmg %*% IintZHZ
+} else {
+  mm <-  X * c(X %*% gamma) * c(xx$time)
+  mm <- c(xx$weights*xx$sign) * mm
+  mm <- apply(mm,2,sumstrata,id,max(id)+1)
+  XJ2l  <- .Call("vecCPMat",XJ)$XX
+  XJ2l <- matrix(apply(XJ2l,2,sum),nrow=1)
+  varmg <-  matrix(.Call("XXMatFULL",XJ2l,p,PACKAGE="mets")$XXf,p,p)
+  varmg <- IintZHZ %*% varmg %*% IintZHZ
+  XdN  <- apply(XJ,2,sumstrata,id[xx$jumps+1],max(id)+1)
+  MGt <-  XdN-mm
+}
+iid <-  MGt %*% IintZHZ
+# }}}
+
+### output  #########################################
+# {{{
+coef <- c(gamma)
+names(coef) <- nn
+x$coef <- coef
+x$var <- crossprod(iid) 
+x$varmg <- varmg
+x$iid <- iid
+x$intZHdN <- intZHdN
+x$intZHZ  <-  intZHZ
+x$formula <- formula.call
+x$ihessian <- IintZHZ
+## score of gamma 
+x$gradient <- c(intZHdN-intZHZ %*% gamma)
+
+x$no.opt <- FALSE
+class(x) <- c(class(x),"aalenMets")
+# }}}
+
+return(x)
+}# }}}
+
+aalenMetsOld <- function(formula,data=data,...)
 {# {{{
 formula.call <- formula
 x <- phreg(formula,data=data,no.opt=TRUE,...)

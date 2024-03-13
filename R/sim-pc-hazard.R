@@ -507,7 +507,6 @@ if (!is.list(coxs)) stop("Cox models in list form\n");
    return(dt)
 }# }}}
 
-
 #' @export
 simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(0,0),...)
 {# {{{

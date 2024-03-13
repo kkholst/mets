@@ -4,12 +4,14 @@
 \alias{aalenMets}
 \title{Fast additive hazards model with robust standard errors}
 \usage{
-aalenMets(formula, data = data, ...)
+aalenMets(formula, data = data, no.baseline = FALSE, ...)
 }
 \arguments{
 \item{formula}{formula with 'Surv' outcome (see \code{coxph})}
 
 \item{data}{data frame}
+
+\item{no.baseline}{to fit model without baseline hazard}
 
 \item{...}{Additional arguments to phreg}
 }

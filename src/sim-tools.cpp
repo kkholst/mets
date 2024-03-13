@@ -232,6 +232,7 @@ return(outsims);
 }
 /*}}}*/
 
+
 // [[Rcpp::export(name=".simSurvZ")]]
 arma::mat simSurvZ(const arma::mat& St, const arma::colvec& rd,const arma::colvec& z,
 		const double theta, const int type)
