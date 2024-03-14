@@ -211,6 +211,10 @@ arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colve
                   colvec gtt =exp(theta*log(St)*rd[i]);
                   base1=fz[i]*cumsum(dbase1/gtt)/share; 
 	       }
+               if (type==4)  {
+                  colvec gtt =1-(1-St)*rd[i]; // model with survival on 
+                  base1=fz[i]*cumsum(dbase1/gtt)/share; 
+	       }
 	       basei.col(1)=base1; 
 
 	       arma::colvec simi=simbase(basei,rr(i),tc(i),0,maxit); 
