@@ -3,19 +3,21 @@
 ##' Simple and fast version for IPCW regression for just one time-point thus fitting the model 
 ##' \deqn{E( min(T, t) | X ) = exp( X^T beta) } or in the case of competing risks data
 ##' \deqn{E( I(epsilon=1) (t - min(T ,t)) | X ) = exp( X^T beta) } thus given years lost to 
-##' cause.
+##' cause. 
 ##'
 ##' When the status is binary assumes it is a survival setting and default is to consider outcome Y=min(T,t), 
 ##' if status has more than two levels, then computes years lost due to the specified cause, thus
-##' using the response \deqn{ (t-min(T,t)) I(status==cause) }
+##' using the response \deqn{ Y = (t-min(T,t)) I(status=cause) }
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta (min(T , t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
-##' for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) I ( min(T ,t) \leq C ) } is indicator of
-##' being uncensored. 
+##' \deqn{ X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
+##' for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) = I ( min(T ,t) \leq C ) } is indicator of
+##' being uncensored.  Concretely, the uncensored observations at time t will count those with an event (of any type) before t and those
+##' with a censoring time at t or further out. One should therefore be a bit careful when data has been constructed such that
+##' some of the event times T are equivalent to t. 
 ##'
 ##' Can also solve the binomial regresion IPCW response estimating equation: 
-##' \deqn{ h(X) X ( \Delta (min(T, t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+##' \deqn{ h(X) X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 ##' 
 ##' By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
@@ -24,7 +26,7 @@
 ##' under known censoring model. 
 ##' 
 ##' When Ydirect is given it solves : 
-##' \deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+##' \deqn{ X ( \Delta(min(T,t)) Ydirect /G_c(min(T,t)) - exp( X^T beta)) = 0 }
 ##' for IPCW adjusted responses. 
 ##'
 ##' The actual influence (type="II") function is based on augmenting with \deqn{ X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) }
@@ -143,14 +145,13 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status==cens.code) 
-  statusE <- (status==cause) & (exit<= time) 
+  statusC <- (status %in% cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
   if ((sum(statusE)==0) & is.null(Ydirect)) warning("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
-  statusC <- (status==cens.code) 
   ucauses  <-  sort(unique(status))
-  ccc <- which(ucauses==cens.code)
+  ccc <- which(ucauses %in% cens.code)
   if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
   competing  <-  (length(Causes)>1) 
   data$id <- id
@@ -176,15 +177,15 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 
   X <-  as.matrix(X)
   X2  <- .Call("vecMatMat",X,X)$vXZ
-  ## if event before time or alive, then uncensored  
-  obs <- (exit<=time & (status %in% Causes)) | (exit>time)
+  ## if event before time or alive, then uncensored, equality for both censored and events  
+  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
   if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
   } else Y <- c(Ydirect*obs)/cens.weights
 
  if (is.null(augmentation))  augmentation=rep(0,p)
- nevent <- sum((status==cause)*(exit<=time))
+ nevent <- sum((status %in% cause)*(exit<=time))
 
  h.call <- h
  if (is.null(h))  h <- rep(1,length(exit))
@@ -205,7 +206,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     h <- h[ord]
 ###    lp <- c(X %*% val$coef+offset)
 ###    p <- exp(lp)
-    obs <- (exit<=time & status==cause) | (exit>time)
+    obs <- (exit<=time & status==cause) | (exit>=time)
     if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
@@ -230,7 +231,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
 	    IhdLam0 <- apply(ht*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 	    U <- matrix(0,nrow(xx$X),ncol(X))
 	    U[xx$jumps+1,] <- (resC$jumptimes<=time)*ht[xx$jumps+1,]/c(resC$S0)
-	    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
+    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
 
 	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
 	    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)

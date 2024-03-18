@@ -81,15 +81,17 @@ cause.
 \details{
 When the status is binary assumes it is a survival setting and default is to consider outcome Y=min(T,t), 
 if status has more than two levels, then computes years lost due to the specified cause, thus
-using the response \deqn{ (t-min(T,t)) I(status==cause) }
+using the response \deqn{ Y = (t-min(T,t)) I(status=cause) }
 
 Based on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta (min(T , t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
-for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) I ( min(T ,t) \leq C ) } is indicator of
-being uncensored. 
+\deqn{ X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
+for IPCW adjusted responses. Here \deqn{ \Delta(min(T,t)) = I ( min(T ,t) \leq C ) } is indicator of
+being uncensored.  Concretely, the uncensored observations at time t will count those with an event (of any type) before t and those
+with a censoring time at t or further out. One should therefore be a bit careful when data has been constructed such that
+some of the event times T are equivalent to t. 
 
 Can also solve the binomial regresion IPCW response estimating equation: 
-\deqn{ h(X) X ( \Delta (min(T, t))/G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+\deqn{ h(X) X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses where $h$ is given as an argument together with iid of censoring with h. 
 
 By using appropriately  the h argument we can also do the efficient IPCW estimator estimator.
@@ -98,7 +100,7 @@ Variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.v
 under known censoring model. 
 
 When Ydirect is given it solves : 
-\deqn{ X ( \Delta( min(T,t)) Ydirect /G_c(min(T_i,t)) - exp( X^T beta)) = 0 }
+\deqn{ X ( \Delta(min(T,t)) Ydirect /G_c(min(T,t)) - exp( X^T beta)) = 0 }
 for IPCW adjusted responses. 
 
 The actual influence (type="II") function is based on augmenting with \deqn{ X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) }

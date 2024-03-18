@@ -441,7 +441,6 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
 }# }}}
 
-##' @export
 recurrentMarginalAIPCWdata <- function(rr,times,km=TRUE,terms=1,idt=1,x.design=NULL,
    id="id",start="start",stop="stop",status="status",death="death",cause=1,...)
 {# {{{
@@ -584,7 +583,6 @@ form1 <- as.formula(paste("Surv(",start,",",stop,",",status,"==",cause,")~cluste
   return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],gamma=gamma,gamma.time=gammahat,times=times,
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
 }# }}}
-
 
 ##' @export
 recurrentMarginalIPCW <- function(rr,km=TRUE,times=NULL,...)
