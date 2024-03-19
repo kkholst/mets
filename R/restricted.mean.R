@@ -207,7 +207,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     h <- h[ord]
 ###    lp <- c(X %*% val$coef+offset)
 ###    p <- exp(lp)
-    obs <- (exit<=time & status %in% cause) | (exit>=time)
+    obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
     if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
 	                  Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
