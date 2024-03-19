@@ -197,6 +197,7 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     ### order of sorted times
     ord <- resC$ord
     X <-  X[ord,,drop=FALSE]
+    X2 <- X2[ord,,drop=FALSE]
     status <- status[ord]
     exit <- exit[ord]
     weights <- weights[ord]
@@ -206,10 +207,10 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     h <- h[ord]
 ###    lp <- c(X %*% val$coef+offset)
 ###    p <- exp(lp)
-    obs <- (exit<=time & status==cause) | (exit>=time)
+    obs <- (exit<=time & status %in% cause) | (exit>=time)
     if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
-	                  Y <- c((status==cause)*(time-pmin(exit,time))*obs)/cens.weights
+	                  Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
     } else Y <- c(Ydirect*obs)/cens.weights
     if (model=="exp" & is.null(h.call))  ph <- 1
     if (model=="exp" & !is.null(h.call)) ph <- h

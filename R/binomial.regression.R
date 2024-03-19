@@ -529,7 +529,6 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   return(val)
 }# }}}
 
-
 ##' @export
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
@@ -884,6 +883,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
      else stop("outcome not defined") 
   }
 
+
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum((status %in% cause)*(exit<=time))
 
@@ -905,16 +905,10 @@ if (outcome[1]!="cif") {
 }
 ploglik <- sum(weights*(Y-p)^2)
 Dlogl <- weights*X*c(Y-p)
-
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
-###hessian <- matrix(D2log,length(pp),length(pp))
-hessian <- matrix(0,length(pp),length(pp))
-###
-hessian[lower.tri(hessian,diag=TRUE)] <- D2log
-hessian <- hessian+t(hessian)
-diag(hessian) <- diag(hessian)/2
-
+np <- length(pp)
+hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
       ihess <- solve(hessian)
@@ -1162,6 +1156,7 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 ###{{{ summary 
 
