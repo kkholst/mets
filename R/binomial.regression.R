@@ -199,11 +199,8 @@ D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 ###hessian <- matrix(D2log,length(pp),length(pp))
 ###
-hessian <- matrix(0,length(pp),length(pp))
-###
-hessian[lower.tri(hessian,diag=TRUE)] <- D2log
-hessian <- hessian+t(hessian)
-diag(hessian) <- diag(hessian)/2
+np <- length(pp)
+hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
       ihess <- solve(hessian)
