@@ -661,7 +661,8 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 
     MGAiid <- NULL
     S0i2 <- rep(0,length(xx2$strata))
-    S0i2[jumps] <- 1/x$S0^2
+    ww <- xx2$caseweights*xx2$weights
+    S0i2[jumps] <- 1/(x$S0^2*ww[jumps])
     MGAiid <- matrix(0,length(S0i2),1)
     MGAiid2 <- matrix(0,length(S0i2),1)
     cumhazAA <- cumsumstrata(S0i2*btimexx,xx2$strata,xx2$nstrata)
