@@ -1078,6 +1078,7 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
 
  ## survival censoring given X, Z, either twostage or frailty-model 
  if (type>=2) stype <- 2 else stype <- 1
+ if (var.z[1]==0) stype <- 1
  dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z[1],stype)
  dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
  if (!is.null(cens)) cens <- rexp(n)/(rc*cens) else cens <- rep(maxtime,n)
