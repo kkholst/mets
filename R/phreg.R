@@ -113,8 +113,9 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
 	 ## Brewslow estimator, to handle also possible weights, caseweights that are 0
 	 S0i2 <- S0i <- rep(0,length(val$S0))
+         wwJ <- val$caseweightsJ*val$weightsJ
 	 S0i[val$S0>0] <- 1/val$S0[val$S0>0]
-	 S0i2[val$S0>0] <- 1/val$S0[val$S0>0]^2
+	 S0i2[val$S0>0] <- 1/(val$S0[val$S0>0]^2*wwJ[val$S0>0])
 	 cumhaz <- cbind(jumptimes,cumsumstrata(S0i,strata,nstrata))
 	 if ((no.opt==FALSE & p!=0)) { 
 	     DLambeta.t <- apply(val$E*S0i,2,cumsumstrata,strata,nstrata)

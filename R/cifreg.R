@@ -546,10 +546,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
         varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
     } else varbetat <- 0
-    var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
+    wwJ <- opt$caseweightsJ*opt$weightsJ
+    var.cumhaz <- cumsumstrata(1/(opt$S0^2*wwJ),strata,nstrata)+varbetat
     se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
     colnames(se.cumhaz) <- c("time","se.cumhaz")
-
 
     out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
                 iid=Uiid,ncluster=nid,
