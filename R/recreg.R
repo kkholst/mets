@@ -635,6 +635,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    augment <- c(gamma %*% apply(ftime*UA/c(Gcj),2,sum))
    var.augment  <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
+   if (!is.null(augmentation.call)) { ## update variance when called with augmentation
    #### iid magic  for censoring augmentation martingale{{{
    ### int_0^infty gamma (e_i - ebar(s)) 1/G_c(s) dM_i^c
    S0iG <- S0i <- rep(0,length(xx2$strata))
@@ -672,7 +673,10 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
    var.augment.times <-  varmc  +  iH %*% var.augment.times %*% iH
    var.augment.iid <-  crossprod(Uiid.augment) 
    var.augment.times.iid <- crossprod(Uiid.augment.times) 
-###   if (!is.null(augmentation)) varmc <- var.augment.times
+   } else {
+   var.augment <-  var.augment.times <-  var.augment.iid <-  var.augment.times.iid <- NULL
+   Uiid.augment.times <- Uiid.augment <- NULL
+   }
 
   } else {
     iid.augment <- iid.augment.times <- augment <- augment.times <- NULL 
