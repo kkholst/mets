@@ -205,8 +205,8 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     if (!is.null(Ydirect)) Ydirect <- Ydirect[ord]
     cens.weights <- cens.weights[ord]
     h <- h[ord]
-###    lp <- c(X %*% val$coef+offset)
-###    p <- exp(lp)
+###  lp <- c(X %*% val$coef+offset)
+###  p <- exp(lp)
     obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
     if (is.null(Ydirect))  {
 	  if (!competing) Y <- c(pmin(exit,time)*obs)/cens.weights else 
@@ -218,39 +218,47 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     if (model!="exp" & !is.null(h.call)) ph <- h 
     Xd <- ph*X
 
-	    xx <- resC$cox.prep
-	    S0i2 <- S0i <- rep(0,length(xx$strata))
-	    S0i[xx$jumps+1]  <- 1/resC$S0
-	    S0i2[xx$jumps+1] <- 1/resC$S0^2
-	    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i) 
-	    ## to make \int h(s)/Ys  dM_i^C(s) 
-	    btime <- 1*(exit<time)
+    xx <- resC$cox.prep
+    S0i2 <- S0i <- rep(0,length(xx$strata))
+    S0i[xx$jumps+1]  <- 1/resC$S0
+    S0i2[xx$jumps+1] <- 1/resC$S0^2
+    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i) 
+    ## to make \int h(s)/Ys  dM_i^C(s) 
+    btime <- 1*(exit<time)
+    S0t <- revcumsumstrata(rep(1,length(xx$strata)),xx$strata,xx$nstrata)
 
-	    ht  <-  apply(Xd*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-	    ### Cens-Martingale as a function of time and for all subjects to handle strata 
-	    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-	    IhdLam0 <- apply(ht*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
-	    U <- matrix(0,nrow(xx$X),ncol(X))
-	    U[xx$jumps+1,] <- (resC$jumptimes<=time)*ht[xx$jumps+1,]/c(resC$S0)
+    ht  <-  apply(Xd*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    ### Cens-Martingale as a function of time and for all subjects to handle strata 
+    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
+    IhdLam0 <- apply(ht*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    U <- matrix(0,nrow(xx$X),ncol(X))
+    U[xx$jumps+1,] <- (resC$jumptimes<=time)*ht[xx$jumps+1,]/c(resC$S0)
     MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
+    mid <- max(xx$id)
+    MGCiid <- apply(MGt,2,sumstrata,xx$id,mid+1)
 
-	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-	    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-
-           if (type[1]=="II") { ## psedo-value type augmentation
-	    hYt  <-  revcumsumstrata(Y,xx$strata,xx$nstrata)
-	    IhdLam0 <- cumsumstrata(hYt*S0i2*btime,xx$strata,xx$nstrata)
-	    U <- rep(0,length(xx$strata))
-	    U[xx$jumps+1] <- (resC$jumptimes<=time)*hYt[xx$jumps+1]/c(resC$S0)
-	    MGt <- Xd*c(U-IhdLam0)*c(xx$weights)
-	    MGtiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-
-	    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-	    MGCiid <- MGtiid
-	    augmentation  <-  apply(MGCiid,2,sum) + augmentation
-           }
+   if (type[1]=="II") { ##  pseudo-value type augmentation
+    hYt  <-  revcumsumstrata(Y,xx$strata,xx$nstrata)
+    IhdLam0 <- cumsumstrata(hYt*S0i2*btime,xx$strata,xx$nstrata)
+    U <- rep(0,length(xx$strata))
+    U[xx$jumps+1] <- (resC$jumptimes<time)*hYt[xx$jumps+1]/c(resC$S0)
+    MGt <- Xd*c(U-IhdLam0)*c(xx$weights)
+    MGtiid <- apply(MGt,2,sumstrata,xx$id,mid+1)
+    augmentation  <-  apply(MGtiid,2,sum) + augmentation
+    ###
+    EXt  <-  apply(Xd,2,revcumsumstrata,xx$strata,xx$nstrata)
+    IEXhYtdLam0 <- apply(EXt*c(hYt)*S0i*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    U <- matrix(0,nrow(xx$X),ncol(X))
+    U[xx$jumps+1,] <- (resC$jumptimes<time)*hYt[xx$jumps+1]*EXt[xx$jumps+1,]/c(resC$S0)^2
+    MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0)*c(xx$weights)
+    ###
+    MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
+    ### Censoring Variance Adjustment 
+    MGCiid <- MGtiid+ MGCiid-MGCiid2
+   }
    }  else {
 	  MGCiid <- 0
+          mid <- max(id)
   }## }}}
 
  ## use data ordered by time (keeping track of id also)
@@ -279,7 +287,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   if (all) {
       ihess <- solve(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
-      beta.iid <- apply(beta.iid,2,sumstrata,id,max(id)+1)
+      beta.iid <- apply(beta.iid,2,sumstrata,id,mid+1)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
