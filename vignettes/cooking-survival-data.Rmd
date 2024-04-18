@@ -1,0 +1,354 @@
+---
+title: "WIP: Cooking survival data, 5 minute recipes"
+aouthor: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    # fig_width: 7.15
+    # fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{Cooking survival data, 5 minutes recipes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  ##dev="png",
+  dpi=50,
+  fig.width=7.15, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1,
+  comment = "#>"  
+)
+```
+
+Overview 
+========
+
+Simulation of survival data is important for both
+theoretical and practical work. In a practical setting we might wish to
+validate that standard errors are valid even in a rather small sample,
+or validate that a more complicated procedure is doing as intended. 
+Therefore it is useful to have simple tools for generating survival data
+that looks as much as possible like particular data. In a theoretical
+setting we often are interested in evaluating the finite sample
+properties of a new procedure in different settings that often are
+motivated by a specific practical problem. The aim of our work is
+provide such tools.
+
+Bender et al. in a nice recent paper also discussed how to generate survival data based on 
+the Cox model, and restricted attention to some of the many useful parametric survival models 
+(weibull, exponential).
+
+Different survival models can be cooked, and we here give recipes for
+hazard and cumulative incidence based simulations. More recipes are
+given in vignette about recurrent events. 
+
+  - hazard based.
+  - cumulative incidence.
+  - recurrent events (see recurrent events vignette).
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(10) # to control output in simulations
+```
+
+Hazard based, Cox models  
+=========================
+
+Given a survival time $T$ with cumulative hazard $\Lambda(t)=\int_0^t \lambda(s) ds$, it
+follows that \cite{}
+with $E \sim Exp(1)$ (exponential with rate 1), that $\Lambda^{-1}(E)$ will have the
+same distribution as $T$.
+
+This provides the basis for simulations of survival times with a given hazard  and is 
+a consequence of this simple calculation
+\[
+  P(\Lambda^{-1}(E) > t) = P(E > \Lambda(t)) = \exp( - \Lambda(t)) = P(T > t).
+\]
+
+Similarly if $T$ given $X$ have hazard on Cox form 
+\[
+  \lambda_0(t) \exp( X^T \beta)
+\]
+where $\beta$ is a $p$-dimensional regression coefficient and $\lambda_0(t)$ a baseline 
+hazard funcion, 
+then it is useful to observe also that 
+$\Lambda^{-1}(E/HR)$ with $HR=\exp(X^T \beta)$ has the same distribution as $T$ given $X$. 
+
+Therefore if the inverse of the cumulative hazard can be computed we can generate survival with 
+a specified hazard function. One useful observation is note that for a piecewise linear continuous
+cumulative hazard on an interval $[0,\tau]$ $\Lambda_l(t)$ it is easy to compute the inverse. 
+
+Further, we can approximate any cumulative hazard with a piecewise linear continous 
+cumulative hazard and then simulate data according to this approximation. Recall that fitting
+the Cox model to data will give a piecewise constant cumulative hazard and the regression coefficients so 
+with these at hand we can first approximate the piecewise constant "Breslow"-estimator with a linear
+upper (or lower bound) by simply connecting the values by 
+straight lines.  
+
+Delayed entry 
+=============
+
+If $T$ given $X$ have hazard  on Cox form 
+\[
+  \lambda_0(t) \exp( X^T \beta)
+\]
+and we wish to generate data according to this hazard for those that are alive at time $s$, that is 
+draw from the distribution of $T$ given $T>s$ (all given $X$ ), then we note that  
+\[
+\Lambda_0^{-1}( \Lambda_0(s) + E/HR)) 
+\]
+with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distributiion we are after. 
+
+This is again a consequence of a simple calculation
+\[
+  P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) > t) = P_X(E > HR( \Lambda(t) - \Lambda(s)) ) = P_X(T>t | T>s)
+\]
+
+
+The engine is to simulate data with a given linear cumulative hazard.
+
+```{r}
+ nsim <- 100
+ chaz <-  c(0,1,1.5,2,2.1)
+ breaks <- c(0,10,   20,  30,   40)
+ cumhaz <- cbind(breaks,chaz)
+ X <- rbinom(nsim,1,0.5)
+ beta <- 0.2
+ rrcox <- exp(X * beta)
+ 
+ pctime <- rchaz(cumhaz,n=nsim)
+ pctimecox <- rchaz(cumhaz,rrcox)
+```
+
+Now we generate data that resemble Cox models  for the bmt data
+
+```{r}
+ data(bmt); 
+ cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
+ cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
+
+ X1 <- bmt[,c("tcell","platelet")]
+ n <- 100
+ xid <- sample(1:nrow(X1),n,replace=TRUE)
+ Z1 <- X1[xid,]
+ Z2 <- X1[xid,]
+ rr1 <- exp(as.matrix(Z1) %*% cox1$coef)
+ rr2 <- exp(as.matrix(Z2) %*% cox2$coef)
+
+ d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2)
+ dd <- cbind(d,Z1)
+
+ scox1 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
+ scox2 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
+ par(mfrow=c(1,2))
+ plot(cox1); plot(scox1,add=TRUE)
+ plot(cox2); plot(scox2,add=TRUE)
+ cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
+```
+
+Now model with no covariates and specific call of sim.base function
+
+```{r}
+data(sTRACE)
+ coxs <-   phreg(Surv(time,status==9)~strata(chf,vf),data=sTRACE)
+ strata <- sample(0:3,nsim,replace=TRUE)
+ simb <- sim.base(coxs$cumhaz,nsim,stratajump=coxs$strata.jumps,strata=strata)
+ cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
+ plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+
+```
+
+More Cox games 
+
+```{r}
+ nsim <- 100
+ data(sTRACE)
+ cox <-  coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
+ sim1 <- sim.cox(cox,nsim,data=sTRACE)
+ cc <- coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
+ cbind(cox$coef,cc$coef)
+ cor(sim1[,c("vf","chf","wmi")])
+ cor(sTRACE[,c("vf","chf","wmi")])
+ 
+ cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
+ sim3 <- sim.cox(cox,nsim,data=sTRACE)
+ cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
+ cbind(cox$coef,cc$coef)
+ plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
+ 
+ coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
+ sim3 <- sim.cox(coxs,nsim,data=sTRACE)
+ cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
+ cbind(coxs$coef,cc$coef)
+ plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+```
+
+More Cox games with cause  specific hazards
+
+```{r}
+ data(bmt)
+ # coxph          
+ cox1 <- coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
+ cox2 <- coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
+ coxs <- list(cox1,cox2)
+ dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ scox1 <- coxph(Surv(time,status==1)~tcell+platelet,data=dd)
+ scox2 <- coxph(Surv(time,status==2)~tcell+platelet,data=dd)
+ cbind(cox1$coef,scox1$coef)
+ cbind(cox2$coef,scox2$coef)
+```
+ 
+ Startified Cox models using phreg
+
+```{r}
+ ## stratified with phreg 
+ cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
+ cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
+ cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
+ coxs <- list(cox0,cox1,cox2)
+ dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ scox0 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
+ scox1 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
+ scox2 <- phreg(Surv(time,status==3)~strata(tcell)+platelet,data=dd)
+ cbind(cox0$coef,scox0$coef)
+ cbind(cox1$coef,scox1$coef)
+ cbind(cox2$coef,scox2$coef)
+ par(mfrow=c(1,3))
+ plot(cox0); plot(scox0,add=TRUE,col=2); 
+ plot(cox1); plot(scox1,add=TRUE,col=2); 
+ plot(cox2); plot(scox2,add=TRUE,col=2); 
+ 
+ cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
+ cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
+ coxs <- list(cox1,cox2)
+ dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
+ scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+ cbind(cox1$coef,scox1$coef)
+ cbind(cox2$coef,scox2$coef)
+ par(mfrow=c(1,2))
+ plot(cox1); plot(scox1,add=TRUE); 
+ plot(cox2); plot(scox2,add=TRUE); 
+```
+
+Cumulative incidence 
+======================
+
+In this section we discuss how to simulate competing risks data that have a specfied cumulative 
+incidence function.  We consider for simplicity a competing risks model with two causes and denote the
+cumulative incidence curves as $F_1(t) = P(T < t, \epsilon=1)$ and  $F_2(t) = P(T < t, \epsilon=2)$.
+
+To generate data with the required cumulative incidence functions a simple approach is to first figure out
+if the subject dies and then from what cause, then finally draw the survival time according to the
+conditional distribution. 
+
+For simplicity we consider survival times in a fixed interval $[0,\tau]$, and first flip a coin with 
+and probabilities $1-F_1(\tau)-F_2(\tau)$ to decide if the subject is a survivor or dies. If the subject
+dies we then flip a coin with probabilities $F_1(\tau)/(F_1(\tau)+F_2(\tau))$ and 
+$F_2(\tau)/(F_1(\tau)+F_2(\tau))$ to decide if $\epsilon=1$ or $\epsilon=2$, and finally draw a
+$T = (\tilde F_1^{-1}(U)$ with $\tilde F_1(s) = F_1(s)/F_1(\tau)$ and $U$ is a uniform.
+
+
+We again note that if $\tilde F_1(s)$ and $F_1(s)$ are piecewise linear
+continuous functions then the inverses are easy to compute. 
+
+
+Cumulative incidence regression
+================================
+
+Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
+cumulative incidence functions that satistifes the needed constraints. 
+
+Possibly $F_1(t;X) = 1 - \exp( \Lambda_1(t) \exp( X^T \beta_1)$
+$F_2(t;X) = 1 - \exp( \Lambda_2(t) \exp( X^T \beta_2)$ given estimators of $\Lambda_1$ and $\lambda_2$ and $\beta_1$ and $\beta_2$.
+We  can obtain a piecewise linear continuous approximation, $F_1^L(t;X)$  
+by linearly connecting estimates $\hat F_1(t_j;X) = 1 - \exp( \hat \Lambda_1(t) \exp( X^T \hat \beta_1)$. Now with these
+at hand  
+$F_1^L(t;X)$ and $F_2^L(t;X)$ we can generate data with these cumulative incidence functions.
+
+Here both the cumulative incidence are on the specified form if the restriction is not 
+important.  Using sim.cifs but sim.cifs enforces the restriction. 
+
+```{r}
+ data(bmt)
+ ################################################################
+ #  simulating several causes with specific cumulatives 
+ ################################################################
+ cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
+ cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
+
+ dds <- sim.cifsRestrict(list(cif1,cif2),200,data=bmt)
+ dd <- sim.cifs(list(cif1,cif2),200,data=bmt)
+
+ scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
+ scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
+    
+ cbind(cif1$coef,scif1$coef)
+ cbind(cif2$coef,scif2$coef)
+ par(mfrow=c(1,2))   
+ plot(cif1); plot(scif1,add=TRUE,col=2)
+ plot(cif2); plot(scif2,add=TRUE,col=2)
+```
+
+
+  - Parametric form with baselines 
+     - Fine-Gray form 
+     - logistic link
+
+We assumed that $F_1(t,X) = 1-\exp( \Lambda_1(t) \exp( X^T \beta_1))$ with
+$\Lambda_1(t) = \rho_1 \cdot (1-exp(-t))$ and $\beta_1 = (0,-0.1)$,
+and that the other cause was given by  
+$F_2(t,X) = 1-\exp( \Lambda_2(t) \exp( X^T \beta_2)) ( 1 - F_1(+\infty,X))$ 
+with $\Lambda_2(t) =  \rho_2 \cdot (1-exp(-t))$ and $\beta_2 = (-0.5,0.3)$,
+a parametrization that satisfies the constraint $F_1+F_2 \leq 1$. 
+
+
+```{r}
+ set.seed(100)
+ rho1 <- 0.2; rho2 <- 10
+ n <- 200
+ beta=c(0.0,-0.1,-0.5,0.3)
+ dats <- simul.cifs(n,rho1,rho2,beta,rc=0.2)
+ dtable(dats,~status)
+ dsort(dats) <- ~time
+ fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
+ summary(fg)
+```
+
+
+CIF Delayed entry
+=================
+
+Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
+cumulative incidence functions that satistifes the needed constraints. We wish to generate data that follows these two
+piecewise linear cumulative indidence functions with delayed entry at time $s$.  We should thus
+generate data that follows the cumulative incidence functions
+\[
+\tilde F_1(t,s;X)=   \frac{F_1(t;X) - F_1(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
+\]
+and 
+\[
+\tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
+\]
+this can be done according to the recipe in the previous section.  
+To be specific (ignoring the $X$ in the formula)
+\[
+  F_1^{-1}( F_1(s) + U \cdot (1 - F_1(s;X) - F_2(s;X)) )
+\]
+where $U$ is a uniform, will have distribution given by $\tilde F_1(t,s)$.
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```

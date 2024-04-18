@@ -32,38 +32,14 @@ will give censoring that looks like the data.  Covariates are drawn from data-se
 with replacement. This gives covariates like the data.
 }
 \examples{
-nsim <- 100
-
-data(bmt)
-# coxph          
-cox1 <- coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
-cox2 <- coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
-coxs <- list(cox1,cox2)
-dd <- sim.cause.cox(coxs,nsim,data=bmt)
-scox1 <- coxph(Surv(time,status==1)~tcell+platelet,data=dd)
-scox2 <- coxph(Surv(time,status==2)~tcell+platelet,data=dd)
-cbind(cox1$coef,scox1$coef)
-cbind(cox2$coef,scox2$coef)
-
-data(bmt)
-cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
-cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
-coxs <- list(cox1,cox2)
-dd <- sim.cause.cox(coxs,nsim,data=bmt)
-scox1 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
-scox2 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
-cbind(cox1$coef,scox1$coef)
-cbind(cox2$coef,scox2$coef)
-par(mfrow=c(1,2))
-plot(cox1); plot(scox1,add=TRUE); 
-plot(cox2); plot(scox2,add=TRUE); 
+nsim <- 100; data(bmt)
 
 cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
-cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
+cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
 coxs <- list(cox1,cox2)
 dd <- sim.cause.cox(coxs,nsim,data=bmt)
 scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
-scox2 <- phreg(Surv(time,status==2)~strata(tcell)+platelet,data=dd)
+scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
 cbind(cox1$coef,scox1$coef)
 cbind(cox2$coef,scox2$coef)
 par(mfrow=c(1,2))

@@ -7,7 +7,7 @@
 \alias{simulate.cox}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
+sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,...)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}
@@ -25,36 +25,24 @@ given then takes average rate of in simulated data from cox model.}
 
 \item{entry}{delayed entry variable for simulation.}
 
-\item{...}{arguments for rchaz, for example entry-time}
+\item{rr}{possible vector of relative risk for cox model.}
+
+\item{Z}{possible covariates to use instead of sampling from data.}
+
+\item{...}{arguments for rchaz, for example entry-time.}
 }
 \description{
 Simulates data that looks like fit from Cox model. Censor data automatically
 for highest value of the event times by using cumulative hazard.
 }
 \examples{
-
 data(sTRACE)
-cox <-  coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
-sim1 <- sim.cox(cox,1000,data=sTRACE)
-cc <- coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
-cbind(cox$coef,cc$coef)
-
-cor(sim1[,c("vf","chf","wmi")])
-cor(sTRACE[,c("vf","chf","wmi")])
-
-cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
-sim3 <- sim.cox(cox,1000,data=sTRACE)
-cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
-cbind(cox$coef,cc$coef)
-plot(cox,se=TRUE)
-plot(cc,add=TRUE,col=2)
-
-cox <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
-sim3 <- sim.cox(cox,100,data=sTRACE)
+nsim <- 100
+coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
+sim3 <- sim.cox(coxs,nsim,data=sTRACE)
 cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
-cbind(cox$coef,cc$coef)
-plot(cox)
-plot(cc,add=TRUE,col=2)
+cbind(coxs$coef,cc$coef)
+plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 
 }
 \author{

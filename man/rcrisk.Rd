@@ -31,8 +31,7 @@ Cox type. Censor data at highest value of the break points for either of the
 cumulatives.
 }
 \examples{
-library(mets); data(bmt); library(survival)
-
+data(bmt); 
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 
