@@ -6,7 +6,17 @@
 \alias{rcrisks}
 \title{Simulation of Piecewise constant hazard models with two causes (Cox).}
 \usage{
-rcrisk(cumhaz1, cumhaz2, rr1, rr2, n = NULL, cens = NULL, rrc = NULL, ...)
+rcrisk(
+  cumhaz1,
+  cumhaz2,
+  rr1,
+  rr2,
+  n = NULL,
+  cens = NULL,
+  rrc = NULL,
+  extend = TRUE,
+  ...
+)
 }
 \arguments{
 \item{cumhaz1}{cumulative hazard of cause 1}
@@ -22,6 +32,8 @@ rcrisk(cumhaz1, cumhaz2, rr1, rr2, n = NULL, cens = NULL, rrc = NULL, ...)
 \item{cens}{to censor further , rate or cumumlative hazard}
 
 \item{rrc}{retlativ risk for censoring.}
+
+\item{extend}{to extend the cumulative hazards to largest end-point}
 
 \item{...}{arguments for rchaz}
 }

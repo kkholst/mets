@@ -2,6 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{survivalG}
 \alias{survivalG}
+\alias{survivalGtime}
 \title{G-estimator for Cox and Fine-Gray model}
 \usage{
 survivalG(

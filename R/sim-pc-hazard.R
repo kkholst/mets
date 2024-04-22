@@ -156,6 +156,7 @@ simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,...)
 #' @param n number of simulation if rr not given 
 #' @param cens to censor further , rate or cumumlative hazard
 #' @param rrc retlativ risk for censoring.
+#' @param extend to extend the cumulative hazards to largest end-point 
 #' @param ... arguments for rchaz 
 #' @author Thomas Scheike
 #' @keywords survival
@@ -184,9 +185,15 @@ simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,...)
 #' 
 #' @export 
 #' @aliases cause.pchazard.sim  rcrisks
-rcrisk <-function(cumhaz1,cumhaz2,rr1,rr2,n=NULL,cens=NULL,rrc=NULL,...)
+rcrisk <-function(cumhaz1,cumhaz2,rr1,rr2,n=NULL,cens=NULL,rrc=NULL,extend=TRUE,...)
 {#'# {{{
  
+ if (extend)  {
+    out <- extendCums(list(cumhaz1,cumhaz2),NULL)
+    cumhaz1 <- out$cum1
+    cumhaz2 <- out$cum2
+ }
+
 if (!is.null(n)) { rr1 <- rep(1,n); rr2 <- rep(1,n) }
 n <- length(rr1); 
 if (missing(rr2)) rr2 <-rep(1,n)
@@ -213,9 +220,12 @@ return(ptt)
 }# }}}
 
 #' @export 
-rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,...)
+rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,extend=TRUE,...)
 {#'# {{{
- 
+  if (extend)  {
+    cumhazs <- extendCums(cumhazs,NULL)
+ }
+
   status <- NULL
   if (!is.null(n)) rrs <- matrix(1,n,length(cumhazs)) 
   n <- nrow(rrs); 
@@ -271,6 +281,7 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' @param entry delayed entry variable for simulation.
 #' @param rr possible vector of relative risk for cox model.
 #' @param Z possible covariates to use instead of sampling from data.
+#' @param extend to extend possible stratified baselines to largest end-point 
 #' @param ... arguments for rchaz, for example entry-time.
 #' @author Thomas Scheike
 #' @keywords survival
@@ -285,8 +296,8 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' 
 #' @aliases read.fit sim.base simulate.cox
 #' @export sim.cox
-#' @usage sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,...)
-sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,...)
+#' @usage sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
+sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
 {# {{{
    des <-  read.fit(cox,n,data=data,...)
    Z <- des$Z
@@ -306,8 +317,17 @@ if (!inherits(cox,"phreg")) {
    ptt <- data.frame()
    stratj <- cox$strata.jumps
    if (cox$nstrata>1) {
+
+	cumhazs <- list()
  	for (j in 0:(cox$nstrata-1)) {
-	cumhazardj <- rbind(c(0,0),cox$cumhaz[stratj==j,])
+	    cumhazardj <- rbind(c(0,0),cox$cumhaz[stratj==j,])
+	    cumhazs[[j+1]] <- cumhazardj
+	}
+        if (extend) cumhazs <- extendCums(cumhazs,NULL)
+
+ 	for (j in 0:(cox$nstrata-1)) {
+###	cumhazardj <- rbind(c(0,0),cox$cumhaz[stratj==j,])
+    	    cumhazardj <- cumhazs[[j+1]]
 	if (!is.null(entry)) lentry <- entry[stratacox==j]
 		pttj <- rchaz(cumhazardj,rr[stratacox==j],entry=lentry) 
 		Zj <- Z[des$strataid==j,,drop=FALSE]
@@ -345,8 +365,8 @@ ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
 }# }}}
 
 #' @export sim.base
-#' @usage sim.base(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,...)
-sim.base <- function(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,...)
+#' @usage sim.base(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,extend=TRUE,...)
+sim.base <- function(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,extend=TRUE,...)
 {# {{{
 
 ## stratajump that indentifies baselines of each strata
@@ -363,30 +383,40 @@ if (is.null(stratajump))  {
   if (cumhaz[1,2]>0) cumhaz <- rbind(c(0,0),cumhaz)
   ptt <- rchaz(cumhaz,rr,entry=entry) 
 } else {
-	ptt <- c()
-	## strata among n simulations
-	for (i in seq_along(unique(strata))) {
-		j <- unique(strata)[i]
-		jjs <- which(stratajump==j)
-		js <- which(strata==j)
-		idj <- id[js]
-		cumhazardj <- rbind(c(0,0),cumhaz[jjs,])
-		if (!is.null(entry)) lentry <- entry[js]
-		ns <- length(js)
-		rrj <- rr[js]
-		pttj <- cbind(rchaz(cumhazardj,rrj,entry=lentry),j)
-		colnames(pttj)[5] <- "strata"
-		pttj$id <- idj
-		ptt  <-  rbind(ptt,pttj)
-	}
-	dsort(ptt) <- ~id
-	drm(ptt) <- ~id
+ptt <- c()
+cumhazs <- list()
+us <- unique(stratajump)
+ss  <- seq_along(us)
+for (j in ss) {
+    i <- us[j]
+    jjs <- which(stratajump==i)
+    cumhazardj <- cumhaz[jjs,]
+    cumhazs[[j]] <- cumhazardj
+}
+if (extend) cumhazs <- extendCums(cumhazs,NULL)
+
+## strata among n simulations
+for (i in seq_along(unique(strata))) {
+	cumhazardj <- cumhazs[[i]]
+	j <- unique(strata)[i]
+	js <- which(strata==j)
+	idj <- id[js]
+	if (!is.null(entry)) lentry <- entry[js]
+	ns <- length(js)
+	rrj <- rr[js]
+	pttj <- cbind(rchaz(cumhazardj,rrj,entry=lentry),j)
+	colnames(pttj)[5] <- "strata"
+	pttj$id <- idj
+	ptt  <-  rbind(ptt,pttj)
+}
+dsort(ptt) <- ~id
+drm(ptt) <- ~id
 } 
 
 if (!is.null(cens))  {
-	if (is.matrix(cens))  pct <- rchaz(cens,rc,entry=entry)$time  else  pct<- rexp(n)/(rc*cens) 
-	ptt$time <- pmin(ptt$time,pct)
-	ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+   if (is.matrix(cens))  pct <- rchaz(cens,rc,entry=entry)$time  else  pct<- rexp(n)/(rc*cens) 
+   ptt$time <- pmin(ptt$time,pct)
+   ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
 } 
 
 return(ptt)
@@ -441,9 +471,9 @@ if (!is.list(coxs)) stop("Cox models in list form\n");
 
  if (length(coxs)>=2)
  for (i in 2:length(coxs)) {
- ptt1 <- sim.cox(coxs[[i]],n,data=data,id=attr(ptt,"id"),Z=simcovs)
- dt <- data.frame(time=pmin(dt$time,ptt1$time),
-     status=ifelse(dt$time<=ptt1$time,dt$status,ptt1$status*i))
+    ptt1 <- sim.cox(coxs[[i]],n,data=data,id=attr(ptt,"id"),Z=simcovs)
+    dt <- data.frame(time=pmin(dt$time,ptt1$time),
+    status=ifelse(dt$time<=ptt1$time,dt$status,ptt1$status*i))
  }
  dt <- cbind(dt,simcovs)
 

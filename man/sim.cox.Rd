@@ -7,7 +7,7 @@
 \alias{simulate.cox}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,...)
+sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}
@@ -28,6 +28,8 @@ given then takes average rate of in simulated data from cox model.}
 \item{rr}{possible vector of relative risk for cox model.}
 
 \item{Z}{possible covariates to use instead of sampling from data.}
+
+\item{extend}{to extend possible stratified baselines to largest end-point}
 
 \item{...}{arguments for rchaz, for example entry-time.}
 }

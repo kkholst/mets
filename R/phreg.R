@@ -1975,6 +1975,7 @@ return(phw)
 ##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 ##' summary(survivalG(ss,bmt,50))
 ##' @export
+##' @aliases survivalGtime
 survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRUE,id=NULL)
 {# {{{
 
@@ -2079,7 +2080,7 @@ if (inherits(x,"phreg"))  {
 out <- estimate(coef=1-Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])/(1-p[1]),null=1)
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
 out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,vcov=vv)
 } 
 if (inherits(x,"cifreg") | inherits(x,"recreg")) { 
@@ -2092,6 +2093,83 @@ out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 class(out) <- "survivalG"
 return(out)
 } ## }}}
+
+##' @export
+survivalGtime <- function(x,data,time=NULL,n=100,...)
+{# {{{
+
+if (!is.null(time)) if (time=="all") time <- x$cumhaz[,1] 
+
+if (is.null(time)) {
+       rr <- range(x$cumhaz[,1])
+       time <- seq(rr[1],rr[2],length=n)
+}
+
+survivalG <- risk <- difference <- ratio <- c()
+for (tt in time) {
+  Gt <- survivalG(x,data,time=tt,...)
+  strata <- strata(rownames(Gt$survivalG$coefmat))
+  survivalG <- rbind(survivalG,cbind(tt,Gt$survivalG$coefmat))
+  risk <- rbind(risk,cbind(tt,Gt$risk$coefmat))
+  difference <- rbind(difference,cbind(tt,Gt$difference$coefmat))
+  ratio <- rbind(ratio,cbind(tt,Gt$ratio$coefmat))
+}
+  colnames(survivalG)[1] <- "time"
+  colnames(risk)[1] <- "time"
+  colnames(difference)[1] <- "time"
+  colnames(ratio)[1] <- "time"
+  strata <- strata(rownames(survivalG))
+out <- list(time=time,survivalG=survivalG,risk=risk,difference=difference,
+	    ratio=ratio,strata=strata)
+
+class(out) <- "survivalGtime"
+return(out)
+} ## }}}
+
+##' @export
+plot.survivalGtime <- function(x,type=c("survival","risk","difference","ratio"),...) {# {{{
+
+  us <- unique(x$strata)
+  cols <- 1:length(us)
+  ltys <- cols
+  ss0 <- x$strata==us[1]
+ 
+  if (type[1]=="survival") {
+  plot(x$time,x$survivalG[ss0,2],type="s",xlab="time",ylab="Survival",ylim=c(0,1),col=cols[1],lty=ltys[1])
+  plotConfRegion(x$time,x$survivalG[ss0,c(4,5)],col=cols[1])
+
+  k <- 2
+for (ss in us[-1]) {
+   ss0 <- x$strata==ss
+   lines(x$time,x$survivalG[ss0,2],type="s",ylim=c(0,1),col=cols[k],lty=ltys[k])
+   plotConfRegion(x$time,x$survivalG[ss0,c(4,5)],col=cols[k])
+   k <- k+1
+}
+  }
+
+  if (type[1]=="risk") {
+   plot(x$time,x$risk[ss0,2],type="s",ylim=c(0,1),xlab="time",ylab="risk",col=cols[1],lty=ltys[1])
+   plotConfRegion(x$time,x$risk[ss0,c(4,5)],col=cols[1])
+   k <- 2
+   for (ss in us[-1]) {
+   ss0 <- x$strata==ss
+   lines(x$time,x$risk[ss0,2],type="s",ylim=c(0,1),col=cols[k],lty=ltys[k])
+   plotConfRegion(x$time,x$risk[ss0,c(4,5)],col=cols[k])
+   k <- k+1
+   }
+  }
+
+  if (type[1]=="difference")  {
+  plot(x$time,x$difference[,2],type="s",xlab="time",ylab="difference in risk",ylim=range(x$difference[,2]),col=cols[1],lty=ltys[1])
+  plotConfRegion(x$time,x$difference[,c(4,5)],col=cols[1])
+  }
+  if (type[1]=="ratio")  {
+  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,2]),xlab="time",ylab="ratio of survival",col=cols[1],lty=ltys[1])
+  plotConfRegion(x$time,x$ratio[,c(4,5)],col=cols[1])
+}
+
+}
+# }}}
 
 ###{{{ summary 
 
@@ -3116,7 +3194,6 @@ plotConfRegionSE <- function(x,est,se,...)
 ul <- est+1.96*se; nl <- est-1.96*se
 plotConfRegion(x,cbind(nl,ul),...)
 }# }}
-
 
 ##' @export
 bplot <- function(x,...) basehazplot.phreg(x,...)
