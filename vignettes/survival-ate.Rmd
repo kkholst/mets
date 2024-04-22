@@ -57,8 +57,11 @@ fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,
 summary(survivalG(fg2,bmt,50))
 
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
-summary(survivalG(ss,bmt,50))
+sss <- survivalG(ss,bmt,50)
+summary(sss)
 
+Gtime <- survivalGtime(ss,bmt)
+plot(Gtime)
 ```
 
 G-computation for the binomial regression

@@ -320,6 +320,7 @@ $F_1^L(t;X)$ and $F_2^L(t;X)$ we can generate data with these cumulative inciden
 
 Here both the cumulative incidence are on the specified form if the restriction is not 
 important.  Using sim.cifs but sim.cifs enforces the restriction. 
+Here $F_1$ will be on the specified form, and $F_2$ not. 
 
 ```{r}
  data(bmt)
@@ -329,11 +330,11 @@ important.  Using sim.cifs but sim.cifs enforces the restriction.
  cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
  cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
 
- dds <- sim.cifsRestrict(list(cif1,cif2),200,data=bmt)
- dd <- sim.cifs(list(cif1,cif2),200,data=bmt)
+ ## dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
+ dds <- sim.cifsRestrict(list(cif1,cif2),nsim,data=bmt)
 
- scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
- scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
+ scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=1)
+ scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=2)
     
  cbind(cif1$coef,scif1$coef)
  cbind(cif2$coef,scif2$coef)
@@ -358,7 +359,7 @@ a parametrization that satisfies the constraint $F_1+F_2 \leq 1$.
 ```{r}
  set.seed(100)
  rho1 <- 0.2; rho2 <- 10
- n <- 200
+ n <- nsim
  beta=c(0.0,-0.1,-0.5,0.3)
  dats <- simul.cifs(n,rho1,rho2,beta,rc=0.2)
  dtable(dats,~status)
