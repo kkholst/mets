@@ -46,9 +46,9 @@ phreg_rct(
 
 \item{treat.model}{propensity score model, default is ~+1, assuming RCT study}
 
-\item{RCT}{if false will use propensity score adjustment}
+\item{RCT}{if false will use propensity score adjustment for marginal model}
 
-\item{weight.var}{in case of twostage randomization, this variable is 1 for the treatment times,}
+\item{weight.var}{in case of twostage randomization, this variable is 1 for the treatment times}
 
 \item{km}{use Kaplan-Meier for the censoring weights (stratified on treatment)}
 
@@ -58,7 +58,7 @@ phreg_rct(
 
 \item{estpr}{estimates propensity scores}
 
-\item{pi0}{possible fixed propoensity scores for randomizations}
+\item{pi0}{possible fixed propensity scores for randomizations}
 
 \item{...}{Additional arguments to phreg function}
 }
