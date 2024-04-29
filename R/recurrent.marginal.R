@@ -694,9 +694,11 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
 
   x <- phreg
   xx <- x$cox.prep
+  ww <- xx$caseweights*xx$weights
+ 
   S0i2 <- S0i <- rep(0,length(xx$strata))
   S0i[xx$jumps+1] <-  1/x$S0
-  S0i2[xx$jumps+1] <- 1/x$S0^2
+  S0i2[xx$jumps+1] <- 1/(x$S0^2*ww[xx$jump+1])
   Z <- xx$X
   U <- E <- matrix(0,nrow(xx$X),x$p)
   E[xx$jumps+1,] <- x$E
