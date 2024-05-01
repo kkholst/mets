@@ -682,7 +682,7 @@ recmarg <- function(recurrent,death,Xr=NULL,Xd=NULL,km=TRUE,...)
 }# }}}
 
 ##' @export
-squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
+squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
 {# {{{
 ###  sum_k ( int_0^t f(s)/S_0^r(s) dM_k.^r(s) )^2
 ###  strata "r" from object and "k" id from cluster 
@@ -724,17 +724,19 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,...)
 
   vbeta <- betaiidR <- NULL
   if (fixbeta==0) {# {{{
-     invhess <- -solve(x$hessian)
-     MGt <- U[,drop=FALSE]-(Z*cumhaz[,2]-EdLam0)*rr*c(xx$weights)
-     UU <- apply(MGt,2,sumstrata,id,mid)
-     betaiidR <- UU %*% invhess
+    if (!is.null(beta.iid))  betaiidR <- beta.iid else {
+	     invhess <- -solve(x$hessian)
+	     MGt <- U[,drop=FALSE]-(Z*cumhaz[,2]-EdLam0)*rr*c(xx$weights)
+	     UU <- apply(MGt,2,sumstrata,id,mid)
+	     betaiidR <- UU %*% invhess
+     }
      vbeta <- crossprod(betaiidR)
      varbetat <-   rowSums((Ht %*% vbeta)*Ht)
      ### writing each beta for all individuals 
      betakt <- betaiidR[id+1,,drop=FALSE]
      covk1 <- apply(xxx*betakt,2,cumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="sum")
      covk2 <- apply(w*rr*betakt,2,revcumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="lagsum")
-     covk2 <- c(covk2)*cumS0i2
+     covk2 <- covk2*cumS0i2
      covv <- covk1-covk2
      varA1 <- varA1+varbetat-2*apply(covv*Ht,1,sum)
   }# }}}
