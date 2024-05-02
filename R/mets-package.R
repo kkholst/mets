@@ -88,6 +88,18 @@ NULL
 ##' fast.reshape(dermalridgesMZ,id="id",varying=c("left","right"))
 NULL
 
+##' CALGB 8923, twostage randomization SMART design
+##'
+##' Data from CALGB 8923 
+##' @name calgb8923 
+##' @docType data
+##' @keywords data
+##' @format Data from smart design
+##' @source  https://github.com/ycchao/code_Joint_model_SMART
+##' @examples
+##' data(calgb8923)
+NULL
+
 ##' Menarche data set
 ##'
 ##' @name mena

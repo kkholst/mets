@@ -1892,36 +1892,36 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,wei
     if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
     phw <- phreg(formula, data, weights = ww, Z = DPait, ...)
 
-    check.derivative <- 0
-	if (check.derivative == 1) {
-	### for checking derivative 
-	fpar <- glm(treat.model,dataW,family=binomial)
-	mm <- model.matrix(treat.model,dataW)
-	cpar <- coef(fpar)
-	library(numDeriv)
-
-	ff <- function(par,base=0) {
-	pa <-        expit(mm %*% par)
-	www <- ifelse(dataW[,treat.name] == "1", pa, 1 - pa)
-	ww <- rep(1, nrow(data))
-	ww[whereW] <- www
-	wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
-	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
-
-	pp <- phreg(formula,data,weights=1/wwwt,no.opt=TRUE,beta=coef(phw))
-	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
-	return(po)
-	}
-
-	print(ff(cpar))
-	gf <- jacobian(ff,cpar)
-	print(t(gf))
-        ###
-        print(ff(cpar,base=1))
-	gf <- jacobian(ff,cpar,base=1)
-	print(gf)
-	print("___________________________________"); 
-	}
+###    check.derivative <- 0
+###	if (check.derivative == 1) {
+###	### for checking derivative 
+###	fpar <- glm(treat.model,dataW,family=binomial)
+###	mm <- model.matrix(treat.model,dataW)
+###	cpar <- coef(fpar)
+###	library(numDeriv)
+###
+###	ff <- function(par,base=0) {
+###	pa <-        expit(mm %*% par)
+###	www <- ifelse(dataW[,treat.name] == "1", pa, 1 - pa)
+###	ww <- rep(1, nrow(data))
+###	ww[whereW] <- www
+###	wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
+###	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
+###
+###	pp <- phreg(formula,data,weights=1/wwwt,no.opt=TRUE,beta=coef(phw))
+###	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
+###	return(po)
+###	}
+###
+###	print(ff(cpar))
+###	gf <- jacobian(ff,cpar)
+###	print(t(gf))
+###        ###
+###        print(ff(cpar,base=1))
+###	gf <- jacobian(ff,cpar,base=1)
+###	print(gf)
+###	print("___________________________________"); 
+###	}
 
 
 if (estpr[1] == 1) {
@@ -4188,7 +4188,7 @@ simLUCox <- function(n,cumhaz,death.cumhaz=NULL,cumhaz2=NULL,r1=NULL,r2=NULL,rd=
 		     rc=NULL,rtr=NULL,ztr=0,betatr=0.3,A0=NULL,Z0=NULL,efTR=0,
    gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=4,var.z=1,cor.mat=NULL,cens=NULL,...) 
 {# {{{
-  status <- fdeath <- dtime <- NULL # to avoid R-check 
+  status <- death <- fdeath <- dtime <- NULL # to avoid R-check 
 
   if (dependence==0) { z <- z1 <- z2 <- zd <- rep(1,n) # {{{
      } else if (dependence==1) {
