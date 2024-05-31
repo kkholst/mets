@@ -3582,8 +3582,6 @@ print.phreg  <- function(x,...) {
 ##' data <- mets:::simLT(0.7,100)
 ##' dfactor(data) <- Z.f~Z
 ##' 
-##' outs <- phreg_rct(Surv(time,status)~strata(Z.f),data=data,augmentR0=~X,augmentC=~factor(Z):X)
-##' 
 ##' out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
 ##' summary(out)
 ##' @export
