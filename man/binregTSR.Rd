@@ -35,6 +35,7 @@ binregTSR(
   pi1 = 0.5,
   cens.time.fixed = 1,
   outcome.iid = 1,
+  meanCs = 0,
   ...
 )
 }
@@ -98,6 +99,8 @@ binregTSR(
 \item{cens.time.fixed}{to use time-dependent weights for censoring estimation using weights}
 
 \item{outcome.iid}{to get iid contribution from outcome model (here linear regression working models).}
+
+\item{meanCs}{(0) indicates that censoring augmentation is centered by CensAugment.times/n}
 
 \item{...}{Additional arguments to lower level funtions}
 }

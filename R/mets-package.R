@@ -100,6 +100,19 @@ NULL
 ##' data(calgb8923)
 NULL
 
+##' ACTG175, block randmized study from speff2trial package
+##'
+##' Data from speff2trial
+##' @name ACTG175
+##' @docType data
+##' @keywords data
+##' @format Randomized study 
+##' @source  Hammer et al. 1996, speff2trial package.
+##' @examples
+##' data(ACTG175)
+NULL
+
+
 ##' Menarche data set
 ##'
 ##' @name mena

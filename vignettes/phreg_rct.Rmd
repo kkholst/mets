@@ -69,7 +69,6 @@ Starting point is that Cox's partial likelihood score can be used for estimating
  \end{align*}
  where $\gamma_c(s)$ is chosen to minimize the variance given the dynamic covariates specified by augmentC.
 
-
 The propensity score models are always estimated unless it is requested to use some fixed number $\pi_0=1/2$ for example, but
 always better to be adaptive and estimate $\pi_0$. Also $\gamma_0$ and $\gamma_1$ are estimated to reduce variance of $U_i$. 
 
@@ -145,13 +144,16 @@ summary(out)
 Results consitent with speff of  library(speff2trial) 
 
 ```{r}
-library(speff2trial) 
-dfactor(ACTG175) <- arms.f~arms
+###library(speff2trial) 
+###dfactor(ACTG175) <- arms.f~arms
+###save(ACTG175,file="ACTG175.rda")
+library(mets)
+data(ACTG175)
 ###
 data <- na.omit(ACTG175[ACTG175$arms==0 | ACTG175$arms==1, ])
 data$days <- data$days+runif(nrow(data))*0.01
 dfactor(data) <- arms.f~arms
-notrun <- 0
+notrun <- 1
 
 if (notrun==1) { 
 fit1 <- speffSurv(Surv(days,cens)~cd40+cd80+age,data=data,trt.id="arms",fixed=TRUE)
@@ -164,6 +166,17 @@ summary(fit1)
 # Speff     -0.76083  0.15189  -1.0585  -0.46313  5.4705e-07
 
 out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~cd40+cd80+age,augmentC=~cd40+cd80+age)
+summary(out)
+```
+
+The study is actually block-randomized according (?)
+so the standard should be computed with an adjustment that is 
+equivalent to augmenting with this block as factor 
+
+```{r}
+dtable(data,~strat+treat)
+dfactor(data) <- strat.f~strat
+out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~strat.f)
 summary(out)
 ```
 

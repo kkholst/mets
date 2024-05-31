@@ -50,6 +50,8 @@
 ##' @param pi1 set up known randomization probabilities 
 ##' @param cens.time.fixed to use time-dependent weights for censoring estimation using weights 
 ##' @param outcome.iid to get iid contribution from outcome model (here linear regression working models). 
+##' @param outcome.iid to get iid contribution from outcome model (here linear regression working models). 
+##' @param meanCs (0) indicates that censoring augmentation is centered by CensAugment.times/n
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -64,13 +66,13 @@
 ##' summary(bb) 
 ##' @export
 binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
-		      response.code=NULL,
-      augmentR0=NULL,treat.model0=~+1,augmentR1=NULL,treat.model1=~+1, 
-      augmentC=NULL,cens.model=~+1,estpr=c(1,1),response.name=NULL,
-      offset=NULL,weights=NULL,cens.weights=NULL,beta=NULL,
-      kaplan.meier=TRUE,no.opt=FALSE,method="nr",augmentation=NULL,
-      outcome=c("cif","rmst","rmst-cause"),model="exp",Ydirect=NULL,
-      return.dataw=0,pi0=0.5,pi1=0.5,cens.time.fixed=1,outcome.iid=1,...)
+    response.code=NULL,
+    augmentR0=NULL,treat.model0=~+1,augmentR1=NULL,treat.model1=~+1, 
+    augmentC=NULL,cens.model=~+1,estpr=c(1,1),response.name=NULL,
+    offset=NULL,weights=NULL,cens.weights=NULL,beta=NULL,
+    kaplan.meier=TRUE,no.opt=FALSE,method="nr",augmentation=NULL,
+    outcome=c("cif","rmst","rmst-cause"),model="exp",Ydirect=NULL,
+    return.dataw=0,pi0=0.5,pi1=0.5,cens.time.fixed=1,outcome.iid=1,meanCs=0,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -635,26 +637,26 @@ for (v in seq(nc))  {
             St <- exp(-cumhazD)
         } else St <- c(exp(cumsumstratasum(log(1 - S0i), xx$strata, xx$nstrata)$lagsum))
 
-     nterms <- cr2$p-1
-     dhessian <- cr2$hessianttime
-     dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
-     ###  matrix(apply(dhessian,2,sum),3,3)
-     timeb <- which(cr2$cumhaz[,1]<time)
-     ### take relevant \sum H_i(s,t) (e_i - \bar e)
-     covts <- dhessian[timeb,1+1:nterms,drop=FALSE]
-     ### construct relevant \sum (e_i - \bar e)^2
-     Pt <- dhessian[timeb,-c((1:(nterms+1)),(1:(nterms))*(nterms+1)+1),drop=FALSE]
-     ###  matrix(apply(dhessian[,c(5,6,8,9)],2,sum),2,2)
-     gammatt <- .Call("CubeVec",Pt,covts,1,PACKAGE="mets")$XXbeta
-     S0 <- cr2$S0[timeb]
-     gammatt[is.na(gammatt)] <- 0
-     gammatt[gammatt==Inf] <- 0
-     Gctb <- St[cr2$cox.prep$jumps+1][timeb]
-     augmentt.times <- apply(gammatt*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum)
-     augment.times <- sum(augmentt.times)/nid
+  nterms <- cr2$p-1
+  dhessian <- cr2$hessianttime
+  dhessian <-  .Call("XXMatFULL",dhessian,cr2$p,PACKAGE="mets")$XXf
+  ###  matrix(apply(dhessian,2,sum),3,3)
+  timeb <- which(cr2$cumhaz[,1]<time)
+  ### take relevant \sum H_i(s,t) (e_i - \bar e)
+  covts <- dhessian[timeb,1+1:nterms,drop=FALSE]
+  ### construct relevant \sum (e_i - \bar e)^2
+  Pt <- dhessian[timeb,-c((1:(nterms+1)),(1:(nterms))*(nterms+1)+1),drop=FALSE]
+  ###  matrix(apply(dhessian[,c(5,6,8,9)],2,sum),2,2)
+  gammatt <- .Call("CubeVec",Pt,covts,1,PACKAGE="mets")$XXbeta
+  S0 <- cr2$S0[timeb]
+  gammatt[is.na(gammatt)] <- 0
+  gammatt[gammatt==Inf] <- 0
+  Gctb <- St[cr2$cox.prep$jumps+1][timeb]
+  augmentt.times <- apply(gammatt*cr2$U[timeb,1+1:nterms,drop=FALSE],1,sum)
+   augment.times <- sum(augmentt.times)/nid
 
-     Augment.times <- c(Augment.times,augment.times)
-     augmentt <- augment.times 
+   Augment.times <- c(Augment.times,augment.times)
+   augmentt <- augment.times 
 
    #### iid magic  for censoring augmentation martingale ## {{{
    ### int_0^infty gamma(t) (e_i - ebar(s)) 1/G_c(s) dM_i^c
@@ -680,15 +682,16 @@ for (v in seq(nc))  {
    Ut[jumpsCt,] <- augmentt.times
    MGCt <- Ut[,drop=FALSE]-(XgammadLam0-gammaEsdLam0)*c(rr0)
    MGCiid <- apply(MGCt,2,sumstrata,xx$id,nid)
+   MGc <- list(MGc.ipcw=MGc,MGc.augment=MGCiid)
 
    riskG[cown,]      <- riskG[cown,]+augmentt
-   riskG.iid[,cown]  <- riskG.iid[,cown]+MGCiid/nid 
+   riskG.iid[,cown]  <- riskG.iid[,cown]+MGCiid/nid-(meanCs==0)*augmentt/nid
    riskG0[cown,]     <- riskG0[cown,]+augmentt
-   riskG0.iid[,cown] <- riskG0.iid[,cown]+MGCiid/nid 
+   riskG0.iid[,cown] <- riskG0.iid[,cown]+MGCiid/nid-(meanCs==0)*augmentt/nid
    riskG1[cown,]     <- riskG1[cown,]+augmentt
-   riskG1.iid[,cown] <- riskG1.iid[,cown]+MGCiid/nid 
+   riskG1.iid[,cown] <- riskG1.iid[,cown]+MGCiid/nid-(meanCs==0)*augmentt/nid
    riskG01[cown,]    <- riskG01[cown,]+augmentt
-   riskG01.iid[,cown]<- riskG01.iid[,cown]+MGCiid/nid 
+   riskG01.iid[,cown]<- riskG01.iid[,cown]+MGCiid/nid-(meanCs==0)*augmentt/nid
 
    dynCgammat  <-  c(dynCgammat,list(gammatt)) 
    ## }}}
@@ -700,7 +703,6 @@ for (v in seq(nc))  {
 varG <- varG0 <- varG1 <- varG01 <- NULL
 rownames(riskG) <-  rnames
 colnames(riskG) <-  c("coef","se","se-fixed-Gc")[1:2]
-
 
    varG <- crossprod(riskG.iid)
    riskG <- cbind(riskG,diag(varG)^.5)[,c(1,3)]
@@ -732,12 +734,14 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###rownames(contrast) <- nncont
 ###
 
-riskG <- list( riskG=riskG, riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
-riskG.iid <- list(riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
-		  riskG.iid=riskG.iid,id=id,orig.id=orig.id)
-varG <- list(varG=varG, varG0=varG0, varG1=varG1, varG01=varG01)
-val <- list( riskG.iid=riskG.iid, MGc=MGc, CensAugment.times=Augment.times,
-            dynCens.coef=dynCgammat,riskG=riskG,varG=varG,dataW=dataW)
+riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
+riskG.iid <- list(riskG.iid=riskG.iid,
+  riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
+	  id=id,orig.id=orig.id)
+varG <- list(varG=varG,varG0=varG0,varG1=varG1,varG01=varG01)
+val <- list( riskG=riskG,varG=varG,riskG.iid=riskG.iid,
+	     MGc=MGc,CensAugment.times=Augment.times,
+            dynCens.coef=dynCgammat,dataW=dataW)
 
   class(val) <- "binregTSR"
   return(val)
@@ -887,7 +891,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 
 gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
 	    beta0=c(0.1,0.5,-0.5),beta1=c(0.4,0.3,0.5,-0.5),betaR=c(-0.3,-0.5,0.5),betac=c(0.3,0.3), 
-            beta0R=c(0,0.5,-0.5),beta1R=c(0,0.5,-0.5),tsr=1)
+            beta0R=c(0,0.5,-0.5),beta1R=c(0,0.5,-0.5),tsr=1,int=1)
    {# {{{
 
    Count2 <- TR <- NULL
@@ -914,13 +918,13 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
    ###
    if (covs==1) {
    rr01 <- exp( cbind(0,X0) %*% beta0)
-   rr02 <- exp( cbind(1,X0) %*% beta0)
+   rr02 <- exp( cbind(1,X0) %*% beta0+ int*( apply(X0,1,sum) * beta0[1]))
    rr11 <- exp( cbind(0,0,X1) %*% beta1 )
-   rr12 <- exp( cbind(0,1,X1) %*% beta1 )
+   rr12 <- exp( cbind(0,1,X1) %*% beta1+ int*( apply(X1,1,sum) * beta1[1]))
    rr21 <- exp( cbind(1,0,X1) %*% beta1 )
-   rr22 <- exp( cbind(1,1,X1) %*% beta1 )
+   rr22 <- exp( cbind(1,1,X1) %*% beta1+ int*( apply(X1,1,sum)* beta1[1]))
    rrr1 <- exp( cbind(0,X0) %*% betaR)
-   rrr2 <- exp( cbind(1,X0) %*% betaR)
+   rrr2 <- exp( cbind(1,X0) %*% betaR + int*(apply(X0,1,sum)*betaR[1]))
    } else {
 	   rr21 <- rr22  <- rr01 <- rr02 <- rr11 <- rr12 <- rrr1 <- rrr2 <- 1
    }

@@ -95,12 +95,10 @@ bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),
 bb
 
 estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01))
-
 estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01),f=function(p) c(p[1]/p[2],p[3]/p[4]))
 estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01),f=function(p) c(p[1]-p[2],p[3]-p[4]))
 
 ```
-
 
 
 
@@ -165,6 +163,55 @@ bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),
 		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
 bb
 ```
+
+Two-Stage Randomization CALGB-9823
+==================================
+
+We here illustrate some analysis of one SMART conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001). 
+388 patients were randomized to an initial treatment of GM-CSF (A1 ) or standard chemotherapy
+(A2 ). Patients with complete remission and informed consent to second stage were then re-randomized to
+only cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ). 
+
+We first compute the weighted risk-set  estimator based on estimated weights
+\begin{align*}
+\Lambda_{A1,B1}(t) & = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
+\end{align*}
+where $w_i(s) = I(A0_i=A1) + (t>T_R) I(A1_i=B1)/\pi_1(X_i)$, that is 1 when you start on treatment $A1$ and
+then for those that changes to $B1$ at time $T_R$ then is scaled up with the proportion doing this. This is equivalent to
+the IPTW (inverse probability of treatment weighted estimator). We estimate 
+the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those that are consistent with ending on $B1$, and similary, we
+estimate the treatment regimes $A1, B2$ and $A2, B2$, by letting $A11$ indicate those that are consistent with ending on $B2$.
+Note that for example $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$, but stays $1$ if the subject is
+treated with $B1$. 
+
+  - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
+  - the treatment model may also depend on a response value
+  - standard errors are based on influence functions and is also computed for the baseline
+
+We here use the simple propensity score model $P(A1=B1|A0_i)$ that uses the observed frequencies on arm $B1$ among those
+starting out on either $A1$ or $A2$.
+
+
+```{r}
+data(calgb8923)
+calgt <- calgb8923
+
+tm=At.f~factor(Count2)+age+sex+wbc
+tm=At.f~factor(Count2)
+ll0 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A10)+cluster(id),calgt,treat.model=tm)
+pll0 <- predict(ll0,expand.grid(A0=0:1,A10=0,id=1))
+ll1 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A11)+cluster(id),calgt,treat.model=tm)
+pll1 <- predict(ll1,expand.grid(A0=0:1,A11=1,id=1))
+plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)")
+plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1)
+legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
+```
+
+
+I here use the simple propensity score mode, but increased efficiency should be acheieved by extending the model, 
+but here does not give much.
+
 
 
 

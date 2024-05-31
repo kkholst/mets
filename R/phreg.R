@@ -3452,7 +3452,7 @@ plotConfRegion(x,cbind(nl,ul),...)
 bplot <- function(x,...) basehazplot.phreg(x,...)
 
 ##' @export
-basecumhaz <- function(x,type="matrix",robust=FALSE,...) {# {{{
+basecumhaz <- function(x,type=c("list","matrix"),robust=FALSE,...) {# {{{
    ## all strata
    strat <- x$strata[x$jumps]
    stratas <- 0:(x$nstrata-1) 
@@ -3460,10 +3460,11 @@ basecumhaz <- function(x,type="matrix",robust=FALSE,...) {# {{{
    ###   se.cum <- cum <- x$cumhaz
    se.cum <- cum <- c()
    strata <- rep(0,nrow(x$cumhaz))
-   if (type=="matrix") { se.cum <- cum <- x$cumhazard }
+   se.cum <- cum <- x$cumhaz 
    if (robust==TRUE) secum <- x$robse.cumhaz else secum  <- x$se.cumhaz
    if (is.null(secum)) nose <- TRUE else nose <- FALSE
 
+   out <- list()
    start <- 1
    for (i in stratas) {
 	   cumhazard <- x$cumhaz[strat==i,,drop=FALSE]
@@ -3475,11 +3476,12 @@ basecumhaz <- function(x,type="matrix",robust=FALSE,...) {# {{{
 		   if (!nose) se.cum <- rbind(se.cum,secum[strat==i,])
 		   strata[start:slut] <- i
 		   start <- slut+1
+		   out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=secum[strata==i,],strata=i) 
 	      }
 	   }
    }
 
-   list(cumhaz=cum,se.cumhaz=se.cum,strata=strata)
+   if (type[1]=="list") return(out) else return(list(cumhaz=cum,se.cumhaz=se.cum,strata=strata))
 }# }}}
 
 ##' @export
@@ -3569,6 +3571,7 @@ print.phreg  <- function(x,...) {
 ##' @param cens.model, default is censoring model ~strata(treatment) but any model can be used to make censoring martingales
 ##' @param estpr estimates propensity scores 
 ##' @param pi0 possible fixed propensity scores for randomizations
+##' @param base.augment TRUE to covariate augment baselines (only for case without covariates, ~strata(treat) ) 
 ##' @param ... Additional arguments to phreg function 
 ##' @author Thomas Scheike
 ##' @references
@@ -3579,13 +3582,15 @@ print.phreg  <- function(x,...) {
 ##' data <- mets:::simLT(0.7,100)
 ##' dfactor(data) <- Z.f~Z
 ##' 
+##' outs <- phreg_rct(Surv(time,status)~strata(Z.f),data=data,augmentR0=~X,augmentC=~factor(Z):X)
+##' 
 ##' out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
 ##' summary(out)
 ##' @export
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL, treat.model=~+1,RCT=TRUE,
-     weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,...) {# {{{
+     weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,...) {# {{{
   Z <- typeII <- NULL
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -3757,12 +3762,13 @@ formula <- update(formula,rformulaS)
 if (RCT) {
 ### ... for phreg
 fit0 <- phreg(formula,data=data,...)
-eaM <- ea <- ea.iid <- (lava::iid(fit0) %*% fit0$hessian)
+if (fit0$p>0) eaM <- ea <- ea.iid <- (lava::iid(fit0) %*% fit0$hessian)
+else ea <- eaM <- matrix(0,fit0$n,1)
 } else {
 fit0 <- phreg_IPTW(formula,data=data,treat.model=treat.formula,weight.var=weight.var,estpr=estpr,pi0=pi0,...)
 ea <- ea.iid <- fit0$IID %*% fit0$hessian
 ## iid without Taylor expansion in weights, to use for censoring augmentation
-eaM <- (lava::iid(fit0) %*% fit0$hessian)
+if (fit0$p>0) eaM <- (lava::iid(fit0) %*% fit0$hessian)
 }
 
 AugR0 <- AugR1 <- AugR01 <- rep(0,ncol(ea))
@@ -4080,7 +4086,7 @@ if (typeR!=typeC) {
    if (typeC=="C") {
        var.beta <- var.beta - fit0$ihessian %*% var.Clt.improve%*% fit0$ihessian
    }
-   iid[[j]] <- iid[[j]] - AugC.iid%*% fit0$ihessian
+   if (!is.null(augmentC)) iid[[j]] <- iid[[j]] - AugC.iid%*% fit0$ihessian
 
    fitts <- phreg(formula,data=data,augmentation=Aug,no.var=1,weights=ww,...)
    coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat

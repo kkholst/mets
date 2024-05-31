@@ -22,6 +22,7 @@ phreg_rct(
   cens.model = NULL,
   estpr = 1,
   pi0 = 0.5,
+  base.augment = FALSE,
   ...
 )
 }
@@ -60,6 +61,8 @@ phreg_rct(
 
 \item{pi0}{possible fixed propensity scores for randomizations}
 
+\item{base.augment}{TRUE to covariate augment baselines (only for case without covariates, ~strata(treat) )}
+
 \item{...}{Additional arguments to phreg function}
 }
 \description{
@@ -72,6 +75,8 @@ randomizations. The function was implemented to deal with recurrent events (star
 ## Lu, Tsiatis simulation
 data <- mets:::simLT(0.7,100)
 dfactor(data) <- Z.f~Z
+
+outs <- phreg_rct(Surv(time,status)~strata(Z.f),data=data,augmentR0=~X,augmentC=~factor(Z):X)
 
 out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
 summary(out)
