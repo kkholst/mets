@@ -145,12 +145,11 @@ Results consitent with speff of  library(speff2trial)
 
 ```{r}
 ###library(speff2trial) 
-###dfactor(ACTG175) <- arms.f~arms
-###save(ACTG175,file="ACTG175.rda")
 library(mets)
 data(ACTG175)
 ###
-data <- na.omit(ACTG175[ACTG175$arms==0 | ACTG175$arms==1, ])
+data <- ACTG175[ACTG175$arms==0 | ACTG175$arms==1, ]
+data <- na.omit(data[,c("days","cens","arms","strat","cd40","cd80","age")])
 data$days <- data$days+runif(nrow(data))*0.01
 dfactor(data) <- arms.f~arms
 notrun <- 1
@@ -161,9 +160,9 @@ summary(fit1)
 }
 # 
 # Treatment effect
-#             Log HR       SE  LowerCI   UpperCI           p
-# Prop Haz  -0.70583  0.15379  -1.0073  -0.40441  4.4411e-06
-# Speff     -0.76083  0.15189  -1.0585  -0.46313  5.4705e-07
+#             Log HR       SE   LowerCI   UpperCI           p
+# Prop Haz  -0.70375  0.12352  -0.94584  -0.46165  1.2162e-08
+# Speff     -0.72430  0.12051  -0.96050  -0.48810  1.8533e-09
 
 out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~cd40+cd80+age,augmentC=~cd40+cd80+age)
 summary(out)
@@ -174,7 +173,7 @@ so the standard should be computed with an adjustment that is
 equivalent to augmenting with this block as factor 
 
 ```{r}
-dtable(data,~strat+treat)
+dtable(data,~strat+arms)
 dfactor(data) <- strat.f~strat
 out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~strat.f)
 summary(out)
