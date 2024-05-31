@@ -154,7 +154,7 @@ data$days <- data$days+runif(nrow(data))*0.01
 dfactor(data) <- arms.f~arms
 notrun <- 1
 
-if (notrun==1) { 
+if (notrun==0) { 
 fit1 <- speffSurv(Surv(days,cens)~cd40+cd80+age,data=data,trt.id="arms",fixed=TRUE)
 summary(fit1)
 }
