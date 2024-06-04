@@ -3572,6 +3572,7 @@ print.phreg  <- function(x,...) {
 ##' @param estpr estimates propensity scores 
 ##' @param pi0 possible fixed propensity scores for randomizations
 ##' @param base.augment TRUE to covariate augment baselines (only for case without covariates, ~strata(treat) ) 
+##' @param return.augmentR0 to return augmentation data
 ##' @param ... Additional arguments to phreg function 
 ##' @author Thomas Scheike
 ##' @references
@@ -3588,7 +3589,7 @@ print.phreg  <- function(x,...) {
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL, treat.model=~+1,RCT=TRUE,
-     weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,...) {# {{{
+     weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
   Z <- typeII <- NULL
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -3769,6 +3770,7 @@ ea <- ea.iid <- fit0$IID %*% fit0$hessian
 if (fit0$p>0) eaM <- (lava::iid(fit0) %*% fit0$hessian)
 }
 
+data.augR0 <- NULL
 AugR0 <- AugR1 <- AugR01 <- rep(0,ncol(ea))
 AugR0.iid <-  AugR1.iid <-  AugR01.iid <- matrix(0,nrow(ea),ncol(ea))
 if (!is.null(augmentR0)) {# {{{
@@ -3791,6 +3793,7 @@ if (!is.null(augmentR0)) {# {{{
        Dp0 <- matrix(0,nid,ncol(fitt$Dp))
        Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
     }
+   if (return.augmentR0)  data.augR0 <- list(ea=ea,XRpi=XRpi)
 
    for (i in 1:ncol(ea)) {
       gamma.R <- xxi %*% crossprod(XRpi,ea[,i])
@@ -4099,7 +4102,8 @@ names(iid) <- iidn
 
 out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
-    formula=formula,formulaC=formulaC,treat.model=treat.model)
+    formula=formula,formulaC=formulaC,treat.model=treat.model,
+    data.augR0=data.augR0)
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
@@ -4437,6 +4441,4 @@ simFrail <- function(n,cumhaz,r1=NULL,rc=NULL,dependence=1,var.z=1,cens=NULL,...
 
   return(tall)
   }# }}}
-
-
 

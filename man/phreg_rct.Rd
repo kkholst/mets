@@ -23,6 +23,7 @@ phreg_rct(
   estpr = 1,
   pi0 = 0.5,
   base.augment = FALSE,
+  return.augmentR0 = FALSE,
   ...
 )
 }
@@ -62,6 +63,8 @@ phreg_rct(
 \item{pi0}{possible fixed propensity scores for randomizations}
 
 \item{base.augment}{TRUE to covariate augment baselines (only for case without covariates, ~strata(treat) )}
+
+\item{return.augmentR0}{to return augmentation data}
 
 \item{...}{Additional arguments to phreg function}
 }
