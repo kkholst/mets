@@ -3739,7 +3739,8 @@ if (estpr[1]==1 ) {
    DPai <- fitt$DPai
 } else {
    ## assumes constant fixed prob over groups
-   pi0 <- ifelse(Z==1,pi0[1],1-pi0[1])
+   pi0 <- ifelse((treats$ntreatvar)[idW]==2,pi0[1],1-pi0[1])                
+   wPA <- c(pi0)
 }
 
 ## construct multiplicative weights, with possible start stop structure

@@ -25,9 +25,9 @@
 ##'
 ##' @param formula formula with 'Event' outcome
 ##' @param data data frame
-##' @param cause of interest
-##' @param death.code codes for death (terminating event)
-##' @param cens.code code of censoring (1 default)
+##' @param cause of interest (1 default)
+##' @param death.code codes for death (terminating event, 2 default)
+##' @param cens.code code of censoring (0 default)
 ##' @param cens.model for stratified Cox model without covariates
 ##' @param weights weights for score equations
 ##' @param offset offsets for model
