@@ -28,11 +28,11 @@ recreg(
 
 \item{data}{data frame}
 
-\item{cause}{of interest}
+\item{cause}{of interest (1 default)}
 
-\item{death.code}{codes for death (terminating event)}
+\item{death.code}{codes for death (terminating event, 2 default)}
 
-\item{cens.code}{code of censoring (1 default)}
+\item{cens.code}{code of censoring (0 default)}
 
 \item{cens.model}{for stratified Cox model without covariates}
 
