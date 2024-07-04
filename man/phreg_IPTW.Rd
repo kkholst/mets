@@ -8,7 +8,7 @@ phreg_IPTW(
   formula,
   data,
   treat.model = NULL,
-  weight.var = NULL,
+  treat.var = NULL,
   weights = NULL,
   estpr = 1,
   pi0 = 0.5,
@@ -22,7 +22,7 @@ phreg_IPTW(
 
 \item{treat.model}{propensity score model (binary or multinomial)}
 
-\item{weight.var}{a 1/0 variable that indicates when propensity score is computed over time}
+\item{treat.var}{a 1/0 variable that indicates when propensity score is computed over time}
 
 \item{weights}{may be given, and then uses weights*w(A) as the weights}
 
@@ -33,14 +33,15 @@ phreg_IPTW(
 \item{...}{arguments for phreg call}
 }
 \description{
-Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
+Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)P(A=a|X)}, where
+ \deqn{\pi(a|X)=P(A=a|X)}. Computes
 standard errors via influence functions that are returned as the IID argument. 
 Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
 of the "treat.model".
 }
 \details{
-Also works with cluster argument. Time-dependent propensity score weights can also be computed when weight.var is 1
+Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
 and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment.
 }
 \examples{

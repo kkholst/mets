@@ -95,7 +95,7 @@ always better to be adaptive and estimate $\pi_0$. Also $\gamma_0$ and $\gamma_1
 
 The times of randomization is specified by 
 
-   - weight.var  is "1" when a randomization is given 
+   - treat.var  is "1" when a randomization is given 
      - default is to assume that all time-points corresponds to a treatment, the survival case without time-dependent
        covariates 
      - recurrent events situation must be specified as first record of each subject, see below example. 
@@ -228,7 +228,7 @@ Now we fit the model
 
 ```{r}
 fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
-	 weight.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
+	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
 	 augmentR0=~z1,augmentC=~z1+Count1)
 summary(fit2)
 ```
@@ -281,7 +281,7 @@ Now fitting the model and computing different augmentations (true values 0.3 and
 
 ```{r}
 sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
-	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),weight.var="treattime",
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),treat.var="treattime",
 	 treat.model=At.f~factor(Count2),
 	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
 summary(sse)
@@ -335,7 +335,7 @@ To use the phreg_rct in this situation
 
 ```{r}
 fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
-	 weight.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
+	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
 	 RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1)
 summary(fit2)
 ```
@@ -345,7 +345,7 @@ and for twostage randomization
 ```{r}
 sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
 	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
-	 weight.var="treattime",
+	 treat.var="treattime",
 	 RCT=FALSE, treat.model=At.f~z1*factor(Count2),
 	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
 summary(sse)

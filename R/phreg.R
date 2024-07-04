@@ -1730,19 +1730,20 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 ##' IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression 
 ##'
-##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
+##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)P(A=a|X)}, where
+##'  \deqn{\pi(a|X)=P(A=a|X)}. Computes
 ##' standard errors via influence functions that are returned as the IID argument. 
 ##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
 ##' of the "treat.model". 
 ##'
-##' Also works with cluster argument. Time-dependent propensity score weights can also be computed when weight.var is 1
+##' Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
 ##' and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment. 
 ##'
 ##' @param formula for phreg 
 ##' @param data data frame for risk averaging
 ##' @param treat.model propensity score model (binary or multinomial) 
-##' @param weight.var a 1/0 variable that indicates when propensity score is computed over time 
+##' @param treat.var a 1/0 variable that indicates when propensity score is computed over time 
 ##' @param weights may be given, and then uses weights*w(A) as the weights
 ##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
 ##' @param pi0 fixed simple weights 
@@ -1756,7 +1757,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' summary(out)
 ##'
 ##' @export
-phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5, ...)
+phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5, ...)
 {# {{{
     cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -1847,8 +1848,8 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,wei
         return(out)
     }
     expit <- function(x) 1/(1 + exp(-x))
-    if (!is.null(weight.var)) {
-        weightWT <- data[, weight.var]
+    if (!is.null(treat.var)) {
+        weightWT <- data[, treat.var]
         whereW <- which(weightWT == 1)
         CountW <- cumsumstrata(weightWT, id - 1, nid)
         dataW <- data[whereW, ]
@@ -2006,198 +2007,6 @@ if (estpr[1] == 1) {
 
 return(phw)
 }# }}}
-
-###phreg_IPTW <- function (formula, data, treat.model = NULL, weight.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5, ...)
-###{# {{{
-###    cl <- match.call()
-###    m <- match.call(expand.dots = TRUE)[1:3]
-###    special <- c("strata", "cluster", "offset")
-###    Terms <- terms(formula, special, data = data)
-###    m$formula <- Terms
-###    m[[1]] <- as.name("model.frame")
-###    m <- eval(m, parent.frame())
-###    Y <- model.extract(m, "response")
-###    if (!inherits(Y, c("Event", "Surv")))
-###        stop("Expected a 'Surv' or 'Event'-object")
-###    if (ncol(Y) == 2) {
-###        exit <- Y[, 1]
-###        entry <- NULL
-###        status <- Y[, 2]
-###    }
-###    else {
-###        entry <- Y[, 1]
-###        exit <- Y[, 2]
-###        status <- Y[, 3]
-###    }
-###    id <- strata <- NULL
-###    if (!is.null(attributes(Terms)$specials$cluster)) {
-###        ts <- survival::untangle.specials(Terms, "cluster")
-###        pos.cluster <- ts$terms
-###        Terms <- Terms[-ts$terms]
-###        id <- m[[ts$vars]]
-###    }
-###    else pos.cluster <- NULL
-###    if (!is.null(id)) {
-###        orig.id <- id
-###        ids <- sort(unique(id))
-###        nid <- length(ids)
-###        if (is.numeric(id))
-###            id <- fast.approx(ids, id) - 1
-###        else {
-###            id <- as.integer(factor(id, labels = seq(nid))) -
-###                1
-###        }
-###    }
-###    else {
-###        orig.id <- NULL
-###        nid <- length(exit)
-###        id <- 0:(nid - 1)
-###        ids <- NULL
-###    }
-###    id <- id + 1
-###    nid <- length(unique(id))
-###    data$id__ <- id
-###    data$cid__ <- cumsumstrata(rep(1, length(id)), id - 1, nid)
-###    treats <- function(treatvar) {
-###        treatvar <- droplevels(treatvar)
-###        nlev <- nlevels(treatvar)
-###        nlevs <- levels(treatvar)
-###        ntreatvar <- as.numeric(treatvar)
-###        return(list(nlev = nlev, nlevs = nlevs, ntreatvar = ntreatvar))
-###    }
-###    fittreat <- function(treat.model, data, id, ntreatvar, nlev) {
-###        if (nlev == 2) {
-###            treat.model <- drop.specials(treat.model, "cluster")
-###            treat <- glm(treat.model, data, family = "binomial")
-###            iidalpha <- lava::iid(treat, id = id)
-###            lpa <- treat$linear.predictors
-###            pal <- expit(lpa)
-###            pal <- cbind(1 - pal, pal)
-###            ppp <- (pal/pal[, 1])
-###            spp <- 1/pal[, 1]
-###        }
-###        else {
-###            treat.modelid <- update.formula(treat.model, . ~
-###                . + cluster(id__))
-###            treat <- mlogit(treat.modelid, data)
-###            iidalpha <- lava::iid(treat)
-###            pal <- predictmlogit(treat, data, se = 0, response = FALSE)
-###            ppp <- (pal/pal[, 1])
-###            spp <- 1/pal[, 1]
-###        }
-###        Xtreat <- model.matrix(treat.model, data)
-###        tvg2 <- 1 * (ntreatvar >= 2)
-###        pA <- c(mdi(pal, 1:length(ntreatvar), ntreatvar))
-###        pppy <- c(mdi(ppp, 1:length(ntreatvar), ntreatvar))
-###        Dppy <- (spp * tvg2 - pppy)
-###        Dp <- c()
-###        for (i in seq(nlev - 1)) Dp <- cbind(Dp, Xtreat * ppp[,
-###            i + 1] * Dppy/spp^2)
-###        DPai <- -1 * Dp/pA^2
-###        out <- list(iidalpha = iidalpha, pA = pA, Dp = Dp, pal = pal,
-###            ppp = ppp, spp = spp, id = id, DPai = DPai)
-###        return(out)
-###    }
-###    expit <- function(x) 1/(1 + exp(-x))
-###    if (!is.null(weight.var)) {
-###        weightWT <- data[, weight.var]
-###        whereW <- which(weightWT == 1)
-###        CountW <- cumsumstrata(weightWT, id - 1, nid)
-###        dataW <- data[whereW, ]
-###        idW <- id[whereW]
-###    } else {
-###        whereW <- 1:nrow(data)
-###        dataW <- data
-###        idW <- id
-###        CountW <- cumsumstrata(rep(1,nrow(data)), id-1,nid)
-###    }
-###    treat.name <- all.vars(treat.model)[1]
-###    treatvar <- dataW[, treat.name]
-###    if (!is.factor(treatvar))
-###        stop(paste("treatment=", treat.name, " must be coded as factor \n",
-###            sep = ""))
-###    treats <- treats(treatvar)
-###    wlPA <- ww <- rep(1, nrow(data))
-###    idWW <- mystrata2index(cbind(id, CountW))
-###    if (estpr[1] == 1) {
-###        fitt <- fittreat(treat.model, dataW, idW, treats$ntreatvar, treats$nlev)
-###        iidalpha0 <- fitt$iidalpha
-###        wPA <- c(fitt$pA)
-###        DPai <- fitt$DPai
-###    }
-###    else {
-###        wPA <- 1/ifelse(pi0, 1 - pi0, treats$ntreatvar == 2)
-###        pi0 <- rep(pi0, treats$nlev)
-###        DPai <- matrix(0, nrow(data), 1)
-###    }
-###    ww <- rep(1, nrow(data))
-###    ww[whereW] <- wPA
-###    wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
-###    wwt <- c(exp(cumsumstrata(log(ww), id - 1, nid)))
-###    ## P(t) = P_0 * P_1^(I(t>T1)), time-dependent weights
-###    ## DP = P(t) \sum_j P_j I(t> TJ) (-DP_j/P_j^2)
-###    if (estpr[1] == 1) {
-###        DPait <- matrix(0, nrow(data), ncol(DPai))
-###        DPait[whereW, ] <- DPai
-###        DPait <- apply(DPait * c(wlPA), 2, cumsumstrata, id - 1, nid)/wwt
-###    } else DPait <- matrix(0, 1, 1)
-###    if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
-###    phw <- phreg(formula, data, weights = ww, Z = DPait, ...)
-######    check.derivative <- 0
-######	if (check.derivative == 1) {
-######	### for checking derivative 
-######	fpar <- glm(treat.model,dataW,family=binomial)
-######	mm <- model.matrix(treat.model,dataW)
-######	cpar <- coef(fpar)
-######	library(numDeriv)
-######
-######	ff <- function(par) {
-######	pa <-        expit(mm %*% par)
-######	www <- ifelse(dataW[,treat.name] == "1", pa, 1 - pa)
-######	ww <- rep(1, nrow(data))
-######	ww[whereW] <- www
-######	wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
-######	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
-######
-######	pp <- phreg(formula,data,weights=1/wwwt,no.opt=TRUE,beta=coef(phw))
-######	return(pp$gradient)
-######	}
-######	print(ff(cpar))
-######	gf <- jacobian(ff,cpar)
-######	print(t(gf))
-######	}
-###
-###if (estpr[1] == 1) {
-###xx <- phw$cox.prep
-###nid <- max(xx$id)
-###S0i <- rep(0, length(xx$strata))
-###wPAJ <- xx$weights[xx$jumps + 1]
-###Xt <- xx$X
-###S0 <- phw$S0 * wPAJ
-###S0i[xx$jumps + 1] <- 1/S0
-###U <- E <- matrix(0, nrow(xx$X), phw$p)
-###U[xx$jumps + 1, ] <- phw$U/wPAJ
-###rr <- c(xx$sign * exp(Xt %*% coef(phw) + xx$offset) * xx$weights)
-###rrnw <- c(xx$sign * exp(Xt %*% coef(phw) + xx$offset))
-###DWX = .Call("vecMatMat", xx$Z, Xt)$vXZ
-###S1 = apply(Xt * rr, 2, revcumsumstrata, xx$strata, xx$nstrata)
-######S00 = revcumsumstrata( rr, xx$strata, xx$nstrata)
-###DS1 = apply(DWX * rrnw, 2, revcumsumstrata, xx$strata, xx$nstrata)
-###DS0 = apply(xx$Z * rrnw, 2, revcumsumstrata, xx$strata, xx$nstrata)
-###DS0S1 = .Call("vecMatMat", DS0[xx$jumps + 1, , drop = FALSE],S1[xx$jumps + 1, , drop = FALSE])$vXZ
-###DUa2 <- apply(wPAJ * DS1[xx$jumps + 1, , drop = FALSE]/c(S0),2, sum) - apply(wPAJ * DS0S1/c(S0^2), 2, sum)
-###DUa2 <- matrix(DUa2, ncol(fitt$DPai), phw$p)
-###DUa1 <- t(xx$Z[xx$jumps + 1, ]) %*% (phw$U/wPAJ)
-###DUa <- DUa1 - DUa2
-###iidpal <- iidalpha0 %*% DUa
-###iid <- lava::iid(phw) + iidpal %*% phw$ihess
-###phw$DUa <- DUa
-###phw$IID <- iid
-###phw$naive.var <- phw$var
-###phw$var <- crossprod(iid)
-###}
-###return(phw)
-###}# }}}
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
@@ -3564,7 +3373,7 @@ print.phreg  <- function(x,...) {
 ##' @param augmentR1 formula for the randomization augmentation  (~age+sex)
 ##' @param augmentC formula for the censoring augmentation  (~age+sex)
 ##' @param RCT if false will use propensity score adjustment for marginal model
-##' @param weight.var in case of twostage randomization, this variable is 1 for the treatment times 
+##' @param treat.var in case of twostage randomization, this variable is 1 for the treatment times, if start,stop then default assumes that only one treatment at first record
 ##' @param treat.model propensity score model, default is ~+1, assuming RCT study
 ##' @param km use Kaplan-Meier for the censoring weights (stratified on treatment)
 ##' @param level of confidence intervals 
@@ -3589,7 +3398,7 @@ print.phreg  <- function(x,...) {
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL, treat.model=~+1,RCT=TRUE,
-     weight.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
+     treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
   Z <- typeII <- NULL
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -3706,26 +3515,27 @@ return(out)
 } # }}}
 
 
-if (!is.null(weight.var)) { # {{{
+if (!is.null(treat.var)) { # {{{
 	## time-changing weights
-	weightWT <- data[,weight.var]
+	weightWT <- data[,treat.var]
 	whereW <- which(weightWT==1)
 	CountW <- cumsumstrata(weightWT,id-1,nid)
         dataW <- data[whereW,]; 
 	CountWW <- CountW[whereW]
         idW <- id[whereW]; } 
-else { ## all records is new weight 
-        whereW <- 1:nrow(data)
-        dataW <- data
-        idW <- id
+else { ## only first record is associated with treatment  
 	weightWT <- rep(1,nrow(data))
-	CountW <- cumsumstrata(weightWT,id-1,nid)
+	cid <- cumsumstrata(weightWT,id-1,nid)
+	## first record of each subject is treatment 
+	whereW <- which(cid==1)
+	CountW <- cumsumstrata((cid==1)*1,id-1,nid)
 	## constant weights 
 	CountWW <- CountW[whereW]
+	dataW <- data[whereW,]
+        idW <- id[whereW]
 } 
 # }}}
 
-###cbind(weightWT,CountW,data$id,data$start,data$time)
 
 treatvar <- dataW[,treat.name]
 if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be factor \n",sep="")); 
@@ -3765,7 +3575,7 @@ fit0 <- phreg(formula,data=data,...)
 if (fit0$p>0) eaM <- ea <- ea.iid <- (lava::iid(fit0) %*% fit0$hessian)
 else ea <- eaM <- matrix(0,fit0$n,1)
 } else {
-fit0 <- phreg_IPTW(formula,data=data,treat.model=treat.formula,weight.var=weight.var,estpr=estpr,pi0=pi0,...)
+fit0 <- phreg_IPTW(formula,data=data,treat.model=treat.formula,treat.var=treat.var,estpr=estpr,pi0=pi0,...)
 ea <- ea.iid <- fit0$IID %*% fit0$hessian
 ## iid without Taylor expansion in weights, to use for censoring augmentation
 if (fit0$p>0) eaM <- (lava::iid(fit0) %*% fit0$hessian)

@@ -33,6 +33,7 @@
 ##' @param offset offsets for model
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
 ##' @param wcomp weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).
+##' @param augmentation.type of augmentation when augmentation model is given 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -63,8 +64,20 @@
 ##' 
 ##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC
 ##' @export
-recreg <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,
-		   wcomp=NULL,...)
+recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,
+		   augmentation.type=c("lindyn.augment","lin.augment"),...)
+{# {{{
+outi  <- recregB(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,...)
+
+if (!is.null(outi$lindyn.augment)) {
+outA  <- recregB(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,
+		 augmentation=outi[[augmentation.type[1]]],...)
+outi <- outA
+}
+return(outi)
+}# }}}
+
+recregB <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]

@@ -11,7 +11,7 @@
 \usage{
 recreg(
   formula,
-  data = data,
+  data,
   cause = 1,
   death.code = c(2),
   cens.code = 0,
@@ -20,6 +20,7 @@ recreg(
   offset = NULL,
   Gc = NULL,
   wcomp = NULL,
+  augmentation.type = c("lindyn.augment", "lin.augment"),
   ...
 )
 }
@@ -43,6 +44,8 @@ recreg(
 \item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
 
 \item{wcomp}{weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).}
+
+\item{augmentation.type}{of augmentation when augmentation model is given}
 
 \item{...}{Additional arguments to lower level funtions}
 }

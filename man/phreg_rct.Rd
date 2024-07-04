@@ -16,7 +16,7 @@ phreg_rct(
   augmentC = NULL,
   treat.model = ~+1,
   RCT = TRUE,
-  weight.var = NULL,
+  treat.var = NULL,
   km = TRUE,
   level = 0.95,
   cens.model = NULL,
@@ -50,7 +50,7 @@ phreg_rct(
 
 \item{RCT}{if false will use propensity score adjustment for marginal model}
 
-\item{weight.var}{in case of twostage randomization, this variable is 1 for the treatment times}
+\item{treat.var}{in case of twostage randomization, this variable is 1 for the treatment times, if start,stop then default assumes that only one treatment at first record}
 
 \item{km}{use Kaplan-Meier for the censoring weights (stratified on treatment)}
 
