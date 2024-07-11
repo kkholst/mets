@@ -931,7 +931,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' set.seed(100)
 ##' cumhaz <- list(base1,base1,base4)
 ##' drl <- list(dr,base4)
-##' rr <- simRecurrentIII(100,cumhaz,death.cumhaz=drl,dep=4)
+##' rr <- simRecurrentIII(100,cumhaz,death.cumhaz=drl,dep=0)
 ##' dtable(rr,~death+status)
 ##' showfitsimIII(rr,cumhaz,drl) 
 ##'
