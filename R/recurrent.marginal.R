@@ -1126,7 +1126,7 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
   tall$id <- 1:n
 
 ### death time simulated
-  if (!is.null(death.cumhaz)) {
+  if (!is.null(death.cumhaz)) {# {{{
           rrzd <- rd*zzd
 	  timed   <- rchazl(cumhazd,rrzd)
 	  tall$dtime <- timed$time
@@ -1146,7 +1146,7 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
 	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
 	  }
   }
-
+# }}}
 
 ### fixing the first time to event
   tall$death <- 0
@@ -1154,8 +1154,6 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
   tall <- dtransform(tall,status=0,time>dtime)
   tall <- dtransform(tall,time=dtime,time>dtime)
   tt <- tall
-  ### setting aside memory 
-###  tt1 <- tt2 <- tt
   i <- 1; 
   while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
 	  i <- i+1
