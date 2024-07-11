@@ -184,7 +184,7 @@ simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,...)
 #' cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 #' 
 #' @export 
-#' @aliases cause.pchazard.sim  rcrisks
+#' @aliases cause.pchazard.sim  rcrisks rchazl
 rcrisk <-function(cumhaz1,cumhaz2,rr1,rr2,n=NULL,cens=NULL,rrc=NULL,extend=TRUE,...)
 {#'# {{{
  
@@ -258,6 +258,21 @@ rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,
 
 return(ptt)
 }# }}}
+
+#' @export 
+rchazl <- function(cumhaz,rr,...)
+{# {{{
+     l <- length(cumhaz)
+     tall <- rchaz(cumhaz[[1]],rr[,1],...)
+     if (l>=2) 
+     for (i in 2:l) {
+	  tall2 <- rchaz(cumhaz[[i]],rr[,i],...)
+          tall$status <- ifelse(tall$time<tall2$time,tall$status,i*tall2$status)
+          tall$time <- ifelse(tall$time<tall2$time,tall$time,tall2$time)
+	  }
+ return(tall)
+}
+# }}}
 
 #' @export 
 cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)

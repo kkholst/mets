@@ -6,6 +6,8 @@
 \alias{showfitsim}
 \alias{covIntH1dM1IntH2dM2}
 \alias{squareintHdM}
+\alias{simRecurrentIII}
+\alias{showfitsimIII}
 \title{Simulation of recurrent events data based on cumulative hazards II}
 \usage{
 simRecurrentII(
@@ -112,6 +114,13 @@ rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
 dtable(rr,~death+status)
 par(mfrow=c(2,2))
 showfitsim(causes=2,rr,dr,base1,base4)
+
+set.seed(100)
+cumhaz <- list(base1,base1,base4)
+drl <- list(dr,base4)
+rr <- simRecurrentIII(100,cumhaz,death.cumhaz=drl,dep=4)
+dtable(rr,~death+status)
+showfitsimIII(rr,cumhaz,drl) 
 
 }
 \author{

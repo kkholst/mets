@@ -4,6 +4,7 @@
 \alias{rcrisk}
 \alias{cause.pchazard.sim}
 \alias{rcrisks}
+\alias{rchazl}
 \title{Simulation of Piecewise constant hazard models with two causes (Cox).}
 \usage{
 rcrisk(

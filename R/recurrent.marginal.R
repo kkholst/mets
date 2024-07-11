@@ -928,8 +928,15 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' par(mfrow=c(2,2))
 ##' showfitsim(causes=2,rr,dr,base1,base4)
 ##'
+##' set.seed(100)
+##' cumhaz <- list(base1,base1,base4)
+##' drl <- list(dr,base4)
+##' rr <- simRecurrentIII(100,cumhaz,death.cumhaz=drl,dep=4)
+##' dtable(rr,~death+status)
+##' showfitsimIII(rr,cumhaz,drl) 
+##'
 ##' @export
-##' @aliases simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM 
+##' @aliases simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentIII showfitsimIII
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,
     gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
 {# {{{
@@ -1043,10 +1050,138 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
   dsort(tall) <- ~id+entry+time
   tall$start <- tall$entry
   tall$stop  <- tall$time
+  tall$rr1 <- tall$rr
+  tall$rr <- NULL
 
   attr(tall,"death.cumhaz") <- cumhazd
   attr(tall,"cumhaz") <- cumhaz
   attr(tall,"cumhaz2") <- cumhaz2
+  attr(tall,"z") <- z
+
+  return(tall)
+  }# }}}
+
+##' @export
+showfitsimIII <- function(rr,cumhaz,dr)  {# {{{
+ par(mfrow=c(2,3))
+ for (i in 1:3) {
+	 pp <- phreg(Surv(entry,time,status==i)~+1,rr)
+	 plot(pp); 
+	 lines(cumhaz[[i]],col=2)
+ }
+  pp <- phreg(Surv(entry,time,death==1)~+1,rr)
+	 plot(pp); lines(dr[[1]],col=2)
+  pp <- phreg(Surv(entry,time,death==2)~+1,rr)
+	 plot(pp); lines(dr[[2]],col=2)
+}
+# }}}
+
+##' @export
+simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,zzr=NULL,zzd=NULL,
+  gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=1,cor.mat=NULL,cens=NULL,...) 
+{# {{{
+  status <- fdeath <- dtime <- NULL # to avoid R-check 
+
+  if (dependence==0) { # {{{
+	  z <- z1 <- z2 <- zd <- rep(1,n) 
+	  if (is.null(zzr)) zzr <- matrix(z,n,length(cumhaz)) 
+	  if (!is.null(death.cumhaz))
+	  if (is.null(zzd)) zzd <- matrix(zd,n,length(death.cumhaz))
+     } else if (dependence==1) {
+	  z <- rgamma(n,1/var.z[1])*var.z[1]
+	  z1 <- z; z2 <- z; zd <- z
+	  if (is.null(zzr)) zzr <- matrix(z,n,length(cumhaz)) 
+	  if (!is.null(death.cumhaz))
+	  if (is.null(zzd)) zzd <- matrix(zd,n,length(death.cumhaz))
+     } else if (dependence==4) {
+	      zz <- rgamma(n,1/var.z[1])*var.z[1]
+	      z1 <- zz; z2 <- zz; zd <- rep(1,n) 
+	      z <- z1
+	  if (is.null(zzr)) zzr <- matrix(z,n,length(cumhaz)) 
+	  if (!is.null(death.cumhaz))
+	  if (is.null(zzd)) zzd <- matrix(zd,n,length(death.cumhaz))
+     }    else stop("dependence 0,1,4"); # }}}
+
+   if (is.null(rr)) rr <- matrix(1,n,length(cumhaz))
+   if (!is.null(death.cumhaz))
+   if (is.null(rd)) rd <- matrix(1,n,length(death.cumhaz))
+   if (is.null(rc)) rc <- rep(1,n)
+
+  ## extend cumulative for death to full range  of cause 1
+  if (!is.null(death.cumhaz)) {
+     out <- extendCums(c(cumhaz,death.cumhaz),NULL)
+     l <- length(cumhaz)
+     ld <- length(death.cumhaz)
+     cumhaz <- out[1:l]
+     cumhazd <- out[(l+1):(l+ld)]
+  } else {
+     out <- extendCums(cumhaz,NULL)
+     l <- length(cumhaz)
+     cumhaz <- out[1:l]
+  }
+  max.time <- tail(cumhaz[[1]][,1],1)
+
+  rrz <- rr*zzr
+  tall <- rchazl(cumhaz,rrz) 
+  tall$id <- 1:n
+
+### death time simulated
+  if (!is.null(death.cumhaz)) {
+          rrzd <- rd*zzd
+	  timed   <- rchazl(cumhazd,rrzd)
+	  tall$dtime <- timed$time
+	  tall$fdeath <- timed$status
+	  if (!is.null(cens)) { 
+             ctime <- rexp(n)/(rc*cens)
+	     tall$fdeath[tall$dtime>ctime] <- 0; 
+	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
+	  }
+  } else { 
+	  tall$dtime <- max.time; 
+	  tall$fdeath <- 0; 
+	  cumhazd <- NULL 
+	  if (!is.null(cens)) { 
+             ctime <- rexp(n)/(rc*cens)
+	     tall$fdeath[tall$dtime>ctime] <- 0; 
+	     tall$dtime[tall$dtime>ctime] <- ctime[tall$dtime>ctime] 
+	  }
+  }
+
+
+### fixing the first time to event
+  tall$death <- 0
+  tall <- dtransform(tall,death=fdeath,time>dtime)
+  tall <- dtransform(tall,status=0,time>dtime)
+  tall <- dtransform(tall,time=dtime,time>dtime)
+  tt <- tall
+  ### setting aside memory 
+###  tt1 <- tt2 <- tt
+  i <- 1; 
+  while (any((tt$time<tt$dtime) & (tt$status!=0) & (i < max.recurrent))) {
+	  i <- i+1
+	  still <- subset(tt,time<dtime & status!=0)
+	  nn <- nrow(still)
+          tt <- rchazl(cumhaz,rrz[still$id,,drop=FALSE],entry=(1-gap.time)*still$time) 
+	  if (gap.time) {
+		  tt$entry <- still$time
+		  tt$time  <- tt$time+still$time
+	  }
+          ###
+	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
+	  tt <- dtransform(tt,death=fdeath,time>dtime)
+	  tt <- dtransform(tt,status=0,time>dtime)
+	  tt <- dtransform(tt,time=dtime,time>dtime)
+	  nt <- nrow(tt)
+	  tall <- rbind(tall,tt[1:nn,],row.names=NULL)
+  } 
+  dsort(tall) <- ~id+entry+time
+  tall$start <- tall$entry
+  tall$stop  <- tall$time
+  tall$rr <- NULL
+
+  attr(tall,"death.cumhaz") <- cumhazd
+  attr(tall,"cumhaz") <- cumhaz
+  attr(tall,"rr") <- rr
   attr(tall,"z") <- z
 
   return(tall)
