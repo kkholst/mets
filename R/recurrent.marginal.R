@@ -1550,7 +1550,6 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   return(tall)
   }# }}}
 
-
 ##' @export
 extendCums <- function(cumA,cumB,haza=NULL)
 {# {{{

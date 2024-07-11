@@ -105,6 +105,10 @@ The key functions are
  * simRecurrentII 
    * extended version with possibly multiple types of recurrent events (but rates can be 0) 
    * Allows Cox types rates with subject specific rates 
+ * simRecurrentIII 
+   * lists are allowed for multiple events and cause of death (competing risks)
+   * Allows Cox types rates with subject specific rates 
+
 
 In addition we can simulate data from the Ghosh-Lin model and where marginals of the rates among survivors are on
 on Cox form 
@@ -267,6 +271,14 @@ bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
 # predictions witout se's 
 outX <- recmarg(xr,dr,Xr=1,Xd=1)
 bplot(outX,add=TRUE,col=3)
+```
+
+Here I simulatte multiple types and two causes of death causes of death 
+
+```{r}
+rr <- simRecurrentIII(100,list(base1,base1,base4),death.cumhaz=list(ddr,base4),cens=3/5000,dependence=0)
+dtable(rr,~status+death,level=2)
+mets:::showfitsimIII(rr,list(base1,base1,base4),list(ddr,base4))
 ```
 
 
