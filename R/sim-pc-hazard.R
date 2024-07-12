@@ -263,8 +263,6 @@ return(ptt)
 rchazl <- function(cumhaz,rr,...)
 {# {{{
      l <- length(cumhaz)
-     ## make sure cumhaz starts at 0 
-     for (i in seq(l)) cumhaz[[i]] <- rbind(0,cumhaz[[i]])
      ## simulate first 
      tall <- rchaz(cumhaz[[1]],rr[,1],...)
      if (l>=2) 
