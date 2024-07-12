@@ -410,7 +410,6 @@ Also possible to do IPCW regression at fixed time-point
  summary(outipcws)$coef
 ```
 
-
 We can also do the Mao-Lin type composite outcome where we both count the cause 1 and deaths for example 
 \begin{align*}
 E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)

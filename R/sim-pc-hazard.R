@@ -24,13 +24,13 @@
 #' chaz <-  c(0,1,1.5,2,2.1)
 #' breaks <- c(0,10,   20,  30,   40)
 #' cumhaz <- cbind(breaks,chaz)
-#' n <- 100
+#' n <- 10
 #' X <- rbinom(n,1,0.5)
 #' beta <- 0.2
 #' rrcox <- exp(X * beta)
 #' 
-#' pctime <- rchaz(cumhaz,n=1000,cum.hazard=FALSE)
-#' pctimecox <- rchaz(cumhaz,rrcox,cum.hazard=FALSE)
+#' pctime <- rchaz(cumhaz,n=10)
+#' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
 #' 
 #' @export 
 #' @aliases simrchaz addCums lin.approx
