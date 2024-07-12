@@ -263,12 +263,15 @@ return(ptt)
 rchazl <- function(cumhaz,rr,...)
 {# {{{
      l <- length(cumhaz)
+     ## make sure cumhaz starts at 0 
+     for (i in seq(l)) cumhaz[[i]] <- rbind(0,cumhaz[[i]])
+     ## simulate first 
      tall <- rchaz(cumhaz[[1]],rr[,1],...)
      if (l>=2) 
      for (i in 2:l) {
 	  tall2 <- rchaz(cumhaz[[i]],rr[,i],...)
           tall$status <- ifelse(tall$time<tall2$time,tall$status,i*tall2$status)
-          tall$time <- ifelse(tall$time<tall2$time,tall$time,tall2$time)
+          tall$time <- pmin(tall$time,tall2$time)
 	  }
  return(tall)
 }
