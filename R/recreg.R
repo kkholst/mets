@@ -843,6 +843,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     orig.id <- id.orig <- id+1;
     nid <- length(unique(id))
 
+    ## to avoid Rcheck wawning
+
  ### setting up with artificial names
  data$status__ <-  status 
  data$id__ <-  id
@@ -852,11 +854,13 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
  data$death__ <- (status %in% death.code)*1
  data$entry__ <- entry 
  data$exit__ <- exit 
- data$statusC__ <- (status %in% cens.code)*1
+ statusC <- data$statusC__ <- (status %in% cens.code)*1
  data$status__cause <- (status %in% cause)*1
  data$rid__ <- revcumsumstrata(rep(1,length(entry)),id,nid)
  dexit <- exit
  dstatus <- status
+ ## to define properly 
+ Dtime <- NULL
 
   xr <- phreg(Surv(entry__,exit__,status__cause)~Count1__+death__+cluster(id__),data=data,no.opt=TRUE,no.var=1)
   formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ . +cluster(id__))
