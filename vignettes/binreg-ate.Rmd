@@ -196,6 +196,10 @@ kumar$cause2 <- 1*(kumar$cause==2)
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
 
+###library(targeted)
+###b3a <- ate(cause2~gp.f|dnr+preauto+ttt24| dnr+preauto+ttt24,kumar,family=binomial)
+###summary(b3a)
+
 ## calculate also relative risk
 estimate(coef=b3$riskDR,vcov=b3$var.riskDR,f=function(p) p[1]/p[2])
 ```
