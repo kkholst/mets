@@ -1,46 +1,47 @@
-## #' Event history object
-## #'
-## #' Constructur for Event History objects
-## #'
-## #' ... content for details
-## #'
-## #' @aliases Event as.character.Event as.matrix.Event [.Event format.Event
-## #' print.Event rbind.Event summary.Event
-## #' @param time Time
-## #' @param time2 Time 2
-## #' @param cause Cause
-## #' @param cens.code Censoring code (default 0)
-## #' @param ... Additional arguments
-## #' @return Object of class Event (a matrix)
-## #' @author Klaus K. Holst and Thomas Scheike
-## #' @examples
-## #'
-## #' 	t1 <- 1:10
-## #' 	t2 <- t1+runif(10)
-## #' 	ca <- rbinom(10,2,0.4)
-## #' 	(x <- Event(t1,t2,ca))
-## #'
-## #' @export
-## Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {
-##     out <- cbind(time,time2,cause)
-##     if (!missing(cause)) {
-##         colnames(out) <- c("entry","exit","cause")
-##     tmp <- (out[,1]>out[,2])
-##     if (any(tmp)) warning("entry time later than exit time\n")
-## ###    if (any(tmp) & !is.na(tmp)) warning("entry time later than exit time\n")
-##     tmp <- (out[,2]<=0)
-##     if (any(tmp)) warning("exit times must be >0\n")
-## ###    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
-##     } else {
-##         colnames(out) <- c("exit","cause")
-##     tmp <- (out[,1]<=0)
-##     if (any(tmp)) warning("exit times must be >0\n")
-## ###    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
-##     }
-##     class(out) <- "Event"
-##     attr(out,"cens.code") <- cens.code
-##     return(out)
-## }
+ #' Event history object
+ #'
+ #' Constructur for Event History objects
+ #'
+ #' ... content for details
+ #'
+ #' @aliases Event as.character.Event as.matrix.Event [.Event format.Event
+ #' print.Event rbind.Event summary.Event
+ #' @param time Time
+ #' @param time2 Time 2
+ #' @param cause Cause
+ #' @param cens.code Censoring code (default 0)
+ #' @param ... Additional arguments
+ #' @return Object of class Event (a matrix)
+ #' @author Klaus K. Holst and Thomas Scheike
+ #' @examples
+ #'
+ #' 	t1 <- 1:10
+ #' 	t2 <- t1+runif(10)
+ #' 	ca <- rbinom(10,2,0.4)
+ #' 	(x <- Event(t1,t2,ca))
+ #'
+ #' @export
+ Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {
+     out <- cbind(time,time2,cause)
+     if (any(is.na(out))) warning("missing values in Event object\n"); 
+     if (!missing(cause)) {
+         colnames(out) <- c("entry","exit","cause")
+     tmp <- (out[,1]>out[,2])
+     if (any(tmp)) warning("entry time later than exit time\n")
+###    if (any(tmp) & !is.na(tmp)) warning("entry time later than exit time\n")
+###     tmp <- (out[,2]<=0)
+###     if (any(tmp)) warning("exit times must be >0\n")
+###    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
+     } else {
+         colnames(out) <- c("exit","cause")
+###     tmp <- (out[,1]<=0)
+###     if (any(tmp)) warning("exit times must be >0\n")
+###    if (any(tmp) & !is.na(tmp)) warning("exit times must be >0\n")
+     }
+     class(out) <- "Event"
+     attr(out,"cens.code") <- cens.code
+     return(out)
+ }
 
 ## #' @export
 ## as.matrix.Event <- function(x,...) structure(x,class="matrix")

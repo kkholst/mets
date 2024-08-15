@@ -1985,7 +1985,7 @@ if (is.null(time)) stop("must give time of response \n")
    S0i[jumpsC] <- icoxS0
 
    pXXA <- ncol(cr2$E)-1
-   EA <- cr2$E[timeb,-1]
+   EA <- cr2$E[timeb,-1,drop=FALSE]
    gammasEs <- .Call("CubeMattime",gammatt,EA,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
    gammasE <- matrix(0,length(xx$strata),1)
    gammattt  <-    matrix(0,length(xx$strata),pXXA*1)
