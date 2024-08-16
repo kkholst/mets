@@ -822,39 +822,45 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 } # }}}
 
 ##' @export
-tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE)
+tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE,cause=NULL,cens.code=0)
 {# {{{
 
    if (!is.null(id)) id <- data[,id]
    ord <- 1:nrow(data)
    stat <- data[,status]
    time <- data[,stop]
+   if (is.null(cause)) cause <- unique(stat)
+   type0 <- which(cause %in% cens.code)
+   cause <- cause[-type0]
+   jumps <- stat %in% cause
    dupexit <- duplicated(time)
-   time1 <- data[stat==1,stop]
-   time0 <- data[stat!=1,stop]
+   time1 <- data[jumps,stop]
+   time0 <- data[!jumps,stop]
    lt0 <- length(time0)
    ddp <- duplicated(c(time0,time1))
    if (exit.unique) ties <-ddp[(lt0+1):nrow(data)] else ties <- duplicated(c(time1))
    nties <- sum(ties)
-   ordties <- ord[stat==1][ties]
-   if (is.null(ddt)) {
-	   abd <- abs(diff(data[,stop]))
-	   abd <- min(abd[abd>0])
-	   ddt <- abd*0.5
-   }
-   time[ordties] <- time[ordties]+runif(nties)*ddt
+   if (nties>1) {
+	   ordties <- ord[jumps][ties]
+	   if (is.null(ddt)) {
+		   abd <- abs(diff(data[,stop]))
+		   abd <- min(abd[abd>0])
+		   ddt <- abd*0.5
+	   }
+	   time[ordties] <- time[ordties]+runif(nties)*ddt
 
-   data[ordties,stop] <- time[ordties]
-   ties <- (ord %in% ordties)
-   if (!is.null(id)) {
-   lagties <- dlag(ties)
-   ### also move next start time if id the same 
-   change.start <- lagties==TRUE & id==dlag(id)
-   change.start[is.na(change.start)] <- FALSE
-   ocs <- ord[change.start]
-   data[ocs,start] <- data[ocs-1,stop]
-   data[,"tiebreaker"] <- FALSE
-   data[ocs,"tiebreaker"] <- TRUE
+	   data[ordties,stop] <- time[ordties]
+	   ties <- (ord %in% ordties)
+	   if (!is.null(id)) {
+	   lagties <- dlag(ties)
+	   ### also move next start time if id the same 
+	   change.start <- lagties==TRUE & id==dlag(id)
+	   change.start[is.na(change.start)] <- FALSE
+	   ocs <- ord[change.start]
+	   data[ocs,start] <- data[ocs-1,stop]
+	   data[,"tiebreaker"] <- FALSE
+	   data[ocs,"tiebreaker"] <- TRUE
+	   }
    }
    
    return(data)
