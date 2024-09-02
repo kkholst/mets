@@ -22,8 +22,8 @@
  #'
  #' @export
  Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {# {{{
-     if (!missing(cause)) { if (!is.numeric(cause)) warning("cause should be numeric\n");  } else
-      { if (!is.numeric(time2)) warning("cause should be numeric\n");  }
+     if (!missing(cause)) { if (is.factor(cause) | is.character(cause)) warning("cause should be numeric\n");  } 
+     else { if (is.factor(cause) | is.character(cause)) warning("cause should be numeric\n");  }
      out <- cbind(time,time2,cause)
      if (any(is.na(out))) warning("missing values in Event object\n"); 
      if (!missing(cause)) {
