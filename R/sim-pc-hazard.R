@@ -896,7 +896,7 @@ if (inherits(cox,"coxph"))
   if (fixZ) Z <- Z else Z <- Z[,names(coef(cox)),drop=FALSE] 
   rownames(Z) <- NULL
   jtime <- sort(time[status==1])
-  cumhazard <- rbind(c(0,0),Cpred(base,jtime))
+  cumhazard <- rbind(c(0,0),cpred(base,jtime))
   rr <- exp( Z %*% matrix(coef(cox),ncol=1))
   if (drawZ==TRUE) xid <- sample(1:nrow(Z),n,replace=TRUE) else xid <- 1:nrow(Z)
   if (!is.null(id)) xid <- id

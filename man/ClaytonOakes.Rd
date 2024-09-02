@@ -51,11 +51,11 @@ e
 d2 <- simClaytonOakes(500,4,2,1,stoptime=2,left=0)
 d2$z <- rep(1,nrow(d2)); d2$z[d2$cluster\%in\%sample(d2$cluster,100)] <- 0
 ## Marginal=Cox Proportional Hazards model:
-ts <- ClaytonOakes(survival::Surv(time,status)~timereg::prop(x)+cluster(~1,cluster),
-                   data=d2,type="two.stage")
+## ts <- ClaytonOakes(survival::Surv(time,status)~timereg::prop(x)+cluster(~1,cluster),
+##                   data=d2,type="two.stage")
 ## Marginal=Aalens additive model:
-ts2 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~1,cluster),
-                    data=d2,type="two.stage")
+## ts2 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~1,cluster),
+##                    data=d2,type="two.stage")
 ## Marginal=Piecewise constant:
 e2 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)
@@ -64,10 +64,10 @@ e2
 
 e0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)
-ts0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~1,cluster),
-                   data=d2,type="two.stage")
-plot(ts0)
-plot(e0,add=TRUE)
+##ts0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~1,cluster),
+##                   data=d2,type="two.stage")
+##plot(ts0)
+plot(e0)
 
 e3 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~1,cluster),cuts=c(0,0.5,1,2),
                    data=d,var.invlink=identity)

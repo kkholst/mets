@@ -25,7 +25,7 @@ by2mat <- function(x,nam,...) {
 ##'
 ##' aggregating for for data frames
 ##' @examples
-##' data("sTRACE",package="timereg")
+##' data("sTRACE")
 ##' daggregate(iris, "^.e.al", x="Species", fun=cor, regex=TRUE)
 ##' daggregate(iris, Sepal.Length+Petal.Length ~Species, fun=summary)
 ##' daggregate(iris, log(Sepal.Length)+I(Petal.Length>1.5) ~ Species,

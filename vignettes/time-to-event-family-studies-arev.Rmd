@@ -299,8 +299,8 @@ of the association.
  summary(cdz)
  summary(cmz)
 
- timereg::Cpred(cmz$casewise,80)
- timereg::Cpred(cdz$casewise,80)
+ cpred(cmz$casewise,c(70,80))
+ cpred(cdz$casewise,c(70,80))
 ```
 
 
@@ -381,10 +381,12 @@ slr
 Competing risk using additive Gamma
 ====================================
 
-Here we do the cumulative incidence random effects modelling 
+Here we do the cumulative incidence random effects modelling  (commented out to avoid timereg dependence) 
 
 
 ```{r, label=additive_gamma, eval=fullVignette}
+ timereg <- 0
+if (timereg==1) {
   times <- seq(50,90,length.out=5)
   cif1 <- timereg::comp.risk(Event(time,status)~-1+factor(country)+cluster(id),prt,
 		   cause=2,times=times,max.clust=NULL)
@@ -401,9 +403,12 @@ Here we do the cumulative incidence random effects modelling
   	 same.cens=TRUE,theta=c(0.45,0.15),var.link=0,
          step=0.5,theta.des=desace$pardes,random.design=desace$des.rv)
   ##outacem$score
+}
 ```
 
 ```{r}  
+timereg <- 0
+if (timereg==1) {
   summary(outacem)
 
  ###  variances
@@ -444,7 +449,7 @@ Here we do the cumulative incidence random effects modelling
  outaem$score
  summary(outaem)
  estimate(coef=outaem$theta,vcov=outaem$var.theta,f=function(p) p/sum(p)^2)
-
+}
 ```
 
 

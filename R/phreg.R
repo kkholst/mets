@@ -2093,7 +2093,7 @@ xlev <- lapply(datA,levels)
 #### }}}
 ###
 
-cumhaz.time <- Cpred(x$cumhaz,time)[-1]
+cumhaz.time <- cpred(x$cumhaz,time)[-1]
 k <- 1; risks <- c(); DariskG <- list()
 for (a in nlevs) { ## {{{
  datA[,treat.name] <- a
@@ -3087,7 +3087,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param conf.type "plain" or "log" transformed 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata
+##' @aliases basehazplot.phreg  bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata kmplot plotConfregion
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -3984,7 +3984,8 @@ c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
-data <- timereg::event.split(data,cuts="TR")
+data <- event.split(data,cuts="TR")
+###data <- EventSplit(data,cuts="TR")
 data <- dtransform(data,status=2,TR==time)
 data <- dtransform(data,Z1=0,start<TR)
 data$count2 <- 1*(data$start==data$TR)

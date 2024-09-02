@@ -7,6 +7,8 @@
 \alias{plotConfRegion}
 \alias{plotConfRegionSE}
 \alias{plotstrata}
+\alias{kmplot}
+\alias{plotConfregion}
 \title{Plotting the baslines of stratified Cox}
 \usage{
 basehazplot.phreg(

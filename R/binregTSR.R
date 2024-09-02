@@ -1005,7 +1005,8 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
 		     TR=(A0==1)*TR1+(A0==2)*TR2,Resp=(A0==1)*R1+(A0==2)*R2)
   dfactor(data) <- A0.f~A0
   dfactor(data) <- A1.f~A1
-  datat <- timereg::event.split(data,cuts="TR",name.start="entry")
+  datat <- event.split(data,cuts="TR",name.start="entry")
+###  datat <- EventSplit(data,cuts="TR",entry="entry")
 
   datat <- dtransform(datat,status=2,time==TR)
   datat  <-  count.history(datat,types=2)

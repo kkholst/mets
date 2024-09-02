@@ -102,7 +102,8 @@ casewise.test <- function(conc,marg,test="no-test",p=0.01)
 	se.const <- apply(iid.constant^2,1,sum)^.5
         test.constant <- max(abs(diff.const/se.const))
 	sim.maxs <- apply(abs(iid.constant/se.const),1,max)
-	pval.const <- timereg::pval(sim.maxs,test.constant)
+	pval.const <-  mean(sim.maxs>test.constant)
+###		timereg::pval(sim.maxs,test.constant)
         outtest <- cbind(diff.pepem,sd.pepem,z.pepem,pval.pepem,test.constant,pval.const)
 
         colnames(outtest) <- c("cum dif.","sd","z","pval","constant-case","pval") 			 

@@ -21,7 +21,9 @@
  #' 	(x <- Event(t1,t2,ca))
  #'
  #' @export
- Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {
+ Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {# {{{
+     if (!missing(cause)) { if (!is.numeric(cause)) warning("cause should be numeric\n");  } else
+      { if (!is.numeric(time2)) warning("cause should be numeric\n");  }
      out <- cbind(time,time2,cause)
      if (any(is.na(out))) warning("missing values in Event object\n"); 
      if (!missing(cause)) {
@@ -42,6 +44,7 @@
      attr(out,"cens.code") <- cens.code
      return(out)
  }
+# }}}
 
 ## #' @export
 ## as.matrix.Event <- function(x,...) structure(x,class="matrix")
