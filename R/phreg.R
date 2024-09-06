@@ -1730,7 +1730,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 ##' IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression 
 ##'
-##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)P(A=a|X)}, where
+##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
 ##'  \deqn{\pi(a|X)=P(A=a|X)}. Computes
 ##' standard errors via influence functions that are returned as the IID argument. 
 ##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
