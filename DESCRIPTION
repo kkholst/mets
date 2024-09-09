@@ -21,10 +21,11 @@ Depends:
     R (>= 3.5),
     timereg (>= 1.9.4)
 Imports:
-    lava (>= 1.7.1),
-    mvtnorm,
-    numDeriv,
     compiler,
+    lava (>= 1.7.1),
+    methods,
+    numDeriv,
+    mvtnorm,
     Rcpp,
     splines,
     survival (>= 2.43-1)
@@ -43,4 +44,4 @@ VignetteBuilder: knitr
 ByteCompile: yes
 LinkingTo: Rcpp, RcppArmadillo, mvtnorm
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

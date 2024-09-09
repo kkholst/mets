@@ -1,3 +1,6 @@
+#' @keywords internal
+"_PACKAGE"
+
 ##' Analysis of Multivariate Events
 ##'
 ##' Implementation of various statistical models for multivariate
@@ -20,8 +23,9 @@
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline title
 ##'   matlines legend
+##' @importFrom methods hasArg
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
-##' @keywords package
+##' @aliases mets mets-package
 ##' @examples
 ##'
 ##' ## To appear
