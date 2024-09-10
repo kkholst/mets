@@ -1273,6 +1273,7 @@ return(res)
 ##' 
 ##' ## years.lost decomposed into causes
 ##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
+##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 ##' summary(drm1)
 ##' @export
 ##' @aliases cif.yearslost  rmst.phreg
@@ -1362,13 +1363,15 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
 ###    colnames(logintkmtimes) <- c("strata","times","log-rmean","log-se.rmean")
   } else intkmtimes <- se.intkmtimes <- NULL
 
+  rmst <- cbind(meanm[,1],vecAllStrata(meanm[,2],strata.jumps,nstrata))
+  se.rmst <- cbind(se.mm[,1],vecAllStrata(se.mm[,2],strata.jumps,nstrata))
 
  out <- list(cumhaz=meanm,se.cumhaz=se.mm,covs=covs,
-       time=time, strata=strata.jumps,nstrata=nstrata,
+       time=time,strata=strata.jumps,nstrata=nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
-       intkmtimes=intkmtimes
-       )
+       intkmtimes=intkmtimes,
+       rmst=rmst,se.rmst=se.rmst)
 class(out) <- c("resmean_phreg")
 return(out)
 }# }}}
