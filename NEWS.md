@@ -1,3 +1,9 @@
+# mets 1.3.5
+  - Development version 
+
+# mets 1.3.4
+  - Maintenance release
+  
 # mets 1.3.3
   - Lu-Tsiatis efficient logrank test and dynamic censoring augmentation: `phreg_rct`
   - Inverse Probability of treatment weighted Cox model: `phreg_IPTW`

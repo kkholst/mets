@@ -2,6 +2,7 @@
 % Please edit documentation in R/mets-package.R
 \docType{package}
 \name{mets-package}
+\alias{mets}
 \alias{mets-package}
 \title{Analysis of Multivariate Events}
 \description{
@@ -12,6 +13,14 @@ and bivariate random effects probit models (Liability models)
 \examples{
 
 ## To appear
+
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://kkholst.github.io/mets/}
+  \item Report bugs at \url{https://github.com/kkholst/mets/issues}
+}
 
 }
 \author{
