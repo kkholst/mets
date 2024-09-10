@@ -2,10 +2,12 @@
 % Please edit documentation in R/mets-package.R
 \docType{package}
 \name{mets-package}
-\alias{mets}
 \alias{mets-package}
-\title{Analysis of Multivariate Events}
+\alias{mets}
+\title{mets: Analysis of Multivariate Event Times}
 \description{
+Implementation of various statistical models for multivariate event history data \doi{10.1007/s10985-013-9244-x}. Including multivariate cumulative incidence models \doi{10.1002/sim.6016}, and bivariate random effects probit models (Liability models) \doi{10.1016/j.csda.2015.01.014}. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions.
+
 Implementation of various statistical models for multivariate
 event history data. Including multivariate cumulative incidence models,
 and bivariate random effects probit models (Liability models)
@@ -22,8 +24,23 @@ Useful links:
   \item Report bugs at \url{https://github.com/kkholst/mets/issues}
 }
 
+
+Useful links:
+\itemize{
+  \item \url{https://kkholst.github.io/mets/}
+  \item Report bugs at \url{https://github.com/kkholst/mets/issues}
+}
+
 }
 \author{
+\strong{Maintainer}: Klaus K. Holst \email{klaus@holst.it}
+
+Authors:
+\itemize{
+  \item Thomas Scheike
+}
+
+
 Klaus K. Holst and Thomas Scheike
 }
-\keyword{package}
+\keyword{internal}
