@@ -416,7 +416,7 @@ recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,we
         U <- U+augmentation
 
         out <- list(ploglik=ploglik,gradient=U,hessian=-DU,cox.prep=xx2,
-                    hessiantime=DUt,weightsJ=weightsJ,caseweightsJ=caseweightsJ,
+                    hessianttime=DUt,weightsJ=weightsJ,caseweightsJ=caseweightsJ,
                     jumptimes=jumptimes,strata=strataJ,nstrata=nstrata,S0s=cbind(S0oo,S0no),
                     time=jumptimes,S0=S0/(caseweightsJ*weightsJ),S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
 
@@ -757,7 +757,8 @@ colnames(se.cumhaz) <- c("time","se.cumhaz")
 
 out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	iid=Uiid,ncluster=nid,
-	ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
+	ihessian=iH,hessian=opt$hessian,
+	hessianttime=opt$hessianttime,var1=var1,se1.coef=diag(var1)^.5,
 	ploglik=opt$ploglik,gradient=opt$gradient,
 	cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
 	strata=xx2$strata,

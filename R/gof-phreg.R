@@ -55,8 +55,14 @@ sup <- matrix(0,n.sim,nrow(ii))
 hatti <- matrix(0,nd,nrow(ii))
 obs <- apply(abs(Ut),2,max)
 
-if (is.null(robust)) 
+if (is.null(robust)) {
    if (!is.null(object$call.id)) robust <- TRUE else robust <- FALSE
+   if (inherits(object,c("cifreg"))) {
+	   robust <- FALSE  ## approximative test using MG framework
+###	   if (is.null(object$cox.prep)) stop("Must be called with cox.prep=TRUE\n")
+   }
+}
+
 
    ### cluster call or robust \hat M_i(t) based  
 if (robust) {# {{{
@@ -68,8 +74,8 @@ if (robust) {# {{{
    nn <- nrow(Z)
 
    tt <- system.time(simcox1<- .Call("PropTestCoxClust",UdN,Pt,rrw,xx$X,
-	     object$S0,object$E,
-             10,obs,nn,xx$id,xx$strata,xx$nstrata,object$strata.jumps,xx$jumps))
+     object$S0,object$E,
+     10,obs,nn,xx$id,xx$strata,xx$nstrata,object$strata.jumps,xx$jumps))
 
    prt <- n.sim*tt[3]/(10*60)
    if (prt>1 & silent==0) cat(paste("Predicted time minutes",signif(prt,2),"\n"))
@@ -99,7 +105,6 @@ out <- list(jumptimes=object$jumptimes,supUsim=sup,res=res,supU=obs,
 class(out) <- "gof.phreg"
 return(out)
 }# }}}
-
 
 ##' GOF for Cox covariates in  PH regression
 ##'

@@ -371,9 +371,15 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
         U <- U+augmentation
 
         out <- list(ploglik=ploglik,gradient=U,hessian=-DU,cox.prep=xx2,
-                    hessiantime=DUt,weightsJ=weightsJ,caseweightsJ=caseweightsJ,
-                    jumptimes=jumptimes,strata=strataJ,nstrata=nstrata,
-                    time=jumptimes,S0=S0/(caseweightsJ*weightsJ),S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
+                    hessiantime=DUt,weightsJ=weightsJ,
+		    caseweightsJ=caseweightsJ,
+                    jumptimes=jumptimes,
+		    strata.jumps=strataJ,
+		    strata=strataJ,
+		    nstrata=nstrata,
+                    time=jumptimes,
+		    S0=S0/(caseweightsJ*weightsJ),
+		    S2S0=S2S0,E=E,U=Ut,X=Xj,Gjumps=Gjumps)
 
 
         if (all)
@@ -553,7 +559,10 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
                 iid=Uiid,ncluster=nid,
-                ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
+                ihessian=iH,hessian=opt$hessian,
+		hessianttime=opt$hessiantime,
+		strata.jumps=opt$strata.jumps,
+		var1=var1,se1.coef=diag(var1)^.5,
                 ploglik=opt$ploglik,gradient=opt$gradient,
                 cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
 		strata.call=strata.call,
@@ -570,6 +579,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     return(out)
 }# }}}
+
 
 ##' @export
 indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
