@@ -1371,9 +1371,24 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
        intkmtimes=intkmtimes,
-       rmst=rmst,se.rmst=se.rmst)
+       rmst=rmst,se.rmst=se.rmst,
+       coef=intkmtimes[,3],var=diag(intkmtimes[,4]^2))
 class(out) <- c("resmean_phreg")
 return(out)
+}# }}}
+
+##' @export
+vcov.resmean_phreg <- function(object,cause=1,...) 
+{# {{{
+if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF1",cause,sep="") else name <- "se.rmean"
+return(diag(object$intkmtimes[,name]^2))
+}# }}}
+
+##' @export
+coef.resmean_phreg <- function(object,cause=1,...) 
+{# {{{
+if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF1",cause,sep="") else name <- "rmean"
+return(object$intkmtimes[,name])
 }# }}}
 
 ##' @export
