@@ -55,7 +55,10 @@
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pfg <- predict(fg,nd)
 ##' plot(pfg)
-##'
+##' 
+##' ## not run to avoid timing issues
+##' ## gofFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
+##' 
 ##' sfg <- cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
 ##' summary(sfg)
 ##' plot(sfg)
@@ -601,9 +604,10 @@ typesF <- c(cens.code,cause,types[-mm][1])
 ###data[,vars[2]] <- factor(statusS,typesF,c("censoring","cause","ocause"))
 data[,vars[2]] <- factor(statusS,typesF,typesF)
 
-if (!is.null(cens.model)) {
 Xs <- vars[-(1:2)]
 modP <- paste(Xs,collapse="+") 
+formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+id"))
+if (!is.null(cens.model)) {
 Cstrata <- as.character(cens.model)
 formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+",Cstrata[2],"+id"))
 }
