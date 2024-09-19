@@ -7,6 +7,7 @@
 \alias{IIDbaseline.cifreg}
 \alias{FGprediid}
 \alias{indexstratarightR}
+\alias{gofFG}
 \title{CIF regression}
 \usage{
 cifreg(

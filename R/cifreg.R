@@ -65,7 +65,7 @@
 ##' Biid <- IIDbaseline.cifreg(fg,time=20)
 ##' FGprediid(Biid,bmt[1:5,])
 ##'
-##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR
+##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR gofFG
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
             weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
@@ -580,6 +580,39 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     return(out)
 }# }}}
 
+##' @export
+gofFG <- function(formula,data,cause=1,cens.code=0,cens.model=NULL,...)
+{# {{{
+fgform <- update(formula, paste("Surv(fgstart, fgstop, fgstatus) ~ .+cluster(id)"))
+## assumes simple Surv(time,status) is given 
+vars <- all.vars(formula)
+data$id <- 1:nrow(data)
+formid <- update.formula(formula,paste(".~.+id"))
+
+## process types to get type of interst and other types 
+status <- data[,vars[2]]
+types <- unique(status)
+mm <- match(c(cens.code,cause),types)
+mm <- mm[!is.na(mm)]
+statusS <- status
+statusS[!(status %in% c(cens.code,cause))] <- types[-mm][1]
+typesF <- c(cens.code,cause,types[-mm][1])
+###
+###data[,vars[2]] <- factor(statusS,typesF,c("censoring","cause","ocause"))
+data[,vars[2]] <- factor(statusS,typesF,typesF)
+
+if (!is.null(cens.model)) {
+Xs <- vars[-(1:2)]
+modP <- paste(Xs,collapse="+") 
+Cstrata <- as.character(cens.model)
+formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+",Cstrata[2],"+id"))
+}
+
+fgdata <- finegray(formid,data=data)
+fgcph <- phreg(fgform,data=fgdata,weights=fgdata$fgwt,...)
+ggmg <- gof(fgcph)
+return(ggmg)
+}# }}}
 
 ##' @export
 indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{

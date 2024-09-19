@@ -3532,7 +3532,6 @@ out <- list(iidalpha=iidalpha,pA=pA,Dp=Dp,DpA=Dp,pal=pal,ppp=ppp,spp=spp,id=id,D
 return(out)
 } # }}}
 
-
 if (!is.null(treat.var)) { # {{{
 	## time-changing weights
 	weightWT <- data[,treat.var]
@@ -3553,7 +3552,6 @@ else { ## only first record is associated with treatment
         idW <- id[whereW]
 } 
 # }}}
-
 
 treatvar <- dataW[,treat.name]
 if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be factor \n",sep="")); 
