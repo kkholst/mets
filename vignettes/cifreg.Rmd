@@ -101,6 +101,14 @@ Now fitting the Fine-Gray model
  plot(pfg,ylim=c(0,0.2))
 ```
 
+and GOF based on cumulative residuals (Li et al. 2015) 
+
+```{r}
+gofFG(Event(time,status)~Z1+Z2,data=dats,cause=1)
+```
+
+showing no problem with the proportionality of the model. 
+
 
 SE's for the baseline and predictions of FG
 ===========================================
