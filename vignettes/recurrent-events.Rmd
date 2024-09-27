@@ -136,6 +136,7 @@ Marginal Mean
 =============
 
  We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the timing of the terminal event. 
+ The marginal mean is the average number of events seen before time $t$. 
 
  This is based on a  rate model  for 
 

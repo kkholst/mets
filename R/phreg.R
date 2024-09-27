@@ -2160,8 +2160,9 @@ if (inherits(x,"phreg"))  {
 out <- estimate(coef=1-Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
-out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,vcov=vv)
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])/(1-p[1]),null=1)
+srd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
+out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,survival.ratio=srd,vcov=vv)
 } 
 if (inherits(x,"cifreg") | inherits(x,"recreg")) { 
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
@@ -2185,7 +2186,7 @@ if (is.null(time)) {
        time <- seq(rr[1],rr[2],length=n)
 }
 
-survivalG <- risk <- difference <- ratio <- c()
+survivalG <- risk <- difference <- ratio <- survival.ratio <- c()
 for (tt in time) {
   Gt <- survivalG(x,data,time=tt,...)
   strata <- strata(rownames(Gt$survivalG$coefmat))
@@ -2193,21 +2194,23 @@ for (tt in time) {
   risk <- rbind(risk,cbind(tt,Gt$risk$coefmat))
   difference <- rbind(difference,cbind(tt,Gt$difference$coefmat))
   ratio <- rbind(ratio,cbind(tt,Gt$ratio$coefmat))
+  survival.ratio <- rbind(survival.ratio,cbind(tt,Gt$survival.ratio$coefmat))
 }
   colnames(survivalG)[1] <- "time"
   colnames(risk)[1] <- "time"
   colnames(difference)[1] <- "time"
   colnames(ratio)[1] <- "time"
+  colnames(survival.ratio)[1] <- "time"
   strata <- strata(rownames(survivalG))
 out <- list(time=time,survivalG=survivalG,risk=risk,difference=difference,
-	    ratio=ratio,strata=strata)
+	    ratio=ratio,survival.ratio=survival.ratio,strata=strata)
 
 class(out) <- "survivalGtime"
 return(out)
 } ## }}}
 
 ##' @export
-plot.survivalGtime <- function(x,type=c("survival","risk","difference","ratio"),...) {# {{{
+plot.survivalGtime <- function(x,type=c("survival","risk","survival.risk","difference","ratio"),...) {# {{{
 
   us <- unique(x$strata)
   cols <- 1:length(us)
@@ -2228,7 +2231,7 @@ for (ss in us[-1]) {
   }
 
   if (type[1]=="risk") {
-   plot(x$time,x$risk[ss0,2],type="s",ylim=c(0,1),xlab="time",ylab="risk",col=cols[1],lty=ltys[1])
+   plot(x$time,x$risk[ss0,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=range(x$risk[ss0,c(2,4,5)]))
    plotConfRegion(x$time,x$risk[ss0,c(4,5)],col=cols[1])
    k <- 2
    for (ss in us[-1]) {
@@ -2244,9 +2247,14 @@ for (ss in us[-1]) {
   plotConfRegion(x$time,x$difference[,c(4,5)],col=cols[1])
   }
   if (type[1]=="ratio")  {
-  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,2]),xlab="time",ylab="ratio of survival",col=cols[1],lty=ltys[1])
+  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,c(4,5)]),xlab="time",ylab="ratio of survival",col=cols[1],lty=ltys[1])
   plotConfRegion(x$time,x$ratio[,c(4,5)],col=cols[1])
 }
+ if (type[1]=="survival.ratio")  {
+   plot(x$time,x$survival.ratio[,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=range(x$survival.ratio[,c(4,5)]))
+  plotConfRegion(x$time,x$survival.ratio[,c(4,5)],col=cols[1])
+}
+
 
 }
 # }}}
@@ -2255,7 +2263,7 @@ for (ss in us[-1]) {
 
 ##' @export
 summary.survivalG <- function(object,...) {
-  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio)
+  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio,survival.ratio=object$survival.ratio)
   class(res) <- "summary.survivalG"
   res
 }
@@ -2270,8 +2278,12 @@ print.summary.survivalG  <- function(x,...) {
     print(x$difference,...)
     cat("\n")
 
-    cat("Average Treatment effect ratio (G-estimator) :\n")
+    cat("Average Treatment effect risk-ratio (G-estimator) :\n")
     print(x$ratio$coefmat,...)
+    cat("\n")
+
+    cat("Average Treatment effect (1-risk=survival)-ratio (G-estimator) :\n")
+    print(x$survival.ratio$coefmat,...)
     cat("\n")
 
 }
