@@ -557,7 +557,7 @@ if (typeR!=typeC) {
    if (fit0$p>0) 
    iid[[j]] <- (ea.iid - AugR.iid ) %*% fit0$ihessian
    else iid[[j]] <- 0
-   if (baseline & typeR=="R0" & (typeC!="dync" | typeC!="C")) {
+   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) {
 	   if (fit0$p>0) fitr0 <- robust.phreg(fit0,beta.iid=-iid[[j]])
            else fitr0 <- robust.phreg(fit0)
            cumhaz <- fit0$cumhaz

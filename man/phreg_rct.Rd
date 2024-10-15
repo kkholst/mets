@@ -62,7 +62,7 @@ phreg_rct(
 
 \item{pi0}{possible fixed propensity scores for randomizations}
 
-\item{base.augment}{TRUE to covariate augment baselines (only for case without covariates, ~strata(treat) )}
+\item{base.augment}{TRUE to covariate augment baselines (only for R0 augmentation)}
 
 \item{return.augmentR0}{to return augmentation data}
 
@@ -84,7 +84,7 @@ summary(out)
 }
 \references{
 Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
-Scheike (2024), WIP, Two-stage randomization for recurrent events,
+Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,
 }
 \author{
 Thomas Scheike
