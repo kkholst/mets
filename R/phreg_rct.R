@@ -564,7 +564,7 @@ if (typeR!=typeC) {
 	   cumhaz[,2] <- cumhaz[,2]-R0baseline.augment      
 	   se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
 	   se.R0cumhaz[,2] <- (fitr0$robse.cumhaz[,2]^2-R0baseline.reduction)^.5
-   } else se.cumhaz <- se.R0cumhaz <- NULL
+   } else cumhaz <- se.cumhaz <- se.R0cumhaz <- NULL
 
    var.beta <- crossprod(iid[[j]])
    AugC.iid <- 0+(typeC=="C")*AugClt.iid+ (typeC=="dynC")*AugCdyn.iid
