@@ -40,8 +40,9 @@
 ##' @export
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
-     augmentR0=NULL,augmentR1=NULL,augmentC=NULL, treat.model=~+1,RCT=TRUE,
-     treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
+     augmentR0=NULL,augmentR1=NULL,augmentC=NULL,treat.model=~+1,RCT=TRUE,
+     treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,
+     base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
   Z <- typeII <- NULL
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -222,6 +223,7 @@ ea <- ea.iid <- fit0$IID %*% fit0$hessian
 if (fit0$p>0) eaM <- (lava::iid(fit0) %*% fit0$hessian)
 }
 
+
 data.augR0 <- NULL
 AugR0 <- AugR1 <- AugR01 <- rep(0,ncol(ea))
 AugR0.iid <-  AugR1.iid <-  AugR01.iid <- matrix(0,nrow(ea),ncol(ea))
@@ -238,10 +240,12 @@ if (!is.null(augmentR0)) {# {{{
    Z0[idW0] <- Z0
    piW0 <- rep(0,length(idW0))
    piW0[idW0] <- pi0[CountWW==1]
+   strata0 <- fit0$strata.call[idW0]
 
    XRpi <- (Z0-piW0)*XR
-   xx <- crossprod(XRpi)
-   xxi <- solve(xx)
+   XR0pi <- XRpi 
+   xxR0 <- crossprod(XRpi)
+   xxi <- solve(xxR0)
    if (estpr[1]==1) {
        Dp0 <- matrix(0,nid,ncol(fitt$Dp))
        Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
@@ -257,33 +261,12 @@ if (!is.null(augmentR0)) {# {{{
       ## iid term for predicted P(treat=1)
       if (estpr[1]==1) {
 	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
-         iid.treat <- Dp0f %*% t(fitt$iidalpha)
+         iid.treat <- fitt$iidalpha %*% Dp0f
          AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
       } 
-
       ## oucome model iid 
    }
 
-   if (base.augment) {
-      xxx <- fit0$cox.prep
-      XRpit <- XRpi[xxx$id+1,]
-      if (fit0$p>0) 
-      rr <- c(exp(xxx$X %*% coef(fit0)+ xxx$offset)*xxx$weights)
-      else rr <- c(exp(xxx$offset)*xxx$weights)
-      XRE <- apply(XRpit*rr*c(xxx$sign),2,revcumsumstrata,xxx$strata,xxx$nstrata)
-      S0i <- rep(0,nrow(xxx$X))
-      jumps <- xxx$jumps+1
-      S0i[jumps] <- 1/fit0$S0
-      ###
-      U <- matrix(0,nrow(XRE),ncol(XRE))
-      U[jumps,] <- XRpit[jumps,]*S0i[jumps]
-      NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
-      XREdLam0 <- apply(XRE*S0i^2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
-      covBase <- NXRE-XREdLam0
-      gamR0Base <- covBase %*% xxi 
-      R0baseline.augment <- apply(XRpi,2,sum) %*% t(gamR0Base)
-      R0baseline.reduction <- apply((gamR0Base %*% xx) * gamR0Base,1,sum)
-   } 
 } # }}}
 
 if (!is.null(augmentR1)) {# {{{
@@ -554,18 +537,8 @@ if (typeR!=typeC) {
    AugR.iid <- 0+(typeR=="R0")*AugR0.iid+ (typeR=="R1")*AugR1.iid + (typeR=="R01")*AugR01.iid
    AugC <- (typeC=="C")*AugClt+(typeC=="dynC")*AugCdyn+0
    Aug <- AugR+AugC
-   if (fit0$p>0) 
-   iid[[j]] <- (ea.iid - AugR.iid ) %*% fit0$ihessian
-   else iid[[j]] <- 0
-   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) {
-	   if (fit0$p>0) fitr0 <- robust.phreg(fit0,beta.iid=-iid[[j]])
-           else fitr0 <- robust.phreg(fit0)
-           cumhaz <- fit0$cumhaz
-	   cumhaz[,2] <- cumhaz[,2]-R0baseline.augment      
-	   se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
-	   se.R0cumhaz[,2] <- (fitr0$robse.cumhaz[,2]^2-R0baseline.reduction)^.5
-   } else cumhaz <- se.cumhaz <- se.R0cumhaz <- NULL
 
+   if (fit0$p>0) iid[[j]] <- (ea.iid - AugR.iid ) %*% fit0$ihessian else iid[[j]] <- 0
    var.beta <- crossprod(iid[[j]])
    AugC.iid <- 0+(typeC=="C")*AugClt.iid+ (typeC=="dynC")*AugCdyn.iid
    if (typeC=="dynC") {
@@ -574,25 +547,64 @@ if (typeR!=typeC) {
    if (typeC=="C") {
        var.beta <- var.beta - fit0$ihessian %*% var.Clt.improve%*% fit0$ihessian
    }
-   if (!is.null(augmentC)) iid[[j]] <- iid[[j]] - AugC.iid%*% fit0$ihessian
 
-   if (fit0$p>0) {
+   if (fit0$p>0) 
    fitts <- phreg(formula,data=data,augmentation=Aug,no.var=1,weights=ww,...)
-      coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
-   nnn <- paste(typeR,typeC,sep="_")
-   iidn <- c(iidn,nnn)
-   rownames(coeffitt) <- paste(nnn,var.names,sep=":")
-   coefs <- rbind(coefs,coeffitt)
+   else fitts <- fit0
+
+   ## only baseline augment with R0 augmentation
+   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) {
+      xxx <- fitts$cox.prep
+      xx <- crossprod(XR0pi)
+      xxi <- solve(xx)
+      XRpit <- XR0pi[xxx$id+1,]
+      if (fit0$p>0) rr <- c(exp(xxx$X %*% coef(fitts)+ xxx$offset)*xxx$weights)
+      else rr <- c(exp(xxx$offset)*xxx$weights)
+      XRE <- apply(XRpit*rr*c(xxx$sign),2,revcumsumstrata,xxx$strata,xxx$nstrata)
+      S0i <- rep(0,nrow(xxx$X))
+      jumps <- xxx$jumps+1
+      S0i[jumps] <- 1/fitts$S0
+      ###
+      U <- matrix(0,nrow(XRE),ncol(XRE))
+      U[jumps,] <- XRpit[jumps,]*S0i[jumps]
+      NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
+      XREdLam0 <- apply(XRE*S0i^2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
+      covBase <- NXRE-XREdLam0
+      n <- nrow(XR0pi)
+      pis <- table(strata0)/n
+      pis <- 1/pis[fit0$strata.jumps+1]
+      gamR0Base <- (covBase %*% xxi)
+      XRs <- apply(XR0pi,2,sum)
+      R0baseline.augment <-  -XRs %*% t(gamR0Base) 
+      R0baseline.reduction<- apply((gamR0Base%*%xx)*gamR0Base,1,sum)
+
+     ## using augmented estimator of beta 
+     if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=-iid[[j]])
+     else fitr0 <- robust.phreg(fit0)
+     cumhazR0 <- cumhaz <- fitts$cumhaz
+     cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
+     se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
+     se.R0cumhaz[,2] <- (se.cumhaz[,2]^2-R0baseline.reduction)^.5
+   } else cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
+
+   if (fit0$p>0)  {
+     coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
+     nnn <- paste(typeR,typeC,sep="_")
+     iidn <- c(iidn,nnn)
+     rownames(coeffitt) <- paste(nnn,var.names,sep=":")
+     coefs <- rbind(coefs,coeffitt)
+     if (!is.null(augmentC)) iid[[j]] <- iid[[j]] - AugC.iid%*% fit0$ihessian
    }
-	}
-}
+   } }
 names(iid) <- iidn
 # }}}
+
 
 out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
     formula=formula,formulaC=formulaC,treat.model=treat.model,
-    cumhaz=cumhaz,se.cumhaz=se.R0cumhaz,se.naive.cumhaz=se.cumhaz, 
+    cumhaz=cumhazR0,se.cumhaz=se.R0cumhaz,
+    cumhaz.noAug=cumhaz,se.cumhaz.noAug=se.cumhaz, 
     strata=fit0$strata.jumps,nstrata=fit0$nstrata,jumps=seq_along(fit0$strata.jumps),
     strata.name=fit0$strata.name,strata.level=fit0$strata.level,
     data.augR0=data.augR0)
