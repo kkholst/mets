@@ -238,9 +238,9 @@ if (!is.null(augmentR0)) {# {{{
    ## order after idW0
    XR[idW0, ] <-  XR 
    Z0[idW0] <- Z0
-   piW0 <- rep(0,length(idW0))
+   strata0 <- piW0 <- rep(0,length(idW0))
    piW0[idW0] <- pi0[CountWW==1]
-   strata0 <- fit0$strata.call[idW0]
+   strata0[idW0] <- fit0$strata.call
 
    XRpi <- (Z0-piW0)*XR
    XR0pi <- XRpi 
@@ -570,22 +570,20 @@ if (typeR!=typeC) {
       NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       XREdLam0 <- apply(XRE*S0i^2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       covBase <- NXRE-XREdLam0
-      n <- nrow(XR0pi)
-      pis <- table(strata0)/n
-      pis <- 1/pis[fit0$strata.jumps+1]
-      gamR0Base <- (covBase %*% xxi)
+
+      gamR0Base <- (covBase) %*% xxi
       XRs <- apply(XR0pi,2,sum)
       R0baseline.augment <-  -XRs %*% t(gamR0Base) 
       R0baseline.reduction<- apply((gamR0Base%*%xx)*gamR0Base,1,sum)
-
-     ## using augmented estimator of beta 
-     if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=-iid[[j]])
-     else fitr0 <- robust.phreg(fit0)
-     cumhazR0 <- cumhaz <- fitts$cumhaz
-     cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
-     se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
-     se.R0cumhaz[,2] <- (se.cumhaz[,2]^2-R0baseline.reduction)^.5
-   } else cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
+      ## using augmented estimator of beta 
+      if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=-iid[[j]])
+      else fitr0 <- robust.phreg(fit0)
+      cumhazR0 <- cumhaz <- fitts$cumhaz
+      cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
+      se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
+      se.R0cumhaz[,2] <- (se.cumhaz[,2]^2-R0baseline.reduction)^.5
+      baselinecox <- list(phreg=fitts,beta.iid=-iid[[j]],XR0pi=XR0pi,gamR0Base=gamR0Base)
+   } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
 
    if (fit0$p>0)  {
      coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
@@ -607,7 +605,7 @@ out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
     cumhaz.noAug=cumhaz,se.cumhaz.noAug=se.cumhaz, 
     strata=fit0$strata.jumps,nstrata=fit0$nstrata,jumps=seq_along(fit0$strata.jumps),
     strata.name=fit0$strata.name,strata.level=fit0$strata.level,
-    data.augR0=data.augR0)
+    baselinecox=baselinecox,data.augR0=data.augR0)
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
