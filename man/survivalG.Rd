@@ -49,6 +49,9 @@ summary(survivalG(fg1,bmt,50))
 
 ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 summary(survivalG(ss,bmt,50))
+
+sst <- survivalGtime(ss,bmt,n=50)
+plot(sst,type=c("survival","risk","survival.ratio")[1])
 }
 \author{
 Thomas Scheike
