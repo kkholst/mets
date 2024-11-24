@@ -131,7 +131,7 @@ recregB <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.m
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
     ## }}}
-d
+
     res <- c(
         recreg01(data, X, entry, exit, status,
             id = id, strata = strata, offset = offset, weights = weights,
