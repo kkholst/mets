@@ -8,7 +8,6 @@
 ##' and bivariate random effects probit models (Liability models)
 ##'
 ##' @name mets-package
-##' @docType package
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @useDynLib mets, .registration=TRUE
 ##' @import stats splines Rcpp mvtnorm

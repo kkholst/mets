@@ -24,13 +24,6 @@ Useful links:
   \item Report bugs at \url{https://github.com/kkholst/mets/issues}
 }
 
-
-Useful links:
-\itemize{
-  \item \url{https://kkholst.github.io/mets/}
-  \item Report bugs at \url{https://github.com/kkholst/mets/issues}
-}
-
 }
 \author{
 \strong{Maintainer}: Klaus K. Holst \email{klaus@holst.it}

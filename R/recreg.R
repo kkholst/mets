@@ -131,16 +131,29 @@ recregB <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.m
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
     ## }}}
+d
+    res <- c(
+        recreg01(data, X, entry, exit, status,
+            id = id, strata = strata, offset = offset, weights = weights,
+            cens.model = cens.model, cause = cause, strata.name = strata.name, strataA = NULL, ## strataAugment,
+            death.code = death.code, cens.code = cens.code, Gc = Gc, wcomp = wcomp, ...
+        ),
+        list(call = cl, model.frame = m, formula = formula, strata.pos = pos.strata, cluster.pos = pos.cluster, n = nrow(X), nevent = sum(status %in% cause))
+    )
+    colnames(res$iid) <- names(res$coef)
 
-    res <- c(recreg01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
-		      cens.model=cens.model, cause=cause, strata.name=strata.name, strataA=NULL,## strataAugment,
-		      death.code=death.code,cens.code=cens.code,Gc=Gc,wcomp=wcomp,...),
-             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status %in%cause))
-             )
-
-    class(res) <- c("phreg","recreg")
+    class(res) <- c("recreg", "phreg")
     return(res)
 }# }}}
+
+
+##' @export
+IC.recreg <- function(x, ...) {
+  res <- with(x, iid * NROW(iid))
+  return(res)
+}
+
+
 
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,

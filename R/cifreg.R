@@ -72,61 +72,72 @@
 ##' @export
 cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
             weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
-{# {{{
-    cl <- match.call()# {{{
+{ # {{{
+    cl <- match.call() # {{{
     m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster","offset")
+    special <- c("strata", "cluster", "offset")
     Terms <- terms(formula, special, data = data)
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-    if (ncol(Y)==2) {
-        exit <- Y[,1]
+    if (!inherits(Y, "Event")) stop("Expected a 'Event'-object")
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
         entry <- NULL ## rep(0,nrow(Y))
-        status <- Y[,2]
+        status <- Y[, 2]
     } else {
-        entry <- Y[,1]
-        exit <- Y[,2]
-        status <- Y[,3]
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
     }
     id <- strata <- NULL
     if (!is.null(attributes(Terms)$specials$cluster)) {
         ts <- survival::untangle.specials(Terms, "cluster")
         pos.cluster <- ts$terms
-        Terms  <- Terms[-ts$terms]
+        Terms <- Terms[-ts$terms]
         id <- m[[ts$vars]]
-    } else pos.cluster <- NULL
+    } else {
+        pos.cluster <- NULL
+    }
     if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
         ts <- survival::untangle.specials(Terms, "strata")
         pos.strata <- ts$terms
-        Terms  <- Terms[-ts$terms]
+        Terms <- Terms[-ts$terms]
         strata <- m[[ts$vars]]
         strata.name <- ts$vars
-    }  else { strata.name <- NULL; pos.strata <- NULL}
+    } else {
+        strata.name <- NULL
+        pos.strata <- NULL
+    }
     if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
         ts <- survival::untangle.specials(Terms, "offset")
-        Terms  <- Terms[-ts$terms]
+        Terms <- Terms[-ts$terms]
         offset <- m[[ts$vars]]
     }
     X <- model.matrix(Terms, m)
-    if (!is.null(intpos  <- attributes(Terms)$intercept))
-        X <- X[,-intpos,drop=FALSE]
-    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+    if (!is.null(intpos <- attributes(Terms)$intercept)) {
+        X <- X[, -intpos, drop = FALSE]
+    }
+    if (ncol(X) == 0) X <- matrix(nrow = 0, ncol = 0)
 
     ## }}}
 
-    res <- c(cifreg01(data,X,exit,status,id,strata,offset,weights,strata.name,
-                      cens.model=cens.model,
-                      cause=cause,cens.code=cens.code,Gc=Gc,propodds=propodds,...),
-             list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
-                  cluster.pos=pos.cluster,n=nrow(X),nevent=sum(status==cause))
-             )
+    res <- c(
+        cifreg01(data, X, exit, status, id, strata, offset, weights, strata.name,
+            cens.model = cens.model,
+            cause = cause, cens.code = cens.code, Gc = Gc, propodds = propodds, ...
+        ),
+        list(
+            call = cl, model.frame = m, formula = formula, strata.pos = pos.strata,
+            cluster.pos = pos.cluster, n = nrow(X), nevent = sum(status == cause)
+        )
+    )
 
-    class(res) <- c("phreg","cifreg")
+    class(res) <- c("cifreg", "phreg")
     return(res)
-}# }}}
+} # }}}
+
 
 cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
               strata.name=NULL,beta,stderr=TRUE,method="NR",no.opt=FALSE,propodds=1,profile=0,
@@ -560,6 +571,9 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
     colnames(se.cumhaz) <- c("time","se.cumhaz")
 
+  colnames(Uiid) <- names(beta.s)
+  if (nrow(Uiid) == nrow(data)) rownames(Uiid) <- rownames(data)
+
     out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
                 iid=Uiid,ncluster=nid,
                 ihessian=iH,hessian=opt$hessian,
@@ -582,6 +596,13 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     return(out)
 }# }}}
+
+##' @export
+IC.cifreg <- function(x, ...) {
+  res <- with(x, iid * NROW(iid))
+  return(res)
+}
+
 
 ##' @export
 gofFG <- function(formula,data,cause=1,cens.code=0,cens.model=NULL,...)
