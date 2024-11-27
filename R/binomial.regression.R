@@ -521,7 +521,6 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   val$cens.code <- cens.code 
 
 
-
   class(val) <- "binreg"
   return(val)
 }# }}}

@@ -516,23 +516,18 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(
 {# {{{
   ## Fine-Gray model cloglog F1= 1-exp(-cum(t)*rr)
   ## logistic                F1= cum(t)*rr/(1+cum(t)*rr)
-  ## identity                F1= cum(t)*rr
-  ## rr=exp(X^t beta) 
+  ## rr                      F1= cum(t)*rr,  rr=exp(X^t beta) 
   if (!is.null(n)) rr <- rep(1,n)
   entry=NULL
 
   logit <- function(p) log(p/(1-p))
 
+  if (cumhazard[1,2]>0)  cumhazard <- rbind(startcum,cumhazard)
   breaks <- cumhazard[,1]
-  rates <- cumhazard[,2][-1]
-  mm <- tail(breaks,1)
   cumh <- cumhazard[,2] 
+  mm <- tail(breaks,1)
   n <- length(rr)
 
-  if (cumh[1]>0) {
-	  cumh <-    c(startcum[2],cumh)
-	  breaks <-  c(startcum[1],breaks)
-  }
   if (type=="cloglog") {
       F1tau <- 1-exp(-tail(cumh,1)*rr)
       ttt <- -log(1-runif(n)*F1tau)/rr
@@ -540,7 +535,7 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(
      F1tau <- tail(cumh,1)*rr/(1+tail(cumh,1)*rr)
      v <- runif(n)*F1tau
      ttt <- exp(logit(v))/rr; 
-  }  else if (type=="identity" | type=="cif") {
+  }  else if (type=="rr" | type=="cif") {
      F1tau <- tail(cumh,1)
      ttt <- runif(n)*F1tau
      ## rr only affects binomial draw 
@@ -549,7 +544,7 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(
   ###
    entry <- cumentry <- rep(0,n)
    ttte <- ttt+cumentry
-   rrx <- lin.approx(ttt,cbind(breaks,cumh),x=-1)
+   rrx <- lin.approx(ttt,cumhazard,x=-1)
    timecause <- rrx
    ###
    rrx <- ifelse(rrx>mm,mm,rrx)

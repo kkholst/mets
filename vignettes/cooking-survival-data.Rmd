@@ -305,8 +305,73 @@ We again note that if $\tilde F_1(s)$ and $F_1(s)$ are piecewise linear
 continuous functions then the inverses are easy to compute. 
 
 
-Cumulative incidence regression
+Cumulative incidence I
 ================================
+
+We here simulate two causes of death with two binary covariates
+
+```{r}
+cif1 <- cbind(c(0,10,20,100),c(0,0.1,0.15,0.2))
+cif2 <- cbind(c(0,10,20,100),c(0,0.4,0.45,0.5))
+
+n <- 100; lrr1=c(0.2,0.1); lrr2=c(0.2,0.1); cens=NULL
+### A binary, L binary
+A <- rbinom(n,1,0.5)
+L <- rbinom(n,1,0.5)
+###
+rr1 <- exp(cbind(A,L) %*% lrr1)
+rr2 <- exp(cbind(A,L) %*% lrr2)
+## model is fine
+mmm<-max(rr1)*max(cif1[,2])+max(rr2)*max(cif2[,2])
+mcif1 <- max(cif1[,2])
+mcif2 <- max(cif2[,2])
+if (mmm>1) warning(" models not satisfying sum <=1\n")
+### here log-link model 
+T1 <- simsubdist(cif1,rr1,type="cif")
+T2 <- simsubdist(cif2,rr2,type="cif")
+###
+dies <- rbinom(n,1,rr1*mcif1+rr2*mcif2)
+sel1 <- rbinom(n,1,mcif2/(mcif1+mcif2))+1
+epsilon  <- dies*(sel1)
+T1$epsilon <- epsilon
+###
+T1$A <- A; T1$L <- L
+## times given 
+T1$time <- T1$timecause
+T1$time2 <- T2$timecause
+T1$status <- epsilon
+T1 <- dtransform(T1,time=100,epsilon==0)
+T1 <- dtransform(T1,status=0,epsilon==0)
+###
+T1 <- dtransform(T1,time=time2,epsilon==2)
+T1 <- dtransform(T1,status=2,epsilon==2)
+
+dtable(T1,~status)
+
+par(mfrow=c(1,2))
+lrr1=c(0.2,0.1);lrr2=c(0.2,0.1)
+pcif1 <- cif(Event(time,status)~strata(A,L),T1,cause=1)
+pcif2 <- cif(Event(time,status)~strata(A,L),T1,cause=2)
+###
+newd <- data.frame(expand.grid(A=0:1,L=0:1))
+rr1 <- c(exp(as.matrix(newd) %*% lrr1))
+rr2 <- c(exp(as.matrix(newd) %*% lrr2))
+###
+cifm1 <- cbind(cif1[,1],cif1[,2] %o% rr1)
+cifm2 <- cbind(cif2[,1],cif2[,2] %o% rr2)
+###
+par(mfrow=c(1,2))
+plot(pcif1,ylim=c(0,0.3)); 
+matlines(cifm1[,1],cifm1[,-1],col=1,lwd=2)
+###
+plot(pcif2,ylim=c(0,0.7))
+matlines(cifm2[,1],cifm2[,-1],col=1,lwd=2)
+```
+
+
+
+Cumulative incidence regression models
+======================================
 
 Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
 cumulative incidence functions that satistifes the needed constraints. 
