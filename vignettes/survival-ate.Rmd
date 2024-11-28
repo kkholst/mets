@@ -40,6 +40,8 @@ These estimates have a causal interpration under the assumption
 of no-unmeasured confounders, and even without the 
 causal assumptions this standardization can still be a useful summary measure. 
 
+First looking cumulative incidence via the Fine-Gray model for the two causes and making a plot of the 
+standardized cumulative incidence for cause 1.
 
 ```{r}
 set.seed(100)
@@ -56,6 +58,13 @@ fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,
 	      cox.prep=TRUE,propodds=NULL)
 summary(survivalG(fg2,bmt,50))
 
+cif1time <- survivalGtime(fg1,bmt)
+plot(cif1time,type="risk"); 
+```
+
+Now looking at the survival probability 
+
+```{r}
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
 sss <- survivalG(ss,bmt,50)
 summary(sss)

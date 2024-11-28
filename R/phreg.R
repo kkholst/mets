@@ -2190,9 +2190,10 @@ if (is.null(time)) {
 }
 
 survivalG <- risk <- difference <- ratio <- survival.ratio <- c()
+
 for (tt in time) {
   Gt <- survivalG(x,data,time=tt,...)
-  strata <- strata(rownames(Gt$survivalG$coefmat))
+  strata <- strata(rownames(Gt$risk$coefmat))
   survivalG <- rbind(survivalG,cbind(tt,Gt$survivalG$coefmat))
   risk <- rbind(risk,cbind(tt,Gt$risk$coefmat))
   difference <- rbind(difference,cbind(tt,Gt$difference$coefmat))
@@ -2204,7 +2205,7 @@ for (tt in time) {
   colnames(difference)[1] <- "time"
   colnames(ratio)[1] <- "time"
   colnames(survival.ratio)[1] <- "time"
-  strata <- strata(rownames(survivalG))
+  strata <- strata(rownames(risk))
 out <- list(time=time,survivalG=survivalG,risk=risk,difference=difference,
 	    ratio=ratio,survival.ratio=survival.ratio,strata=strata)
 
@@ -2215,6 +2216,8 @@ return(out)
 ##' @export
 plot.survivalGtime <- function(x,type=c("survival","risk","survival.ratio","difference","ratio"),...) {# {{{
 
+  ## to deal with fine-gray based things, that do not contain survival estimates
+  if ((ncol(x$survivalG)==1) & type[1]=="survival") type <- "risk"
   us <- unique(x$strata)
   cols <- 1:length(us)
   ltys <- cols
@@ -2250,7 +2253,7 @@ for (ss in us[-1]) {
   plotConfRegion(x$time,x$difference[,c(4,5)],col=cols[1])
   }
   if (type[1]=="ratio")  {
-  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,c(4,5)]),xlab="time",ylab="ratio of survival",col=cols[1],lty=ltys[1])
+  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,c(4,5)]),xlab="time",ylab="ratio",col=cols[1],lty=ltys[1])
   plotConfRegion(x$time,x$ratio[,c(4,5)],col=cols[1])
 }
  if (type[1]=="survival.ratio")  {
