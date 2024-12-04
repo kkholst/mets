@@ -2940,11 +2940,11 @@ if (!is.null(object$propodds)) pcumhaz <- -log(surv)
 
  out <- list(surv=surv,times=times,
 	      surv.upper=cisurv$upper,surv.lower=cisurv$lower,cumhaz=pcumhaz,se.cumhaz=se.cumhaz,strata=strataNew,X=X, RR=RR)
- if (length(class(object))==2 && substr(class(object)[2],1,3)=="cif") {
+ if (length(class(object))==2 && ( substr(class(object)[2],1,3)=="cif" | substr(class(object)[1],1,3)=="cif")) {
 	 out <- c(out,list(cif=1-out$surv,cif.lower=1-out$surv.upper, cif.upper=1-out$surv.lower))
  }
  class(out) <- c("predictphreg")
- if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[2])
+ if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[1])
  return(out)
 }# }}}
 
