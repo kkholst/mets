@@ -153,8 +153,6 @@ IC.recreg <- function(x, ...) {
   return(res)
 }
 
-
-
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=NULL,
@@ -1098,7 +1096,6 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     class(val) <- c("binreg", "resmean")
     return(val)
 } # }}}
-
 
 ##' @export
 strataAugment <- survival:::strata
