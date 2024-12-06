@@ -2993,7 +2993,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
    if (type[1]=="cumhaz" & is.null(ylab) & (length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) ylab <- "mean"
    if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative  hazard"
    if (type[1]=="cif" & is.null(ylab)) ylab <- "Cumulative probability"
-   if ((substr(class(x)[2],1,3)=="rec")) type <- "cumhaz"
+   if ((length(class(x))==2) &&(substr(class(x)[2],1,3)=="rec")) type <- "cumhaz"
 
    if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
