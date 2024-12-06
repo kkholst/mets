@@ -62,7 +62,7 @@
 ##'               death.code=3,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC
+##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
@@ -145,6 +145,12 @@ recregB <- function(formula,data=data,cause=1,death.code=c(2),cens.code=0,cens.m
     class(res) <- c("recreg", "phreg")
     return(res)
 }# }}}
+
+##' @export IIDbaseline.recreg 
+IIDbaseline.recreg <- function(x,time=NULL,fixbeta=NULL,...)
+{# {{{
+   return(IIDbaseline.cifreg(x,time=time,fixbeta=fixbeta,...))
+} # }}}
 
 
 ##' @export

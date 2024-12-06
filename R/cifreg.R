@@ -669,7 +669,7 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
   if (length(class(x))!=2) stop("Must be cifreg object\n"); 
-  if (!inherits(x,c("cifreg","recreg"))) stop("Must be cifreg object\n"); 
+  if (!inherits(x,c("cifreg","recreg"))) stop("Must be cifreg/recreg object\n"); 
   if (is.null(time)) stop("Must give time for iid of baseline")
 
   if (!is.null(x$propodds))  stop("Only for Fine-Gray-model") 
@@ -841,6 +841,7 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
              nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
 	     model.frame=x$model.frame,formula=x$formula))
 } # }}}
+
 
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")
