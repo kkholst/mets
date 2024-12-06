@@ -2943,6 +2943,10 @@ if (!is.null(object$propodds)) pcumhaz <- -log(surv)
  if (length(class(object))==2 && ( substr(class(object)[2],1,3)=="cif" | substr(class(object)[1],1,3)=="cif")) {
 	 out <- c(out,list(cif=1-out$surv,cif.lower=1-out$surv.upper, cif.upper=1-out$surv.lower))
  }
+if (length(class(object))==2 && ( substr(class(object)[2],1,3)=="rec" | substr(class(object)[1],1,3)=="rec")) {
+	 out <- c(out,list(mean=-log(out$surv),mean.lower=-log(out$surv.upper),mean.upper=-log(out$surv.lower)))
+ }
+
  class(out) <- c("predictphreg")
  if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[1])
  return(out)
@@ -2981,14 +2985,16 @@ print.predictphreg  <- function(x,se=FALSE,...) {# {{{
   invisible(xx)
 }# }}}
 
-
 ##' @export
 plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
     polygon=TRUE,level=0.95,whichx=NULL,robust=FALSE,...) {# {{{
-   if (type[1]=="surv" & is.null(ylab)) ylab <- "Survival probability"
-   if (type[1]=="cif" & is.null(ylab)) ylab <- "Cumulative probability"
-   if (type[1]=="surv" & length(class(x))==2) ylab <- "Cumulative probability"
+   if (type[1]=="surv" & (length(class(x))==2) && (substr(class(x)[2],1,3)=="cif")) ylab <- "Cumulative probability"
+   if (type[1]=="surv" & is.null(ylab) & (length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) ylab <- "mean"
+   if (type[1]=="cumhaz" & is.null(ylab) & (length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) ylab <- "mean"
    if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative  hazard"
+   if (type[1]=="cif" & is.null(ylab)) ylab <- "Cumulative probability"
+   if ((substr(class(x)[2],1,3)=="rec")) type <- "cumhaz"
+
    if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
    if (type[1]=="surv") rr <- c(0,1) 
@@ -3045,11 +3051,13 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
   i <- 1
   j <- whichx[i]
 
-  cifreg <- FALSE
+  recreg <- cifreg <- FALSE
   if ((length(class(x))==2) && (substr(class(x)[2],1,3)=="cif")) cifreg <- TRUE
+###  if ((length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) recreg <- TRUE
   if (type[1]=="surv") { 
 	  xx <- x$surv 
 	  if (cifreg)  xx <- x$cif 
+	  if (recreg)  xx <- x$mean 
   } else if (type[1]=="cif") {
 	  xx <- 1-x$surv 
   } else xx <- x$cumhaz
@@ -3057,9 +3065,9 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
      if (type[1]=="surv") {
 	     upper <- x$surv.upper; lower <- x$surv.lower 
 	     if (cifreg) { upper <- x$cif.upper; lower <- x$cif.lower} 
+	     if (recreg) { upper <- x$mean.upper; lower <- x$mean.lower} 
      } else if (type[1]=="cif") {
 	     upper <- 1-x$surv.lower; lower <- 1-x$surv.upper
-
      } else { upper <- cumhaz.upper; lower <- cumhaz.lower}
   }
 
