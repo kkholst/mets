@@ -2660,6 +2660,8 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
 
   ### cif 
   cifo <- recurrentMarginal(coxE,coxS)
+  ## to work with predict function
+###  cifo$no.opt <- TRUE
 
   ### to use basehazplot.phreg
   class(cifo) <- c("cif","phreg")
@@ -2947,8 +2949,9 @@ if (length(class(object))==2 && ( substr(class(object)[2],1,3)=="rec" | substr(c
 	 out <- c(out,list(mean=-log(out$surv),mean.lower=-log(out$surv.upper),mean.upper=-log(out$surv.lower)))
  }
 
- class(out) <- c("predictphreg")
- if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[1])
+   class(out) <- c("predictphreg",class(object)[1])
+### class(out) <- c("predictphreg")
+### if (length(class(object))==2) class(out) <- c("predictphreg",class(object)[1])
  return(out)
 }# }}}
 
@@ -2986,17 +2989,18 @@ print.predictphreg  <- function(x,se=FALSE,...) {# {{{
 }# }}}
 
 ##' @export
-plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
+plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("default","surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
     polygon=TRUE,level=0.95,whichx=NULL,robust=FALSE,...) {# {{{
-   if (type[1]=="surv" & (length(class(x))==2) && (substr(class(x)[2],1,3)=="cif")) ylab <- "Cumulative probability"
-   if (type[1]=="surv" & is.null(ylab) & (length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) ylab <- "mean"
-   if (type[1]=="cumhaz" & is.null(ylab) & (length(class(x))==2) && (substr(class(x)[2],1,3)=="rec")) ylab <- "mean"
-   if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative  hazard"
+   if (type[1]=="cumhaz" & is.null(ylab)) ylab <- "Cumulative hazard"
    if (type[1]=="cif" & is.null(ylab)) ylab <- "Cumulative probability"
-   if ((length(class(x))==2) &&(substr(class(x)[2],1,3)=="rec")) type <- "cumhaz"
+   if (type[1]=="surv" & is.null(ylab)) ylab <- "Surival probability"
+   if (type[1]=="default" & (class(x)[2]=="phreg"))  { if (is.null(ylab)) ylab <- "Survival probability";   type <- "surv"}
+   if (type[1]=="default" & (class(x)[2]=="cifreg"))  {if (is.null(ylab))  ylab <- "Cumulative probability"; type <- "cif"}
+   if (type[1]=="default" & (class(x)[2]=="recreg"))  {if (is.null(ylab))  ylab <- "Cumulative mean";        type <- "cumhaz"}
 
    if (is.null(xlab)) xlab <- "time"
    level <- -qnorm((1-level)/2)
+   if (type[1]=="cif") rr <- c(0,1) 
    if (type[1]=="surv") rr <- c(0,1) 
    if (type[1]=="cumhaz") rr <- range(c(0,x$cumhaz))
    ylimo <- ylim
@@ -3009,12 +3013,14 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
    if (se==TRUE) {
       if (is.null(x$se.cumhaz)) stop("predict.phreg must be with se=TRUE\n"); 
    if (type[1]=="surv") rrse <- range(c(x$surv.upper,x$surv.lower)) 
+   if (type[1]=="surv") rrse <- range(c(x$surv.upper,x$surv.lower)) 
    if (type[1]=="cumhaz") {
 	   cumhaz.upper <- x$cumhaz+level*x$se.cumhaz
 	   cumhaz.lower <- x$cumhaz-level*x$se.cumhaz
        rrse <- range(c(cumhaz.upper,cumhaz.lower)) 
    }
    if (type[1]=="surv") rrse <- c(0,1)
+   if (type[1]=="cif") rrse <- c(0,1)
    if (type[1]=="cumhaz") rrse <- c(max(0,rrse[1]),rrse[2])
    if (is.null(ylimo)) ylim <- rrse
    }
@@ -3104,6 +3110,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
   if (type[1]=="surv") where <-  "topright"
 
 }# }}}
+
 
 ###}}} predict
 
