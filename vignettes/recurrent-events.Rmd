@@ -274,14 +274,13 @@ outX <- recmarg(xr,dr,Xr=1,Xd=1)
 bplot(outX,add=TRUE,col=3)
 ```
 
-Here I simulatte multiple types and two causes of death causes of death 
+Here I simulate multiple types and two causes of death causes of death 
 
 ```{r}
 rr <- simRecurrentIII(100,list(base1,base1,base4),death.cumhaz=list(ddr,base4),cens=3/5000,dependence=0)
 dtable(rr,~status+death,level=2)
 mets:::showfitsimIII(rr,list(base1,base1,base4),list(ddr,base4))
 ```
-
 
 Improving efficiency 
 ======================

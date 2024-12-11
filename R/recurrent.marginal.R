@@ -1125,7 +1125,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' rr <- simRecurrent(5,base1,death.cumhaz=dr)
 ##' dlist(rr,.~id,n=0)
 ##'
-##' rr <- simRecurrent(100,base1,death.cumhaz=dr)
+##' rr <- simRecurrent(10000,base1,death.cumhaz=dr)
 ##' par(mfrow=c(1,3))
 ##' showfitsim(causes=1,rr,dr,base1,base1)
 ##' ######################################################################
@@ -1139,7 +1139,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' ### now with two event types and second type has same rate as death rate
 ##' ######################################################################
 ##' set.seed(100)
-##' rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
+##' rr <- simRecurrentII(10000,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
 ##' par(mfrow=c(2,2))
 ##' showfitsim(causes=2,rr,dr,base1,base4)
@@ -1279,16 +1279,18 @@ simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd
 
 ##' @export
 showfitsimIII <- function(rr,cumhaz,dr)  {# {{{
- par(mfrow=c(2,3))
- for (i in 1:3) {
+ colp <- max(length(cumhaz),length(dr))
+ par(mfrow=c(2,colp))
+ for (i in 1:length(cumhaz)) {
 	 pp <- phreg(Surv(entry,time,status==i)~+1,rr)
 	 plot(pp); 
-	 lines(cumhaz[[i]],col=2)
+	 lines(cumhaz[[i]],col=2,lwd=2)
  }
-  pp <- phreg(Surv(entry,time,death==1)~+1,rr)
-	 plot(pp); lines(dr[[1]],col=2)
-  pp <- phreg(Surv(entry,time,death==2)~+1,rr)
-	 plot(pp); lines(dr[[2]],col=2)
+ for (i in 1:length(dr)) {
+	 pp <- phreg(Surv(entry,time,death==i)~+1,rr)
+	 plot(pp); 
+	 lines(dr[[i]],col=2,lwd=2)
+ }
 }
 # }}}
 
