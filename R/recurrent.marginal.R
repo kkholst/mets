@@ -1404,11 +1404,13 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
   }# }}}
 
 #' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
-sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
+#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
+sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
 ## exp censoring default
-## to avoid R check warning
 death <- NULL
+
+if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox" 
+if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
 
 scox1 <- read.phreg(cox1,n,data=data)
 if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,Z=scox1$data)

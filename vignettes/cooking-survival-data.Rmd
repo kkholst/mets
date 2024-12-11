@@ -110,7 +110,6 @@ This is again a consequence of a simple calculation
   P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) > t) = P_X(E > HR( \Lambda(t) - \Lambda(s)) ) = P_X(T>t | T>s)
 \]
 
-
 The engine is to simulate data with a given linear cumulative hazard.
 
 ```{r}
@@ -126,7 +125,7 @@ The engine is to simulate data with a given linear cumulative hazard.
  pctimecox <- rchaz(cumhaz,rrcox)
 ```
 
-Now we generate data that resemble Cox models  for the bmt data
+Now we generate data that resemble Cox models for the bmt data
 
 ```{r}
  data(bmt); 
@@ -180,9 +179,9 @@ More Cox games
  cbind(cox$coef,cc$coef)
  plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
  
- coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
- sim3 <- sim.cox(coxs,nsim,data=sTRACE)
- cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
+ coxs <-  phreg(Surv(time,status==9)~strata(chf,vf)+wmi,data=sTRACE)
+ sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
+ cc <-   phreg(Surv(time, status)~strata(chf,vf)+wmi,data=sim3)
  cbind(coxs$coef,cc$coef)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 ```
@@ -234,6 +233,11 @@ More Cox games with cause  specific hazards
  plot(cox1); plot(scox1,add=TRUE); 
  plot(cox2); plot(scox2,add=TRUE); 
 ```
+
+ - sim.phreg only for phreg, but a bit more flexible, can deal with strata 
+ - sim.cox can only deal with covariates that can be identified from
+     the names of its coefficients (so factors should be coded accordingly) or use sim.phreg
+
 
 Multistate models: The Illness Death model 
 ==========================================
@@ -485,6 +489,10 @@ See also recurrent events vignette
  dtable(rr,~death+status)
  showfitsimIII(rr,cumhaz,drl) 
 ```
+
+ - sim.recurrent can simulate based on cox hazard for events and death based on phreg
+    - similar to sim.phreg
+
 
 
 
