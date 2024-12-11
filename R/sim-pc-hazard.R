@@ -305,12 +305,12 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' data(sTRACE)
 #' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
-#' sim3 <- sim.cox(coxs,nsim,data=sTRACE)
+#' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
 #' cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
-#' @aliases read.fit sim.base simulate.cox
+#' @aliases sim.phreg read.phreg read.fit sim.base simulate.cox
 #' @export sim.cox
 #' @usage sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
 sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
@@ -379,6 +379,96 @@ ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
 	attr(ptt,"id") <- des$id
 	return(ptt)
 }# }}}
+
+#' @export sim.phreg
+#' @usage sim.phreg(cox,n,data,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,...)
+sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,...)
+{# {{{
+
+   scox1 <- read.phreg(cox,n,data=data,...)
+   dat <- scox1$data
+   strata <- scox1$strata
+   dat$orig.id <- scox1$id
+   dat$id <- NULL
+   cumhaz <- cox$cum
+   if (is.null(rr)) rr <- scox1$rr
+   cumhaz <- cbind(cox$cumhaz[,1],
+   	    vecAllStrata(cox$cumhaz[,2],cox$strata.jumps,cox$nstrata))
+   ids <- 1:n
+   lentry <- NULL
+
+   ptt <- c()
+   for (i in seq((ncol(cumhaz)-1))) {
+      whichi <- which(strata==i-1)
+      cumhazj <- cumhaz[,c(1,i+1)]
+
+      if (!is.null(entry)) lentry <- entry[whichi]
+      simj <- rchaz(cumhazj,rr[whichi],entry=lentry,extend=extend) 
+      simj$id <- ids[whichi]
+      ptt  <-  rbind(ptt,simj)
+    }
+    dsort(ptt) <- ~id
+    ptt <- cbind(ptt,dat)
+
+if (!is.null(cens))  {
+if (is.null(rrc)) rrc <- rep(1,n)
+if (is.matrix(cens)) {
+	pct <- rchaz(cens,rrc,entry=entry)
+	pct <- pct$time
+} else {
+	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
+	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
+	pct<- rexp(n)/chaz 
+	if (!is.null(entry)) pct  <- entry + pct
+    }
+}
+ptt$time <- pmin(ptt$time,pct)
+ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+} 
+
+return(ptt)
+}# }}}
+
+#' @export read.phreg
+#' @usage read.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+read.phreg <- function(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+{# {{{
+if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
+
+## give data so that design can be constructed based on model-formula
+if (is.null(Z)) {
+cid <- countID(data.frame(id=cox$id))
+whereid <- which(cid$Countid==1)
+xid <- sample(whereid,n,replace=TRUE)
+dataid <- data[xid,] 
+###    ms <- match(cox$strata.name,names(cox$model.frame))
+###    stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
+} else { xid <- 1:nrow(Z); n <- nrow(Z); dataid <- Z}
+
+desX <- readPhreg(cox,dataid)
+Z <- desX$X
+strata <- desX$strata
+nz <- ncol(Z)
+if (nz>0) rr <- exp(as.matrix(Z) %*% coef(cox)) else rr <- rep(1,nrow(Z))
+cumhaz <- rbind(c(0,0),cox$cumhaz)
+###   if (drawZ==TRUE) {
+###           xid <- sample(1:nrow(Z),n,replace=TRUE)
+###   } else xid <- 1:nrow(Z)
+###   if (drawZ==FALSE) xid <- 1:nrow(Z) 
+   if (cox$nstrata>1) stratid <- strata else stratid <- NULL
+###   rr <- rr[xid]
+###   Z <- Z[xid,,drop=FALSE]
+   if (cox$nstrata>1) {
+       ms <- match(cox$strata.name,names(cox$model.frame))
+       stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
+###       Z[,stratname] <- stratid
+   } else stratname <- NULL
+   model <-c(class(cox),is.null(cox$propodds))
+
+out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,strata=strata,data=dataid, stratname=stratname)
+
+return(out)
+} ## }}}
 
 #' @export sim.base
 #' @usage sim.base(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,extend=TRUE,...)

@@ -62,7 +62,7 @@
 ##'               death.code=3,cens.model=~strata(gx))
 ##' summary(lls)
 ##' 
-##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC
+##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
@@ -1107,6 +1107,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ##' @export
 strataAugment <- survival:::strata
 
+##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 	     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
 {# {{{

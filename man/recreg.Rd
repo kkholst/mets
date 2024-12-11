@@ -8,6 +8,7 @@
 \alias{GLprediid}
 \alias{recregIPCW}
 \alias{twostageREC}
+\alias{simGLcox}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(

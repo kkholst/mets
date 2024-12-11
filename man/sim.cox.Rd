@@ -2,6 +2,8 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{sim.cox}
 \alias{sim.cox}
+\alias{sim.phreg}
+\alias{read.phreg}
 \alias{read.fit}
 \alias{sim.base}
 \alias{simulate.cox}
@@ -41,7 +43,7 @@ for highest value of the event times by using cumulative hazard.
 data(sTRACE)
 nsim <- 100
 coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
-sim3 <- sim.cox(coxs,nsim,data=sTRACE)
+sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
 cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
 cbind(coxs$coef,cc$coef)
 plot(coxs,col=1); plot(cc,add=TRUE,col=2)

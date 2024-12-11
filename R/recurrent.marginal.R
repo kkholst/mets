@@ -1152,7 +1152,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' showfitsimIII(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @aliases simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentIII showfitsimIII
+##' @aliases sim.recurrent simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentIII showfitsimIII
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,
     gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
 {# {{{
@@ -1402,6 +1402,47 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
 
   return(tall)
   }# }}}
+
+#' @export sim.recurrent
+#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
+sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
+## exp censoring default
+## to avoid R check warning
+death <- NULL
+
+scox1 <- read.phreg(cox1,n,data=data)
+if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,Z=scox1$data)
+if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,Z=scox1$data)
+if (type[1]=="cox-cox") type <- 3 else type <- 2
+
+Lam1 <- scalecumhaz(scox1$cumhaz,scale1); r1 <- scox1$rr
+if (!is.null(coxc)) rc <-  scoxc$rr else rc <- rep(1,n)
+if (!is.null(coxd))  {
+LamD <- scalecumhaz(scoxd$cumhaz,scaled); rd <- scoxd$rr 
+} else { LamD <- NULL; rd <- NULL; }
+Lam2 <- scalecumhaz(scox1$cumhaz,0)
+if (is.null(dependence) & (!is.null(LamD))) {
+rrs <- simGLcox(n,Lam1,LamD,var.z=varz,r1=r1,rd=rd,rc=rc,model="twostage",cens=cens,type=type,share=share)
+} else { 
+if (is.null(dependence)) dependence <- 0
+###rrs <- simRecurrentII(n,Lam1,Lam2,death.cumhaz=LamD,r1=r1,rd=rd,rc=rc,cens=cens,var.z=varz,dependence=dependence)
+if (!is.null(LamD)) 
+rrs <- simRecurrentIII(n,list(Lam1),death.cumhaz=list(LamD),rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+else rrs <- simRecurrentIII(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+
+rrs$statusD <- rrs$status
+if (!is.null(LamD))  {
+rrs <- dtransform(rrs,statusD=3,death==1)
+}
+rrs$id <- rrs$id-1
+}
+
+## add covariates 
+rrs <- cbind(rrs,scox1$data[rrs$id+1,-(1:3)])
+
+return(rrs)
+}
+# }}}
 
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,...) 
