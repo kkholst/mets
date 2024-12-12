@@ -1,5 +1,6 @@
 # mets 1.3.5
   - Development version 
+  - sim.phreg and sim.recurrent for simulations 
 
 # mets 1.3.4
   - Maintenance release
