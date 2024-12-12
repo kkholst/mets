@@ -108,7 +108,7 @@ The key functions are
  * simRecurrentIII 
    * lists are allowed for multiple events and cause of death (competing risks)
    * Allows Cox types rates with subject specific rates 
-
+ * sim.recurrent to simulate from Cox-Cox  (marginals) or Ghosh-Lin-Cox
 
 In addition we can simulate data from the Ghosh-Lin model and where marginals of the rates among survivors are on
 on Cox form 
