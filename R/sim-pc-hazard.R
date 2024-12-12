@@ -429,8 +429,6 @@ ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
 return(ptt)
 }# }}}
 
-
-
 #' @export read.phreg
 #' @usage read.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
 read.phreg <- function(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
@@ -442,7 +440,8 @@ if (is.null(Z)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
 xid <- sample(whereid,n,replace=TRUE)
-dataid <- data[xid,] 
+vars <- all.vars(cox$formula)
+dataid <- data[xid,vars] 
 ###    ms <- match(cox$strata.name,names(cox$model.frame))
 ###    stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
 } else { xid <- 1:nrow(Z); n <- nrow(Z); dataid <- Z}
