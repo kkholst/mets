@@ -541,6 +541,21 @@ plot(margsurv); lines(ddr,col=3);
 plot(recurrent); lines(base1,col=3)
 ```
 
+We can simulate data with underlying dependence fromm the two-stage model (simGLcox) or using 
+simRecurrent random effects models, for Cox-Cox or Ghosh-Lin-Cox models.
+
+Here with marginals on 
+  - Cox- Cox form
+  - Ghosh-Lin - Cox form 
+
+
+```{r}
+simcoxcox <- sim.recurrent(recurrent,margsurv,n=100,data=rr)
+
+recurrentGL <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),rr,death.code=3)
+simglcox <- sim.recurrent(recurrentGL,margsurv,n=100,data=rr)
+```
+
 
 Other marginal properties 
 =========================
