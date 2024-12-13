@@ -439,7 +439,7 @@ if (!inherits(cox,"phreg")) stop("must be phreg object\n");
 if (is.null(Z)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
-xid <- sample(whereid,n,replace=TRUE)
+if (drawZ==TRUE) xid <- sample(whereid,n,replace=TRUE) else xid <- id
 vars <- all.vars(update(cox$formula,-1~.))
 dataid <- data[xid,vars] 
 ###    ms <- match(cox$strata.name,names(cox$model.frame))

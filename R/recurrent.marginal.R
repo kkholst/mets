@@ -1404,8 +1404,8 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
   }# }}}
 
 #' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
-sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=100,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
+#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
+sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
 ## exp censoring default
 death <- NULL
 
@@ -1413,9 +1413,13 @@ if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox"
 if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
 
 scox1 <- read.phreg(cox1,n,data=data)
-if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,Z=scox1$data)
-if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,Z=scox1$data)
+if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,data=data,,draw=FALSE,id=scox1$id)
+if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,data=data,draw=FALSE,id=scox1$id)
 if (type[1]=="cox-cox") type <- 3 else type <- 2
+data <- scox1$data
+ind <-  match(names(scox1$data), names(scoxd$data))
+ind <- ind[!is.na(ind)]
+if (length(ind)<ncol(scoxd$data))  data <- cbind(data,scoxd$data[,-ind])
 
 Lam1 <- scalecumhaz(scox1$cumhaz,scale1); r1 <- scox1$rr
 if (!is.null(coxc)) rc <-  scoxc$rr else rc <- rep(1,n)
@@ -1440,11 +1444,13 @@ rrs$id <- rrs$id-1
 }
 
 ## add covariates 
-rrs <- cbind(rrs,scox1$data[rrs$id+1,-(1:3)])
+rrs <- cbind(rrs,data[rrs$id+1,])
 
 return(rrs)
 }
 # }}}
+
+
 
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,...) 

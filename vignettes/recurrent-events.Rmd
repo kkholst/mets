@@ -548,12 +548,13 @@ Here with marginals on
   - Cox- Cox form
   - Ghosh-Lin - Cox form 
 
+Draws covariates from data and simulates data that has the marginals given. 
 
 ```{r}
-simcoxcox <- sim.recurrent(recurrent,margsurv,n=100,data=rr)
+simcoxcox <- sim.recurrent(recurrent,margsurv,n=10,data=rr)
 
 recurrentGL <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),rr,death.code=3)
-simglcox <- sim.recurrent(recurrentGL,margsurv,n=100,data=rr)
+simglcox <- sim.recurrent(recurrentGL,margsurv,n=10,data=rr)
 ```
 
 
