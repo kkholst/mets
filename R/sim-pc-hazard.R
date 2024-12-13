@@ -440,7 +440,7 @@ if (is.null(Z)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
 xid <- sample(whereid,n,replace=TRUE)
-vars <- all.vars(cox$formula)
+vars <- all.vars(update(cox$formula,-1~.))
 dataid <- data[xid,vars] 
 ###    ms <- match(cox$strata.name,names(cox$model.frame))
 ###    stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
