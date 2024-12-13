@@ -1413,8 +1413,8 @@ if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox"
 if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
 
 scox1 <- read.phreg(cox1,n,data=data)
-if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,data=data,,draw=FALSE,id=scox1$id)
-if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,data=data,draw=FALSE,id=scox1$id)
+if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,data=data,drawZ=FALSE,id=scox1$id)
+if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,data=data,drawZ=FALSE,id=scox1$id)
 if (type[1]=="cox-cox") type <- 3 else type <- 2
 data <- scox1$data
 ind <-  match(names(scox1$data), names(scoxd$data))
