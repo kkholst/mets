@@ -95,7 +95,6 @@ estimate(coef=sr1$riskDR,vcov=sr1$var.riskDR,f=function(p) p[2]/p[1],null=1)
 br1 <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
 		 time=40,treat.model=tcell~platelet+age)
 summary(br1)
-
 ```
 
 and using the specialized function 

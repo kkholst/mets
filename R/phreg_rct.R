@@ -240,7 +240,7 @@ if (!is.null(augmentR0)) {# {{{
    Z0[idW0] <- Z0
    strata0 <- piW0 <- rep(0,length(idW0))
    piW0[idW0] <- pi0[CountWW==1]
-   strata0[idW0] <- fit0$strata.call
+   strata0 <- fit0$strata.call[idW0]
 
    XRpi <- (Z0-piW0)*XR
    XR0pi <- XRpi 

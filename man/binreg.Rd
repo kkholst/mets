@@ -4,6 +4,7 @@
 \alias{binreg}
 \alias{logitIPCW}
 \alias{binregt}
+\alias{binregII}
 \title{Binomial Regression for censored competing risks data}
 \usage{
 binreg(
@@ -12,6 +13,7 @@ binreg(
   cause = 1,
   time = NULL,
   beta = NULL,
+  type = c("II", "I"),
   offset = NULL,
   weights = NULL,
   cens.weights = NULL,
@@ -35,6 +37,8 @@ binreg(
 \item{time}{time of interest}
 
 \item{beta}{starting values}
+
+\item{type}{"II" adds augmentation term, and "I" classic binomial regression}
 
 \item{offset}{offsets for partial likelihood}
 
@@ -65,31 +69,38 @@ Simple version of comp.risk function of timereg for just one time-point thus fit
 \details{
 Based on binomial regresion IPCW response estimating equation: 
 \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
-for IPCW adjusted responses. 
+for IPCW adjusted responses, with (default, type="II") an additional 
+censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) dM_c} with 
+\deqn{Y(t) = I(T \leq t, \epsilon=1 )}
 
 logitIPCW instead considers 
 \deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
 a standard logistic regression with weights that adjust for IPCW. 
 
-variance is based on  \deqn{ \sum w_i^2 } also with IPCW adjustment, and naive.var is variance 
+Variance is based on  \deqn{ \sum w_i^2 } with IPCW adjustment, and naive.var is variance 
 under known censoring model. 
 
 Censoring model may depend on strata.
 }
 \examples{
 
-data(bmt)
+data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
+
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
-outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
-summary(outs)
+##outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
+##summary(outs)
 
 ## glm with IPCW weights 
 outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(outl)
+
+## multiple time-points 
+##outt <- binregt(Event(time,cause)~tcell+platelet,bmt,time=c(10,40,50,70))
+##estimate(outt)
 
 ##########################################
 ### risk-ratio of different causes #######
@@ -111,7 +122,7 @@ cif2 <- cif(Event(time,cause)~+1,bmt,cause=2)
 bplot(cif1)
 bplot(cif2,add=TRUE,col=2)
 
-cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=50)
+cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
 cifs2 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
 summary(cifs1)
 summary(cifs2)

@@ -193,7 +193,6 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
  if (!is.null(MCaugment)) {se <- FALSE;}
 
  if (se) {## {{{ censoring adjustment of variance 
-
     ### order of sorted times
     ord <- resC$ord
     X <-  X[ord,,drop=FALSE]
@@ -256,13 +255,12 @@ resmeanIPCW  <- function(formula,data,cause=1,time=NULL,type=c("II","I"),
     ### Censoring Variance Adjustment 
     MGCiid <- MGtiid+ MGCiid-MGCiid2
    }
+   ## use data ordered by time (keeping track of id also)
+   id <- xx$id
    }  else {
-	  MGCiid <- 0
+          MGCiid <- 0
           mid <- max(id)
   }## }}}
-
- ## use data ordered by time (keeping track of id also)
- id <- xx$id
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -295,7 +293,6 @@ hessian <- matrix(D2log,length(pp),length(pp))
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
 }# }}}
-
 
   p <- ncol(X)
   opt <- NULL
