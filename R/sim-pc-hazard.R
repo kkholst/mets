@@ -381,8 +381,8 @@ ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
 }# }}}
 
 #' @export sim.phreg
-#' @usage sim.phreg(cox,n,data,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,...)
-sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,...)
+#' @usage sim.phreg(cox,n,data,rr=NULL,entry=NULL,extend=NULL,cens=NULL,...)
+sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=NULL,cens=NULL,...)
 {# {{{
 
    scox1 <- read.phreg(cox,n,data=data,...)
@@ -393,8 +393,9 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,
    cumhaz <- cox$cum
    if (is.null(rr)) rr <- scox1$rr
    cumhaz <- basecumhaz(cox,only=1)
-   if (extend)  {
-      cumhaz <- extendCums(cumhaz,NULL)
+   if (!is.null(extend))  {
+      if (!is.numeric(extend)) stop("extend is numeric slope from last time seen \n"); 
+      cumhaz <- extendCums(cumhaz,NULL,haza=extend)
    }
    ids <- 1:n
    lentry <- NULL
@@ -404,7 +405,7 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,
       whichi <- which(strata==i-1)
       cumhazj <- rbind(0,cumhaz[[i]])
       if (!is.null(entry)) lentry <- entry[whichi]
-      simj <- rchaz(cumhazj,rr[whichi],entry=lentry,extend=extend) 
+      simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
       simj$id <- ids[whichi]
       ptt  <-  rbind(ptt,simj)
     }
