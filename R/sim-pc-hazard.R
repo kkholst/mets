@@ -421,8 +421,8 @@ if (is.matrix(cens)) {
 	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
 	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
 	pct<- rexp(n)/chaz 
-	if (!is.null(entry)) pct  <- entry + pct
     }
+    if (!is.null(entry)) pct  <- entry + pct
 }
 ptt$time <- pmin(ptt$time,pct)
 ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
