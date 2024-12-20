@@ -392,16 +392,17 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,entry=NULL,extend=FALSE,cens=NULL,
    dat$id <- NULL
    cumhaz <- cox$cum
    if (is.null(rr)) rr <- scox1$rr
-   cumhaz <- basecumhaz(cox)
-###   cumhaz <- cbind(cox$cumhaz[,1],
-###   	    vecAllStrata(cox$cumhaz[,2],cox$strata.jumps,cox$nstrata))
+   cumhaz <- basecumhaz(cox,only=1)
+   if (extend)  {
+      cumhaz <- extendCums(cumhaz,NULL)
+   }
    ids <- 1:n
    lentry <- NULL
 
    ptt <- c()
    for (i in seq(length(cumhaz))) {
       whichi <- which(strata==i-1)
-      cumhazj <- rbind(0,cumhaz[[i]]$cumhaz)
+      cumhazj <- rbind(0,cumhaz[[i]])
       if (!is.null(entry)) lentry <- entry[whichi]
       simj <- rchaz(cumhazj,rr[whichi],entry=lentry,extend=extend) 
       simj$id <- ids[whichi]
