@@ -257,7 +257,7 @@ END_RCPP
 
 
 // [[Rcpp::export(name = ".scoreMVN")]]
-arma::mat scoremvn(arma::mat &Y,
+arma::mat scoreMVN(arma::mat &Y,
                    arma::mat &Mu,
                    arma::mat &dMu,
                    arma::mat &S,
@@ -283,10 +283,10 @@ arma::mat scoremvn(arma::mat &Y,
   return(U);
 }
 
-vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
-	      mat &Mu, mat &S,
-	      mat &Z,  mat &Su,
-	      mat &Threshold, double itol=0.0) {
+vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
+              mat &Z, mat &Su,
+              mat &Threshold,
+              double itol=0.0, bool nonconstvar = false) {
 
   int k = Yl.n_cols;
   int n = Yl.n_rows;
@@ -297,10 +297,7 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
   int nObs = Obs.size();
   int nNonObs = NonObs.size();
   int nOrd = Ord.size();
-  int nu = Su.n_cols;
-  bool nonconstvar = (nu>0);
-
-  double logdetS0, logdetS, sign;
+  double logdetS0;
   mat Se,S0,iS0;
 
   vec loglik(n); loglik.fill(0);
@@ -316,11 +313,10 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
     for (int i=0; i<n; i++) { // Iterate over subjects
 
       if (nonconstvar) {
+        unsigned nu = Su.n_cols;
         mat Z0 = reshape(Z.row(i),k,nu);
         S0 = Se+Z0.rows(Obs)*Su*trans(Z0.rows(Obs));
         iS0 = Inv(S0, logdetS0, itol);
-        // iS0 = inv(S0);
-        // log_det(logdetS0, sign, S0);
       }
 
       loglik(i) = -0.5*(logdetS0 + as_scalar(Y0.row(i)*iS0*trans(Y0.row(i))));
@@ -382,12 +378,13 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
       upper = Yu.submat(currow,NonObs);
 
       if (nonconstvar) {
-	mat Z0 = reshape(Z.row(i),k,nu);
-	mat SS = S+Z0*Su*trans(Z0);
+        unsigned nu = Su.n_cols;
+        mat Z0 = reshape(Z.row(i),k,nu);
+        mat SS = S+Z0*Su*trans(Z0);
 
 	if (nObs>0) {
-	  S0 = SS.submat(NonObs,NonObs);
-	  mat S01 = SS.submat(NonObs,Obs);
+    mat S0 =  SS.submat(NonObs,NonObs);
+    mat S01 = SS.submat(NonObs,Obs);
 	  mat iS1 = Inv(SS.submat(Obs,Obs), logdetS0, itol);
 	  // mat iS1 = inv(SS.submat(Obs,Obs));
 	  Mi = Mi +
@@ -507,7 +504,6 @@ arma::mat loglikMVN(arma::mat Yl, arma::mat Yu,
   uvec Ord = find(Status>1);
   // int nObs = Obs.size();
   // int nNonObs = NonObs.size();
-  int nOrd = Ord.size();
   int nCens = Cens.size();
   unsigned n = Yl.n_rows;
   mat Z,Zsub;
@@ -520,7 +516,7 @@ arma::mat loglikMVN(arma::mat Yl, arma::mat Yu,
     if (Z.n_rows!=n)
       throw(Rcpp::exception("Dimension of 'z' and 'yl' did not agree","mvn.cpp",1));
   }
-  //
+  // int nOrd = Ord.size();
   // mat Threshold;
   // if (nOrd>0) {
   //   Threshold = Rcpp::as<mat>(threshold);
@@ -547,11 +543,8 @@ arma::mat loglikMVN(arma::mat Yl, arma::mat Yu,
       mat Musub = Mu.rows(idx);
       if (!Rf_isNull(z)) Zsub = Z.rows(idx);
 
-      vec ll = loglikmvn(Ylsub, Yusub, NewStatus,
-			 Musub, S,
-			 Zsub,  Su,
-			 Threshold,
-			 itol);
+      vec ll = loglikmvn(Ylsub, Yusub, NewStatus, Musub, S, Zsub, S, Threshold,
+			               itol);
       loglik.elem(idx) = ll;
     }
   } else {

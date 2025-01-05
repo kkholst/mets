@@ -990,13 +990,14 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	for (unsigned i=0; i<n; i++) {
 		ss=intstrata(i);
 		// valid strata update
-		if ((first>0.1) && (i>=1)&& (ss<nstrata) && (ss>=0))
-			ressqu(i)=ressqu(i-1)+pow(a(i),2)+2*a(i)*tmpsum(ss);
-			lagressum(i)=tmpsum(ss);
-			tmpsum(ss) += a(i);
-			// cumsum+=a(i);
-			if (first<0.1) ressqu(i) = pow(a(i),2);
-			first=1;
+		if ((first>0.1) && (i>=1)&& (ss<nstrata) && (ss>=0)) {
+			ressqu(i) = ressqu(i - 1) + pow(a(i), 2) + 2 * a(i) * tmpsum(ss);
+		}
+		lagressum(i)=tmpsum(ss);
+		tmpsum(ss) += a(i);
+		// cumsum+=a(i);
+		if (first<0.1) ressqu(i) = pow(a(i),2);
+		first=1;
 		ressum(i) = tmpsum(ss);
 	}
 

@@ -58,10 +58,10 @@ using namespace Rcpp;
 	slope = (input.row(cur+1)-input.row(cur))/(time(cur+1)-time(cur));
       }
       double delta = curtime-time(cur);
-      input2.row(i) = input.row(cur) + slope*(curtime-time(cur));
+      input2.row(i) = input.row(cur) + slope * delta;
       curtime += tau;
     }
-    double tau2 = tn-input2(N-2,0);
+    // double tau2 = tn-input2(N-2,0);
     input2.row(N-1) = input.row(input.n_rows-1);
     return( input2 );
   }
@@ -192,7 +192,7 @@ arma::mat simGL(const arma::mat& dcum,const  arma::colvec& St,const  arma::colve
 		const int type, const double theta,const  int maxit,const double share)
 {/*{{{*/
     unsigned n = rr.n_elem;
-     arma:mat basei=dcum; 
+     mat basei=dcum;
      mat sims(maxit*n,4);
      colvec dbase1=dcum.col(1); 
      colvec base1=dcum.col(1); 
@@ -243,7 +243,7 @@ arma::mat simSurvZ(const arma::mat& St, const arma::colvec& rd,const arma::colve
 {/*{{{*/
     unsigned n = rd.n_elem;
     unsigned N = St.n_rows;
-    arma:mat basei=St; 
+    mat basei=St;
     colvec sims(n);
     colvec St1=St.col(1); 
     colvec Stt=St1;

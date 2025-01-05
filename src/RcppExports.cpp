@@ -45,9 +45,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// scoremvn
-arma::mat scoremvn(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
-static SEXP _mets_scoremvn_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
+// scoreMVN
+arma::mat scoreMVN(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
+static SEXP _mets_scoreMVN_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
@@ -56,15 +56,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat& >::type S(SSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type dS(dSSEXP);
     Rcpp::traits::input_parameter< double >::type itol(itolSEXP);
-    rcpp_result_gen = Rcpp::wrap(scoremvn(Y, Mu, dMu, S, dS, itol));
+    rcpp_result_gen = Rcpp::wrap(scoreMVN(Y, Mu, dMu, S, dS, itol));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _mets_scoremvn(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
+RcppExport SEXP _mets_scoreMVN(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_mets_scoremvn_try(YSEXP, MuSEXP, dMuSEXP, SSEXP, dSSEXP, itolSEXP));
+        rcpp_result_gen = PROTECT(_mets_scoreMVN_try(YSEXP, MuSEXP, dMuSEXP, SSEXP, dSSEXP, itolSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -489,7 +489,7 @@ static int _mets_RcppExport_validate(const char* sig) {
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _mets_RcppExport_registerCCallable() { 
-    R_RegisterCCallable("mets", "_mets_.scoreMVN", (DL_FUNC)_mets_scoremvn_try);
+    R_RegisterCCallable("mets", "_mets_.scoreMVN", (DL_FUNC)_mets_scoreMVN_try);
     R_RegisterCCallable("mets", "_mets_.loglikMVN", (DL_FUNC)_mets_loglikMVN_try);
     R_RegisterCCallable("mets", "_mets_.dmvn", (DL_FUNC)_mets_dmvn_try);
     R_RegisterCCallable("mets", "_mets_.rmvn", (DL_FUNC)_mets_rmvn_try);
