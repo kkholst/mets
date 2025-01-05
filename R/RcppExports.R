@@ -2,30 +2,30 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .ApplyBy2 <- function(idata, icluster, F, Env, Argument = "x", Columnwise = 0L, Reduce = 0L, epsilon = 1.0e-16) {
-    .Call("_mets_ApplyBy2", idata, icluster, F, Env, Argument, Columnwise, Reduce, epsilon)
+    .Call(`_mets_ApplyBy2`, idata, icluster, F, Env, Argument, Columnwise, Reduce, epsilon)
 }
 
 .ApplyBy <- function(idata, icluster, f) {
-    .Call("_mets_ApplyBy", idata, icluster, f)
+    .Call(`_mets_ApplyBy`, idata, icluster, f)
 }
 
 .scoreMVN <- function(Y, Mu, dMu, S, dS, itol = 0.0) {
-    .Call("_mets_scoreMVN", Y, Mu, dMu, S, dS, itol)
+    .Call(`_mets_scoreMVN`, Y, Mu, dMu, S, dS, itol)
 }
 
 .loglikMVN <- function(Yl, Yu, Status, Mu, S, Threshold, z, su, itol) {
-    .Call("_mets_loglikMVN", Yl, Yu, Status, Mu, S, Threshold, z, su, itol)
+    .Call(`_mets_loglikMVN`, Yl, Yu, Status, Mu, S, Threshold, z, su, itol)
 }
 
 .dmvn <- function(u, mu, rho) {
-    .Call("_mets_dmvn", u, mu, rho)
+    .Call(`_mets_dmvn`, u, mu, rho)
 }
 
 .rmvn <- function(n, mu, rho) {
-    .Call("_mets_rmvn", n, mu, rho)
+    .Call(`_mets_rmvn`, n, mu, rho)
 }
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call("_mets_RcppExport_registerCCallable")
+    .Call(`_mets_RcppExport_registerCCallable`)
 })

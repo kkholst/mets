@@ -263,8 +263,8 @@ arma::mat scoreMVN(arma::mat &Y,
                    arma::mat &S,
                    arma::mat &dS,
                    double itol=0.0) {
-	     // mat &Z,  mat &Su, mat &dSu,
-	     // mat &Threshold, mat &dThreshold) {
+  // mat &Z,  mat &Su, mat &dSu,
+  // mat &Threshold, mat &dThreshold) {
 
   int n = Y.n_rows;
   int p = dMu.n_cols;
@@ -275,7 +275,7 @@ arma::mat scoreMVN(arma::mat &Y,
   mat U(n,p);
   U.fill(0);
   colvec A = -0.5*trans(dS)*vectorise(iS);
-    for (int i=0; i<n; i++) {
+  for (int i=0; i<n; i++) {
     colvec zi = trans(z.row(i));
     U.row(i) = trans( A+0.5*trans(dS)*vectorise(zi*trans(zi))
                       + trans(dMu)*zi ) ;
@@ -336,7 +336,7 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
       mat iS1 = Inv(S.submat(Obs,Obs),logdetS0, itol);
       // mat iS1 = inv(S.submat(Obs,Obs));
       MuNonObs = MuNonObs +
-	trans(S01*iS1*trans(Yl.cols(Obs)-Mu.cols(Obs)));
+        trans(S01*iS1*trans(Yl.cols(Obs)-Mu.cols(Obs)));
       //      MuNonObs.each_row() += Mu.(NonObs);
       SNonObs = SNonObs - S01*iS1*trans(S01);
 
@@ -346,14 +346,14 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
 
     Se = S0 = iL*SNonObs*iL; // Correlation matrix
     int ncor = nNonObs*(nNonObs-1)/2;
-    rowvec Cor(ncor);
+    rowvec Cor(std::min(1, ncor)); // We allocate a 1x1 matrix even when ncor=0
     if (ncor>0) {
       int j = 0;
       for (int r=0; r<nNonObs; r++) {
-	for (int c=r+1; c<nNonObs; c++) {
-	  Cor(j) = S0(r,c);
-	  j++;
-	}
+        for (int c=r+1; c<nNonObs; c++) {
+          Cor(j) = S0(r,c);
+          j++;
+        }
       }
     }
     int nthresmax = Threshold.n_cols;
@@ -382,39 +382,39 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
         mat Z0 = reshape(Z.row(i),k,nu);
         mat SS = S+Z0*Su*trans(Z0);
 
-	if (nObs>0) {
-    mat S0 =  SS.submat(NonObs,NonObs);
-    mat S01 = SS.submat(NonObs,Obs);
-	  mat iS1 = Inv(SS.submat(Obs,Obs), logdetS0, itol);
-	  // mat iS1 = inv(SS.submat(Obs,Obs));
-	  Mi = Mi +
-	    trans(S01*iS1*trans(Yl.submat(currow,Obs)-Mu.submat(currow,Obs)));
+        if (nObs>0) {
+          mat S0 =  SS.submat(NonObs,NonObs);
+          mat S01 = SS.submat(NonObs,Obs);
+          mat iS1 = Inv(SS.submat(Obs,Obs), logdetS0, itol);
+          // mat iS1 = inv(SS.submat(Obs,Obs));
+          Mi = Mi +
+            trans(S01*iS1*trans(Yl.submat(currow,Obs)-Mu.submat(currow,Obs)));
 
-	  SNonObs = S0 - S01*iS1*trans(S01);
-	} else {
-	  SNonObs = SS;
-	}
+          SNonObs = S0 - S01*iS1*trans(S01);
+        } else {
+          SNonObs = SS;
+        }
 
-	il = 1/sqrt(diagvec(SNonObs));
-	iL = diagmat(il);
-	Se = S0 = iL*SNonObs*iL; // Correlation matrix
-	if (ncor>0) {
-	  int j = 0;
-	  for (int r=0; r<nNonObs; r++) {
-	    for (int c=r+1; c<nNonObs; c++) {
-	      Cor(j) = S0(r,c);
-	      j++;
-	    }
-	  }
-	}
+        il = 1/sqrt(diagvec(SNonObs));
+        iL = diagmat(il);
+        Se = S0 = iL*SNonObs*iL; // Correlation matrix
+        if (ncor>0) {
+          int j = 0;
+          for (int r=0; r<nNonObs; r++) {
+            for (int c=r+1; c<nNonObs; c++) {
+              Cor(j) = S0(r,c);
+              j++;
+            }
+          }
+        }
       }
 
       umat StatusNonObs = Status.elem(NonObs);
       infin.fill(2);
 
       for (int j=0; j<nNonObs; j++) {
-	if (upper(j)==datum::inf && StatusNonObs(j)==1) infin(j) = 1;
-	if (lower(j)==-datum::inf && StatusNonObs(j)==1) infin(j) = 0;
+        if (upper(j)==datum::inf && StatusNonObs(j)==1) infin(j) = 1;
+        if (lower(j)==-datum::inf && StatusNonObs(j)==1) infin(j) = 0;
       }
       // uvec infplus = find(upper==datum::inf);
       // uvec infminus = find(lower==-datum::inf);
@@ -422,30 +422,30 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
       // if (infminus.size()>0) { infin.elem(infminus) -= 2; }
 
       if (nOrd>0) {
-	for (int j=0; j<nOrd; j++) {
-	  int jj = OrdNonObs(j);
-	  int yval = (int) lower(jj);
-	  if (yval<1) { // if Y=0
-	    infin(jj) = 0; // Integrate over left tail
-	    upper(jj) = Thres(j,0);
-	  } else { // Y>1
-	    if (yval>=nthresmax) { // Y=k (last)
-	      double val = Thres(j,yval-1);
-	      infin(jj) = 1; // Integrate over right tail
-	      lower(jj) = val;
-	    } else {
-	      double val = Thres(j,yval-1);
-	      double val2 = Thres(j,yval);
-	      if (val>=val2) { // Also Y=k (last)
-		infin(jj) = 1;
-		lower(jj) = val;
-	      } else { //Y=k-i (in between)
-		lower(jj) = val;
-		upper(jj) = val2;
-	      }
-	    }
-	  }
-	}
+        for (int j=0; j<nOrd; j++) {
+          int jj = OrdNonObs(j);
+          int yval = (int) lower(jj);
+          if (yval<1) { // if Y=0
+            infin(jj) = 0; // Integrate over left tail
+            upper(jj) = Thres(j,0);
+          } else { // Y>1
+            if (yval>=nthresmax) { // Y=k (last)
+              double val = Thres(j,yval-1);
+              infin(jj) = 1; // Integrate over right tail
+              lower(jj) = val;
+            } else {
+              double val = Thres(j,yval-1);
+              double val2 = Thres(j,yval);
+              if (val>=val2) { // Also Y=k (last)
+                infin(jj) = 1;
+                lower(jj) = val;
+              } else { //Y=k-i (in between)
+                lower(jj) = val;
+                upper(jj) = val2;
+              }
+            }
+          }
+        }
       }
 
       lower = (lower-Mi)%trans(il);
@@ -453,11 +453,11 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
 
       double val;
       val = mvtdst(&nNonObs, &_mvt_df,
-      		   &lower[0], &upper[0],
-      		   &infin[0], &Cor[0],
-      		   &_mvt_delta[0], &_mvt_maxpts,
-      		   &_mvt_abseps, &_mvt_releps,
-      		   &_mvt_error[0], &val, &_mvt_inform);
+                   &lower[0], &upper[0],
+                   &infin[0], &Cor[0],
+                   &_mvt_delta[0], &_mvt_maxpts,
+                   &_mvt_abseps, &_mvt_releps,
+                   &_mvt_error[0], &val, &_mvt_inform);
 
       // if (isnan(val)) {
       // 	cerr << "***i=" << i << endl;
