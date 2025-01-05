@@ -45,34 +45,68 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// loglikMVN
-arma::mat loglikMVN(arma::mat Yl, SEXP yu, SEXP status, arma::mat Mu, SEXP dmu, arma::mat S, SEXP ds, SEXP z, SEXP su, SEXP dsu, SEXP threshold, SEXP dthreshold, bool Score, double itol);
-static SEXP _mets_loglikMVN_try(SEXP YlSEXP, SEXP yuSEXP, SEXP statusSEXP, SEXP MuSEXP, SEXP dmuSEXP, SEXP SSEXP, SEXP dsSEXP, SEXP zSEXP, SEXP suSEXP, SEXP dsuSEXP, SEXP thresholdSEXP, SEXP dthresholdSEXP, SEXP ScoreSEXP, SEXP itolSEXP) {
+// scoremvn
+arma::mat scoremvn(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
+static SEXP _mets_scoremvn_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type Yl(YlSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type yu(yuSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type status(statusSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Mu(MuSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type dmu(dmuSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ds(dsSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type z(zSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type su(suSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type dsu(dsuSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type dthreshold(dthresholdSEXP);
-    Rcpp::traits::input_parameter< bool >::type Score(ScoreSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type Mu(MuSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type dMu(dMuSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S(SSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type dS(dSSEXP);
     Rcpp::traits::input_parameter< double >::type itol(itolSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglikMVN(Yl, yu, status, Mu, dmu, S, ds, z, su, dsu, threshold, dthreshold, Score, itol));
+    rcpp_result_gen = Rcpp::wrap(scoremvn(Y, Mu, dMu, S, dS, itol));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _mets_loglikMVN(SEXP YlSEXP, SEXP yuSEXP, SEXP statusSEXP, SEXP MuSEXP, SEXP dmuSEXP, SEXP SSEXP, SEXP dsSEXP, SEXP zSEXP, SEXP suSEXP, SEXP dsuSEXP, SEXP thresholdSEXP, SEXP dthresholdSEXP, SEXP ScoreSEXP, SEXP itolSEXP) {
+RcppExport SEXP _mets_scoremvn(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_mets_loglikMVN_try(YlSEXP, yuSEXP, statusSEXP, MuSEXP, dmuSEXP, SSEXP, dsSEXP, zSEXP, suSEXP, dsuSEXP, thresholdSEXP, dthresholdSEXP, ScoreSEXP, itolSEXP));
+        rcpp_result_gen = PROTECT(_mets_scoremvn_try(YSEXP, MuSEXP, dMuSEXP, SSEXP, dSSEXP, itolSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// loglikMVN
+arma::mat loglikMVN(arma::mat Yl, arma::mat Yu, arma::uvec Status, arma::mat Mu, arma::mat S, arma::mat Threshold, SEXP z, SEXP su, double itol);
+static SEXP _mets_loglikMVN_try(SEXP YlSEXP, SEXP YuSEXP, SEXP StatusSEXP, SEXP MuSEXP, SEXP SSEXP, SEXP ThresholdSEXP, SEXP zSEXP, SEXP suSEXP, SEXP itolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Yl(YlSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Yu(YuSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type Status(StatusSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Mu(MuSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Threshold(ThresholdSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type z(zSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type su(suSEXP);
+    Rcpp::traits::input_parameter< double >::type itol(itolSEXP);
+    rcpp_result_gen = Rcpp::wrap(loglikMVN(Yl, Yu, Status, Mu, S, Threshold, z, su, itol));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _mets_loglikMVN(SEXP YlSEXP, SEXP YuSEXP, SEXP StatusSEXP, SEXP MuSEXP, SEXP SSEXP, SEXP ThresholdSEXP, SEXP zSEXP, SEXP suSEXP, SEXP itolSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_mets_loglikMVN_try(YlSEXP, YuSEXP, StatusSEXP, MuSEXP, SSEXP, ThresholdSEXP, zSEXP, suSEXP, itolSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -438,7 +472,8 @@ RcppExport SEXP _mets_tildeLambda1R(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1
 static int _mets_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("arma::mat(*.loglikMVN)(arma::mat,SEXP,SEXP,arma::mat,SEXP,arma::mat,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,bool,double)");
+        signatures.insert("arma::mat(*.scoreMVN)(arma::mat&,arma::mat&,arma::mat&,arma::mat&,arma::mat&,double)");
+        signatures.insert("arma::mat(*.loglikMVN)(arma::mat,arma::mat,arma::uvec,arma::mat,arma::mat,arma::mat,SEXP,SEXP,double)");
         signatures.insert("NumericVector(*.dmvn)(arma::mat,arma::mat,arma::mat)");
         signatures.insert("arma::mat(*.rmvn)(unsigned,arma::mat,arma::mat)");
         signatures.insert("arma::vec(*.rpch)(unsigned,std::vector<double>,std::vector<double>)");
@@ -454,6 +489,7 @@ static int _mets_RcppExport_validate(const char* sig) {
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _mets_RcppExport_registerCCallable() { 
+    R_RegisterCCallable("mets", "_mets_.scoreMVN", (DL_FUNC)_mets_scoremvn_try);
     R_RegisterCCallable("mets", "_mets_.loglikMVN", (DL_FUNC)_mets_loglikMVN_try);
     R_RegisterCCallable("mets", "_mets_.dmvn", (DL_FUNC)_mets_dmvn_try);
     R_RegisterCCallable("mets", "_mets_.rmvn", (DL_FUNC)_mets_rmvn_try);

@@ -1,4 +1,5 @@
-// [[Rcpp::interfaces(cpp)]]
+// [[Rcpp::interfaces(r, cpp)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 #include "mvn.h"
 #include "tools.h"
@@ -254,9 +255,14 @@ END_RCPP
 
 // END_RCPP
 
-mat scoremvn(mat &Y,
-	     mat &Mu, mat &dMu,
-	     mat &S, mat &dS, double itol=0.0) {
+
+// [[Rcpp::export(name = ".scoreMVN")]]
+arma::mat scoremvn(arma::mat &Y,
+                   arma::mat &Mu,
+                   arma::mat &dMu,
+                   arma::mat &S,
+                   arma::mat &dS,
+                   double itol=0.0) {
 	     // mat &Z,  mat &Su, mat &dSu,
 	     // mat &Threshold, mat &dThreshold) {
 
@@ -310,11 +316,11 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
     for (int i=0; i<n; i++) { // Iterate over subjects
 
       if (nonconstvar) {
-	mat Z0 = reshape(Z.row(i),k,nu);
-	S0 = Se+Z0.rows(Obs)*Su*trans(Z0.rows(Obs));
-	iS0 = Inv(S0, logdetS0, itol);
-	// iS0 = inv(S0);
-	// log_det(logdetS0, sign, S0);
+        mat Z0 = reshape(Z.row(i),k,nu);
+        S0 = Se+Z0.rows(Obs)*Su*trans(Z0.rows(Obs));
+        iS0 = Inv(S0, logdetS0, itol);
+        // iS0 = inv(S0);
+        // log_det(logdetS0, sign, S0);
       }
 
       loglik(i) = -0.5*(logdetS0 + as_scalar(Y0.row(i)*iS0*trans(Y0.row(i))));
@@ -481,34 +487,14 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status,
 }
 
 
-
-
 // [[Rcpp::export(name = ".loglikMVN")]]
-arma::mat loglikMVN(arma::mat Yl, SEXP yu,
-		    SEXP status,
-		    arma::mat Mu, SEXP dmu,
-		    arma::mat S,  SEXP ds,
-		    SEXP z, SEXP su, SEXP dsu,
-		    SEXP threshold, SEXP dthreshold,
-		    bool Score, double itol) {
-  // mat Yl = Rcpp::as<mat>(yl);
-  // mat Mu = Rcpp::as<mat>(mu);
-  // mat S = Rcpp::as<mat>(s);
-  // bool Score = Rcpp::as<bool>(score);
-  if (Score) {
-    mat dS = Rcpp::as<mat>(ds);
-    mat dMu = Rcpp::as<mat>(dmu);
-    mat U = scoremvn(Yl,
-		     Mu, dMu,
-		     S, dS,
-		     itol);
-		 // Z,  Su, dSu,
-		 // Threshold, dThreshold) {
-    return(U);
-  }
-
-  uvec Status = Rcpp::as<uvec>(status);
-  mat Yu = Rcpp::as<mat>(yu);
+arma::mat loglikMVN(arma::mat Yl, arma::mat Yu,
+                    arma::uvec Status,
+                    arma::mat Mu,
+                    arma::mat S,
+                    arma::mat Threshold,
+                    SEXP z, SEXP su,
+                    double itol) {
 
   if ((Mu.n_cols!=Yl.n_cols) || (Mu.n_rows!=Yl.n_rows))
     throw(Rcpp::exception("Dimension of 'mu' and 'yl' did not agree","mvn.cpp",1));
@@ -534,12 +520,13 @@ arma::mat loglikMVN(arma::mat Yl, SEXP yu,
     if (Z.n_rows!=n)
       throw(Rcpp::exception("Dimension of 'z' and 'yl' did not agree","mvn.cpp",1));
   }
-  mat Threshold;
-  if (nOrd>0) {
-    Threshold = Rcpp::as<mat>(threshold);
-    if (Threshold.n_rows!=Yl.n_cols)
-      throw(Rcpp::exception("Dimension of 'threshold' and 'yl' did not agree","mvn.cpp",1));
-  }
+  //
+  // mat Threshold;
+  // if (nOrd>0) {
+  //   Threshold = Rcpp::as<mat>(threshold);
+  //   if (Threshold.n_rows!=Yl.n_cols)
+  //     throw(Rcpp::exception("Dimension of 'threshold' and 'yl' did not agree","mvn.cpp",1));
+  // }
 
   vec loglik(n); loglik.fill(0);
   if (nCens>0) {
@@ -559,13 +546,6 @@ arma::mat loglikMVN(arma::mat Yl, SEXP yu,
       mat Yusub = Yu.rows(idx);
       mat Musub = Mu.rows(idx);
       if (!Rf_isNull(z)) Zsub = Z.rows(idx);
-      // cerr << "i=" << i << endl;
-      // cerr << "idx =" << idx << endl;
-      // cerr << "Yl =" << Ylsub << endl;
-      // cerr << "Yu =" << Yusub << endl;
-      // cerr << "Musub =" << Musub << endl;
-      // cerr << "Zsub =" << Zzub << endl;
-      // cerr << "Status =" << NewStatus << endl;
 
       vec ll = loglikmvn(Ylsub, Yusub, NewStatus,
 			 Musub, S,
@@ -599,9 +579,9 @@ void cov2cor0(const mat &x, rowvec &Cor, rowvec &sx, bool nrm=true) {
   for (unsigned r=0; r<p; r++) {
     for (unsigned c=r+1; c<p; c++) {
       if (nrm)
-	Cor(j) = x(r,c)*sx(r)*sx(c);
+        Cor(j) = x(r,c)*sx(r)*sx(c);
       else
-	Cor(j) = x(r,c);
+        Cor(j) = x(r,c);
       j++;
     }
   }
@@ -704,25 +684,6 @@ END_RCPP
 //////////////////////////////////////////////////
 
 RcppExport SEXP bvncdf(SEXP a, SEXP b, SEXP r) {
-  // double u[2];
-  // u[0] = Rcpp::as<double>(a);
-  // u[1] = Rcpp::as<double>(b);
-  // double cr = Rcpp::as<double>(r);
-  // double val;
-  // int n = 2;
-  // int inttype[2];
-  // inttype[0] = 0;
-  // inttype[1] = 0;
-  // double _mvt_delta[2]; // Non-centrality parameter
-  // void C_bvtlr            (int *NU, double *DH, double *DK, double *R, double *BVTL);
-  // _mvt_delta[0] = 0;
-  // _mvt_delta[1] = 0;
-  // val = mvtdst(&n, &_mvt_df,
-  // 	       &u[0], &u[0],
-  // 	       &inttype[0], &cr,
-  // 	       &_mvt_delta[0], &_mvt_maxpts,
-  // 	       &_mvt_abseps, &_mvt_releps,
-  // 	       &_mvt_error[0], &val, &_mvt_inform);
   double u1 = -Rcpp::as<double>(a);
   double u2 = -Rcpp::as<double>(b);
   double rho = Rcpp::as<double>(r);
@@ -754,17 +715,6 @@ vecmat Dbvn(double y1, double y2, double R) {
 }
 
 double Sbvn(double &l1, double &l2, double &r) {
-  // int n = 2;
-  // double l[] = {l1, l2};
-  // int inttype[] = {1, 1};
-  // double _mvt_delta[] {0.0, 0.0}; // Non-centrality parameter
-  // double val;
-  // val = mvtdst(&n, &_mvt_df,
-  // 	       &l[0], &l[0],
-  // 	       &inttype[0], &r,
-  // 	       &_mvt_delta[0], &_mvt_maxpts,
-  // 	       &_mvt_abseps, &_mvt_releps,
-  // 	       &_mvt_error[0], &val, &_mvt_inform);
   double val = bvnd_(&l1, &l2, &r);
   return(val);
 }

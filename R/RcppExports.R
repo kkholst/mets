@@ -9,6 +9,22 @@
     .Call(`_mets_ApplyBy`, idata, icluster, f)
 }
 
+.scoreMVN <- function(Y, Mu, dMu, S, dS, itol = 0.0) {
+    .Call(`_mets_scoremvn`, Y, Mu, dMu, S, dS, itol)
+}
+
+.loglikMVN <- function(Yl, Yu, Status, Mu, S, Threshold, z, su, itol) {
+    .Call(`_mets_loglikMVN`, Yl, Yu, Status, Mu, S, Threshold, z, su, itol)
+}
+
+.dmvn <- function(u, mu, rho) {
+    .Call(`_mets_dmvn`, u, mu, rho)
+}
+
+.rmvn <- function(n, mu, rho) {
+    .Call(`_mets_rmvn`, n, mu, rho)
+}
+
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
     .Call(`_mets_RcppExport_registerCCallable`)

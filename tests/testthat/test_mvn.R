@@ -18,8 +18,7 @@ m0 <-  transform(m0, s1 ~ y1, cens1(-2, 'left')) |>
 
 test_that("phreg.iid", {
   d <- sim(m0, 500, p=c(r=0.9), seed=1)
-  head(d)
-  d
+
   m3 <- lvm() |>
     regression(y1 + s2 ~ x) |>
     covariance(y1 ~ s2, constrain=TRUE, rname='z')

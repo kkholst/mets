@@ -74,10 +74,11 @@ rmvn <- function(n,mu,sigma,rho,...) {
             p <- introotpn(NCOL(rho))
             mu <- rep(0,p)
         }
-        return (.Call("_mets_rmvn",
-                 n=as.integer(n),
-                 mu=rbind(mu),
-                 rho=rbind(rho)))
+        return (.rmvn(
+          n=as.integer(n),
+          mu=rbind(mu),
+          rho=rbind(rho))
+          )
     }
     if (!missing(mu) && missing(sigma)) sigma <- diag(nrow=length(mu))
     if (missing(sigma)) sigma <- matrix(1)
@@ -98,10 +99,9 @@ dmvn <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,...) {
             p <- NCOL(x)
             mu <- rep(0,p)
         }
-        res <- .Call("_mets_dmvn",
-                    u=x,
-                    mu=rbind(mu),
-                    rho=rho)
+        res <- .dmvn(u=x,
+                     mu=rbind(mu),
+                     rho=rho)
         if (!log) res <- exp(res)
         return(res)
     }

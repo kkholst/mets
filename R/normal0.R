@@ -1,28 +1,26 @@
 
 ##' @export
-loglikMVN <- function(yl,yu,status,mu,S,thres) {
-    .Call("_mets_loglikMVN",
-          yl=as.matrix(yl),
-          yu=as.matrix(yu),
-          status=as.integer(status),
-          mu=as.matrix(mu),dmu=NULL,s=as.matrix(S),ds=NULL,
-          z=NULL,su=NULL,dsu=NULL,
-          threshold=as.matrix(thres),dthreshold=NULL,
-          score=FALSE, itol=lava.options()$itol,
-          PACKAGE="mets")
+loglikMVN <- function(yl, yu, status, mu, S, thres) {
+  .loglikMVN(
+          Yl=as.matrix(yl),
+          Yu=as.matrix(yu),
+          Status=as.integer(status),
+          Mu=as.matrix(mu),
+          S=as.matrix(S),
+          z=NULL,su=NULL,
+          Threshold=as.matrix(thres),
+          itol=lava::lava.options()$itol
+  )
 }
 
-
 ##' @export
-scoreMVN <- function(y,mu,S,dmu,dS) {
-    .Call("_mets_loglikMVN",
-          yl=as.matrix(y),
-          yu=NULL,
-          status=NULL,
-          mu=as.matrix(mu),dmu=as.matrix(dmu),
-          s=as.matrix(S),ds=as.matrix(dS),
-          z=NULL,su=NULL,dsu=NULL,
-          threshold=NULL,dthreshold=NULL,
-          score=TRUE, itol=lava.options()$itol,
-          PACKAGE="mets")
+scoreMVN <- function(y, m, s, dm, ds) {
+    .scoreMVN(
+          Y=as.matrix(y),
+          Mu=as.matrix(m),
+          dMu=as.matrix(dm),
+          S=as.matrix(s),
+          dS=as.matrix(ds),
+          itol=lava::lava.options()$itol
+      )
 }
