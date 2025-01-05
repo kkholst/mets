@@ -1,8 +1,6 @@
 
 context("Influence functions, robust standard errors")
 
-fnorm <-
-
 test_that("phreg.iid", {
   data(TRACE)
   out1 <- phreg(Surv(time,status==9)~vf+chf, data=TRACE)
