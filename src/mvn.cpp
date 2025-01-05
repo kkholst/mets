@@ -346,7 +346,7 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
 
     Se = S0 = iL*SNonObs*iL; // Correlation matrix
     int ncor = nNonObs*(nNonObs-1)/2;
-    rowvec Cor(std::min(1, ncor)); // We allocate a 1x1 matrix even when ncor=0
+    rowvec Cor(std::max(1, ncor)); // We allocate a 1x1 matrix even when ncor=0
     if (ncor>0) {
       int j = 0;
       for (int r=0; r<nNonObs; r++) {
@@ -452,12 +452,10 @@ vec loglikmvn(mat &Yl, mat &Yu, uvec &Status, mat &Mu, mat &S,
       upper = (upper-Mi)%trans(il);
 
       double val;
-      val = mvtdst(&nNonObs, &_mvt_df,
-                   &lower[0], &upper[0],
-                   &infin[0], &Cor[0],
-                   &_mvt_delta[0], &_mvt_maxpts,
-                   &_mvt_abseps, &_mvt_releps,
+      val = mvtdst(&nNonObs, &_mvt_df, &lower[0], &upper[0], &infin[0], &Cor[0],
+                   &_mvt_delta[0], &_mvt_maxpts, &_mvt_abseps, &_mvt_releps,
                    &_mvt_error[0], &val, &_mvt_inform);
+
 
       // if (isnan(val)) {
       // 	cerr << "***i=" << i << endl;
@@ -581,9 +579,9 @@ void cov2cor0(const mat &x, rowvec &Cor, rowvec &sx, bool nrm=true) {
 }
 
 RcppExport SEXP pmvn0(SEXP lower, SEXP upper,
-		      SEXP mu, SEXP sigma, SEXP cor) {
-BEGIN_RCPP
-  mat Sigma = Rcpp::as<mat>(sigma);
+                      SEXP mu, SEXP sigma, SEXP cor) {
+  BEGIN_RCPP
+    mat Sigma = Rcpp::as<mat>(sigma);
   bool asCor = Rcpp::as<bool>(cor);
   mat Mu = Rcpp::as<mat>(mu);
   mat Lower = Rcpp::as<mat>(lower);
@@ -629,11 +627,11 @@ BEGIN_RCPP
       Upper0 = Upper.row(i)-Mu0;
       infin.fill(2); // (a,b)
       for (unsigned j=0; j<(unsigned)p; j++) {
-	if (Upper0(0,j)==datum::inf) infin(j) = 1; // (a,Inf)
-	if (Lower0(0,j)==-datum::inf) {
-	  if (infin(j)==1) infin(j) = -1; // (-Inf,Inf)
-	  else infin(j) = 0; // (-Inf,b)
-	}
+        if (Upper0(0,j)==datum::inf) infin(j) = 1; // (a,Inf)
+        if (Lower0(0,j)==-datum::inf) {
+          if (infin(j)==1) infin(j) = -1; // (-Inf,Inf)
+          else infin(j) = 0; // (-Inf,b)
+        }
       }
     } else {
       Lower0 = Lower.row(0)-Mu0;
@@ -642,11 +640,11 @@ BEGIN_RCPP
     // We use that Phi(a,b,S,mu) = Phi(L(a-mu),L(b-mu),R,0); R=LSL
     if (nSigma) {
       if (asCor) {
-	Cor = Sigma.row(i);
+        Cor = Sigma.row(i);
       } else { // p*p row
-	mat Sigma0 = Sigma.row(i);
-	Sigma0.reshape(p,p);
-	cov2cor0(Sigma0,Cor,L,true);
+        mat Sigma0 = Sigma.row(i);
+        Sigma0.reshape(p,p);
+        cov2cor0(Sigma0,Cor,L,true);
       }
     }
     if (!asCor) {
@@ -660,16 +658,16 @@ BEGIN_RCPP
     // std::cerr << "mvtdelta" << _mvt_delta;
     // std::cerr << "mvt_df" << _mvt_df;
     mvtdst(&p, &_mvt_df,
-	   &Lower0[0], &Upper0[0],
-	   &infin[0], &Cor[0],
-	   &_mvt_delta[0], &_mvt_maxpts,
-	   &_mvt_abseps, &_mvt_releps,
-	   &_mvt_error[0], &val, &_mvt_inform);
+           &Lower0[0], &Upper0[0],
+           &infin[0], &Cor[0],
+           &_mvt_delta[0], &_mvt_maxpts,
+           &_mvt_abseps, &_mvt_releps,
+           &_mvt_error[0], &val, &_mvt_inform);
     res(i) = val;
   }
   return(Rcpp::wrap(res));
-END_RCPP
-}
+  END_RCPP
+    }
 
 
 //////////////////////////////////////////////////
