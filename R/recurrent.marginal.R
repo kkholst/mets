@@ -1826,6 +1826,7 @@ extendCums <- function(cumA,cumB,haza=NULL)
  maxx <- unlist(lapply(cumA,function(x) tail(x,1)[1]))
  mm <- which.max(maxx)
  nn <- length(cumA)
+ if (!is.null(haza)) if (length(haza)!=length(cumA)) haza <- rep(haza,length(cumA))
 
 for (i in seq(nn)[-mm]) {
   cumB <- as.matrix(cumA[[i]]); 

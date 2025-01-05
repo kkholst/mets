@@ -3312,7 +3312,7 @@ plotConfRegion(x,cbind(nl,ul),...)
 bplot <- function(x,...) basehazplot.phreg(x,...)
 
 ##' @export
-basecumhaz <- function(x,type=c("list","matrix"),robust=FALSE,...) {# {{{
+basecumhaz <- function(x,type=c("list","matrix"),only=0,robust=FALSE,...) {# {{{
    ## all strata
    strat <- x$strata[x$jumps]
    stratas <- 0:(x$nstrata-1) 
@@ -3336,7 +3336,9 @@ basecumhaz <- function(x,type=c("list","matrix"),robust=FALSE,...) {# {{{
 		   if (!nose) se.cum <- rbind(se.cum,secum[strat==i,])
 		   strata[start:slut] <- i
 		   start <- slut+1
+		   if (only==0)
 		   out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=secum[strata==i,],strata=i) 
+	           else out[[i+1]] <- cumhazard
 	      }
 	   }
    }

@@ -7,7 +7,6 @@
 \alias{normalATE}
 \alias{kumarsim}
 \alias{kumarsimRCT}
-\alias{binregATEbin}
 \title{Average Treatment effect for censored competing risks data using Binomial Regression}
 \usage{
 binregATE(
@@ -22,12 +21,13 @@ binregATE(
   weights = NULL,
   cens.weights = NULL,
   se = TRUE,
+  type = c("II", "I"),
   kaplan.meier = TRUE,
   cens.code = 0,
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmst", "rmst-cause"),
+  outcome = c("cif", "rmst"),
   model = "exp",
   Ydirect = NULL,
   ...
@@ -56,6 +56,8 @@ binregATE(
 
 \item{se}{to compute se's with IPCW  adjustment, otherwise assumes that IPCW weights are known}
 
+\item{type}{"II" adds augmentation term, and "I" classic binomial regression}
+
 \item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
 
 \item{cens.code}{gives censoring code}
@@ -64,13 +66,13 @@ binregATE(
 
 \item{method}{for optimization}
 
-\item{augmentation}{to augment binomial regression}
+\item{augmentation}{for augment binomial regression}
 
-\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
+\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X) depending on the number of the number of causes.}
 
-\item{model}{possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)}
+\item{model}{exp or linear model for E( min(T, t) | X)=exp(X^t beta), or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)}
 
-\item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
+\item{Ydirect}{use this outcome Y with IPCW vesion}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -82,10 +84,7 @@ The first covariate in the specification of the competing risks regression model
 then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
-Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
-
-The original version of the program with only binary treatment binregATEbin take  binary-numeric as input for the treatment, 
-and also computes the ATT and ATC, average treatment effect on the treated (ATT), E(Y(1) - Y(0) | A=1), and non-treated, respectively. Experimental version.
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.
 }
 \examples{
 data(bmt)

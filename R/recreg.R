@@ -1110,13 +1110,18 @@ strataAugment <- survival:::strata
 
 ##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
-	     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
+   model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 {# {{{
 ## setting up baselines for simulations 
 maxt <- tail(base1[,1],1)
-seqt <- seq(by,maxt,by=by)
-base1 <- predictCumhaz(rbind(0, as.matrix(base1)), seqt)
-cumD <- predictCumhaz(rbind(0, as.matrix(drcumhaz)), seqt)
+base1 <- as.matrix(base1); drcumhaz <- as.matrix(drcumhaz)
+nmin <- max(nrow(base1),nrow(drcumhaz),nmin)
+nmin <- min(nmax,nmin)
+seqt <- seq(from=0,to=maxt,length.out=nmin)
+if (base1[1,1]!=0) base1 <- rbind(0,base1) 
+if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
+base1 <- cbind(seqt, lin.approx(seqt,base1))
+cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
 ###
 St <- exp(-cumD[,2])
 Stm <- cbind(base1[,1],St)
@@ -1157,7 +1162,8 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ## survival censoring given X, Z, either twostage or frailty-model 
  if (type>=2) stype <- 2 else stype <- 1
  if (var.z[1]==0) stype <- 1
- dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z[1],stype)
+### dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z[1],stype)
+ dd <- .Call("_mets_simSurvZ",as.matrix(rbind(Stm)),rd,z,var.z[1],stype)
  dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
  if (!is.null(cens)) cens <- rexp(n)/(rc*cens) else cens <- rep(maxtime,n)
  dd$status <- ifelse(dd$time<cens,dd$status,0)
@@ -1180,7 +1186,8 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ## or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
  ## or W_2 * W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
- ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
+### ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
+ ll <- .Call("_mets_simGL",as.matrix(dcum),c(St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
  colnames(ll) <- c("id","start","stop","death")
  ll <- data.frame(ll)
  ll$death <- dd$status[ll$id+1]

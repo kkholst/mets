@@ -5,20 +5,12 @@
 \alias{rmstATE}
 \title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
 \usage{
-resmeanATE(
-  formula,
-  data,
-  outcome = c("rmst", "rmst-cause"),
-  model = "exp",
-  ...
-)
+resmeanATE(formula, data, model = "exp", ...)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}
 
 \item{data}{data-frame}
-
-\item{outcome}{"rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
 
 \item{model}{possible exp model for relevant mean model that is exp(X^t beta)}
 
@@ -29,8 +21,8 @@ Under the standard causal assumptions  we can estimate the average treatment eff
 }
 \details{
 The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
-then it uses the mlogit for propensity score modelling.  We consider the outcome mint(T;tau) or
-I(epsion==cause1)(t- min(T;t)) that gives years lost due to cause "cause".  
+then it uses the mlogit for propensity score modelling.  We consider the outcome mint(T;tau) or  I(epsion==cause1)(t- min(T;t)) that gives years lost due to cause "cause" depending on 
+the number of causes. The default model is the exp(X^ beta) and otherwise a linear model is used. 
 
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 }
@@ -39,8 +31,8 @@ library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
 out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
 summary(out)
 
-out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,outcome="rmst-cause",
-                   time=40,treat.model=tcell~platelet)
+out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
+                   treat.model=tcell~platelet)
 summary(out1)
 
 }
