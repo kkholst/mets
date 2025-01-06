@@ -602,8 +602,8 @@ return(ptt)
 
 sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,...)
 {# {{{
-   if (is.null(strata))  strata <- scox1$strata 
-   if (is.null(rr)) rr <- scox1$rr  
+   if (is.null(strata))  strata <- rep(0,n) 
+   if (is.null(rr)) rr <- rep(1,n)
    
    cumhaz <- cox.baseline
    if (!is.null(extend))  {
