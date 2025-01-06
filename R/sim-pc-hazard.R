@@ -33,7 +33,7 @@
 #' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
 #' 
 #' @export 
-#' @aliases simrchaz addCums lin.approx
+#' @aliases simrchaz addCums lin.approx simCens
 rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=FALSE)
 {# {{{
 ### cumh=cbind(breaks,rates), first rate is 0 if cumh=FALSE
@@ -118,30 +118,38 @@ addCums <- function(cumB,cumA,max=NULL)
 }# }}}
 
 #' @export
-simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,...)
+simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
 {# {{{
 ###   adds censoring to to rchaz call
    if (!is.null(n)) rr <- rep(1,n)
    n <- length(rr)  
 
-   ptt <- rchaz(cumhazard,rr,...)
+   ptt <- rchaz(cumhazard,rr,entry=entry,...)
 
-   if (is.null(rrc)) {
-	   rrc <- rep(1,n)
-   }
-   if (is.matrix(cens)) {
-	   pct <- rchaz(cens,rrc,...)
-	   pct <- pct$time
-   } else {
-	   if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	      chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	      pct<- rexp(n)/chaz 
-	   }
-   }
-   dt <- data.frame(time=pmin(ptt$time,pct), status=ifelse(ptt$time<pct,ptt$status,0))
+   if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      dt <- data.frame(time=pmin(ptt$time,pct),status=ifelse(ptt$time<pct,ptt$status,0))
+   } else dt <- ptt[,c("time","status")]
 
    return(dt)
 }# }}}
+
+#' @export
+simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
+{# {{{
+   if (is.null(rrc) & is.null(n)) stop("must give either rr or n\n"); 
+   if (is.null(rrc)) rrc <- rep(1,n)
+   n <- length(rrc)  
+   if (is.matrix(cens)) {
+	   pct <- rchaz(cens,rrc,entry=entry,...)
+	   pct <- pct$time
+   } else if (is.numeric(cens)) pct<- rexp(n)/(rrc*cens)  
+   else stop("cens must be cumulative hazard or constant rate\n"); 
+
+   if (!is.null(entry)) pct <- entry+pct
+   return(pct)
+} ## }}}
+
 
 #' Simulation of Piecewise constant hazard models with two causes (Cox).
 #' 
@@ -202,19 +210,11 @@ ptt1 <- rchaz(cumhaz1,rr1,cum.hazard=TRUE,...)
 ptt2 <- rchaz(cumhaz2,rr2,cum.hazard=TRUE,...)
 ptt <- data.frame(time=pmin(ptt1$time,ptt2$time),status=ifelse(ptt1$time<=ptt2$time,ptt1$status,ptt2$status*2),entry=ptt1$entry)
 
-if (!is.null(cens)) {
-	if (is.null(rrc)) rrc <- rep(1,n)
-	if (is.matrix(cens)) {
-		pct <- rchaz(cens,rrc,...)
-		pct <- pct$time
-	} else {
-		if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-			chaz <-sum(ptt1$status+ptt2$status)/sum(ptt1$time+ptt2$time)  ## hazard averate T haz 
-			pct<- rexp(n)/chaz 
-		}
-	}
-	ptt <- data.frame(time=pmin(ptt$time,pct),status=ifelse(ptt$time<pct,ptt$status,0),entry=ptt$entry)
-}
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
 
 return(ptt)
 }# }}}
@@ -359,30 +359,20 @@ if (!inherits(cox,"phreg")) {
 	ptt <- cbind(ptt,Z)
 }
 
-if (!is.null(cens))  {
-if (is.null(rrc)) rrc <- rep(1,n)
-if (is.matrix(cens)) {
-	pct <- rchaz(cens,rrc,entry=entry)
-	pct <- pct$time
-}
-else {
-	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	pct<- rexp(n)/chaz 
-	if (!is.null(entry)) pct  <- entry + pct
-    }
-}
-ptt$time <- pmin(ptt$time,pct)
-ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-} 
 
-	attr(ptt,"id") <- des$id
-	return(ptt)
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
+attr(ptt,"id") <- des$id
+return(ptt)
 }# }}}
 
 #' @export sim.phreg
-#' @usage sim.phreg(cox,n,data,rr=NULL,entry=NULL,extend=NULL,cens=NULL,...)
-sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,...)
+#' @usage sim.phreg(cox,n,data,rr=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 
    scox1 <- read.phreg(cox,n,data=data,...)
@@ -414,21 +404,12 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL
     dsort(ptt) <- ~id
     ptt <- cbind(ptt,dat)
 
-if (!is.null(cens))  {
-if (is.null(rrc)) rrc <- rep(1,n)
-if (is.matrix(cens)) {
-	pct <- rchaz(cens,rrc,entry=entry)
-	pct <- pct$time
-} else {
-	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	pct<- rexp(n)/chaz 
-    }
-    if (!is.null(entry)) pct  <- entry + pct
-}
-ptt$time <- pmin(ptt$time,pct)
-ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-} 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
 
 return(ptt)
 }# }}}
@@ -544,7 +525,7 @@ extendit <- function(cox,extend=NULL)
 }# }}}
 
 #' @export sim.phregs
-sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,...)
+sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 
    scox1 <- read.phreg(coxs[[1]],n,data=data)
@@ -581,26 +562,17 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NU
    }
    ptt <- cbind(simdata,datas)
 
-if (!is.null(cens))  {
-if (is.null(rrc)) rrc <- rep(1,n)
-if (is.matrix(cens)) {
-	pct <- rchaz(cens,rrc,entry=entry)
-	pct <- pct$time
-} else {
-	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	pct<- rexp(n)/chaz 
-    }
-    if (!is.null(entry)) pct  <- entry + pct
-}
-ptt$time <- pmin(ptt$time,pct)
-ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-} 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
 
 return(ptt)
 }# }}}
 
-sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,...)
+sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
    if (is.null(strata))  strata <- rep(0,n) 
    if (is.null(rr)) rr <- rep(1,n)
@@ -625,21 +597,12 @@ sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=
     }
     dsort(ptt) <- ~id
 
-if (!is.null(cens))  {
-if (is.null(rrc)) rrc <- rep(1,n)
-if (is.matrix(cens)) {
-	pct <- rchaz(cens,rrc,entry=entry)
-	pct <- pct$time
-} else {
-	if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	pct<- rexp(n)/chaz 
-    }
-    if (!is.null(entry)) pct  <- entry + pct
-}
-ptt$time <- pmin(ptt$time,pct)
-ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-} 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
 
 return(ptt)
 }# }}}
@@ -700,19 +663,10 @@ if (!is.list(coxs)) stop("Cox models in list form\n");
  dt <- cbind(dt,simcovs)
 
  if (!is.null(cens)) {
- if (is.matrix(cens)) {
-     pct <- rchaz(cens,rrc)
-     pct <- pct$time
+      pct <- simCens(cens,rrc=rrc,n=n,...)
+      dt$time <- pmin(dt$time,pct)
+      dt$status <- ifelse(dt$time<pct,ptt$status,0)
  }
- else {
-   if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-      chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-      pct<- rexp(n)/chaz 
-   }
-}
-
-dt <- cbind(data.frame(time=pmin(ptt$time,pct),status=ifelse(ptt$time<pct,ptt$status,0)),simcovs)
-}
 
 return(dt)
 }# }}}
@@ -880,22 +834,14 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
 	}
  }# }}}
 
-  ### adds censoring 
-   if (!is.null(cens))  {# {{{
-      if (is.null(rrc)) rrc <- rep(1,n)
-      if (is.matrix(cens)) {
-	   pct <- rchaz(cens,rrc,...)
-	   pct <- pct$time
-      }
-      else {
-	   if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	      chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	      pct<- rexp(n)/chaz 
-           }
-      }
+ ### adds censoring 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,...)
       ptt$time <- pmin(ptt$time,pct)
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-   } # }}}
+ }
+
+
 
    attr(ptt,"model") <- model
    attr(ptt,"id") <-  id
@@ -939,21 +885,15 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   Ze <- Zcovs[,-samecovs]
   ptt <- cbind(ptt,Ze)
 
-   if (!is.null(cens))  {# {{{
-      if (is.null(rrc)) rrc <- rep(1,n)
-      if (is.matrix(cens)) {
-	   pct <- rchaz(cens,rrc,...)
-	   pct <- pct$time
-      }
-      else {
-	   if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	      chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	      pct<- rexp(n)/chaz 
-           }
-      }
+### adds censoring 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,...)
       ptt$time <- pmin(ptt$time,pct)
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-   } # }}}
+ }
+
+
+
 
    return(ptt)
 }# }}}
@@ -995,22 +935,12 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   Ze <- Z2[,-samecovs]
   ptt <- cbind(ptt,Ze)
 
-   if (!is.null(cens))  {# {{{
-      if (is.null(rrc)) rrc <- rep(1,n)
-      if (is.matrix(cens)) {
-           cum.hazard <- TRUE
-	   pct <- rchaz(cens,rrc,...)
-	   pct <- pct$time
-      }
-      else {
-	   if (is.numeric(cens)) pct<- rexp(n)/cens  else {
-	      chaz <-sum(ptt$status)/sum(ptt$time)  ## hazard averate T haz 
-	      pct<- rexp(n)/chaz 
-           }
-      }
+### adds censoring 
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,...)
       ptt$time <- pmin(ptt$time,pct)
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-   } # }}}
+ }
 
    return(ptt)
 }# }}}

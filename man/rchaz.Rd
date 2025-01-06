@@ -5,6 +5,7 @@
 \alias{simrchaz}
 \alias{addCums}
 \alias{lin.approx}
+\alias{simCens}
 \title{Simulation of Piecewise constant hazard model (Cox).}
 \usage{
 rchaz(

@@ -2,7 +2,6 @@
 context("RMST binreg versus resmean.phreg, cif.yearslost")
 
 test_that("resmeanIPCW", {
-		  library(mets)
      set.seed(101)
      data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 
@@ -19,6 +18,12 @@ test_that("resmeanIPCW", {
 
      
 test_that("cif.yearslost", {
+     set.seed(101)
+     data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+
+     ### same as cif integral for full censoring model 
+     bmt$int <- with(bmt,strata(tcell,platelet))
+
      ## competing risks years-lost for cause 1  
      outc <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
                                  cens.model=~strata(platelet,tcell),model="lin")

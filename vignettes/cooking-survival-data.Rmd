@@ -260,11 +260,6 @@ More Cox games with cause  specific hazards
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
-
- coxss <- phreg(Surv(time,status==9)~strata(vf,chf)+diabetes+wmi,data=sTRACE)
- dd <- sim.phreg(coxss,100,data=sTRACE)
- scoxs <- phreg(Surv(time,status)~strata(vf,chf)+diabetes+wmi,data=dd)
- plot(scoxs,col=2); plot(coxss,add=TRUE,col=1)
 ```
 
 
