@@ -7,6 +7,7 @@
 \alias{read.fit}
 \alias{sim.base}
 \alias{simulate.cox}
+\alias{sim.phregs}
 \title{Simulation of output from Cox model.}
 \usage{
 sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)

@@ -201,7 +201,7 @@ More Cox games with cause  specific hazards
  cbind(cox2$coef,scox2$coef)
 ```
  
- Startified Cox models using phreg
+ Stratified Cox models using phreg
 
 ```{r}
  ## stratified with phreg 
@@ -237,6 +237,35 @@ More Cox games with cause  specific hazards
  - sim.phreg only for phreg, but a bit more flexible, can deal with strata 
  - sim.cox can only deal with covariates that can be identified from
      the names of its coefficients (so factors should be coded accordingly) or use sim.phreg
+
+
+```{r}
+ library(mets)
+ n <- 100
+ data(bmt)
+ bmt$bmi <- rnorm(408)
+ dcut(bmt) <- gage~age
+ data <- bmt
+ cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
+ cox2 <- phreg(Surv(time,cause==2)~strata(gage)+tcell+platelet,data=bmt)
+ cox3 <- phreg(Surv(time,cause==0)~strata(platelet)+bmi,data=bmt)
+ coxs <- list(cox1,cox2,cox3)
+
+ dd <- sim.phregs(coxs,1000,data=bmt,extend=0.002)
+ scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
+ scox2 <- phreg(Surv(time,status==2)~strata(gage)+tcell+platelet,data=dd)
+ scox3 <- phreg(Surv(time,status==3)~strata(platelet)+bmi,data=dd)
+ cbind(coef(cox1),coef(scox1), coef(cox2),coef(scox2), coef(cox3),coef(scox3))
+ par(mfrow=c(1,3))
+ plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
+ plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
+ plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
+
+ coxss <- phreg(Surv(time,status==9)~strata(vf,chf)+diabetes+wmi,data=sTRACE)
+ dd <- sim.phreg(coxss,100,data=sTRACE)
+ scoxs <- phreg(Surv(time,status)~strata(vf,chf)+diabetes+wmi,data=dd)
+ plot(scoxs,col=2); plot(coxss,add=TRUE,col=1)
+```
 
 
 Multistate models: The Illness Death model 
