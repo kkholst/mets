@@ -650,7 +650,6 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
 }# }}}
 
-
 recurrentMarginalAIPCWdata <- function(rr,times,km=TRUE,terms=1,idt=1,x.design=NULL,
    id="id",start="start",stop="stop",status="status",death="death",cause=1,...)
 {# {{{
@@ -1404,7 +1403,7 @@ simRecurrentIII <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,z
   }# }}}
 
 #' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) 
+#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
 sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
 ## exp censoring default
 death <- NULL
@@ -1449,8 +1448,6 @@ rrs <- cbind(rrs,data[rrs$id+1,])
 return(rrs)
 }
 # }}}
-
-
 
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,...) 
