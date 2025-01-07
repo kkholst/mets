@@ -1316,7 +1316,7 @@ for (a in nlevs) {# {{{
     pal <- pal[ord]
     cens.weights <- cens.weights[ord]
     lp <- c(X %*% val$coef+offset)
-    obs <- (exit<=time & status==cause) | (exit>=time)
+    obs <- obs[ord]
     p <- expit(lp)
 
  if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
