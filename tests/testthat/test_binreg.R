@@ -12,7 +12,10 @@ cif1 <- cif(Event(time,cause)~strata(platelet),bmt)
 cifs <- cbind(cif1$cumhaz[,1],vecAllStrata(cif1$cumhaz[,2],cif1$strata,cif1$nstrata))
 pcif50 <- cpred(cifs,50)[,2]
 
-expect_true( (sum(abs(pcif50-pp[,1])))<0.0001) 
-})
+se.cifs <- cbind(cif1$cumhaz[,1],vecAllStrata(cif1$se.cumhaz[,2],cif1$strata,cif1$nstrata))
+se.pcif50 <- cpred(se.cifs,50)[,2]
 
+## estimate (same) and standard errors (close)
+expect_true( ((sum(abs(pcif50-pp[,1])))<0.0001) & (sum(abs(pp[,2]-cpred(se.cifs,50)[,2])) < 0.0002))
+})
 
