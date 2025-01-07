@@ -4,12 +4,11 @@ pbvn <- function(upper,rho,sigma) {
         rho <- cov2cor(sigma)[1,2]
         upper <- upper/diag(sigma)^0.5
     }
-    arglist <- list("bvncdf",
-                    a=upper[1],
-                    b=upper[2],
-                    r=rho,
-                    PACKAGE="mets")
-    res <- do.call(".Call",arglist)
+    res <- .Call("bvncdf",
+                 a = upper[1],
+                 b = upper[2],
+                 r = rho,
+                 PACKAGE = "mets")
     return(res)
 }
 
@@ -47,14 +46,13 @@ pmvn <- function(lower,upper,mu,sigma,cor=FALSE) {
         stop("Incompatible dimensions of mean and variance")    
     if (ncol(rbind(lower))!=p || ncol(rbind(upper))!=p)
         stop("Incompatible integration bounds")    
-    arglist <- list("pmvn0",
-                   lower=rbind(lower),
-                   upper=rbind(upper),
-                   mu=rbind(mu),
-                   sigma=rbind(sigma),
-                   cor=as.logical(cor[1]),
-                   PACKAGE="mets")
-    res <- do.call(".Call",arglist)
+    res <- .Call("pmvn0",
+                 lower = rbind(lower),
+                 upper = rbind(upper),
+                 mu = rbind(mu),
+                 sigma = rbind(sigma),
+                 cor = as.logical(cor[1]),
+                 PACKAGE = "mets")
     return(as.vector(res))
 }
 
