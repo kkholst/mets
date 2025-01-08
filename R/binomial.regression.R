@@ -1119,6 +1119,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   n <- length(exit)
   cens.strata <- cens.nstrata <- NULL 
 
+  call.cw <- cens.weights
   if (is.null(cens.weights))  {
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
       resC <- phreg(formC,data)
@@ -1217,10 +1218,11 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 ###    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
 ###    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 
-  val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,
-	   offset=offset,weights=weights,cens.weights=cens.weights,
-	   cens.code=cens.code,no.opt=no.opt,method=method,augmentation=augmentation,
-	   outcome=outcome[1],model=model[1],Ydirect=Ydirect,...)
+  val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,
+	cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,
+        offset=offset,weights=weights,cens.weights=call.cw,
+        cens.code=cens.code,no.opt=no.opt,method=method,augmentation=augmentation,
+        outcome=outcome[1],model=model[1],Ydirect=Ydirect,...)
 
 # {{{ computation of ate, att, atc and their influence functions
 
