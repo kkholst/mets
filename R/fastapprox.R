@@ -31,13 +31,12 @@ fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left
     }
     if (is.unsorted(time)) warnings("'time' will be sorted")
     type <- agrep(type[1],c("nearest","right","left"))-1
-    arglist <- list("FastApprox",
-                    time=sort(time),
-                    newtime=new.time,
-                    equal=equal,
-                    type=type,
-                    PACKAGE="mets")
-    res <- do.call(".Call",arglist)
+    res <- .Call("FastApprox",
+                 time=sort(time),
+                 newtime=new.time,
+                 equal=equal,
+                 type=type,
+                 PACKAGE="mets")
     if (!sorted) {
         oord <- order(ord)
         if (!equal) return(res[oord])

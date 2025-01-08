@@ -18,12 +18,15 @@ test:
 vignette:
 	@_R_FULL_VIGNETTE_=1 R -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
 
+init: doc
+	R -q -e "Rcpp::compileAttributes()"
+
 v:
 	@R -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
 
 roxy: doc
 
-.PHONY: c check roxy doc v vignette install
+.PHONY: c check init roxy doc v vignette install
 
 .PHONY: export
 export:

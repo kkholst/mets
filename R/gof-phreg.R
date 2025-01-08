@@ -408,19 +408,20 @@ for (j in (i+1):(nstrata-1)) {
       if ((fixbeta==0 | sim==0) & lm ) 
       graphics::legend("topleft",c("Nonparametric","lm"),lty=1,col=1:2)
       ab <- lm(cumhazi[,2]~-1+cumhazj[,2])
-      if (sim==1 & fixbeta==0) {
-             Pt <- DLambeta.t <- apply(x$E/c(x$S0),2,cumsumstrata,strata,nstrata)
-             II <- -solve(x$hessian)
-             betaiid <- t(II %*% t(x$U))
-	     simband <-  .Call("simBandCumHazCox",1/x$S0,Pt,betaiid,50,rep(1,nrow(Pt)),PACKAGE="mets")
-	     simU <-simband$simUt
-	     for (k in 1:50)
-	     {
-	      di <- cpred(cbind(jumptimes[ii],simU[ii,k]),dijjumps)[,2]
-	      dj <- cpred(cbind(jumptimes[ij],simU[ij,k]),dijjumps)[,2]
-	      lines(cumhazj[,2]+dj,cumhazi[,2]+di,type="s",lwd=0.1,col=3)
-	     }
-      }
+      ## TODO: simBandCumHazCox
+      ## if (sim==1 & fixbeta==0) {
+      ##   Pt <- DLambeta.t <- apply(x$E/c(x$S0),2,cumsumstrata,strata,nstrata)
+      ##   II <- -solve(x$hessian)
+      ##   betaiid <- t(II %*% t(x$U))
+      ##   simband <-  .Call("simBandCumHazCox",1/x$S0,Pt,betaiid,50,rep(1,nrow(Pt)),PACKAGE="mets")
+      ##   simU <-simband$simUt
+      ##   for (k in 1:50)
+      ##   {
+	  ##     di <- cpred(cbind(jumptimes[ii],simU[ii,k]),dijjumps)[,2]
+	  ##     dj <- cpred(cbind(jumptimes[ij],simU[ij,k]),dijjumps)[,2]
+	  ##     lines(cumhazj[,2]+dj,cumhazi[,2]+di,type="s",lwd=0.1,col=3)
+      ##   }
+      ## }
       lines(cumhazj[,2],cumhazi[,2],type="s",lwd=2,col=1)
       if (lm==TRUE) abline(c(0,coef(ab)),col=2,lwd=2)
 }

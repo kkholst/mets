@@ -1,5 +1,4 @@
 # mets 1.3.5
-  - Development version 
   - `sim.phreg` and `sim.recurrent` for simulations 
   - combining `binreg`, `binregATE` with `resmeanIPCW` and `resmeanATE`
 
