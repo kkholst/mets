@@ -1868,7 +1868,7 @@ print.twostageREC  <- function(x,...) {# {{{
 ##' returns X(min(D,t)) and min(D,t) and their ratio. for censored observation 0. 
 ##' to use with the IPCW models implemented. 
 ##'
-##' @param formula formula with 'Event' outcome
+##' @param formula formula with 'Event' outcome and X to evaluate at min(D,t)
 ##' @param data data frame
 ##' @param death.code codes for death (terminating event, 2 default)
 ##' @param time for evaluation 
@@ -1930,9 +1930,8 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
     } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
     ## orginal id coding into integers 1:...
    id <- id+1
-    orig.id <- id.orig <- id;
-    nid <- length(unique(id))
-
+   orig.id <- id.orig <- id;
+   nid <- length(unique(id))
 
  ###
  indexD  <- which(exit <= time & (status %in% death.code))
@@ -1941,7 +1940,7 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  Dmintid <- rep(0,nid)
  Dmintid[idD] <- exit[indexD]
  ### 
- indexA<- which(entry <= time & time <= exit )
+ indexA<- which(entry <= time & time <= exit)
  idA <- id[indexA]
  Dmintid[idA] <- time
  Dmint <- Dmintid[id]

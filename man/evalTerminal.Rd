@@ -7,7 +7,7 @@
 evalTerminal(formula, data = data, death.code = 2, time = NULL)
 }
 \arguments{
-\item{formula}{formula with 'Event' outcome}
+\item{formula}{formula with 'Event' outcome and X to evaluate at min(D,t)}
 
 \item{data}{data frame}
 

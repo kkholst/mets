@@ -52,7 +52,7 @@ cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,r
 } ## }}}
 
 ##' @export
-countID <- function(data,id="id",names.count="Count",total.count="Total",index.name="index",reverse=TRUE,sep="",addid=TRUE)
+countID <- function(data,id="id",names.count="Count",total.count="Total",index.name="index",reverse=TRUE,sep="",addid=TRUE,sorted=FALSE)
 {# {{{
 
 clusters <- data[,id]
@@ -65,6 +65,10 @@ if (is.numeric(clusters)) {
 else {
      max.clust <- length(unique(clusters))
      clusters <- as.integer(factor(clusters, labels = seq(max.clust))) - 1
+}
+
+if (sorted) {
+ clusters <- (0:(max.clust-1))[order(uc)][clusters+1]
 }
 
 ###tabid <- table(clusters)
