@@ -203,6 +203,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
              else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
+ Yipcw <- Y
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -262,7 +263,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
    }  else {
 	  MGCiid <- 0
   }## }}}
-
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -347,7 +347,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$augmentation <- augmentation
   val$model <- model[1]
   val$outcome <- outcome[1]
-  val$Y <- Y
+  val$Y <- Yipcw
   val$Causes <- Causes
 
   class(val) <- "binreg"
