@@ -1959,7 +1959,7 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  return(dd)
 } # }}}
 
-dynCensAug <- function(formC,data,augmentC=~+1,response="Yipcw",time=NULL,Z=NULL) {# {{{ 
+dynCensAugOld <- function(formC,data,augmentC=~+1,response="Yipcw",time=NULL,Z=NULL) {# {{{ 
 if (is.null(time)) stop("must give time of response \n")
    data$Y__ <- data[,response]
    varsC <- c("Y__",attr(terms(augmentC), "term.labels"))
