@@ -1955,6 +1955,7 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  ratio[is.na(ratio)] <- 0
 
  dd <- data.frame(cbind(XminDt,Dmint,id,ratio))
+ colnames(dd) <- c("XminDt","minDt","id","ratio")
 
  return(dd)
 } # }}}
