@@ -131,11 +131,11 @@ formulaCount <- update.formula(formulaCount,cform)
 
 ## While-Alive mean of events per time-unit 
 dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code)
-rrR[,"ratio__æ"] <- dataDmin[cid$reverseCountid==1,4]
+rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]
 if (!is.null(trans)) {
-     rrR[,"ratio__æ"] <- dataDmin[cid$reverseCountid==1,4]^trans
+     rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]^trans
 }
-Yr <- rrR[,"ratio__æ"]
+Yr <- rrR[,"ratio__"]
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
                Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,...) 
@@ -143,11 +143,11 @@ ET <- list(riskDR=outae)
 
 ids <- countID(data,"id__",sorted=TRUE)
 ### assume id is ordered 
-data[,"ratio__æ"] <- outae$Yipcw[ids$indexid+1]
+data[,"ratio__"] <- outae$Yipcw[ids$indexid+1]
 
 if (!is.null(augmentC)) { ## {{{
-dc0 <- dynCensAug(formC,subset(data,ntreatvar==0),augmentC=augmentC,response="ratio__æ",time=time)
-dc1 <- dynCensAug(formC,subset(data,ntreatvar==1),augmentC=augmentC,response="ratio__æ",time=time)
+dc0 <- dynCensAug(formC,subset(data,ntreatvar==0),augmentC=augmentC,response="ratio__",time=time)
+dc1 <- dynCensAug(formC,subset(data,ntreatvar==1),augmentC=augmentC,response="ratio__",time=time)
 ###nn <- table(rr$treat)
 nid <- nrow(rrR)
 
