@@ -14,13 +14,14 @@
 ##' @param cens.formula censoring model, default is to use strata(treatment)
 ##' @param augmentR covariates for model of mean ratio
 ##' @param augmentC covariates for censoring augmentation
+##' @param type augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
-	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=c("I","II"),...)
+	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,...)
 { ## {{{
   cl <- match.call() ## {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -140,6 +141,10 @@ if (!is.null(trans)) {
      rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]^trans
 }
 Yr <- rrR[,"ratio__"]
+
+if (is.null(type)) {
+	if (is.null(augmentC)) type <- "II" else type <- "I"
+}
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
                Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
@@ -350,6 +355,7 @@ if (is.null(time)) stop("must give time of response \n")
    S0i <- rep(0,length(xx$strata))
    S0i[jumpsC] <- c(1/(icoxS0*St[jumpsC]))
    S0i[jumpsC] <- icoxS0
+   xxtime <- 1*c(xx$time<time)
 
    pXXA <- ncol(cr2$E)-1
    EA <- cr2$E[timeb,-1,drop=FALSE]
@@ -359,8 +365,8 @@ if (is.null(time)) stop("must give time of response \n")
    jumpsCt <- jumpsC[timeb]
    gammasE[jumpsCt,] <- gammasEs
    gammattt[jumpsCt,] <- gammatt
-   gammaEsdLam0 <- apply(gammasE*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-   gammadLam0 <-   apply(gammattt*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+   gammaEsdLam0 <- apply(gammasE*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
+   gammadLam0 <-   apply(gammattt*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
    XgammadLam0 <- .Call("CubeMattime",gammadLam0,xx$X[,-1],pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
    Ut <- Et <- matrix(0,length(xx$strata),1)
    Ut[jumpsCt,] <- augmentt.times
