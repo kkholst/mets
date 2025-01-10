@@ -1920,6 +1920,7 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
     ## }}}
 
    if (!is.null(id)) {
+	   call.id <- id
         ids <- unique(id)
         nid <- length(ids)
         if (is.numeric(id))
@@ -1927,11 +1928,14 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
         else  {
             id <- as.integer(factor(id,labels=seq(nid)))-1
         }
-    } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+    } else { call.id <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
     ## orginal id coding into integers 1:...
    id <- id+1
-   orig.id <- id.orig <- id;
-   nid <- length(unique(id))
+
+   dd <- data.frame(id=id)
+   dd <- countID(dd,sorted=TRUE)
+   ## new id 1,2,.... and so on, referring to rows of data
+   id <- dd$indexid+1
 
  ###
  indexD  <- which(exit <= time & (status %in% death.code))
@@ -1953,8 +1957,8 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  ratio <- XminDt/Dmint
  ratio[is.na(ratio)] <- 0
 
- dd <- data.frame(cbind(XminDt,Dmint,id,ratio))
- colnames(dd) <- c("XminDt","minDt","id","ratio")
+ dd <- data.frame(cbind(XminDt,Dmint,id,call.id,ratio))
+ colnames(dd) <- c("XminDt","minDt","nid","call.id","ratio")
 
  return(dd)
 } # }}}

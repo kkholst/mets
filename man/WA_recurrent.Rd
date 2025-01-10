@@ -15,7 +15,7 @@ WA_recurrent(
   cens.formula = NULL,
   augmentR = NULL,
   augmentC = NULL,
-  type = c("I", "II"),
+  type = NULL,
   ...
 )
 }
@@ -39,6 +39,8 @@ WA_recurrent(
 \item{augmentR}{covariates for model of mean ratio}
 
 \item{augmentC}{covariates for censoring augmentation}
+
+\item{type}{augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"}
 
 \item{...}{arguments for binregATE}
 }
