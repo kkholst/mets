@@ -1,0 +1,57 @@
+---
+title: "While Alive estimands for Recurrent Events"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    fig_width: 7.15
+    fig_height: 5.5        
+vignette: >
+  %\VignetteIndexEntry{Average treatment effect (ATE) for Competing risks and binary outcomes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+While Alive estimands for Recurrent Events
+==========================================
+
+We consider two while-alive estimands for recurrent events data
+\begin{align*}
+ \frac{E(N(D \wedge t))}{E(D \wedge t)}
+\end{align*}
+and the mean of the subject specific events per time-unit 
+\begin{align*}
+ E( \frac{N(D \wedge t)}{D \wedge t} ) 
+\end{align*}
+for two treatment-groups in the case of an RCT. 
+
+
+```{r}
+data(hfaction_cpx12)
+
+dtable(hfaction_cpx12,~status)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,time=2,
+		   death.code=2)
+summary(dd)
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

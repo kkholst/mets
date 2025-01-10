@@ -115,6 +115,18 @@ NULL
 ##' data(ACTG175)
 NULL
 
+##' hfaction, subset of block randmized study HF-ACtion from WA package  
+##'
+##' Data from HF-action trial slightly modified from WA package
+##' @name hfaction_cpx12
+##' @docType data
+##' @keywords data
+##' @format Randomized study 
+##' @source  WA package, Connor et al. 2009
+##' @examples
+##' data(hfaction_cpx12)
+NULL
+
 
 ##' Menarche data set
 ##'
