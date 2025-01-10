@@ -20,7 +20,7 @@
 ##' 
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
-	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,...)
+	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=c("I","II"),...)
 { ## {{{
   cl <- match.call() ## {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -66,12 +66,12 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
 
   ### possible handling of id to code from 0:(antid-1)
   if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
+      ids <- sort(unique(id))
+      nid <- length(ids)
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
+     orig.id <- id
    } else { orig.id <- NULL; nid <- nrow(X); 
              id <- as.integer(seq_along(exit))-1; ids <- NULL
   }
@@ -81,7 +81,11 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   if (is.null(weights)) weights <- rep(1,length(exit)) 
   data$id__ <- id ## }}}
 
-cid  <- countID(data,id="id__")
+  ## use sorted id for all things 
+  cid <- countID(data,"id__",sorted=TRUE)
+###  cid <- countID(data,"id__")
+  data$id__ <- cid$indexid
+
 rrR <- subset(data,cid$reverseCountid==1)
 ## first var on rhs of formula
 vars <- all.vars(formula)
@@ -94,7 +98,7 @@ ntreatvar <- as.numeric(treatvar)-1
 treat.formula <- treat.model <- as.formula(paste(treat.name,"~+1",sep=""))
 
 if (is.null(cens.formula)) cens.formula <- as.formula( paste("~strata(",treat.name,")",collapse=""))
-formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"!=cens.code)~+cluster(id__)",collapse=""))
+formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"==cens.code)~+cluster(id__)",collapse=""))
 formD <- as.formula( paste("Event(",vars[2],",",vars[3],"!=cens.code)~-1+",treat.name,"+cluster(id__)",collapse=""))
 form1 <- as.formula( paste("Event(",vars[2],",",vars[3],")~-1+",treat.name,"+cluster(id__)",collapse=""))
 
@@ -138,12 +142,12 @@ if (!is.null(trans)) {
 Yr <- rrR[,"ratio__"]
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
-               Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,...) 
+               Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
 ET <- list(riskDR=outae)
 
-ids <- countID(data,"id__",sorted=TRUE)
+#ids <- countID(data,"id__",sorted=TRUE)
 ### assume id is ordered 
-data[,"ratio__"] <- outae$Yipcw[ids$indexid+1]
+data[,"ratio__"] <- outae$Yipcw[cid$indexid+1]
 
 if (!is.null(augmentC)) { ## {{{
 dc0 <- dynCensAug(formC,subset(data,ntreatvar==0),augmentC=augmentC,response="ratio__",time=time)
@@ -162,7 +166,7 @@ fittreat <- function(treat.model, data, id, ntreatvar, nlev) {
 if (nlev == 2) {
     treat.model <- drop.specials(treat.model, "cluster")
     treat <- glm(treat.model, data, family = "binomial")
-    iidalpha <- lava::iid(treat, id = "id__")
+    iidalpha <- lava::iid(treat, id =id)
     lpa <- treat$linear.predictors
     pal <- expit(lpa)
     pal <- cbind(1 - pal, pal)
@@ -193,77 +197,82 @@ return(out)
 
 expit <- function(x) 1/(1 + exp(-x))
 idW <- rrR[,"id__"]
-treatsvar <- rrR[,"treatment"]
+treatsvar <- rrR[,treat.name]
 treats <- treats(treatsvar)
 
 fitt <- fittreat(treat.model, rrR, idW, treats$ntreatvar, treats$nlev)
 iidalpha0 <- fitt$iidalpha
 wPA <- c(fitt$pA)
-###
-rrR$wPA <- wPA
-
-###ptreat <- glm(A.f~x,newdata,family=binomial)
-###pA <- predict(ptreat,newdata,type="response")
-###cbind(pA,newdata$id,newdata$A.f)
 
 riskDRC <- outae$riskDR+c(dc0$augment,dc1$augment)/nid
 
 MGC0 <- sumstrata(dc0$MGCiid/c(wPA[dc0$id+1]),dc0$id,nid)*dc0$n
 MGC1 <- sumstrata(dc1$MGCiid/c(wPA[dc1$id+1]),dc1$id,nid)*dc1$n
 MGC <- cbind(MGC0,MGC1)
-###
 ccaugment <- apply(MGC,2,sum)
 
 riskDRC <- outae$riskDR+ccaugment/nid
 iidDRC <- outae$riskDR.iid+MGC/nid
 varDRC <- crossprod(iidDRC)
 se.riskDRC <- diag(varDRC)^.5
-se.riskDRC
 
 riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC)
 ET <- list(riskDRC=riskDRC,riskDR=outae)
 } ## }}}
 
-out <- list(time=time,trans=trans,cause=cause,cens.code=cens.code,death.code,
+out <- list(time=time,id=cid$indexid,orig.id=orig.id,trans=trans,cause=cause,cens.code=cens.code,death.code,
 	    RAW=RAW,ET=ET,augmentR=augmentR,augmentC=augmentC)
 class(out) <- "WA"
 return(out)
 } ## }}}
 
 ##' @export
-print.WA  <- function(x,...) {# {{{
-  print(summary(x),...)
+print.WA  <- function(x,type="log",...) {# {{{
+  print(summary(x),type=type,...)
 }# }}}
 
 ##' @export
-summary.WA <- function(object,type=c("ratio","log-ratio"),...) {# {{{
+summary.WA <- function(object,type="p",...) {# {{{
 
 rmst <- estimate(object$RAW$rmst)
 rmst.test <- estimate(rmst,contrast=rbind(c(1,-1)))
+rmst.log <- estimate(rmst,function(p) log(p))
+rmst.test.log <- estimate(rmst.log,contrast=rbind(c(1,-1)))
 
 meanNtD <- estimate(object$RAW$meanN)
 meanNtD.test <- estimate(meanNtD,contrast=rbind(c(1,-1)))
+meanNtD.log <- estimate(meanNtD,function(p) log(p))
+meanNtD.test.log <- estimate(meanNtD.log,contrast=rbind(c(1,-1)))
 
-if (type[1]=="ratio") {
 eer <- estimate(object$RAW$ratio.means)
 eedr <- estimate(eer,contrast=rbind(c(1,-1)))
-} else {
-eer <- estimate(object$RAW$log.ratio.means)
-eedr <- estimate(eer,contrast=rbind(c(1,-1)))
-}
-
 ee <- estimate(coef=object$ET$riskDR$riskDR,vcov=object$ET$riskDR$var.riskDR)
 eed <- estimate(ee,contrast=rbind(c(1,-1)))
+eer.log <- object$RAW$ratio.means.log
+eedr.log <- estimate(eer.log,contrast=rbind(c(1,-1)))
+eelog <-  estimate(ee,function(p) log(p))
+eedlog <- estimate(eelog,contrast=rbind(c(1,-1)))
 
 res <- list(rmst=rmst,rmst.test=rmst.test,meanNtD=meanNtD,meanNtD.test=meanNtD.test,
 	    ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)
+reslog <- list(rmst=rmst.log,rmst.test=rmst.test.log,
+	       meanNtD=meanNtD.log,meanNtD.test=meanNtD.test.log,
+    ratio=eer.log,test.ratio=eedr.log,meanpt=eelog,test.meanpt=eedlog)
 class(res) <- "summary.WA"
-return(res)
+class(reslog) <- "summary.WA"
+attr(res,"log") <- (type!="p")
+attr(reslog,"log") <- (type!="p")
+
+if (type=="p") return(res) else return(reslog)
 }# }}}
 
 ##' @export
 print.summary.WA <- function(x,...)
 {# {{{
+
+if (attr(x,"log")) 
+cat(paste("While-Alive summaries, log-scale:",x$time,"\n\n"))
+else
 cat(paste("While-Alive summaries:",x$time,"\n\n"))
 
 cat("RMST,  E(min(D,t)) \n")
@@ -366,4 +375,7 @@ if (is.null(time)) stop("must give time of response \n")
 
    res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times, id=ids,n=nid)
 } ## }}}
+
+
+
 

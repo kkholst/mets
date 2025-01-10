@@ -15,6 +15,7 @@ WA_recurrent(
   cens.formula = NULL,
   augmentR = NULL,
   augmentC = NULL,
+  type = c("I", "II"),
   ...
 )
 }
