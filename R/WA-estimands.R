@@ -136,7 +136,7 @@ formulaCount <- update.formula(formulaCount,cform)
 
 ## While-Alive mean of events per time-unit 
 dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code)
-rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]
+rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,"ratio"]
 if (!is.null(trans)) {
      rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]^trans
 }
