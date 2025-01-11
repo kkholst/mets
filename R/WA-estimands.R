@@ -17,8 +17,6 @@
 ##' @param type augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
-##' @examples
-##' 
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
 	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,...)
