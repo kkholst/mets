@@ -1,24 +1,26 @@
-pandoc: 2.9.2.1
-pkgdown: 2.0.7
+pandoc: 3.1.3
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
   binomial-family: binomial-family.html
   binomial-twin: binomial-twin.html
-  binreg-TRS: binreg-TRS.html
   binreg-ate: binreg-ate.html
+  binreg-TRS: binreg-TRS.html
   binreg: binreg.html
   cifreg: cifreg.html
+  cooking-survival-data: cooking-survival-data.html
   glm-utility: glm-utility.html
   haplo-discrete-ttp: haplo-discrete-ttp.html
   interval-discrete-survival: interval-discrete-survival.html
   marginal-cox: marginal-cox.html
   mediation-survival: mediation-survival.html
+  phreg_rct: phreg_rct.html
   quantitative-twin: quantitative-twin.html
   recurrent-events: recurrent-events.html
   rmst-ate: rmst-ate.html
   survival-ate: survival-ate.html
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
-last_built: 2024-02-20T09:58Z
-
+  while-alive: while-alive.html
+last_built: 2025-01-11T11:05Z

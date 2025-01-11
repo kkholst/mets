@@ -6,20 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Two-Stage Randomization for for Competing risks and Survival outcomes • mets</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Two-Stage Randomization for for Competing risks and Survival outcomes">
-<meta property="og:description" content="mets">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
       </span>
     </div>
 
@@ -45,7 +44,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -59,16 +58,19 @@
       <a href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a>
     </li>
     <li>
-      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
+      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
     </li>
     <li>
-      <a href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a>
+      <a href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a>
     </li>
     <li>
       <a href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a>
     </li>
     <li>
       <a href="../articles/cifreg.html">Cumulative Incidence Regression</a>
+    </li>
+    <li>
+      <a href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a>
     </li>
     <li>
       <a href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a>
@@ -84,6 +86,9 @@
     </li>
     <li>
       <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
+    </li>
+    <li>
+      <a href="../articles/phreg_rct.html">Two-Stage Randomization for Cox Type rate models </a>
     </li>
     <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
@@ -103,6 +108,9 @@
     <li>
       <a href="../articles/twostage-survival.html">Analysis of multivariate survival data</a>
     </li>
+    <li>
+      <a href="../articles/while-alive.html">While Alive estimands for Recurrent Events</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -113,7 +121,7 @@
 <li>
   <a href="https://github.com/kkholst/mets/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -124,61 +132,93 @@
 </div>
 <!--/.navbar -->
 
-      
 
-      </header><script src="binreg-TRS_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Two-Stage Randomization for for Competing risks and Survival outcomes</h1>
-                        <h4 data-toc-skip class="author">Klaus Holst &amp; Thomas Scheike</h4>
+      <h1 data-toc-skip>Two-Stage Randomization for for Competing risks
+and Survival outcomes</h1>
+                        <h4 data-toc-skip class="author">Klaus Holst
+&amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2024-02-20</h4>
+            <h4 data-toc-skip class="date">2025-01-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/HEAD/vignettes/binreg-TRS.rmd" class="external-link"><code>vignettes/binreg-TRS.rmd</code></a></small>
-      <div class="hidden name"><code>binreg-TRS.rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/binreg-TRS.Rmd" class="external-link"><code>vignettes/binreg-TRS.Rmd</code></a></small>
+      <div class="hidden name"><code>binreg-TRS.Rmd</code></div>
 
     </div>
 
     
     
 <div class="section level2">
-<h2 id="two-stage-randomization-for-for-competing-risks-and-survival-outcomes">Two-Stage Randomization for for Competing risks and Survival outcomes<a class="anchor" aria-label="anchor" href="#two-stage-randomization-for-for-competing-risks-and-survival-outcomes"></a>
+<h2 id="two-stage-randomization-for-for-competing-risks-and-survival-outcomes">Two-Stage Randomization for for Competing risks and Survival
+outcomes<a class="anchor" aria-label="anchor" href="#two-stage-randomization-for-for-competing-risks-and-survival-outcomes"></a>
 </h2>
-<p>Under two-stage randomization we can estimate the average treatment effect <span class="math inline">\(E(Y(i,\bar k))\)</span> of treatment regime <span class="math inline">\((i,\bar k)\)</span>.</p>
+<p>Under two-stage randomization we can estimate the average treatment
+effect
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">E(Y(i,\bar k))</annotation></semantics></math>
+of treatment regime
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(i,\bar k)</annotation></semantics></math>.</p>
 <ul>
 <li>treatment A0=i and
 <ul>
 <li>for all responses, randomization A1 = (k_1), so treatment k_1</li>
-<li>response*A1 = (k_1, k_2), so treatment k_1 if response 1, and treatment k_2 if response 2.</li>
+<li>response*A1 = (k_1, k_2), so treatment k_1 if response 1, and
+treatment k_2 if response 2.</li>
 </ul>
 </li>
 </ul>
-<p>The estimator can be agumented in different ways: using the two randomizations and the dynamic censoring augmentatation.</p>
-<p>Estimating <span class="math inline">\(\mu_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) &lt;= t)\)</span>, restricted mean <span class="math inline">\(E( \min(Y(i,\bar k),\tau))\)</span> or years lost <span class="math inline">\(E( I(\epsilon=v) \cdot (\tau - \min(Y(i,\bar k),\tau)))\)</span> using IPCW weighted estimating equations : \</p>
-<p>The solved estimating eqution is <span class="math display">\[\begin{align*}
+<p>The estimator can be agumented in different ways: using the two
+randomizations and the dynamic censoring augmentatation.</p>
+<p>Estimating
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover></mrow></msub><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover><mo>,</mo><mi>ϵ</mi><mo>=</mo><mi>v</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&lt;</mo><mo>=</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mu_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) &lt;= t)</annotation></semantics></math>,
+restricted mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">E( \min(Y(i,\bar k),\tau))</annotation></semantics></math>
+or years lost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ϵ</mi><mo>=</mo><mi>v</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>−</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mover><mi>k</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">E( I(\epsilon=v) \cdot (\tau - \min(Y(i,\bar k),\tau)))</annotation></semantics></math>
+using IPCW weighted estimating equations : \</p>
+<p>The solved estimating eqution is
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∑</mo><mi>i</mi></munder><mfrac><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>,</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&lt;</mo><msub><mi>G</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>,</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>0</mn></msub><mo>−</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>1</mn></msub><mo>+</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mi>C</mi></msub><mo>−</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0</mn></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  \sum_i  \frac{I(min(T_i,t) &lt; G_i)}{G_c(min(T_i ,t))} I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 
- \end{align*}\]</span> using the covariates from augmentR0 to augment with <span class="math display">\[\begin{align*}
+ \end{align*}</annotation></semantics></math> using the covariates from
+augmentR0 to augment with
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>0</mn></msub><mo>=</mo><mfrac><mrow><msub><mi>A</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><msub><mi>X</mi><mn>0</mn></msub><msub><mi>γ</mi><mn>0</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0
- \end{align*}\]</span> and using the covariates from augmentR1 to augment with <span class="math display">\[\begin{align*}
+ \end{align*}</annotation></semantics></math> and using the covariates
+from augmentR1 to augment with
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><msub><mi>A</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><msub><mi>X</mi><mn>1</mn></msub><msub><mi>γ</mi><mn>1</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1
- \end{align*}\]</span> and censoring augmenting with <span class="math display">\[\begin{align*}
+ \end{align*}</annotation></semantics></math> and censoring augmenting
+with
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mi>C</mi></msub><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>γ</mi><mi>c</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mover><mi>e</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mfrac><mn>1</mn><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>M</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
   AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) 
- \end{align*}\]</span> where <span class="math inline">\(\gamma_c(s)\)</span> is chosen to minimize the variance given the dynamic covariates specified by augmentC.</p>
+ \end{align*}</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>γ</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\gamma_c(s)</annotation></semantics></math>
+is chosen to minimize the variance given the dynamic covariates
+specified by augmentC.</p>
 <ul>
 <li>The treatment’s must be given as factors.</li>
 <li>Treatment for 2nd randomization may depend on response.
 <ul>
-<li>Treatment probabilities are estimated by default and uncertainty from this adjusted for.</li>
+<li>Treatment probabilities are estimated by default and uncertainty
+from this adjusted for.</li>
 </ul>
 </li>
-<li>Randomization augmentation for 1’st and 2’nd randomization possible.</li>
-<li>Censoring model possibly stratified on observed covariates (at time 0).</li>
-<li>Censoring augmentation done dynamically over time with time-dependent covariates.</li>
+<li>Randomization augmentation for 1’st and 2’nd randomization
+possible.</li>
+<li>Censoring model possibly stratified on observed covariates (at time
+0).</li>
+<li>Censoring augmentation done dynamically over time with
+time-dependent covariates.</li>
 </ul>
-<p>Standard errors are estimated using the influence function of all estimators and tests of differences can therefore be computed subsequently.</p>
+<p>Standard errors are estimated using the influence function of all
+estimators and tests of differences can therefore be computed
+subsequently.</p>
 <p>Data must be given on start,stop,status survival format with</p>
 <ul>
-<li>one code of status indicating response, that is 2nd randomization</li>
+<li>one code of status indicating response, that is 2nd
+randomization</li>
 <li>other codes defines the outcome of interest</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -189,7 +229,7 @@
 <span><span class="va">ddf</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">gsim</span><span class="op">(</span><span class="va">n</span>,covs<span class="op">=</span><span class="fl">1</span>,null<span class="op">=</span><span class="fl">0</span>,cens<span class="op">=</span><span class="fl">1</span>,ce<span class="op">=</span><span class="fl">1</span>,betac<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">true</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">ddf</span><span class="op">$</span><span class="va">TTt</span><span class="op">&lt;</span><span class="fl">2</span>,<span class="fl">2</span>,<span class="va">mean</span><span class="op">)</span></span>
 <span><span class="va">true</span></span>
-<span><span class="co">#&gt; [1] 0.740 0.770 0.395 0.430</span></span>
+<span><span class="co">#&gt; [1] 0.740 0.715 0.340 0.350</span></span>
 <span><span class="va">datat</span> <span class="op">&lt;-</span> <span class="va">ddf</span><span class="op">$</span><span class="va">datat</span></span>
 <span><span class="co">## set-random response on data, only relevant after status==2 </span></span>
 <span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span></span>
@@ -197,58 +237,57 @@
 <span><span class="va">datat</span><span class="op">$</span><span class="va">A000</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">datat</span><span class="op">$</span><span class="va">A111</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.f</span><span class="op">~</span><span class="va">A0.f</span>,</span>
 <span>        augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                              coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5913901 0.13861137</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.6240667 0.10605755</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2446124 0.07925685</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.3897508 0.08252711</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5723748 0.19721139</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.7354573 0.08755875</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2834829 0.10028201</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.4790373 0.10007200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                              coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.6047560 0.14921165</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.6441681 0.11761310</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2371433 0.08089305</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.3806609 0.08391961</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5900338 0.21419118</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.7428143 0.08889887</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2721992 0.10288280</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.4671886 0.10273188</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                              coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5784696 0.18002763</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.5078635 0.14816954</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2352898 0.08048304</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.3703686 0.08815050</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5564110 0.24533756</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.7185240 0.09841671</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2778309 0.09021056</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.4685339 0.09839184</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                              coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.6141209 0.19240265</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.5270450 0.15149921</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2297845 0.08096617</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.3672756 0.08784395</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1 0.5981472 0.26485855</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=2 0.7302633 0.10170090</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1 0.2699247 0.09093482</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=2 0.4620365 0.09859532</span></span>
 <span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG</span><span class="op">$</span><span class="va">riskG01</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG.iid</span><span class="op">$</span><span class="va">riskG01</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1   0.6141 0.19240 0.23702 0.9912 1.414e-03</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=2   0.5270 0.15150 0.23011 0.8240 5.035e-04</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1   0.2298 0.08097 0.07109 0.3885 4.539e-03</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=2   0.3673 0.08784 0.19510 0.5394 2.902e-05</span></span>
-<span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1   0.5981 0.26486 0.07903 1.1173 2.392e-02</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=2   0.7303 0.10170 0.53093 0.9296 6.946e-13</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1   0.2699 0.09093 0.09170 0.4482 2.994e-03</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=2   0.4620 0.09860 0.26879 0.6553 2.783e-06</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG</span><span class="op">$</span><span class="va">riskG01</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG.iid</span><span class="op">$</span><span class="va">riskG01</span><span class="op">)</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Estimate Std.Err    2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1   1.1652  0.5435 0.09991 2.231 0.03205</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1   0.6256  0.2573 0.12144 1.130 0.01502</span></span>
+<span><span class="co">#&gt;                         Estimate Std.Err   2.5% 97.5%  P-value</span></span>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1   0.8191  0.3600 0.1135 1.525 0.022884</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1   0.5842  0.2249 0.1433 1.025 0.009399</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG</span><span class="op">$</span><span class="va">riskG01</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,vcov<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">bb</span><span class="op">$</span><span class="va">riskG.iid</span><span class="op">$</span><span class="va">riskG01</span><span class="op">)</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">-</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">-</span><span class="va">p</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         Estimate Std.Err    2.5%   97.5% P-value</span></span>
-<span><span class="co">#&gt; A0.f=1, response*A1.f=1  0.08708  0.2681 -0.4384 0.61257  0.7454</span></span>
-<span><span class="co">#&gt; A0.f=2, response*A1.f=1 -0.13749  0.1150 -0.3630 0.08799  0.2320</span></span></code></pre></div>
+<span><span class="co">#&gt; A0.f=1, response*A1.f=1  -0.1321   0.266 -0.6534 0.38920  0.6194</span></span>
+<span><span class="co">#&gt; A0.f=2, response*A1.f=1  -0.1921   0.129 -0.4450 0.06076  0.1365</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## 2 levels for each response , fixed weights </span></span>
 <span><span class="va">datat</span><span class="op">$</span><span class="va">response.f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">datat</span><span class="op">$</span><span class="va">response</span><span class="op">)</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,</span>
@@ -256,97 +295,97 @@
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5386068 0.12844087</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.5450214 0.12794277</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.5456221 0.09349913</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.5520366 0.09093621</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2570426 0.08524398</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3522177 0.09946394</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3600957 0.10342185</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4552707 0.11129564</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5195752 0.18171540</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.5264182 0.18212146</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6343225 0.09083112</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6411655 0.08810024</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.3023142 0.11081204</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3199096 0.09719853</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.5294417 0.13399244</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.5470372 0.13251846</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.6464138 0.14788853</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6524848 0.14783874</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6435582 0.09492478</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6496292 0.09153841</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2213105 0.09350027</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3092979 0.10675847</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3102643 0.11228693</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3982518 0.11851483</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.6359737 0.21658343</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6425345 0.21728891</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.7129831 0.06901176</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7195438 0.06513763</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2561355 0.12249210</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2790365 0.10488801</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.4557345 0.14361723</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4786356 0.14226926</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.4404540 0.15440522</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.5847041 0.16921711</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.5215925 0.11292250</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.5549930 0.10040415</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2647734 0.07944743</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3437537 0.09821336</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3970266 0.08317368</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3995221 0.11567339</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.4046498 0.19742912</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.5687969 0.23376677</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.5910450 0.09523643</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6498579 0.08872953</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.3039991 0.10638060</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3311109 0.09138384</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.5569428 0.11332978</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.5164913 0.12796725</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5499140 0.15696306</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.7049532 0.19047490</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6206264 0.11607918</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6566749 0.09929892</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2303423 0.08548320</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3069402 0.10292148</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3487837 0.08783732</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3563507 0.11928271</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5212352 0.21098387</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6994484 0.26830813</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6692919 0.07617047</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7328127 0.06615399</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2586853 0.11531506</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2935352 0.09702298</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.4809089 0.11457277</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4602799 0.13349781</span></span>
 <span></span>
 <span><span class="co">## 2 levels for each response ,  estimated treat probabilities</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,estpr<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5960606 0.17488200</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6241013 0.17440045</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.5970085 0.09374896</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6250491 0.09621393</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2511629 0.08214906</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2897991 0.07348482</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3513307 0.09298624</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3899668 0.08400431</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5733301 0.25088070</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6022300 0.25101611</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6893786 0.07700325</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7182785 0.08178121</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2851197 0.09997901</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2841367 0.07893846</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.4821020 0.10343782</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4811190 0.10002228</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.6110247 0.18838108</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6392858 0.18875912</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6144511 0.10254061</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6427122 0.10570324</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2440860 0.08346801</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2831312 0.07506141</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3410878 0.09418680</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3801331 0.08553880</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5934059 0.27131225</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6224367 0.27204244</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6962560 0.07772829</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7252868 0.08319005</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2738115 0.10244557</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2767634 0.08081569</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.4661741 0.10481333</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4691260 0.10238718</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.4814011 0.17426935</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6103501 0.18912497</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6070156 0.11378882</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6181593 0.09508071</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2454093 0.08562583</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3061112 0.06782067</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3545614 0.09061532</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3709128 0.08781320</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.4372672 0.23706174</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.5854429 0.26329507</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6685369 0.07730893</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7320359 0.08145477</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2745442 0.10426421</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2988823 0.07578047</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.5019477 0.09984288</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4745778 0.10218550</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                  coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.5086290 0.18332584</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6311793 0.20425552</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6250920 0.12136105</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.6410325 0.10178189</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2381002 0.08632006</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.3018155 0.06857549</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.3452178 0.09088007</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.3666639 0.08738161</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,1 0.4702327 0.25293879</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,1 0.6127080 0.28587900</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=1,2 0.6759149 0.07701506</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.f=2,2 0.7433289 0.08370622</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,1 0.2634297 0.10565890</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,1 0.2948997 0.07656016</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=1,2 0.4865367 0.09860797</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.f=2,2 0.4699980 0.10193373</span></span>
 <span></span>
 <span></span>
 <span><span class="co">## 2 and 3 levels for each response , fixed weights </span></span>
@@ -355,27 +394,27 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response   0   1</span></span>
 <span><span class="co">#&gt; A1.23.f                 </span></span>
-<span><span class="co">#&gt; 1                116  23</span></span>
-<span><span class="co">#&gt; 2                120  23</span></span>
+<span><span class="co">#&gt; 1                120  23</span></span>
+<span><span class="co">#&gt; 2                120  25</span></span>
 <span><span class="va">datat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">datat</span>,A1.23.f<span class="op">=</span><span class="fl">2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">datat</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>            <span class="va">Count2</span><span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">A1.23.f</span><span class="op">==</span><span class="fl">2</span> <span class="op">&amp;</span> <span class="va">response</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">datat</span>,<span class="op">~</span><span class="va">A1.23.f</span><span class="op">+</span><span class="va">response</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response   0   1</span></span>
 <span><span class="co">#&gt; A1.23.f                 </span></span>
-<span><span class="co">#&gt; 1                116  23</span></span>
-<span><span class="co">#&gt; 2                111  23</span></span>
+<span><span class="co">#&gt; 1                120  23</span></span>
+<span><span class="co">#&gt; 2                111  25</span></span>
 <span><span class="co">#&gt; 3                  9   0</span></span>
 <span><span class="va">datat</span><span class="op">$</span><span class="va">A1.23.f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">datat</span><span class="op">$</span><span class="va">A1.23.f</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">datat</span>,<span class="op">~</span><span class="va">A1.23.f</span><span class="op">+</span><span class="va">response</span><span class="op">|</span><span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response  0  1</span></span>
 <span><span class="co">#&gt; A1.23.f               </span></span>
-<span><span class="co">#&gt; 1                17 23</span></span>
-<span><span class="co">#&gt; 2                10 23</span></span>
+<span><span class="co">#&gt; 1                21 23</span></span>
+<span><span class="co">#&gt; 2                10 25</span></span>
 <span><span class="co">#&gt; 3                 9  0</span></span>
 <span><span class="co">###</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.23.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,</span>
@@ -383,129 +422,129 @@
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.6138741 0.14546619</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6257528 0.14027635</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5753190 0.13540555</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6216688 0.10602763</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6335476 0.09548483</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.5831138 0.08882984</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2719027 0.09932666</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2562909 0.08395583</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3361501 0.11249207</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3655873 0.11106102</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3499755 0.09860883</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4298347 0.11791066</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5928568 0.20464868</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6055291 0.20241441</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5539792 0.19865003</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.7203538 0.09728960</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7330260 0.08618558</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6814762 0.07905734</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.3487105 0.14756981</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2724117 0.09182351</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.2669705 0.10319223</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.5551901 0.15399346</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4788913 0.12263546</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4734501 0.12853150</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.6254238 0.15870500</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6402288 0.15454601</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5922315 0.14938976</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6367920 0.11621860</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6515970 0.10470729</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6035997 0.09759337</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2643835 0.10132734</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2534870 0.08372325</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3252664 0.11484580</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3552907 0.11311288</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3443942 0.09915534</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4161736 0.11990969</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.6091794 0.22507560</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6246762 0.22364858</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5756603 0.21982886</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.7242102 0.10066515</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7397070 0.08813234</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6906911 0.07986256</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.3348012 0.15239160</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2718558 0.09060009</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.2532931 0.10673462</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.5362379 0.15754640</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4732925 0.12378699</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4547298 0.13192021</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5052801 0.17545930</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6490684 0.15881690</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.6854636 0.21833075</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.5585969 0.14220646</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6777914 0.10735131</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.5813296 0.09751519</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2422917 0.10988029</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2797783 0.06601642</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3401244 0.10216861</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3485496 0.10783283</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3412911 0.09398459</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4201655 0.10601190</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.4707095 0.21804098</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6287053 0.22907037</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.6778953 0.30311581</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6499002 0.12488660</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7656237 0.07140976</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6875010 0.08312068</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2656521 0.17396985</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2706333 0.08715854</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3235400 0.07994612</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.4759907 0.16071698</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4671860 0.11714753</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.5050170 0.11067832</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5364106 0.17539959</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6790927 0.17741623</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.7120475 0.23374336</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.5848366 0.14466454</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7002151 0.11773612</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6093505 0.10260212</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2325801 0.11079752</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2794200 0.06590063</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3304444 0.10321469</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3371281 0.10787101</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3408481 0.09407294</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4097042 0.10540790</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5068915 0.22640669</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6601925 0.25328437</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.7128045 0.32561624</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6681178 0.12092323</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7709766 0.07310528</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.7088981 0.08171051</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2472033 0.17493179</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2703258 0.08650158</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3183141 0.08043082</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.4540746 0.15704473</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4667557 0.11617870</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4960792 0.11127903</span></span>
 <span></span>
 <span><span class="co">## 2 and 3 levels for each response , estimated </span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.23.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,estpr<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5960607 0.17488240</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6694918 0.18436102</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5787109 0.17389417</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.5970086 0.09374912</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6704397 0.12466711</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.5796588 0.09175040</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2511630 0.08214910</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2466693 0.07985946</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3390904 0.13291742</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3513309 0.09298631</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3468372 0.09363568</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4392583 0.13816514</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5733301 0.25088123</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6486249 0.25863637</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5558352 0.25058134</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6893788 0.07700333</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7646736 0.11893993</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6718839 0.07549715</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2851198 0.09997906</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2795959 0.10086233</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.2893264 0.12751179</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.4821024 0.10343788</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4765785 0.12129977</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4863090 0.13928327</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.6110248 0.18838149</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6824835 0.19886165</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5960883 0.18774606</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6144512 0.10254079</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6859099 0.13389812</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.5995147 0.10050974</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2440861 0.08346805</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2436866 0.08028322</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3282110 0.13608467</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3410881 0.09418688</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3406886 0.09477872</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4252130 0.14126153</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5934060 0.27131280</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6665511 0.27965619</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.5783224 0.27132992</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6962562 0.07772837</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7694013 0.12078013</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6811727 0.07593118</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2738116 0.10244561</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2791785 0.10064910</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.2740035 0.13235513</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.4661745 0.10481340</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4715413 0.12263585</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4663664 0.14396909</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.4814004 0.17426965</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6135499 0.17753447</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.6888656 0.25450984</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6070155 0.11378895</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6754339 0.10506823</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.5781644 0.09243287</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2454092 0.08562594</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2755312 0.06176367</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3436018 0.10039784</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3545614 0.09061545</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3396800 0.09092113</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4176542 0.11160494</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.4372664 0.23706211</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.5867572 0.24940274</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.6818858 0.34853309</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6685368 0.07730905</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7678408 0.07768404</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6794316 0.07967452</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2745441 0.10426433</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2695053 0.09394894</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3345432 0.09931154</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.5019478 0.09984303</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4603587 0.11962056</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.5047271 0.12508846</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.5086283 0.18332613</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6349396 0.19140558</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.7148045 0.26881972</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6250918 0.12136117</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.6956879 0.11422414</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.6145399 0.09722634</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2381001 0.08632018</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2746787 0.06225545</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3340444 0.10201691</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.3452178 0.09088021</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.3384473 0.09094019</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4068396 0.11084657</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,1 0.4702319 0.25293915</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,1 0.6117617 0.26980849</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,1 0.7132649 0.36786766</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=1,2 0.6759149 0.07701519</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=2,2 0.7733904 0.07957475</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.23.f=3,2 0.7066309 0.07677686</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,1 0.2634296 0.10565903</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,1 0.2691166 0.09330578</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,1 0.3296791 0.10056744</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=1,2 0.4865368 0.09860813</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=2,2 0.4605674 0.11777635</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.23.f=3,2 0.4971161 0.12478451</span></span>
 <span></span>
 <span><span class="co">## 2 and 1 level for each response </span></span>
 <span><span class="va">datat</span><span class="op">$</span><span class="va">A1.21.f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">datat</span><span class="op">$</span><span class="va">A1.f</span><span class="op">)</span></span>
@@ -513,101 +552,186 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response  0  1</span></span>
 <span><span class="co">#&gt; A1.21.f               </span></span>
-<span><span class="co">#&gt; 1                17 23</span></span>
-<span><span class="co">#&gt; 2                19 23</span></span>
+<span><span class="co">#&gt; 1                21 23</span></span>
+<span><span class="co">#&gt; 2                19 25</span></span>
 <span><span class="va">datat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">datat</span>,A1.21.f<span class="op">=</span><span class="fl">1</span>,<span class="va">Count2</span><span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">response</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">datat</span>,<span class="op">~</span><span class="va">A1.21.f</span><span class="op">+</span><span class="va">response</span><span class="op">|</span><span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response  0  1</span></span>
 <span><span class="co">#&gt; A1.21.f               </span></span>
-<span><span class="co">#&gt; 1                17 46</span></span>
+<span><span class="co">#&gt; 1                21 48</span></span>
 <span><span class="co">#&gt; 2                19  0</span></span>
 <span><span class="va">datat</span><span class="op">$</span><span class="va">A1.21.f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">datat</span><span class="op">$</span><span class="va">A1.21.f</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">datat</span>,<span class="op">~</span><span class="va">A1.21.f</span><span class="op">+</span><span class="va">response</span><span class="op">|</span><span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         response  0  1</span></span>
 <span><span class="co">#&gt; A1.21.f               </span></span>
-<span><span class="co">#&gt; 1                17 46</span></span>
+<span><span class="co">#&gt; 1                21 48</span></span>
 <span><span class="co">#&gt; 2                19  0</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.21.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,estpr<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.5965662 0.09733539</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6246068 0.09822505</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2996312 0.07727063</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3382673 0.06699693</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6352226 0.11813045</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6641226 0.12002926</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3865954 0.09118205</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3856124 0.07700508</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6128521 0.10629676</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6411132 0.10832312</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2910224 0.07750644</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3300676 0.06746375</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6482593 0.12794220</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6772901 0.13063539</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3729074 0.09195877</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3758593 0.07808807</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6051429 0.09770130</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6483866 0.09264360</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3025669 0.07788942</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3325213 0.07135192</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6435175 0.11802262</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6882148 0.11332360</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3954927 0.09148962</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3782504 0.08450470</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6326858 0.10838935</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6766156 0.10446225</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2944012 0.07730608</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3287928 0.07092539</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6685224 0.13033444</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.7138566 0.12655030</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3839378 0.08986106</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3758166 0.08434474</span></span>
 <span></span>
 <span><span class="co">## known weights </span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/timereg/man/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregTSR.html">binregTSR</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,response.code<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model0<span class="op">=</span><span class="va">A0.f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, treat.model1<span class="op">=</span><span class="va">A1.21.f</span><span class="op">~</span><span class="va">A0.f</span><span class="op">*</span><span class="va">response.f</span>,</span>
 <span>        augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span>, augmentR1<span class="op">=</span><span class="op">~</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span>,</span>
 <span>        augmentC<span class="op">=</span><span class="op">~</span><span class="va">X01</span><span class="op">+</span><span class="va">X02</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="va">A12t</span><span class="op">+</span><span class="va">X11</span><span class="op">+</span><span class="va">X12</span><span class="op">+</span><span class="va">TR</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0.f</span><span class="op">)</span>,estpr<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,pi1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bb</span></span>
 <span><span class="co">#&gt; Simple estimator :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6023494 0.09968651</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6094767 0.09708463</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2805174 0.06945416</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3670402 0.07983587</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6410543 0.12005600</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6486576 0.11864403</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3780709 0.09171015</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3940667 0.08377301</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6178310 0.10889407</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6267140 0.10667341</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2722077 0.07020526</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3586436 0.07971457</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6532872 0.12997608</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6625853 0.12899925</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3647406 0.09331039</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3842369 0.08422015</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Second Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6052636 0.10251830</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6359914 0.09334072</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3008284 0.06070542</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3281989 0.09349507</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6435110 0.12122751</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6751763 0.11432293</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3957743 0.08413935</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3772145 0.09110553</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 1st and 2nd Randomization Augmentation :</span></span>
 <span><span class="co">#&gt;                                     coef           </span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6337891 0.11081838</span></span>
-<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.6661916 0.10467515</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.2984575 0.05975394</span></span>
-<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3290272 0.09244601</span></span></code></pre></div>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=1,1 0.6709750 0.13165583</span></span>
+<span><span class="co">#&gt; A0.f=1, response.f*A1.21.f=2,1 0.7043078 0.12732297</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=1,1 0.3861201 0.08279377</span></span>
+<span><span class="co">#&gt; A0.f=2, response.f*A1.21.f=2,1 0.3757694 0.09080739</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="two-stage-randomization-calgb-9823">Two-Stage Randomization CALGB-9823<a class="anchor" aria-label="anchor" href="#two-stage-randomization-calgb-9823"></a>
+</h2>
+<p>We here illustrate some analysis of one SMART conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
+388 patients were randomized to an initial treatment of GM-CSF (A1 ) or
+standard chemotherapy (A2 ). Patients with complete remission and
+informed consent to second stage were then re-randomized to only
+cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ).</p>
+<p>We first compute the weighted risk-set estimator based on estimated
+weights
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>Λ</mi><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msup><mi>Y</mi><mi>w</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>N</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+\Lambda_{A1,B1}(t) &amp; = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
+\end{align*}</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>0</mn><mi>i</mi></msub><mo>=</mo><mi>A</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>&gt;</mo><msub><mi>T</mi><mi>R</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>1</mn><mi>i</mi></msub><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w_i(s) = I(A0_i=A1) + (t&gt;T_R) I(A1_i=B1)/\pi_1(X_i)</annotation></semantics></math>,
+that is 1 when you start on treatment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
+and then for those that changes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
+at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>R</mi></msub><annotation encoding="application/x-tex">T_R</annotation></semantics></math>
+then is scaled up with the proportion doing this. This is equivalent to
+the IPTW (inverse probability of treatment weighted estimator). We
+estimate the treatment regimes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1, B1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A2, B1</annotation></semantics></math>
+by letting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
+indicate those that are consistent with ending on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>,
+and similary, we estimate the treatment regimes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A1, B2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn><mo>,</mo><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2, B2</annotation></semantics></math>,
+by letting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>11</mn></mrow><annotation encoding="application/x-tex">A11</annotation></semantics></math>
+indicate those that are consistent with ending on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>.
+Note that for example
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
+then starts being
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+and becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+if the subject is treated with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>,
+but stays
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+if the subject is treated with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.</p>
+<ul>
+<li>the treatment models are for all time-points, unless the weight.var
+variable is given (1 for treatments, 0 otherwise) to accomodate a
+general start,stop format</li>
+<li>the treatment model may also depend on a response value</li>
+<li>standard errors are based on influence functions and is also
+computed for the baseline</li>
+</ul>
+<p>We here use the simple propensity score model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mn>1</mn><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>A</mi><msub><mn>0</mn><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(A1=B1|A0_i)</annotation></semantics></math>
+that uses the observed frequencies on arm
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
+among those starting out on either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">calgb8923</span><span class="op">)</span></span>
+<span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="va">calgb8923</span></span>
+<span></span>
+<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">+</span><span class="va">age</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">wbc</span></span>
+<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span></span>
+<span><span class="va">ll0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_IPTW.html">phreg_IPTW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0</span>,<span class="va">A10</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">calgt</span>,treat.model<span class="op">=</span><span class="va">tm</span><span class="op">)</span></span>
+<span><span class="va">pll0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">ll0</span>,<span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>A0<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>,A10<span class="op">=</span><span class="fl">0</span>,id<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ll1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_IPTW.html">phreg_IPTW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0</span>,<span class="va">A11</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">calgt</span>,treat.model<span class="op">=</span><span class="va">tm</span><span class="op">)</span></span>
+<span><span class="va">pll1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">ll1</span>,<span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>A0<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>,A11<span class="op">=</span><span class="fl">1</span>,id<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pll0</span>,se<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">1</span>,xlab<span class="op">=</span><span class="st">"time (months)"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pll1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span>,se<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A1B1"</span>,<span class="st">"A2B1"</span>,<span class="st">"A1B2"</span>,<span class="st">"A2B2"</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="binreg-TRS_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>I here use the simple propensity score mode, but increased efficiency
+should be acheieved by extending the model, but here does not give
+much.</p>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.3.2 (2023-10-31)</span></span>
-<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 22.04.3 LTS</span></span>
+<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
@@ -622,33 +746,29 @@
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.4     timereg_2.0.5  survival_3.5-7</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.5     timereg_2.0.6  survival_3.7-0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.6-1.1      future.apply_1.11.1 jsonlite_1.8.8     </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.3.2      Rcpp_1.0.12         stringr_1.5.1      </span></span>
-<span><span class="co">#&gt;  [7] parallel_4.3.2      jquerylib_0.1.4     globals_0.16.2     </span></span>
-<span><span class="co">#&gt; [10] splines_4.3.2       systemfonts_1.0.5   textshaping_0.3.7  </span></span>
-<span><span class="co">#&gt; [13] yaml_2.3.8          fastmap_1.1.1       lattice_0.21-9     </span></span>
-<span><span class="co">#&gt; [16] R6_2.5.1            knitr_1.45          future_1.33.1      </span></span>
-<span><span class="co">#&gt; [19] desc_1.4.3          bslib_0.6.1         rlang_1.1.3        </span></span>
-<span><span class="co">#&gt; [22] cachem_1.0.8        stringi_1.8.3       xfun_0.42          </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.3            sass_0.4.8          memoise_2.0.1      </span></span>
-<span><span class="co">#&gt; [28] cli_3.6.2           pkgdown_2.0.7       magrittr_2.0.3     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.34       grid_4.3.2          mvtnorm_1.2-4      </span></span>
-<span><span class="co">#&gt; [34] lifecycle_1.0.4     lava_1.7.3          vctrs_0.6.5        </span></span>
-<span><span class="co">#&gt; [37] evaluate_0.23       glue_1.7.0          listenv_0.9.1      </span></span>
-<span><span class="co">#&gt; [40] numDeriv_2016.8-1.1 codetools_0.2-19    ragg_1.2.7         </span></span>
-<span><span class="co">#&gt; [43] parallelly_1.37.0   rmarkdown_2.25      purrr_1.0.2        </span></span>
-<span><span class="co">#&gt; [46] tools_4.3.2         htmltools_0.5.7</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] cli_3.6.3           knitr_1.49          rlang_1.1.4        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.50           textshaping_0.4.1   jsonlite_1.8.9     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.0         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.3.3          sass_0.4.9         </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.4.2          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       mvtnorm_1.3-3      </span></span>
+<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 yaml_2.3.10         lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [22] compiler_4.4.2      codetools_0.2-20    fs_1.6.5           </span></span>
+<span><span class="co">#&gt; [25] Rcpp_1.0.13-1       future_1.34.0       systemfonts_1.1.0  </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-6      digest_0.6.37       R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [31] parallelly_1.41.0   parallel_4.4.2      splines_4.4.2      </span></span>
+<span><span class="co">#&gt; [34] bslib_0.8.0         Matrix_1.7-1        tools_4.4.2        </span></span>
+<span><span class="co">#&gt; [37] globals_0.16.3      pkgdown_2.1.1       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [40] desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -661,16 +781,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>
