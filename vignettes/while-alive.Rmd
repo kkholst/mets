@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5        
 vignette: >
-  %\VignetteIndexEntry{Average treatment effect (ATE) for Competing risks and binary outcomes}
+  %\VignetteIndexEntryA{While Alive estimands for Recurrent Events}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
