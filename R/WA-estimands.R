@@ -138,7 +138,7 @@ formulaCount <- update.formula(formulaCount,cform)
 dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code)
 rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,"ratio"]
 if (!is.null(trans)) {
-     rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,4]^trans
+     rrR[,"ratio__"] <- rrR[,"ratio__"]^trans
 }
 Yr <- rrR[,"ratio__"]
 
