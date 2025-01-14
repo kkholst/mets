@@ -1434,6 +1434,7 @@ if (is.null(dependence)) dependence <- 0
 if (!is.null(LamD)) 
 rrs <- simRecurrentIII(n,list(Lam1),death.cumhaz=list(LamD),rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
 else rrs <- simRecurrentIII(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+if (!is.null(attr(rrs,"z")) rrs$Z <- attr(rrs,"z")[rr$id]
 
 rrs$statusD <- rrs$status
 if (!is.null(LamD))  {

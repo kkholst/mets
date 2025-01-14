@@ -161,7 +161,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
   statusC <- (status %in% cens.code) 
   statusE <- (status %in% cause) & (exit<= time) 
-  if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
+  if (sum(statusE)==0) warning("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
 
   ucauses  <-  sort(unique(status))
@@ -1105,7 +1105,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
   statusC <- (status %in%cens.code) 
   statusE <- (status %in% cause) & (exit<= time) 
-  if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
+  if (sum(statusE)==0) warning("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
   ucauses  <-  sort(unique(status))
   ccc <- which(ucauses %in% cens.code)

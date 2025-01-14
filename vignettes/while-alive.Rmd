@@ -45,10 +45,11 @@ thus consider
 data(hfaction_cpx12)
 
 dtable(hfaction_cpx12,~status)
-dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,time=2,death.code=2)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,time=3.5,death.code=2)
 summary(dd)
 
-dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,time=2,death.code=2,trans=.333)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,time=3.5,death.code=2,trans=.333)
+dd
 ```
 
 We see that the ratio of means are not very different, but that the subject specific 
