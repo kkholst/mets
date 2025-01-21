@@ -1,7 +1,7 @@
 context("cifreg versus crr-cmprsk")
 
 test_that("cifreg", {
-if (requireNamespace(cmprsk)){
+###if (requireNamespace(cmprsk)){
 set.seed(100)
 data(bmt)
 bmt$time <-  bmt$time+runif(nrow(bmt))*0.001
@@ -15,6 +15,6 @@ mm
 
 ## estimate (same) and standard errors (close close)
 expect_true( ((sum(abs(mm[,5])))<0.0001) &   ((sum(abs(mm[,6])))<0.0001)   )
-}
+###}
 })
 
