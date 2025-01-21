@@ -195,8 +195,6 @@ if (run==1) {
 
 ```
 
-
-
 We also remove all censorings from the data to compare the estimates with those 
 based on coxph, and observe that the estimates as well as the standard errors agree 
 
