@@ -1957,11 +1957,13 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  ratio <- XminDt/Dmint
  ratio[is.na(ratio)] <- 0
 
+ nX <- colnames(XminDt) <- paste(colnames(X),"minDt",sep="") 
  dd <- data.frame(cbind(XminDt,Dmint,id,call.id,ratio))
- colnames(dd) <- c("XminDt","minDt","nid","call.id","ratio")
+ colnames(dd) <- c(nX,"minDt","nid","call.id","ratio")
 
  return(dd)
 } # }}}
+
 
 dynCensAugOld <- function(formC,data,augmentC=~+1,response="Yipcw",time=NULL,Z=NULL) {# {{{ 
 if (is.null(time)) stop("must give time of response \n")
