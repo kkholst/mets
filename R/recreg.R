@@ -1958,8 +1958,9 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL)
  ratio[is.na(ratio)] <- 0
 
  nX <- colnames(XminDt) <- paste(colnames(X),"minDt",sep="") 
+ if (ncol(X)==1) nR <- "ratio" else nR <- paste(colnames(X),"ratio",sep="") 
  dd <- data.frame(cbind(XminDt,Dmint,id,call.id,ratio))
- colnames(dd) <- c(nX,"minDt","nid","call.id","ratio")
+ colnames(dd) <- c(nX,"minDt","nid","call.id",nR)
 
  return(dd)
 } # }}}
