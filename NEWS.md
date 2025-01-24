@@ -1,4 +1,5 @@
 # mets 1.3.6
+  - Development version
   - While-alive estimation : `WA_recurrent` 
 
 # mets 1.3.5
