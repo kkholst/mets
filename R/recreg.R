@@ -34,6 +34,7 @@
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
 ##' @param wcomp weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).
 ##' @param augmentation.type of augmentation when augmentation model is given 
+##' @param marks   a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
@@ -64,10 +65,11 @@
 ##' 
 ##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox
 ##' @export
-recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,
+recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
 {# {{{
-outi  <- recregB(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,...)
+outi  <- recregB(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,
+		 case.weights=marks,...)
 
 if (!is.null(outi$lindyn.augment)) {
 outA  <- recregB(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,

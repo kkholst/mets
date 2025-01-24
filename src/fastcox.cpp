@@ -163,10 +163,10 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 		if (Truncation) XX.row(i+n/2) = XX.row(i);
 	}
 
-//	unsigned nZ = Z.n_rows;
-//	if (Truncation) nZ = 2*Z.n_rows;
+	unsigned nZ = Z.n_rows;
+	if (Truncation) nZ = 2*nZ;
 	mat ZX(n , Z.n_cols * X.n_cols);
-	if (Z.n_rows==X.n_rows)
+	if (nZ==X.n_rows)
 		for (unsigned i=0; i<X.n_rows; i++) {
 			rowvec Xi = X.row(i);
 			rowvec Zi = Z.row(i);
