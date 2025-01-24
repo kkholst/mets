@@ -927,7 +927,6 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   x <- xr
   xx <- xr$cox.prep
   marksxx <- xx$Z[,1]
-  print(marksxx)
   jump1 <- xx$jumps+1
   timeJ <- xx$time[jump1]
   strataN1J <- xx$strata[jump1]
