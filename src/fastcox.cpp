@@ -148,6 +148,7 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
         unsigned kj=0;
 
 	//Rcout << "n=" << X.n_rows << ", p=" << X.n_cols << std::endl;
+//	Rcout << "n=" << Z.n_rows << ", p=" << Z.n_cols << std::endl;
 
 	mat XX(n, X.n_cols*(X.n_cols+1)/2); // Calculate XX' at each time-point
 	for (unsigned i=0; i<X.n_rows; i++) {
@@ -163,10 +164,10 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 		if (Truncation) XX.row(i+n/2) = XX.row(i);
 	}
 
-	unsigned nZ = Z.n_rows;
-	if (Truncation) nZ = 2*nZ;
+//	unsigned nZ = Z.n_rows;
+//	if (Truncation) nZ = 2*nZ;
 	mat ZX(n , Z.n_cols * X.n_cols);
-	if (nZ==X.n_rows)
+	if (Z.n_rows==X.n_rows)
 		for (unsigned i=0; i<X.n_rows; i++) {
 			rowvec Xi = X.row(i);
 			rowvec Zi = Z.row(i);
@@ -220,6 +221,7 @@ RcppExport SEXP FastCoxPrepStrata(SEXP EntrySEXP, SEXP ExitSEXP, SEXP StatusSEXP
 		XX = XX.rows(idx);
 		X = X.rows(idx);
 	}
+
 	if (Z.n_rows==X.n_rows) {
 		Z = Z.rows(idx);
 	}
