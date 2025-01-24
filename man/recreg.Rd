@@ -22,6 +22,7 @@ recreg(
   offset = NULL,
   Gc = NULL,
   wcomp = NULL,
+  marks = NULL,
   augmentation.type = c("lindyn.augment", "lin.augment"),
   ...
 )
@@ -46,6 +47,8 @@ recreg(
 \item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
 
 \item{wcomp}{weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).}
+
+\item{marks}{a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events}
 
 \item{augmentation.type}{of augmentation when augmentation model is given}
 
