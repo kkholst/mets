@@ -807,7 +807,7 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("incIPCW"),
-	       weights=NULL,model="exp",no.opt=FALSE,method="nr",augment.model=~+1,se=TRUE,...)
+	       marks=NULL,weights=NULL,model="exp",no.opt=FALSE,method="nr",augment.model=~+1,se=TRUE,...)
 {# {{{
    ## type=c("incIPCW","IPCW","rate")
     cl <- match.call()# {{{
@@ -861,12 +861,14 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
         else  {
             id <- as.integer(factor(id,labels=seq(nid)))-1
         }
-    } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+    } else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
     ## orginal id coding into integers 1:...
     orig.id <- id.orig <- id+1;
     nid <- length(unique(id))
 
     ## to avoid Rcheck wawning
+
+    if (is.null(marks)) marks <- rep(1,length(id))
 
  ### setting up with artificial names
  data$status__ <-  status 
@@ -877,6 +879,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
  data$death__ <- (status %in% death.code)*1
  data$entry__ <- entry 
  data$exit__ <- exit 
+ data$marks__ <- marks 
  statusC <- data$statusC__ <- (status %in% cens.code)*1
  data$status__cause <- (status %in% cause)*1
  data$rid__ <- revcumsumstrata(rep(1,length(entry)),id,nid)
@@ -885,12 +888,9 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
  ## to define properly 
  Dtime <- NULL
 
-  xr <- phreg(Surv(entry__,exit__,status__cause)~Count1__+death__+cluster(id__),data=data,no.opt=TRUE,no.var=1)
   formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ . +cluster(id__))
   cr <- phreg(formC,data=data)
   whereC <- which(status %in% cens.code)
-
-###  xr <- phreg(Surv(entry__,exit__,status__ %in% cause)~cens__+cluster(id__),data=data,no.opt=TRUE,no.var=1)
 
   formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
   cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
@@ -916,21 +916,23 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
   form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
   form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
-  xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1)
+  xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1,Z=matrix(data$marks__,ncol=1))
+###  ### cook-lawless ghosh-lin
+###  xr0 <- phreg(form1,data=data,no.opt=TRUE)
 ###  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
-###   ### cook-lawless ghosh-lin
-###   xr0 <- phreg(form1,data=data,no.opt=TRUE)
-###   clgl  <- recurrentMarginal(xr0,dr)
-###   plot(clgl)
+###  clgl  <- recurrentMarginal(xr0,dr)
+###  plot(clgl)
  
   ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
   x <- xr
   xx <- xr$cox.prep
+  marksxx <- xx$Z[,1]
+  print(marksxx)
   jump1 <- xx$jumps+1
   timeJ <- xx$time[jump1]
   strataN1J <- xx$strata[jump1]
  ### Partitioned estimator , same as Ghosh-Lin+Lawless-Cook estimator
- cumhazP <- c(cumsum(1/Gc[jump1])/nid)
+ cumhazP <- c(cumsum(marksxx[jump1]/Gc[jump1])/nid)
  cumhazP <- cbind(timeJ,cumhazP)
 # }}}
 
@@ -938,13 +940,13 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
   ### setting up regression setting with Y(t) =\int_0^t 1/G(s) dN_i(s)
  if (type[1]=="incIPCW") 
-  Ydata <- Y <- sumstrata((xx$status!=0)*(xx$time<times)/Gc,xx$id,nid)
+  Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times)/Gc,xx$id,nid)
  else if (type[1]=="IPCW")  {
      obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
-  Ydata <- Y <- sumstrata((xx$status!=0)*(xx$time<times),xx$id,nid)*obs
+  Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)*obs
   } else {
      obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
-  NtD <- sumstrata((xx$status!=0)*(xx$time<times),xx$id,nid)
+  NtD <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)
   Ydata <- Y <- obs*NtD/pmin(times,Dtime)
  }
 
@@ -1029,7 +1031,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
        Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
        Gcdata[Gcdata<0.000001] <- 0.00001
-       data$Hst <- revcumsumstrata((dexit<times)*(dstatus %in% cause)/Gcdata,data$id__,nid)
+       data$Hst <- revcumsumstrata((dexit<times)*(marks*dstatus %in% cause)/Gcdata,data$id__,nid)
        if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
        ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
        colnames(HstX) <- ccn
