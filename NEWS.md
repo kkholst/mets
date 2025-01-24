@@ -1,6 +1,7 @@
 # mets 1.3.5
   - `sim.phreg` and `sim.recurrent` for simulations 
   - combining `binreg`, `binregATE` with `resmeanIPCW` and `resmeanATE`
+  - While-alive estimation : `WA_recurrent` 
 
 # mets 1.3.4
   - Maintenance release
