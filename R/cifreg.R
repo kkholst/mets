@@ -363,7 +363,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             S0 <- S0/pow
             DUt <- pow*DUt
             DUt <-  .Call("XXMatFULL",DUt,p,PACKAGE="mets")$XXf
-            DUt <- DUt+DUadj
+	    if (ncol(DUt)>0) DUt <- DUt+DUadj
             if (profile==1) {
 		Ut <- Ut+c(ploglik)*Dwbeta
 		## not implemented
@@ -598,6 +598,8 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     return(out)
 }# }}}
+
+
 
 
 ##' @export
