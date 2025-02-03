@@ -160,6 +160,7 @@ IC.recreg <- function(x, ...) {
   res <- with(x, iid * NROW(iid))
   return(res)
 }
+
 recreg01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,strataA=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE, propodds=NULL,profile=0,
           case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=NULL,
@@ -781,7 +782,7 @@ out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	ploglik=opt$ploglik,gradient=opt$gradient,
 	cumhaz=cumhaz, se.cumhaz=se.cumhaz,MGciid=MGc,
 	id=id.orig,call.id=call.id,
-	strata.jumps=opt$strata,
+	strata.jumps=opt$strata[jumps],
 	strata=xx2$strata,
 	nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
 	propodds=propodds,
