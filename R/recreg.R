@@ -807,8 +807,8 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
-	       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("incIPCW"),
-	       marks=NULL,weights=NULL,model="exp",no.opt=FALSE,method="nr",augment.model=~+1,se=TRUE,...)
+       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("incIPCW"),
+      marks=NULL,weights=NULL,model="exp",no.opt=FALSE,method="nr",augment.model=~+1,se=TRUE,...)
 {# {{{
    ## type=c("incIPCW","IPCW","rate")
     cl <- match.call()# {{{

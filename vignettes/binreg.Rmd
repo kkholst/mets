@@ -24,37 +24,67 @@ library(mets)
 Binomial Regression for censored data 
 =====================================
 
+Details
+=======
+
 The binreg function does direct binomial regression for one time-point, $t$, 
 fitting the model 
 \begin{align*}
-P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta) 
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta)  = F_1(t,X,\beta)
 \end{align*}
-the estimation is based on IPCW weighted EE
+the estimation is based on IPCW weighted EE with response  $Y(t)=I(T \leq t, \epsilon=1 )$
 \begin{align*}
- U(\beta) = &  X ( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T_i- \wedge t) - \mbox{expit}( X^T \beta)) = 0 
+ U(\beta) = &  X ( Y(t) \frac{ \Delta(t) }{G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0 
 \end{align*}
 for IPCW adjusted responses and with $\Delta$ indicator of death and $G_c$ censoring survival
 distribution. With $\Delta(t) = I( C_i > T_i \wedge t)$. 
 The default type="II" is to augment with the censoring term, that is solve 
 \begin{align*}
-  &  U(\beta) + \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d\hat M_c(u) =0 
+  &  U(\beta) + \int_0^t X \frac{E(Y(t) | T>u)}{G_c(u)} d\hat M_c(u) =0 
 \end{align*}
 where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivlent to the 
 pseudo-value approach (see Overgaard (2024)).
 
+The influence function of type="II" is 
+\begin{align*}
+    U(\beta) - \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
+    + \int_0^t  \frac{E(X| T>u) E(Y| T>u)}{G_c(u)} d M_c(u) + \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u)  
+\end{align*}
+and for type="I"
+\begin{align*}
+  &  U(\beta) + \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u).
+\end{align*}
+The means such as $E(X Y| T>u)$ are estimated by IPCW estimators among survivors.
+
 The function logitIPCW instead considers 
 \begin{align*}
- U(\beta) = &  X  \Delta(t) /G_c(T_i- \wedge t) ( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T \beta)) = 0.
+ U^{glm}(\beta) = & \frac{ \Delta(t) }{G_c(T_i \wedge t)}  X  ( Y(t) - \mbox{expit}( X^T \beta)) = 0.
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
 
-Additional functions logitATE, and binregATE computes the average treatment effect, the average effect on treated (ATT), and 
-the average effect on non-treated (ATC). We demonstrate this in another vignette. 
+The logitIPCW has influence function 
+\begin{align*}
+  &  U^{glm}(\beta) + \int_0^t \frac{E( X ( Y - F_1(t,\beta)) | T>u)}{G_c(u)} d M_c(u)  
+\end{align*}
 
-The function logitATE also works when there is no censoring and we thus have simple binary outcome. 
+Which estimator performs the best depends on the censoring distribution and it seems that the binreg with type="II" performs 
+overall quite nicely (see Blanche et al (2023) and Overgaard (2024)).  For the full estimated censoring model all estimators have the
+same influence function (see Blanche et al (2023)).
 
-Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
-under known censoring model. The influence functions are stored in the output. 
+
+Additional functions logitATE, and binregATE computes the average treatment effect. 
+%the average effect on treated (ATT), and the average effect on non-treated (ATC). 
+We demonstrate this in another vignette. 
+
+The function logitATE can be used there is no censoring and we thus have simple binary outcome. 
+
+Variance is based on  sandwich formula with IPCW adjustment (using the influence functions), 
+and naive.var is variance under known censoring model. The influence functions are stored in the output. 
+
+
+Examples
+========
+
 
 ```{r}
  library(mets)
@@ -151,7 +181,7 @@ where $S(X)$ gives strata based on $X$ as a working model.
 using a KM for $G_c(t)$ and a working model for cumulative baseline
 related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
 
- Standard errors computed under assumption of correct but estimated $G_c(s)$ model.
+Standard errors computed under assumption of correct but estimated $G_c(s)$ model.
 
 ```{r}
  data(bmt)
