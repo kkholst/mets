@@ -176,7 +176,7 @@ if (run==1) {
  dats$id <- 1:nrow(dats)
  dats$event <- factor(dats$status,0:2, labels=c("censor", "death", "other"))
  fgdats <- finegray(Surv(time,event)~.,data=dats)
- coxfg <- coxph(Surv(fgstart, fgstop, fgstatus) ~ Z1+Z2 + cluster(id), weight=fgwt, data=fgdats)
+ coxfg <- survival::coxph(Surv(fgstart, fgstop, fgstatus) ~ Z1+Z2 + cluster(id), weight=fgwt, data=fgdats)
 
  fg0 <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
  cbind( coxfg$coef,fg0$coef, coxfg$coef-fg0$coef)
@@ -211,7 +211,7 @@ datsnc2 <- transform(datsnc2,time=max)
 datsncf <- rbind(datsnc,datsnc2)
 #
 cifnc <- cifreg(Event(time,status)~Z1+Z2,data=datsnc,cause=1,propodds=NULL)
-cc <- coxph(Surv(entry,time,status==1)~Z1+Z2+cluster(id),datsncf,robust=TRUE)
+cc <- survival::coxph(Surv(entry,time,status==1)~Z1+Z2+cluster(id),datsncf,robust=TRUE)
 cbind(cifnc$coef,cifnc$se.coef, cc$coef, diag(cc$var)^.5)
 cbind(cifnc$coef-cc$coef, diag(cc$var)^.5-cifnc$se.coef)
 ```
