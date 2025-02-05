@@ -138,7 +138,6 @@ cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
     return(res)
 } # }}}
 
-
 cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
               strata.name=NULL,beta,stderr=TRUE,method="NR",no.opt=FALSE,propodds=1,profile=0,
               case.weights=NULL,cause=1,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=0,cox.prep=FALSE,
@@ -364,7 +363,7 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
             S0 <- S0/pow
             DUt <- pow*DUt
             DUt <-  .Call("XXMatFULL",DUt,p,PACKAGE="mets")$XXf
-            DUt <- DUt+DUadj
+	    if (ncol(DUt)>0) DUt <- DUt+DUadj
             if (profile==1) {
 		Ut <- Ut+c(ploglik)*Dwbeta
 		## not implemented
@@ -571,8 +570,11 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
     colnames(se.cumhaz) <- c("time","se.cumhaz")
 
-  colnames(Uiid) <- names(beta.s)
-  if (nrow(Uiid) == nrow(data)) rownames(Uiid) <- rownames(data)
+
+  if (!is.null(Uiid)) {
+     colnames(Uiid) <- names(beta.s)
+     if (nrow(Uiid) == nrow(data)) rownames(Uiid) <- rownames(data)
+  }
 
     out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
                 iid=Uiid,ncluster=nid,
@@ -596,6 +598,9 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     return(out)
 }# }}}
+
+
+
 
 ##' @export
 IC.cifreg <- function(x, ...) {

@@ -166,9 +166,9 @@ Now model with no covariates and specific call of sim.base function
 More Cox games 
 
 ```{r}
- cox <-  coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
+ cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
  sim1 <- sim.cox(cox,nsim,data=sTRACE)
- cc <- coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
+ cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
  cbind(cox$coef,cc$coef)
  cor(sim1[,c("vf","chf","wmi")])
  cor(sTRACE[,c("vf","chf","wmi")])
@@ -191,12 +191,12 @@ More Cox games with cause  specific hazards
 ```{r}
  data(bmt)
  # coxph          
- cox1 <- coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
- cox2 <- coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
+ cox1 <- survival::coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
+ cox2 <- survival::coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
  coxs <- list(cox1,cox2)
  dd <- sim.cause.cox(coxs,nsim,data=bmt)
- scox1 <- coxph(Surv(time,status==1)~tcell+platelet,data=dd)
- scox2 <- coxph(Surv(time,status==2)~tcell+platelet,data=dd)
+ scox1 <- survival::coxph(Surv(time,status==1)~tcell+platelet,data=dd)
+ scox2 <- survival::coxph(Surv(time,status==2)~tcell+platelet,data=dd)
  cbind(cox1$coef,scox1$coef)
  cbind(cox2$coef,scox2$coef)
 ```
