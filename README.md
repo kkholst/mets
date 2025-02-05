@@ -1,11 +1,7 @@
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/kkholst/mets/actions)
-  [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg)](https://app.codecov.io/github/kkholst/mets?branch=master)
-  [![cran](https://www.r-pkg.org/badges/version-last-release/mets)](https://CRAN.R-project.org/package=mets)
-  [![cran-dl](https://cranlogs.r-pkg.org/badges/mets)](https://cranlogs.r-pkg.org/downloads/total/last-month/mets)
+<!-- badges: start -->[![R-CMD-check](https://github.com/kkholst/mets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/mets/actions/workflows/R-CMD-check.yaml)  [![coverage](https://codecov.io/github/kkholst/mets/coverage.svg)](https://app.codecov.io/github/kkholst/mets?branch=master)
+[![cran](https://www.r-pkg.org/badges/version-last-release/mets)](https://CRAN.R-project.org/package=mets)
+[![cran-dl](https://cranlogs.r-pkg.org/badges/mets)](https://cranlogs.r-pkg.org/downloads/total/last-month/mets)
 <!-- badges: end -->
-
-
 
 
 # Multivariate Event Times (`mets`) <img src=man/figures/timerrr.png align="right" height="150">
