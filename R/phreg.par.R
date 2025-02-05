@@ -16,7 +16,7 @@
 ## (op <- phreg.par(y,TRUE))
 
 ## tt <- seq(0,100,length.out=100)
-## cc <- coxph(Surv(y,rep(TRUE,length(y)))~1)
+## cc <- survival::coxph(Surv(y,rep(TRUE,length(y)))~1)
 ## plot(survfit(cc),mark.time=FALSE)
 ## lines(tt,exp(-(exp(-4)*tt)^exp(.484)),col="red") 
 ##(op <- phreg.weibull(d$y,TRUE,cbind(d$x)))
