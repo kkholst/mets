@@ -156,6 +156,7 @@ or without symmetry as might be the case with mothers and daughters (sym=0).
 see example below, but the default is that it is simply \eqn{\theta^T z}.
 }
 \examples{
+\donttest{ ## Reduce Ex.Timings
 library("timereg")
 data(multcif);
 multcif$cause[multcif$cause==0] <- 2
@@ -179,7 +180,6 @@ summary(out2)
 ###########################################################
 # investigating further models using parfunc and dparfunc
 ###########################################################
-\donttest{ ## Reduce Ex.Timings
 set.seed(100)
 prt<-simnordic.random(2000,cordz=2,cormz=5)
 prt$status <-prt$cause

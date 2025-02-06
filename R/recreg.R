@@ -807,10 +807,10 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
-       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("incIPCW"),
-      marks=NULL,weights=NULL,model="exp",no.opt=FALSE,method="nr",augment.model=~+1,se=TRUE,...)
+       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,estimation=c("incIPCW"),type=c("II","I"),
+      marks=NULL,weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
 {# {{{
-   ## type=c("incIPCW","IPCW","rate")
+   ## method=c("incIPCW","IPCW","rate")
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
     special <- c("strata", "cluster","offset")
@@ -854,6 +854,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     ## }}}
 
+   ## {{{
    if (!is.null(id)) {
         ids <- unique(id)
         nid <- length(ids)
@@ -896,6 +897,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
   cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
   whereC <- which(status %in% cens.code)
+  ## }}}
 
   if (length(whereC)>0) {# {{{
   ### censoring weights
@@ -924,7 +926,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 ###  clgl  <- recurrentMarginal(xr0,dr)
 ###  plot(clgl)
  
-  ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
+  ####  First partitioned estimator everywhere n^-1 sum_i \int_0^t m_i(s)/G_c(s) Y_i(s) I(D_i > s) dN_i(s) 
   x <- xr
   xx <- xr$cox.prep
   marksxx <- xx$Z[,1]
@@ -934,18 +936,17 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
  ### Partitioned estimator , same as Ghosh-Lin+Lawless-Cook estimator
  cumhazP <- c(cumsum(marksxx[jump1]/Gc[jump1])/nid)
  cumhazP <- cbind(timeJ,cumhazP)
-# }}}
 
   if (is.null(times)) stop("time for recurrent events regression must be given\n")
 
   ### setting up regression setting with Y(t) =\int_0^t 1/G(s) dN_i(s)
- if (type[1]=="incIPCW") 
+ if (estimation[1]=="incIPCW") 
   Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times)/Gc,xx$id,nid)
- else if (type[1]=="IPCW")  {
-     obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
+ else if (estimation[1]=="IPCW")  {
+     obs <- (exit<=times & (!statusC)) | (exit>=times)/Gc
   Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)*obs
   } else {
-     obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
+     obs <- (exit<=times & (!statusC)) | (exit>=times)/Gc
   NtD <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)
   Ydata <- Y <- obs*NtD/pmin(times,Dtime)
  }
@@ -958,6 +959,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   ###  
   Xorig <- X <- as.matrix(X)
   Xdata <- X <- X[data$rid__==1,,drop=FALSE]
+  px <- ncol(X)
+  if (is.null(augmentation))  augmentation=rep(0,px)
   offset <- offset[data$rid__==1]
   weights <- weights[data$rid__==1]
   status <- status[data$rid__==1]
@@ -984,7 +987,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	if (model=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
 	}
         D2log <- apply(D2logl, 2, sum)
-        gradient <- apply(Dlogl, 2, sum) 
+        gradient <- apply(Dlogl, 2, sum) + augmentation
         hessian <- matrix(D2log, length(pp), length(pp))
 
         if (all) {
@@ -1027,8 +1030,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
    val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
 
-    if (se & type[1]=="incIPCW") {# {{{
-
+    if (se) {# {{{
        Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
        Gcdata[Gcdata<0.000001] <- 0.00001
        data$Hst <- revcumsumstrata((dexit<times)*(marks*dstatus %in% cause)/Gcdata,data$id__,nid)
@@ -1053,39 +1055,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
        EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
        MGt <- E[, drop = FALSE] - EdLam0 * c(xx$sign) 
        MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
-    } else if (se & type[1]!="incIPCW") {
-
-    ### order of sorted times
-    ord <- resC$ord
-    X <-  X[ord,,drop=FALSE]
-    status <- status[ord]
-    exit <- exit[ord]
-    weights <- weights[ord]
-    offset <- offset[ord]
-    cens.weights <- cens.weights[ord]
-    lp <- c(X %*% val$coef+offset)
-    p <- expit(lp)
-    Y <- c((status %in% cause)*weights*(exit<=time)/cens.weights)
-
-    xx <- resC$cox.prep
-    S0i2 <- S0i <- rep(0,length(xx$strata))
-    S0i[xx$jumps+1]  <- 1/resC$S0
-    S0i2[xx$jumps+1] <- 1/resC$S0^2
-    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
-    ## to make \int h(s)/Ys  dM_i^C(s) 
-    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-    ### Cens-Martingale as a function of time and for all subjects to handle strata 
-    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-    U <- matrix(0,nrow(xx$X),ncol(X))
-    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
-    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
-
-    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-    MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
-   }  else { 
-	  MGCiid <- 0
-  }## }}}
+    } else  MGCiid <- 0 ## }}}
 
     if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
     val$id <- id
@@ -1103,7 +1073,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     val$cens.code <- cens.code
     val$cause <- cause
     val$death.code <- death.code
-    val$model.type <- model
+    val$model.method <- estimation
+    val$type <- type
     val$cumhazP <- cumhazP
     class(val) <- c("binreg", "resmean")
     return(val)
