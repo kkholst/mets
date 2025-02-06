@@ -208,7 +208,7 @@ and the  years lost can be decomposed into different causes
  summary(drm1)
 ```
 
-Examples: Competing risks regression, Binomial Regression
+## Examples: Competing risks regression, Binomial Regression
 
 We can fit the logistic regression model at a specific time-point
 with IPCW adjustment
