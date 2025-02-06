@@ -1351,7 +1351,7 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
 
   ### make output at specified times
   if (!is.null(times)) {
-    intkmtimes <- meanm[newtimes,]
+    intkmtimes <- meanm[newtimes,,drop=FALSE]
     se.intkmtimes <- se.resmean[newtimes]
     skmtimes <- mm[newtimes,2]
     years.lost <- intkmtimes[,1]-intkmtimes[,2]
@@ -2579,7 +2579,6 @@ km <- function(formula,data=data,conf.type="log",conf.int=0.95,robust=TRUE,...)
 ##' @export
 cif <- function(formula,data=data,cause=1,cens.code=0,...)
 {# {{{
-
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -2632,25 +2631,27 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
 
   statusE <- 1*(status==cause)
   statusD <- 1*(status!=cens.code)
+  data$statusE__ <- statusE
+  data$statusD__ <- statusD
+  data$strata__  <- strata
   if (ncol(Y)==3) {
 	  if (!is.null(strata)) {
-  formE <- as.formula(paste("Surv(entry,exit,statusE)~strata(strata)+cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(entry,exit,statusD)~strata(strata)+cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(entry,exit,statusE__)~strata(strata)+cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(entry,exit,statusD__)~strata(strata)+cluster(id_1_)",sep=""))
 	  } else {
-  formE <- as.formula(paste("Surv(entry,exit,statusE)~1+cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(entry,exit,statusD)~1+cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(entry,exit,statusE__)~1+cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(entry,exit,statusD__)~1+cluster(id_1_)",sep=""))
 
 	  }
   } else {
 	  if (!is.null(strata)) {
-  formE <- as.formula(paste("Surv(exit,statusE)~strata(strata)+cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(exit,statusD)~strata(strata)+cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(exit,statusE__)~strata(strata)+cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(exit,statusD__)~strata(strata)+cluster(id_1_)",sep=""))
 	  } else {
-  formE <- as.formula(paste("Surv(exit,statusE)~cluster(id_1_)",sep=""))
-  formD <- as.formula(paste("Surv(exit,statusD)~cluster(id_1_)",sep=""))
+  formE <- as.formula(paste("Surv(exit,statusE__)~cluster(id_1_)",sep=""))
+  formD <- as.formula(paste("Surv(exit,statusD__)~cluster(id_1_)",sep=""))
 	  } 
   }
-
   data$id_1_ <- id
 
   if (sum(statusE)==0) warning("No events of type 1\n"); 
@@ -2658,15 +2659,18 @@ cif <- function(formula,data=data,cause=1,cens.code=0,...)
   coxE <- phreg(formE,data=data,...)
   coxS <- phreg(formD,data=data,...)
 
+  if (sum(statusE)>0) 
   ### cif 
   cifo <- recurrentMarginal(coxE,coxS)
+  else cifo <- coxE
   ## to work with predict function
-###  cifo$no.opt <- TRUE
+  ##  cifo$no.opt <- TRUE
 
   ### to use basehazplot.phreg
   class(cifo) <- c("cif","phreg")
   return(cifo)
 }# }}}
+
 
 ##' Proportional odds survival model
 ##'

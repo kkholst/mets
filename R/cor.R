@@ -449,6 +449,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' A Semiparametric Random Effects Model for Multivariate Competing Risks Data,
 ##' Scheike, Zhang, Sun, Jensen (2010), Biometrika. 
 ##' @examples
+##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
 ##' data(multcif);
 ##' multcif$cause[multcif$cause==0] <- 2
@@ -472,7 +473,6 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' ###########################################################
 ##' # investigating further models using parfunc and dparfunc
 ##' ###########################################################
-##' \donttest{ ## Reduce Ex.Timings
 ##' set.seed(100)
 ##' prt<-simnordic.random(2000,cordz=2,cormz=5)
 ##' prt$status <-prt$cause

@@ -56,15 +56,14 @@
 event.split <- function(data,
 		time="time",status="status",cuts="cuts",name.id="id",
 		name.start="start", cens.code=0,order.id=TRUE, time.group=FALSE)
-{
-## {{{ 
+{ ## {{{
     n <- nrow(data)
     new.time <- data[,time]
     new.status <- data[,status]
 
     if (is.numeric(cuts)) {
-	    cutname <- paste("cut",cuts,sep=".")
-            data[,cutname] <- cuts
+        cutname <- paste("cut",cuts,sep=".")
+        data[,cutname] <- cuts
     } else cutname <- cuts
     new.cuts <- data[,cutname]
 
@@ -86,8 +85,7 @@ event.split <- function(data,
 	    data[,name.id] <- idl 
     }
 
-###    if (newrow)  new.row <- rep(0,nrow(data))
-
+    ## only split if cut not already among times
     splits <- which(new.cuts<new.time & new.start<new.cuts)
 
     if (length(splits)) {
@@ -96,7 +94,6 @@ event.split <- function(data,
 	    new.start <-  c(new.start,new.cuts[splits])
 	    new.status <- c(new.status,new.status[splits])
 	    new.ccc <-    c(new.cuts,new.cuts[splits])
-###	    new.row <- c(new.row,rep(1,length(splits)))
 	    idl <- c(idl,idl[splits])
 	    new.time[splits] <- new.cuts[splits]
 	    new.status[splits] <- cens.code
@@ -105,10 +102,6 @@ event.split <- function(data,
 	    data[,status] <- new.status
 	    data[,name.start] <- new.start
 	    data[,name.id] <- idl
-###	    if (newrow) data[,newrow.name]  <-  new.row 
-###    if (num %in% names(data))
-###        data[,num] <- data[,num] + new.num else data[,num] <- new.num
-
     }
 
     if (time.group) {
@@ -117,15 +110,16 @@ event.split <- function(data,
     } 
 
     if (order.id) data <- data[order(idl,new.start),] 
+    rownames(data) <- NULL
 
     return(data)
-    ## }}} 
-} 
+}  ## }}}
+
 
 
 ##' Event split with two time-scales, time and gaptime 
 ##'
-##' splits after cut times for the two time-scales. 
+##' Cuts time for two time-scales, as event.split 
 ##'
 ##' @param data data to be split
 ##' @param time time variable.
@@ -145,14 +139,14 @@ event.split <- function(data,
 ##' rr$gaptime <-  rr$time-rr$start
 ##' rr$gapstart <- 0
 ##'
-##' rr1 <- EventSplit(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
-##' rr2 <- EventSplit(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
+##' rr1 <- EventSplit2(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
+##' rr2 <- EventSplit2(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
 ##'
 ##' dlist(rr1,start-time+status+gapstart+gaptime~id)
 ##' dlist(rr2,start-time+status+gapstart+gaptime~id)
 ##'
 ##' @export 
-EventSplit <- function(data,
+EventSplit2 <- function(data,
 		time="time",status="status",entry="start",cuts="cuts",name.id="id",
 		gaptime=NULL,gaptime.entry=NULL,cuttime=c("time","gaptime"),
 		cens.code=0,order.id=TRUE)

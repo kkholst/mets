@@ -71,9 +71,7 @@ Which estimator performs the best depends on the censoring distribution and it s
 overall quite nicely (see Blanche et al (2023) and Overgaard (2024)).  For the full estimated censoring model all estimators have the
 same influence function (see Blanche et al (2023)).
 
-
 Additional functions logitATE, and binregATE computes the average treatment effect. 
-%the average effect on treated (ATT), and the average effect on non-treated (ATC). 
 We demonstrate this in another vignette. 
 
 The function logitATE can be used there is no censoring and we thus have simple binary outcome. 

@@ -81,7 +81,7 @@ mm <- dreg(dat, "*.length"~"*.width"|species+status,z.arg="group")
 \donttest{ ## Reduce Ex.Timings
 y <- "S*"~"*.width"
 xs <- dreg(dat, y, fun.=phreg)
-xs <- dreg(dat, y, fun.=survdiff)
+## xs <- dreg(dat, y, fun.=survdiff)
 
 y <- "S*"~"*.width"
 xs <- dreg(dat, y, x.oneatatime=FALSE, fun.=phreg)

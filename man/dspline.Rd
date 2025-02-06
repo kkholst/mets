@@ -54,7 +54,8 @@ The full spline is thus given by x and spline variables added to the data-set.
 data(TRACE)
 TRACE <- dspline(TRACE,~wmi,breaks=c(1,1.3,1.7))
 cca <- survival::coxph(Surv(time,status==9)~age+vf+chf+wmi,data=TRACE)
-cca2 <- survival::coxph(Surv(time,status==9)~age+wmi+vf+chf+wmi.spline1+wmi.spline2+wmi.spline3,data=TRACE)
+cca2 <- survival::coxph(Surv(time,status==9)~age+wmi+vf+chf+
+                           wmi.spline1+wmi.spline2+wmi.spline3,data=TRACE)
 anova(cca,cca2)
 
 nd <- data.frame(age=50,vf=0,chf=0,wmi=seq(0.4,3,by=0.01))

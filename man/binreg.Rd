@@ -77,8 +77,8 @@ Simple version of comp.risk function of timereg for just one time-point thus fit
 \details{
 Based on binomial regresion IPCW response estimating equation: 
 \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
-for IPCW adjusted responses, with (default, type="II") an additional 
-censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) dM_c} with 
+for IPCW adjusted responses (type="I"), with (default, type="II") an additional 
+censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} with 
 \deqn{Y(t) = I(T \leq t, \epsilon=1 )}
 
 logitIPCW instead considers 
