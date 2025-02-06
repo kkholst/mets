@@ -107,8 +107,8 @@ In the context of time-to-events data we consider the
 First we fit the bivariate probit model (same marginals in MZ and DZ twins but 
 different correlation parameter). Here we evaluate the risk of getting 
 cancer before the last double cancer event (95 years)
-```{r, label=probit1}
-rm(prt)
+
+```{r}
 data(prt)
 prt0 <-  force.same.cens(prt, cause="status", cens.code=0, time="time", id="id")
 prt0$country <- relevel(prt0$country, ref="Sweden")
@@ -116,14 +116,9 @@ prt_wide <- fast.reshape(prt0, id="id", num="num", varying=c("time","status","ca
 prt_time <- subset(prt_wide,  cancer1 & cancer2, select=c(time1, time2, zyg))
 tau <- 95
 tt <- seq(70, tau, length.out=5) ## Time points to evaluate model in
-```
 
-```{r b0, eval=fullVignette}
 b0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="cor",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
-```
-
-```{r}
 summary(b0)
 ```
 
@@ -131,25 +126,19 @@ Liability threshold model with ACE random effects structure
 
 ```{r, label=liability_ace1, eval=fullVignette}
 b1 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
-              cens.formula=Surv(time,status==0)~zyg, breaks=tau)
-```
-
-```{r}
+           cens.formula=Surv(time,status==0)~zyg, breaks=tau)
 summary(b1)
 ```
 
 ## Examples: Twins Concordance for time-to-events Data
 
 ```r
-library("mets")
 
 data(prt) ## Prostate data example (sim)
 
 ## Bivariate competing risk, concordance estimates
 p33 <- bicomprisk(Event(time,status)~strata(zyg)+id(id),
                   data=prt, cause=c(2,2), return.data=1, prodlim=TRUE)
-#> Strata 'DZ'
-#> Strata 'MZ'
 
 p33dz <- p33$model$"DZ"$comp.risk
 p33mz <- p33$model$"MZ"$comp.risk
