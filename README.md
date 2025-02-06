@@ -204,7 +204,7 @@ and the  years lost can be decomposed into different causes
 ```{r}
  ## years.lost decomposed into causes
  drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
- # par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
+ par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
  summary(drm1)
 ```
 
@@ -240,9 +240,9 @@ We can fit the Fine-Gray model and the logit-link competing risks model
  plot(or)
 
  # predictions 
- #nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
- #pll <- predict(ll,nd)
- #plot(pll)
+ nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
+ pll <- predict(ll,nd)
+ plot(pll)
 ```
 
 The Fine-Gray model can be estimated using IPCW adjustment
@@ -252,9 +252,9 @@ The Fine-Gray model can be estimated using IPCW adjustment
  fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
  summary(fg)
  plot(fg)
- #nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
- #pfg <- predict(fg,nd)
- #plot(pfg)
+ nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
+ pfg <- predict(fg,nd)
+ plot(pfg)
 
  ## influence functions of regression coefficients
  head(iid(fg))
@@ -264,8 +264,7 @@ and G-estimation can be done
 
 ```{r}
  dfactor(bmt) <- tcell.f~tcell
- fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
-               cox.prep=TRUE,propodds=NULL)
+ fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,cox.prep=TRUE,propodds=NULL)
  summary(survivalG(fg1,bmt,50))
 ```
 
@@ -300,9 +299,9 @@ quantities
                          cens.model=~strata(platelet,tcell),model="lin")
  estimate(out)
  ## same as 
- ## out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
- ## rm1 <- resmean.phreg(out1,times=30)
- ## summary(rm1)
+ out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
+ rm1 <- resmean.phreg(out1,times=30)
+ summary(rm1)
  
  ## competing risks years-lost for cause 1  
  out1 <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
