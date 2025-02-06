@@ -13,7 +13,12 @@ doc:
 	R -q -e "devtools::document()"
 
 test:
-	R -q -e "devtools::test()"
+	R -q -e 'library("mets"); tinytest::run_test_dir("inst/tinytest")'
+
+slowtest:
+	R -q -e 'library("mets"); tinytest::run_test_dir("inst/slowtest")'
+
+testall: test slowtest
 
 vignette:
 	@_R_FULL_VIGNETTE_=1 R -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
@@ -26,7 +31,7 @@ v:
 
 roxy: doc
 
-.PHONY: c check init roxy doc v vignette install
+.PHONY: check doc test
 
 .PHONY: export
 export:

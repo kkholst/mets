@@ -33,7 +33,7 @@ Suggests:
     optimx,
     prodlim,
     cmprsk,
-    testthat (>= 0.11),
+    tinytest (>= 1.4.1),
     ucminf,
     knitr,
     rmarkdown,

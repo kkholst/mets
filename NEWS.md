@@ -2,7 +2,7 @@
   - Development version
   - While-alive estimation : `WA_recurrent` 
   - Marks for medical cost models : `recreg` `recregIPCW`
-
+  
 # mets 1.3.5
   - `sim.phreg` and `sim.recurrent` for simulations 
   - Combining `binreg`, `binregATE` with `resmeanIPCW` and `resmeanATE`
