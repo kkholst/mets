@@ -1351,7 +1351,7 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
 
   ### make output at specified times
   if (!is.null(times)) {
-    intkmtimes <- meanm[newtimes,]
+    intkmtimes <- meanm[newtimes,,drop=FALSE]
     se.intkmtimes <- se.resmean[newtimes]
     skmtimes <- mm[newtimes,2]
     years.lost <- intkmtimes[,1]-intkmtimes[,2]
