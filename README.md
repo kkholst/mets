@@ -323,4 +323,24 @@ quantities
 
 ## Examples: Average treatment effects (ATE) for survival or competing risks 
 
+We can compute ATE for survival or competing risks data for the 
+probabilty of dying 
+
+```{r}
+ bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+ brs <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,
+	  treat.model=tcell~platelet+age)
+ summary(brs)
+```
+
+or the the restricted mean survival (years-lost to different causes)
+
+```{r}
+ out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
+ summary(out)
+ 
+ out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
+                    treat.model=tcell~platelet)
+ summary(out1)
+```
 
