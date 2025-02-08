@@ -18,7 +18,7 @@ LazyLoad: yes
 URL: https://kkholst.github.io/mets/
 BugReports: https://github.com/kkholst/mets/issues
 Depends:
-    R (>= 3.5),
+    R (>= 3.5)
 Imports:
     compiler,
     lava (>= 1.8.0),
