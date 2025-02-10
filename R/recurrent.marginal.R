@@ -172,6 +172,11 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 }# }}}
 
 ##' @export
+plot.recurrent <- function(object,...) {# {{{
+ bplot(object,...)
+}# }}}
+
+##' @export
 summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,...) {# {{{
  if (is.null(times)) times <- object$times
 
