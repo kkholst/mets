@@ -69,3 +69,34 @@ kmplot<- function(x,add=FALSE,loc=NULL,col=NULL,lty=NULL,conf.int=TRUE,polygon=T
 
 } ## }}}
 
+
+##' @export
+plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,type="s",...)
+{# {{{
+nl <- cbind(x,band[,1])
+ul <- cbind(x,band[,2])
+
+  if (!polygon) {
+      lines(nl,type=type,...)
+      lines(ul,type=type,...)
+      } else {
+	 ll <- length(nl[,1])
+         timess <- nl[,1]
+         ttp <- c(timess[1],rep(timess[-c(1,ll)],each=2),timess[ll])
+         tt <- c(ttp,rev(ttp))
+         yy <- c(rep(nl[-ll,2],each=rep(2)),rep(rev(ul[-ll,2]),each=2))
+         col.alpha<-0.1
+         col.ci<-col[1]
+         col.trans <- sapply(col.ci, FUN=function(x) 
+           do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
+	 polygon(tt,yy,lty=0,col=col.trans,...)
+      }
+}# }}}
+
+##' @export
+plotConfRegionSE <- function(x,est,se,...)
+{# {{{
+ul <- est+1.96*se; nl <- est-1.96*se
+plotConfRegion(x,cbind(nl,ul),...)
+}# }}
+

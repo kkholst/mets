@@ -2959,7 +2959,6 @@ if (length(class(object))==2 && ( substr(class(object)[2],1,3)=="rec" | substr(c
  return(out)
 }# }}}
 
-
 ##' @export
 print.predictphreg  <- function(x,se=FALSE,...) {# {{{
 
@@ -3094,19 +3093,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
       if (!polygon) {
       lines(x$times,nl,type="s",lty=ltys[i,2],col=cols[i,2])
       lines(x$times,ul,type="s",lty=ltys[i,3],col=cols[i,3])
-      } else {
-	 ll <- length(x$times)
-         tt <- c(x$times,rev(x$times))
-         yy <- c(nl,rev(ul))
-         ttp <- c(x$times[1],rep(x$times[-c(1,ll)],each=2),x$times[ll])
-         tt <- c(ttp,rev(ttp))
-         yy <- c(rep(nl[-ll],each=rep(2)),rep(rev(ul[-ll]),each=2))
-         col.alpha<-0.1
-         col.ci<-cols[i,1]
-         col.trans <- sapply(col.ci, FUN=function(x) 
-         do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
-	 polygon(tt,yy,lty=0,col=col.trans)
-     }
+      } else plotConfRegion(x$times,cbind(nl,ul),col=cols[i,1])
     }
   }
 
@@ -3256,19 +3243,7 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 	      if (!polygon) {
 		  lines(nl,type="s",lty=ltys[i,2],col=cols[i,2],lwd=lwds[i,2],...)
 		  lines(ul,type="s",lty=ltys[i,3],col=cols[i,3],lwd=lwds[i,3],...)
-	      } else {
-                 ## type="s" confidence regions
-		 ll <- length(nl[,1])
-		 timess <- nl[,1]
-		 ttp <- c(timess[1],rep(timess[-c(1,ll)],each=2),timess[ll])
-		 tt <- c(ttp,rev(ttp))
-		 yy <- c(rep(nl[-ll,2],each=rep(2)),rep(rev(ul[-ll,2]),each=2))
-		 col.alpha<-0.1
-		 col.ci<-cols[j+1]
-		 col.trans <- sapply(col.ci, FUN=function(x) 
-			   do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
-		 polygon(tt,yy,lty=0,col=col.trans)
-	      }
+	      } else plotConfRegion(nl[,1],cbind(nl[,2],ul[,2]),col=cols[j+1])
         }
      }
      }
@@ -3281,36 +3256,6 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
     graphics::legend(where,legend=stratnames,col=cols[,1],lty=ltys[,1])
 
 }# }}}
-
-##' @export
-plotConfRegion <- function(x,band,add=TRUE,polygon=TRUE,col=1,type="s",...)
-{# {{{
-nl <- cbind(x,band[,1])
-ul <- cbind(x,band[,2])
-
-  if (!polygon) {
-      lines(nl,type=type,...)
-      lines(ul,type=type,...)
-      } else {
-	 ll <- length(nl[,1])
-         timess <- nl[,1]
-         ttp <- c(timess[1],rep(timess[-c(1,ll)],each=2),timess[ll])
-         tt <- c(ttp,rev(ttp))
-         yy <- c(rep(nl[-ll,2],each=rep(2)),rep(rev(ul[-ll,2]),each=2))
-         col.alpha<-0.1
-         col.ci<-col[1]
-         col.trans <- sapply(col.ci, FUN=function(x) 
-           do.call(grDevices::rgb,as.list(c(grDevices::col2rgb(x)/255,col.alpha))))
-	 polygon(tt,yy,lty=0,col=col.trans,...)
-      }
-}# }}}
-
-##' @export
-plotConfRegionSE <- function(x,est,se,...)
-{# {{{
-ul <- est+1.96*se; nl <- est-1.96*se
-plotConfRegion(x,cbind(nl,ul),...)
-}# }}
 
 ##' @export
 bplot <- function(x,...) basehazplot.phreg(x,...)
