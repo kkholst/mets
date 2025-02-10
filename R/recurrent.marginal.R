@@ -166,14 +166,15 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
      St=varrs$St,
      cumhaz=cbind(varrs$time,varrs$mu),se.cumhaz=cbind(varrs$time,varrs$se.mu),
      strata=varrs$strata,nstrata=xr$nstrata,jumps=1:nrow(varrs),
-     strata.name=xr$strata.name,strata.level=recurrent$strata.level)
+     strata.name=xr$strata.name,strata.level=recurrent$strata.level,call=xr$call,
+     formula=xr$formula,no.opt=TRUE,exit=varrs$time,p=0)
  class(out) <- "recurrent"
  return(out)
 }# }}}
 
 ##' @export
-plot.recurrent <- function(object,...) {# {{{
- bplot(object,...)
+plot.recurrent <- function(x,...) {# {{{
+ bplot(x,...)
 }# }}}
 
 ##' @export
