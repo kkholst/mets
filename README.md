@@ -15,6 +15,8 @@
     effects probit models (Liability models) <doi:10.1016/j.csda.2015.01.014>.
     Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
     Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
+    Restricted mean survival time regression and years lost for competing risks. 
+    Average treatment effects and G-computation. 
 
 
 ## Installation
