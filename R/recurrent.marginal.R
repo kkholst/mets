@@ -2202,21 +2202,15 @@ return(data)
 ##' legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
 ##' 
 ##' 
-##' \donttest{
-##' ### do not test to avoid dependence on prodlim 
-##' ### now estimation based on cumualative incidence, but do not test to avoid dependence on prodlim 
-##' ### library(prodlim)
 ##' pp <- prob.exceed.recurrent(rr,1,status="status",death="death",start="entry",stop="time",id="id")
 ##' with(pp, matplot(times,prob,type="s"))
 ##' ###
 ##' with(pp, matlines(times,se.lower,type="s"))
 ##' with(pp, matlines(times,se.upper,type="s"))
-##' }
 ##' @export
 ##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryTimeobject
 prob.exceed.recurrent <- function(data,type,status="status",death="death",
- start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=TRUE,
- strata=NULL,all.cifs=FALSE,...)
+ start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=TRUE,strata=NULL,all.cifs=FALSE,...)
 {# {{{
 ### setting up data 
 stat <-     data[,status]
