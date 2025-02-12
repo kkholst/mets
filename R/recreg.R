@@ -34,7 +34,7 @@
 ##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
 ##' @param wcomp weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).
 ##' @param augmentation.type of augmentation when augmentation model is given 
-##' @param marks   a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events
+##' @param marks  a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
