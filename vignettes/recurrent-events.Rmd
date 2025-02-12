@@ -643,10 +643,10 @@ the probability that $(N_1(t) \geq k_1, N_2(t) \geq k_2)$
 
 ```{r}
 # Bivariate probability of exceeding 
-oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5),exceed2=c(1,2))
-with(oo, matplot(time,pe1e2,type="s"))
-nc <- ncol(oo$pe1e2)
-legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
+## oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5),exceed2=c(1,2))
+## with(oo, matplot(time,pe1e2,type="s"))
+## nc <- ncol(oo$pe1e2)
+## legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
 ```
 
 Looking at other simulations with dependence 
