@@ -179,10 +179,9 @@ plot.recurrent <- function(x,...) {# {{{
 
 ##' @export
 summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,...) {# {{{
- if (is.null(times)) times <- object$times
 
 base <- basecumhaz(object)
- nstrata <- object$nstrata
+nstrata <- object$nstrata
 
 baseci <- list()
 if (object$nstrata==1) {
