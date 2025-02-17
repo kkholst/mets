@@ -178,7 +178,6 @@ We start by generating some data to illustrate the computation of the marginal m
 
 ```{r}
 library(mets)
-library(timereg)
 set.seed(1000) # to control output in simulatins for p-values below.
 ```
 
@@ -208,22 +207,22 @@ error computation in the recurrentMarginal function
 xr <- phreg(Surv(entry,time,status)~cluster(id),data=rr)
 dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
 par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
+plot(dr,se=TRUE)
 title(main="death")
-bplot(xr,se=TRUE)
+plot(xr,se=TRUE)
 # robust standard errors 
 rxr <-   robust.phreg(xr,fixbeta=1)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 
 # marginal mean of expected number of recurrent events 
 out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=2)
+plot(out,se=TRUE,ylab="marginal mean",col=2)
 ```
 
 We can also extract the estimate in different time-points 
 
 ```{r}
-summary(out,times=c(1000,2000))
+summary(out,times=c(1000,2000))$pbaseci[[1]]
 ```
 
 The marginal mean can also be estimated in a stratified case:
@@ -232,14 +231,14 @@ The marginal mean can also be estimated in a stratified case:
 xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
 dr <- phreg(Surv(entry,time,death)~strata(strata)+cluster(id),data=rr)
 par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
+plot(dr,se=TRUE)
 title(main="death")
-bplot(xr,se=TRUE)
+plot(xr,se=TRUE)
 rxr <-   robust.phreg(xr,fixbeta=1)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
 
 out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
+plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
 Further, if we adjust for covariates for the two rates we can still do
@@ -253,14 +252,14 @@ solely for predictions without standard error computation).
 xr <- phreg(Surv(entry,time,status)~x+cluster(id),data=rr)
 dr <- phreg(Surv(entry,time,death)~x+cluster(id),data=rr)
 par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
+plot(dr,se=TRUE)
 title(main="death")
-bplot(xr,se=TRUE)
+plot(xr,se=TRUE)
 rxr <- robust.phreg(xr)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
 
 out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
+plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 
 # predictions witout se's 
 outX <- recmarg(xr,dr,Xr=1,Xd=1)
@@ -385,8 +384,8 @@ rr <- cbind(rr,X[rr$id+1,])
 
  ## checking baseline
  par(mfrow=c(1,1))
- bplot(out)
- bplot(outs,add=TRUE,col=2)
+ plot(out)
+ plot(outs,add=TRUE,col=2)
  lines(scalecumhaz(base1,1),col=3,lwd=2)
 ```
 

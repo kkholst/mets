@@ -368,20 +368,9 @@ base <- basecumhaz(object)
 nstrata <- object$nstrata
 
 baseci <- list()
-if (object$nstrata==1) {
-   mu <- object$mu
-   se.mu <- object$se.mu
-   stratao <- 0
-   se.logmu=se.mu/mu
-   lower <- exp(log(mu) - 1.96*se.logmu)
-   upper <- exp(log(mu) + 1.96*se.logmu)
-  out <- data.frame(times=mu[,1],mu=mu,se.mu=se.mu,lower=lower,upper=upper,strata=stratao)
-  names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
-   baseci[[1]] <- out
-} else {
  nstrata <- object$nstrata
  for (i in 1:nstrata) {
-	 cumhaz <- base[[i]]$cumhaz
+   cumhaz <- base[[i]]$cumhaz
    mu <- base[[i]]$cumhaz[,2]
    se.mu <- base[[i]]$se.cumhaz[,2]
    stratao <- i
@@ -392,7 +381,6 @@ if (object$nstrata==1) {
    names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
    baseci[[i]] <- out
    }
-}
 out <- baseci
 
 pbaseci <- list()
