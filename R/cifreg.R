@@ -599,15 +599,12 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
     return(out)
 }# }}}
 
-
-
-
 ##' @export
-IC.cifreg <- function(x, ...) {
+IC.cifreg <- function(x, ...) {# {{{
   res <- with(x, iid * NROW(iid))
   return(res)
 }
-
+# }}}
 
 ##' @export
 gofFG <- function(formula,data,cause=1,cens.code=0,cens.model=NULL,...)
@@ -846,7 +843,6 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
              nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
 	     model.frame=x$model.frame,formula=x$formula))
 } # }}}
-
 
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")

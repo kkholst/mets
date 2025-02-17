@@ -129,7 +129,9 @@ NULL
 
 ##' hfaction, subset of block randmized study HF-ACtion from WA package  
 ##'
-##' Data from HF-action trial slightly modified from WA package
+##' Data from HF-action trial slightly modified from WA package,
+##' consisting of 741 nonischemic patients with baseline
+##' cardiopulmonary test duration less than or equal to 12 minutes.
 ##' @name hfaction_cpx12
 ##' @docType data
 ##' @keywords data

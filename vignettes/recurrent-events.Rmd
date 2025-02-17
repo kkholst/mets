@@ -53,13 +53,6 @@ bivariate recurrent events data, also with a possible terminating event:
    * frailty extenstions
  * The general illness death model with  cox models for all hazards. 
 
-For bivariate recurrent events we also compute summary measures that describe their
-dependence such as 
-
- * the covariance 
- * directional dependence 
- * the bivariate probability of exceeding $(k_1,k_2)$ events
-
 
 Simulation of recurrents events
 ==============================

@@ -3261,12 +3261,11 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 bplot <- function(x,...) basehazplot.phreg(x,...)
 
 ##' @export
-basecumhaz <- function(x,type=c("list","matrix"),only=0,robust=FALSE,...) {# {{{
+basecumhaz <- function(x,type=c("list"),only=0,robust=FALSE,...) {# {{{
    ## all strata
    strat <- x$strata[x$jumps]
    stratas <- 0:(x$nstrata-1) 
 
-   ###   se.cum <- cum <- x$cumhaz
    se.cum <- cum <- c()
    strata <- rep(0,nrow(x$cumhaz))
    se.cum <- cum <- x$cumhaz 
@@ -3274,25 +3273,20 @@ basecumhaz <- function(x,type=c("list","matrix"),only=0,robust=FALSE,...) {# {{{
    if (is.null(secum)) nose <- TRUE else nose <- FALSE
 
    out <- list()
-   start <- 1
    for (i in stratas) {
 	   cumhazard <- x$cumhaz[strat==i,,drop=FALSE]
 	   if (!is.null(cumhazard)) {
 		   nr <- nrow(cumhazard)
 		   if (nr>=1) {
-		   slut <- start-1+nr
-		   cum <- rbind(cum,cumhazard)
-		   if (!nose) se.cum <- rbind(se.cum,secum[strat==i,])
-		   strata[start:slut] <- i
-		   start <- slut+1
+		   if (!nose) se.cum <- secum[strat==i,]
 		   if (only==0)
-		   out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=secum[strata==i,],strata=i) 
+		   out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=se.cum,strata=i) 
 	           else out[[i+1]] <- cumhazard
 	      }
 	   }
    }
 
-   if (type[1]=="list") return(out) else return(list(cumhaz=cum,se.cumhaz=se.cum,strata=strata))
+   return(out) 
 }# }}}
 
 ##' @export

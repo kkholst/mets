@@ -181,38 +181,43 @@ plot.recurrent <- function(x,...) {# {{{
 summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,...) {# {{{
  if (is.null(times)) times <- object$times
 
+base <- basecumhaz(object)
+ nstrata <- object$nstrata
+
+baseci <- list()
 if (object$nstrata==1) {
-   where <- fast.approx(c(0,object$times),times,type="left")
-   mu <- c(0,object$mu)[where]
-   se.mu <- c(0,object$se.mu)[where]
+   mu <- object$mu
+   se.mu <- object$se.mu
    stratao <- 0
+   se.logmu=se.mu/mu
+   lower <- exp(log(mu) - 1.96*se.logmu)
+   upper <- exp(log(mu) + 1.96*se.logmu)
+  out <- data.frame(times=mu[,1],mu=mu,se.mu=se.mu,lower=lower,upper=upper,strata=stratao)
+  names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
+   baseci[[1]] <- out
 } else {
  nstrata <- object$nstrata
- if (is.null(strata))  {
-    where <- indexstratarightR(object$times,object$strata,
-    rep(times,each=nstrata),rep((nstrata-1):0,length(times)),nstrata,type="left")
+ for (i in 1:nstrata) {
+	 cumhaz <- base[[i]]$cumhaz
+   mu <- base[[i]]$cumhaz[,2]
+   se.mu <- base[[i]]$se.cumhaz[,2]
+   stratao <- i
+   se.logmu <- se.mu/mu
+   lower <- exp(log(mu) - 1.96*se.logmu)
+   upper <- exp(log(mu) + 1.96*se.logmu)
+   out <- data.frame(times=cumhaz[,1],mu=mu,se.mu=se.mu,lower=lower,upper=upper,strata=stratao)
+   names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
+   baseci[[i]] <- out
+   }
+}
+out <- baseci
 
- times <- rep(times,each=nstrata)
- strata <- rep((nstrata-1):0,length(times))
-
- } else where <- indexstratarightR(object$times,object$strata,times,strata,nstrata,type="left")
-
-   mu <- object$mu[where]
-   se.mu <- object$se.mu[where]
-   stratao <- object$strata[where] 
+pbaseci <- list()
+if (!is.null(times)) {
+for (i in 1:nstrata) pbaseci[[i]] <- predictCumhaz(rbind(0,baseci[[i]]),times)
+out <- list(baseci=baseci,pbaseci=pbaseci)
 }
 
- se.logmu=se.mu/mu
- lower <- exp(log(mu) - 1.96*se.logmu)
- upper <- exp(log(mu) + 1.96*se.logmu)
-
- out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper,
- strata=stratao)
- names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
- if (estimates) {
-         attr(out,"where") <- where
-	 attr(out,"estimates") <- cbind(object$cumhaz,object$strata)[where,]
- }
  return(out)
 }# }}}
 
