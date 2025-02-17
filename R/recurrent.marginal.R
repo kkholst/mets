@@ -2174,13 +2174,18 @@ return(data)
 ##' data(hfaction_cpx12)
 ##' dtable(hfaction_cpx12,~status)
 ##' 
-##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),hfaction_cpx12,cause=1,death.code=2)
+##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
+##'         hfaction_cpx12,cause=1,death.code=2)
 ##' plot(oo)
 ##' 
 ##' @export
 ##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryTimeobject
 ##' @export
-prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,exceed=NULL,marks=NULL,cifmets=TRUE,all.cifs=FALSE,...)
+prob.exceed.recurrent <- function(formula,data,
+                                   cause=1,
+                                   death.code=2,
+                                   cens.code=0,
+                                   exceed=NULL,marks=NULL,cifmets=TRUE,all.cifs=FALSE,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]

@@ -15,6 +15,9 @@ doc:
 test:
 	R -q -e 'library("mets"); tinytest::run_test_dir("inst/tinytest")'
 
+test-loadall:
+	R -q -e 'devtools::load_all("."); tinytest::test_all(".")'
+
 slowtest:
 	R -q -e 'library("mets"); tinytest::run_test_dir("inst/slowtest")'
 
