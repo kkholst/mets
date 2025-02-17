@@ -81,29 +81,23 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 }
 \examples{
 ## data with no ties
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-Lam1 <- base1cumhaz;  Lam2 <- base4cumhaz;  LamD <- drcumhaz
-## simulates recurrent events of types 1 and 2 and with terminal event D and censoring
-rr <- simRecurrentII(100,Lam1,cumhaz2=Lam2,death.cumhaz=LamD,cens=3/5000)
-rr <- count.history(rr)
-rr$cens <- 0
-nid <- max(rr$id)
-rr$revnr <- revcumsumstrata(rep(1,nrow(rr)),rr$id-1,nid)
-rr$x <- rnorm(nid)[rr$id]
-rr$statusG <- rr$status
-rr <- dtransform(rr,statusG=3,death==1)
-dtable(rr,~statusG+status+death)
-dcut(rr) <- gx~x
+data(hfaction_cpx12)
+hf <- hfaction_cpx12
+hf$x <- as.numeric(hf$treatment) 
 
-ll <- recreg(Event(start,stop,statusG)~x+cluster(id),data=rr,cause=1,death.code=3)
+ll <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
+cause=1,death.code=2)
 summary(ll)
 
-## censoring stratified after quartiles of x
-lls <- recreg(Event(start, stop, statusG)~x+cluster(id),data=rr,cause=1,
-              death.code=3,cens.model=~strata(gx))
+## censoring stratified after treatment 
+lls <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
+cause=1,death.code=2,cens.model=~strata(treatment))
 summary(lls)
+
+## IPCW at 2 years 
+ll2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),data=hf,
+cause=1,death.code=2,time=2,cens.model=~strata(treatment))
+summary(ll2)
 
 }
 \author{

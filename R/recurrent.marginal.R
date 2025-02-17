@@ -69,7 +69,7 @@
 ##'  out <- recurrentMarginal(xr,dr,km=TRUE)
 ##'  plot(out,se=TRUE,ylab="cumulative incidence")
 ##' 
-##' @aliases tie.breaker recmarg recurrentMarginalIPCW 
+##' @aliases tie.breaker recmarg recurrentMarginalAIPCW 
 ##' @export
 recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 {# {{{

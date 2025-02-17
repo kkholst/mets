@@ -5,8 +5,6 @@
 \alias{tie.breaker}
 \alias{recmarg}
 \alias{recurrentMarginalIPCW}
-\alias{recurrentMarginalAIPCW}
-\alias{recurrentMarginalAIPCWdata}
 \title{Fast recurrent marginal mean when death is possible}
 \usage{
 recurrentMarginal(recurrent, death, fixbeta = NULL, km = TRUE, ...)
@@ -37,61 +35,39 @@ Here \deqn{ S(u|x=0) }  is estimated by \deqn{ exp(-\Lambda_d(u|x=0) }  with
 Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 }
 \examples{
-
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-dr <- drcumhaz
-base1 <- base1cumhaz
-base4 <- base4cumhaz
-rr <- simRecurrent(1000,base1,death.cumhaz=dr)
-rr$x <- rnorm(nrow(rr)) 
-rr$strata <- floor((rr$id-0.01)/500)
+data(hfaction_cpx12)
+hf <- hfaction_cpx12
+hf$x <- as.numeric(hf$treatment) 
 
 ##  to fit non-parametric models with just a baseline 
-xr <- phreg(Surv(entry,time,status)~cluster(id),data=rr)
-dr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
+xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
+dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
 par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
+plot(dr,se=TRUE)
 title(main="death")
-bplot(xr,se=TRUE)
+plot(xr,se=TRUE)
 ### robust standard errors 
 rxr <-   robust.phreg(xr,fixbeta=1)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 
 ## marginal mean of expected number of recurrent events 
 out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=2)
+plot(out,se=TRUE,ylab="marginal mean",col=2)
 
 ########################################################################
 ###   with strata     ##################################################
 ########################################################################
-xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
-dr <- phreg(Surv(entry,time,death)~strata(strata)+cluster(id),data=rr)
+xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
+dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
 par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
+plot(dr,se=TRUE)
 title(main="death")
-bplot(xr,se=TRUE)
+plot(xr,se=TRUE)
 rxr <-   robust.phreg(xr,fixbeta=1)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
 
 out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
-
-########################################################################
-###   cox case        ##################################################
-########################################################################
-xr <- phreg(Surv(entry,time,status)~x+cluster(id),data=rr)
-dr <- phreg(Surv(entry,time,death)~x+cluster(id),data=rr)
-par(mfrow=c(1,3))
-bplot(dr,se=TRUE)
-title(main="death")
-bplot(xr,se=TRUE)
-rxr <-   robust.phreg(xr)
-bplot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
-
-out <- recurrentMarginal(xr,dr)
-bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
+plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 
 ########################################################################
 ###   CIF  #############################################################
@@ -103,7 +79,7 @@ bplot(out,se=TRUE,ylab="marginal mean",col=1:2)
  dr  <- phreg(Surv(time,cause!=0)~cluster(id),data=bmt)
 
  out <- recurrentMarginal(xr,dr,km=TRUE)
- bplot(out,se=TRUE,ylab="cumulative incidence")
+ plot(out,se=TRUE,ylab="cumulative incidence")
 
 }
 \references{
