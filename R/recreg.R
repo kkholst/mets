@@ -802,277 +802,313 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
-       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,marks=NULL,
-       weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
+cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
+marks=NULL,weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
 {# {{{
-  estimation=c("incIPCW");type=c("II","I")
-   ## method=c("incIPCW","IPCW","rate")
-    cl <- match.call()# {{{
-    m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster","offset")
-    Terms <- terms(formula, special, data = data)
-    m$formula <- Terms
-    m[[1]] <- as.name("model.frame")
-    m <- eval(m, parent.frame())
-    Y <- model.extract(m, "response")
-    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-    if (ncol(Y)==2) {
-        exit <- Y[,1]
-        entry <- NULL ## rep(0,nrow(Y))
-        status <- Y[,2]
-    } else {
-        entry <- Y[,1]
-        exit <- Y[,2]
-        status <- Y[,3]
-    }
-    id <- strata <- NULL
-    if (!is.null(attributes(Terms)$specials$cluster)) {
-        ts <- survival::untangle.specials(Terms, "cluster")
-        pos.cluster <- ts$terms
-        Terms  <- Terms[-ts$terms]
-        id <- m[[ts$vars]]
-    } else pos.cluster <- NULL
-    if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-        ts <- survival::untangle.specials(Terms, "strata")
-        pos.strata <- ts$terms
-        Terms  <- Terms[-ts$terms]
-        strata <- m[[ts$vars]]
-        strata.name <- ts$vars
-    }  else { strata.name <- NULL; pos.strata <- NULL}
-    if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-        ts <- survival::untangle.specials(Terms, "offset")
-        Terms  <- Terms[-ts$terms]
-        offset <- m[[ts$vars]]
-    }
-    X <- model.matrix(Terms, m)
+## method=c("incIPCW","IPCW","rate")
+estimator=c("incIPCW")
+cl <- match.call()# {{{
+m <- match.call(expand.dots = TRUE)[1:3]
+special <- c("strata", "cluster","offset")
+Terms <- terms(formula, special, data = data)
+m$formula <- Terms
+m[[1]] <- as.name("model.frame")
+m <- eval(m, parent.frame())
+Y <- model.extract(m, "response")
+if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+if (ncol(Y)==2) {
+exit <- Y[,1]
+entry <- NULL ## rep(0,nrow(Y))
+status <- Y[,2]
+} else {
+entry <- Y[,1]
+exit <- Y[,2]
+status <- Y[,3]
+}
+id <- strata <- NULL
+if (!is.null(attributes(Terms)$specials$cluster)) {
+ts <- survival::untangle.specials(Terms, "cluster")
+pos.cluster <- ts$terms
+Terms  <- Terms[-ts$terms]
+id <- m[[ts$vars]]
+} else pos.cluster <- NULL
+if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+ts <- survival::untangle.specials(Terms, "strata")
+pos.strata <- ts$terms
+Terms  <- Terms[-ts$terms]
+strata <- m[[ts$vars]]
+strata.name <- ts$vars
+}  else { strata.name <- NULL; pos.strata <- NULL}
+if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+ts <- survival::untangle.specials(Terms, "offset")
+Terms  <- Terms[-ts$terms]
+offset <- m[[ts$vars]]
+}
+X <- model.matrix(Terms, m)
 ###    if (!is.null(intpos  <- attributes(Terms)$intercept))
 ###        X <- X[,-intpos,drop=FALSE]
-    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-    ## }}}
+if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+## }}}
 
-   ## {{{
-   if (!is.null(id)) {
-        ids <- unique(id)
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <-  fast.approx(ids,id)-1
-        else  {
-            id <- as.integer(factor(id,labels=seq(nid)))-1
-        }
-    } else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-    ## orginal id coding into integers 1:...
-    orig.id <- id.orig <- id+1;
-    nid <- length(unique(id))
+## {{{
+if (!is.null(id)) {
+ids <- unique(id)
+nid <- length(ids)
+if (is.numeric(id))
+    id <-  fast.approx(ids,id)-1
+else  {
+    id <- as.integer(factor(id,labels=seq(nid)))-1
+}
+} else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+## orginal id coding into integers 1:...
+orig.id <- id.orig <- id+1;
+nid <- length(unique(id))
 
-    ## to avoid Rcheck wawning
+## to avoid Rcheck wawning
 
-    if (is.null(marks)) marks <- rep(1,length(id))
+if (is.null(marks)) marks <- rep(1,length(id))
 
- ### setting up with artificial names
- data$status__ <-  status 
- data$id__ <-  id
- ## lave Countcause
- data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
- data$Count1__ <- data[,paste("Count",cause[1],sep="")]
- data$death__ <- (status %in% death.code)*1
- data$entry__ <- entry 
- data$exit__ <- exit 
- data$marks__ <- marks 
- statusC <- data$statusC__ <- (status %in% cens.code)*1
- data$status__cause <- (status %in% cause)*1
- data$rid__ <- revcumsumstrata(rep(1,length(entry)),id,nid)
- dexit <- exit
- dstatus <- status
- ## to define properly 
- Dtime <- NULL
+### setting up with artificial names
+data$status__ <-  status 
+data$id__ <-  id
+## lave Countcause
+data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+data$Count1__ <- data[,paste("Count",cause[1],sep="")]
+data$death__ <- (status %in% death.code)*1
+data$entry__ <- entry 
+data$exit__ <- exit 
+data$marks__ <- marks 
+statusC <- data$statusC__ <- (status %in% cens.code)*1
+data$status__cause <- (status %in% cause)*1
+data$rid__ <- revcumsumstrata(rep(1,length(entry)),id,nid)
+dexit <- exit
+dstatus <- status
+## to define properly 
+Dtime <- NULL
 
- formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
- cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
- whereC <- which(status %in% cens.code)
-  ## }}}
+formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
+cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
+whereC <- which(status %in% cens.code)
+## }}}
 
-  if (length(whereC)>0) {# {{{
-  ### censoring weights
-  strat <- cr$strata[cr$jumps]
-  x <- cr
-  xx <- x$cox.prep
-  S0i2 <- S0i <- rep(0,length(xx$strata))
-  S0i[xx$jumps+1] <-  1/x$S0
-  S0i2[xx$jumps+1] <- 1/x$S0^2
-  ## survival at t- to also work in competing risks situation
-  if (!km) { 
-    cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
-    St      <- exp(-cumhazD)
-  } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-  } else  St <- rep(1,nrow(xx$strata))
-  Gc <- St
-  ## }}}
+if (length(whereC)>0) {# {{{
+### censoring weights
+strat <- cr$strata[cr$jumps]
+x <- cr
+xx <- x$cox.prep
+S0i2 <- S0i <- rep(0,length(xx$strata))
+S0i[xx$jumps+1] <-  1/x$S0
+S0i2[xx$jumps+1] <- 1/x$S0^2
+## survival at t- to also work in competing risks situation
+if (!km) { 
+cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
+St      <- exp(-cumhazD)
+} else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
+} else  St <- rep(1,nrow(xx$strata))
+Gc <- St
+## }}}
 
-  formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
-  form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
-  form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
-  xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1,Z=matrix(data$marks__,ncol=1))
+###formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
+form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
+###form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
+xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1,Z=matrix(data$marks__,ncol=1))
 ###  ### cook-lawless ghosh-lin
 ###  xr0 <- phreg(form1,data=data,no.opt=TRUE)
 ###  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
 ###  clgl  <- recurrentMarginal(xr0,dr)
 ###  plot(clgl)
- 
-  ####  First partitioned estimator everywhere n^-1 sum_i \int_0^t m_i(s)/G_c(s) Y_i(s) I(D_i > s) dN_i(s) 
-  x <- xr
-  xx <- xr$cox.prep
-  marksxx <- xx$Z[,1]
-  jump1 <- xx$jumps+1
-  timeJ <- xx$time[jump1]
-  strataN1J <- xx$strata[jump1]
- ### Partitioned estimator , same as Ghosh-Lin+Lawless-Cook estimator
- cumhazP <- c(cumsum(marksxx[jump1]/Gc[jump1])/nid)
- cumhazP <- cbind(timeJ,cumhazP)
 
-  if (is.null(times)) stop("time for recurrent events regression must be given\n")
+####  First partitioned estimator everywhere n^-1 sum_i \int_0^t m_i(s)/G_c(s) Y_i(s) I(D_i > s) dN_i(s) 
+x <- xr
+xx <- xr$cox.prep
+marksxx <- xx$Z[,1]
+jump1 <- xx$jumps+1
+timeJ <- xx$time[jump1]
+strataN1J <- xx$strata[jump1]
+### Partitioned estimator , same as Ghosh-Lin+Lawless-Cook estimator
+cumhazP <- c(cumsum(marksxx[jump1]/Gc[jump1])/nid)
+cumhazP <- cbind(timeJ,cumhazP)
 
-  ### setting up regression setting with Y(t) =\int_0^t 1/G(s) dN_i(s)
- if (estimation[1]=="incIPCW") 
-  Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times)/Gc,xx$id,nid)
- else if (estimation[1]=="IPCW")  {
-     obs <- (exit<=times & (!statusC)) | (exit>=times)/Gc
-  Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)*obs
-  } else {
-     obs <- (exit<=times & (!statusC)) | (exit>=times)/Gc
-  NtD <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)
-  Ydata <- Y <- obs*NtD/pmin(times,Dtime)
- }
+if (is.null(times)) stop("time for recurrent events regression must be given\n")
 
-  ## back to ordering in data
-  Ydata <- Y <- Y[id[data$rid__==1]+1]
-  ###
-  if (is.null(offset)) offset <- rep(0, length(exit))
-  if (is.null(weights)) weights <- rep(1, length(exit))
-  ###  
-  Xorig <- X <- as.matrix(X)
-  Xdata <- X <- X[data$rid__==1,,drop=FALSE]
-  px <- ncol(X)
-  if (is.null(augmentation))  augmentation=rep(0,px)
-  offset <- offset[data$rid__==1]
-  weights <- weights[data$rid__==1]
-  status <- status[data$rid__==1]
-  exit <- exit[data$rid__==1]
-  id <- id[data$rid__==1]
-  X2 <- .Call("vecMatMat", X, X)$vXZ
-  ph <- 1
-  if (is.null(beta)) beta <- rep(0,ncol(X))
-  ## take iid vession of data 
-  dataiid <- data[data$rid__==1,]
+### setting up regression setting with Y(t) =\int_0^t 1/G(s) dN_i(s)
+if (estimator[1]=="incIPCW") 
+Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times)/Gc,xx$id,nid)
+else if (estimator[1]=="IPCW")  {
+obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
+Ydata <- Y <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)*obs
+} else {
+obs <- (exit<=time & (!statusC)) | (exit>=time)/cens.weights
+NtD <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)
+Ydata <- Y <- obs*NtD/pmin(times,Dtime)
+}
 
-  nevent <- sum(status %in% cause)
+## back to ordering in data
+Ydata <- Y <- Y[id[data$rid__==1]+1]
+###
+if (is.null(offset)) offset <- rep(0, length(exit))
+if (is.null(weights)) weights <- rep(1, length(exit))
+###  
+Xorig <- X <- as.matrix(X)
+Xdata <- X <- X[data$rid__==1,,drop=FALSE]
+px <- ncol(X)
+if (is.null(augmentation))  augmentation=rep(0,px)
+offset <- offset[data$rid__==1]
+weights <- weights[data$rid__==1]
+status <- status[data$rid__==1]
+exit <- exit[data$rid__==1]
+id <- id[data$rid__==1]
+X2 <- .Call("vecMatMat", X, X)$vXZ
+ph <- 1
+if (is.null(beta)) beta <- rep(0,ncol(X))
+## take iid vession of data 
+dataiid <- data[data$rid__==1,]
 
-    obj <- function(pp, all = FALSE) {# {{{
-        lp <- c(X %*% pp + offset)
-        if (model == "exp") p <- exp(lp) else p <- lp
-        if (model == "dexp") p <- exp(lp) 
-        ploglik <- sum(weights * (Y - p)^2)
-        if (model == "dexp") {
-            Dlogl <- weights * X *p * c(Y - p)
-            D2logl <- c(weights) *p^2* X2
-        } else {
-            Dlogl <- weights *  X * c(Y - p)
-	if (model=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
-	}
-        D2log <- apply(D2logl, 2, sum)
-        gradient <- apply(Dlogl, 2, sum) + augmentation
-        hessian <- matrix(D2log, length(pp), length(pp))
+nevent <- sum(status %in% cause)
 
-        if (all) {
-            ihess <- solve(hessian)
-            beta.iid <- Dlogl %*% ihess
-            beta.iid <- apply(beta.iid, 2, sumstrata, id, max(id) + 1)
-            robvar <- crossprod(beta.iid)
-            val <- list(par = pp, ploglik = ploglik, gradient = gradient,
-                hessian = hessian, ihessian = ihess, id = id,
-                Dlogl = Dlogl, iid = beta.iid, robvar = robvar,
-                var = robvar, se.robust = diag(robvar)^0.5)
-            return(val)
-        }
-        structure(-ploglik, gradient = -gradient, hessian = hessian)
-    }# }}}
+if (type[1]=="II") {# {{{ type="II" default augmentation
+Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
+Gcdata[Gcdata<0.000001] <- 0.00001
+data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+formC <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
+desform <- update.formula(cens.model,as.formula(paste("~ Hst+ . + cluster(id__)")))
+formC[[3]] <- desform[[2]]
 
-    p <- ncol(X)
-    opt <- NULL
-    if (p > 0) {
-        if (no.opt == FALSE) {
-            if (tolower(method) == "nr") {
-                tim <- system.time(opt <- lava::NR(beta, obj, ...))
-                opt$timing <- tim
-                opt$estimate <- opt$par
-            }
-            else {
-                opt <- nlm(obj, beta, ...)
-                opt$method <- "nlm"
-            }
-            cc <- opt$estimate
-###            if (!se) return(cc)
-            val <- c(list(coef = cc), obj(opt$estimate, all = TRUE))
-        }
-        else val <- c(list(coef = beta), obj(beta, all = TRUE))
+resC <- phreg(formC,data=data,no.opt=TRUE,no.var=1,Z=Xorig)
+xx <- resC$cox.prep
+Xt <- xx$Z
+S0i2 <- S0i <- rep(0, length(xx$strata))
+S0i[xx$jumps+1] <- 1/resC$S0
+S0i2[xx$jumps+1] <- 1/resC$S0^2
+E <- matrix(0, nrow(xx$X), 1)
+E[xx$jumps+1,] <- resC$E*((resC$jumptimes<times)*1)
+btime <- c(1 * (xx$time < times))
+EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+
+mid <- max(id)
+MGt <- Xt*c(E[, drop = FALSE] - EdLam0 * c(xx$sign))*c(xx$weights)
+MGtiid <- apply(MGt,2,sumstrata,xx$id,mid+1)
+augmentation <- augmentation+apply(MGtiid,2,sum)
+###        
+EXt  <-  apply(Xt*c(xx$sign),2,revcumsumstrata,xx$strata,xx$nstrata)
+IEXhYtdLam0 <- apply(EXt*c(E)*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+U <- matrix(0,nrow(xx$X),ncol(X))
+U[xx$jumps+1,] <- (resC$jumptimes<times)*E[xx$jumps+1]*EXt[xx$jumps+1,]/c(resC$S0)
+MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign))*c(xx$weights)
+###
+MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
+MGCiid2 <- MGtiid-MGCiid2
+}  else MGCiid2 <- 0   
+## }}}
+
+obj <- function(pp, all = FALSE) {# {{{
+lp <- c(X %*% pp + offset)
+if (model == "exp") p <- exp(lp) else p <- lp
+if (model == "dexp") p <- exp(lp) 
+ploglik <- sum(weights * (Y - p)^2)
+if (model == "dexp") {
+    Dlogl <- weights * X *p * c(Y - p)
+    D2logl <- c(weights) *p^2* X2
+} else {
+    Dlogl <- weights *  X * c(Y - p)
+if (model=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
+}
+D2log <- apply(D2logl, 2, sum)
+gradient <- apply(Dlogl, 2, sum) + augmentation
+hessian <- matrix(D2log, length(pp), length(pp))
+
+if (all) {
+    ihess <- solve(hessian)
+    beta.iid <- Dlogl %*% ihess
+    beta.iid <- apply(beta.iid, 2, sumstrata, id, max(id) + 1)
+    robvar <- crossprod(beta.iid)
+    val <- list(par = pp, ploglik = ploglik, gradient = gradient,
+	hessian = hessian, ihessian = ihess, id = id,
+	Dlogl = Dlogl, iid = beta.iid, robvar = robvar,
+	var = robvar, se.robust = diag(robvar)^0.5)
+    return(val)
+}
+structure(-ploglik, gradient = -gradient, hessian = hessian)
+}# }}}
+
+p <- ncol(X)
+opt <- NULL
+if (p > 0) {
+if (no.opt == FALSE) {
+    if (tolower(method) == "nr") {
+	tim <- system.time(opt <- lava::NR(beta, obj, ...))
+	opt$timing <- tim
+	opt$estimate <- opt$par
     }
     else {
-        val <- obj(0, all = TRUE)
+	opt <- nlm(obj, beta, ...)
+	opt$method <- "nlm"
     }
-    if (length(val$coef) == length(colnames(X))) names(val$coef) <- colnames(X)
+    cc <- opt$estimate
+###            if (!se) return(cc)
+    val <- c(list(coef = cc), obj(opt$estimate, all = TRUE))
+}
+else val <- c(list(coef = beta), obj(beta, all = TRUE))
+}
+else {
+val <- obj(0, all = TRUE)
+}
+if (length(val$coef) == length(colnames(X))) names(val$coef) <- colnames(X)
 
-   val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
+val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
 
-    if (se) {# {{{
-       Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
-       Gcdata[Gcdata<0.000001] <- 0.00001
-       data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
-       if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
-       ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
-       colnames(HstX) <- ccn
-       nncovs <- c()
-       for (i in 1:ncol(Xorig)) nncovs <- c(paste(nncovs,paste("+",ccn[i],sep="")))
-       formC <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
-       desform <- update.formula(cens.model,as.formula(paste("~",nncovs,"+ . + cluster(id__)")))
-       formC[[3]] <- desform[[2]]
+if (se) {# {{{
+Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
+Gcdata[Gcdata<0.000001] <- 0.00001
+data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
+ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
+colnames(HstX) <- ccn
+nncovs <- c()
+for (i in 1:ncol(Xorig)) nncovs <- c(paste(nncovs,paste("+",ccn[i],sep="")))
+formC <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
+desform <- update.formula(cens.model,as.formula(paste("~",nncovs,"+ . + cluster(id__)")))
+formC[[3]] <- desform[[2]]
 
-       data <- cbind(data,HstX)
-       resC <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
-       xx <- resC$cox.prep
-       S0i2 <- S0i <- rep(0, length(xx$strata))
-       S0i[xx$jumps + 1] <- 1/resC$S0
-       S0i2[xx$jumps + 1] <- 1/resC$S0^2
-       E <- U <- matrix(0, nrow(xx$X), ncol(X))
-       E[xx$jumps + 1, ] <- resC$E*((resC$jumptimes < times)*1)
-       btime <- c(1 * (xx$time < times))
-       EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
-###       print(cbind(E,EdLam0,xx$sign,xx$weights))
-       MGt <- E[, drop = FALSE] - EdLam0 * c(xx$sign) 
-       MGt <- (E[, drop = FALSE] - EdLam0 * c(xx$sign) )*c(xx$weights)
-       MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
-    } else  MGCiid <- 0 ## }}}
+data <- cbind(data,HstX)
+resC <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
+xx <- resC$cox.prep
+S0i2 <- S0i <- rep(0, length(xx$strata))
+S0i[xx$jumps + 1] <- 1/resC$S0
+S0i2[xx$jumps + 1] <- 1/resC$S0^2
+E <- U <- matrix(0, nrow(xx$X), ncol(X))
+E[xx$jumps + 1, ] <- resC$E*((resC$jumptimes < times)*1)
+btime <- c(1 * (xx$time < times))
+EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+MGt <- (E[, drop = FALSE] - EdLam0 * c(xx$sign) )*c(xx$weights)
+MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
+MGCiid <- MGCiid+MGCiid2
+} else  MGCiid <- 0 ## }}}
 
-    if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
-    val$id <- id
-    val$Y <- Ydata
-    val$X <- Xdata
-    val$orig.id <- orig.id
-    val$iid.origid <- ids
-    val$iid.naive <- val$iid
-    if (se) val$iid <- val$iid + val$MGciid
-    val$naive.var <- val$var
-    robvar <- crossprod(val$iid)
-    val$var <- val$robvar <- robvar
-    val$se.robust <- diag(robvar)^0.5
-    val$se.coef <- diag(val$var)^0.5
-    val$cens.code <- cens.code
-    val$cause <- cause
-    val$death.code <- death.code
-    val$model.method <- estimation
-    val$type <- type
-    val$cumhazP <- cumhazP
-    class(val) <- c("binreg", "resmean")
-    return(val)
+if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
+val$id <- id
+val$Y <- Ydata
+val$X <- Xdata
+val$orig.id <- orig.id
+val$iid.origid <- ids
+val$iid.naive <- val$iid
+if (se) val$iid <- val$iid + val$MGciid
+val$naive.var <- val$var
+robvar <- crossprod(val$iid)
+val$var <- val$robvar <- robvar
+val$se.robust <- diag(robvar)^0.5
+val$se.coef <- diag(val$var)^0.5
+val$cens.code <- cens.code
+val$cause <- cause
+val$death.code <- death.code
+val$model.estimator <- estimator
+val$augmentation <- augmentation
+val$type <- type
+val$cumhazP <- cumhazP
+class(val) <- c("binreg", "resmean")
+return(val)
 } # }}}
+
 
 ##' @export
 strataAugment <- survival:::strata
