@@ -146,7 +146,7 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
      strata=varrs$strata,nstrata=xr$nstrata,jumps=1:nrow(varrs),
      strata.name=xr$strata.name,strata.level=recurrent$strata.level,call=xr$call,
      formula=xr$formula,no.opt=TRUE,exit=varrs$time,p=0)
- class(out) <- "recurrent"
+ class(out) <- rep("recurrent",2)
  return(out)
 }# }}}
 
