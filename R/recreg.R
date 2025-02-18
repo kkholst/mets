@@ -802,9 +802,10 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
-       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,estimation=c("incIPCW"),type=c("II","I"),
-      marks=NULL,weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
+       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,marks=NULL,
+       weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
 {# {{{
+  estimation=c("incIPCW");type=c("II","I")
    ## method=c("incIPCW","IPCW","rate")
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -1024,7 +1025,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
     if (se) {# {{{
        Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
        Gcdata[Gcdata<0.000001] <- 0.00001
-       data$Hst <- cumsumstratasum((dexit<times)*(marks*dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+       data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
        if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
        ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
        colnames(HstX) <- ccn
@@ -1041,10 +1042,12 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
        S0i[xx$jumps + 1] <- 1/resC$S0
        S0i2[xx$jumps + 1] <- 1/resC$S0^2
        E <- U <- matrix(0, nrow(xx$X), ncol(X))
-       E[xx$jumps + 1, ] <- resC$E
+       E[xx$jumps + 1, ] <- resC$E*((resC$jumptimes < times)*1)
        btime <- c(1 * (xx$time < times))
        EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+###       print(cbind(E,EdLam0,xx$sign,xx$weights))
        MGt <- E[, drop = FALSE] - EdLam0 * c(xx$sign) 
+       MGt <- (E[, drop = FALSE] - EdLam0 * c(xx$sign) )*c(xx$weights)
        MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
     } else  MGCiid <- 0 ## }}}
 
