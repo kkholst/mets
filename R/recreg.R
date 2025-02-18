@@ -765,7 +765,8 @@ DLambeta.t <- apply(opt$E/c(opt$S0),2,cumsumstrata,strata,nstrata)
 varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
 } else varbetat <- 0
 wwJ <- opt$caseweightsJ*opt$weightsJ
-var.cumhaz <- cumsumstrata(1/(opt$S0^2*wwJ),strata,nstrata)+varbetat
+###var.cumhaz <- cumsumstrata(1/(opt$S0^2*wwJ),strata,nstrata)+varbetat
+var.cumhaz <- cumsumstrata(1/(opt$S0^2),strata,nstrata)+varbetat
 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 colnames(se.cumhaz) <- c("time","se.cumhaz")
 
