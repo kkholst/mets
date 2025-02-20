@@ -280,16 +280,12 @@ if (outcome[1]!="cif") {
 	p <- expit(lp)
         D2logl <- c(weights*p/(1+exp(lp)))*X2
 }
-
-###p <- expit(lp)
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
 ###D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
-###hessian <- matrix(D2log,length(pp),length(pp))
-###
 np <- length(pp)
 hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 

@@ -641,6 +641,7 @@ RcppExport SEXP revcumsum2stratafdNR(SEXP ia, SEXP idN, SEXP istrata, SEXP instr
 	return(rres);
 }/*}}}*/
 
+// [[Rcpp::export(name="S0FG")]] 
 RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	colvec Gc = Rcpp::as<colvec>(iGc);

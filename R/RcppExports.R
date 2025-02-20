@@ -9,6 +9,10 @@
     .Call(`_mets_ApplyBy`, idata, icluster, f)
 }
 
+S0FG <- function(ia, iGc, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcstart) {
+    .Call(`_mets_S0_FG_GcR`, ia, iGc, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcstart)
+}
+
 .scoreMVN <- function(Y, Mu, dMu, S, dS, itol = 0.0) {
     .Call(`_mets_scoreMVN`, Y, Mu, dMu, S, dS, itol)
 }

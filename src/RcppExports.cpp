@@ -45,6 +45,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// S0_FG_GcR
+RcppExport SEXP S0_FG_GcR(SEXP ia, SEXP iGc, SEXP itype2, SEXP istatus, SEXP istrata, SEXP instrata, SEXP istrata2, SEXP instrata2, SEXP iGcstart);
+RcppExport SEXP _mets_S0_FG_GcR(SEXP iaSEXP, SEXP iGcSEXP, SEXP itype2SEXP, SEXP istatusSEXP, SEXP istrataSEXP, SEXP instrataSEXP, SEXP istrata2SEXP, SEXP instrata2SEXP, SEXP iGcstartSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ia(iaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type iGc(iGcSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type itype2(itype2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istatus(istatusSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata(istrataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata(instrataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata2(istrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata2(instrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type iGcstart(iGcstartSEXP);
+    rcpp_result_gen = Rcpp::wrap(S0_FG_GcR(ia, iGc, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcstart));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scoreMVN
 arma::mat scoreMVN(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
 static SEXP _mets_scoreMVN_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
@@ -541,7 +560,6 @@ RcppExport SEXP FastPattern(SEXP, SEXP, SEXP);
 RcppExport SEXP headstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP indexstrataR(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP Matdoubleindex(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP meanriskR(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP ModelMatrixTestCox(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP pBhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP pmvn0(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -554,7 +572,6 @@ RcppExport SEXP revcumsumidstratasumR(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP revcumsumR(SEXP);
 RcppExport SEXP revcumsumstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP revcumsumstratasumR(SEXP, SEXP, SEXP);
-RcppExport SEXP riskstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP sumstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP tailstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP twostageloglikebin(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -572,6 +589,7 @@ RcppExport SEXP XXMatFULL(SEXP, SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_mets_ApplyBy2", (DL_FUNC) &_mets_ApplyBy2, 8},
     {"_mets_ApplyBy", (DL_FUNC) &_mets_ApplyBy, 3},
+    {"_mets_S0_FG_GcR", (DL_FUNC) &_mets_S0_FG_GcR, 9},
     {"_mets_scoreMVN", (DL_FUNC) &_mets_scoreMVN, 6},
     {"_mets_loglikMVN", (DL_FUNC) &_mets_loglikMVN, 9},
     {"_mets_dmvn", (DL_FUNC) &_mets_dmvn, 3},
@@ -621,7 +639,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"headstrataR",              (DL_FUNC) &headstrataR,               3},
     {"indexstrataR",             (DL_FUNC) &indexstrataR,              5},
     {"Matdoubleindex",           (DL_FUNC) &Matdoubleindex,            6},
-    {"meanriskR",                (DL_FUNC) &meanriskR,                 5},
     {"ModelMatrixTestCox",       (DL_FUNC) &ModelMatrixTestCox,        5},
     {"pBhat",                    (DL_FUNC) &pBhat,                     6},
     {"pmvn0",                    (DL_FUNC) &pmvn0,                     5},
@@ -634,7 +651,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"revcumsumR",               (DL_FUNC) &revcumsumR,                1},
     {"revcumsumstrataR",         (DL_FUNC) &revcumsumstrataR,          3},
     {"revcumsumstratasumR",      (DL_FUNC) &revcumsumstratasumR,       3},
-    {"riskstrataR",              (DL_FUNC) &riskstrataR,               3},
     {"sumstrataR",               (DL_FUNC) &sumstrataR,                3},
     {"tailstrataR",              (DL_FUNC) &tailstrataR,               3},
     {"twostageloglikebin",       (DL_FUNC) &twostageloglikebin,       21},
