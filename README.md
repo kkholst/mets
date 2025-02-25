@@ -251,7 +251,8 @@ The Fine-Gray model can be estimated using IPCW adjustment
 
 ```{r}
  ## Fine-Gray model
- fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+ fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL,
+	   cox.prep=TRUE)
  summary(fg)
  plot(fg)
  nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
@@ -262,7 +263,15 @@ The Fine-Gray model can be estimated using IPCW adjustment
  head(iid(fg))
 ```
 
-and G-estimation can be done 
+and we can get standard errors for predictions  based on the influence functions of 
+the baseline and the regression coefiicients
+
+```{r}
+baseid <- IIDbaseline.cifreg(fg,time=40)
+FGprediid(baseid,nd)
+```
+
+G-estimation can be done 
 
 ```{r}
  dfactor(bmt) <- tcell.f~tcell
@@ -270,21 +279,41 @@ and G-estimation can be done
  summary(survivalG(fg1,bmt,50))
 ```
 
-
 ## Examples: Ghosh-Lin for recurrent events 
 
 We can fit the Ghosh-Lin model for the expected number of events observed
-before dying (using IPCW adjustment)
+before dying (using IPCW adjustment, and with cox.prep to get predictions))
 
 ```{r}
 data(hfaction_cpx12)
 dtable(hfaction_cpx12,~status)
 
-gl1 <- recreg(Event(entry,time,status)~treatment,hfaction_cpx12,cause=1,death.code=2)
+gl1 <- recreg(Event(entry,time,status)~treatment,hfaction_cpx12,cause=1,death.code=2,
+	      cox.prep=TRUE)
 summary(gl1)
 
 ## influence functions of regression coefficients
 head(iid(gl1))
+```
+and we can get standard errors for predictions  based on the influence functions of the baseline 
+and the regression coefiicients
+
+```{r}
+baseid <- IIDbaseline.recreg(gl1,time=2)
+dd <- data.frame(treatment=levels(hfaction_cpx12$treatment),id=1)
+GLprediid(baseid,dd)
+```
+
+## Examples: Fixed time modelling for recurrent events 
+
+We can fit a log-link regression model at 2 yeas for the expected number of events observed
+before dying (using IPCW adjustment)
+
+```{r}
+data(hfaction_cpx12)
+
+e2 <- recregIPCW(Event(entry,time,status)~treatment,hfaction_cpx12,cause=1,death.code=2,time=2)
+summary(e2)
 ```
 
 ## Examples: RMST/Restricted mean survival for survival and competing risks 

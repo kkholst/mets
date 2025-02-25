@@ -9,6 +9,9 @@
 \alias{recregIPCW}
 \alias{twostageREC}
 \alias{simGLcox}
+\alias{recregN}
+\alias{IIDbaseline.recregN}
+\alias{IIDrecreg}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(

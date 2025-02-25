@@ -97,8 +97,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
   if (no.opt==FALSE & p!=0) {
-         II <- - tryCatch(solve(val$hessian),error=
-             function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
+         II <- - tryCatch(solve(val$hessian),error=function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
   } else II <- matrix(0,p,p)
 
   ## Brewslow estimator, to handle also possible weights, caseweights that are 0
@@ -151,10 +150,11 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,
 
   ## also computing robust variance 
   if (p>0 & no.var==0) {
-  ii <- iid(res)
-  phvar <- crossprod(ii)
+  beta.iid <- iid(res)
+  phvar <- crossprod(beta.iid)
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
+  res$beta.iid <- beta.iid
   } else res$var <- 0
 
   return(res)
@@ -939,8 +939,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
     if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
-            if (!is.null(object$augmentation)) { V <- object[[augment.type[1]]]; 
-	    }
+            if (!is.null(object$augmentation)) { V <- object[[augment.type[1]]]; }
     } else  {  ## phreg
 	    V <- vcov(object,type=type[1])
             ncluster <- object$n

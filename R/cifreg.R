@@ -68,10 +68,9 @@
 ##' Biid <- IIDbaseline.cifreg(fg,time=20)
 ##' FGprediid(Biid,bmt[1:5,])
 ##'
-##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR gofFG
+##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR gofFG cifregN cifregFG IIDbaseline.cifregN
 ##' @export
-cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,
-            weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
+cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
 { # {{{
     cl <- match.call() # {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -598,6 +597,52 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 
     return(out)
 }# }}}
+
+##' @export
+cifregN  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,...)
+{# {{{
+    cl <- match.call()
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster","offset","strataAugment")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (class(Y)!="Event") stop("Expected a 'Event'-object, with codes for terminal events (death.code if any), censoring (cens.code), and event of interest (cause)")
+    if (ncol(Y)==2) {
+        exit <- Y[,1]
+        entry <- rep(0,nrow(Y))
+        status <- Y[,2]
+    } else {
+        entry <- Y[,1]
+        exit <- Y[,2]
+        status <- Y[,3]
+    }
+    ## default version of codes, otherwise call recregN directly
+    all.codes <-  unique(status)
+    codes <- c(cause,cens.code) 
+    if (!is.null(no.codes)) codes <- c(codes,no.codes) 
+    mcodes <- match(codes,all.codes,nomatch=0)
+    death.code <- all.codes[-mcodes]
+
+    cif <- recregN(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
+return(cif)
+} # }}}
+
+##' @export
+cifregFG  <- function(formula,data,propodds=NULL,...)
+{# {{{
+cif <- cifregN(formula,data,propodds=propodds,...)
+return(cif)
+} # }}}
+
+##' @export
+IIDbaseline.cifregN <- function(x,...)
+{# {{{
+   out <- IIDbaseline.recregN(x,...)
+   return(out)
+} # }}}
 
 ##' @export
 IC.cifreg <- function(x, ...) {# {{{

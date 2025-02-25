@@ -3,7 +3,8 @@
   - While-alive estimation : `WA_recurrent` 
   - Marks for medical cost models : `recreg` `recregIPCW`
   - New default augmentation for `binreg` `resmeanIPCW` type="II", type="I" simple outcome IPCW
-  
+  - New version of `recreg` and `cifreg` for testing and comparison `recregN` and `cifregN`
+
 # mets 1.3.5
   - `sim.phreg` and `sim.recurrent` for simulations 
   - Combining `binreg`, `binregATE` with `resmeanIPCW` and `resmeanATE`
