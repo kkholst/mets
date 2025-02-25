@@ -1167,7 +1167,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     iH <- - tryCatch(solve(opt$hessian),error=function(e) matrix(0,nrow(opt$hessian),ncol(opt$hessian)) )
     opt$ihessian <- iH
     opt$no.opt <- FALSE
-    dd <- IIDrecreg(xx2,opt,cause=cause,cens.code=cens.code,death.code=death.code) 
+    dd <- IIDrecreg(xx2,opt,cause=cause,cens.code=cens.code,death.code=death.code,adm.cens=adm.cens.time) 
 
     Uiid <-  dd$beta.iid.naive 
     UUiid <- dd$beta.iid
@@ -1387,7 +1387,7 @@ return(out)
 }# }}}
 
 ##' @export
-IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbeta=NULL,beta.iid=NULL)
+IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbeta=NULL,beta.iid=NULL,adm.cens=NULL)
 { ## {{{
   if (is.null(fixbeta)) 
   if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
@@ -1421,6 +1421,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     Gstart <- rep(1,nCstrata)
     Gjumps <- Gcxx2[jumps,]
     ## }}}
+    if (!is.null(x$adm.cens.time)) typexx2 <- 1
 
     ### iid version given G_c when covariates are there 
     ## {{{ iid robust 
@@ -1451,8 +1452,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	    MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rrw*(typexx2==1)
 	    UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
     } else UU <- 0
-###    print(UU)
-
 
     if (!is.null(time)) {
 	    ## baseline
@@ -1464,12 +1463,10 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	    MGAiid2 <- matrix(0,length(S0i2),1)
 	    cumhazAA <- cumsumstrata(S0i2*btimexx,xx2$strata,xx2$nstrata)
 	    MGAiid <- S0i*btimexx-cumhazAA*rrw*(typexx2==1)
-###            MGAiids <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
-###    print("MGAiid1")
-###    print(MGAiids)
-    }
+    } else MGAiid <- NULL
 
-   if ((length(other)>=1) | !is.null(x$adm.cens.time)) { ## martingale part for type-2 after T
+
+   if ((length(other)>=1) & is.null(adm.cens)) { ## martingale part for type-2 after T
    ## tail part with \int (Z_i-E) w_i(t) dM_i = \int_D_i^\tau (Z_i-E) Gc(t) dM_i/Gc(D_i) 
    rrw2 <- rrw*(typexx2==2)
    GdL <- c(cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)$res)
@@ -1478,44 +1475,35 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
             return(cx)
     }
 
-    if ( (!is.null(beta.iid)) | fixbeta==0) {
+    if ( ((!is.null(beta.iid)) | fixbeta==0) & is.null(adm.cens)) {
 	    EGdL  <- apply(E,2,fff)
 	    MGt2  <- -(Z*GdL-EGdL)*rrw2
 	    UU2 <- apply(MGt2,2,sumstrata,xx2$id,mid+1)
 	    UU  <-  UU+UU2
     }
-###    print(cbind(UU2,UU))
 
     dstrata <- mystrata(data.frame(strataCxx2,xx2$strata))
     ndstrata <- attr(dstrata,"nlevel")
     lastt <- tailstrata(dstrata-1,ndstrata)
 
-###    print(Gcxx2)
-
-    if (!is.null(time)) {
+    if (!is.null(time) & is.null(adm.cens)) {
 	    ## baseline
 	    ll <-  cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
 	    HBtinf <- ll$res[lastt][dstrata]-ll$res
-###	    MGAiid2[otherxx2,] <- -HBtsj[other,,drop=FALSE]*rrw2
-###	    MGAiid2 <- -HBtsj*c(rrw2)
 	    MGAiid2 <- -ll$res*c(rrw2)
-###            MGAiid2s <- apply(MGAiid2,2,sumstrata,xx2$id,mid+1)
 	    MGAiid <- MGAiid+MGAiid2
             MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
-###	    print("MGA2"); print(MGAiid)
-###	    print("HBtinf")
-###	    print(HBtinf)
     }
-
-    if ( (!is.null(beta.iid)) | fixbeta==0) {
+       if ( ((!is.null(beta.iid)) | fixbeta==0) & is.null(adm.cens)) {
 	    Htinf <- GdL[lastt][dstrata]-GdL
 	    ff <- function(x) x[lastt][dstrata]-x
 	    EHtinf  <- apply(EGdL,2,ff)
-###	print("H,EH"); print(cbind(Htinf,EHtinf))
     }
    } ## }}}
 
-    if ((length(other)>=1) & (length(whereC)>0) | !is.null(x$adm.cens.time)) { ## {{{
+ if (!is.null(time) & !is.null(adm.cens)) MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
+
+    if ((length(other)>=1) & (length(whereC)>0) & is.null(adm.cens)) { ## {{{
         ### Censoring adjustment for jumps of other type but only for KM-case 
         ### first time we see them with type2 event 
         rrw2j <- -c(rrw2*(xx2$sign==-1))
@@ -1525,7 +1513,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
         q2 <- (Xos*c(Htinf)-EHtinf*c(rrsx))
 
         if (!is.null(time))  qB2 <- rrsx*c(HBtinf) 
-###	print(qB2)
 
         sss <- headstrata(dstrata-1,ndstrata)
         fff <- function(x) {
@@ -1534,18 +1521,15 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
             return(cx)
         }
         EdLam0q2 <- apply(q2,2,fff)
-###	print(EdLam0q2)
 
         ### Martingale  as a function of time and for all subjects to handle strata
         if ( (!is.null(beta.iid)) | fixbeta==0) {
         MGc <- q2*S0iC-EdLam0q2*c(xx2$sign)*(typexx2==1)
         MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
 	}
-###	print(MGc)
 
-        if (!is.null(time)) {
+    if (!is.null(time) & is.null(adm.cens)) {
 	   EBdLam0q2 <- apply(qB2,2,fff)
-###	print(cbind(qB2,EBdLam0q2))
            MGBc <- qB2*S0iC-EBdLam0q2*c(xx2$sign)*(typexx2==1)
            MGBc <- apply(MGBc,2,sumstrata,xx2$id,mid+1)
 	}
@@ -1553,11 +1537,9 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     } else { MGc <- 0; MGBc <- 0}
 
 
-   if (!is.null(time)) {
+    if (!is.null(time) & is.null(adm.cens)) {
    MGAiid <- MGAiid+MGBc 
-###   print("MGAiid"); print(MGAiid)
-   } else { MGAiid <- NULL }
-
+   }  
 
    if ( (!is.null(beta.iid)) | fixbeta==0) {
 	   Uiid <-  (UU+MGc) %*% x$ihessian
@@ -1572,13 +1554,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     HtS <- Ht[Htlast,,drop=FALSE]
  } ## }}}
 
-###  if (!is.null(time)) {
-###     print(HtS)
-###     print(cbind(Uiid,MGAiid))
-###   }
-###
-### print("::::::::::::::::")
-
 ## sum after id's within strata and order 
 if (!is.null(time))  {
  MGAiids <- c()
@@ -1590,19 +1565,11 @@ if (!is.null(time))  {
 
  for (i in sus)  { 
 	 ws <- 1*(wis==i)
-###         MGAiidl <- sumstrata(MGAiidt[ws],id,mid+1)
-###	 print(MGAiidl)
 	 cumhaz.time <- c(cumhaz.time,cpred(x$cumhaz[x$strata[x$jumps]==i,],time)[,-1])
-###	 print(names(x))
-###	 print(cumhaz.time)
-###	 print(x$cumhaz)
-###	 print(x$strata)
-###	 print(x$jumps)
 
         if (fixbeta==0) {
            UU <-  apply(HtS[i+1,]*t(Uiid),2,sum)
            MGAiidl <- ws*MGAiid - UU
-###	   print(cbind(ws,MGAiid,UU,MGAiidl))
          }
          MGAiids <- cbind(MGAiids,MGAiidl)
  }
@@ -1623,11 +1590,13 @@ if (!is.null(time))  {
    return(out)
 } ## }}}
 
-##' @export IIDbaseline.recregN
+##' @export
 IIDbaseline.recregN <- function(x,time=NULL,fixbeta=NULL,beta.iid=x$iid,...)
 {# {{{
-   return(IIDrecreg(x$cox.prep,x,time=time,fixbeta=fixbeta,beta.iid=beta.iid,...))
+   return(IIDrecreg(x$cox.prep,x,time=time,fixbeta=fixbeta,beta.iid=beta.iid,
+		    adm.cens=x$adm.cens,...))
 } # }}}
+
 
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
