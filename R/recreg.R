@@ -1012,7 +1012,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
         Zcallo <-  Zcall[other,]
         Zcallo[,6] <- 2
 	Zcall <- rbind(Zcall,Zcallo)
-	Zcall <- cbind(Zcall,rbind(XXA,XXA[other,]))
+	Zcall <- cbind(Zcall,rbind(XXA,XXA[other,,drop=FALSE]))
     }# }}}
 
     stat1 <- 1*(status %in% cause)
