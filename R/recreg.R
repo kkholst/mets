@@ -57,7 +57,7 @@
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2)
 ##' 
-##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox recregN IIDbaseline.recregN IIDrecreg
+##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox recregN IIDbaseline.recregN IIDrecreg pred.time
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
@@ -1597,7 +1597,6 @@ IIDbaseline.recregN <- function(x,time=NULL,fixbeta=NULL,beta.iid=x$iid,...)
 		    adm.cens=x$adm.cens,...))
 } # }}}
 
-
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
@@ -2226,6 +2225,44 @@ GLprediid <- function(...)
 out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
+
+##' @export
+pred.time  <-  function(x,newdata,time=NULL,np=50) { ## {{{
+
+if (is.null(time))  {
+  if (is.null(np)) time <- x$cumhaz[,2] else time <- quantile(x$cumhaz[,2],probs=seq(0,1,length=np))
+} 
+
+rangem <- c()
+predt <- list()
+for (i in seq(nrow(newdata))) {
+pred <- c()
+for (tt in time) {
+	bt <- IIDbaseline.recregN(x,time=tt)
+
+	 if (inherits(x,c("cifreg"))) pt <- FGprediid(bt,newdata[i,]);
+	 if (inherits(x,c("recreg"))) pt <- GLprediid(bt,newdata[i,])
+	 pred <- rbind(pred,cbind(tt,pt)) 
+}
+predt[[i]] <- pred
+rangem <- rbind(rangem,range(pred[,3:4]))
+}
+
+class(predt) <- "FGGLtime"
+attr(predt,"range") <- range(rangem)
+return(predt)
+} ## }}}
+
+##' @export
+plot.FGGLtime <- function(x,...) { ## {{{
+ran <- attr(x,"range")
+i <- 1
+for  (xx in x) {
+if (i==1) plots(xx[,1:2],col=i,ylim=ran) else lines(xx[,1:2],col=i,type="s")
+plotConfRegion(xx[,1],xx[,4:5],col=i)
+i <- i+1
+}
+} ## }}} 
 
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsize=0.5,...) 
 {# {{{

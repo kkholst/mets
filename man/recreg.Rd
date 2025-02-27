@@ -12,6 +12,7 @@
 \alias{recregN}
 \alias{IIDbaseline.recregN}
 \alias{IIDrecreg}
+\alias{pred.time}
 \title{Recurrent events regression with terminal event}
 \usage{
 recreg(
