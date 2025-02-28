@@ -627,6 +627,7 @@ cifregN  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,.
     death.code <- all.codes[-mcodes]
 
     cif <- recregN(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
+    class(cif) <- c("cifreg","phreg")
 return(cif)
 } # }}}
 
