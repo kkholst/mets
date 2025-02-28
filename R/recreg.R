@@ -2261,12 +2261,15 @@ return(predt)
 } ## }}}
 
 ##' @export
-plot.FGGLtime <- function(x,ylim=NULL,...) { ## {{{
+plot.FGGLtime <- function(x,ylim=NULL,col=NULL,...) { ## {{{
 if (is.null(ylim)) ylim <- attr(x,"range")
+if (is.null(col)) cols <- 1:length(x) else {
+	if (length(col)!=length(x)) cols <- rep(col[1],length(xx)) else cols <- col
+}
 i <- 1
 for  (xx in x) {
-if (i==1) plots(xx[,1:2],col=i,ylim=ylim) else lines(xx[,1:2],col=i,type="s")
-plotConfRegion(xx[,1],xx[,4:5],col=i)
+if (i==1) plots(xx[,1:2],col=cols[i],ylim=ylim) else lines(xx[,1:2],col=cols[i],type="s")
+plotConfRegion(xx[,1],xx[,4:5],col=cols[i])
 i <- i+1
 }
 } ## }}} 
