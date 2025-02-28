@@ -2235,7 +2235,7 @@ return(out)
 pred.time  <-  function(x,newdata,time=NULL,np=50) { ## {{{
 
 if (is.null(time))  {
-  if (is.null(np)) time <- x$cumhaz[,2] else time <- quantile(x$cumhaz[,2],probs=seq(0,1,length=np))
+  if (is.null(np)) time <- x$cumhaz[,1] else time <- quantile(x$cumhaz[,1],probs=seq(0,1,length=np))
 } 
 
 rangem <- c()
