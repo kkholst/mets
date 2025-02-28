@@ -1597,7 +1597,7 @@ if (!is.null(time))  {
 ##' @export
 IIDbaseline.recregN <- function(x,time=NULL,fixbeta=NULL,beta.iid=x$iid,...)
 {# {{{
-if (is.null(cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
+if (is.null(x$cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
    return(IIDrecreg(x$cox.prep,x,time=time,fixbeta=fixbeta,beta.iid=beta.iid,
 		    adm.cens=x$adm.cens,...))
 } # }}}
