@@ -57,7 +57,7 @@
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2)
 ##' 
-##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox recregN IIDbaseline.recregN IIDrecreg pred.time
+##' @aliases IIDbaseline.recreg strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox recregN IIDbaseline.recregN IIDrecreg predicttime
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
@@ -1392,6 +1392,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
   if (is.null(fixbeta)) 
   if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
+
   xx2 <- coxprep
   status <- xx2$Z[,1]
   cause.jumps <- xx2$jumps+1 
@@ -1437,10 +1438,10 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
        U <- E <- matrix(0,nrow(Z),p)
        E[jumps,] <- x$E
        U[jumps,] <- x$U
-    }
+    EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
+    } else U <- NULL
     cumhazA <- cumsumstratasum(S0i,xx2$strata,xx2$nstrata,type="all")
     cumhaz <- c(cumhazA$sum)
-    EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
     
    if (!is.null(time))  btimexx <- (xx2$time<time) else btimexx <- rep(1,length(xx2$time))
 
@@ -1514,8 +1515,8 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
         Xos <- Z*rrw2j
         rrsx <- cumsumstrata(rrw2j,strataCxx2,nCstrata)
         Xos <- apply(Xos,2,cumsumstrata,strataCxx2,nCstrata)
-        q2 <- (Xos*c(Htinf)-EHtinf*c(rrsx))
 
+        if ( (!is.null(beta.iid)) | fixbeta==0) q2 <- (Xos*c(Htinf)-EHtinf*c(rrsx))
         if (!is.null(time))  qB2 <- rrsx*c(HBtinf) 
 
         sss <- headstrata(dstrata-1,ndstrata)
@@ -1524,10 +1525,11 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
             cx  <- cumsum2strata(x,S0iC2,dstrata-1,ndstrata,strataCxx2,nCstrata,gtstart)$res
             return(cx)
         }
-        EdLam0q2 <- apply(q2,2,fff)
+
 
         ### Martingale  as a function of time and for all subjects to handle strata
         if ( (!is.null(beta.iid)) | fixbeta==0) {
+	       EdLam0q2 <- apply(q2,2,fff)
         MGc <- q2*S0iC-EdLam0q2*c(xx2$sign)*(typexx2==1)
         MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
 	}
@@ -1574,7 +1576,7 @@ if (!is.null(time))  {
         if (fixbeta==0) {
            UU <-  apply(HtS[i+1,]*t(Uiid),2,sum)
            MGAiidl <- ws*MGAiid - UU
-         }
+         } else MGAiidl <- ws*MGAiid 
          MGAiids <- cbind(MGAiids,MGAiidl)
  }
  colnames(MGAiids) <- paste("strata",sus,sep="")
@@ -2232,7 +2234,7 @@ return(out)
 }# }}}
 
 ##' @export
-pred.time  <-  function(x,newdata,time=NULL,np=50) { ## {{{
+predicttime  <-  function(x,newdata,time=NULL,np=50) { ## {{{
 
 if (is.null(time))  {
   if (is.null(np)) time <- x$cumhaz[,1] else time <- quantile(x$cumhaz[,1],probs=seq(0,1,length=np))
@@ -2259,11 +2261,11 @@ return(predt)
 } ## }}}
 
 ##' @export
-plot.FGGLtime <- function(x,...) { ## {{{
-ran <- attr(x,"range")
+plot.FGGLtime <- function(x,ylim=NULL,...) { ## {{{
+if (is.null(ylim)) ylim <- attr(x,"range")
 i <- 1
 for  (xx in x) {
-if (i==1) plots(xx[,1:2],col=i,ylim=ran) else lines(xx[,1:2],col=i,type="s")
+if (i==1) plots(xx[,1:2],col=i,ylim=ylim) else lines(xx[,1:2],col=i,type="s")
 plotConfRegion(xx[,1],xx[,4:5],col=i)
 i <- i+1
 }
