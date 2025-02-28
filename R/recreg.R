@@ -1410,16 +1410,20 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     typexx2 <- xx2$Z[,6]
     rr0 <- xx2$sign*(typexx2==1)
     jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1 & typexx2==1)
-    strataCxx2 <- xx2$Z[,2]
-    S0iC2  <-  S0iC <- rep(0,length(xx2$status))
-    nCstrata <- max(strataCxx2)+1
-    S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
-    S0iC[jumpsC] <- 1/S0rrr[jumpsC]
-    S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
-    ## Gc(t) computed  along all times of combined data-set: data + [D,\infty] 
-    Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
-    Gstart <- rep(1,nCstrata)
-    Gjumps <- Gcxx2[jumps,]
+###    if (length(jumpsC)>1 & is.null(adm.cens.time)) {
+	    strataCxx2 <- xx2$Z[,2]
+	    S0iC2  <-  S0iC <- rep(0,length(xx2$status))
+	    nCstrata <- max(strataCxx2)+1
+	    S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
+	    if (length(jumpsC)>0) {
+	    S0iC[jumpsC] <- 1/S0rrr[jumpsC]
+	    S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
+	    }
+	    ## Gc(t) computed  along all times of combined data-set: data + [D,\infty] 
+	    Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
+	    Gstart <- rep(1,nCstrata)
+	    Gjumps <- Gcxx2[jumps,]
+###    } else 
     ## }}}
     if (!is.null(x$adm.cens.time)) typexx2 <- 1
 
@@ -1466,7 +1470,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     } else MGAiid <- NULL
 
 
-   if ((length(other)>=1) & is.null(adm.cens)) { ## martingale part for type-2 after T
+   if (length(other)>=1 & is.null(adm.cens)) { ## martingale part for type-2 after T
    ## tail part with \int (Z_i-E) w_i(t) dM_i = \int_D_i^\tau (Z_i-E) Gc(t) dM_i/Gc(D_i) 
    rrw2 <- rrw*(typexx2==2)
    GdL <- c(cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)$res)
@@ -1593,6 +1597,7 @@ if (!is.null(time))  {
 ##' @export
 IIDbaseline.recregN <- function(x,time=NULL,fixbeta=NULL,beta.iid=x$iid,...)
 {# {{{
+if (is.null(cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
    return(IIDrecreg(x$cox.prep,x,time=time,fixbeta=fixbeta,beta.iid=beta.iid,
 		    adm.cens=x$adm.cens,...))
 } # }}}
