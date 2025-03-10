@@ -4,16 +4,18 @@
 \alias{cif}
 \title{Cumulative incidence with robust standard errors}
 \usage{
-cif(formula, data = data, cause = 1, cens.code = 0, ...)
+cif(formula, data = data, cause = 1, cens.code = 0, death.code = NULL, ...)
 }
 \arguments{
-\item{formula}{formula with 'Surv' outcome (see \code{coxph})}
+\item{formula}{formula with 'Event' outcome and strata (only!)}
 
 \item{data}{data frame}
 
 \item{cause}{NULL looks at all, otherwise specify which cause to consider}
 
-\item{cens.code}{censoring code "0" is default}
+\item{cens.code}{censoring code "0" is default, and death is cens.code!=0}
+
+\item{death.code}{alternative to cens.code give codes of death}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -21,17 +23,14 @@ cif(formula, data = data, cause = 1, cens.code = 0, ...)
 Cumulative incidence with robust standard errors
 }
 \examples{
-data(TRACE)
-TRACE$cluster <- sample(1:100,1878,replace=TRUE)
-out1 <- cif(Event(time,status)~+1,data=TRACE,cause=9)
-out2 <- cif(Event(time,status)~+1+cluster(cluster),data=TRACE,cause=9)
-
-out1 <- cif(Event(time,status)~strata(vf,chf),data=TRACE,cause=9)
-out2 <- cif(Event(time,status)~strata(vf,chf)+cluster(cluster),data=TRACE,cause=9)
+data(bmt)
+bmt$cluster <- sample(1:100,408,replace=TRUE)
+out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)
+out2 <- cif(Event(time,cause)~+1+cluster(cluster),data=bmt,cause=1)
 
 par(mfrow=c(1,2))
-bplot(out1,se=TRUE)
-bplot(out2,se=TRUE)
+plot(out1,se=TRUE)
+plot(out2,se=TRUE)
 }
 \author{
 Thomas Scheike

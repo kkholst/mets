@@ -9,8 +9,8 @@
 \alias{recregIPCW}
 \alias{twostageREC}
 \alias{simGLcox}
-\alias{recregN}
-\alias{IIDbaseline.recregN}
+\alias{recregO}
+\alias{IIDbaseline.recregO}
 \alias{IIDrecreg}
 \alias{predicttime}
 \title{Recurrent events regression with terminal event}
@@ -19,7 +19,7 @@ recreg(
   formula,
   data,
   cause = 1,
-  death.code = c(2),
+  death.code = 2,
   cens.code = 0,
   cens.model = ~1,
   weights = NULL,
@@ -85,18 +85,20 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 }
 \examples{
 ## data with no ties
+library(mets)
 data(hfaction_cpx12)
 hf <- hfaction_cpx12
 hf$x <- as.numeric(hf$treatment) 
+dd <- data.frame(treatment=levels(hf$treatment),id=1)
 
-ll <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
-cause=1,death.code=2)
-summary(ll)
+gl <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,cause=1,death.code=2)
+summary(gl)
+pgl <- predict(gl,dd,se=1); plot(pgl,se=1)
 
 ## censoring stratified after treatment 
-lls <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
+gls <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
 cause=1,death.code=2,cens.model=~strata(treatment))
-summary(lls)
+summary(gls)
 
 ## IPCW at 2 years 
 ll2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),data=hf,

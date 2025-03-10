@@ -49,10 +49,14 @@ fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left
 }# }}}
 
 ##' @export
-predictCumhaz <- function (cum, new.time, type = c("left", "right", "nearest"),tminus=TRUE,tplus=TRUE,...)
+predictCumhaz <- function (cum, new.time, type = c("left", "right", "nearest"),tminus=FALSE,tplus=FALSE,return.index=TRUE,...)
 {# {{{
    if (NCOL(cum)>1) { cumh <- cum[,-1,drop=FALSE]; time <- cum[,1]} else time <- cum
-   index <- fast.approx(time,new.time, type = type[1],equal=TRUE,...)
+   equal <- FALSE
+   if (type[1]=="left" & tminus) equal <- TRUE
+   if (type[1]=="right" & tplus) equal <- TRUE
+   index <- fast.approx(time,new.time,type=type[1],equal=equal,...)
+   if (equal) {
    equali <- which(index$eq!=0)
    index <- index$idx
    if (length(equali)>=1 & tminus & type[1]=="left") {
@@ -64,9 +68,12 @@ predictCumhaz <- function (cum, new.time, type = c("left", "right", "nearest"),t
    if (any(index==0))  { 
       index[index==0] <- 1 
    }
+   }
    if (NCOL(cum)>1) {
 	   res <- cbind(new.time, cumh[index,])
-   } else res <-  index
+   } else {
+	   if (return.index) res <-  index else res <- time[index]
+   }
    return(res)
 }# }}}
 
@@ -74,24 +81,26 @@ predictCumhaz <- function (cum, new.time, type = c("left", "right", "nearest"),t
 cpred <- function(...) predictCumhaz(...)
 
 ##' @export
-indexstrata <- function(jump.times,jump.strata,eval.times,eval.strata,nstrata,equal=FALSE,
-			type=c("nearest","right","left"),sorted=FALSE,start.time=NULL)
+indexstrata <- function(jump.times,eval.times,jump.strata=NULL,eval.strata=NULL,nstrata=NULL,start.time=NULL,...)
 {   # {{{
 	stopifnot(is.numeric(jump.times))
 	stopifnot(is.numeric(eval.times))
-	if (any(eval.strata<0) | any(eval.strata>nstrata-1)) stop("eval.strata index not ok\n"); 
-	if (any(jump.strata<0) | any(jump.strata>nstrata-1)) stop("jump.strata index not ok\n"); 
+	if (is.null(jump.strata)) jump.strata <- rep(0,length(jump.times))
+	if (is.null(eval.strata)) eval.strata <- rep(0,length(eval.times))
+###	if (any(eval.strata<0) | any(eval.strata>nstrata-1)) stop("eval.strata index not ok\n"); 
+###	if (any(jump.strata<0) | any(jump.strata>nstrata-1)) stop("jump.strata index not ok\n"); 
 	N <- length(jump.times)
 	index <- rep(0,length(eval.times))
-
+	
 	for (i in unique(eval.strata)) {
 	   wherej <- which(eval.strata==i)
 	   whereJ <- which(jump.strata==i)
-	   if (!is.null(start.time)) iindex <- fast.approx(c(start.time,jump.times[whereJ]),eval.times[wherej],equal=equal,type=type,sorted=sorted) 
-	   else iindex <- fast.approx(jump.times[whereJ],eval.times[wherej],equal=equal,type=type,sorted=sorted) 
+	   if (!is.null(start.time)) iindex <- predictCumhaz(c(start.time,jump.times[whereJ]),eval.times[wherej],...)
+	   else iindex <- predictCumhaz(jump.times[whereJ],eval.times[wherej],...)
 	iindexn0 <- which(iindex!=0)
         if (length(iindexn0)>0)
 	   index[wherej[iindexn0]] <- whereJ[iindex[iindexn0]]
 	}
 	return(index)
 }# }}}
+

@@ -126,7 +126,7 @@ We now look at the plot  with robust standard errors
 
 
 ```{r}
-  bplot(rob,se=TRUE,robust=TRUE,col=3)
+  plot(rob,se=TRUE,robust=TRUE,col=3)
 ```
 
 We can also make survival prediction with robust standard errors using the phreg.

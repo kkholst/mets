@@ -52,7 +52,7 @@
 
 \item{se}{with standard errors and upper and lower confidence intervals.}
 
-\item{robust}{to get robust se's.}
+\item{robust}{to get robust se's also default for most functions (uses robse.cumhaz otherwise se.cumhaz).}
 
 \item{conf.type}{transformation for suvival estimates, default is log}
 

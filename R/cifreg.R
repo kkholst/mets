@@ -25,52 +25,99 @@
 ##'
 ##' @param formula formula with 'Event' outcome
 ##' @param data data frame
+##' @param propodds to fit logit link model, and propodds=NULL to fit Fine-Gray model
 ##' @param cause of interest
 ##' @param cens.code code of censoring
-##' @param cens.model for stratified Cox model without covariates
-##' @param offset offsets for FG  model
-##' @param weights weights for FG score equations
-##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
-##' @param propodds 1 is logistic model, NULL is fine-gray model
-##' @param ... Additional arguments to lower level funtions
+##' @param no.codes certain event codes to be ignored when finding competing causes
+##' @param ... Additional arguments to recreg 
 ##' @author Thomas Scheike
 ##' @examples
 ##' ## data with no ties
+##' library(mets)
 ##' data(bmt,package="timereg")
 ##' bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 ##' bmt$id <- 1:nrow(bmt)
 ##'
 ##' ## logistic link  OR interpretation
-##' ll=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
-##' summary(ll)
-##' plot(ll)
+##' or=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
+##' summary(or)
+##' par(mfrow=c(1,2))
+##' plot(or)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
-##' pll <- predict(ll,nd)
-##' plot(pll)
+##' por <- predict(or,nd)
+##' plot(por)
 ##'
 ##' ## Fine-Gray model
-##' fg=cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' fg=cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 ##' summary(fg)
 ##' plot(fg)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
-##' pfg <- predict(fg,nd)
-##' plot(pfg)
+##' pfg <- predict(fg,nd,se=1)
+##' plot(pfg,se=1)
 ##' 
 ##' ## not run to avoid timing issues
 ##' ## gofFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 ##' 
-##' sfg <- cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+##' sfg <- cifregFG(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1)
 ##' summary(sfg)
 ##' plot(sfg)
 ##'
 ##' ### predictions with CI based on iid decomposition of baseline and beta
-##' fg <- cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,propodds=NULL,cox.prep=TRUE)
+##' ### these are used in the predict function above
+##' fg <- cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 ##' Biid <- IIDbaseline.cifreg(fg,time=20)
-##' FGprediid(Biid,bmt[1:5,])
-##'
-##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR gofFG cifregN cifregFG IIDbaseline.cifregN
+##' pfg1 <- FGprediid(Biid,nd)
+##' pfg1
+##' @aliases vecAllStrata diffstrata IIDbaseline.cifreg FGprediid indexstratarightR gofFG cifregO cifregFG IIDbaseline.cifregO
 ##' @export
-cifreg <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
+cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,...)
+{# {{{
+    cl <- match.call()
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster","offset","strataAugment")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (class(Y)!="Event") stop("Expected a 'Event'-object, with codes for terminal events (death.code if any), censoring (cens.code), and event of interest (cause)")
+    if (ncol(Y)==2) {
+        exit <- Y[,1]
+        entry <- rep(0,nrow(Y))
+        status <- Y[,2]
+    } else {
+        entry <- Y[,1]
+        exit <- Y[,2]
+        status <- Y[,3]
+    }
+    ## default version of codes, otherwise call recregN directly
+    all.codes <-  unique(status)
+    codes <- c(cause,cens.code) 
+    if (!is.null(no.codes)) codes <- c(codes,no.codes) 
+    mcodes <- match(codes,all.codes,nomatch=0)
+    death.code <- all.codes[-mcodes]
+
+    cif <- recreg(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
+    class(cif) <- c("cifreg","phreg")
+return(cif)
+} # }}}
+
+##' @export
+cifregFG  <- function(formula,data,propodds=NULL,...)
+{# {{{
+cif <- cifreg(formula,data,propodds=propodds,...)
+return(cif)
+} # }}}
+
+##' @export
+IIDbaseline.cifreg <- function(x,...)
+{# {{{
+   out <- IIDbaseline.recreg(x,...)
+   return(out)
+} # }}}
+
+##' @export
+cifregO <- function(formula,data=data,cause=1,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,propodds=1,...)
 { # {{{
     cl <- match.call() # {{{
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -599,58 +646,45 @@ cifreg01 <- function(data,X,exit,status,id=NULL,strata=NULL,offset=NULL,weights=
 }# }}}
 
 ##' @export
-cifregN  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,...)
-{# {{{
-    cl <- match.call()
-    m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster","offset","strataAugment")
-    Terms <- terms(formula, special, data = data)
-    m$formula <- Terms
-    m[[1]] <- as.name("model.frame")
-    m <- eval(m, parent.frame())
-    Y <- model.extract(m, "response")
-    if (class(Y)!="Event") stop("Expected a 'Event'-object, with codes for terminal events (death.code if any), censoring (cens.code), and event of interest (cause)")
-    if (ncol(Y)==2) {
-        exit <- Y[,1]
-        entry <- rep(0,nrow(Y))
-        status <- Y[,2]
-    } else {
-        entry <- Y[,1]
-        exit <- Y[,2]
-        status <- Y[,3]
-    }
-    ## default version of codes, otherwise call recregN directly
-    all.codes <-  unique(status)
-    codes <- c(cause,cens.code) 
-    if (!is.null(no.codes)) codes <- c(codes,no.codes) 
-    mcodes <- match(codes,all.codes,nomatch=0)
-    death.code <- all.codes[-mcodes]
-
-    cif <- recregN(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
-    class(cif) <- c("cifreg","phreg")
-return(cif)
-} # }}}
-
-##' @export
-cifregFG  <- function(formula,data,propodds=NULL,...)
-{# {{{
-cif <- cifregN(formula,data,propodds=propodds,...)
-return(cif)
-} # }}}
-
-##' @export
-IIDbaseline.cifregN <- function(x,...)
-{# {{{
-   out <- IIDbaseline.recregN(x,...)
-   return(out)
-} # }}}
-
-##' @export
 IC.cifreg <- function(x, ...) {# {{{
   res <- with(x, iid * NROW(iid))
   return(res)
 }
 # }}}
+
+##' @export
+plot.cifreg <- function(x,se=FALSE,ylab=NULL,...) { ## {{{
+   if (inherits(x,"cifreg") & is.null(ylab)) ylab <- "Cumulative Hazard"
+if (!se) baseplot(x,se=se,ylab=ylab,...)
+else {
+    warning("Standard errors approximative (but too small), use predict and type='cumhaz' \n")
+    baseplot(x,se=se,ylab=ylab,...)
+}
+} ## }}}
+
+##' @export
+predict.cifreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { ## {{{
+if (!is.null(object$propodds) & se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
+if (!se) out <- mets:::predict.phreg(object,newdata,se=se,times=times,...)
+else {
+  out <- predictrecreg(object,newdata,times=times,np=np,...)
+}
+class(out) <- c("predictcifreg",class(object)[1])
+return(out)
+} ## }}}
+
+##' @export
+summary.predictcifreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[1],...) {# {{{
+ret <- mets:::summary.predictrecreg(object,type=type[1],times=times,...)
+return(ret)
+}# }}}
+
+##' @export
+plot.predictcifreg <- function(x,se=FALSE,ylab=NULL,type="cif",...)
+{ ## {{{
+  if (inherits(x,"predictcifreg") & is.null(ylab)) ylab <- "Probability"
+  plotpredictphreg(x,se=se,ylab=ylab,type=type[1],...)
+} ## }}}
 
 ##' @export
 gofFG <- function(formula,data,cause=1,cens.code=0,cens.model=NULL,...)
@@ -712,7 +746,7 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 } ## }}}
 
 ##' @export IIDbaseline.cifreg 
-IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
+IIDbaseline.cifregO <- function(x,time=NULL,fixbeta=NULL,...)
 {# {{{
 ###  sum_i int_0^t 1/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
@@ -871,7 +905,8 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
  for (i in sus)  { 
 	 wi <- which(xx2$strata==i)
          MGAiidl <- sumstrata(MGAiid[wi],xx2$id[wi],mid+1)
-	 cumhaz.time <- c(cumhaz.time,cpred(x$cumhaz[x$strata[x$jumps]==i,],time)[,-1])
+	 cumhazs <- x$cumhaz[x$strata[x$jumps]==i,,drop=FALSE]
+cumhaz.time <- c(cumhaz.time,cpred(rbind(0,cumhazs),time)[,2])
 
         if (fixbeta==0) {
            UU <-  apply(HtS[i+1,]*t(betaiid),2,sum)
@@ -890,6 +925,7 @@ IIDbaseline.cifreg <- function(x,time=NULL,fixbeta=NULL,...)
 	     model.frame=x$model.frame,formula=x$formula))
 } # }}}
 
+
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")
 {# {{{
@@ -899,21 +935,22 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model
 	  fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X; p <- ncol(beta.iid); 
   } else { fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); p <- 1 }
 
-   sus <- sort(unique(strata))
-
-   At <- iidBase$cumhaz.time[match(sus,iidBase$strata.time)]
+  sus <- sort(unique(strata))
+  At <- iidBase$cumhaz.time[match(sus,iidBase$strata.time)]
 
    if (missing(X)) X <- matrix(0,1,p)
    if (ncol(X)!=p) stop("X and coef does not match \n"); 
 
-   Ft <- function(p,Xi=rep(0,length(p)-1),type="log") {
+   Ft <- function(coef,Xi=rep(0,length(p)),type="log") {
+	   base <- coef[1]
+	   p <- coef[-1]
    if (model=="FG") {
-       if (type=="log")     y <- log(1-exp(-p[1]*exp(sum(Xi*p[-1]))))
-       if (type=="plain")   y <- 1-exp(-p[1]*exp(sum(Xi*p[-1])))
-       if (type=="cloglog") y <- log(-log(1-exp(-p[1]*exp(sum(Xi*p[-1])))))
+       if (type=="log")     y <- log(1-exp(-base*exp(Xi %*% p)))
+       if (type=="plain")   y <- 1-exp(-base*exp(Xi %*% p))
+       if (type=="cloglog") y <- log(-log(1-exp(-base*exp(Xi %*% p))))
    } else { ## Ghosh-Lin model
-       if (type=="log")     y <- log(p[1]*exp(sum(Xi*p[-1])))
-       if (type=="plain")   y <- p[1]*exp(sum(Xi*p[-1]))
+       if (type=="log")     y <- log(base*exp(Xi %*% p))
+       if (type=="plain")   y <- base*exp(Xi %*% p)
    }
        return(y)
    }

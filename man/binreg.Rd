@@ -99,8 +99,8 @@ summary(out)
 
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
-##outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
-##summary(outs)
+outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
+summary(outs)
 
 ## glm with IPCW weights 
 outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)

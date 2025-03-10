@@ -215,14 +215,14 @@ rxr <-   robust.phreg(xr,fixbeta=1)
 plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 
 # marginal mean of expected number of recurrent events 
-out <- recurrentMarginal(xr,dr)
+out <- recurrentMarginal(Event(entry,time,status)~cluster(id),data=rr,cause=1,death.code=2)
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 ```
 
 We can also extract the estimate in different time-points 
 
 ```{r}
-summary(out,times=c(1000,2000))$pbaseci[[1]]
+summary(out,times=c(1000,2000))
 ```
 
 The marginal mean can also be estimated in a stratified case:
@@ -237,7 +237,8 @@ plot(xr,se=TRUE)
 rxr <-   robust.phreg(xr,fixbeta=1)
 plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
 
-out <- recurrentMarginal(xr,dr)
+out <- recurrentMarginal(Event(entry,time,status)~strata(strata)+cluster(id),
+			 data=rr,cause=1,death.code=2)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
@@ -258,12 +259,13 @@ plot(xr,se=TRUE)
 rxr <- robust.phreg(xr)
 plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
 
-out <- recurrentMarginal(xr,dr)
+out <- recurrentMarginalPhreg(xr,dr)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 
-# predictions witout se's 
-outX <- recmarg(xr,dr,Xr=1,Xd=1)
-bplot(outX,add=TRUE,col=3)
+#### predictions witout se's 
+###outX <- recmarg(xr,dr,Xr=1,Xd=1)
+###plot(outX,add=TRUE,col=3)
+
 ```
 
 Here I simulate multiple types and two causes of death causes of death 
@@ -291,10 +293,10 @@ rr <- transform(rr,statusD=status)
 rr <- dtransform(rr,statusD=3,death==1)
 dtable(rr,~statusD+status+death,level=2,response=1)
 
-xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
-dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
+##xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
+##dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
 # marginal mean of expected number of recurrent events 
-out <- recurrentMarginal(xr,dr)
+out <- recurrentMarginal(Event(start,stop,statusD)~cluster(id),data=rr,cause=1,death.code=3)
 
 times <- 500*(1:10)
 recEFF1 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
@@ -310,7 +312,7 @@ recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr
 death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
-bplot(out,se=TRUE,ylab="marginal mean",col=2)
+plot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
 for (t in times) {
 	ci1 <- c(recEFF1$muPAt[k]-1.96*recEFF1$semuPAt[k],
@@ -346,10 +348,8 @@ recEFF1x <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr
 				   cens.code=0,death.code=3,cause=1,augment.model=~X1+X2)
 with(recEFF1x, cbind(muP,muPA,muPAt,semuP,semuPA,semuPAt,semuPAt/semuP))
 
-xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
-dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
-out <- recurrentMarginal(xr,dr)
-mets::summaryTimeobject(out$times,out$mu,times=times,se.mu=out$se.mu)
+out <- recurrentMarginal(Event(start,stop,statusD)~cluster(id),data=rr,cause=1,death.code=3)
+summary(out,times=times)
 ```
 
 Regression models for the marginal mean 
@@ -434,9 +434,9 @@ and with weights  $w_1,w_2$ that follow the causes, here 1 and 3.
 		  death.code=c(3,4),cens.code=0,wcomp=c(1,2))
  summary(outCW)$coef
 
- bplot(out,ylab="Mean composite")
- bplot(outC,col=2,add=TRUE)
- bplot(outCW,col=3,add=TRUE)
+ plot(out,ylab="Mean composite")
+ plot(outC,col=2,add=TRUE)
+ plot(outCW,col=3,add=TRUE)
 ```
 
 Predictions and standard errors can be computed via the iid decompositions of the baseline and the regression coefficients. We illustrate this
@@ -472,9 +472,9 @@ satisfying the Ghosh-Lin model.
 Now we fit the two-stage model (the recreg must be called with cox.prep=TRUE)
 
 ```{r}
- out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,
-		cause=1,death.code=3,cens.code=0,cox.prep=TRUE)
+ out  <- phreg(Event(start,stop,statusD==1)~X1+X2+cluster(id),data=rr)
  outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
+ outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr)
 
  tsout <- twostageREC(outs,out,data=rr)
  summary(tsout)

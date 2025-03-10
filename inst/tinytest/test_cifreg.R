@@ -2,6 +2,7 @@
 library("tinytest")
 
 test_cifreg <- function() {
+  library(mets)
   set.seed(100)
   data(bmt)
   bmt$time <-  bmt$time + runif(nrow(bmt)) * 0.001
@@ -19,8 +20,10 @@ test_cifreg <- function() {
                  diag(cr$var)^.5 - fg$se.coef)
     mm
     ## estimate (same) and standard errors (close close)
-    expect_true( ((sum(abs(mm[, 5]))) < 0.0001) &
-                 ((sum(abs(mm[,6])))<0.0001)   )
+    expect_true( ((sum(abs(mm[, 5]))) < 0.0001) & ((sum(abs(mm[,6])))<0.0001)   )
   }
 }
 test_cifreg()
+
+
+

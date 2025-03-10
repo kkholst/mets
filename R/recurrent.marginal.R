@@ -12,10 +12,10 @@
 ##' 
 ##' Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 ##' 
-##' @param recurrent phreg object with recurrent events
-##' @param death     phreg object with deaths
-##' @param fixbeta   to force the estimation of standard errors to think of regression coefficients as known/fixed
-##' @param km  if true then uses Kaplan-Meier for death, otherwise exp(- Nelson-Aalen ) 
+##' @param formula with Event object
+##' @param data data frame for computation
+##' @param cause of interest (1 default)
+##' @param death.code codes for death (terminating event, 2 default)
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' 
@@ -35,43 +35,123 @@
 ##' title(main="death")
 ##' plot(xr,se=TRUE)
 ##' ### robust standard errors 
-##' rxr <-   robust.phreg(xr,fixbeta=1)
+##' rxr <-  robust.phreg(xr,fixbeta=1)
 ##' plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 ##' 
 ##' ## marginal mean of expected number of recurrent events 
-##' out <- recurrentMarginal(xr,dr)
-##' plot(out,se=TRUE,ylab="marginal mean",col=2)
+##' ## out <- recurrentMarginalPhreg(xr,dr)
+##' ## summary(out,times=1:5) 
+##' 
+##' ## marginal mean using formula  
+##' outN <- recurrentMarginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
+##' plot(outN,se=TRUE,col=2,add=TRUE)
+##' summary(outN,times=1:5) 
 ##' 
 ##' ########################################################################
 ##' ###   with strata     ##################################################
 ##' ########################################################################
-##' xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-##' dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
-##' par(mfrow=c(1,3))
-##' plot(dr,se=TRUE)
-##' title(main="death")
-##' plot(xr,se=TRUE)
-##' rxr <-   robust.phreg(xr,fixbeta=1)
-##' plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
-##'
-##' out <- recurrentMarginal(xr,dr)
+##' out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hf,cause=1,death.code=2)
 ##' plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+##' summary(out,times=1:5) 
 ##'
-##' ########################################################################
-##' ###   CIF  #############################################################
-##' ########################################################################
-##' ### use of function to compute cumulative incidence (cif) with robust standard errors
-##'  data(bmt)
-##'  bmt$id <- 1:nrow(bmt)
-##'  xr  <- phreg(Surv(time,cause==1)~cluster(id),data=bmt)
-##'  dr  <- phreg(Surv(time,cause!=0)~cluster(id),data=bmt)
-##' 
-##'  out <- recurrentMarginal(xr,dr,km=TRUE)
-##'  plot(out,se=TRUE,ylab="cumulative incidence")
-##' 
-##' @aliases tie.breaker recmarg recurrentMarginalAIPCW 
+##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg
 ##' @export
-recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
+recurrentMarginal <- function(formula,data=data,cause=1,death.code=2,...)
+{# {{{
+  cl <- match.call()
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+  if (ncol(Y)==2) {
+    exit <- Y[,1]
+    entry <- NULL ## rep(0,nrow(Y))
+    status <- Y[,2]
+  } else {
+    entry <- Y[,1]
+    exit <- Y[,2]
+    status <- Y[,3]
+  }
+  id <- strata <- NULL
+  if (!is.null(attributes(Terms)$specials$cluster)) {
+    ts <- survival::untangle.specials(Terms, "cluster")
+    Terms  <- Terms[-ts$terms]
+    id <- m[[ts$vars]]
+  }
+  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+    ts <- survival::untangle.specials(Terms, "strata")
+    Terms  <- Terms[-ts$terms]
+    strata <- m[[ts$vars]]
+    strata.name <- ts$vars
+  }  else strata.name <- NULL
+  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+    ts <- survival::untangle.specials(Terms, "offset")
+    Terms  <- Terms[-ts$terms]
+    offset <- m[[ts$vars]]
+  }  
+  X <- model.matrix(Terms, m)
+  if (!is.null(intpos  <- attributes(Terms)$intercept))
+    X <- X[,-intpos,drop=FALSE]
+  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+  id.orig <- id; 
+  if (!is.null(id)) {
+	  ids <- sort(unique(id))
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+   } else id <- as.integer(seq_along(exit))-1; 
+
+  statusE <- 1*(status %in% cause)
+###  if (is.null(death.code)) statusD <- 1*(!(status %in% cens.code)) else 
+  statusD <- 1*(status %in% death.code)
+  data$statusE__ <- statusE
+  data$statusD__ <- statusD
+  data$strata__  <- strata
+
+  ### setting up formulae for the two phreg (cause of interest and death)
+  if (is.null(id.orig)) { 
+     formid <- update.formula(formula,~.+cluster(id)) 
+     data$id <- id
+     tt <- terms(formid)
+     tt <- delete.response(tt)
+     formid <- formula(tt)
+  }  else formid <- formula
+  tt <- terms(formid)
+  tt <- delete.response(tt)
+  formid <- formula(tt)
+
+  if (ncol(Y)==3) {
+     formE <- as.formula(paste("Surv(entry,exit,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(entry,exit,statusD__)~+1"))
+  } else {
+     formE <- as.formula(paste("Surv(exit,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(exit,statusD__)~+1"))
+  }
+ formE <- update.formula(formE,formid)
+ formD <- update.formula(formD,formid)
+
+  if (sum(statusE)==0) warning("No events of type 1\n"); 
+  coxE <- phreg(formE,data=data,...)
+  coxS <- phreg(formD,data=data,...)
+
+  ### cif 
+  if (sum(statusE)>0) meano <- recurrentMarginalPhreg(coxE,coxS) else meano <- coxE
+  ## to work with predict function
+  meano$no.opt <- TRUE
+
+  attr(meano,"cause") <- cause
+  attr(meano,"death.code") <- death.code
+  return(meano)
+}# }}}
+
+##' @export
+recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
 {# {{{
   xr <- recurrent
   dr <- death 
@@ -149,6 +229,52 @@ recurrentMarginal <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
  class(out) <- rep("recurrent",2)
  return(out)
 }# }}}
+
+##' @export
+plot.recurrent <- function(x,ylab=NULL,...) {# {{{
+ if (inherits(x,"recurrent") & is.null(ylab)) ylab <- "Mean events"
+ baseplot(x,ylab=ylab,...)
+}# }}}
+
+##' @export
+summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,name="mean",
+			      conf.type=c("log","log-log","plain"),...) {# {{{
+base <- basecumhaz(object,joint=1)
+nstrata <- object$nstrata
+stratobs <- attr(base,"stratobs")
+
+baseci <- rep(list(NULL),nstrata)
+if (length(stratobs)>0) 
+ for (i in stratobs) {
+   cumhaz <- base[[i+1]]$cumhaz
+   if (nrow(cumhaz)>=1) {
+     mu <- base[[i+1]]$cumhaz[,2]
+     se.mu <- base[[i+1]]$cumhaz[,3]
+	   if (length(mu)>=1) {
+	   conf <- conftype(mu,se.mu,conf.type=conf.type[1],...)
+	   out <- data.frame(times=cumhaz[,1],mu=mu,se.mu=se.mu,lower=conf$lower,upper=conf$upper,strata=i)
+	   names(out) <- c("times",name,"se","CI-2.5%","CI-97.5%","strata")
+	   baseci[[i+1]] <- out
+	   } 
+   } 
+   }
+
+pbaseci <- NULL
+if (!is.null(times)) {
+ if (length(stratobs)>0) 
+ for (i in stratobs) 
+if (!is.null(baseci[[i+1]])) pbaseci[[i+1]] <- predictCumhaz(rbind(0,baseci[[i+1]]),times) 
+}
+out <- list(baseci=baseci,pbaseci=pbaseci,times=times)
+
+class(out) <- "summary.recurrent"
+return(out)
+}# }}}
+
+##' @export
+print.summary.recurrent  <- function(x,...) {# {{{
+if (is.null(x$times)) print(x$baseci) else print(x$pbaseci)
+} # }}}
 
 ##' @export
 recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
@@ -257,7 +383,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
 
  ### cook-lawless-ghosh-lin
  xr0 <- phreg(form1,data=data,no.opt=TRUE)
- clgl  <- recurrentMarginal(xr0,dr)
+ clgl  <- recurrentMarginalPhreg(xr0,dr)
 ### bplot(clgl,se=1); print(cpred(clgl$cumhaz,times)); print(cpred(clgl$se.cumhaz,times)); 
 
   ####  First \mu_ipcw(t) \sum_i I(T_i /\ t \leq C_i)/G_c(T_i /\ t ) N_(T_i /\ t) {{{
@@ -354,42 +480,6 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
 
   return(list(censoring.weights=Gctb,muP.all=cumhazP,Gcjump=Gc[jump1],gamma=gamma,gamma.time=gammahat,times=times,
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
-}# }}}
-
-##' @export
-plot.recurrent <- function(x,...) {# {{{
- bplot(x,...)
-}# }}}
-
-##' @export
-summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,...) {# {{{
-
-base <- basecumhaz(object)
-nstrata <- object$nstrata
-
-baseci <- list()
- nstrata <- object$nstrata
- for (i in 1:nstrata) {
-   cumhaz <- base[[i]]$cumhaz
-   mu <- base[[i]]$cumhaz[,2]
-   se.mu <- base[[i]]$se.cumhaz[,2]
-   stratao <- i
-   se.logmu <- se.mu/mu
-   lower <- exp(log(mu) - 1.96*se.logmu)
-   upper <- exp(log(mu) + 1.96*se.logmu)
-   out <- data.frame(times=cumhaz[,1],mu=mu,se.mu=se.mu,lower=lower,upper=upper,strata=stratao)
-   names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%","strata")
-   baseci[[i]] <- out
-   }
-out <- baseci
-
-pbaseci <- list()
-if (!is.null(times)) {
-for (i in 1:nstrata) pbaseci[[i]] <- predictCumhaz(rbind(0,baseci[[i]]),times)
-out <- list(baseci=baseci,pbaseci=pbaseci)
-}
-
- return(out)
 }# }}}
 
 ##' @export
@@ -1162,10 +1252,10 @@ if (2 %in% which) {
   }
   }
 if (3 %in% which) {
-  meanr1 <-   recurrentMarginal(xrr,drr)
+  meanr1 <-   recurrentMarginalPhreg(xrr,drr)
   basehazplot.phreg(meanr1,se=TRUE)
   if (causes>=2) {
-	  meanr2 <-   recurrentMarginal(xrr2,drr)
+	  meanr2 <-   recurrentMarginalPhreg(xrr2,drr)
 	  basehazplot.phreg(meanr2,se=TRUE,add=TRUE,col=2)
   }
 }

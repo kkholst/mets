@@ -5,18 +5,19 @@
 \alias{tie.breaker}
 \alias{recmarg}
 \alias{recurrentMarginalAIPCW}
+\alias{recurrentMarginalPhreg}
 \title{Fast recurrent marginal mean when death is possible}
 \usage{
-recurrentMarginal(recurrent, death, fixbeta = NULL, km = TRUE, ...)
+recurrentMarginal(formula, data = data, cause = 1, death.code = 2, ...)
 }
 \arguments{
-\item{recurrent}{phreg object with recurrent events}
+\item{formula}{with Event object}
 
-\item{death}{phreg object with deaths}
+\item{data}{data frame for computation}
 
-\item{fixbeta}{to force the estimation of standard errors to think of regression coefficients as known/fixed}
+\item{cause}{of interest (1 default)}
 
-\item{km}{if true then uses Kaplan-Meier for death, otherwise exp(- Nelson-Aalen )}
+\item{death.code}{codes for death (terminating event, 2 default)}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -47,39 +48,24 @@ plot(dr,se=TRUE)
 title(main="death")
 plot(xr,se=TRUE)
 ### robust standard errors 
-rxr <-   robust.phreg(xr,fixbeta=1)
+rxr <-  robust.phreg(xr,fixbeta=1)
 plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 
 ## marginal mean of expected number of recurrent events 
-out <- recurrentMarginal(xr,dr)
-plot(out,se=TRUE,ylab="marginal mean",col=2)
+## out <- recurrentMarginalPhreg(xr,dr)
+## summary(out,times=1:5) 
+
+## marginal mean using formula  
+outN <- recurrentMarginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
+plot(outN,se=TRUE,col=2,add=TRUE)
+summary(outN,times=1:5) 
 
 ########################################################################
 ###   with strata     ##################################################
 ########################################################################
-xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
-par(mfrow=c(1,3))
-plot(dr,se=TRUE)
-title(main="death")
-plot(xr,se=TRUE)
-rxr <-   robust.phreg(xr,fixbeta=1)
-plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
-
-out <- recurrentMarginal(xr,dr)
+out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hf,cause=1,death.code=2)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
-
-########################################################################
-###   CIF  #############################################################
-########################################################################
-### use of function to compute cumulative incidence (cif) with robust standard errors
- data(bmt)
- bmt$id <- 1:nrow(bmt)
- xr  <- phreg(Surv(time,cause==1)~cluster(id),data=bmt)
- dr  <- phreg(Surv(time,cause!=0)~cluster(id),data=bmt)
-
- out <- recurrentMarginal(xr,dr,km=TRUE)
- plot(out,se=TRUE,ylab="cumulative incidence")
+summary(out,times=1:5) 
 
 }
 \references{

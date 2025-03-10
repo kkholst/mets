@@ -113,7 +113,7 @@ This is again a consequence of a simple calculation
 The engine is to simulate data with a given linear cumulative hazard.
 
 ```{r}
- nsim <- 100
+ nsim <- 200
  chaz <-  c(0,1,1.5,2,2.1)
  breaks <- c(0,10,   20,  30,   40)
  cumhaz <- cbind(breaks,chaz)
@@ -294,16 +294,16 @@ and re-estimate the cumulative baselines
  c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
  ###
  par(mfrow=c(2,2))
- bplot(c0)
+ plot(c0)
  lines(cens,col=2) 
- bplot(c3,main="rates 1-> 3 , 2->3")
+ plot(c3,main="rates 1-> 3 , 2->3")
  lines(dr,col=1,lwd=2)
  lines(dr2,col=2,lwd=2)
  ###
- bplot(c1,main="rate 1->2")
+ plot(c1,main="rate 1->2")
  lines(base1,lwd=2)
  ###
- bplot(c2,main="rate 2->1")
+ plot(c2,main="rate 2->1")
  lines(base1,lwd=2)
  
 ```
