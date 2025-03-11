@@ -13,6 +13,14 @@ S0FG <- function(ia, iGc, itype2, istatus, istrata, instrata, istrata2, instrata
     .Call(`_mets_S0_FG_GcR`, ia, iGc, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcstart)
 }
 
+Gcjumps <- function(iGc, istatus, istrata2, instrata2, iGcstart, injumps) {
+    .Call(`_mets_GcjumpsR`, iGc, istatus, istrata2, instrata2, iGcstart, injumps)
+}
+
+S0FGN <- function(ia, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcjumps) {
+    .Call(`_mets_S0_FGRN`, ia, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcjumps)
+}
+
 .scoreMVN <- function(Y, Mu, dMu, S, dS, itol = 0.0) {
     .Call(`_mets_scoreMVN`, Y, Mu, dMu, S, dS, itol)
 }

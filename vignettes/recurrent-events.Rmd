@@ -474,10 +474,15 @@ Now we fit the two-stage model (the recreg must be called with cox.prep=TRUE)
 ```{r}
  out  <- phreg(Event(start,stop,statusD==1)~X1+X2+cluster(id),data=rr)
  outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
- outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr)
+ outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,twostage=TRUE)
 
+ ## cox/cox
  tsout <- twostageREC(outs,out,data=rr)
  summary(tsout)
+
+ ## ghosh-lin/cox
+ glout <- twostageREC(outs,outgl,data=rr)
+ summary(glout)
 ```
 
 Standard errors are computed assuming that the parameters of out and outs are 

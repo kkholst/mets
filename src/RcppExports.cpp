@@ -64,6 +64,40 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// GcjumpsR
+RcppExport SEXP GcjumpsR(SEXP iGc, SEXP istatus, SEXP istrata2, SEXP instrata2, SEXP iGcstart, SEXP injumps);
+RcppExport SEXP _mets_GcjumpsR(SEXP iGcSEXP, SEXP istatusSEXP, SEXP istrata2SEXP, SEXP instrata2SEXP, SEXP iGcstartSEXP, SEXP injumpsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type iGc(iGcSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istatus(istatusSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata2(istrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata2(instrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type iGcstart(iGcstartSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type injumps(injumpsSEXP);
+    rcpp_result_gen = Rcpp::wrap(GcjumpsR(iGc, istatus, istrata2, instrata2, iGcstart, injumps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// S0_FGRN
+RcppExport SEXP S0_FGRN(SEXP ia, SEXP itype2, SEXP istatus, SEXP istrata, SEXP instrata, SEXP istrata2, SEXP instrata2, SEXP iGcjumps);
+RcppExport SEXP _mets_S0_FGRN(SEXP iaSEXP, SEXP itype2SEXP, SEXP istatusSEXP, SEXP istrataSEXP, SEXP instrataSEXP, SEXP istrata2SEXP, SEXP instrata2SEXP, SEXP iGcjumpsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ia(iaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type itype2(itype2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istatus(istatusSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata(istrataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata(instrataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata2(istrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata2(instrata2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type iGcjumps(iGcjumpsSEXP);
+    rcpp_result_gen = Rcpp::wrap(S0_FGRN(ia, itype2, istatus, istrata, instrata, istrata2, instrata2, iGcjumps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scoreMVN
 arma::mat scoreMVN(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
 static SEXP _mets_scoreMVN_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
@@ -590,6 +624,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mets_ApplyBy2", (DL_FUNC) &_mets_ApplyBy2, 8},
     {"_mets_ApplyBy", (DL_FUNC) &_mets_ApplyBy, 3},
     {"_mets_S0_FG_GcR", (DL_FUNC) &_mets_S0_FG_GcR, 9},
+    {"_mets_GcjumpsR", (DL_FUNC) &_mets_GcjumpsR, 6},
+    {"_mets_S0_FGRN", (DL_FUNC) &_mets_S0_FGRN, 8},
     {"_mets_scoreMVN", (DL_FUNC) &_mets_scoreMVN, 6},
     {"_mets_loglikMVN", (DL_FUNC) &_mets_loglikMVN, 9},
     {"_mets_dmvn", (DL_FUNC) &_mets_dmvn, 3},

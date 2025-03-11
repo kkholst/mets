@@ -508,7 +508,7 @@ RcppExport SEXP DLambetaR(SEXP iweights,SEXP iS0,SEXP iE,SEXP iXi,SEXP istrata,S
 }/*}}}*/
 
 colvec  cumsumstrataAddGam(colvec a,IntegerVector strata,int nstrata, colvec exb,colvec etheta,cube thetades,cube rv,mat ags, uvec Jumps) {/*{{{*/
-	unsigned n = a.n_rows;
+unsigned n = a.n_rows;
 	colvec tmpsum(nstrata);
 	tmpsum.zeros(); tmpsum.zeros();
 	colvec res = a;
@@ -689,6 +689,82 @@ RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata
 	rres["S0m"]=S0s;
 	return(rres);
 }/*}}}*/
+
+
+// [[Rcpp::export(name="Gcjumps")]] 
+RcppExport SEXP GcjumpsR(SEXP iGc,SEXP istatus,SEXP istrata2,SEXP instrata2,SEXP iGcstart,SEXP injumps) {/*{{{*/
+	colvec Gc = Rcpp::as<colvec>(iGc);
+	colvec Gcstart = Rcpp::as<colvec>(iGcstart);
+	IntegerVector status(istatus);
+        IntegerVector strata2(istrata2);
+	unsigned nstrata2 = Rcpp::as<int>(instrata2);
+	unsigned njumps = Rcpp::as<int>(injumps);
+	unsigned n = Gc.n_rows;
+
+       vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
+       mat Gcjumps(njumps,nstrata2); 
+       // whenever jump compute S_ss(t) = \sum_c G_c(t) S_ss,c(t) 
+       unsigned jumps=0; 
+       
+	for (unsigned i=0; i<n; i++) {
+		int ss2=strata2(i);
+		Gct(ss2)=Gc(i); 
+		if (status(i)>0) {
+			for (unsigned k=0;k<nstrata2; k++) Gcjumps(jumps,k)=Gct(k); 
+			jumps=jumps+1; 
+	         }
+	}
+
+	List rres;
+	rres["Gcjumps"]=Gcjumps;
+	return(rres);
+}/*}}}*/
+
+
+
+// [[Rcpp::export(name="S0FGN")]] 
+RcppExport SEXP S0_FGRN(SEXP ia,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcjumps) {/*{{{*/
+	colvec a = Rcpp::as<colvec>(ia);
+//	colvec Gc = Rcpp::as<colvec>(iGc);
+//	colvec Gcstart = Rcpp::as<colvec>(iGcstart);
+	IntegerVector status(istatus);
+	IntegerVector type2(itype2);
+	IntegerVector strata(istrata);
+	unsigned nstrata = Rcpp::as<int>(instrata);
+        IntegerVector strata2(istrata2);
+	unsigned nstrata2 = Rcpp::as<int>(instrata2);
+	unsigned n = a.n_rows;
+	mat Gcjumps = Rcpp::as<mat>(iGcjumps);
+	unsigned njumps = Gcjumps.n_rows;
+
+        vec S0jumps(njumps); 
+        // strata 2 er C-strata,  
+	// first compute S0(nstrata,nstrataC+1) for all time points 
+	// type is 1 when type is other dead, and type  is 0 when normal risk
+	mat tmpsum(nstrata,nstrata2+1); tmpsum.zeros();
+//        mat S0s(n,nstrata2+1); S0s.zeros();
+//	colvec S0sc = a;
+	unsigned jumps=njumps-1; 
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(n-i-1); 
+		// censureringstrata put to 0 for non type2
+		int ss2=type2(n-i-1)*(strata2(n-i-1)+1);
+		tmpsum(ss,ss2) += a(n-i-1);
+//		S0sc(n-i-1)=tmpsum(ss,ss2);
+		if (status(n-i-1)>0) {
+			for (unsigned k=1;k<nstrata2+1; k++) S0jumps(jumps)+=Gcjumps(jumps,k-1)*tmpsum(ss,k); 
+//		        for (unsigned k=0;k<nstrata2+1; k++) S0s(n-i-1,k)=tmpsum(ss,k); 
+			S0jumps(jumps)+=tmpsum(ss,0); 
+			jumps=jumps-1; 
+		}
+	}
+
+	List rres;
+	rres["S0"]=S0jumps;
+//	rres["S0m"]=S0s;
+	return(rres);
+}/*}}}*/
+
 
 //
 //RcppExport SEXP S0_N_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
