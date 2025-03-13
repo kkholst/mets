@@ -1223,7 +1223,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     rr0 <- xx2$sign*(typexx2==1)
     jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1 & typexx2==1)
 
-    if (length(jumpsC)>1 & is.null(adm.cens)) {
+###    if (length(jumpsC)>1 & is.null(adm.cens)) {
 	    strataCxx2 <- xx2$Z[,2]
 	    S0iC2  <-  S0iC <- rep(0,length(xx2$status))
 	    nCstrata <- max(strataCxx2)+1
@@ -1236,7 +1236,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	    Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
 	    Gstart <- rep(1,nCstrata)
 	    Gjumps <- Gcxx2[jumps,]
-    } else  Gcxx2 <- rep(1,length(xx2$stata))
+###    } else  Gcxx2 <- rep(1,length(xx2$stata))
     ## }}}
     if (!is.null(adm.cens)) typexx2 <- 1
 
