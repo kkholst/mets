@@ -1266,7 +1266,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
     mid <- max(xx2$id)
     if ( (!is.null(beta.iid)) | fixbeta==0) {
             ### Martingale  as a function of time and for all subjects to handle strata
-	    print(typexx2)
 	    MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rrw*(typexx2==1)
 	    UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
     } else UU <- 0
