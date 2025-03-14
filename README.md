@@ -70,7 +70,7 @@ BibTeX:
     	    Left truncation; Heritability; Survival analysis},
       pages={1-24},
       language={English}
-    }
+   }
 
     @Article{,
       title={The Liability Threshold Model for Censored Twin Data},
@@ -174,7 +174,8 @@ abline(h=summary(bpmz)$prob["Concordance",],lwd=c(2,1,1),col="lightgray", lty=2)
 ## Examples: Cox model, RMST 
 
 We can fit the Cox model and compute many useful summaries, such as 
-restricted mean survival and  stanardized treatment effects (G-estimation)
+restricted mean survival and  stanardized treatment effects (G-estimation).
+First estimating the standardized survival 
 
 ```{r}
  data(bmt); bmt$time <- bmt$time+runif(408)*0.001
@@ -188,9 +189,9 @@ restricted mean survival and  stanardized treatment effects (G-estimation)
  plot(sst,type=c("survival","risk","survival.ratio")[1])
 ```
 
-Based on the phreg via the Kaplan-Meier we can also compute 
-restricted mean survival times and also
-years lost for competing risks 
+Based on the phreg, that can be used to get the the Kaplan-Meier, we can also compute 
+restricted mean survival times and years lost 
+
 
 ```{r}
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
@@ -201,7 +202,8 @@ years lost for competing risks
  plot(rm1,se=1)
  plot(rm1,years.lost=TRUE,se=1)
 ```
-and the  years lost can be decomposed into different causes 
+
+and for competing risks the years lost can be decomposed into different causes 
 
 ```{r}
  ## years.lost decomposed into causes
@@ -212,8 +214,7 @@ and the  years lost can be decomposed into different causes
 
 ## Examples: Competing risks regression, Binomial Regression
 
-We can fit the logistic regression model at a specific time-point
-with IPCW adjustment
+We can fit the logistic regression model at a specific time-point with IPCW adjustment
 
 ```{r}
  data(bmt); bmt$time <- bmt$time+runif(408)*0.001
@@ -227,7 +228,7 @@ with IPCW adjustment
 ## Examples: Competing risks regression, Fine-Gray/Logistic link
 
 We can fit the Fine-Gray model and the logit-link competing risks model 
-(using IPCW adjustment)
+(using IPCW adjustment). Starting with the logit-link model 
 
 ```{r}
  data(bmt)
@@ -243,27 +244,27 @@ We can fit the Fine-Gray model and the logit-link competing risks model
 
  # predictions 
  nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
- pll <- predict(ll,nd)
+ pll <- predict(or,nd)
  plot(pll)
 ```
 
-The Fine-Gray model can be estimated using IPCW adjustment
+Similarly, the Fine-Gray model can be estimated using IPCW adjustment
 
 ```{r}
  ## Fine-Gray model
- fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL,
-	   cox.prep=TRUE)
+ fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
  summary(fg)
+ ## baselines 
  plot(fg)
  nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
- pfg <- predict(fg,nd)
- plot(pfg)
+ pfg <- predict(fg,nd,se=1)
+ plot(pfg,se=1)
 
  ## influence functions of regression coefficients
  head(iid(fg))
 ```
 
-and we can get standard errors for predictions  based on the influence functions of 
+and we can get standard errors for predictions based on the influence functions of 
 the baseline and the regression coefiicients
 
 ```{r}
@@ -271,25 +272,24 @@ baseid <- IIDbaseline.cifreg(fg,time=40)
 FGprediid(baseid,nd)
 ```
 
-G-estimation can be done 
+further G-estimation can be done 
 
 ```{r}
  dfactor(bmt) <- tcell.f~tcell
- fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,cox.prep=TRUE,propodds=NULL)
+ fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,propodds=NULL)
  summary(survivalG(fg1,bmt,50))
 ```
 
 ## Examples: Ghosh-Lin for recurrent events 
 
 We can fit the Ghosh-Lin model for the expected number of events observed
-before dying (using IPCW adjustment, and with cox.prep to get predictions))
+before dying (using IPCW adjustment and get predictions)
 
 ```{r}
 data(hfaction_cpx12)
 dtable(hfaction_cpx12,~status)
 
-gl1 <- recreg(Event(entry,time,status)~treatment,hfaction_cpx12,cause=1,death.code=2,
-	      cox.prep=TRUE)
+gl1 <- recreg(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,cause=1,death.code=2)
 summary(gl1)
 
 ## influence functions of regression coefficients
@@ -297,6 +297,16 @@ head(iid(gl1))
 ```
 and we can get standard errors for predictions  based on the influence functions of the baseline 
 and the regression coefiicients
+
+```{r}
+ nd=data.frame(treatment=levels(hfaction_cpx12$treatment),id=1)
+ pfg <- predict(gl1,nd,se=1)
+ summary(pfg,times=1:5)
+ plot(pfg,se=1)
+```
+
+and we can get the influence functions of the baseline and regression coefficients at 
+a specific time-point 
 
 ```{r}
 baseid <- IIDbaseline.recreg(gl1,time=2)
@@ -312,16 +322,15 @@ before dying (using IPCW adjustment)
 ```{r}
 data(hfaction_cpx12)
 
-e2 <- recregIPCW(Event(entry,time,status)~treatment,hfaction_cpx12,cause=1,death.code=2,time=2)
+e2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,cause=1,death.code=2,time=2)
 summary(e2)
 ```
 
-## Examples: RMST/Restricted mean survival for survival and competing risks 
+## Examples: Regression for RMST/Restricted mean survival for survival and competing risks  using IPCW  
 
 RMST can be computed using the Kaplan-Meier (via phreg) and the for competing
-risks via the cumulative incidence estimates, but we can also get these 
-estimates via IPCW adjustment and then we can do regression for these
-quantities
+risks via the cumulative incidence functions, but we can also get these 
+estimates via IPCW adjustment and then we can do regression 
 
 ```{r}
  ### same as Kaplan-Meier for full censoring model 
