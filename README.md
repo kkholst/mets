@@ -280,6 +280,20 @@ further G-estimation can be done
  summary(survivalG(fg1,bmt,50))
 ```
 
+## Examples: Marginal mean for recurrent events 
+
+We can estimate the expected number of events non-parametrically and 
+get standard errors for this estimator
+
+```{r}
+data(hfaction_cpx12)
+dtable(hfaction_cpx12,~status)
+
+gl1 <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfaction_cpx12,cause=1,death.code=2)
+summary(gl1,times=1:5)
+plot(gl1,se=1)
+```
+
 ## Examples: Ghosh-Lin for recurrent events 
 
 We can fit the Ghosh-Lin model for the expected number of events observed
