@@ -40,8 +40,8 @@
 ##' @examples
 ##' ## data with no ties
 ##' library(mets)
-##' data(hfaction_cpx12)
-##' hf <- hfaction_cpx12
+##' data(hfactioncpx12)
+##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment) 
 ##' dd <- data.frame(treatment=levels(hf$treatment),id=1)
 ##'

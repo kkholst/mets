@@ -132,13 +132,13 @@ NULL
 ##' Data from HF-action trial slightly modified from WA package,
 ##' consisting of 741 nonischemic patients with baseline
 ##' cardiopulmonary test duration less than or equal to 12 minutes.
-##' @name hfaction_cpx12
+##' @name hfactioncpx12
 ##' @docType data
 ##' @keywords data
 ##' @format Randomized study 
 ##' @source  WA package, Connor et al. 2009
 ##' @examples
-##' data(hfaction_cpx12)
+##' data(hfactioncpx12)
 NULL
 
 

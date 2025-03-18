@@ -36,8 +36,8 @@ Here \deqn{ S(u|x=0) }  is estimated by \deqn{ exp(-\Lambda_d(u|x=0) }  with
 Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 }
 \examples{
-data(hfaction_cpx12)
-hf <- hfaction_cpx12
+data(hfactioncpx12)
+hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment) 
 
 ##  to fit non-parametric models with just a baseline 

@@ -23,8 +23,8 @@
 ##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @examples
-##' data(hfaction_cpx12)
-##' hf <- hfaction_cpx12
+##' data(hfactioncpx12)
+##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment) 
 ##'
 ##' ##  to fit non-parametric models with just a baseline 
