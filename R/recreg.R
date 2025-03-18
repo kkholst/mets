@@ -2317,7 +2317,7 @@ Y <- model.extract(m, "response")
 if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
 if (ncol(Y)==2) {
 exit <- Y[,1]
-entry <- NULL ## rep(0,nrow(Y))
+entry <- rep(0,nrow(Y))
 status <- Y[,2]
 } else {
 entry <- Y[,1]
