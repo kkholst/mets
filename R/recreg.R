@@ -2587,6 +2587,7 @@ MGCiid <- MGCiid+MGCiid2
 } else  MGCiid <- 0 ## }}}
 
 if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
+val$call <- cl
 val$id <- id
 val$Y <- Ydata
 val$X <- Xdata
