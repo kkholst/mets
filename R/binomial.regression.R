@@ -350,6 +350,117 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   return(val)
 }# }}}
 
+##' @export
+IC.binreg  <- function(x,...) {# {{{
+  x$iid*NROW(x$iid)
+}# }}}
+
+##' @export
+print.binreg  <- function(x,...) {# {{{
+  print(summary(x),...)
+}# }}}
+
+##' @export
+summary.binreg <- function(object,...) {# {{{
+
+cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
+
+expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
+V=object$var
+
+res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
+
+## to add marginal estimates for binregATE 
+if (!is.null(object$riskDR))  {
+    marginalDR <- estimate(coef=object$riskDR,vcov=object$var.riskDR)$coefmat
+    difmarginalDR <- estimate(coef=object$difriskDR,vcov=as.matrix(object$var.difriskDR))$coefmat
+###    rownames(difmarginalDR) <- "differenceDR"
+    marginalDR <- rbind(marginalDR,difmarginalDR)
+
+    marginalG <- estimate(coef=object$riskG,vcov=object$var.riskG)$coefmat
+    difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
+###    rownames(difG) <- "differenceG"
+    marginalG <- rbind(marginalG,difG) 
+    res <- c(res,list(ateG=marginalG,ateDR=marginalDR))
+
+    if (!is.null(object$attc)) {
+    attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
+    res <- c(res,list(attc=attc))
+    }
+}
+
+class(res) <- "summary.phreg"
+return(res)
+}# }}}
+
+##' @export
+vcov.binreg <- function(object,...) {# {{{
+	return(object$var)
+}# }}}
+
+##' @export
+coef.binreg <- function(object,...) {# {{{
+	return(object$coef)
+}# }}}
+
+##' @export
+predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
+{# {{{
+
+  xlev <- lapply(object$model.frame,levels)
+  ff <- unlist(lapply(object$model.frame,is.factor))
+  upf <- update(object$formula,~.)
+  tt <- terms(upf)
+  tt <- delete.response(tt)
+  Z <- model.matrix(tt,data=newdata,xlev=xlev)
+  ## assuming that cluster comes after Z's 
+  Z <- as.matrix(Z)[,1:length(object$coef),drop=FALSE]
+  clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(object$model.frame),perl=TRUE)
+  if (length(clusterTerm)>=1) 
+	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
+
+  if (!inherits(object,"resmean")) {
+  lp <- c(Z %*% object$coef)
+  p <- expit(lp)
+  preds <- p
+
+  if (se) {
+     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
+     Dpv <- Z*exp(-lp)*p^2
+     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
+     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
+     names(cmat)[1:4] <- c("pred","se","lower","upper")
+     preds <- cmat
+  }
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
+
+  } else {
+
+  lp <- c(Z %*% object$coef)
+  if (object$model.type=="exp") p <- exp(lp) else p <- lp
+  preds <- p
+
+  if (se) {
+     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
+     if (object$model.type=="exp") Dpv <- Z*p else Dpv <- Z 
+     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
+     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
+     names(cmat)[1:4] <- c("pred","se","lower","upper")
+     preds <- cmat
+  }
+  if (iid) {
+      Piid <- object$iid  %*% t(Dpv)
+      preds <- list(pred=preds,iid=Piid)
+  }
+
+  }
+return(preds)
+} # }}}
+
+
 #####' @export
 ###binregII <- function(formula,data,cause=1,time=NULL,beta=NULL,
 ###	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
@@ -2437,117 +2548,6 @@ normalATE <- function(formula,data,binreg=TRUE,model="lin",...)
    out <- logitATE(formula,data,binreg=binreg,...)
    return(out)
 }# }}}
-
-##' @export
-IC.binreg  <- function(x,...) {# {{{
-  x$iid*NROW(x$iid)
-}# }}}
-
-##' @export
-print.binreg  <- function(x,...) {# {{{
-  print(summary(x),...)
-}# }}}
-
-##' @export
-summary.binreg <- function(object,...) {# {{{
-
-cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
-
-expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
-V=object$var
-
-res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
-
-## to add marginal estimates for binregATE 
-if (!is.null(object$riskDR))  {
-    marginalDR <- estimate(coef=object$riskDR,vcov=object$var.riskDR)$coefmat
-    difmarginalDR <- estimate(coef=object$difriskDR,vcov=as.matrix(object$var.difriskDR))$coefmat
-###    rownames(difmarginalDR) <- "differenceDR"
-    marginalDR <- rbind(marginalDR,difmarginalDR)
-
-    marginalG <- estimate(coef=object$riskG,vcov=object$var.riskG)$coefmat
-    difG <- estimate(coef=object$difriskG,vcov=as.matrix(object$var.difriskG))$coefmat
-###    rownames(difG) <- "differenceG"
-    marginalG <- rbind(marginalG,difG) 
-    res <- c(res,list(ateG=marginalG,ateDR=marginalDR))
-
-    if (!is.null(object$attc)) {
-    attc <- estimate(coef=object$attc,vcov=object$var.attc)$coefmat
-    res <- c(res,list(attc=attc))
-    }
-}
-
-class(res) <- "summary.phreg"
-return(res)
-}# }}}
-
-##' @export
-vcov.binreg <- function(object,...) {# {{{
-	return(object$var)
-}# }}}
-
-##' @export
-coef.binreg <- function(object,...) {# {{{
-	return(object$coef)
-}# }}}
-
-##' @export
-predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
-{# {{{
-
-  xlev <- lapply(object$model.frame,levels)
-  ff <- unlist(lapply(object$model.frame,is.factor))
-  upf <- update(object$formula,~.)
-  tt <- terms(upf)
-  tt <- delete.response(tt)
-  Z <- model.matrix(tt,data=newdata,xlev=xlev)
-  ## assuming that cluster comes after Z's 
-  Z <- as.matrix(Z)[,1:length(object$coef),drop=FALSE]
-  clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(object$model.frame),perl=TRUE)
-  if (length(clusterTerm)>=1) 
-	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
-
-  if (!inherits(object,"resmean")) {
-  lp <- c(Z %*% object$coef)
-  p <- expit(lp)
-  preds <- p
-
-  if (se) {
-     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
-     Dpv <- Z*exp(-lp)*p^2
-     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
-     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
-     names(cmat)[1:4] <- c("pred","se","lower","upper")
-     preds <- cmat
-  }
-  if (iid) {
-      Piid <- object$iid  %*% t(Dpv)
-      preds <- list(pred=preds,iid=Piid)
-  }
-
-  } else {
-
-  lp <- c(Z %*% object$coef)
-  if (object$model.type=="exp") p <- exp(lp) else p <- lp
-  preds <- p
-
-  if (se) {
-     if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
-     if (object$model.type=="exp") Dpv <- Z*p else Dpv <- Z 
-     se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
-     cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
-     names(cmat)[1:4] <- c("pred","se","lower","upper")
-     preds <- cmat
-  }
-  if (iid) {
-      Piid <- object$iid  %*% t(Dpv)
-      preds <- list(pred=preds,iid=Piid)
-  }
-
-  }
-return(preds)
-} # }}}
-
 
 ##' Augmentation for Binomial regression based on stratified NPMLE Cif (Aalen-Johansen) 
 ##'
