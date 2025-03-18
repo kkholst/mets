@@ -50,11 +50,11 @@ In contrast the probability of exceeding k events can also be computed as a
 counting process integral, and this is implemented in prob.exceedRecurrent
 }
 \examples{
-data(hfaction_cpx12)
-dtable(hfaction_cpx12,~status)
+data(hfactioncpx12)
+dtable(hfactioncpx12,~status)
 
 oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
-        hfaction_cpx12,cause=1,death.code=2)
+        hfactioncpx12,cause=1,death.code=2)
 plot(oo)
 
 }

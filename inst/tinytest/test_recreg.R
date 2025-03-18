@@ -5,8 +5,8 @@ library("tinytest")
 # recreg versus recurrentMarginal for non-parametric 
 test_recregMarginal <- function() {
  library(mets)
- data(hfaction_cpx12)
- hf <- hfaction_cpx12
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
  dd <- data.frame(treatment=levels(hf$treatment),id=1)
 
  ngl <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
