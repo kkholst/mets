@@ -63,6 +63,7 @@
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 {# {{{
+cl <- match.call()
 outi  <- recregBN(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,marks=marks,...)
 
 if (!is.null(outi$lindyn.augment)) {
@@ -70,6 +71,7 @@ outA  <- recregBN(formula,data,cause=cause,death.code=death.code,cens.code=cens.
 outi <- outA
 }
 
+outi$call <- cl
 return(outi)
 }# }}}
 

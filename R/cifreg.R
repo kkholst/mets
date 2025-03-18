@@ -99,6 +99,7 @@ cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,..
 
     cif <- recreg(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
     class(cif) <- c("cifreg","phreg")
+    cif$call <- cl
 return(cif)
 } # }}}
 
