@@ -28,4 +28,11 @@ predictRisk.cifreg <- function(object,newdata,cause,times=NULL)
 	return(c(pcif))
 }# }}}
 
+##' @export
+predictRisk.recreg <- function(object,newdata,cause,times=NULL)
+{# {{{
+	pcif <- predict(object,newdata,times=times,se=0)$cumhaz
+	return(c(pcif))
+}# }}}
+
 
