@@ -2299,8 +2299,6 @@ se.cif=se.cif,se.surv=se.surv)
 return(out)
 } ## }}}
 
-
-
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
@@ -2588,6 +2586,9 @@ MGCiid <- MGCiid+MGCiid2
 
 if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
 val$call <- cl
+val$formula <- formula
+val$model <- model[1]
+val$model.type <- model[1]
 val$id <- id
 val$Y <- Ydata
 val$X <- Xdata
@@ -2610,6 +2611,7 @@ val$cumhazP <- cumhazP
 class(val) <- c("binreg", "resmean")
 return(val)
 } # }}}
+
 
 ##' @export
 strataAugment <- survival:::strata
