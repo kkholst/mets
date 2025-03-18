@@ -63,7 +63,8 @@ summary(outN,times=1:5)
 ########################################################################
 ###   with strata     ##################################################
 ########################################################################
-out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hf,cause=1,death.code=2)
+out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+                         data=hf,cause=1,death.code=2)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 summary(out,times=1:5) 
 

@@ -85,7 +85,7 @@ recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0)
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Y <- model.extract(m, "response")
-    if (class(Y)!="Event") stop("Expected a 'Event'-object, with codes for terminal events (death.code if any), censoring (cens.code), and event of interest (cause)")
+    if (!(inherits(Y,"Event"))) stop("Expected a 'Event'-object, with codes for terminal events (death.code if any), censoring (cens.code), and event of interest (cause)")
     if (ncol(Y)==2) {
         exit <- Y[,1]
         entry <- rep(0,nrow(Y))
