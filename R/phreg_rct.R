@@ -176,6 +176,7 @@ else { ## only first record is associated with treatment
 	CountWW <- CountW[whereW]
 	dataW <- data[whereW,]
         idW <- id[whereW]
+	if (!is.null(augmentR1)) warning("must specify treat.var to indicate where treatment is given\nassumes now that treatment is given only at start\n")
 } 
 # }}}
 

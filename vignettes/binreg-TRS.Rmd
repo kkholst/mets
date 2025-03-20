@@ -203,16 +203,14 @@ ll0 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A10)+cluster(id),calgt,t
 pll0 <- predict(ll0,expand.grid(A0=0:1,A10=0,id=1))
 ll1 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A11)+cluster(id),calgt,treat.model=tm)
 pll1 <- predict(ll1,expand.grid(A0=0:1,A11=1,id=1))
-plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)")
-plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1)
+plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)",xlim=c(0,30))
+plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1,xlim=c(0,30))
+abline(h=0.25)
 legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
 ```
 
-
 I here use the simple propensity score mode, but increased efficiency should be acheieved by extending the model, 
 but here does not give much.
-
-
 
 
 SessionInfo
