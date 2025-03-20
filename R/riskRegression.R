@@ -7,7 +7,7 @@
 ##' @param times times for predictions
 ##' @author Thomas Scheike
 ##' @export
-##' @aliases predictRisk.cifreg predictRisk.binreg
+##' @aliases predictRisk.cifreg predictRisk.binreg predictRisk.recreg
 predictRisk.phreg <- function(object,newdata,times=NULL)
 {# {{{
 	pcif <- predict(object,newdata,times=times,se=0)
