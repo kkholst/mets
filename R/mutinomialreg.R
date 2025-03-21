@@ -41,10 +41,12 @@
 ##' 
 ##' ## predictions based on seen response or not 
 ##' newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
-##' predictmlogit(mreg,newdata,response=FALSE)
-##' predictmlogit(mreg,newdata)
+##' ## all probabilities
+##' predict(mreg,newdata,response=FALSE)
+##' ## only probability of seen response 
+##' predict(mreg,newdata)
 ##' @export
-##' @aliases predictmlogit 
+##' @aliases predict 
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
   cl <- match.call()
@@ -156,12 +158,12 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 
   res$px <- px
   res$nlev <- nlev
-  class(res) <- c("phreg","mlogit")
+  class(res) <- rev(c("phreg","mlogit"))
   return(res)
 }# }}}
 
 ##' @export
-predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,alpha=0.05,...)
+predict.mlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,alpha=0.05,...)
 {# {{{
    ## when response not given, not used for predictions
    if (!missing(newdata)) 
@@ -194,8 +196,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
   Xbeta <- c()
   for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
 
-  X %*% 
-	  object$coef[(1:px)+px]
+###  X %*% object$coef[(1:px)+px]
 
   ppp <- cbind(1,exp(Xbeta))
   spp <- apply(ppp,1,sum)
@@ -223,7 +224,7 @@ predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,al
 }# }}}
 
 
-###predictmlogit <- function (object, newdata, se = TRUE, response=TRUE , ...)
+###predict <- function (object, newdata, se = TRUE, response=TRUE , ...)
 ###{# {{{
 ###    Y <- NULL
 ###   ## when response not given, not used for predictions

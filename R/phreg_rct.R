@@ -25,6 +25,7 @@
 ##' @param pi0 possible fixed propensity scores for randomizations
 ##' @param base.augment TRUE to covariate augment baselines (only for R0 augmentation) 
 ##' @param return.augmentR0 to return augmentation data
+##' @param mlogit if TRUE then forces use of this function for propensity scores, default for binary treatment is glm 
 ##' @param ... Additional arguments to phreg function 
 ##' @author Thomas Scheike
 ##' @references
@@ -42,7 +43,7 @@ phreg_rct <- function(formula,data,cause=1,cens.code=0,
      typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL,treat.model=~+1,RCT=TRUE,
      treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,
-     base.augment=FALSE,return.augmentR0=FALSE,...) {# {{{
+     base.augment=FALSE,return.augmentR0=FALSE,mlogit=FALSE,...) {# {{{
   Z <- typeII <- NULL
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -120,8 +121,8 @@ return(list(nlev=nlev,nlevs=nlevs,ntreatvar=ntreatvar))
 }
 # }}}
 
-fittreat <- function(treat.model,data,id,ntreatvar,nlev) {# {{{
-if (nlev==2) {
+fittreat <- function(treat.model,data,id,ntreatvar,nlev,mlogit=FALSE) {# {{{
+if (nlev==2 & !mlogit) {
    treat.model <- drop.specials(treat.model,"cluster")
    treat <- glm(treat.model,data,family="binomial")
    iidalpha <- lava::iid(treat,id=id)
@@ -134,7 +135,7 @@ if (nlev==2) {
    treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
    treat <- mlogit(treat.modelid,data)
    iidalpha <- lava::iid(treat)
-   pal <- predictmlogit(treat,data,se=0,response=FALSE)
+   pal <- predict(treat,data,se=0,response=FALSE)
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 }
@@ -185,7 +186,7 @@ if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be factor \n
 treats <- treats(treatvar)
 
 if (estpr[1]==1 ) {
-   fitt <- fittreat(treat.formula,dataW,idW,treats$ntreatvar,treats$nlev)
+   fitt <- fittreat(treat.formula,dataW,idW,treats$ntreatvar,treats$nlev,mlogit=mlogit)
    pi0 <- fitt$pal[,-1]
    ## p(A) 
    wPA <- c(fitt$pA)
@@ -706,7 +707,7 @@ return(out)
 ###   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
 ###   treat <- mlogit(treat.modelid,data)
 ###   iidalpha <- lava::iid(treat)
-###   pal <- predictmlogit(treat,data,se=0,response=FALSE)
+###   pal <- predict(treat,data,se=0,response=FALSE)
 ###   ppp <- (pal/pal[,1])
 ###   spp <- 1/pal[,1]
 ###}

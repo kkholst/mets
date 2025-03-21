@@ -180,7 +180,7 @@ else {
     treat.modelid <- update.formula(treat.model, . ~ . + cluster(id__))
     treat <- mlogit(treat.modelid, data)
     iidalpha <- lava::iid(treat)
-    pal <- predictmlogit(treat, data, se = 0, response = FALSE)
+    pal <- predict(treat, data, se = 0, response = FALSE)
     ppp <- (pal/pal[, 1])
     spp <- 1/pal[, 1]
 }
