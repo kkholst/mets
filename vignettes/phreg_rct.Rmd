@@ -228,13 +228,12 @@ plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1,xlim=c(0,30))
 abline(h=0.25)
 legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
 
-summary(pll1,times=12)
-summary(pll0,times=12)
+summary(pll1,times=1:10)
+summary(pll0,times=1:10)
 ```
 
 The propensity score mode can be extended to use covariates to get increased efficiency.
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
-
 
 
 Recurrent events: Simple Randomization 
@@ -391,21 +390,21 @@ To use the phreg_rct in this situation
 
 
 ```{r}
-fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
-	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
-	 RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1)
-summary(fit2)
+#fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
+#	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
+#	 RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1)
+#summary(fit2)
 ```
 
 and for twostage randomization
 
 ```{r}
-sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
-	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
-	 treat.var="treattime",
-	 RCT=FALSE, treat.model=At.f~z1*factor(Count2),
-	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
-summary(sse)
+#sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
+#	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
+#	 treat.var="treattime",
+#	 RCT=FALSE, treat.model=At.f~z1*factor(Count2),
+#	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
+#summary(sse)
 ```
 
 
