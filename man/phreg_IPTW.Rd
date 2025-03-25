@@ -12,6 +12,7 @@ phreg_IPTW(
   weights = NULL,
   estpr = 1,
   pi0 = 0.5,
+  se.cluster = NULL,
   ...
 )
 }
@@ -30,6 +31,8 @@ phreg_IPTW(
 
 \item{pi0}{fixed simple weights}
 
+\item{se.cluster}{to compute GEE type standard errors when additional cluster structure is present.}
+
 \item{...}{arguments for phreg call}
 }
 \description{
@@ -38,7 +41,8 @@ Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, wher
 standard errors via influence functions that are returned as the IID argument. 
 Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
-of the "treat.model".
+of the "treat.model".  Recurrent events can be considered with start,stop structure and then cluster(id) must be
+specified. Robust standard errors are computed.
 }
 \details{
 Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
