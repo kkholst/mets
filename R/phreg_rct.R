@@ -213,6 +213,7 @@ else
 rformulaS <-as.formula( paste("Surv(",rsss[1],",",rsss[2],",",rsss[3],"==",cause,")~."))
 formula <- update(formula,rformulaS)
 
+
 if (RCT) {
 ### ... for phreg
 fit0 <- phreg(formula,data=data,...)
@@ -222,7 +223,7 @@ else ea <- eaM  <- ea.iid <- matrix(0,max(fit0$id),1)
 fit0 <- phreg_IPTW(formula,data=data,treat.model=treat.formula,treat.var=treat.var,estpr=estpr,pi0=pi0,...)
 ea <- ea.iid <- fit0$IID %*% fit0$hessian
 ## iid without Taylor expansion in weights, to use for censoring augmentation
-if (fit0$p>0) eaM <- (lava::iid(fit0) %*% fit0$hessian)
+if (fit0$p>0) eaM <- fit0$beta.iid %*% fit0$hessian
 }
 
 

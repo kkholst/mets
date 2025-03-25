@@ -390,21 +390,22 @@ To use the phreg_rct in this situation
 
 
 ```{r}
-#fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
-#	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
-#	 RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1)
-#summary(fit2)
+fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
+	 typesR=c("non","R0"),typesC=c("non","C","dynC"),
+         RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1,
+	 treat.var="treattime")
+summary(fit2)
 ```
 
 and for twostage randomization
 
 ```{r}
-#sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
-#	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
-#	 treat.var="treattime",
-#	 RCT=FALSE, treat.model=At.f~z1*factor(Count2),
-#	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
-#summary(sse)
+sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
+         treat.var="treattime",
+	 RCT=FALSE,treat.model=At.f~z1*factor(Count2),
+ augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
+summary(sse)
 ```
 
 
