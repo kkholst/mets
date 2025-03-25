@@ -665,8 +665,8 @@ if (is.null(x$propodds)) {
 tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
  res <- res*NROW(res)
  return(res)
-} else if (inherits(x,c("cifreg","recreg"))) {
-  res <- x$iid * NROW(x$iid)
+} else if (inherits(x,c("cifreg","recreg","IPTW"))) {
+    if (inherits(x,c("IPTW"))) res <- x$IID * NROW(x$IID) else res <- x$iid * NROW(x$iid)
   if (is.null(colnames(res)))
     colnames(res) <- names(coef(x))
   res <- res*NROW(res)
@@ -2728,9 +2728,11 @@ if (estpr[1] == 1) {
 	resAiid <- list(DAt=DAt,Ht=Ht,iidalpha0=iidalpha0,iidbeta=phw$IID)
 	phw$resAiid <- resAiid
 }
+class(phw) <- c("phreg","IPTW")
 
 return(phw)
 }# }}}
+
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
