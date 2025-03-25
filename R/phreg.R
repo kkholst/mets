@@ -2535,10 +2535,8 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weig
         sds <- sort(unique(se.cluster))
         sid <- length(sds)
         if (is.numeric(se.cluster))
-            se.clsuter <- fast.approx(sds, sid) - 1
-        else {
-            se.cluster <- as.integer(factor(se.cluster, labels = seq(sid))) - 1
-        }
+            se.cluster <- fast.approx(sds, se.cluster) - 1
+        else se.cluster <- as.integer(factor(se.cluster, labels = seq(sid))) - 1
     }
 
     id <- id + 1
@@ -2744,7 +2742,9 @@ if (estpr[1] == 1) {
 
 if (!is.null(se.cluster)) {
 	phw$IID.simple <- phw$IID
+	phw$var.simple <- phw$var
 	phw$IID <- apply(phw$IID,2,sumstrata,se.cluster,sid)
+	phw$var <- crossprod(phw$IID)
 	phw$se.cluster <- se.cluster
 }
 class(phw) <- c("phreg","IPTW")
