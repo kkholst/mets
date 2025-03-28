@@ -4,6 +4,7 @@
 \alias{predictRisk.phreg}
 \alias{predictRisk.cifreg}
 \alias{predictRisk.binreg}
+\alias{predictRisk.recreg}
 \title{Risk predictions to work with riskRegression package}
 \usage{
 \method{predictRisk}{phreg}(object, newdata, times = NULL, ...)

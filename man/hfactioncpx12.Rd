@@ -5,7 +5,9 @@
 \alias{hfactioncpx12}
 \title{hfaction, subset of block randmized study HF-ACtion from WA package}
 \format{
-Randomized study
+Randomized study 
+status : 1-event, 2-death, 0-censoring
+treatment : 1/0
 }
 \source{
 WA package, Connor et al. 2009

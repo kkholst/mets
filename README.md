@@ -286,10 +286,10 @@ We can estimate the expected number of events non-parametrically and
 get standard errors for this estimator
 
 ```{r}
-data(hfaction_cpx12)
-dtable(hfaction_cpx12,~status)
+data(hfactioncpx12)
+dtable(hfactioncpx12,~status)
 
-gl1 <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfaction_cpx12,cause=1,death.code=2)
+gl1 <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfactioncpx12,cause=1,death.code=2)
 summary(gl1,times=1:5)
 plot(gl1,se=1)
 ```
@@ -300,10 +300,10 @@ We can fit the Ghosh-Lin model for the expected number of events observed
 before dying (using IPCW adjustment and get predictions)
 
 ```{r}
-data(hfaction_cpx12)
-dtable(hfaction_cpx12,~status)
+data(hfactioncpx12)
+dtable(hfactioncpx12,~status)
 
-gl1 <- recreg(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,cause=1,death.code=2)
+gl1 <- recreg(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2)
 summary(gl1)
 
 ## influence functions of regression coefficients
@@ -313,7 +313,7 @@ and we can get standard errors for predictions  based on the influence functions
 and the regression coefiicients
 
 ```{r}
- nd=data.frame(treatment=levels(hfaction_cpx12$treatment),id=1)
+ nd=data.frame(treatment=levels(hfactioncpx12$treatment),id=1)
  pfg <- predict(gl1,nd,se=1)
  summary(pfg,times=1:5)
  plot(pfg,se=1)
@@ -324,7 +324,7 @@ a specific time-point
 
 ```{r}
 baseid <- IIDbaseline.recreg(gl1,time=2)
-dd <- data.frame(treatment=levels(hfaction_cpx12$treatment),id=1)
+dd <- data.frame(treatment=levels(hfactioncpx12$treatment),id=1)
 GLprediid(baseid,dd)
 ```
 
@@ -334,9 +334,9 @@ We can fit a log-link regression model at 2 yeas for the expected number of even
 before dying (using IPCW adjustment)
 
 ```{r}
-data(hfaction_cpx12)
+data(hfactioncpx12)
 
-e2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfaction_cpx12,cause=1,death.code=2,time=2)
+e2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2,time=2)
 summary(e2)
 ```
 
@@ -359,8 +359,11 @@ estimates via IPCW adjustment and then we can do regression
  
  ## competing risks years-lost for cause 1  
  out1 <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
-                             cens.model=~strata(platelet,tcell),model="lin")
+                       cens.model=~strata(platelet,tcell),model="lin")
  estimate(out1)
+ ## same as 
+ drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+ summary(drm1)
 ```
 
 ## Examples: Average treatment effects (ATE) for survival or competing risks 

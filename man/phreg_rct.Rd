@@ -24,6 +24,7 @@ phreg_rct(
   pi0 = 0.5,
   base.augment = FALSE,
   return.augmentR0 = FALSE,
+  mlogit = FALSE,
   ...
 )
 }
@@ -65,6 +66,8 @@ phreg_rct(
 \item{base.augment}{TRUE to covariate augment baselines (only for R0 augmentation)}
 
 \item{return.augmentR0}{to return augmentation data}
+
+\item{mlogit}{if TRUE then forces use of this function for propensity scores, default for binary treatment is glm}
 
 \item{...}{Additional arguments to phreg function}
 }

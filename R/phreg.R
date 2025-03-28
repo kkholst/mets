@@ -665,8 +665,8 @@ if (is.null(x$propodds)) {
 tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
  res <- res*NROW(res)
  return(res)
-} else if (inherits(x,c("cifreg","recreg"))) {
-  res <- x$iid * NROW(x$iid)
+} else if (inherits(x,c("cifreg","recreg","IPTW"))) {
+    if (inherits(x,c("IPTW"))) res <- x$IID * NROW(x$IID) else res <- x$iid * NROW(x$iid)
   if (is.null(colnames(res)))
     colnames(res) <- names(coef(x))
   res <- res*NROW(res)
@@ -2459,7 +2459,8 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' standard errors via influence functions that are returned as the IID argument. 
 ##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
-##' of the "treat.model". 
+##' of the "treat.model".  Recurrent events can be considered with start,stop structure and then cluster(id) must be
+##' specified. Robust standard errors are computed. 
 ##'
 ##' Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
 ##' and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment. 
@@ -2471,6 +2472,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param weights may be given, and then uses weights*w(A) as the weights
 ##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
 ##' @param pi0 fixed simple weights 
+##' @param se.cluster to compute GEE type standard errors when additional cluster structure is present.
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
@@ -2481,7 +2483,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' summary(out)
 ##'
 ##' @export
-phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5, ...)
+phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5,se.cluster=NULL,...)
 {# {{{
     cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -2528,6 +2530,15 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weig
         id <- 0:(nid - 1)
         ids <- NULL
     }
+
+    if (!is.null(se.cluster)) {
+        sds <- sort(unique(se.cluster))
+        sid <- length(sds)
+        if (is.numeric(se.cluster))
+            se.cluster <- fast.approx(sds, se.cluster) - 1
+        else se.cluster <- as.integer(factor(se.cluster, labels = seq(sid))) - 1
+    }
+
     id <- id + 1
     nid <- length(unique(id))
     data$id__ <- id
@@ -2555,7 +2566,7 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weig
                 . + cluster(id__))
             treat <- mlogit(treat.modelid, data)
             iidalpha <- lava::iid(treat)
-            pal <- predictmlogit(treat, data, se = 0, response = FALSE)
+            pal <- predict(treat, data, se = 0, response = FALSE)
             ppp <- (pal/pal[, 1])
             spp <- 1/pal[, 1]
         }
@@ -2729,8 +2740,18 @@ if (estpr[1] == 1) {
 	phw$resAiid <- resAiid
 }
 
+if (!is.null(se.cluster)) {
+	phw$IID.simple <- phw$IID
+	phw$var.simple <- phw$var
+	phw$IID <- apply(phw$IID,2,sumstrata,se.cluster,sid)
+	phw$var <- crossprod(phw$IID)
+	phw$se.cluster <- se.cluster
+}
+class(phw) <- c("phreg","IPTW")
+
 return(phw)
 }# }}}
+
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'

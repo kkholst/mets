@@ -2,7 +2,7 @@
 % Please edit documentation in R/mutinomialreg.R
 \name{mlogit}
 \alias{mlogit}
-\alias{predictmlogit}
+\alias{predict}
 \title{Multinomial regression based on phreg regression}
 \usage{
 mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
@@ -56,8 +56,10 @@ lava::estimate(coef=mreg3$coef,vcov=mreg3$II)
 
 ## predictions based on seen response or not 
 newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
-predictmlogit(mreg,newdata,response=FALSE)
-predictmlogit(mreg,newdata)
+## all probabilities
+predict(mreg,newdata,response=FALSE)
+## only probability of seen response 
+predict(mreg,newdata)
 }
 \author{
 Thomas Scheike

@@ -45,7 +45,7 @@ if (inherits(fit,"glm")) {
 	y <- as.numeric(wdata[,vvars[1]])-1
 	pp <- pp1*y + (1-pp1)*(1-y)
 	wdata[,"basep1"] <- pp
-} else if (inherits(fit,"mlogit")) pp <- predictmlogit(fit,wdata,se=0) 
+} else if (inherits(fit,"mlogit")) pp <- predict(fit,wdata,se=0) 
 else stop("Considers only binary or multinomial regression modelss glm mlogit \n");
 
 countid <- rep(1:nlev,nrow(data))
@@ -130,7 +130,7 @@ y <- as.numeric(wdata[,mvar])-1
 pp <- pp1*y + (1-pp1)*(1-y)
 } else if (inherits(weightmodel,"mlogit"))  {
 weightmodel$coef <- p
-pp <- predictmlogit(weightmodel,wdata,se=0)
+pp <- predict(weightmodel,wdata,se=0)
 } else stop("must be glm or mlogit weights\n") 
 
 countid <- attr(wdata,"countid")
