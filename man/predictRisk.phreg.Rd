@@ -2,9 +2,6 @@
 % Please edit documentation in R/riskRegression.R
 \name{predictRisk.phreg}
 \alias{predictRisk.phreg}
-\alias{predictRisk.cifreg}
-\alias{predictRisk.binreg}
-\alias{predictRisk.recreg}
 \title{Risk predictions to work with riskRegression package}
 \usage{
 predictRisk.phreg(object, newdata, times = NULL)

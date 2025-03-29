@@ -924,6 +924,14 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
 } ## }}}
 
 ##' @export
+summarybase.phreg <- function(object,robust=FALSE,...) { ## {{{
+  out <- mets::summary.recurrent(object,robust=robust,...)
+class(out) <- "summary.recurrent"
+return(out)
+}# }}}
+
+
+##' @export
 print.phreg  <- function(x,...) { ## {{{
   cat("Call:\n")
   dput(x$call)
@@ -1043,26 +1051,27 @@ zval <- qnorm(1 - (1 - conf.int)/2, 0, 1)
 }# }}}
 
 ##' @export
-basecumhaz <- function(x,type=c("list"),only=0,joint=0,robust=FALSE,...) {# {{{
+basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",
+		       se.cumhaz="se.cumhaz",robust=FALSE,...) {# {{{
    ## all strata
    stratobs <- x$strata[x$jumps]
    ustratobs <- sort(unique(stratobs))
    stratas <- 0:(x$nstrata-1) 
 
    se.cum <- cum <- c()
-   se.cum <- cum <- x$cumhaz 
+   se.cum <- cum <- x[[cumhaz]]
    if (robust==TRUE) {
 	   ## take robse if there otherwise stay with se.cumhaz
 	   secum <- x$robse.cumhaz 
-	   if (is.null(secum)) secum <- x$se.cumhaz
-   } else secum  <- x$se.cumhaz
+	   if (is.null(secum)) secum <- x[[se.cumhaz]]
+   } else secum  <- x[[se.cumhaz]]
    if (is.null(secum)) nose <- TRUE else nose <- FALSE
 
    out <- rep(list(NULL),x$nstrata)
    if (length(ustratobs)>0)
    for (i in ustratobs) {
-	   if (!is.null(x$cumhaz)) {
-	   cumhazard <- x$cumhaz[stratobs==i,,drop=FALSE]
+	   if (!is.null(x[[cumhaz]])) {
+	   cumhazard <- x[[cumhaz]][stratobs==i,,drop=FALSE]
            nr <- nrow(cumhazard)
 	   if (nr>=1) {
 		   if (!nose) se.cum <- secum[stratobs==i,,drop=FALSE] else se.cum <- NULL
@@ -1078,13 +1087,50 @@ basecumhaz <- function(x,type=c("list"),only=0,joint=0,robust=FALSE,...) {# {{{
    return(out) 
 }# }}}
 
+###
+###basecumhaz <- function(x,type=c("list"),only=0,joint=0,robust=FALSE,...) {# {{{
+###   ## all strata
+###   stratobs <- x$strata[x$jumps]
+###   ustratobs <- sort(unique(stratobs))
+###   stratas <- 0:(x$nstrata-1) 
+###
+###   se.cum <- cum <- c()
+###   se.cum <- cum <- x$cumhaz 
+###   if (robust==TRUE) {
+###	   ## take robse if there otherwise stay with se.cumhaz
+###	   secum <- x$robse.cumhaz 
+###	   if (is.null(secum)) secum <- x$se.cumhaz
+###   } else secum  <- x$se.cumhaz
+###   if (is.null(secum)) nose <- TRUE else nose <- FALSE
+###
+###   out <- rep(list(NULL),x$nstrata)
+###   if (length(ustratobs)>0)
+###   for (i in ustratobs) {
+###	   if (!is.null(x$cumhaz)) {
+###	   cumhazard <- x$cumhaz[stratobs==i,,drop=FALSE]
+###           nr <- nrow(cumhazard)
+###	   if (nr>=1) {
+###		   if (!nose) se.cum <- secum[stratobs==i,,drop=FALSE] else se.cum <- NULL
+###		   if (only==0) {
+###			  if (joint==0) out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=se.cum,strata=i) else 
+###		                        out[[i+1]] <- list(cumhaz=cbind(cumhazard,se.cum[,2],i)) 
+###	           } else out[[i+1]] <- cumhazard
+###         } 
+###	 } 
+###   }
+###
+###   attr(out,"stratobs") <- ustratobs
+###   return(out) 
+###}# }}}
+###
+
 ##' @export
 baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
 	 lty=NULL,col=NULL,lwd=NULL,legend=TRUE,ylab="Cumulative hazard",xlab="time",
-	 polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,
+	 polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,cumhaz="cumhaz",se.cumhaz="se.cumhaz",
  conf.type=c("log","plain"),restrict = c("positive","prob", "none"),...) {# {{{
 
-   base <- basecumhaz(x,joint=1,robust=robust)
+   base <- basecumhaz(x,joint=1,robust=robust,cumhaz=cumhaz,se.cumhaz=se.cumhaz)
    nstrata <- x$nstrata
    stratobs <- attr(base,"stratobs")
    ###
@@ -3217,18 +3263,17 @@ return(x)
 ##' @author Thomas Scheike
 ##' @examples
 ##' library(mets)
-##' data(TRACE)
-##' TRACE$cluster <- sample(1:100,1878,replace=TRUE)
-##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=TRACE)
-##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=TRACE)
-##' dd <- expand.grid(vf=0:1,chf=0:1)
+##' data(sTRACE)
+##' sTRACE$cluster <- sample(1:100,500,replace=TRUE)
+##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
+##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
 ##' 
-##' pout1 <- predict(out1,dd,robust=TRUE)
-##' pout2 <- predict(out1,dd,robust=TRUE)
+##' summary(out1,times=1:3)
+##' summary(out2,times=1:3)
 ##' 
 ##' par(mfrow=c(1,2))
-##' plot(pout1,se=TRUE)
-##' plot(pout2,se=TRUE)
+##' plot(out1,se=TRUE)
+##' plot(out2,se=TRUE)
 ##' @export
 km <- function(formula,data=data,...)
 {# {{{
@@ -3248,63 +3293,37 @@ km <- function(formula,data=data,...)
  
 res <- phreg(formula,data=data,...)
 
-class(res) <- c("km","phreg")
-return(res)
+rhs <- update(formula,-1~.)
+varss <- all.vars(rhs)
+## find all strata 
+first <- c(headstrata(res$strata.call,res$nstrata))
+
+ddf <- data[first,varss]
+pres <- predict(res,ddf,robust=TRUE,...)
+pres$formula <- formula
+pres$call <- match.call()
+
+attr(pres,"data") <- ddf
+class(pres) <- c("km","predictphreg")
+return(pres)
 }# }}}
 
 ##' @export
-summary.km <- function(object,...) { ## {{{
-   out <- mets:::summary.phreg(object,...)
+summary.km <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],...) { ## {{{
+   out <- mets:::summary.predictrecreg(object,times=times,type=type[1],...)
    return(out)
 } ## }}}
 
 ##' @export
-plot.km <- function(x,se=FALSE,ylab=NULL,ylim=c(0,1),conf.type=c("log","plain"),...) { ## {{{
-   if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival Probability"
-   baseplot(x,se=se,ylab=ylab,ylim=ylim,restrict="prob",conf.type=conf.type[1],...)
+plot.km <- function(x,...) { ## {{{
+   mets:::plot.predictphreg(x,...)
 }# }}}
 
-##' @export
-predict.km <- function(object,newdata,se=TRUE,conf.type=c("log","plain"),...) { ## {{{
- out <- mets:::predict.phreg(object,newdata,se=se,conf.type=conf.type[1],...)
-}# }}}
-
-###
-###predict.km <- function(object,newdata,se=FALSE,conf.type=c("log","plain"),...) { ## {{{
-###
-###       nr <- TRUE
-###       xlev <- lapply(object$model.frame,levels)
-###       ff <- unlist(lapply(object$model.frame,is.factor))
-###       upf <- update(object$formula,~.)
-###       tt <- terms(upf)
-###       if (nr) tt <- delete.response(tt)
-###       X <- model.matrix(tt,data=newdata,xlev=xlev)[,-1,drop=FALSE]
-### 
-###      strataTerm<- grep("^strata[(][A-z0-9._:]*",colnames(X),perl=TRUE)
-###       ## remove strataTerm from design, and construct numeric version of strata
-###       if (length(strataTerm)>=1) { 
-###	       strataNew <- X[,strataTerm,drop=FALSE]
-###               whichstrata  <-  paste(object$strata.name,object$strata.level,sep="")
-###	       if (length(strataTerm)>=1) { ## construct strata levels numeric
-###               mm <- match(colnames(X)[strataTerm], whichstrata)-1
-###               strataNew <- c(strataNew %*% mm )
-###               }
-###	       X <- X[,-strataTerm,drop=FALSE]
-###       } else strataNew <- rep(0,nrow(X))
-###
-###       survs <- basecumhaz(object,joint=1)
-###
-###### out <- list(surv=surv,times=times,
-######    surv.upper=cisurv$upper,surv.lower=cisurv$lower,cumhaz=pcumhaz,se.cumhaz=se.cumhaz,
-######    se.surv=surv*se.cumhaz,se.cif=surv*se.cumhaz,
-######    cif=1-surv,cif.lower=1-cisurv$upper,cif.upper=1-cisurv$lower,
-######    cumhaz.upper=cibase$upper,cumhaz.lower=cibase$lower,strata=strataNew,X=X,RR=RR)
-######
-######class(out) <- c("predictkm",class(object)[1])
-###
-###   print(" not yet \n"); 
+###predict.km <- function(object,newdata,...) { ## {{{
+## take strata after readPhreg
+### take relevant parts of prediction that is only for each strata
+## out <- mets:::predict.phreg(object,newdata,se=se,conf.type=conf.type[1],...)
 ###}# }}}
-###
 
 ##' Cumulative incidence with robust standard errors 
 ##'

@@ -19,18 +19,17 @@ Robust variance is default variance and obtained from the predict call
 }
 \examples{
 library(mets)
-data(TRACE)
-TRACE$cluster <- sample(1:100,1878,replace=TRUE)
-out1 <- km(Surv(time,status==9)~strata(vf,chf),data=TRACE)
-out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=TRACE)
-dd <- expand.grid(vf=0:1,chf=0:1)
+data(sTRACE)
+sTRACE$cluster <- sample(1:100,500,replace=TRUE)
+out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
+out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
 
-pout1 <- predict(out1,dd,robust=TRUE)
-pout2 <- predict(out1,dd,robust=TRUE)
+summary(out1,times=1:3)
+summary(out2,times=1:3)
 
 par(mfrow=c(1,2))
-plot(pout1,se=TRUE)
-plot(pout2,se=TRUE)
+plot(out1,se=TRUE)
+plot(out2,se=TRUE)
 }
 \author{
 Thomas Scheike

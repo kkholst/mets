@@ -238,9 +238,11 @@ plot.recurrent <- function(x,ylab=NULL,...) {# {{{
 }# }}}
 
 ##' @export
-summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,name="mean",
-			      conf.type=c("log","log-log","plain"),...) {# {{{
-base <- basecumhaz(object,joint=1)
+summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,
+			      name="mean",cumhaz="cumhaz",
+			      se.cumhaz="se.cumhaz",robust=FALSE,
+	      conf.type=c("log","log-log","plain"),...) {# {{{
+base <- basecumhaz(object,joint=1,robust=robust,cumhaz=cumhaz,se.cumhaz=se.cumhaz)
 nstrata <- object$nstrata
 stratobs <- attr(base,"stratobs")
 
@@ -271,6 +273,42 @@ out <- list(baseci=baseci,pbaseci=pbaseci,times=times)
 class(out) <- "summary.recurrent"
 return(out)
 }# }}}
+
+###summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,
+###			      name="mean",robust=FALSE,
+###	      conf.type=c("log","log-log","plain"),...) {# {{{
+###base <- basecumhaz(object,joint=1,robust=robust)
+###nstrata <- object$nstrata
+###stratobs <- attr(base,"stratobs")
+###
+###baseci <- rep(list(NULL),nstrata)
+###if (length(stratobs)>0) 
+### for (i in stratobs) {
+###   cumhaz <- base[[i+1]]$cumhaz
+###   if (nrow(cumhaz)>=1) {
+###     mu <- base[[i+1]]$cumhaz[,2]
+###     se.mu <- base[[i+1]]$cumhaz[,3]
+###	   if (length(mu)>=1) {
+###	   conf <- conftype(mu,se.mu,conf.type=conf.type[1],...)
+###	   out <- data.frame(times=cumhaz[,1],mu=mu,se.mu=se.mu,lower=conf$lower,upper=conf$upper,strata=i)
+###	   names(out) <- c("times",name,"se","CI-2.5%","CI-97.5%","strata")
+###	   baseci[[i+1]] <- out
+###	   } 
+###   } 
+###   }
+###
+###pbaseci <- NULL
+###if (!is.null(times)) {
+### if (length(stratobs)>0) 
+### for (i in stratobs) 
+###if (!is.null(baseci[[i+1]])) pbaseci[[i+1]] <- predictCumhaz(rbind(0,baseci[[i+1]]),times) 
+###}
+###out <- list(baseci=baseci,pbaseci=pbaseci,times=times)
+###
+###class(out) <- "summary.recurrent"
+###return(out)
+###}# }}}
+
 
 ##' @export
 print.summary.recurrent  <- function(x,...) {# {{{

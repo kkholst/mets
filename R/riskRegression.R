@@ -7,7 +7,6 @@
 ##' @param times times for predictions
 ##' @author Thomas Scheike
 ##' @export
-##' @aliases predictRisk.cifreg predictRisk.binreg predictRisk.recreg
 predictRisk.phreg <- function(object,newdata,times=NULL)
 {# {{{
 	pcif <- predict(object,newdata,times=times,se=0)
@@ -29,6 +28,14 @@ predictRisk.cifreg <- function(object,newdata,cause,times=NULL)
 }# }}}
 
 ##' @export
+predictRisk.cifregFG <- function(object,newdata,cause,times=NULL)
+{# {{{
+	pcif <- predict(object,newdata,times=times,se=0)$cif
+	return(c(pcif))
+}# }}}
+
+
+##' @export
 predictRisk.recreg <- function(object,newdata,cause,times=NULL)
 {# {{{
 	pcif <- predict(object,newdata,times=times,se=0)$cumhaz
@@ -36,3 +43,4 @@ predictRisk.recreg <- function(object,newdata,cause,times=NULL)
 }# }}}
 
 
+# ##' @aliases predictRisk.cifreg predictRisk.binreg predictRisk.recreg 

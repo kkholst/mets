@@ -1003,7 +1003,7 @@ maxtimes <- rep(0,length(cifs))
 ## if drawZ is true the covariates in Z are used but multplied coefficient 
 ## based on column names, if fixZ=TRUE the matrix Z is multiplied coefficients 
 ## as is Z %*% coef(x)  to form linear predictor
-read.fit <- function(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+read.fit <- function(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL,strata=NULL)
 {# {{{
 
 if (inherits(cox,"coxph"))
@@ -1058,24 +1058,28 @@ if (inherits(cox,"cox.aalen"))
 }# }}}
 if (inherits(cox,"phreg"))
 {# {{{
+   strata.call <- strata
    p <- length(cox$coef)
    if (is.null(Z)) {
       Z <- cox$model.frame[,-1,drop=FALSE]
       if (cox$nstrata>1) {
 	   ms <- match(cox$strata.name,names(Z))
            stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
-	   strata <- cox$strata
+	   strata <- cox$strata.call
 	   Z  <-  Z[,-ms,drop=FALSE]
       }
    }
    nz <- ncol(Z)
-   if (fixZ) Z <- Z else Z <- Z[,names(cox$coef),drop=FALSE] 
+   if (fixZ) {
+ 	   Z <- Z 
+   } else Z <- Z[,names(cox$coef),drop=FALSE] 
    lrr <- as.matrix(Z) %*% cox$coef
    cumhazard <- rbind(c(0,0),cox$cumhaz)
    rr <- exp(lrr)
    if (drawZ==TRUE) xid <- sample(1:nrow(Z),n,replace=TRUE) else xid <- 1:nrow(Z)
    if (!is.null(id)) xid <- id
    if (cox$nstrata>1) stratid <- strata[xid] else stratid <- NULL
+   if (!is.null(strata.call))  stratid <- strata.call 
    rr <- rr[xid]
    Z <- Z[xid,,drop=FALSE]
    if (cox$nstrata>1) {
