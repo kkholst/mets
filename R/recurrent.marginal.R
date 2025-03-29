@@ -239,8 +239,7 @@ plot.recurrent <- function(x,ylab=NULL,...) {# {{{
 
 ##' @export
 summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,
-			      name="mean",cumhaz="cumhaz",
-			      se.cumhaz="se.cumhaz",robust=FALSE,
+			      name="mean",cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,
 	      conf.type=c("log","log-log","plain"),...) {# {{{
 base <- basecumhaz(object,joint=1,robust=robust,cumhaz=cumhaz,se.cumhaz=se.cumhaz)
 nstrata <- object$nstrata
@@ -308,7 +307,6 @@ return(out)
 ###class(out) <- "summary.recurrent"
 ###return(out)
 ###}# }}}
-
 
 ##' @export
 print.summary.recurrent  <- function(x,...) {# {{{
