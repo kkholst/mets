@@ -4,7 +4,7 @@
 \alias{predictRisk.phreg}
 \title{Risk predictions to work with riskRegression package}
 \usage{
-\method{predictRisk}{phreg}(object, newdata, times = NULL, ...)
+predictRisk.phreg(object, newdata, times = NULL)
 }
 \arguments{
 \item{object}{phreg/binreg/cifreg object}
@@ -12,8 +12,6 @@
 \item{newdata}{newdata}
 
 \item{times}{times for predictions}
-
-\item{...}{additional arguments to lower level functions}
 }
 \description{
 Risk predictions to work with riskRegression package
