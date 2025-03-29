@@ -23,6 +23,7 @@
 ##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @examples
+##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment) 
@@ -53,6 +54,7 @@
 ##' out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
 ##'                          data=hf,cause=1,death.code=2)
 ##' plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+##' 
 ##' summary(out,times=1:5) 
 ##'
 ##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg
@@ -238,7 +240,13 @@ plot.recurrent <- function(x,ylab=NULL,...) {# {{{
 }# }}}
 
 ##' @export
-summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,
+summary.recurrent <- function(object,...) {# {{{
+out <- summaryRecurrentobject(object,...)
+return(out)
+}# }}}
+
+##' @export
+summaryRecurrentobject <- function(object,times=NULL,strata=NULL,estimates=FALSE,
 			      name="mean",cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,
 	      conf.type=c("log","log-log","plain"),...) {# {{{
 base <- basecumhaz(object,joint=1,robust=robust,cumhaz=cumhaz,se.cumhaz=se.cumhaz)
@@ -261,6 +269,7 @@ if (length(stratobs)>0)
    } 
    }
 
+i <- stratobs
 pbaseci <- NULL
 if (!is.null(times)) {
  if (length(stratobs)>0) 
@@ -1866,7 +1875,7 @@ return(data)
 ##' plot(oo)
 ##' 
 ##' @export
-##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryTimeobject
+##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryRecurrentobject summaryTimeobject
 ##' @export
 prob.exceed.recurrent <- function(formula,data,
                                    cause=1,

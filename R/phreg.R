@@ -925,7 +925,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
 
 ##' @export
 summarybase.phreg <- function(object,robust=FALSE,...) { ## {{{
-  out <- mets::summary.recurrent(object,robust=robust,...)
+  out <- summaryRecurrentobject(object,robust=robust,...)
 class(out) <- "summary.recurrent"
 return(out)
 }# }}}
@@ -3447,7 +3447,7 @@ plot.cif <- function(x,se=FALSE,ylab=NULL,ylim=c(0,1),conf.type=c("log","plain")
 ##' @export
 summary.cif <- function(object,se=FALSE,ylab=NULL,times=NULL,conf.type=c("log","plain"),...) { ## {{{
    if (inherits(object,"cif") & is.null(ylab)) ylab <- "Probability"
-   out <- summary.recurrent(object,name="probability",times=times,conf.type=conf.type[1],restrict="prob",...)
+   out <- summaryRecurrentobject(object,name="probability",times=times,conf.type=conf.type[1],restrict="prob",...)
    return(out)
 } ## }}}
 

@@ -36,6 +36,7 @@ Here \deqn{ S(u|x=0) }  is estimated by \deqn{ exp(-\Lambda_d(u|x=0) }  with
 Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 }
 \examples{
+library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment) 
@@ -66,6 +67,7 @@ summary(outN,times=1:5)
 out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
                          data=hf,cause=1,death.code=2)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+
 summary(out,times=1:5) 
 
 }

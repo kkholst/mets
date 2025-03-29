@@ -6,6 +6,7 @@
 \alias{prob.exceedBiRecurrent}
 \alias{prob.exceedRecurrentStrata}
 \alias{prob.exceedBiRecurrentStrata}
+\alias{summaryRecurrentobject}
 \alias{summaryTimeobject}
 \title{Estimation of probability of more that k events for recurrent events process}
 \usage{
