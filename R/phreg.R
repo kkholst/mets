@@ -926,8 +926,8 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
 ##' @export
 summarybase.phreg <- function(object,robust=FALSE,...) { ## {{{
   out <- summaryRecurrentobject(object,robust=robust,...)
-class(out) <- "summary.recurrent"
-return(out)
+  class(out) <- "summary.recurrent"
+  return(out)
 }# }}}
 
 
