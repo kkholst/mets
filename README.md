@@ -224,7 +224,7 @@ library(mets)
  bmt$event <- (bmt$cause!=0)*1
  dfactor(bmt) <- tcell.f~tcell
 
- ss <- phreg_IPTW(Surv(time,event)~tcell.f+platelet+age,bmt,treat.model=tcell.f~platelet+age) 
+ ss <- phreg_IPTW(Surv(time,event)~tcell.f,data=bmt,treat.model=tcell.f~platelet+age) 
  summary(ss)
 ```
 
