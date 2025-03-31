@@ -1,16 +1,13 @@
 ##' Risk predictions to work with riskRegression package
 ##'
-##' Risk predictions to work with riskRegression package
-##'
+##' @title Risk predictions to work with riskRegression package
 ##' @param object phreg/binreg/cifreg object
-##' @param newdata newdata
-##' @param times times for predictions
 ##' @param ... additional arguments to lower level functions
 ##' @author Thomas Scheike
-##' @aliases predictRisk predictRisk.phreg predictRisk.binreg predictRisk.cifreg
-##'   predictRisk.cifregFG predictRisk.recreg
+##' @aliases predictRisk 
 ##' @export
 predictRisk <- function(object, ...) UseMethod("predictRisk")
+
 
 ##' @export
 predictRisk.phreg <- function(object,newdata,times=NULL,...)
@@ -19,6 +16,13 @@ predictRisk.phreg <- function(object,newdata,times=NULL,...)
 	return(c(1-pcif$surv))
 }# }}}
 
+##' @title Risk predictions to work with riskRegression package
+##' @inheritParams predictRisk
+##' @param newdata data.frame on which to make new predictions
+##' @param times times for predictions
+##' @param cause cause (cif) to predict
+##' @aliases predictRisk.phreg predictRisk.binreg predictRisk.cifreg
+##'   predictRisk.cifregFG predictRisk.recreg
 ##' @export
 predictRisk.binreg <- function(object,newdata,cause,times=NULL,...)
 {# {{{
