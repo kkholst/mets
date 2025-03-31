@@ -212,6 +212,23 @@ and for competing risks the years lost can be decomposed into different causes
  summary(drm1)
 ```
 
+## Examples: Cox model IPTW 
+
+We can fit the Cox model with inverse probabilty of treatment weights based on 
+logistic regression. The treatment weights can be time-dependent and then mutiplicative
+weights are applied. 
+
+```{r}
+library(mets)
+ data(bmt); bmt$time <- bmt$time+runif(408)*0.001
+ bmt$event <- (bmt$cause!=0)*1
+ dfactor(bmt) <- tcell.f~tcell
+
+ ss <- phreg_IPTW(Surv(time,event)~tcell.f+platelet+age,bmt,treat.model=tcell.f~platelet+age) 
+ summary(ss)
+```
+
+
 ## Examples: Competing risks regression, Binomial Regression
 
 We can fit the logistic regression model at a specific time-point with IPCW adjustment
