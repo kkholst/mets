@@ -40,7 +40,7 @@
 ##' summary(out)
 ##' @export
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
-     typesR=c("R0","R1","R01"),typesC=c("C","dynC"),
+     typesR=c("R0","R1","R01"),typesC=c("C","dynC"),weights=NULL,offset=NULL,
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL,treat.model=~+1,RCT=TRUE,
      treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,
      base.augment=FALSE,return.augmentR0=FALSE,mlogit=FALSE,...) {# {{{
@@ -206,14 +206,14 @@ wwt <- exp(cumsumstrata(log(ww),id-1,nid))
 ## set propensity score weights for Cox model's below 
 if (!RCT) ww <- 1/wwt  else ww <- rep(1,nrow(data))
 
+if (!is.null(weights)) ww <- weights*ww
+
 rsss <- all.vars(formula)
 if (ncol(Y)==2) 
 rformulaS <-as.formula( paste("Surv(",rsss[1],",",rsss[2],"==",cause,")~."))
 else 
 rformulaS <-as.formula( paste("Surv(",rsss[1],",",rsss[2],",",rsss[3],"==",cause,")~."))
 formula <- update(formula,rformulaS)
-
-
 
 
 if (RCT) {
@@ -247,6 +247,7 @@ if (!is.null(augmentR0)) {# {{{
    Z0[idW0] <- Z0
    strata0 <- piW0 <- rep(0,length(idW0))
    piW0[idW0] <- pi0[CountWW==1]
+   ## strata0 0 ??  
    strata0 <- fit0$strata.call[idW0]
 
    XRpi <- (Z0-piW0)*XR
@@ -269,6 +270,7 @@ if (!is.null(augmentR0)) {# {{{
       if (estpr[1]==1) {
 	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
          iid.treat <- fitt$iidalpha %*% Dp0f
+	 ### same for RCT \hat \pi(,X)
          AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
       } 
       ## oucome model iid 
@@ -542,11 +544,11 @@ for (typeC in typesCC) {# {{{
 if (typeR!=typeC) {
    j <- j+1
    AugR <- (typeR=="R0")*AugR0+ (typeR=="R1")*AugR1+(typeR=="R01")*AugR01 +0 
-   AugR.iid <- 0+(typeR=="R0")*AugR0.iid+ (typeR=="R1")*AugR1.iid + (typeR=="R01")*AugR01.iid
+   AugR.iid <- 0+(typeR=="R0")*AugR0.iid+(typeR=="R1")*AugR1.iid + (typeR=="R01")*AugR01.iid
    AugC <- (typeC=="C")*AugClt+(typeC=="dynC")*AugCdyn+0
    Aug <- AugR+AugC
 
-   if (fit0$p>0) iid[[j]] <- (ea.iid - AugR.iid ) %*% fit0$ihessian else iid[[j]] <- 0
+   if (fit0$p>0) iid[[j]] <- -1*(ea.iid-AugR.iid ) %*% fit0$ihessian else iid[[j]] <- 0
    var.beta <- crossprod(iid[[j]])
    AugC.iid <- 0+(typeC=="C")*AugClt.iid+ (typeC=="dynC")*AugCdyn.iid
    if (typeC=="dynC") {
@@ -560,9 +562,8 @@ if (typeR!=typeC) {
    fitts <- phreg(formula,data=data,augmentation=Aug,no.var=1,weights=ww,...)
    else fitts <- fit0
 
-
    ## only baseline augment with R0 augmentation
-   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) {
+   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) { ## {{{
       xxx <- fitts$cox.prep
       xx <- crossprod(XR0pi)
       xxi <- solve(xx)
@@ -578,21 +579,22 @@ if (typeR!=typeC) {
       U[jumps,] <- XRpit[jumps,]*S0i[jumps]
       NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       XREdLam0 <- apply(XRE*S0i^2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
-      covBase <- NXRE-XREdLam0
+      if (RCT) covBase <- (NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
 
       gamR0Base <- (covBase) %*% xxi
       XRs <- apply(XR0pi,2,sum)
-      R0baseline.augment <-  -XRs %*% t(gamR0Base) 
+      R0baseline.augment <-  XRs %*% t(gamR0Base) 
       R0baseline.reduction<- apply((gamR0Base%*%xx)*gamR0Base,1,sum)
       ## using augmented estimator of beta 
-      if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=-iid[[j]])
+      if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=iid[[j]])
       else fitr0 <- robust.phreg(fit0)
       cumhazR0 <- cumhaz <- fitts$cumhaz
       cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
       se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
       se.R0cumhaz[,2] <- (se.cumhaz[,2]^2-R0baseline.reduction)^.5
-      baselinecox <- list(phreg=fitts,beta.iid=-iid[[j]],XR0pi=XR0pi,gamR0Base=gamR0Base)
-   } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
+      baselinecox <- list(phreg=fitts,beta.iid=iid[[j]],XR0pi=XR0pi,gamR0Base=gamR0Base)
+   } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL  ## }}}
+
 
    if (fit0$p>0)  {
      coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
@@ -607,7 +609,6 @@ if (typeR!=typeC) {
 names(iid) <- iidn
 # }}}
 
-
 out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
     formula=formula,formulaC=formulaC,treat.model=treat.model,
@@ -620,12 +621,10 @@ class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
 
-
 ##' @export
 plot.phreg_rct  <- function(x,...)  { ## {{{
 	if (!is.null(x$cumhaz)) baseplot(x,...) 
 } ## }}}
-
 
 ##' @export
 print.phreg_rct <- function(x,...) {# {{{

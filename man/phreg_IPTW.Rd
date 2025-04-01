@@ -49,12 +49,12 @@ Also works with cluster argument. Time-dependent propensity score weights can al
 and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment.
 }
 \examples{
-
+library(mets)
 data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 dfactor(data) <- Z.f~Z
 out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 summary(out)
-
+estimate(out)
 }
 \author{
 Thomas Scheike

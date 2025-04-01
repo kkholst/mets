@@ -666,7 +666,7 @@ tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
  res <- res*NROW(res)
  return(res)
 } else if (inherits(x,c("cifreg","recreg","IPTW"))) {
-    if (inherits(x,c("IPTW"))) res <- x$IID * NROW(x$IID) else res <- x$iid * NROW(x$iid)
+    if (inherits(x,c("IPTW"))) res <- x$IID else res <- x$iid
   if (is.null(colnames(res)))
     colnames(res) <- names(coef(x))
   res <- res*NROW(res)
@@ -2522,12 +2522,11 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
-##'
+##' library(mets)
 ##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 ##' dfactor(data) <- Z.f~Z
 ##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 ##' summary(out)
-##'
 ##' @export
 phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5,se.cluster=NULL,...)
 {# {{{

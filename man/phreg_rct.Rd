@@ -11,6 +11,8 @@ phreg_rct(
   cens.code = 0,
   typesR = c("R0", "R1", "R01"),
   typesC = c("C", "dynC"),
+  weights = NULL,
+  offset = NULL,
   augmentR0 = NULL,
   augmentR1 = NULL,
   augmentC = NULL,
