@@ -54,7 +54,6 @@ data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 dfactor(data) <- Z.f~Z
 out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 summary(out)
-estimate(out)
 }
 \author{
 Thomas Scheike
