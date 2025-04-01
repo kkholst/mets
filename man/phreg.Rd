@@ -11,6 +11,7 @@
 \alias{plotpredictphreg}
 \alias{predictO.phreg}
 \alias{predictrecreg}
+\alias{summarybase.phreg}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)

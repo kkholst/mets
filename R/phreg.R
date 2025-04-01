@@ -176,7 +176,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg IIDbaseline.phreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg
+##' @aliases phreg phreg.par robust.phreg readPhreg IIDbaseline.phreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
