@@ -35,7 +35,7 @@ and the mean of the subject specific events per time-unit
 \end{align*}
 for two treatment-groups in the case of an RCT. 
 For the laste mean of events per time-unit it has been seen that when the sample size is to great
-it can improve the finite sample properties to employ a transformation such as $\sqrt$ or cube-root, and
+it can improve the finite sample properties to employ a transformation such as square or cube-root, and
 thus consider 
 \begin{align*}
  E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
@@ -53,8 +53,8 @@ summary(dd,type="log")
 ```
 
 We see that the ratio of means are not very different, but that the subject specific 
-mean of events per time-unit shows that those on the active treatment has fewer events per time-unit on
-average.
+mean of events per time-unit shows that those on the active treatment has fewer 
+events per time-unit on average.
 
 SessionInfo
 ============
