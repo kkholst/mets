@@ -2188,10 +2188,18 @@ return(out)
 } ## }}}
 
 ##' @export
-summary.predictrecreg <- function(object,times=NULL,strata=NULL,estimates=FALSE,type=c("cif","cumhaz","surv")[2],...) {# {{{
-if (is.null(times)) warning("Must give times for predictions\n") 
-
+summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cumhaz","surv")[2],np=10,...) {# {{{
 if (!is.null(times)) {
+   indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+} else {
+   ## all predictions
+   nl <- length(object$times)+1 
+   indexcol  <- seq(1,nl,length=np)
+   times <- c(0,object$times)[indexcol]
+   print("summary.predictrecreg")
+   print(times)
+}
+
 out <- object[[type[1]]]
 nlower <- paste(type[1],".lower",sep="")
 nupper <- paste(type[1],".upper",sep="")
@@ -2210,18 +2218,16 @@ if (type[1]=="surv") {
 	if (!is.null(lower)) lower <- cbind(0,lower) 
 	if (!is.null(upper)) upper <- cbind(0,upper) 
 }
-
 if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
-indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
 
 if (!is.null(lower)) ret <- list(pred=out[,indexcol],se.pred=se.out[,indexcol],lower=lower[,indexcol],upper=upper[,indexcol],times=times)
 else  ret <- list(pred=out[,indexcol],times=times)
 rownames(ret) <- NULL
 ###ret$strata <- object$strata; ret$X <- object$X; ret$RR <- object$RR
-class(ret) <- "summary.predictrecreg"
-} else ret <- NULL
+class(ret) <- "summarypredictrecreg"
 return(ret)
 }# }}}
+
 
 ##' @export
 plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)

@@ -1878,8 +1878,8 @@ return(out)
 }# }}}
 
 ##' @export
-summary.predictphreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],...) {# {{{
-ret <- mets:::summary.predictrecreg(object,times=times,type=type[1],...)
+summary.predictphreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],np=10,...) {# {{{
+ret <- summary.predictrecreg(object,times=times,type=type[1],np=np,...)
 return(ret)
 }# }}}
 
