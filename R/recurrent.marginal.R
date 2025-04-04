@@ -1,6 +1,6 @@
 ##' Fast recurrent marginal mean when death is possible
 ##'
-##' Fast Marginal means of recurrent events. Using the Lin and Ghosh (2000) 
+##' Fast Marginal means of recurrent events using the Lin and Ghosh (2000) 
 ##' standard errors.  
 ##' Fitting two models for death and recurent events these are
 ##' combined to prducte the estimator 
