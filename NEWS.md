@@ -3,7 +3,7 @@
   - While-alive estimation : `WA_recurrent` 
   - Marks for medical cost models : `recreg` `recregIPCW`
   - New default augmentation for `binreg` `resmeanIPCW` type="II", type="I" simple outcome IPCW
-  - New version of `recreg` and `cifreg` for testing and comparison with old versions `recregO` and `cifregO`
+  - New version of `recreg` and `cifreg` `cifregFG` old versions `recregO` and `cifregO`
      - plot, summary, predict for these functions
   - New call for `recurentMarginal` based on formula, old version `recurentMarginalPhreg`
 
