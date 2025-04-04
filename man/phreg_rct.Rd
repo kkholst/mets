@@ -89,6 +89,7 @@ summary(out)
 }
 \references{
 Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
+
 Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,
 }
 \author{
