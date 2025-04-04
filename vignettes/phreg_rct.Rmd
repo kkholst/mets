@@ -236,6 +236,52 @@ The propensity score mode can be extended to use covariates to get increased eff
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
 
 
+We now illustrate how to fit a  Cox model of the form
+\begin{align*}
+  & \lambda_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2)
+\end{align*}
+where $\beta_0$ is the effect of treatment $A2$ and the effect of $B1$ 
+
+Now  comparing only those starting on A1/A2 to compare the effect of B1 versus B2
+
+```{r}
+library(mets)
+data(calgb8923)
+calgt <- calgb8923
+calgt$treatvar <- 1
+
+## making time-dependent indicators of going to B1/B2
+calgt$A10t <- calgt$A11t <- 0
+calgt <- dtransform(calgt,A10t=1,A1==0 & Count2==1)
+calgt <- dtransform(calgt,A11t=1,A1==1 & Count2==1)
+calgt0 <- subset(calgt,A0==0)
+
+ss0 <- phreg_rct(Event(start,time,status)~A10t+A11t+cluster(id),data=subset(calgt,A0==0),
+	 typesR=c("non","R1"),typesC=c("non","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+summary(ss0)
+
+ss1 <- phreg_rct(Event(start,time,status)~A10t+A11t+cluster(id),data=subset(calgt,A0==1),
+	 typesR=c("non","R1"),typesC=c("non","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+summary(ss1)
+```
+
+and a more structured model with both A0 and A1, that does not seem very reasonable based on 
+the above,
+
+```{r}
+ssf <- phreg_rct(Event(start,time,status)~A0.f+A10t+A11t+cluster(id),
+	 data=calgt,
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR0=~age+wbc+sex,augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+```
+
+
+
 Recurrent events: Simple Randomization 
 ======================================
 
@@ -404,7 +450,7 @@ sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
 	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
          treat.var="treattime",
 	 RCT=FALSE,treat.model=At.f~z1*factor(Count2),
- augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
+         augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
 summary(sse)
 ```
 

@@ -30,6 +30,7 @@
 ##' @author Thomas Scheike
 ##' @references
 ##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
+##' 
 ##' Scheike et al. (2024), WIP, Two-stage randomization for recurrent events, 
 ##' @examples
 ##' ## Lu, Tsiatis simulation
@@ -81,7 +82,7 @@ phreg_rct <- function(formula,data,cause=1,cens.code=0,
 	  nid <- length(ids)
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
+      }
   } else { orig.id <- NULL; nid <- length(exit); id <- 0:(nid-1); ids <- NULL}
   ### id from call coded as numeric 1 -> 
   id <- id+1
@@ -193,7 +194,7 @@ if (estpr[1]==1 ) {
    DPai <- fitt$DPai
 } else {
    ## assumes constant fixed prob over groups
-   wPA <- ifelse((treats$ntreatvar)[idW]==2,pi0[1],1-pi0[1])                
+   wPA <- ifelse((treats$ntreatvar)[idW]==2,pi0[1],1-pi0[1])         
    pi0 <- rep(pi0[1],length(idW))
 }
 
@@ -239,7 +240,7 @@ if (!is.null(augmentR0)) {# {{{
    ff0 <- sides(augmentR0,all.vars(ssform$rhs)[1])
    dataW0 <- subset(dataW,CountWW==1)
    idW0 <- idW[CountWW==1]
-   XR <- model.matrix(augmentR0,dataW0) # [,-1,drop=FALSE]
+   XR <- model.matrix(augmentR0,dataW0) 
    Z0 <- dataW0[,all.vars(ff0$formula)[1]]
    if (is.factor(Z0)) Z0 <- as.numeric(Z0)-1
    ## order after idW0
@@ -252,31 +253,59 @@ if (!is.null(augmentR0)) {# {{{
 
    XRpi <- (Z0-piW0)*XR
    XR0pi <- XRpi 
-   xxR0 <- crossprod(XRpi)
-   xxi <- solve(xxR0)
+###   xxR0 <- crossprod(XRpi)
+###   xxi <- solve(xxR0)
    if (estpr[1]==1) {
        Dp0 <- matrix(0,nid,ncol(fitt$Dp))
        Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
     }
    if (return.augmentR0)  data.augR0 <- list(ea=ea,XRpi=XRpi,XR=XR,A=Z0,p0=piW0)
 
-   for (i in 1:ncol(ea)) {
-      gamma.R <- xxi %*% crossprod(XRpi,ea[,i])
-      XRgamma <- XR %*% gamma.R
-      AugR0.iid[,i] <- XRpi %*% gamma.R
-      AugR0[i] <- sum(AugR0.iid[,i])
+###   for (i in 1:ncol(ea)) {
+###      gamma.R <- xxi %*% crossprod(XRpi,ea[,i])
+###      XRgamma <- XR %*% gamma.R
+###      AugR0.iid[,i] <- XRpi %*% gamma.R
+###      AugR0[i] <- sum(AugR0.iid[,i])
+###
+###      ## iid term for predicted P(treat=1)
+###      if (estpr[1]==1) {
+###	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
+###         iid.treat <- fitt$iidalpha %*% Dp0f
+###	 ### same for RCT \hat \pi(,X)
+###         AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
+###      } 
+###      ## oucome model iid 
+###      if (!RCT) {
+######	      DpO <- apply(XRpi,2,sum)
+######	      iid.outcome <- xxi %*% XRpi*(ea[,i]-AugR0.iid[,i])
+######	      iid.outcome <- iid.outcome %*% DpO
+######         AugR0.iid[,i] <- AugR0.iid[,i]-iid.outcome
+###      }
+###   }
 
-      ## iid term for predicted P(treat=1)
+   augR0fit <- lm(ea~-1+XRpi)
+   XRgamma <- augR0fit$fitted.values/(Z0-piW0)
+   AugR0.iid <- matrix(augR0fit$fitted.values,ncol=ncol(ea))
+   AugR0 <- apply(AugR0.iid,2,sum)
+
+
+   ## iid term for predicted P(treat=1)
       if (estpr[1]==1) {
-	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
+	 Dp0f <- crossprod(Dp0,XRgamma) 
          iid.treat <- fitt$iidalpha %*% Dp0f
 	 ### same for RCT \hat \pi(,X)
-         AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
+         AugR0.iid <- AugR0.iid - iid.treat
       } 
       ## oucome model iid 
-   }
+      if (!RCT) {
+         DpO <- apply(XRpi,2,sum)
+         iid.outcome <- iid(augR0fit)
+###         iid.outcome <- iid.outcome %*% DpO
+###         AugR0.iid <- AugR0.iid-iid.outcome
+      }
 
 } # }}}
+
 
 if (!is.null(augmentR1)) {# {{{
    ff1 <- sides(augmentR1,all.vars(ssform$rhs)[2])
@@ -292,47 +321,96 @@ if (!is.null(augmentR1)) {# {{{
    Z1p1  <-  rep(0,nid)
    Z1p1[idW1] <- Z1p
    XR1pi <- Z1p1*XR1
-   xxi <- solve(crossprod(XR1pi)) 
+
+###   xxi <- solve(crossprod(XR1pi)) 
 
    if (estpr[1]==1) {
 	 Dp1 <- matrix(0,nid,ncol(fitt$Dp))
 	 Dp1[idW1,]  <- fitt$Dp[CountWW==2,]
    }
 
-   for (i in 1:ncol(ea)) {
-      gamma.R <- xxi %*% crossprod(XR1pi,ea[,i])
-      XRgamma <- XR1 %*% gamma.R
-      AugR1.iid[,i] <- XR1pi %*% gamma.R
-      AugR1[i] <- sum(AugR1.iid[,i])
+###   for (i in 1:ncol(ea)) {
+###      gamma.R <- xxi %*% crossprod(XR1pi,ea[,i])
+###      XRgamma <- XR1 %*% gamma.R
+###      AugR1.iid[,i] <- XR1pi %*% gamma.R
+###      AugR1[i] <- sum(AugR1.iid[,i])
+###
+###      ## iid term for predicted P(treat=1)
+###      if (estpr[1]==1) {
+###	 Dp1f <- apply(Dp1*c(XRgamma),2,sum) 
+###         iid.treat <- Dp1f %*% t(fitt$iidalpha)
+###	 print(head(t(iid.treat)))
+###         AugR1.iid[,i] <- AugR1.iid[,i] - iid.treat
+###      } 
+###   }
+###   print(head(AugR1.iid))
 
-      ## iid term for predicted P(treat=1)
+   augR1fit <- lm(ea~-1+XR1pi)
+   XRgamma <- XR1 %*%  coef(augR1fit)
+   AugR1.iid <- augR1fit$fitted.values 
+   AugR1 <- apply(AugR1.iid,2,sum)
+
+   ## iid term for predicted P(treat=1)
       if (estpr[1]==1) {
-	 Dp1f <- apply(Dp1*c(XRgamma),2,sum) 
-         iid.treat <- Dp1f %*% t(fitt$iidalpha)
-         AugR1.iid[,i] <- AugR1.iid[,i] - iid.treat
+	 Dp1f <- crossprod(Dp1,XRgamma) 
+         iid.treat <- fitt$iidalpha %*% Dp1f
+	 ### same for RCT \hat \pi(,X)
+         AugR1.iid <- AugR1.iid - iid.treat
       } 
-   }
+
+      ## oucome model iid 
+      if (!RCT) {
+###         DpO <- apply(XR1pi,2,sum)
+###         iid.outcome <- iid(augR1fit)
+###         iid.outcome <- iid.outcome %*% rep(DpO,ncol(ea))
+###         AugR1.iid <- AugR1.iid-iid.outcome
+      }
+
 } # }}}
 
 if (!is.null(augmentR0) & !is.null(augmentR1)) {# {{{
    XRbpi <- cbind(XRpi,XR1pi)
    XRb <- cbind(XR,XR1)
    xxi <- solve(crossprod(XRbpi)) 
-   for (i in 1:ncol(ea)) {
-      gamma.R <- xxi %*% crossprod(XRbpi,ea[,i])
-      XRgamma <- XRb %*% gamma.R
-      XRgamma0 <- XRpi %*% gamma.R[1:ncol(XRpi)]
-      XRgamma1 <- XR1pi %*% gamma.R[-(1:ncol(XRpi))]
-      AugR01.iid[,i] <- XRbpi %*% gamma.R
-      AugR01[i] <- sum(AugR01.iid[,i])
+###   for (i in 1:ncol(ea)) {
+###      gamma.R <- xxi %*% crossprod(XRbpi,ea[,i])
+###      XRgamma <- XRb %*% gamma.R
+###      XRgamma0 <- XRpi %*% gamma.R[1:ncol(XRpi)]
+###      XRgamma1 <- XR1pi %*% gamma.R[-(1:ncol(XRpi))]
+###      AugR01.iid[,i] <- XRbpi %*% gamma.R
+###      AugR01[i] <- sum(AugR01.iid[,i])
+###
+###       if (estpr[1]==1) {
+###         Dp <- Dp0*c(XRgamma0)+Dp1*c(XRgamma1)
+###	 Dp01f <- apply(Dp,2,sum) 
+###	 print(Dp01f)
+###         iid.treat <- Dp01f  %*% t(fitt$iidalpha)
+###         AugR01.iid[,i] <- AugR01.iid[,i] - iid.treat
+###      } 
+###   }
+###
 
-       if (estpr[1]==1) {
-         Dp <- Dp0*c(XRgamma0)+Dp1*c(XRgamma1)
-	 Dp01f <- apply(Dp,2,sum) 
-         iid.treat <- Dp01f  %*% t(fitt$iidalpha)
-         AugR01.iid[,i] <- AugR01.iid[,i] - iid.treat
+   augR01fit <- lm(ea~-1+XRbpi)
+   XRgamma <- XRb %*%  coef(augR01fit)
+   AugR01.iid <- augR01fit$fitted.values 
+   AugR01 <- apply(AugR01.iid,2,sum)
+
+   ## iid term for predicted P(treat=1)
+      if (estpr[1]==1) {
+         XRgamma0 <- XRpi %*% coef(augR01fit)[1:ncol(XRpi),]
+         XRgamma1 <- XR1pi %*% coef(augR01fit)[-(1:ncol(XRpi)),]
+         Dp01f <- crossprod(Dp0,XRgamma0)+crossprod(Dp1,XRgamma1)
+         iid.treat <- fitt$iidalpha %*% Dp01f
+         AugR01.iid <- AugR01.iid - iid.treat
       } 
-   }
+      ## oucome model iid 
+      if (!RCT) {
+         DpO <- apply(XRbpi,2,sum)
+###         iid.outcome <- iid(augR01fit)
+###         iid.outcome <- iid.outcome %*% rep(DpO,ncol(ea))
+###         AugR01.iid <- AugR1.iid-iid.outcome
+      }
+
 } else {AugR01.iid <- AugR0.iid+AugR1.iid; AugR01 <- AugR0+AugR1;  }
 # }}}
 
@@ -538,7 +616,7 @@ if (length(typesRR)==0) { typesRR <- "none" }
 
 baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
 iidn <- c()
-iid <- fitt <- list(); j <- 0
+varbeta <- iid <- fitt <- list(); j <- 0
 for (typeR in typesRR) 
 for (typeC in typesCC) {# {{{
 if (typeR!=typeC) {
@@ -557,6 +635,7 @@ if (typeR!=typeC) {
    if (typeC=="C") {
        var.beta <- var.beta - fit0$ihessian %*% var.Clt.improve%*% fit0$ihessian
    }
+   if (fit0$p>0) varbeta[[j]] <- var.beta
 
    if (fit0$p>0) 
    fitts <- phreg(formula,data=data,augmentation=Aug,no.var=1,weights=ww,...)
@@ -571,15 +650,18 @@ if (typeR!=typeC) {
       if (fit0$p>0) rr <- c(exp(xxx$X %*% coef(fitts)+ xxx$offset)*xxx$weights)
       else rr <- c(exp(xxx$offset)*xxx$weights)
       XRE <- apply(XRpit*rr*c(xxx$sign),2,revcumsumstrata,xxx$strata,xxx$nstrata)
-      S0i <- rep(0,nrow(xxx$X))
+      S0i2 <- S0i <- rep(0,nrow(xxx$X))
       jumps <- xxx$jumps+1
       S0i[jumps] <- 1/fitts$S0
+      ww <- xxx$caseweights*xxx$weights
+      S0i2[jumps] <- 1/(fitts$S0^2*ww[xxx$jumps+1])
       ###
       U <- matrix(0,nrow(XRE),ncol(XRE))
       U[jumps,] <- XRpit[jumps,]*S0i[jumps]
       NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
-      XREdLam0 <- apply(XRE*S0i^2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
-      if (RCT) covBase <- (NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
+      XREdLam0 <- apply(XRE*S0i2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
+      ns <- c(sumstrata(rep(1,nid),xxx$strata[headstrata(xxx$id,nid)],xxx$nstrata))[xxx$strata[jumps,]+1]
+      if (RCT) covBase <- (nid/ns)*(NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
 
       gamR0Base <- (covBase) %*% xxi
       XRs <- apply(XR0pi,2,sum)
@@ -616,7 +698,7 @@ out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
     cumhaz.noAug=cumhaz,se.cumhaz.noAug=se.cumhaz, 
     strata=fit0$strata.jumps,nstrata=fit0$nstrata,jumps=seq_along(fit0$strata.jumps),
     strata.name=fit0$strata.name,strata.level=fit0$strata.level,
-    baselinecox=baselinecox,data.augR0=data.augR0)
+    baselinecox=baselinecox,data.augR0=data.augR0,var.beta=varbeta)
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
