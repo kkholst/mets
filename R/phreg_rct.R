@@ -5,7 +5,8 @@
 ##' censoring augmentation regression is also computed to gain even more from the censoring augmentation. Furhter, we also deal with twostage
 ##' randomizations. The function was implemented to deal with recurrent events (start,stop) + cluster, and  more examples in vignette. 
 ##'
-##' @param formula formula with 'Surv' or 'Event' outcome (see \code{coxph}) and treatment (randomization 0/1)
+##' @param formula formula with 'Surv' or 'Event' outcome (see \code{coxph}) and
+##'   treatment (randomization 0/1)
 ##' @param data data frame
 ##' @param cause to use for competing risks, recurrent events data
 ##' @param cens.code to use for competing risks, recurrent events data
@@ -13,25 +14,31 @@
 ##' @param typesC augmentations used for censoring
 ##' @param weights weights for score equation
 ##' @param offset offsets for Cox model
-##' @param augmentR0 formula for the randomization augmentation  (~age+sex)
-##' @param augmentR1 formula for the randomization augmentation  (~age+sex)
-##' @param augmentC formula for the censoring augmentation  (~age+sex)
-##' @param treat.model propensity score model, default is ~+1, assuming RCT study
+##' @param augmentR0 formula for the randomization augmentation (~age+sex)
+##' @param augmentR1 formula for the randomization augmentation (~age+sex)
+##' @param augmentC formula for the censoring augmentation (~age+sex)
+##' @param treat.model propensity score model, default is ~+1, assuming RCT
+##'   study
 ##' @param RCT if false will use propensity score adjustment for marginal model
-##' @param treat.var in case of twostage randomization, this variable is 1 for the treatment times, if start,stop then default assumes that only one treatment at first record
-##' @param km use Kaplan-Meier for the censoring weights (stratified on treatment)
+##' @param treat.var in case of twostage randomization, this variable is 1 for
+##'   the treatment times, if start,stop then default assumes that only one
+##'   treatment at first record
+##' @param km use Kaplan-Meier for the censoring weights (stratified on
+##'   treatment)
 ##' @param level of confidence intervals
-##' @param cens.model
+##' @param cens.model default is censoring model ~strata(treatment) but any
+##'   model can be used to make censoring martingales
 ##' @param estpr estimates propensity scores
 ##' @param pi0 possible fixed propensity scores for randomizations
-##' @param base.augment TRUE to covariate augment baselines (only for R0 augmentation)
+##' @param base.augment TRUE to covariate augment baselines (only for R0
+##'   augmentation)
 ##' @param return.augmentR0 to return augmentation data
-##' @param mlogit if TRUE then forces use of this function for propensity scores, default for binary treatment is glm
+##' @param mlogit if TRUE then forces use of this function for propensity
+##'   scores, default for binary treatment is glm
 ##' @param ... Additional arguments to phreg function
-##' @param cens.model, default is censoring model ~strata(treatment) but any model can be used to make censoring martingales
 ##' @author Thomas Scheike
-##' @references
-##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
+##' @references Lu, Tsiatis (2008), Improving the efficiency of the log-rank
+##'   test using auxiliary covariates, Biometrika, 679--694
 ##' 
 ##' Scheike et al. (2024), WIP, Two-stage randomization for recurrent events, 
 ##' @examples

@@ -31,7 +31,8 @@ phreg_rct(
 )
 }
 \arguments{
-\item{formula}{formula with 'Surv' or 'Event' outcome (see \code{coxph}) and treatment (randomization 0/1)}
+\item{formula}{formula with 'Surv' or 'Event' outcome (see \code{coxph}) and
+treatment (randomization 0/1)}
 
 \item{data}{data frame}
 
@@ -47,33 +48,40 @@ phreg_rct(
 
 \item{offset}{offsets for Cox model}
 
-\item{augmentR0}{formula for the randomization augmentation  (~age+sex)}
+\item{augmentR0}{formula for the randomization augmentation (~age+sex)}
 
-\item{augmentR1}{formula for the randomization augmentation  (~age+sex)}
+\item{augmentR1}{formula for the randomization augmentation (~age+sex)}
 
-\item{augmentC}{formula for the censoring augmentation  (~age+sex)}
+\item{augmentC}{formula for the censoring augmentation (~age+sex)}
 
-\item{treat.model}{propensity score model, default is ~+1, assuming RCT study}
+\item{treat.model}{propensity score model, default is ~+1, assuming RCT
+study}
 
 \item{RCT}{if false will use propensity score adjustment for marginal model}
 
-\item{treat.var}{in case of twostage randomization, this variable is 1 for the treatment times, if start,stop then default assumes that only one treatment at first record}
+\item{treat.var}{in case of twostage randomization, this variable is 1 for
+the treatment times, if start,stop then default assumes that only one
+treatment at first record}
 
-\item{km}{use Kaplan-Meier for the censoring weights (stratified on treatment)}
+\item{km}{use Kaplan-Meier for the censoring weights (stratified on
+treatment)}
 
 \item{level}{of confidence intervals}
 
-\item{cens.model, }{default is censoring model ~strata(treatment) but any model can be used to make censoring martingales}
+\item{cens.model}{default is censoring model ~strata(treatment) but any
+model can be used to make censoring martingales}
 
 \item{estpr}{estimates propensity scores}
 
 \item{pi0}{possible fixed propensity scores for randomizations}
 
-\item{base.augment}{TRUE to covariate augment baselines (only for R0 augmentation)}
+\item{base.augment}{TRUE to covariate augment baselines (only for R0
+augmentation)}
 
 \item{return.augmentR0}{to return augmentation data}
 
-\item{mlogit}{if TRUE then forces use of this function for propensity scores, default for binary treatment is glm}
+\item{mlogit}{if TRUE then forces use of this function for propensity
+scores, default for binary treatment is glm}
 
 \item{...}{Additional arguments to phreg function}
 }
@@ -92,7 +100,8 @@ out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z
 summary(out)
 }
 \references{
-Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
+Lu, Tsiatis (2008), Improving the efficiency of the log-rank
+  test using auxiliary covariates, Biometrika, 679--694
 
 Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,
 }
