@@ -564,7 +564,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                ##                     trace=1,
                ##                     stabil=FALSE)
                ##   controlnr[names(control)] <- control
-               ##   lava:::NR(start=p0,NULL,g0, h0,control=controlnr)
+               ##   lava::NR(start=p0,NULL,g0, h0,control=controlnr)
 ##               },
                ##                 op <- switch(mycontrol$method,
                ##                              ucminf=ucminf(p0,f,control=mycontrol[ucminfopt],hessian=F),

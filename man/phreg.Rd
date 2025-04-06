@@ -21,7 +21,7 @@ phreg(formula, data, offset = NULL, weights = NULL, ...)
 
 \item{data}{data frame}
 
-\item{offset}{offsets for cox model}
+\item{offset}{offsets for Cox model}
 
 \item{weights}{weights for Cox score equations}
 
@@ -53,7 +53,7 @@ plot(rob1,se=TRUE,robust=TRUE)
 betaiiid <- lava::iid(out1)
 
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- mets:::IIDbaseline.phreg(out1,time=30)
+Aiiid <- mets::IIDbaseline.phreg(out1,time=30)
 
 }
 \author{

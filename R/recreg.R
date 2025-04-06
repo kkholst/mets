@@ -2179,7 +2179,7 @@ else {
 
 ##' @export
 predict.recreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { ## {{{
-if (!se) out <- mets:::predict.phreg(object,newdata,se=se,times=times,...)
+if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
   out <- predictrecreg(object,newdata,times=times,np=np,...)
 }
@@ -2620,7 +2620,7 @@ return(val)
 
 
 ##' @export
-strataAugment <- survival:::strata
+strataAugment <- survival::strata
 
 ##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,

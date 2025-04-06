@@ -172,7 +172,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##'
 ##' @param formula formula with 'Surv' outcome (see \code{coxph})
 ##' @param data data frame
-##' @param offset offsets for cox model
+##' @param offset offsets for Cox model
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
@@ -195,7 +195,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' betaiiid <- lava::iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- mets:::IIDbaseline.phreg(out1,time=30)
+##' Aiiid <- mets::IIDbaseline.phreg(out1,time=30)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -3309,19 +3309,19 @@ return(pres)
 
 ##' @export
 summary.km <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],...) { ## {{{
-   out <- mets:::summary.predictrecreg(object,times=times,type=type[1],...)
+   out <- summary.predictrecreg(object,times=times,type=type[1],...)
    return(out)
 } ## }}}
 
 ##' @export
 plot.km <- function(x,...) { ## {{{
-   mets:::plot.predictphreg(x,...)
+   plot.predictphreg(x,...)
 }# }}}
 
 ###predict.km <- function(object,newdata,...) { ## {{{
 ## take strata after readPhreg
 ### take relevant parts of prediction that is only for each strata
-## out <- mets:::predict.phreg(object,newdata,se=se,conf.type=conf.type[1],...)
+## out <- predict.phreg(object,newdata,se=se,conf.type=conf.type[1],...)
 ###}# }}}
 
 ##' Cumulative incidence with robust standard errors 

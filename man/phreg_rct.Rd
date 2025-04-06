@@ -43,6 +43,10 @@ phreg_rct(
 
 \item{typesC}{augmentations used for censoring}
 
+\item{weights}{weights for score equation}
+
+\item{offset}{offsets for Cox model}
+
 \item{augmentR0}{formula for the randomization augmentation  (~age+sex)}
 
 \item{augmentR1}{formula for the randomization augmentation  (~age+sex)}

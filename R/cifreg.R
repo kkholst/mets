@@ -666,7 +666,7 @@ else {
 ##' @export
 predict.cifreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { ## {{{
 if (!is.null(object$propodds) & se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
-if (!se) out <- mets:::predict.phreg(object,newdata,se=se,times=times,...)
+if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
   out <- predictrecreg(object,newdata,times=times,np=np,...)
 }
@@ -676,7 +676,7 @@ return(out)
 
 ##' @export
 summary.predictcifreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[1],...) {# {{{
-ret <- mets:::summary.predictrecreg(object,type=type[1],times=times,...)
+ret <- summary.predictrecreg(object,type=type[1],times=times,...)
 return(ret)
 }# }}}
 
@@ -1002,7 +1002,7 @@ return(preds)
 }# }}}
 
 ##' @export
-strataC <- survival:::strata
+strataC <- survival::strata
 
 ##' Augmentation for Fine-Gray model based on stratified NPMLE Cif (Aalen-Johansen)
 ##'

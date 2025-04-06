@@ -593,7 +593,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
   ##                     trace=1,
   ##                     stabil=FALSE)
   ##   controlnr[names(control)] <- control
-  ##   op <- lava:::NR(start=p0,NULL,g0, h0,control=controlnr)
+  ##   op <- lava::NR(start=p0,NULL,g0, h0,control=controlnr)
       } else {
           control$method <- NULL
           op <- nlminb(p0,f0,control=control)

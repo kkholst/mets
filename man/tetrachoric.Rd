@@ -12,7 +12,8 @@ tetrachoric(P, OR, approx = 0, ...)
 
 \item{OR}{Odds-ratio}
 
-\item{approx}{If TRUE an approximation of the tetrachoric correlation is used}
+\item{approx}{If TRUE an approximation of the tetrachoric correlation is
+used}
 
 \item{...}{Additional arguments}
 }
