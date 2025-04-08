@@ -23,15 +23,15 @@ phreg_IPTW(
 
 \item{treat.model}{propensity score model (binary or multinomial)}
 
-\item{treat.var}{a 1/0 variable that indicates when propensity score is computed over time}
+\item{treat.var}{a 1/0 variable that indicates when treatment is given and the propensity score is computed}
 
 \item{weights}{may be given, and then uses weights*w(A) as the weights}
 
-\item{estpr}{to estimate propensity scores and get infuence function contribution to uncertainty}
+\item{estpr}{(=1, default) to estimate propensity scores and get infuence function contribution to uncertainty}
 
 \item{pi0}{fixed simple weights}
 
-\item{se.cluster}{to compute GEE type standard errors when additional cluster structure is present.}
+\item{se.cluster}{to compute GEE type standard errors when additional cluster structure is present}
 
 \item{...}{arguments for phreg call}
 }
@@ -39,14 +39,15 @@ phreg_IPTW(
 Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
  \deqn{\pi(a|X)=P(A=a|X)}. Computes
 standard errors via influence functions that are returned as the IID argument. 
-Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
-than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
-of the "treat.model".  Recurrent events can be considered with start,stop structure and then cluster(id) must be
-specified. Robust standard errors are computed.
+Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are 
+than treatment categories. The treatment needs to be a factor and is identified on the rhs
+of the "treat.model". Recurrent events can be considered with start,stop structure and then cluster(id) must be
+specified. Robust standard errors are computed in all cases.
 }
 \details{
-Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
-and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment.
+Time-dependent propensity score weights can also be computed when treat.var is used, it must be 1 at the time
+of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
+time of 2nd randomization.
 }
 \examples{
 library(mets)
