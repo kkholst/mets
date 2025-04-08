@@ -9,6 +9,7 @@
 ##' @param data data frame
 ##' @param cause  to use for competing risks, recurrent events data
 ##' @param cens.code to use for competing risks, recurrent events data
+##' @param weights to be used for phreg
 ##' @param typesR augmentations used for randomization
 ##' @param typesC augmentations used for censoring 
 ##' @param augmentR0 formula for the randomization augmentation  (~age+sex)
@@ -41,7 +42,7 @@
 ##' summary(out)
 ##' @export
 phreg_rct <- function(formula,data,cause=1,cens.code=0,
-     typesR=c("R0","R1","R01"),typesC=c("C","dynC"),weights=NULL,offset=NULL,
+     typesR=c("R0","R1","R01"),typesC=c("C","dynC"),weights=NULL,
      augmentR0=NULL,augmentR1=NULL,augmentC=NULL,treat.model=~+1,RCT=TRUE,
      treat.var=NULL,km=TRUE,level=0.95,cens.model=NULL,estpr=1,pi0=0.5,
      base.augment=FALSE,return.augmentR0=FALSE,mlogit=FALSE,...) {# {{{

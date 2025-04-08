@@ -2674,36 +2674,36 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
     if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
     phw <- phreg(formula, data, weights = ww, Z = DPait, ...)
 
-    check.derivative <- 0
-	if (check.derivative == 1) { ## {{{ 
-	### for checking derivative 
-	fpar <- glm(treat.model,dataw,family=binomial)
-	mm <- model.matrix(treat.model,dataw)
-	cpar <- coef(fpar)
-   	 ### library(numderiv)
-
-	ff <- function(par,base=0) {
-	pa <-        expit(mm %*% par)
-	www <- ifelse(dataw[,treat.name] == "1", pa, 1 - pa)
-	ww <- rep(1, nrow(data))
-	ww[wherew] <- www
-	wlpa <- exp(cumsumstrata(log(ww), idww - 1, attr(idww, "nlevel")))
-	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
-
-	pp <- phreg(formula,data,weights=1/wwwt,no.opt=true,beta=coef(phw))
-	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
-	return(po)
-	}
-
-	print(ff(cpar))
-	gf <- jacobian(ff,cpar)
-	print(t(gf))
-        ###
-        print(ff(cpar,base=1))
-	gf <- jacobian(ff,cpar,base=1)
-	print(gf)
-	print("___________________________________"); 
-	} ## }}}
+###    check.derivative <- 0
+###	if (check.derivative == 1) { ## {{{ 
+###	### for checking derivative 
+###	fpar <- glm(treat.model,dataw,family=binomial)
+###	mm <- model.matrix(treat.model,dataw)
+###	cpar <- coef(fpar)
+###   	 ### library(numderiv)
+###
+###	ff <- function(par,base=0) {
+###	pa <-        expit(mm %*% par)
+###	www <- ifelse(dataw[,treat.name] == "1", pa, 1 - pa)
+###	ww <- rep(1, nrow(data))
+###	ww[wherew] <- www
+###	wlpa <- exp(cumsumstrata(log(ww), idww - 1, attr(idww, "nlevel")))
+###	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
+###
+###	pp <- phreg(formula,data,weights=1/wwwt,no.opt=true,beta=coef(phw))
+###	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
+###	return(po)
+###	}
+###
+###	print(ff(cpar))
+###	gf <- jacobian(ff,cpar)
+###	print(t(gf))
+###        ###
+###        print(ff(cpar,base=1))
+###	gf <- jacobian(ff,cpar,base=1)
+###	print(gf)
+###	print("___________________________________"); 
+###	} ## }}}
 
 if (estpr[1] == 1) { 
 	xx <- phw$cox.prep
@@ -2807,7 +2807,6 @@ class(phw) <- c("phreg","IPTW")
 
 return(phw)
 }# }}}
-
 
 ##' G-estimator for Cox and Fine-Gray model 
 ##'
