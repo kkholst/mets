@@ -12,7 +12,6 @@ phreg_rct(
   typesR = c("R0", "R1", "R01"),
   typesC = c("C", "dynC"),
   weights = NULL,
-  offset = NULL,
   augmentR0 = NULL,
   augmentR1 = NULL,
   augmentC = NULL,
@@ -42,6 +41,8 @@ phreg_rct(
 \item{typesR}{augmentations used for randomization}
 
 \item{typesC}{augmentations used for censoring}
+
+\item{weights}{to be used for phreg}
 
 \item{augmentR0}{formula for the randomization augmentation  (~age+sex)}
 
