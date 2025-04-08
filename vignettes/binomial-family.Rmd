@@ -83,7 +83,7 @@ For the additive gamma of this type we set-up the random effects
 included in such a family to make the ACE valid using some
 special functions for this. 
 
-The model is constructe with one enviromental effect shared by
+The model is constructed with one enviromental effect shared by
 all in the family and 8 genetic random effects with size (1/4) genetic
 variance. Looking at the first family we see that the mother and
 father both share half the genes with the children and that the

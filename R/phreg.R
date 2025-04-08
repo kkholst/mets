@@ -108,7 +108,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 	 nstrata <- val$nstrata
 	 jumptimes <- val$jumptimes
 
-	 ## Brewslow estimator, to handle also possible weights, caseweights that are 0
+	 ## Brewslow estimator, to handle also possible weights/case-weights, and caseweights that are 0
 	 S0i2 <- S0i <- rep(0,length(val$S0))
          wwJ <- val$caseweightsJ*val$weightsJ
 	 S0i[val$S0>0] <- 1/val$S0[val$S0>0]
@@ -2503,22 +2503,23 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
 ##'  \deqn{\pi(a|X)=P(A=a|X)}. Computes
 ##' standard errors via influence functions that are returned as the IID argument. 
-##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
-##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
-##' of the "treat.model".  Recurrent events can be considered with start,stop structure and then cluster(id) must be
-##' specified. Robust standard errors are computed. 
+##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are 
+##' than treatment categories. The treatment needs to be a factor and is identified on the rhs
+##' of the "treat.model". Recurrent events can be considered with start,stop structure and then cluster(id) must be
+##' specified. Robust standard errors are computed in all cases. 
 ##'
-##' Also works with cluster argument. Time-dependent propensity score weights can also be computed when treat.var is 1
-##' and then at time of 2nd treatment (A_1) uses weights w_0(A_0) * w_1(A_1) where A_0 is first treatment. 
+##' Time-dependent propensity score weights can also be computed when treat.var is used, it must be 1 at the time
+##' of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
+##' time of 2nd randomization.
 ##'
 ##' @param formula for phreg 
 ##' @param data data frame for risk averaging
 ##' @param treat.model propensity score model (binary or multinomial) 
-##' @param treat.var a 1/0 variable that indicates when propensity score is computed over time 
+##' @param treat.var a 1/0 variable that indicates when treatment is given and the propensity score is computed 
 ##' @param weights may be given, and then uses weights*w(A) as the weights
-##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
+##' @param estpr (=1, default) to estimate propensity scores and get infuence function contribution to uncertainty
 ##' @param pi0 fixed simple weights 
-##' @param se.cluster to compute GEE type standard errors when additional cluster structure is present.
+##' @param se.cluster to compute GEE type standard errors when additional cluster structure is present
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
@@ -2528,7 +2529,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
 ##' summary(out)
 ##' @export
-phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5,se.cluster=NULL,...)
+phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5,se.cluster=NULL,...)
 {# {{{
     cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -2653,10 +2654,10 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weig
         iidalpha0 <- fitt$iidalpha
         wPA <- c(fitt$pA)
         DPai <- fitt$DPai
-    }
-    else {
-        wPA <- 1/ifelse(pi0, 1 - pi0, treats$ntreatvar == 2)
-        pi0 <- rep(pi0, treats$nlev)
+    } else {
+        if (length(pi0)==length(treats$ntreatvar)) wPA <- pi0 
+	else wPA <- 1/ifelse(pi0[1], 1 - pi0[1], treats$ntreatvar == 2)
+        ## pi0 <- rep(pi0, treats$nlev)
         DPai <- matrix(0, nrow(data), 1)
     }
     ww <- rep(1, nrow(data))
@@ -2669,43 +2670,42 @@ phreg_IPTW <- function (formula, data, treat.model = NULL, treat.var = NULL,weig
         DPait <- matrix(0, nrow(data), ncol(DPai))
         DPait[whereW, ] <- DPai
         DPait <- apply(DPait * c(wlPA), 2, cumsumstrata, id - 1, nid)/wwt
-    } else DPait <- matrix(0, 1, 1)
+    } else DPait <- NULL
     if (is.null(weights)) ww <- 1/wwt else ww <- weights/wwt
     phw <- phreg(formula, data, weights = ww, Z = DPait, ...)
 
-###    check.derivative <- 0
-###	if (check.derivative == 1) {
-###	### for checking derivative 
-###	fpar <- glm(treat.model,dataW,family=binomial)
-###	mm <- model.matrix(treat.model,dataW)
-###	cpar <- coef(fpar)
-###	library(numDeriv)
-###
-###	ff <- function(par,base=0) {
-###	pa <-        expit(mm %*% par)
-###	www <- ifelse(dataW[,treat.name] == "1", pa, 1 - pa)
-###	ww <- rep(1, nrow(data))
-###	ww[whereW] <- www
-###	wlPA <- exp(cumsumstrata(log(ww), idWW - 1, attr(idWW, "nlevel")))
-###	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
-###
-###	pp <- phreg(formula,data,weights=1/wwwt,no.opt=TRUE,beta=coef(phw))
-###	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
-###	return(po)
-###	}
-###
-###	print(ff(cpar))
-###	gf <- jacobian(ff,cpar)
-###	print(t(gf))
-###        ###
-###        print(ff(cpar,base=1))
-###	gf <- jacobian(ff,cpar,base=1)
-###	print(gf)
-###	print("___________________________________"); 
-###	}
+    check.derivative <- 0
+	if (check.derivative == 1) { ## {{{ 
+	### for checking derivative 
+	fpar <- glm(treat.model,dataw,family=binomial)
+	mm <- model.matrix(treat.model,dataw)
+	cpar <- coef(fpar)
+   	 ### library(numderiv)
 
+	ff <- function(par,base=0) {
+	pa <-        expit(mm %*% par)
+	www <- ifelse(dataw[,treat.name] == "1", pa, 1 - pa)
+	ww <- rep(1, nrow(data))
+	ww[wherew] <- www
+	wlpa <- exp(cumsumstrata(log(ww), idww - 1, attr(idww, "nlevel")))
+	wwwt <- exp(cumsumstrata(log(ww), id - 1, nid))
 
-if (estpr[1] == 1) {
+	pp <- phreg(formula,data,weights=1/wwwt,no.opt=true,beta=coef(phw))
+	if (base==1) po <- c(pp$cumhaz[,2]) else po <- pp$gradient
+	return(po)
+	}
+
+	print(ff(cpar))
+	gf <- jacobian(ff,cpar)
+	print(t(gf))
+        ###
+        print(ff(cpar,base=1))
+	gf <- jacobian(ff,cpar,base=1)
+	print(gf)
+	print("___________________________________"); 
+	} ## }}}
+
+if (estpr[1] == 1) { 
 	xx <- phw$cox.prep
 	nid <- max(xx$id)
 	S0i <- rep(0, length(xx$strata))
@@ -2725,7 +2725,6 @@ if (estpr[1] == 1) {
 	rr <- c(xx$sign * exp(xx$offset) * xx$weights)
 	rrnw <- c(xx$sign * exp(xx$offset))
         }
-
 	DWX = .Call("vecMatMat", xx$Z, Xt)$vXZ
 	S1 = apply(Xt * rr, 2, revcumsumstrata, xx$strata, xx$nstrata)
 	###S00 = revcumsumstrata( rr, xx$strata, xx$nstrata)
@@ -2765,6 +2764,10 @@ if (estpr[1] == 1) {
         thetat <- iidalpha0[id+1,,drop=FALSE]
         covk1 <- apply(S0i*thetat,2,cumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="sum")
         covk2 <- apply(rr*thetat,2,revcumsumidstratasum,id,mid,xx$strata,xx$nstrata,type="lagsum")
+        ###
+        covk1 <- apply(S0i*thetat,2,cumsumstrata,xx$strata,xx$nstrata)
+        covk2 <- apply(rr*thetat,2,revcumsumstrata,xx$strata,xx$nstrata)
+        ###
         covk2 <- covk2*cumS0i2
         covv <- (covk1-covk2)[xx$jumps+1,,drop=FALSE]
         covvt <- 2*apply(covv*DAt,1,sum)
@@ -2776,14 +2779,22 @@ if (estpr[1] == 1) {
 		Ht <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
 		Ht <- Ht[xx$jumps+1,,drop=FALSE]
 		covvBT <- 2* rowSums((Ht %*% t(covbetatheta))*DAt)
-		varA <- varA - covvBT 
+		varA <- varA + covvBT 
 	}
 	phw$robse.cumhaz[,2] <- varA^.5
 	phw$se.cumhaz[,2] <- varA^.5
 	phw$var.cumhaz <- cbind(phw$se.cumhaz[,1],varA)
 	resAiid <- list(DAt=DAt,Ht=Ht,iidalpha0=iidalpha0,iidbeta=phw$IID)
 	phw$resAiid <- resAiid
-}
+	phw$iptw <- ww
+} else {
+   phw$iptw <- ww
+   phw <- robust.phreg(phw)
+   phw$naive.se.cumhaz <- phw$se.cumhaz 
+   phw$se.cumhaz <- phw$robse.cumhaz
+   phw$naive.var <- phw$var
+} 
+
 
 if (!is.null(se.cluster)) {
 	phw$IID.simple <- phw$IID
