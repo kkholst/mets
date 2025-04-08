@@ -14,7 +14,6 @@
 ##' @param typesR augmentations used for randomization
 ##' @param typesC augmentations used for censoring
 ##' @param weights weights for score equation
-##' @param offset offsets for Cox model
 ##' @param augmentR0 formula for the randomization augmentation (~age+sex)
 ##' @param augmentR1 formula for the randomization augmentation (~age+sex)
 ##' @param augmentC formula for the censoring augmentation (~age+sex)
