@@ -137,14 +137,15 @@ daggregate <- function(data,y=NULL,x=NULL,subset,...,fun="summary",regex=mets.op
         if (matrix) {
             res <- by2mat(res,colnames(y))
         }
-        return(structure(res,ngroupvar=NCOL(x),class=c("daggregate",class(res))))
+        return(structure(res, ngroupvar=NCOL(x),
+                         class=c("daggregate",class(res))))
     }
     if (silent)
         capture.output(res <- do.call(fun, c(list(y),list(...))))
     else
-        res <- do.call(fun, c(list(y),list(...)))
-    res
-    structure(res, ngroupvar=0, class=c("daggregate",class(res)))
+        res <- do.call(fun, c(list(y), list(...)))
+    if (is.null(res)) return(invisible(NULL))
+    structure(res, ngroupvar=0, class=c("daggregate", class(res)))
 }# }}}
 
 ##' @export

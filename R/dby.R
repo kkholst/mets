@@ -26,7 +26,9 @@
 ##' n <- 4
 ##' k <- c(3,rbinom(n-1,3,0.5)+1)
 ##' N <- sum(k)
-##' d <- data.frame(y=rnorm(N),x=rnorm(N),id=rep(seq(n),k),num=unlist(sapply(k,seq)))
+##' d <- data.frame(y=rnorm(N),x=rnorm(N),
+##'    id=rep(seq(n),k),num=unlist(sapply(k,seq))
+##' )
 ##' d2 <- d[sample(nrow(d)),]
 ##'
 ##' dby(d2, y~id, mean)
@@ -37,7 +39,9 @@
 ##' dby(d,y ~ id + order(num), dlag, ARGS=list(k=1:2), NAMES=c("l1","l2"))
 ##'
 ##' dby(d, y~id + order(num), mean=mean, csum=cumsum, n=length)
-##' dby(d2, y~id + order(num), a=cumsum, b=mean, N=length, l1=function(x) c(NA,x)[-length(x)])
+##' dby(d2, y~id + order(num), a=cumsum, b=mean, N=length,
+##'   l1=function(x) c(NA,x)[-length(x)]
+##' )
 ##'
 ##' dby(d, y~id + order(num), nn=seq_along, n=length)
 ##' dby(d, y~id + order(num), nn=seq_along, n=length)
@@ -75,7 +79,21 @@
 ##' a <- iris
 ##' a <- dby(a,y=1)
 ##' dby(a,Species=="versicolor") <- list(y=2)
-dby <- function(data,INPUT,...,ID=NULL,ORDER=NULL,SUBSET=NULL,SORT=0,COMBINE=!REDUCE,NOCHECK=FALSE,ARGS=NULL,NAMES,COLUMN=FALSE,REDUCE=FALSE,REGEX=mets.options()$regex,ALL=TRUE) {
+dby <- function(data,
+                INPUT,
+                ...,
+                ID=NULL,
+                ORDER=NULL,
+                SUBSET=NULL,
+                SORT=0,
+                COMBINE=!REDUCE,
+                NOCHECK=FALSE,
+                ARGS=NULL,
+                NAMES,
+                COLUMN=FALSE,
+                REDUCE=FALSE,
+                REGEX=mets.options()$regex,
+                ALL=TRUE) {
     if (missing(INPUT)) INPUT <- .~1
     val <- substitute(INPUT)
     INPUT <- try(eval(val),silent=TRUE)

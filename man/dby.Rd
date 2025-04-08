@@ -70,7 +70,9 @@ dby2 for column-wise calculations
 n <- 4
 k <- c(3,rbinom(n-1,3,0.5)+1)
 N <- sum(k)
-d <- data.frame(y=rnorm(N),x=rnorm(N),id=rep(seq(n),k),num=unlist(sapply(k,seq)))
+d <- data.frame(y=rnorm(N),x=rnorm(N),
+   id=rep(seq(n),k),num=unlist(sapply(k,seq))
+)
 d2 <- d[sample(nrow(d)),]
 
 dby(d2, y~id, mean)
@@ -81,7 +83,9 @@ dby(d,y ~ id + order(num), dlag, ARGS=list(k=1:2))
 dby(d,y ~ id + order(num), dlag, ARGS=list(k=1:2), NAMES=c("l1","l2"))
 
 dby(d, y~id + order(num), mean=mean, csum=cumsum, n=length)
-dby(d2, y~id + order(num), a=cumsum, b=mean, N=length, l1=function(x) c(NA,x)[-length(x)])
+dby(d2, y~id + order(num), a=cumsum, b=mean, N=length,
+  l1=function(x) c(NA,x)[-length(x)]
+)
 
 dby(d, y~id + order(num), nn=seq_along, n=length)
 dby(d, y~id + order(num), nn=seq_along, n=length)
