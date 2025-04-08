@@ -81,8 +81,6 @@ augmentation)}
 scores, default for binary treatment is glm}
 
 \item{...}{Additional arguments to phreg function}
-
-\item{offset}{offsets for Cox model}
 }
 \description{
 Efficient implementation of the Lu-Tsiatis improvement using baseline covariates, extended to competing risks and recurrent events. Results
