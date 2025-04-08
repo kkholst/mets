@@ -12,7 +12,6 @@ phreg_rct(
   typesR = c("R0", "R1", "R01"),
   typesC = c("C", "dynC"),
   weights = NULL,
-  offset = NULL,
   augmentR0 = NULL,
   augmentR1 = NULL,
   augmentC = NULL,
@@ -45,8 +44,6 @@ treatment (randomization 0/1)}
 \item{typesC}{augmentations used for censoring}
 
 \item{weights}{weights for score equation}
-
-\item{offset}{offsets for Cox model}
 
 \item{augmentR0}{formula for the randomization augmentation (~age+sex)}
 
@@ -84,6 +81,8 @@ augmentation)}
 scores, default for binary treatment is glm}
 
 \item{...}{Additional arguments to phreg function}
+
+\item{offset}{offsets for Cox model}
 }
 \description{
 Efficient implementation of the Lu-Tsiatis improvement using baseline covariates, extended to competing risks and recurrent events. Results
