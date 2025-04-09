@@ -1,6 +1,7 @@
 ##' CIF regression
 ##'
-##' CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog) regression for propodds=NULL
+##' CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog) regression for propodds=NULL. The
+##' FG model can also be called using the cifregFG function that has propodds=NULL.
 ##'
 ##' For FG model:
 ##' \deqn{
