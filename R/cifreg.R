@@ -1,23 +1,21 @@
 ##' CIF regression
 ##'
-##' CIF logistic for propodds=1 default
-##' CIF Fine-Gray (cloglog) regression for propodds=NULL
+##' CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog) regression for propodds=NULL
 ##'
 ##' For FG model:
 ##' \deqn{
 ##' \int (X - E ) Y_1(t) w(t) dM_1
 ##' }
-##' is computed and summed over clusters  and returned multiplied with inverse
-##' of second derivative as iid.naive. Where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
-##' \deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}
-##'
+##' is computed and summed over clusters and returned multiplied with inverse
+##' of second derivative as iid.naive. Here \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
+##' \deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}.
 ##'
 ##' The iid decomposition of the beta's, however, also have a censoring term that is also
-##' is computed and added to UUiid (still scaled with inverse second derivative)
+##' is computed and added (still scaled with inverse second derivative)
 ##' \deqn{
 ##' \int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c
 ##' }
-##' and returned as iid
+##' and returned as the iid 
 ##'
 ##' For logistic link standard errors are slightly to small since uncertainty from recursive baseline is not considered, so for smaller
 ##' data-sets it is recommended to use the prop.odds.subdist of timereg that is also more efficient due to use of different weights for
