@@ -7,7 +7,7 @@
 binregG(x, data, Avalues = c(0, 1), varname = NULL)
 }
 \arguments{
-\item{x}{phreg or cifreg object}
+\item{x}{binreg object}
 
 \item{data}{data frame for risk averaging}
 

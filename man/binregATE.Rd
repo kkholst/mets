@@ -80,7 +80,8 @@ binregATE(
 Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 }
 \details{
-The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
+The first covariate in the specification of the competing risks regression model must be the treatment variable that should be coded as a factor. 
+If the factor has more than two levels
 then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.

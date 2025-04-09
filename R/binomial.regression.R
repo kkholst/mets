@@ -4,19 +4,22 @@
 ##' \deqn{P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) }
 ##'
 ##' Based on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
-##' for IPCW adjusted responses (type="I"), with (default, type="II") an additional 
-##' censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} with 
-##' \deqn{Y(t) = I(T \leq t, \epsilon=1 )}
+##' \deqn{ X ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
+##' where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
+##' IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
+##'
+##' (type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
+##' censoring distribution. For (type="II") the default an additional 
+##' censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
 ##'
 ##' logitIPCW instead considers 
 ##' \deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
-##' a standard logistic regression with weights that adjust for IPCW. 
+##' a standard logistic regression with weights that adjust for IPCW.
 ##'
-##' Variance is based on  \deqn{ \sum w_i^2 } with IPCW adjustment, and naive.var is variance 
+##' The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 ##' under known censoring model. 
 ##'
-##' Censoring model may depend on strata. 
+##' Censoring model may depend on strata (cens.model=~strata(gX)). 
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame
@@ -1106,7 +1109,8 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##'
 ##' Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
 ##'
-##' The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
+##' The first covariate in the specification of the competing risks regression model must be the treatment variable that should be coded as a factor. 
+##' If the factor has more than two levels
 ##' then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 ##'
 ##' Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
@@ -1129,7 +1133,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
 ##' @param augmentation for augment binomial regression 
-##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X) depending on the number of the number of causes. 
+##' @param outcome can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X) depending on the number of the number of causes. 
 ##' @param model exp or linear model for E( min(T, t) | X)=exp(X^t beta), or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta) 
 ##' @param Ydirect use this outcome Y with IPCW vesion
 ##' @param ... Additional arguments to lower level funtions
@@ -1583,7 +1587,7 @@ print.summary.survivalG  <- function(x,...) {
 ##' If first covariate is a factor then all contrast are computed, and if continuous 
 ##' then considered covariate values are given by Avalues.
 ##'
-##' @param x phreg or cifreg object
+##' @param x binreg object
 ##' @param data data frame for risk averaging
 ##' @param Avalues values to compare for first covariate A
 ##' @param varname if given then averages for this variable, default is first variable
@@ -1648,354 +1652,6 @@ class(out) <- "survivalG"
 return(out)
 } ## }}}
 
-#####' @export
-###binregATEbin <- function(formula,data,cause=1,time=NULL,beta=NULL,
-###	   treat.model=~+1, cens.model=~+1,
-###	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,
-###	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
-###{# {{{
-###  cl <- match.call()# {{{
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###
-###  ### possible handling of id to code from 0:(antid-1)
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- sort(unique(id))
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###
-###  if (is.null(offset)) offset <- rep(0,length(exit)) 
-###  if (is.null(weights)) weights <- rep(1,length(exit)) 
-#### }}}
-###
-###  if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-###  statusC <- (status %in% cens.code) 
-###  statusE <- (status %in% cause) & (exit<= time) 
-###  if (sum(statusE)==0) stop("No events of type 1 before time \n"); 
-###  kmt <- kaplan.meier
-###
-###  statusC <- (status %in% cens.code) 
-###  data$id <- id
-###  data$exit <- exit
-###  data$statusC <- statusC 
-###  n <- length(exit)
-###
-###  cens.strata <- cens.nstrata <- NULL 
-###
-###  if (is.null(cens.weights))  {
-###      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
-###      resC <- phreg(formC,data)
-###      if (resC$p>0) kmt <- FALSE
-###      exittime <- pmin(exit,time)
-###      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv)
-###      ## strata from original data 
-###      cens.strata <- resC$strata[order(resC$ord)]
-###      cens.nstrata <- resC$nstrata
-###  } else formC <- NULL
-###
-###  if (is.null(beta)) beta <- rep(0,ncol(X))
-###  p <- ncol(X)
-###
-###  X <-  as.matrix(X)
-###  X2  <- .Call("vecMatMat",X,X)$vXZ
-###  Y <- c((status==cause)*(exit<=time)/cens.weights)
-###
-### if (is.null(augmentation))  augmentation=rep(0,p)
-### nevent <- sum((status==cause)*(exit<=time))
-###
-###obj <- function(pp,all=FALSE)
-###{ # {{{
-###
-###lp <- c(X %*% pp+offset)
-###p <- expit(lp)
-###ploglik <- sum(weights*(Y-p)^2)
-###
-###Dlogl <- weights*X*c(Y-p)
-###D2logl <- c(weights*p/(1+exp(lp)))*X2
-###D2log <- apply(D2logl,2,sum)
-###gradient <- apply(Dlogl,2,sum)+augmentation
-###hessian <- matrix(D2log,length(pp),length(pp))
-###
-###  if (all) {
-###      ihess <- solve(hessian)
-###      beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
-###      beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
-###      robvar <- crossprod(beta.iid)
-###      val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-###	 id=id,Dlogl=Dlogl,
-###	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
-###      return(val)
-###  }  
-### structure(-ploglik,gradient=-gradient,hessian=hessian)
-###}  # }}}
-###
-###  p <- ncol(X)
-###  opt <- NULL
-###  if (p>0) {
-###  if (no.opt==FALSE) {
-###      if (tolower(method)=="nr") {
-###	  tim <- system.time(opt <- lava::NR(beta,obj,...))
-###	  opt$timing <- tim
-###	  opt$estimate <- opt$par
-###      } else {
-###	  opt <- nlm(obj,beta,...)
-###	  opt$method <- "nlm"
-###      }
-###      cc <- opt$estimate; 
-###      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-###      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
-###  } else {
-###      val <- obj(0,all=TRUE)
-###  }
-###
-###  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-###  val <- c(val,list(time=time,formula=formula,formC=formC,
-###    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-###    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
-###	  
-#### {{{ computation of ate, att, atc and their influence functions
-###
-##### dropping cluster here 
-###treat.model <- drop.specials(treat.model,"cluster")
-###treat <- glm(treat.model,data,family="binomial")
-###Xtreat <- model.matrix(treat$formula,data)
-###ytreat <- treat$y
-###
-###lpa <- treat$linear.predictors 
-###pal <- expit(lpa)
-###iidalpha <- iid(treat,id=id)
-###
-###### treatment is rhs of treat.model 
-###treat.name <-  all.vars(treat.model)[1]
-###dat1 <- data
-###dat1[,treat.name] <- 1 ## treat.contrast[2]
-###dat0 <- data
-###dat0[,treat.name] <- 0 ## treat.contrast[1]
-###
-###formulanc <- drop.specials(formula,"cluster")
-###
-###X1 <- model.matrix(formulanc[-2],dat1)
-###X0 <- model.matrix(formulanc[-2],dat0)
-###
-###p11lp <- X1 %*% val$coef+offset
-###p10lp <- X0 %*% val$coef+offset
-###p1lp <-   X %*% val$coef+offset
-###p1 <- expit(p1lp)
-###p10 <- expit(p10lp)
-###p11 <- expit(p11lp)
-###Y <- 1*(exit<time & status==cause)/cens.weights
-###
-###risk1 <- ytreat*(Y-p11)/pal+p11
-###risk0 <- (1-ytreat)*(Y-p10)/(1-pal)+p10
-###
-###riskG1 <- p11
-###riskG0 <- p10
-###
-###ntreat <- sum(ytreat)
-######att <- ytreat*Y-(pal*(1-ytreat)*Y + (ytreat - pal)* p10)/(1-pal)
-######atc <- ((1-pal)*ytreat*Y - ((ytreat - pal)* p11)/pal)-(1-ytreat)*Y
-###
-###Dp1 <- X * c(p1/(1+exp(p1lp)))
-###Dp11 <- X1 * c(p11/(1+exp(p11lp)))
-###Dp10 <- X0 * c(p10/(1+exp(p10lp)))
-###Dpai <-  - Xtreat * exp(-lpa)
-###D1mpai <-   Xtreat * exp(lpa)
-###
-###DaPsi1 <-  apply( Dpai * ytreat * c( Y - p1),2,sum)
-###DaPsi0 <-  apply( D1mpai * (1-ytreat) * c( Y - p1),2,sum)
-###DePsi1 <-  apply( Dp11 * ( 1- ytreat/pal),2,sum)
-###DePsi0 <-  apply( Dp10 * ( 1- (1-ytreat)/(1-pal)),2,sum)
-###
-######DePsiatt <- - apply( Dp10* (ytreat-pal)/(1-pal),2,sum)
-######DaPsiatt <- apply(c((1-ytreat)*(Y-p10))*D1mpai,2,sum)
-######
-######DePsiatc <- -apply( Dp11* (ytreat-pal)/pal,2,sum)
-######DaPsiatc <- apply(c(ytreat*(Y-p11))*Dpai,2,sum)
-###
-###DriskG1 <- apply(Dp11,2,sum)
-###DriskG0 <- apply(Dp10,2,sum)
-###DdifriskG <- DriskG1-DriskG0
-###
-### if (se) {## {{{ censoring adjustment of variance 
-###    ### order of sorted times
-###    ord <- resC$ord
-###    X <-  X[ord,,drop=FALSE]
-###    Xtreat <- Xtreat[ord,,drop=FALSE]
-###    ytreat <- ytreat[ord]
-###    status <- status[ord]
-###    exit <- exit[ord]
-###    weights <- weights[ord]
-###    offset <- offset[ord]
-###    cens.weights <- cens.weights[ord]
-###    lp <- c(X %*% val$coef+offset)
-###    p <- expit(lp)
-###    Y <- c((status==cause)*weights*(exit<=time)/cens.weights)
-###
-###    xx <- resC$cox.prep
-###    S0i2 <- S0i <- rep(0,length(xx$strata))
-###    S0i[xx$jumps+1]  <- 1/resC$S0
-###    S0i2[xx$jumps+1] <- 1/resC$S0^2
-###    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
-###    ## to make \int h(s)/Ys  dM_i^C(s) 
-###    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-###    h10  <-  apply(cbind(ytreat/pal,I(ytreat==0)/(1-pal))*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-###    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
-###    ### Cens-Martingale as a function of time and for all subjects to handle strata 
-###    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
-###    IhdLam0 <- apply(h*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-###    U <- matrix(0,nrow(xx$X),ncol(X))
-###    U[xx$jumps+1,] <- h[xx$jumps+1,] /c(resC$S0)
-###    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
-###
-###    IhdLamh10 <- apply(h10*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-###    U10 <- matrix(0,nrow(xx$X),2)
-###    U10[xx$jumps+1,] <- h10[xx$jumps+1,] /c(resC$S0)
-###    MGt10 <- (U10[,drop=FALSE]-IhdLamh10)*c(xx$weights)
-###
-######    IhdLamhattc <- apply(hattc*S0i2,2,cumsumstrata,xx$strata,xx$nstrata)
-######    Uattc <- matrix(0,nrow(xx$X),2)
-######    Uattc[xx$jumps+1,] <- hattc[xx$jumps+1,]/c(resC$S0)
-######    MGtattc <- (Uattc[,drop=FALSE]-IhdLamhattc)*c(xx$weights)
-###
-###    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
-###    mid <- max(xx$id)+1
-###    MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
-###    MGCiid10 <- apply(MGt10,2,sumstrata,xx$id,mid)
-######    MGCiidattc <- apply(MGtattc,2,sumstrata,xx$id,mid)
-### 
-###  }  else { MGCiidattc <- MGCiid <- 0; MGCiid10 <- 0 }
-##### }}}
-###
-###val$MGciid <- MGCiid
-###val$MGciid10 <- MGCiid10
-###val$MGtid <- id
-###val$orig.id <- orig.id
-###val$iid.origid <- ids 
-###val$iid.naive <- val$iid 
-###if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-###val$naive.var <- val$var
-###robvar <- crossprod(val$iid)
-###val$var <-  val$robvar <- robvar
-###val$se.robust <- diag(robvar)^.5
-###val$se.coef <- diag(val$var)^.5
-###  val$cause <- cause
-###  val$cens.code <- cens.code 
-###
-###
-###### estimates risk, att, atc
-###val$riskDR <- c(mean(risk1),mean(risk0))
-###val$riskG<- c(mean(riskG1),mean(riskG0))
-###
-######val$att <- sum(att)/ntreat
-######val$atc <- sum(atc)/(n-ntreat)
-######val$attc <- c(val$att,val$atc)
-######names(val$attc) <- c("ATT","ATC")
-###
-###names(val$riskDR) <- paste("treat",1:0,sep="-")
-###names(val$riskG) <- paste("treat",1:0,sep="-")
-###
-##### iid's of marginal risk estimates 
-###iidbase1 <- c(risk1-val$riskDR[1])
-###iidcif1 <- c(c(DePsi1) %*% t(val$iid))
-###iidpal1 <- c(c(DaPsi1) %*% t(iidalpha))
-###if (se)  {
-###iidGc1 <- MGCiid10[,1]; iidGc0 <- MGCiid10[,2]
-######iidGatt <-  MGCiidattc[,1]; iidGatc <-  MGCiidattc[,2]
-###}  else { iidGc1 <- iidGatt  <- iidGatc  <- iidGc0  <- 0 } 
-###
-###iidbase0 <- c(risk0-val$riskDR[2])
-###iidcif0 <- c(c(DePsi0) %*% t(val$iid))
-###iidpal0 <- c(c(DaPsi0) %*% t(iidalpha))
-###
-###iidrisk1 <- iidbase1+iidcif1+iidpal1+iidGc1
-###iidrisk0 <- iidbase0+iidcif0+iidpal0+iidGc0
-###difriskiid <- (iidrisk1-iidrisk0)/n
-###
-###iidrisk <- cbind(iidrisk1,iidrisk0)/n
-######iidatt <- att-ytreat*val$att
-######iidatc <- atc-(1-ytreat)*val$atc
-######
-######iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
-######iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
-######iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
-######iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
-######
-######iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
-######iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
-###
-#### }}}
-###
-#### {{{ output ate, att, atc
-###
-###val$var.riskDR <- crossprod(iidrisk); 
-###val$se.riskDR <- diag(val$var.riskDR)^.5
-###val$riskDR.iid <- iidrisk
-###val$difriskDR <- val$riskDR[1]-val$riskDR[2]
-###names(val$difriskDR) <- "Difference"
-###val$var.difriskDR <- sum(difriskiid^2)
-###val$se.difriskDR <- val$var.difriskDR^.5
-###
-###val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
-###	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
-###val$var.riskG <- crossprod(val$riskG.iid)
-###val$se.riskG <- diag(val$var.riskG)^.5
-###
-###val$difriskG <- mean(p11)-mean(p10)
-###names(val$difriskG) <- "Difference"
-###val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
-###val$var.difriskG <- sum(val$difriskG.iid^2)
-###val$se.difriskG <- val$var.difriskG^.5
-###
-######val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
-######val$var.attc <- crossprod(val$attc.iid)
-######val$se.attc <- diag(val$var.attc)^.5
-#### }}}
-###
-###  class(val) <- "binreg"
-###  return(val)
-###}# }}}
 
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,

@@ -76,19 +76,22 @@ Simple version of comp.risk function of timereg for just one time-point thus fit
 }
 \details{
 Based on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta I(T \leq t, \epsilon=1 )/G_c(T_i-) - expit( X^T beta)) = 0 }
-for IPCW adjusted responses (type="I"), with (default, type="II") an additional 
-censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} with 
-\deqn{Y(t) = I(T \leq t, \epsilon=1 )}
+\deqn{ X ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
+where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
+IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
+
+(type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
+censoring distribution. For (type="II") the default an additional 
+censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
 
 logitIPCW instead considers 
 \deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
-a standard logistic regression with weights that adjust for IPCW. 
+a standard logistic regression with weights that adjust for IPCW.
 
-Variance is based on  \deqn{ \sum w_i^2 } with IPCW adjustment, and naive.var is variance 
+The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 under known censoring model. 
 
-Censoring model may depend on strata.
+Censoring model may depend on strata (cens.model=~strata(gX)).
 }
 \examples{
 library(mets)
