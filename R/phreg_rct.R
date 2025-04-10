@@ -658,7 +658,8 @@ if (typeR!=typeC) {
       XRpit <- XR0pi[xxx$id+1,]
       if (fit0$p>0) rr <- c(exp(xxx$X %*% coef(fitts)+ xxx$offset)*xxx$weights)
       else rr <- c(exp(xxx$offset)*xxx$weights)
-      XRE <- apply(XRpit*rr*c(xxx$sign),2,revcumsumstrata,xxx$strata,xxx$nstrata)
+      rrs <- rr*c(xxx$sign)
+      XRE <- apply(XRpit*rrs,2,revcumsumstrata,xxx$strata,xxx$nstrata)
       S0i2 <- S0i <- rep(0,nrow(xxx$X))
       jumps <- xxx$jumps+1
       S0i[jumps] <- 1/fitts$S0
@@ -670,12 +671,12 @@ if (typeR!=typeC) {
       NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       XREdLam0 <- apply(XRE*S0i2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       ns <- c(sumstrata(rep(1,nid),xxx$strata[headstrata(xxx$id,nid)],xxx$nstrata))[xxx$strata[jumps,]+1]
-      if (RCT) covBase <- (nid/ns)*(NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
+      if (RCT) covBase <- (NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
 
       gamR0Base <- (covBase) %*% xxi
       XRs <- apply(XR0pi,2,sum)
-      R0baseline.augment <-  XRs %*% t(gamR0Base) 
-      R0baseline.reduction<- apply((gamR0Base%*%xx)*gamR0Base,1,sum)
+      R0baseline.augment <-  c(XRs %*% t(gamR0Base))
+      R0baseline.reduction<- apply(covBase*gamR0Base,1,sum)
       ## using augmented estimator of beta 
       if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=iid[[j]])
       else fitr0 <- robust.phreg(fit0)
