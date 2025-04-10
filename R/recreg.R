@@ -2973,7 +2973,6 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
   fnu=NULL,nufix=0,nu=NULL,at.risk=1,numderiv=1,derivmethod=c("simple","Richardson"),newrec=1,...)
 {# {{{
-    if (model[1]=="non-shared") stop("Not yet \n"); 
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
     if (is.null(recurrent$cox.prep) & newrec==0) stop("recreg must be called with cox.prep=TRUE\n")
@@ -3340,7 +3339,6 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 }
 # }}}
 
-
 ##' @export
 summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
     I <- -solve(object$hessian)
@@ -3350,9 +3348,12 @@ summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
     pd <- object$p
     if (object$var.link==1 & object$model=="full") f <- function(p) exp(p)
     if (object$var.link==0 & object$model=="full") f <- function(p) p
+    if (object$var.link==1 & object$model=="non-shared") f <- function(p) exp(p)
+    if (object$var.link==0 & object$model=="non-shared") f <- function(p) p
+
     if (object$var.link==1 & object$model=="shared") f <- function(p) c(exp(p[1]),attr(object,"fnu")(p[2]))
     if (object$var.link==0 & object$model=="shared") f <- function(p) c(p[1],attr(object,"fnu")(p[2]))
-    if (delta==1 | object$model=="full") 
+    if (delta==1 | object$model=="full" | object$model=="non-shared") 
     expC <- lava::estimate(coef=object$coef,vcov=V,f=f)$coefmat ##[,c(1,3,4),drop=FALSE]
     else expC <- apply(cc[,c(1,3,4),drop=FALSE],2,f) 
   n <- object$n
