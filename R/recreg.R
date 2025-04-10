@@ -2973,6 +2973,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
   fnu=NULL,nufix=0,nu=NULL,at.risk=1,numderiv=1,derivmethod=c("simple","Richardson"),newrec=1,...)
 {# {{{
+    if (model=="non-shared") stop("Not yet \n"); 
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
     if (is.null(recurrent$cox.prep) & newrec==0) stop("recreg must be called with cox.prep=TRUE\n")
