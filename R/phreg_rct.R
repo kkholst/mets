@@ -262,35 +262,11 @@ if (!is.null(augmentR0)) {# {{{
 
    XRpi <- (Z0-piW0)*XR
    XR0pi <- XRpi 
-###   xxR0 <- crossprod(XRpi)
-###   xxi <- solve(xxR0)
    if (estpr[1]==1) {
        Dp0 <- matrix(0,nid,ncol(fitt$Dp))
        Dp0[idW0,]  <- fitt$Dp[CountWW==1,]
     }
    if (return.augmentR0)  data.augR0 <- list(ea=ea,XRpi=XRpi,XR=XR,A=Z0,p0=piW0)
-
-###   for (i in 1:ncol(ea)) {
-###      gamma.R <- xxi %*% crossprod(XRpi,ea[,i])
-###      XRgamma <- XR %*% gamma.R
-###      AugR0.iid[,i] <- XRpi %*% gamma.R
-###      AugR0[i] <- sum(AugR0.iid[,i])
-###
-###      ## iid term for predicted P(treat=1)
-###      if (estpr[1]==1) {
-###	 Dp0f <- apply(Dp0*c(XRgamma),2,sum) 
-###         iid.treat <- fitt$iidalpha %*% Dp0f
-###	 ### same for RCT \hat \pi(,X)
-###         AugR0.iid[,i] <- AugR0.iid[,i] - iid.treat
-###      } 
-###      ## oucome model iid 
-###      if (!RCT) {
-######	      DpO <- apply(XRpi,2,sum)
-######	      iid.outcome <- xxi %*% XRpi*(ea[,i]-AugR0.iid[,i])
-######	      iid.outcome <- iid.outcome %*% DpO
-######         AugR0.iid[,i] <- AugR0.iid[,i]-iid.outcome
-###      }
-###   }
 
    augR0fit <- lm(ea~-1+XRpi)
    XRgamma <- augR0fit$fitted.values/(Z0-piW0)
@@ -331,28 +307,10 @@ if (!is.null(augmentR1)) {# {{{
    Z1p1[idW1] <- Z1p
    XR1pi <- Z1p1*XR1
 
-###   xxi <- solve(crossprod(XR1pi)) 
-
    if (estpr[1]==1) {
 	 Dp1 <- matrix(0,nid,ncol(fitt$Dp))
 	 Dp1[idW1,]  <- fitt$Dp[CountWW==2,]
    }
-
-###   for (i in 1:ncol(ea)) {
-###      gamma.R <- xxi %*% crossprod(XR1pi,ea[,i])
-###      XRgamma <- XR1 %*% gamma.R
-###      AugR1.iid[,i] <- XR1pi %*% gamma.R
-###      AugR1[i] <- sum(AugR1.iid[,i])
-###
-###      ## iid term for predicted P(treat=1)
-###      if (estpr[1]==1) {
-###	 Dp1f <- apply(Dp1*c(XRgamma),2,sum) 
-###         iid.treat <- Dp1f %*% t(fitt$iidalpha)
-###	 print(head(t(iid.treat)))
-###         AugR1.iid[,i] <- AugR1.iid[,i] - iid.treat
-###      } 
-###   }
-###   print(head(AugR1.iid))
 
    augR1fit <- lm(ea~-1+XR1pi)
    XRgamma <- XR1 %*%  coef(augR1fit)
@@ -381,23 +339,6 @@ if (!is.null(augmentR0) & !is.null(augmentR1)) {# {{{
    XRbpi <- cbind(XRpi,XR1pi)
    XRb <- cbind(XR,XR1)
    xxi <- solve(crossprod(XRbpi)) 
-###   for (i in 1:ncol(ea)) {
-###      gamma.R <- xxi %*% crossprod(XRbpi,ea[,i])
-###      XRgamma <- XRb %*% gamma.R
-###      XRgamma0 <- XRpi %*% gamma.R[1:ncol(XRpi)]
-###      XRgamma1 <- XR1pi %*% gamma.R[-(1:ncol(XRpi))]
-###      AugR01.iid[,i] <- XRbpi %*% gamma.R
-###      AugR01[i] <- sum(AugR01.iid[,i])
-###
-###       if (estpr[1]==1) {
-###         Dp <- Dp0*c(XRgamma0)+Dp1*c(XRgamma1)
-###	 Dp01f <- apply(Dp,2,sum) 
-###	 print(Dp01f)
-###         iid.treat <- Dp01f  %*% t(fitt$iidalpha)
-###         AugR01.iid[,i] <- AugR01.iid[,i] - iid.treat
-###      } 
-###   }
-###
 
    augR01fit <- lm(ea~-1+XRbpi)
    XRgamma <- XRb %*%  coef(augR01fit)
