@@ -2837,8 +2837,15 @@ return(phw)
 ##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
 ##' summary(survivalG(ss,bmt,50))
 ##'
+##' ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt) 
+##' summary(survivalG(ss,bmt,50))
+##'
 ##' sst <- survivalGtime(ss,bmt,n=50)
-##' plot(sst,type=c("survival","risk","survival.ratio")[1])
+##' plot(sst)
+##'
+##' fg1t <- survivalGtime(fg1,bmt,n=50)
+##' plot(fg1t)
+##' 
 ##' @export
 ##' @aliases survivalGtime
 survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRUE,id=NULL)
@@ -2870,52 +2877,33 @@ ytreat <- ntreatvar-1
 
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
-formulaX[-2]
 datA <- dkeep(data,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
 
-###
-###Gf <- function(p,ic=0) {# {{{
-###   risks <- c()
-###   a <- nlevs[1]
-###   for (a in nlevs) {# {{{
-###      datA[,treat.name] <- a
-###      Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
-###      rra <- exp(Xa %*% p[-1])
-###
-###      if (inherits(x,"cifreg")) { ps0 <- 1- exp(-p[1]*rra) } 
-###      else if (inherits(x,"recreg")) { ps0 <- p[1]*rra }
-###      else { ps0 <-  exp(-p[1]*rra) } 
-###      risks <- cbind(risks,ps0)
-###    }# }}}
-###
-###Gest <- apply(risks,2,mean)
-###if (ic==1) Gest <- list(Gest=Gest,iid=t(t(risks)-Gest))
-###return(Gest)
-###}
-#### }}}
-###
-
-cumhaz.time <- cpred(x$cumhaz,time)[-1]
+cumhaz.time <- cpred(x$cumhaz,time)[-1,]
 k <- 1; risks <- c(); DariskG <- list()
 for (a in nlevs) { ## {{{
  datA[,treat.name] <- a
- Xa <- model.matrix(formulaX[-2],datA,xlev=xlev)[,-1]
- rra <- c(exp(Xa %*% x$coef))
- if (inherits(x,"phreg"))  { ps0 <- exp(-cumhaz.time*rra); Dma  <- -cbind(rra*ps0,ps0*cumhaz.time*rra*Xa);    }
- if (inherits(x,"cifreg")) { ps0 <- 1- exp(-cumhaz.time*rra); Dma  <- cbind(rra*(1-ps0),(1-ps0)*cumhaz.time*rra*Xa);    }
-  else if (inherits(x,"recreg")) { ps0 <- cumhaz.time*rra ; Dma <-  cbind(rra,cumhaz.time*rra*Xa) }
+
+ pp <- predict(x,datA,time,se=0)
+ Xbase <- 1*outer(pp$strata,0:(x$nstrata-1),"==")
+
+ if (inherits(x,"phreg"))  { ps0 <- c(pp$surv); Dma  <- -cbind(c(pp$RR)*ps0*Xbase,c(ps0*pp$cumhaz)*pp$X);    }
+ if (inherits(x,"cifreg")) { ps0 <- c(pp$cif); Dma  <- cbind(c(pp$RR)*c(1-ps0)*Xbase,c((1-ps0)*pp$cumhaz)*pp$X); }
+  else if (inherits(x,"recreg")) { ps0 <- pp$cumhaz; Dma <-  cbind(c(pp$RR)*Xbase,c(pp$cumhaz)*pp$X) }
+
  risks <- cbind(risks,ps0)
  DariskG[[k]] <- apply(Dma,2,sum)
  k <- k+1
 } ## }}}
+
 
 predictAiid <- NULL
 ###
 Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
 ###
-nid <- nrow(Xa) 
+nid <- nrow(pp$X) 
 nidcox <- max(x$id)
 mnid <- max(nid,nidcox)
 
@@ -2924,9 +2912,8 @@ if (nid!=nidcox) {
     coxiid <- apply(coxiid,2,sumstrata,x$id-1,mnid)
 } 
 
-
 if (same.data) {
-   if (is.null(id)) id <- 1:nrow(Xa) else id <- data[,id];  
+   if (is.null(id)) id <- 1:nrow(pp$X) else id <- data[,id];  
    risk.iid <- apply(risk.iid,2,sumstrata,id-1,mnid)/nid 
    for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/nid
    vv <- crossprod(risk.iid)
@@ -2996,7 +2983,7 @@ return(out)
 } ## }}}
 
 ##' @export
-plot.survivalGtime <- function(x,type=c("survival","risk","survival.ratio","difference","ratio"),...) {# {{{
+plot.survivalGtime <- function(x,type=c("survival","risk","survival.ratio","difference","ratio"),ylim=NULL,legend=NULL,...) {# {{{
 
   ## to deal with fine-gray based things, that do not contain survival estimates
   if ((ncol(x$survivalG)==1) & type[1]=="survival") type <- "risk"
@@ -3006,7 +2993,8 @@ plot.survivalGtime <- function(x,type=c("survival","risk","survival.ratio","diff
   ss0 <- x$strata==us[1]
  
   if (type[1]=="survival") {
-  plot(x$time,x$survivalG[ss0,2],type="s",xlab="time",ylab="Survival",ylim=c(0,1),col=cols[1],lty=ltys[1])
+  if (is.null(ylim))  ylim  <- range(x$survivalG[,c(4,5)])
+  plot(x$time,x$survivalG[ss0,2],type="s",xlab="time",ylab="Survival",col=cols[1],lty=ltys[1],ylim=ylim,...)
   plotConfRegion(x$time,x$survivalG[ss0,c(4,5)],col=cols[1])
 
   k <- 2
@@ -3019,7 +3007,8 @@ for (ss in us[-1]) {
   }
 
   if (type[1]=="risk") {
-   plot(x$time,x$risk[ss0,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=range(x$risk[ss0,c(2,4,5)]))
+   if (is.null(ylim))  ylim  <- range(x$risk[,c(4,5)]) 
+   plot(x$time,x$risk[ss0,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=ylim,...)
    plotConfRegion(x$time,x$risk[ss0,c(4,5)],col=cols[1])
    k <- 2
    for (ss in us[-1]) {
@@ -3031,18 +3020,22 @@ for (ss in us[-1]) {
   }
 
   if (type[1]=="difference")  {
-  plot(x$time,x$difference[,2],type="s",xlab="time",ylab="difference in risk",ylim=range(x$difference[,2]),col=cols[1],lty=ltys[1])
+	  if (is.null(ylim))  ylim  <- range(x$risk[,c(4,5)]) 
+  plot(x$time,x$difference[,2],type="s",xlab="time",ylab="difference in risk",ylim=range(x$difference[,2]),col=cols[1],lty=ltys[1],...)
   plotConfRegion(x$time,x$difference[,c(4,5)],col=cols[1])
   }
   if (type[1]=="ratio")  {
-  plot(x$time,x$ratio[,2],type="s",ylim=range(x$ratio[,c(4,5)]),xlab="time",ylab="ratio",col=cols[1],lty=ltys[1])
+  if (is.null(ylim))  ylim  <- range(x$ratio[,c(4,5)]) 
+  plot(x$time,x$ratio[,2],type="s",ylim=ylim,xlab="time",ylab="ratio",col=cols[1],lty=ltys[1],...)
   plotConfRegion(x$time,x$ratio[,c(4,5)],col=cols[1])
 }
  if (type[1]=="survival.ratio")  {
-   plot(x$time,x$survival.ratio[,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=range(x$survival.ratio[,c(4,5)]))
+   if (is.null(ylim))  ylim  <- range(x$survival.ratio[,c(4,5)]) 
+  plot(x$time,x$survival.ratio[,2],type="s",xlab="time",ylab="risk",col=cols[1],lty=ltys[1],ylim=ylim,...)
   plotConfRegion(x$time,x$survival.ratio[,c(4,5)],col=cols[1])
 }
 
+ if (is.null(legend)) legend("topleft",levels(x$strata),col=cols,lty=ltys)
 
 }
 # }}}
