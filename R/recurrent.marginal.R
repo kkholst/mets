@@ -59,8 +59,11 @@
 ##'
 ##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg
 ##' @export
-recurrentMarginal <- function(formula,data=data,cause=1,death.code=2,...)
+recurrentMarginal <- function(formula,data,cause=1,death.code=2,...)
 {# {{{
+  if (missing(formula)) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
+    return(recurrentMarginalPhreg(...))
+  }
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
   special <- c("strata", "cluster","offset")
@@ -154,7 +157,7 @@ recurrentMarginal <- function(formula,data=data,cause=1,death.code=2,...)
 }# }}}
 
 ##' @export
-recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE,...)
+recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE)
 {# {{{
   xr <- recurrent
   dr <- death 
