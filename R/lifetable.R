@@ -272,14 +272,6 @@ eventpois <- function(object,...,timevar,time,int.len,confint=FALSE,level=0.95,i
         time <- sort(unique(as.numeric(gsub(timevar_re0,"",tvar))))
         if (length(time)==0) {
             i0 <- seq(nrow(object$data))
-            ## browser()
-            ## if ("rate"%in%colnames(object$data)) {
-            ##     ii0 <- which(object$data[,"rate"]>0)
-            ##     i0 <- intersect(i0,ii0)
-            ## }
-            ## for (i in seq_along(dots)) {
-            ##      i0 <- intersect(i0,which(object$data[,names(dots)[i]]==dots[[i]]))
-            ##  }
             rg <- range(object$data[i0,timevar],na.rm=TRUE)        
             time <- seq(rg[1],rg[2],length.out=length.out)
         } else {
@@ -409,7 +401,6 @@ plot.eventpois <- function(x,var,confint=TRUE,cont=TRUE,length.out=200,type="sur
         dt <- tail(e0,1)        
         time0 <- c(e0[,1],dt[,1]+dt[,2])
         if (use.time) {
-            ##browser()
             time0 <- attr(x,"time")[[i]]-1
             e0 <- e0[na.omit(match(time0,e0[,"time"])),,drop=FALSE]
             time0 <- time0[match(e0[,"time"],time0)]

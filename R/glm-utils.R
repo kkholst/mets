@@ -103,7 +103,6 @@ glmw <- suppressWarnings(glm(formula,data,weights=ww,family=family,...))
 glm.iid <- lava::iid(glmw,id=id)
 ihess <- attr(glm.iid,"bread")
 
-###browser()
 check.derivative <- 0
 ### for checking derivative 
 if (check.derivative==1) {

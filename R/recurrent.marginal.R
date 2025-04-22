@@ -11,12 +11,12 @@
 ##'  \deqn{\Lambda_d(u|x=0) } being the cumulative baseline for death.
 ##' 
 ##' Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
-##' 
+##'
 ##' @param formula with Event object
 ##' @param data data frame for computation
 ##' @param cause of interest (1 default)
-##' @param death.code codes for death (terminating event, 2 default)
 ##' @param ... Additional arguments to lower level funtions
+##' @param death.code codes for death (terminating event, 2 default)
 ##' @author Thomas Scheike
 ##' 
 ##' @references 
@@ -59,7 +59,7 @@
 ##'
 ##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg
 ##' @export
-recurrentMarginal <- function(formula,data,cause=1,death.code=2,...)
+recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
 {# {{{
   if (missing(formula)) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
     return(recurrentMarginalPhreg(...))
