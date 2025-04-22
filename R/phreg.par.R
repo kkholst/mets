@@ -242,49 +242,7 @@ predict.phreg.par <- function(object, p=coef(object),
 ###{{{ phreg.par + methods
 
 ##' @export
-##' @param formula
-##' @param data
-##' @param formula2
-##' @param time
-##' @param status
-##' @param X
-##' @param model
-##' @param theta.idx
-##' @param theta0
-##' @param niter
-##' @param tol1
-##' @param tol2
-##' @param lambda1
-##' @param lambda2
-##' @param trace
-##' @param ...
-##'
-##' @examples
-##' m <- lava::lvm(y~x) |>
-##'     distribution(~y, value = coxWeibull.lvm(shape=3,scale=5)) |>
-##'     transform(~status) <- function(...) TRUE
-##'
-##' d <- lava::sim(m,2e4,p=c("y~x"=2))
-## library(eha)
-## with(d,phreg.par(y,status,cbind(x)))
-## weibreg(Surv(y,status)~x,data=d)
-
-## ## Note in simulation A(t) = lambda*t^scale
-## ## but here A(t) (scale*t)^shape, hence
-## ## lambda := scale^(1/shape)
-## tt <- seq(0,100,length.out=100)
-## plot(tt,exp(-(exp(-4)*tt)^exp(.5))
-## y <- runif(2e4,0,100)
-## (op <- phreg.par(y,TRUE))
-
-## tt <- seq(0,100,length.out=100)
-## cc <- survival::coxph(Surv(y,rep(TRUE,length(y)))~1)
-## plot(survfit(cc),mark.time=FALSE)
-## lines(tt,exp(-(exp(-4)*tt)^exp(.484)),col="red")
-##(op <- phreg.weibull(d$y,TRUE,cbind(d$x)))
-## (a <- survival::survreg(Surv(y,status)~1+x,dist="weibull",data=d))
-## (e <- eha::weibreg(Surv(y,status)~x,data=d))
-phreg.par <- function(formula, data=parent.frame(), formula2,
+phreg.par <- function(formula, data=parent.frame(),
                       time, status, X=NULL, model="weibull",
                       theta.idx=NULL, theta0,
                       niter=100, tol1=1e-9, tol2=1e-9,
@@ -403,7 +361,6 @@ phreg.par <- function(formula, data=parent.frame(), formula2,
                  time=time, status=status, X=X),
             class=c("phreg.par", "phreg"))
 }
-
 
 ##' @export
 print.phreg.par <- function(x, ...) {
