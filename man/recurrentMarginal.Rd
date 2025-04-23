@@ -8,7 +8,7 @@
 \alias{recurrentMarginalPhreg}
 \title{Fast recurrent marginal mean when death is possible}
 \usage{
-recurrentMarginal(formula, data = data, cause = 1, death.code = 2, ...)
+recurrentMarginal(formula, data, cause = 1, ..., death.code = 2)
 }
 \arguments{
 \item{formula}{with Event object}
@@ -17,9 +17,9 @@ recurrentMarginal(formula, data = data, cause = 1, death.code = 2, ...)
 
 \item{cause}{of interest (1 default)}
 
-\item{death.code}{codes for death (terminating event, 2 default)}
-
 \item{...}{Additional arguments to lower level funtions}
+
+\item{death.code}{codes for death (terminating event, 2 default)}
 }
 \description{
 Fast Marginal means of recurrent events using the Lin and Ghosh (2000) 
