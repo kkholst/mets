@@ -20,7 +20,7 @@ counting process integral, and this is implemented in prob.exceedRecurrent'><!--
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -130,17 +130,14 @@ counting process integral, and this is implemented in prob.exceedRecurrent</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prob.exceed.recurrent</span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">data</span>,</span>
-<span>  <span class="va">type</span>,</span>
-<span>  status <span class="op">=</span> <span class="st">"status"</span>,</span>
-<span>  death <span class="op">=</span> <span class="st">"death"</span>,</span>
-<span>  start <span class="op">=</span> <span class="st">"start"</span>,</span>
-<span>  stop <span class="op">=</span> <span class="st">"stop"</span>,</span>
-<span>  id <span class="op">=</span> <span class="st">"id"</span>,</span>
-<span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cause <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  death.code <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  cens.code <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  exceed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  marks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cifmets <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  strata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  all.cifs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -150,48 +147,36 @@ counting process integral, and this is implemented in prob.exceedRecurrent</p>
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
+<dd><p>formula</p></dd>
+
+
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>data-frame</p></dd>
 
 
-<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>type of evnent (code) related to status</p></dd>
+<dt id="arg-cause">cause<a class="anchor" aria-label="anchor" href="#arg-cause"></a></dt>
+<dd><p>of interest</p></dd>
 
 
-<dt id="arg-status">status<a class="anchor" aria-label="anchor" href="#arg-status"></a></dt>
-<dd><p>name of status</p></dd>
+<dt id="arg-death-code">death.code<a class="anchor" aria-label="anchor" href="#arg-death-code"></a></dt>
+<dd><p>for status</p></dd>
 
 
-<dt id="arg-death">death<a class="anchor" aria-label="anchor" href="#arg-death"></a></dt>
-<dd><p>name of death indicator</p></dd>
-
-
-<dt id="arg-start">start<a class="anchor" aria-label="anchor" href="#arg-start"></a></dt>
-<dd><p>start stop call of Hist() of prodlim</p></dd>
-
-
-<dt id="arg-stop">stop<a class="anchor" aria-label="anchor" href="#arg-stop"></a></dt>
-<dd><p>start stop call of Hist() of prodlim</p></dd>
-
-
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>id</p></dd>
-
-
-<dt id="arg-times">times<a class="anchor" aria-label="anchor" href="#arg-times"></a></dt>
-<dd><p>time at which to get probabilites P(N1(t) &gt;= n)</p></dd>
+<dt id="arg-cens-code">cens.code<a class="anchor" aria-label="anchor" href="#arg-cens-code"></a></dt>
+<dd><p>censoring codes</p></dd>
 
 
 <dt id="arg-exceed">exceed<a class="anchor" aria-label="anchor" href="#arg-exceed"></a></dt>
-<dd><p>n's for which which to compute probabilites P(N1(t) &gt;= n)</p></dd>
+<dd><p>values (if not given then all observed values)</p></dd>
+
+
+<dt id="arg-marks">marks<a class="anchor" aria-label="anchor" href="#arg-marks"></a></dt>
+<dd><p>may be give for jump-times and then exceed values needs to be specified</p></dd>
 
 
 <dt id="arg-cifmets">cifmets<a class="anchor" aria-label="anchor" href="#arg-cifmets"></a></dt>
 <dd><p>if true uses cif of mets package rather than prodlim</p></dd>
-
-
-<dt id="arg-strata">strata<a class="anchor" aria-label="anchor" href="#arg-strata"></a></dt>
-<dd><p>to stratify according to variable, only for cifmets=TRUE, when strata is given then only consider the output in the all.cifs</p></dd>
 
 
 <dt id="arg-all-cifs">all.cifs<a class="anchor" aria-label="anchor" href="#arg-all-cifs"></a></dt>
@@ -215,57 +200,19 @@ counting process integral, and this is implemented in prob.exceedRecurrent</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">########################################</span></span></span>
-<span class="r-in"><span><span class="co">## getting some rates to mimick </span></span></span>
-<span class="r-in"><span><span class="co">########################################</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base1cumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base4cumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">drcumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span></span>
-<span class="r-in"><span><span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">base1cumhaz</span></span></span>
-<span class="r-in"><span><span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">base4cumhaz</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">cor.mat</span> <span class="op">&lt;-</span> <span class="va">corM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="fl">0.6</span>, <span class="fl">0.9</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">1.0</span>, <span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base4</span>,cumhaz2<span class="op">=</span><span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span>,cens<span class="op">=</span><span class="fl">2</span><span class="op">/</span><span class="fl">5000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">hfactioncpx12</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       status   0   1   2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> death                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0            378 177 224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            622   0   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  617 1391  124 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu">prob.exceedRecurrent</span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">oo</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu">prob.exceed.recurrent</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>        <span class="va">hfactioncpx12</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oo</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="prob.exceed.recurrent-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">mu</span>,col<span class="op">=</span><span class="fl">2</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">###</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">varN</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="prob.exceed.recurrent-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### Bivariate probability of exceeding </span></span></span>
-<span class="r-in"><span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu">prob.exceedBiRecurrent</span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,<span class="fl">2</span>,exceed1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">5</span><span class="op">)</span>,exceed2<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">pe1e2</span>,type<span class="op">=</span><span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">nc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">oo</span><span class="op">$</span><span class="va">pe1e2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>,legend<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">oo</span><span class="op">$</span><span class="va">pe1e2</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nc</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nc</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co">### do not test to avoid dependence on prodlim </span></span></span>
-<span class="r-in"><span><span class="co">### now estimation based on cumualative incidence, but do not test to avoid dependence on prodlim </span></span></span>
-<span class="r-in"><span><span class="co">### library(prodlim)</span></span></span>
-<span class="r-in"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="fu">prob.exceed.recurrent</span><span class="op">(</span><span class="va">rr</span>,<span class="fl">1</span>,status<span class="op">=</span><span class="st">"status"</span>,death<span class="op">=</span><span class="st">"death"</span>,start<span class="op">=</span><span class="st">"entry"</span>,stop<span class="op">=</span><span class="st">"time"</span>,id<span class="op">=</span><span class="st">"id"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">pp</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">prob</span>,type<span class="op">=</span><span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">###</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">pp</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matlines</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">se.lower</span>,type<span class="op">=</span><span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">pp</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matlines</a></span><span class="op">(</span><span class="va">times</span>,<span class="va">se.upper</span>,type<span class="op">=</span><span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="prob.exceed.recurrent-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

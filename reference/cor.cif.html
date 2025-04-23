@@ -46,7 +46,7 @@ Here \(B^c\) is the complement event of \(B\),
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -375,7 +375,8 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/scheike/timereg" class="external-link">"timereg"</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/scheike/timereg" class="external-link">"timereg"</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">multcif</span><span class="op">)</span>;</span></span>
 <span class="r-in"><span><span class="va">multcif</span><span class="op">$</span><span class="va">cause</span><span class="op">[</span><span class="va">multcif</span><span class="op">$</span><span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="va">zyg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,each<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
@@ -403,9 +404,9 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Effect of cause1=1 on cause2=1 under symmetry=0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              log-Coef.    SE      z P-val Cross odds ratio   SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)0     1.230 19.00 0.0648 0.948             3.42 65.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)1     0.828  9.13 0.0908 0.928             2.29 20.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              log-Coef.   SE      z P-val Cross odds ratio   SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)0     1.180 15.2 0.0775 0.938             3.25 49.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)1     0.895 11.1 0.0809 0.936             2.45 27.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##out3 &lt;- cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)</span></span></span>
@@ -413,7 +414,6 @@ Scheike, Zhang, Sun, Jensen (2010), Biometrika.</p>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
 <span class="r-in"><span><span class="co"># investigating further models using parfunc and dparfunc</span></span></span>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
-<span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">prt</span><span class="op">&lt;-</span><span class="fu"><a href="internal.html">simnordic.random</a></span><span class="op">(</span><span class="fl">2000</span>,cordz<span class="op">=</span><span class="fl">2</span>,cormz<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">prt</span><span class="op">$</span><span class="va">status</span> <span class="op">&lt;-</span><span class="va">prt</span><span class="op">$</span><span class="va">cause</span></span></span>

@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-01-11</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cifreg.Rmd" class="external-link"><code>vignettes/cifreg.Rmd</code></a></small>
       <div class="hidden name"><code>cifreg.Rmd</code></div>
@@ -259,7 +259,7 @@ scale.</p>
 <span><span class="co">#&gt; Z2  0.42346 0.12451 1.4402</span></span>
 <span></span>
 <span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Z1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,Z2<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span></span>
-<span> <span class="va">pfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fg</span>,<span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="va">pfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlogit.html">predict</a></span><span class="op">(</span><span class="va">fg</span>,<span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cifreg_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>and GOF based on cumulative residuals (Li et al. 2015)</p>
@@ -337,7 +337,7 @@ errors</p>
 <span> <span class="va">dats</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dats</span><span class="op">)</span></span>
 <span> <span class="va">dats</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dats</span><span class="op">$</span><span class="va">status</span>,<span class="fl">0</span><span class="op">:</span><span class="fl">2</span>, labels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"censor"</span>, <span class="st">"death"</span>, <span class="st">"other"</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="va">fgdats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/finegray.html" class="external-link">finegray</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">.</span>,data<span class="op">=</span><span class="va">dats</span><span class="op">)</span></span>
-<span> <span class="va">coxfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">fgstart</span>, <span class="va">fgstop</span>, <span class="va">fgstatus</span><span class="op">)</span> <span class="op">~</span> <span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, weight<span class="op">=</span><span class="va">fgwt</span>, data<span class="op">=</span><span class="va">fgdats</span><span class="op">)</span></span>
+<span> <span class="va">coxfg</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">fgstart</span>, <span class="va">fgstop</span>, <span class="va">fgstatus</span><span class="op">)</span> <span class="op">~</span> <span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, weight<span class="op">=</span><span class="va">fgwt</span>, data<span class="op">=</span><span class="va">fgdats</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="va">fg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="va">coxfg</span><span class="op">$</span><span class="va">coef</span>,<span class="va">fg0</span><span class="op">$</span><span class="va">coef</span>, <span class="va">coxfg</span><span class="op">$</span><span class="va">coef</span><span class="op">-</span><span class="va">fg0</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
@@ -373,7 +373,7 @@ standard errors agree</p>
 <span><span class="va">datsncf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">datsnc</span>,<span class="va">datsnc2</span><span class="op">)</span></span>
 <span><span class="co">#</span></span>
 <span><span class="va">cifnc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">datsnc</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datsncf</span>,robust<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datsncf</span>,robust<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cifnc</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cifnc</span><span class="op">$</span><span class="va">se.coef</span>, <span class="va">cc</span><span class="op">$</span><span class="va">coef</span>, <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">cc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span><span class="op">^</span><span class="fl">.5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          [,1]      [,2]       [,3]      [,4]</span></span>
 <span><span class="co">#&gt; Z1  0.7376223 0.3962877  0.7376223 0.3962877</span></span>
@@ -452,7 +452,7 @@ that reflects that the censoring only affects the terms related to cause
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>T</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*} 
     q(t) &amp; =   E( H(t,X) I(T  \leq t, \epsilon=2) I(C &gt; T)/G_c(T)) = E( H(t,X) F_2(t,X) ), 
 \end{align*}</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mi>t</mi><mi>∞</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H(t,X) = \int_t^{\infty} (X- e(s)) G(s) d \Lambda_1(s,X)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mi>t</mi><mi>∞</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H(t,X) =  \int_t^{\infty} (X- e(s))  G(s) d \Lambda_1(s,X)</annotation></semantics></math>
 and since
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\pi(t)=E(Y(t))=S(t) G_c(t)</annotation></semantics></math>.</p>
 <p>In the case where the censoring weights are stratified (based on
@@ -465,7 +465,7 @@ function becomes
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>∫</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>M</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mo>∫</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mfrac><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mfrac><mn>1</mn><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>M</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
 \int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t,X)} dM_c(t,X).
 \end{align*}</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mi>t</mi><mi>∞</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H(t,X) = \int_t^{\infty} (X- e(s)) G(s,X) d \Lambda_1(s,X)</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mi>t</mi><mi>∞</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)</annotation></semantics></math>.</p>
 </div>
 <div class="section level2">
 <h2 id="augmenting-the-fg-estimator">Augmenting the FG-estimator<a class="anchor" aria-label="anchor" href="#augmenting-the-fg-estimator"></a>
@@ -483,13 +483,13 @@ augmentation term and do a couple of iterations</p>
 <span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.55614  0.29861  0.35607  0.0625</span></span>
-<span><span class="co">#&gt; Z2 -0.88438  0.61209  0.62011  0.1485</span></span>
+<span><span class="co">#&gt; Z1  0.69686  0.34898  0.38882  0.0458</span></span>
+<span><span class="co">#&gt; Z2 -0.85929  0.60243  0.61478  0.1538</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.74392 0.97128 3.1312</span></span>
-<span><span class="co">#&gt; Z2  0.41297 0.12442 1.3707</span></span>
+<span><span class="co">#&gt; Z1  2.00744 1.01296 3.9783</span></span>
+<span><span class="co">#&gt; Z2  0.42346 0.13002 1.3791</span></span>
 <span></span>
 <span>  <span class="va">fgaugS2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">FG_AugmentCifstrata</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS2</span><span class="op">)</span></span>
@@ -500,13 +500,13 @@ augmentation term and do a couple of iterations</p>
 <span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.56000  0.29957  0.35687  0.0616</span></span>
-<span><span class="co">#&gt; Z2 -0.88347  0.61172  0.61993  0.1487</span></span>
+<span><span class="co">#&gt; Z1  0.69686  0.34898  0.38882  0.0458</span></span>
+<span><span class="co">#&gt; Z2 -0.85929  0.60243  0.61478  0.1538</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.75068 0.97321 3.1492</span></span>
-<span><span class="co">#&gt; Z2  0.41335 0.12463 1.3709</span></span>
+<span><span class="co">#&gt; Z1  2.00744 1.01296 3.9783</span></span>
+<span><span class="co">#&gt; Z2  0.42346 0.13002 1.3791</span></span>
 <span></span>
 <span>  <span class="va">fgaugS3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">FG_AugmentCifstrata</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS2</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS3</span><span class="op">)</span></span>
@@ -517,13 +517,13 @@ augmentation term and do a couple of iterations</p>
 <span><span class="co">#&gt;  400 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1  0.55989  0.29954  0.35685  0.0616</span></span>
-<span><span class="co">#&gt; Z2 -0.88350  0.61173  0.61994  0.1487</span></span>
+<span><span class="co">#&gt; Z1  0.69686  0.34898  0.38882  0.0458</span></span>
+<span><span class="co">#&gt; Z2 -0.85929  0.60243  0.61478  0.1538</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  1.75047 0.97317 3.1487</span></span>
-<span><span class="co">#&gt; Z2  0.41333 0.12462 1.3709</span></span></code></pre></div>
+<span><span class="co">#&gt; Z1  2.00744 1.01296 3.9783</span></span>
+<span><span class="co">#&gt; Z2  0.42346 0.13002 1.3791</span></span></code></pre></div>
 <p>Again we note slightly smaller standard errors when augmenting the
 estimator.</p>
 <p>The function compute the augmentation term for fixed
@@ -603,9 +603,9 @@ different weights but this is much slower.</p>
 </h2>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -624,23 +624,23 @@ different weights but this is much slower.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.5     timereg_2.0.6  survival_3.7-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.3           knitr_1.49          rlang_1.1.4        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.50           textshaping_0.4.1   jsonlite_1.8.9     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.0         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.3.3          sass_0.4.9         </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.4.2          evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       mvtnorm_1.3-3      </span></span>
-<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 yaml_2.3.10         lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] compiler_4.4.2      codetools_0.2-20    fs_1.6.5           </span></span>
-<span><span class="co">#&gt; [25] Rcpp_1.0.13-1       future_1.34.0       systemfonts_1.1.0  </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      digest_0.6.37       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [31] parallelly_1.41.0   parallel_4.4.2      splines_4.4.2      </span></span>
-<span><span class="co">#&gt; [34] bslib_0.8.0         Matrix_1.7-1        tools_4.4.2        </span></span>
-<span><span class="co">#&gt; [37] globals_0.16.3      pkgdown_2.1.1       cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [40] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 

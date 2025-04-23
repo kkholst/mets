@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -125,7 +125,18 @@
 
     <div id="format">
     <h2>Format</h2>
-    <p>Data from smart design</p>
+    <p>Data from smart design
+id: id of subject
+status : 1-death, 2-response for second randomization, 0-censoring
+A0 : treament at first randomization
+A1 : treament at second randomization
+At.f : treament given at record (A0 or A1)
+TR : time of response
+sex : 0-males, 1-females
+consent: 1 if agrees to 2nd randomization, censored if not
+R: 1 if response
+trt1: A0
+trt2: A1</p>
     </div>
     <div id="source">
     <h2>Source</h2>

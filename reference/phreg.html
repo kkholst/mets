@@ -18,7 +18,7 @@ Robust variance is default variance with the summary."><!-- mathjax --><script s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@ Robust variance is default variance with the summary.</p>
 
 
 <dt id="arg-offset">offset<a class="anchor" aria-label="anchor" href="#arg-offset"></a></dt>
-<dd><p>offsets for cox model</p></dd>
+<dd><p>offsets for Cox model</p></dd>
 
 
 <dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
@@ -167,9 +167,6 @@ so ordering after $id will give iid in order of data-set.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TRACE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dcut.html">dcut</a></span><span class="op">(</span><span class="va">TRACE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">.</span></span></span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">phreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">wmicat.4</span><span class="op">)</span>,data<span class="op">=</span><span class="va">TRACE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">phreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">wmicat.4</span><span class="op">)</span>,data<span class="op">=</span><span class="va">TRACE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## tracesim &lt;- timereg::sim.cox(out1,1000)</span></span></span>
-<span class="r-in"><span><span class="co">## sout1 &lt;- phreg(Surv(time,status==1)~vf+chf+strata(wmicat.4),data=tracesim)</span></span></span>
 <span class="r-in"><span><span class="co">## robust standard errors default </span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -186,37 +183,20 @@ so ordering after $id will give iid in order of data-set.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> chf   2.5391 2.1954 2.9367</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">phreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">wmicat.4</span><span class="op">)</span>,data<span class="op">=</span><span class="va">TRACE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     n events</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1878    970</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate     S.E.  dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf  0.455201 0.135555 0.110436   8e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf 0.903063 0.073354 0.073780   0e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate   2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf    1.5765 1.2087 2.0563</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf   2.4671 2.1368 2.8486</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## bplot(sout1,se=TRUE)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## computing robust variance for baseline</span></span></span>
 <span class="r-in"><span><span class="va">rob1</span> <span class="op">&lt;-</span> <span class="fu">robust.phreg</span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="basehazplot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">rob1</span>,se<span class="op">=</span><span class="cn">TRUE</span>,robust<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rob1</span>,se<span class="op">=</span><span class="cn">TRUE</span>,robust<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="phreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## making iid decomposition of regression parameters</span></span></span>
+<span class="r-in"><span><span class="co">## taking iid decomposition of regression parameters</span></span></span>
 <span class="r-in"><span><span class="va">betaiiid</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## making iid decomposition of baseline at a specific time-point</span></span></span>
-<span class="r-in"><span><span class="va">Aiiid</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">IIDbaseline.phreg</span><span class="op">(</span><span class="va">out1</span>,time<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Aiiid</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">::</span><span class="fu">IIDbaseline.phreg</span><span class="op">(</span><span class="va">out1</span>,time<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

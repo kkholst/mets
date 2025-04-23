@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-01-11</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/mediation-survival.Rmd" class="external-link"><code>vignettes/mediation-survival.Rmd</code></a></small>
       <div class="hidden name"><code>mediation-survival.Rmd</code></div>
@@ -412,17 +412,17 @@ above.</p>
 <span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;         Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; dnr.f01 0.189343 0.219850 0.158549  0.3891</span></span>
-<span><span class="co">#&gt; dnr.f11 0.187373 0.040836 0.145027  0.0000</span></span>
-<span><span class="co">#&gt; preauto 0.414500 0.227838 0.160984  0.0689</span></span>
-<span><span class="co">#&gt; ttt24   0.173048 0.228921 0.163080  0.4497</span></span>
+<span><span class="co">#&gt; dnr.f01 0.189039 0.219848 0.158547  0.3899</span></span>
+<span><span class="co">#&gt; dnr.f11 0.188170 0.040779 0.145022  0.0000</span></span>
+<span><span class="co">#&gt; preauto 0.414628 0.227873 0.160986  0.0688</span></span>
+<span><span class="co">#&gt; ttt24   0.172931 0.228951 0.163082  0.4501</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.20846 0.78541 1.8594</span></span>
-<span><span class="co">#&gt; dnr.f11  1.20608 1.11331 1.3066</span></span>
-<span><span class="co">#&gt; preauto  1.51361 0.96845 2.3657</span></span>
-<span><span class="co">#&gt; ttt24    1.18892 0.75910 1.8621</span></span>
+<span><span class="co">#&gt; dnr.f01  1.20809 0.78517 1.8588</span></span>
+<span><span class="co">#&gt; dnr.f11  1.20704 1.11432 1.3075</span></span>
+<span><span class="co">#&gt; preauto  1.51381 0.96851 2.3661</span></span>
+<span><span class="co">#&gt; ttt24    1.18878 0.75896 1.8620</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -432,17 +432,17 @@ above.</p>
 <span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.189343  0.233933 -0.269157  0.647843  0.4183</span></span>
-<span><span class="co">#&gt; dnr.f11  0.187373  0.047734  0.093817  0.280930  0.0001</span></span>
-<span><span class="co">#&gt; preauto  0.414500  0.230688 -0.037640  0.866639  0.0724</span></span>
-<span><span class="co">#&gt; ttt24    0.173048  0.230815 -0.279341  0.625437  0.4534</span></span>
+<span><span class="co">#&gt; dnr.f01  0.189039  0.233957 -0.269509  0.647587  0.4191</span></span>
+<span><span class="co">#&gt; dnr.f11  0.188170  0.047819  0.094446  0.281895  0.0001</span></span>
+<span><span class="co">#&gt; preauto  0.414628  0.230733 -0.037600  0.866857  0.0723</span></span>
+<span><span class="co">#&gt; ttt24    0.172931  0.230846 -0.279518  0.625380  0.4538</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.20846 0.76402 1.9114</span></span>
-<span><span class="co">#&gt; dnr.f11  1.20608 1.09836 1.3244</span></span>
-<span><span class="co">#&gt; preauto  1.51361 0.96306 2.3789</span></span>
-<span><span class="co">#&gt; ttt24    1.18892 0.75628 1.8691</span></span>
+<span><span class="co">#&gt; dnr.f01  1.20809 0.76375 1.9109</span></span>
+<span><span class="co">#&gt; dnr.f11  1.20704 1.09905 1.3256</span></span>
+<span><span class="co">#&gt; preauto  1.51381 0.96310 2.3794</span></span>
+<span><span class="co">#&gt; ttt24    1.18878 0.75615 1.8690</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### logit model  #############################################################3</span></span>
@@ -456,17 +456,17 @@ above.</p>
 <span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;         Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; dnr.f01 0.357164 0.339839 0.158937  0.2933</span></span>
-<span><span class="co">#&gt; dnr.f11 0.272389 0.064148 0.145076  0.0000</span></span>
-<span><span class="co">#&gt; preauto 0.657009 0.326087 0.160361  0.0439</span></span>
-<span><span class="co">#&gt; ttt24   0.191334 0.353607 0.167443  0.5884</span></span>
+<span><span class="co">#&gt; dnr.f01 0.357149 0.339814 0.158936  0.2933</span></span>
+<span><span class="co">#&gt; dnr.f11 0.272344 0.064265 0.145075  0.0000</span></span>
+<span><span class="co">#&gt; preauto 0.657028 0.326121 0.160362  0.0439</span></span>
+<span><span class="co">#&gt; ttt24   0.191321 0.353641 0.167443  0.5885</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.42927 0.73425 2.7822</span></span>
-<span><span class="co">#&gt; dnr.f11  1.31310 1.15796 1.4890</span></span>
-<span><span class="co">#&gt; preauto  1.92901 1.01805 3.6551</span></span>
-<span><span class="co">#&gt; ttt24    1.21086 0.60549 2.4215</span></span>
+<span><span class="co">#&gt; dnr.f01  1.42925 0.73427 2.7820</span></span>
+<span><span class="co">#&gt; dnr.f11  1.31304 1.15764 1.4893</span></span>
+<span><span class="co">#&gt; preauto  1.92905 1.01800 3.6554</span></span>
+<span><span class="co">#&gt; ttt24    1.21085 0.60544 2.4216</span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">mediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -476,17 +476,17 @@ above.</p>
 <span><span class="co">#&gt;  200 clusters</span></span>
 <span><span class="co">#&gt; coeffients:</span></span>
 <span><span class="co">#&gt;          Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; dnr.f01  0.357164  0.351081 -0.330942  1.045270  0.3090</span></span>
-<span><span class="co">#&gt; dnr.f11  0.272389  0.068097  0.138922  0.405856  0.0001</span></span>
-<span><span class="co">#&gt; preauto  0.657009  0.328211  0.013728  1.300290  0.0453</span></span>
-<span><span class="co">#&gt; ttt24    0.191334  0.356086 -0.506582  0.889250  0.5910</span></span>
+<span><span class="co">#&gt; dnr.f01  0.357149  0.351057 -0.330911  1.045209  0.3090</span></span>
+<span><span class="co">#&gt; dnr.f11  0.272344  0.068247  0.138583  0.406105  0.0001</span></span>
+<span><span class="co">#&gt; preauto  0.657028  0.328246  0.013678  1.300377  0.0453</span></span>
+<span><span class="co">#&gt; ttt24    0.191321  0.356120 -0.506661  0.889303  0.5911</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;         Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; dnr.f01  1.42927 0.71825 2.8442</span></span>
-<span><span class="co">#&gt; dnr.f11  1.31310 1.14903 1.5006</span></span>
-<span><span class="co">#&gt; preauto  1.92901 1.01382 3.6704</span></span>
-<span><span class="co">#&gt; ttt24    1.21086 0.60255 2.4333</span></span>
+<span><span class="co">#&gt; dnr.f01  1.42925 0.71827 2.8440</span></span>
+<span><span class="co">#&gt; dnr.f11  1.31304 1.14864 1.5010</span></span>
+<span><span class="co">#&gt; preauto  1.92905 1.01377 3.6707</span></span>
+<span><span class="co">#&gt; ttt24    1.21085 0.60250 2.4334</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">runb</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">{</span> <span class="va">bll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mediatorSurv.html">BootmediatorSurv</a></span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,k.boot<span class="op">=</span><span class="va">k.boot</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bll</span><span class="op">)</span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">### binomial outcome  ############################</span></span>
@@ -592,9 +592,9 @@ above.</p>
 </h2>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -613,23 +613,23 @@ above.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.5     timereg_2.0.6  survival_3.7-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.3           knitr_1.49          rlang_1.1.4        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.50           textshaping_0.4.1   jsonlite_1.8.9     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.0         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.3.3          sass_0.4.9         </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.4.2          evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       mvtnorm_1.3-3      </span></span>
-<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 yaml_2.3.10         lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] compiler_4.4.2      codetools_0.2-20    fs_1.6.5           </span></span>
-<span><span class="co">#&gt; [25] Rcpp_1.0.13-1       future_1.34.0       systemfonts_1.1.0  </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      digest_0.6.37       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [31] parallelly_1.41.0   parallel_4.4.2      splines_4.4.2      </span></span>
-<span><span class="co">#&gt; [34] bslib_0.8.0         Matrix_1.7-1        tools_4.4.2        </span></span>
-<span><span class="co">#&gt; [37] globals_0.16.3      pkgdown_2.1.1       cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [40] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 

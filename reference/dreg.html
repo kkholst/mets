@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -240,7 +240,7 @@
 <span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="st">"S*"</span><span class="op">~</span><span class="st">"*.width"</span></span></span>
 <span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, fun.<span class="op">=</span><span class="va">phreg</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, fun.<span class="op">=</span><span class="va">survdiff</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## xs &lt;- dreg(dat, y, fun.=survdiff)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="st">"S*"</span><span class="op">~</span><span class="st">"*.width"</span></span></span>
 <span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, x.oneatatime<span class="op">=</span><span class="cn">FALSE</span>, fun.<span class="op">=</span><span class="va">phreg</span><span class="op">)</span></span></span>
@@ -288,7 +288,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">S1</span><span class="op">~</span><span class="st">"*.width"</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">species</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, z.arg<span class="op">=</span><span class="st">"base"</span>, fun.<span class="op">=</span><span class="va">phreg</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, z.arg<span class="op">=</span><span class="st">"base"</span>, fun.<span class="op">=</span><span class="va">coxph</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">dreg</span><span class="op">(</span><span class="va">dat</span>, <span class="va">y</span>, z.arg<span class="op">=</span><span class="st">"base"</span>, fun.<span class="op">=</span><span class="fu">survival</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## under condition with groups</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">S1</span><span class="op">~</span><span class="st">"*.width"</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">sepal.length</span><span class="op">&gt;</span><span class="fl">4</span><span class="op">)</span></span></span>
@@ -303,7 +303,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">formula</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span> <span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="va">formula</span>,<span class="va">data</span>,<span class="va">...</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="fu"><a href="basehazplot.phreg.html">kmplot</a></span><span class="op">(</span><span class="va">ss</span>,<span class="va">...</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="plot.phreg.html">kmplot</a></span><span class="op">(</span><span class="va">ss</span>,<span class="va">...</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">ss</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

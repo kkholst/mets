@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -139,10 +139,11 @@
   <div class="contents col-md-9">
 
 
+<!-- badges: end -->
 <div class="section level1">
 <div class="page-header"><h1 id="multivariate-event-times-mets-">Multivariate Event Times (<code>mets</code>) <img src="reference/figures/timerrr.png" align="right" height="150"><a class="anchor" aria-label="anchor" href="#multivariate-event-times-mets-"></a>
 </h1></div>
-<p>Implementation of various statistical models for multivariate event history data <a href="doi:10.1007/s10985-013-9244-x" class="uri">doi:10.1007/s10985-013-9244-x</a>. Including multivariate cumulative incidence models <a href="doi:10.1002/sim.6016" class="uri">doi:10.1002/sim.6016</a>, and bivariate random effects probit models (Liability models) <a href="doi:10.1016/j.csda.2015.01.014" class="uri">doi:10.1016/j.csda.2015.01.014</a>. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions.</p>
+<p>Implementation of various statistical models for multivariate event history data <a href="doi:10.1007/s10985-013-9244-x" class="uri">doi:10.1007/s10985-013-9244-x</a>. Including multivariate cumulative incidence models <a href="doi:10.1002/sim.6016" class="uri">doi:10.1002/sim.6016</a>, and bivariate random effects probit models (Liability models) <a href="doi:10.1016/j.csda.2015.01.014" class="uri">doi:10.1016/j.csda.2015.01.014</a>. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions. Restricted mean survival time regression and years lost for competing risks. Average treatment effects and G-computation.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -178,46 +179,75 @@
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  keywords<span class="ot">=</span>{Cause specific hazards; Competing risks; Delayed entry;</span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>        Left truncation; Heritability; Survival analysis},</span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>  pages<span class="ot">=</span>{<span class="dv">1-24</span>},</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  language<span class="ot">=</span>{English}</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>}</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="sc">@</span>Article{,</span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  title<span class="ot">=</span>{The Liability Threshold Model <span class="cf">for</span> Censored Twin Data},</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>  author<span class="ot">=</span>{Holst, Klaus K. and Scheike, Thomas H. and Hjelmborg, Jacob B.},</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  year<span class="ot">=</span>{<span class="dv">2015</span>},</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  doi<span class="ot">=</span>{<span class="fl">10.1016</span><span class="sc">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  url<span class="ot">=</span>{http<span class="sc">:</span><span class="er">//</span>dx.doi.org<span class="sc">/</span><span class="fl">10.1016</span><span class="sc">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>  journal<span class="ot">=</span>{Computational Statistics and Data Analysis}</span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  language<span class="ot">=</span>{English}</span></code></pre></div>
+<p>}</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="sc">@</span>Article{,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  title<span class="ot">=</span>{The Liability Threshold Model <span class="cf">for</span> Censored Twin Data},</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  author<span class="ot">=</span>{Holst, Klaus K. and Scheike, Thomas H. and Hjelmborg, Jacob B.},</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  year<span class="ot">=</span>{<span class="dv">2015</span>},</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  doi<span class="ot">=</span>{<span class="fl">10.1016</span><span class="sc">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  url<span class="ot">=</span>{http<span class="sc">:</span><span class="er">//</span>dx.doi.org<span class="sc">/</span><span class="fl">10.1016</span><span class="sc">/</span>j.csda.<span class="dv">2015</span>.<span class="fl">01.014</span>},</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  journal<span class="ot">=</span>{Computational Statistics and Data Analysis}</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="examples-twins-polygenic-modelling">Examples: Twins Polygenic modelling<a class="anchor" aria-label="anchor" href="#examples-twins-polygenic-modelling"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kkholst.github.io/mets/" class="external-link">"mets"</a></span><span class="op">)</span></span>
-<span></span>
+<p>First considering standard twin modelling (ACE, AE, ADE, and more models)</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="va">ace</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data<span class="op">=</span><span class="va">d</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"id"</span><span class="op">)</span></span>
+<span> <span class="va">ace</span></span>
+<span> <span class="co">## An AE-model could be fitted as</span></span>
+<span> <span class="va">ae</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data<span class="op">=</span><span class="va">d</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"id"</span>, type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
+<span> <span class="co">## LRT:</span></span>
+<span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/compare.html" class="external-link">compare</a></span><span class="op">(</span><span class="va">ae</span>,<span class="va">ace</span><span class="op">)</span></span>
+<span> <span class="co">## AIC</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC</a></span><span class="op">(</span><span class="va">ae</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC</a></span><span class="op">(</span><span class="va">ace</span><span class="op">)</span></span>
+<span> <span class="co">## To adjust for the covariates we simply alter the formula statement</span></span>
+<span> <span class="va">ace2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, data<span class="op">=</span><span class="va">d</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"id"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<span> <span class="co">## Summary/GOF</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ace2</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="examples-twins-polygenic-modelling-time-to-events-data">Examples: Twins Polygenic modelling time-to-events Data<a class="anchor" aria-label="anchor" href="#examples-twins-polygenic-modelling-time-to-events-data"></a>
+</h2>
+<p>In the context of time-to-events data we consider the “Liabilty Threshold model” with IPCW adjustment for censoring.</p>
+<p>First we fit the bivariate probit model (same marginals in MZ and DZ twins but different correlation parameter). Here we evaluate the risk of getting cancer before the last double cancer event (95 years)</p>
+<p>```{r} data(prt) prt0 &lt;- force.same.cens(prt, cause=“status”, cens.code=0, time=“time”, id=“id”) prt0<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mi>r</mi><mi>y</mi><mo>&lt;</mo><mo>−</mo><mi>r</mi><mi>e</mi><mi>l</mi><mi>e</mi><mi>v</mi><mi>e</mi><mi>l</mi><mo stretchy="false" form="prefix">(</mo><mi>p</mi><mi>r</mi><mi>t</mi><mn>0</mn></mrow><annotation encoding="application/x-tex">country &lt;- relevel(prt0</annotation></semantics></math>country, ref=“Sweden”) prt_wide &lt;- fast.reshape(prt0, id=“id”, num=“num”, varying=c(“time”,“status”,“cancer”)) prt_time &lt;- subset(prt_wide, cancer1 &amp; cancer2, select=c(time1, time2, zyg)) tau &lt;- 95 tt &lt;- seq(70, tau, length.out=5) ## Time points to evaluate model in</p>
+<p>b0 &lt;- bptwin.time(cancer ~ 1, data=prt0, id=“id”, zyg=“zyg”, DZ=“DZ”, type=“cor”, cens.formula=Surv(time,status==0)~zyg, breaks=tau) summary(b0)</p>
+<pre><code>
+Liability threshold model with ACE random effects structure
+
+```{r, label=liability_ace1, eval=fullVignette}
+b1 &lt;- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
+           cens.formula=Surv(time,status==0)~zyg, breaks=tau)
+summary(b1)</code></pre>
+</div>
+<div class="section level2">
+<h2 id="examples-twins-concordance-for-time-to-events-data">Examples: Twins Concordance for time-to-events Data<a class="anchor" aria-label="anchor" href="#examples-twins-concordance-for-time-to-events-data"></a>
+</h2>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">prt</span><span class="op">)</span> <span class="co">## Prostate data example (sim)</span></span>
 <span></span>
 <span><span class="co">## Bivariate competing risk, concordance estimates</span></span>
-<span><span class="va">p33</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bicomprisk.html">bicomprisk</a></span><span class="op">(</span><span class="fu"><a href="reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu">strata</span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu">id</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span><span class="va">p33</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bicomprisk.html">bicomprisk</a></span><span class="op">(</span><span class="fu"><a href="reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu">id</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
 <span>                  data<span class="op">=</span><span class="va">prt</span>, cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, return.data<span class="op">=</span><span class="fl">1</span>, prodlim<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Strata 'DZ'</span></span>
-<span><span class="co">#&gt; Strata 'MZ'</span></span>
 <span></span>
 <span><span class="va">p33dz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"DZ"</span><span class="op">$</span><span class="va">comp.risk</span></span>
 <span><span class="va">p33mz</span> <span class="op">&lt;-</span> <span class="va">p33</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="st">"MZ"</span><span class="op">$</span><span class="va">comp.risk</span></span>
 <span></span>
 <span><span class="co">## Probability weights based on Aalen's additive model (same censoring within pair)</span></span>
-<span><span class="va">prtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipw.html">ipw</a></span><span class="op">(</span><span class="fu">Surv</span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span><span class="op">+</span><span class="va">zyg</span>, data<span class="op">=</span><span class="va">prt</span>,</span>
+<span><span class="va">prtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipw.html">ipw</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">country</span><span class="op">+</span><span class="va">zyg</span>, data<span class="op">=</span><span class="va">prt</span>,</span>
 <span>            obs.only<span class="op">=</span><span class="cn">TRUE</span>, same.cens<span class="op">=</span><span class="cn">TRUE</span>, </span>
 <span>            cluster<span class="op">=</span><span class="st">"id"</span>, weight.name<span class="op">=</span><span class="st">"w"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Marginal model (wrongly ignoring censorings)</span></span>
-<span><span class="va">bpmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, </span>
+<span><span class="va">bpmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, </span>
 <span>                 data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>, eqmarg<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Extended liability model</span></span>
-<span><span class="va">bpmzIPW</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu">cluster</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span><span class="va">bpmzIPW</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biprobit.html">biprobit</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
 <span>                    data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prtw</span>,<span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span>,</span>
 <span>                    weights<span class="op">=</span><span class="st">"w"</span><span class="op">)</span></span>
 <span><span class="va">smz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bpmzIPW</span><span class="op">)</span></span>
@@ -230,6 +260,143 @@
 <span><span class="co">## Wrong estimates:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bpmz</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span><span class="op">[</span><span class="st">"Concordance"</span>,<span class="op">]</span>,lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"lightgray"</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/ex1-1.png" title="plot of chunk ex1" alt="plot of chunk ex1" width="60%"></p>
+</div>
+<div class="section level2">
+<h2 id="examples-cox-model-rmst">Examples: Cox model, RMST<a class="anchor" aria-label="anchor" href="#examples-cox-model-rmst"></a>
+</h2>
+<p>We can fit the Cox model and compute many useful summaries, such as restricted mean survival and stanardized treatment effects (G-estimation). First estimating the standardized survival</p>
+<p>```{r} data(bmt); bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>&lt;</mo><mo>−</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">time &lt;- bmt</annotation></semantics></math>time+runif(408)<em>0.001 bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>v</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo>&lt;</mo><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">event &lt;- (bmt</annotation></semantics></math>cause!=0)</em>1 dfactor(bmt) &lt;- tcell.f~tcell</p>
+<p>ss &lt;- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) summary(survivalG(ss,bmt,50))</p>
+<p>sst &lt;- survivalGtime(ss,bmt,n=50) plot(sst,type=c(“survival”,“risk”,“survival.ratio”)[1])</p>
+<pre><code>
+Based on the phreg, that can be used to get the the Kaplan-Meier, we can also compute
+restricted mean survival times and years lost
+
+
+```{r}
+ out1 &lt;- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
+
+ rm1 &lt;- resmean.phreg(out1,times=50)
+ summary(rm1)
+ par(mfrow=c(1,2))
+ plot(rm1,se=1)
+ plot(rm1,years.lost=TRUE,se=1)</code></pre>
+<p>and for competing risks the years lost can be decomposed into different causes</p>
+<p><code>{r}  ## years.lost decomposed into causes  drm1 &lt;- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);  summary(drm1)</code></p>
+</div>
+<div class="section level2">
+<h2 id="examples-cox-model-iptw">Examples: Cox model IPTW<a class="anchor" aria-label="anchor" href="#examples-cox-model-iptw"></a>
+</h2>
+<p>We can fit the Cox model with inverse probabilty of treatment weights based on logistic regression. The treatment weights can be time-dependent and then mutiplicative weights are applied.</p>
+<p>```{r} library(mets) data(bmt); bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>&lt;</mo><mo>−</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">time &lt;- bmt</annotation></semantics></math>time+runif(408)<em>0.001 bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>v</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo>&lt;</mo><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">event &lt;- (bmt</annotation></semantics></math>cause!=0)</em>1 dfactor(bmt) &lt;- tcell.f~tcell</p>
+<p>ss &lt;- phreg_IPTW(Surv(time,event)<sub>tcell.f,data=bmt,treat.model=tcell.f</sub>platelet+age) summary(ss)</p>
+<pre><code>
+
+## Examples: Competing risks regression, Binomial Regression
+
+We can fit the logistic regression model at a specific time-point with IPCW adjustment
+
+```{r}
+ data(bmt); bmt$time &lt;- bmt$time+runif(408)*0.001
+ # logistic regresion with IPCW binomial regression
+ out &lt;- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+
+ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)</code></pre>
+</div>
+<div class="section level2">
+<h2 id="examples-competing-risks-regression-fine-graylogistic-link">Examples: Competing risks regression, Fine-Gray/Logistic link<a class="anchor" aria-label="anchor" href="#examples-competing-risks-regression-fine-graylogistic-link"></a>
+</h2>
+<p>We can fit the Fine-Gray model and the logit-link competing risks model (using IPCW adjustment). Starting with the logit-link model</p>
+<p>```{r} data(bmt) bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>&lt;</mo><mo>−</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">time &lt;- bmt</annotation></semantics></math>time+runif(nrow(bmt))*0.01 bmt$id &lt;- 1:nrow(bmt)</p>
+<p>## logistic link OR interpretation or=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1) summary(or) par(mfrow=c(1,2)) ## to see baseline plot(or)</p>
+<p># predictions nd &lt;- data.frame(tcell=c(1,0),platelet=0,age=0) pll &lt;- predict(or,nd) plot(pll)</p>
+<pre><code>
+Similarly, the Fine-Gray model can be estimated using IPCW adjustment
+
+```{r}
+ ## Fine-Gray model
+ fg=cifreg(Event(time,cause)~strata(tcell)+platelet+age,data=bmt,cause=1,propodds=NULL)
+ summary(fg)
+ ## baselines
+ plot(fg)
+ nd &lt;- data.frame(tcell=c(1,0),platelet=0,age=0)
+ pfg &lt;- predict(fg,nd,se=1)
+ plot(pfg,se=1)
+
+ ## influence functions of regression coefficients
+ head(iid(fg))</code></pre>
+<p>and we can get standard errors for predictions based on the influence functions of the baseline and the regression coefiicients</p>
+<p><code>{r} baseid &lt;- IIDbaseline.cifreg(fg,time=40) FGprediid(baseid,nd)</code></p>
+<p>further G-estimation can be done</p>
+<p><code>{r}  dfactor(bmt) &lt;- tcell.f~tcell  fg1 &lt;- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,propodds=NULL)  summary(survivalG(fg1,bmt,50))</code></p>
+</div>
+<div class="section level2">
+<h2 id="examples-marginal-mean-for-recurrent-events">Examples: Marginal mean for recurrent events<a class="anchor" aria-label="anchor" href="#examples-marginal-mean-for-recurrent-events"></a>
+</h2>
+<p>We can estimate the expected number of events non-parametrically and get standard errors for this estimator</p>
+<p>```{r} data(hfactioncpx12) dtable(hfactioncpx12,~status)</p>
+<p>gl1 &lt;- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfactioncpx12,cause=1,death.code=2) summary(gl1,times=1:5) plot(gl1,se=1)</p>
+<pre><code>
+## Examples: Ghosh-Lin for recurrent events
+
+We can fit the Ghosh-Lin model for the expected number of events observed
+before dying (using IPCW adjustment and get predictions)
+
+```{r}
+data(hfactioncpx12)
+dtable(hfactioncpx12,~status)
+
+gl1 &lt;- recreg(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2)
+summary(gl1)
+
+## influence functions of regression coefficients
+head(iid(gl1))</code></pre>
+<p>and we can get standard errors for predictions based on the influence functions of the baseline and the regression coefiicients</p>
+<p><code>{r}  nd=data.frame(treatment=levels(hfactioncpx12$treatment),id=1)  pfg &lt;- predict(gl1,nd,se=1)  summary(pfg,times=1:5)  plot(pfg,se=1)</code></p>
+<p>and we can get the influence functions of the baseline and regression coefficients at a specific time-point</p>
+<p><code>{r} baseid &lt;- IIDbaseline.recreg(gl1,time=2) dd &lt;- data.frame(treatment=levels(hfactioncpx12$treatment),id=1) GLprediid(baseid,dd)</code></p>
+</div>
+<div class="section level2">
+<h2 id="examples-fixed-time-modelling-for-recurrent-events">Examples: Fixed time modelling for recurrent events<a class="anchor" aria-label="anchor" href="#examples-fixed-time-modelling-for-recurrent-events"></a>
+</h2>
+<p>We can fit a log-link regression model at 2 yeas for the expected number of events observed before dying (using IPCW adjustment)</p>
+<p>```{r} data(hfactioncpx12)</p>
+<p>e2 &lt;- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2,time=2) summary(e2)</p>
+<pre><code>
+## Examples: Regression for RMST/Restricted mean survival for survival and competing risks  using IPCW
+
+RMST can be computed using the Kaplan-Meier (via phreg) and the for competing
+risks via the cumulative incidence functions, but we can also get these
+estimates via IPCW adjustment and then we can do regression
+
+```{r}
+ ### same as Kaplan-Meier for full censoring model
+ bmt$int &lt;- with(bmt,strata(tcell,platelet))
+ out &lt;- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
+                         cens.model=~strata(platelet,tcell),model="lin")
+ estimate(out)
+ ## same as
+ out1 &lt;- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
+ rm1 &lt;- resmean.phreg(out1,times=30)
+ summary(rm1)
+
+ ## competing risks years-lost for cause 1
+ out1 &lt;- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
+                       cens.model=~strata(platelet,tcell),model="lin")
+ estimate(out1)
+ ## same as
+ drm1 &lt;- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+ summary(drm1)</code></pre>
+</div>
+<div class="section level2">
+<h2 id="examples-average-treatment-effects-ate-for-survival-or-competing-risks">Examples: Average treatment effects (ATE) for survival or competing risks<a class="anchor" aria-label="anchor" href="#examples-average-treatment-effects-ate-for-survival-or-competing-risks"></a>
+</h2>
+<p>We can compute ATE for survival or competing risks data for the probabilty of dying</p>
+<p><code>{r}  bmt$event &lt;- bmt$cause!=0; dfactor(bmt) &lt;- tcell~tcell  brs &lt;- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,       treat.model=tcell~platelet+age)  summary(brs)</code></p>
+<p>or the the restricted mean survival (years-lost to different causes)</p>
+<p>```{r} out &lt;- resmeanATE(Event(time,event)<sub>tcell+platelet,data=bmt,time=40,treat.model=tcell</sub>platelet) summary(out)</p>
+<p>out1 &lt;- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40, treat.model=tcell~platelet) summary(out1) ```</p>
 </div>
 </div>
 
@@ -271,7 +438,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/kkholst/mets/actions" class="external-link"><img src="https://github.com/kkholst/mets/workflows/R-CMD-check/badge.svg?branch=master" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/kkholst/mets/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/kkholst/mets/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/github/kkholst/mets?branch=master" class="external-link"><img src="https://codecov.io/github/kkholst/mets/coverage.svg" alt="coverage"></a></li>
 <li><a href="https://CRAN.R-project.org/package=mets" class="external-link"><img src="https://www.r-pkg.org/badges/version-last-release/mets" alt="cran"></a></li>
 <li><a href="https://cranlogs.r-pkg.org/downloads/total/last-month/mets" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/mets" alt="cran-dl"></a></li>

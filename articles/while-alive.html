@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-01-11</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/while-alive.Rmd" class="external-link"><code>vignettes/while-alive.Rmd</code></a></small>
       <div class="hidden name"><code>while-alive.Rmd</code></div>
@@ -161,17 +161,22 @@ specific events per time-unit
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>D</mi><mo>∧</mo><mi>t</mi></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  E( \frac{N(D \wedge t)}{D \wedge t} ) 
 \end{align*}</annotation></semantics></math> for two treatment-groups in
-the case of an RCT.</p>
+the case of an RCT. For the laste mean of events per time-unit it has
+been seen that when the sample size is to great it can improve the
+finite sample properties to employ a transformation such as square or
+cube-root, and thus consider
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>D</mi><mo>∧</mo><mi>t</mi></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>.33</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+ E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
+\end{align*}</annotation></semantics></math></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfaction_cpx12</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">hfaction_cpx12</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">hfactioncpx12</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
 <span><span class="co">#&gt;    0    1    2 </span></span>
 <span><span class="co">#&gt;  617 1391  124</span></span>
-<span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WA_recurrent.html">WA_recurrent</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">hfaction_cpx12</span>,time<span class="op">=</span><span class="fl">2</span>,</span>
-<span>           death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WA_recurrent.html">WA_recurrent</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">hfactioncpx12</span>,time<span class="op">=</span><span class="fl">2</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span>
 <span><span class="co">#&gt; While-Alive summaries:  </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -187,22 +192,22 @@ the case of an RCT.</p>
 <span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
 <span><span class="co">#&gt; mean events, E(N(min(D,t))): </span></span>
 <span><span class="co">#&gt;            Estimate Std.Err  2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; treatment0    1.572 0.09573 1.384 1.759 1.375e-60</span></span>
-<span><span class="co">#&gt; treatment1    1.453 0.10315 1.251 1.656 4.376e-45</span></span>
+<span><span class="co">#&gt; treatment0    1.572 0.09821 1.379 1.764 1.171e-57</span></span>
+<span><span class="co">#&gt; treatment1    1.453 0.10825 1.241 1.666 4.205e-41</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;                           Estimate Std.Err    2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; [treatment0] - [treat....   0.1185  0.1407 -0.1574 0.3943     0.4</span></span>
+<span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [treatment0] - [treat....   0.1185  0.1462 -0.168 0.4049  0.4177</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
 <span><span class="co">#&gt; _______________________________________________________ </span></span>
 <span><span class="co">#&gt; Ratio of means E(N(min(D,t)))/E(min(D,t)) </span></span>
 <span><span class="co">#&gt;            Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; treatment0   0.8457 0.05264 0.7425 0.9488 4.411e-58</span></span>
-<span><span class="co">#&gt; treatment1   0.7555 0.05433 0.6490 0.8619 5.963e-44</span></span>
+<span><span class="co">#&gt; treatment0   0.8457 0.05396 0.7399 0.9514 2.308e-55</span></span>
+<span><span class="co">#&gt; treatment1   0.7555 0.05696 0.6438 0.8671 3.835e-40</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;                           Estimate Std.Err     2.5%  97.5% P-value</span></span>
-<span><span class="co">#&gt; [treatment0] - [treat....  0.09022 0.07565 -0.05805 0.2385   0.233</span></span>
+<span><span class="co">#&gt;                           Estimate Std.Err     2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; [treatment0] - [treat....  0.09022 0.07846 -0.06357 0.244  0.2502</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
@@ -216,16 +221,66 @@ the case of an RCT.</p>
 <span><span class="co">#&gt; [treat0] - [treat1]   0.3173  0.1381 0.04675 0.5879 0.02153</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [treat0] - [treat1] = 0</span></span>
+<span></span>
+<span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WA_recurrent.html">WA_recurrent</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">hfactioncpx12</span>,time<span class="op">=</span><span class="fl">2</span>,death.code<span class="op">=</span><span class="fl">2</span>,trans<span class="op">=</span><span class="fl">.333</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dd</span>,type<span class="op">=</span><span class="st">"log"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; While-Alive summaries, log-scale:  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; RMST,  E(min(D,t)) </span></span>
+<span><span class="co">#&gt;            Estimate  Std.Err   2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; treatment0   0.6199 0.011340 0.5977 0.6421       0</span></span>
+<span><span class="co">#&gt; treatment1   0.6543 0.007807 0.6390 0.6696       0</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt;                           Estimate Std.Err     2.5%     97.5% P-value</span></span>
+<span><span class="co">#&gt; [treatment0] - [treat.... -0.03446 0.01377 -0.06145 -0.007478 0.01231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
+<span><span class="co">#&gt; mean events, E(N(min(D,t))): </span></span>
+<span><span class="co">#&gt;            Estimate Std.Err   2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; treatment0   0.4523 0.06248 0.3298 0.5747 4.535e-13</span></span>
+<span><span class="co">#&gt; treatment1   0.3739 0.07448 0.2279 0.5199 5.155e-07</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt;                           Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [treatment0] - [treat....  0.07835 0.09721 -0.1122 0.2689  0.4203</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
+<span><span class="co">#&gt; _______________________________________________________ </span></span>
+<span><span class="co">#&gt; Ratio of means E(N(min(D,t)))/E(min(D,t)) </span></span>
+<span><span class="co">#&gt;            Estimate Std.Err    2.5%    97.5%   P-value</span></span>
+<span><span class="co">#&gt; treatment0  -0.1676  0.0638 -0.2927 -0.04257 0.0086101</span></span>
+<span><span class="co">#&gt; treatment1  -0.2804  0.0754 -0.4282 -0.13265 0.0001999</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt;                           Estimate Std.Err     2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [treatment0] - [treat....   0.1128 0.09877 -0.08078 0.3064  0.2534</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Null Hypothesis: </span></span>
+<span><span class="co">#&gt;   [treatment0] - [treatment1] = 0 </span></span>
+<span><span class="co">#&gt; _______________________________________________________ </span></span>
+<span><span class="co">#&gt; Mean of Events per time-unit E(N(min(D,t))/min(D,t)) </span></span>
+<span><span class="co">#&gt;        Estimate Std.Err    2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; treat0  -0.3833 0.04939 -0.4801 -0.2865 8.487e-15</span></span>
+<span><span class="co">#&gt; treat1  -0.5380 0.05666 -0.6491 -0.4270 2.191e-21</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt;                     Estimate Std.Err     2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; [treat0] - [treat1]   0.1548 0.07517 0.007459 0.3021 0.03948</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [treat0] - [treat1] = 0</span></span></code></pre></div>
+<p>We see that the ratio of means are not very different, but that the
+subject specific mean of events per time-unit shows that those on the
+active treatment has fewer events per time-unit on average.</p>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -244,23 +299,23 @@ the case of an RCT.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.5     timereg_2.0.6  survival_3.7-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.3           knitr_1.49          rlang_1.1.4        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.50           textshaping_0.4.1   jsonlite_1.8.9     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.0         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.3.3          sass_0.4.9         </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.4.2          evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       mvtnorm_1.3-3      </span></span>
-<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 yaml_2.3.10         lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] compiler_4.4.2      codetools_0.2-20    fs_1.6.5           </span></span>
-<span><span class="co">#&gt; [25] Rcpp_1.0.13-1       future_1.34.0       systemfonts_1.1.0  </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      digest_0.6.37       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [31] parallelly_1.41.0   parallel_4.4.2      splines_4.4.2      </span></span>
-<span><span class="co">#&gt; [34] bslib_0.8.0         Matrix_1.7-1        tools_4.4.2        </span></span>
-<span><span class="co">#&gt; [37] globals_0.16.3      pkgdown_2.1.1       cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [40] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 

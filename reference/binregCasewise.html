@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -170,11 +170,11 @@
 <span class="r-in"><span><span class="co">## concordance </span></span></span>
 <span class="r-in"><span><span class="va">bcif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, data<span class="op">=</span><span class="va">dd</span>,</span></span>
 <span class="r-in"><span>                time<span class="op">=</span><span class="fl">80</span>, cause<span class="op">=</span><span class="fl">1</span>, cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pconc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">bcif1</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pconc</span> <span class="op">&lt;-</span> <span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">bcif1</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## marginal estimates </span></span></span>
 <span class="r-in"><span><span class="va">mbcif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, data<span class="op">=</span><span class="va">prt</span>, time<span class="op">=</span><span class="fl">80</span>, cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mbcif1</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mc</span> <span class="op">&lt;-</span> <span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">mbcif1</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mc</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         pred          se      lower      upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.04751637 0.002253132 0.04310023 0.05193251</span>

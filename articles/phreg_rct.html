@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@ models</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-01-11</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/phreg_rct.Rmd" class="external-link"><code>vignettes/phreg_rct.Rmd</code></a></small>
       <div class="hidden name"><code>phreg_rct.Rmd</code></div>
@@ -363,10 +363,265 @@ with this block as factor</p>
 <span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="two-stage-randomization-calgb-9823-for-survival-outcomes">Two-Stage Randomization CALGB-9823 for survival outcomes<a class="anchor" aria-label="anchor" href="#two-stage-randomization-calgb-9823-for-survival-outcomes"></a>
+</h2>
+<p>We here illustrate some analysis of one SMART conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
+388 patients were randomized to an initial treatment of GM-CSF (A1 ) or
+standard chemotherapy (A2 ). Patients with complete remission and
+informed consent to second stage were then re-randomized to only
+cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ).</p>
+<p>We first compute the weighted risk-set estimator based on estimated
+weights
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>Λ</mi><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msup><mi>Y</mi><mi>w</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>N</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+\Lambda_{A1,B1}(t) &amp; = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
+\end{align*}</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>0</mn><mi>i</mi></msub><mo>=</mo><mi>A</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>&gt;</mo><msub><mi>T</mi><mi>R</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>1</mn><mi>i</mi></msub><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w_i(s) = I(A0_i=A1) + (t&gt;T_R) I(A1_i=B1)/\pi_1(X_i)</annotation></semantics></math>,
+that is 1 when you start on treatment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
+and then for those that changes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
+at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>R</mi></msub><annotation encoding="application/x-tex">T_R</annotation></semantics></math>
+then is scaled up with the proportion doing this. This is equivalent to
+the IPTW (inverse probability of treatment weighted estimator). We
+estimate the treatment regimes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1, B1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A2, B1</annotation></semantics></math>
+by letting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
+indicate those that are consistent with ending on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
+then starts being
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+and becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+if the subject is treated with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>,
+but stays
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+if the subject is treated with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.
+We can then look at the two strata where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn><mo>=</mo><mn>0</mn><mo>,</mo><mi>A</mi><mn>10</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">A0=0,A10=1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn><mo>=</mo><mn>1</mn><mo>,</mo><mi>A</mi><mn>10</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">A0=1,A10=1</annotation></semantics></math>.
+Similary, for those that end being consistent with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>.
+Thus defining
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>11</mn></mrow><annotation encoding="application/x-tex">A11</annotation></semantics></math>
+to start being
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>,
+then stays
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>
+is taken, and becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+if the second randomization is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.</p>
+<ul>
+<li>the treatment models are for all time-points, unless the weight.var
+variable is given (1 for treatments, 0 otherwise) to accomodate a
+general start,stop format</li>
+<li>the treatment model may also depend on a response value</li>
+<li>standard errors are based on influence functions and is also
+computed for the baseline</li>
+</ul>
+<p>We here use the propensity score model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mn>1</mn><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>A</mi><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(A1=B1|A0)</annotation></semantics></math>
+that uses the observed frequencies on arm
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
+among those starting out on either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">calgb8923</span><span class="op">)</span></span>
+<span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="va">calgb8923</span></span>
+<span></span>
+<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">+</span><span class="va">age</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">wbc</span></span>
+<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span></span>
+<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">*</span><span class="va">A0.f</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">calgt</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   id V X Z   TR R     U delta  stop age   wbc sex race      time status start</span></span>
+<span><span class="co">#&gt; 1  1 0 0 0 0.00 0 13.33     1 13.33  64 128.0   1    1 13.338219      1  0.00</span></span>
+<span><span class="co">#&gt; 2  2 1 1 0 0.00 0 17.80     1 17.80  71   4.3   2    1 17.802995      1  0.00</span></span>
+<span><span class="co">#&gt; 3  3 1 0 0 0.00 0  1.27     1  1.27  71  43.6   2    1  1.271527      1  0.00</span></span>
+<span><span class="co">#&gt; 4  4 1 0 1 0.00 0 24.77     1 24.77  63  72.3   2    1  0.730000      2  0.00</span></span>
+<span><span class="co">#&gt; 5  4 1 0 1 0.73 1 24.77     1 24.77  63  72.3   2    1 24.772515      1  0.73</span></span>
+<span><span class="co">#&gt; 6  5 0 1 0 0.00 0 10.37     1 10.37  65   1.4   1    1 10.374479      1  0.00</span></span>
+<span><span class="co">#&gt;   A0.f A0 A1 A11 A12 A1.f A10 At.f lbnr__id Count1 Count2 consent trt2 trt1</span></span>
+<span><span class="co">#&gt; 1    0  0  0   1   0    0   0    0        1      0      0      -1   -1    1</span></span>
+<span><span class="co">#&gt; 2    1  1  0   1   0    0   0    1        1      0      0      -1   -1    2</span></span>
+<span><span class="co">#&gt; 3    0  0  0   1   0    0   0    0        1      0      0      -1   -1    1</span></span>
+<span><span class="co">#&gt; 4    0  0  0   1   0    0   0    0        1      0      0      -1   -1    1</span></span>
+<span><span class="co">#&gt; 5    0  0  1   1   1    1   1    1        2      0      1       1    1    1</span></span>
+<span><span class="co">#&gt; 6    1  1  0   1   0    0   0    1        1      0      0      -1   -1    2</span></span>
+<span><span class="va">ll0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_IPTW.html">phreg_IPTW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0</span>,<span class="va">A10</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">calgt</span>,treat.model<span class="op">=</span><span class="va">tm</span><span class="op">)</span></span>
+<span><span class="va">pll0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlogit.html">predict</a></span><span class="op">(</span><span class="va">ll0</span>,<span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>A0<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>,A10<span class="op">=</span><span class="fl">0</span>,id<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ll1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_IPTW.html">phreg_IPTW</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A0</span>,<span class="va">A11</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">calgt</span>,treat.model<span class="op">=</span><span class="va">tm</span><span class="op">)</span></span>
+<span><span class="va">pll1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlogit.html">predict</a></span><span class="op">(</span><span class="va">ll1</span>,<span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>A0<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>,A11<span class="op">=</span><span class="fl">1</span>,id<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pll0</span>,se<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">1</span>,xlab<span class="op">=</span><span class="st">"time (months)"</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pll1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span>,se<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">1</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A1B1"</span>,<span class="st">"A2B1"</span>,<span class="st">"A1B2"</span>,<span class="st">"A2B2"</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="phreg_rct_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pll1</span>,times<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $pred</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.8022569 0.7119656 0.6675967 0.6471848 0.6369788 0.6164021 0.5770105</span></span>
+<span><span class="co">#&gt; [2,] 0.8568499 0.7871414 0.7456444 0.7133504 0.6878999 0.6623719 0.6400970</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.5427705 0.5154506 0.5103024</span></span>
+<span><span class="co">#&gt; [2,] 0.6109335 0.5646244 0.5543596</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $se.pred</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span></span>
+<span><span class="co">#&gt; [1,] 0.02861524 0.03101141 0.03283701 0.03265187 0.03255301 0.03229413</span></span>
+<span><span class="co">#&gt; [2,] 0.02491113 0.02819870 0.02918381 0.03134551 0.03175905 0.03205534</span></span>
+<span><span class="co">#&gt;            [,7]       [,8]       [,9]      [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.03387985 0.03486639 0.03785952 0.03806234</span></span>
+<span><span class="co">#&gt; [2,] 0.03345603 0.03601502 0.03946837 0.03959668</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $lower</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.7480876 0.6537066 0.6062423 0.5862506 0.5762674 0.5562481 0.5142857</span></span>
+<span><span class="co">#&gt; [2,] 0.8093900 0.7337687 0.6905840 0.6544855 0.6283866 0.6024322 0.5777713</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.4785606 0.4463411 0.4408982</span></span>
+<span><span class="co">#&gt; [2,] 0.5442707 0.4923330 0.4819390</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $upper</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.8603486 0.7754168 0.7351604 0.7144523 0.7040864 0.6830613 0.6473856</span></span>
+<span><span class="co">#&gt; [2,] 0.9070927 0.8443964 0.8050947 0.7775096 0.7530497 0.7282753 0.7091460</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.6155957 0.5952608 0.5906319</span></span>
+<span><span class="co">#&gt; [2,] 0.6857613 0.6475306 0.6376627</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $times</span></span>
+<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "summarypredictrecreg"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pll0</span>,times<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $pred</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.8017327 0.7008265 0.6523029 0.6158134 0.5923768 0.5659830 0.5329907</span></span>
+<span><span class="co">#&gt; [2,] 0.8560743 0.7740713 0.7153512 0.6690102 0.6272139 0.5642496 0.5412531</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.4856035 0.4751084 0.4580125</span></span>
+<span><span class="co">#&gt; [2,] 0.5244200 0.5014231 0.4784263</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $se.pred</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span></span>
+<span><span class="co">#&gt; [1,] 0.02874374 0.03363964 0.03593932 0.03745772 0.03849765 0.03905568</span></span>
+<span><span class="co">#&gt; [2,] 0.02508408 0.03053222 0.03382459 0.03662354 0.03831324 0.04083119</span></span>
+<span><span class="co">#&gt;            [,7]       [,8]       [,9]      [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.03953451 0.04080406 0.04110910 0.04157512</span></span>
+<span><span class="co">#&gt; [2,] 0.04145722 0.04203299 0.04238077 0.04269490</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $lower</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.7473298 0.6379004 0.5855331 0.5466050 0.5215305 0.4943860 0.4608737</span></span>
+<span><span class="co">#&gt; [2,] 0.8082955 0.7164839 0.6520354 0.6009461 0.5564424 0.4896381 0.4658035</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.4118674 0.4009976 0.3833640</span></span>
+<span><span class="co">#&gt; [2,] 0.4481818 0.4248738 0.4016554</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $upper</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt; [1,] 0.8600959 0.7699599 0.7266867 0.6937847 0.6728470 0.6479486 0.6163926</span></span>
+<span><span class="co">#&gt; [2,] 0.9066774 0.8362873 0.7848152 0.7447834 0.7069865 0.6502305 0.6289239</span></span>
+<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
+<span><span class="co">#&gt; [1,] 0.5725404 0.5629159 0.5471966</span></span>
+<span><span class="co">#&gt; [2,] 0.6136267 0.5917643 0.5698710</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $times</span></span>
+<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "summarypredictrecreg"</span></span></code></pre></div>
+<p>The propensity score mode can be extended to use covariates to get
+increased efficiency. Note also that the propensity scores for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn></mrow><annotation encoding="application/x-tex">A0</annotation></semantics></math>
+will cancel out in the different strata.</p>
+<p>We now illustrate how to fit a Cox model of the form
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>λ</mi><mrow><mi>A</mi><mn>0</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><mi>B</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+  &amp; \lambda_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2)
+\end{align*}</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math>
+is the effect of treatment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2</annotation></semantics></math>
+and the effect of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math></p>
+<p>Now comparing only those starting on A1/A2 to compare the effect of
+B1 versus B2</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">calgb8923</span><span class="op">)</span></span>
+<span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="va">calgb8923</span></span>
+<span><span class="va">calgt</span><span class="op">$</span><span class="va">treatvar</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span></span>
+<span><span class="co">## making time-dependent indicators of going to B1/B2</span></span>
+<span><span class="va">calgt</span><span class="op">$</span><span class="va">A10t</span> <span class="op">&lt;-</span> <span class="va">calgt</span><span class="op">$</span><span class="va">A11t</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">calgt</span>,A10t<span class="op">=</span><span class="fl">1</span>,<span class="va">A1</span><span class="op">==</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">calgt</span>,A11t<span class="op">=</span><span class="fl">1</span>,<span class="va">A1</span><span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">calgt0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">calgt</span>,<span class="va">A0</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ss0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">A10t</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">calgt</span>,<span class="va">A0</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span>,</span>
+<span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R1"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
+<span>     treat.var<span class="op">=</span><span class="st">"treatvar"</span>,treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
+<span>     augmentR1<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span><span class="op">+</span><span class="va">Count2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ss0</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                Estimate   Std.Err      2.5%      97.5%      P-value</span></span>
+<span><span class="co">#&gt; Marginal-A10t -1.570250 0.2433389 -2.047185 -1.0933143 1.097054e-10</span></span>
+<span><span class="co">#&gt; Marginal-A11t -1.407287 0.2193924 -1.837289 -0.9772861 1.413090e-10</span></span>
+<span><span class="co">#&gt; non_dynC:A10t -1.583146 0.2418997 -2.057260 -1.1090311 5.963963e-11</span></span>
+<span><span class="co">#&gt; non_dynC:A11t -1.406682 0.2190539 -1.836020 -0.9773442 1.348264e-10</span></span>
+<span><span class="co">#&gt; R1_non:A10t   -1.544312 0.2396152 -2.013949 -1.0746751 1.156250e-10</span></span>
+<span><span class="co">#&gt; R1_non:A11t   -1.423064 0.2087465 -1.832199 -1.0139282 9.284039e-12</span></span>
+<span><span class="co">#&gt; R1_dynC:A10t  -1.557021 0.2381534 -2.023793 -1.0902486 6.239330e-11</span></span>
+<span><span class="co">#&gt; R1_dynC:A11t  -1.422360 0.2083906 -1.830798 -1.0139218 8.764919e-12</span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span>
+<span></span>
+<span><span class="va">ss1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">A10t</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">calgt</span>,<span class="va">A0</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R1"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
+<span>     treat.var<span class="op">=</span><span class="st">"treatvar"</span>,treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
+<span>     augmentR1<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span><span class="op">+</span><span class="va">Count2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ss1</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                 Estimate   Std.Err      2.5%      97.5%      P-value</span></span>
+<span><span class="co">#&gt; Marginal-A10t -0.8968608 0.2312067 -1.350018 -0.4437039 1.048683e-04</span></span>
+<span><span class="co">#&gt; Marginal-A11t -0.9754528 0.2215523 -1.409687 -0.5412181 1.068580e-05</span></span>
+<span><span class="co">#&gt; non_dynC:A10t -0.8312901 0.2263294 -1.274888 -0.3876925 2.397942e-04</span></span>
+<span><span class="co">#&gt; non_dynC:A11t -1.0165973 0.2211108 -1.449967 -0.5832280 4.272177e-06</span></span>
+<span><span class="co">#&gt; R1_non:A10t   -0.9310307 0.2299136 -1.381653 -0.4804083 5.133147e-05</span></span>
+<span><span class="co">#&gt; R1_non:A11t   -0.9361199 0.2204289 -1.368153 -0.5040872 2.168342e-05</span></span>
+<span><span class="co">#&gt; R1_dynC:A10t  -0.8634407 0.2250083 -1.304449 -0.4224326 1.243576e-04</span></span>
+<span><span class="co">#&gt; R1_dynC:A11t  -0.9753885 0.2199851 -1.406551 -0.5442256 9.255029e-06</span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span></code></pre></div>
+<p>and a more structured model with both A0 and A1, that does not seem
+very reasonable based on the above,</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ssf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">A0.f</span><span class="op">+</span><span class="va">A10t</span><span class="op">+</span><span class="va">A11t</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>     data<span class="op">=</span><span class="va">calgt</span>,</span>
+<span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span>,<span class="st">"R1"</span>,<span class="st">"R01"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
+<span>     treat.var<span class="op">=</span><span class="st">"treatvar"</span>,treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
+<span>     augmentR0<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span>,augmentR1<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">age</span><span class="op">+</span><span class="va">wbc</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">TR</span><span class="op">+</span><span class="va">Count2</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="recurrent-events-simple-randomization">Recurrent events: Simple Randomization<a class="anchor" aria-label="anchor" href="#recurrent-events-simple-randomization"></a>
 </h2>
 <p>Recurrents events simulation with death and censoring.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fl">0.15</span>; </span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base1cumhaz</span><span class="op">)</span></span>
@@ -412,7 +667,7 @@ with this block as factor</p>
 <span><span class="co">#&gt;   start stop  statusD A0 z1    treattime Count1</span></span>
 <span><span class="co">#&gt; 5 0     213.9 2       1  2.338 1         0</span></span></code></pre></div>
 <p>Now we fit the model</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="va">Z.f</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span>,</span>
 <span>     treat.var<span class="op">=</span><span class="st">"treattime"</span>,typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
 <span>     augmentR0<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">z1</span><span class="op">+</span><span class="va">Count1</span><span class="op">)</span></span>
@@ -434,7 +689,7 @@ with this block as factor</p>
 <div class="section level2">
 <h2 id="twostage-randomization-recurrent-events">Twostage Randomization: Recurrent events<a class="anchor" aria-label="anchor" href="#twostage-randomization-recurrent-events"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
 <span><span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="fl">0.3</span><span class="op">)</span>;<span class="va">betatr</span><span class="op">=</span><span class="fl">0.3</span>;<span class="va">betac</span><span class="op">=</span><span class="fl">0</span>;<span class="va">betao</span><span class="op">=</span><span class="fl">0</span>;<span class="va">betao1</span><span class="op">=</span><span class="fl">0</span>;<span class="va">ce</span><span class="op">=</span><span class="fl">3</span>;<span class="va">fixed</span><span class="op">=</span><span class="fl">1</span>;<span class="va">sim</span><span class="op">=</span><span class="fl">1</span>;<span class="va">dep</span><span class="op">=</span><span class="fl">4</span>;<span class="va">varz</span><span class="op">=</span><span class="fl">1</span>;<span class="va">ztr</span><span class="op">=</span><span class="fl">0</span>; <span class="va">ce</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span><span class="co">## take possible frailty </span></span>
@@ -477,7 +732,7 @@ with this block as factor</p>
 <span><span class="co">#&gt; 509 33.12 1363.53 0       1  0  0   0    1      0.06891 1         0</span></span></code></pre></div>
 <p>Now fitting the model and computing different augmentations (true
 values 0.3 and 0.3)</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="va">A0.f</span><span class="op">+</span><span class="va">A1t</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,</span>
 <span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span>,<span class="st">"R1"</span>,<span class="st">"R01"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,treat.var<span class="op">=</span><span class="st">"treattime"</span>,</span>
 <span>     treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
@@ -528,7 +783,7 @@ but also have death
 <p>Now we need that given
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>0</mn></msub><annotation encoding="application/x-tex">X_0</annotation></semantics></math></p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">A_0 \perp N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">A_0 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0</annotation></semantics></math></li>
 <li>positivity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&gt;</mo><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">1 &gt; \pi_0(X_0) &gt; 0</annotation></semantics></math>
 </li>
@@ -539,7 +794,7 @@ the history accumulated at time
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>R</mi></msub><annotation encoding="application/x-tex">T_R</annotation></semantics></math>
 of 2nd randomization</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>1</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A_1 \perp N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>1</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A_1 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1</annotation></semantics></math></li>
 <li>positivity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&gt;</mo><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">1 &gt; \pi_1(X_1) &gt; 0</annotation></semantics></math>
 </li>
@@ -568,10 +823,11 @@ adaptive nature from fitting the propensity score models.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="va">Z.f</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span>,</span>
-<span>     treat.var<span class="op">=</span><span class="st">"treattime"</span>,typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
-<span>     RCT<span class="op">=</span><span class="cn">FALSE</span>,treat.model<span class="op">=</span><span class="va">Z.f</span><span class="op">~</span><span class="va">z1</span>,augmentR0<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">z1</span><span class="op">+</span><span class="va">Count1</span><span class="op">)</span></span>
+<span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
+<span>         RCT<span class="op">=</span><span class="cn">FALSE</span>,treat.model<span class="op">=</span><span class="va">Z.f</span><span class="op">~</span><span class="va">z1</span>,augmentR0<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">z1</span><span class="op">+</span><span class="va">Count1</span>,</span>
+<span>     treat.var<span class="op">=</span><span class="st">"treattime"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                Estimate    Std.Err       2.5%     97.5%      P-value</span></span>
 <span><span class="co">#&gt; Marginal-Z.f1 0.3111195 0.08058494 0.15317593 0.4690631 0.0001130326</span></span>
@@ -583,12 +839,12 @@ adaptive nature from fitting the propensity score models.</li>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span></code></pre></div>
 <p>and for twostage randomization</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg_rct.html">phreg_rct</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">time</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="va">A0.f</span><span class="op">+</span><span class="va">A1t</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,</span>
 <span>     typesR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"R0"</span>,<span class="st">"R1"</span>,<span class="st">"R01"</span><span class="op">)</span>,typesC<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"non"</span>,<span class="st">"C"</span>,<span class="st">"dynC"</span><span class="op">)</span>,</span>
-<span>     treat.var<span class="op">=</span><span class="st">"treattime"</span>,</span>
-<span>     RCT<span class="op">=</span><span class="cn">FALSE</span>, treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="va">z1</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
-<span>     augmentR0<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentR1<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">z1</span><span class="op">+</span><span class="va">Count1</span><span class="op">+</span><span class="va">A1t</span><span class="op">)</span></span>
+<span>         treat.var<span class="op">=</span><span class="st">"treattime"</span>,</span>
+<span>     RCT<span class="op">=</span><span class="cn">FALSE</span>,treat.model<span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="va">z1</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span>,</span>
+<span>         augmentR0<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentR1<span class="op">=</span><span class="op">~</span><span class="va">z1</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="va">z1</span><span class="op">+</span><span class="va">Count1</span><span class="op">+</span><span class="va">A1t</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sse</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 Estimate    Std.Err        2.5%     97.5%      P-value</span></span>
 <span><span class="co">#&gt; Marginal-A0.f1 0.3817476 0.13188068  0.12326622 0.6402290 0.0037958891</span></span>
@@ -621,11 +877,11 @@ adaptive nature from fitting the propensity score models.</li>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -644,23 +900,23 @@ adaptive nature from fitting the propensity score models.</li>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.5     timereg_2.0.6  survival_3.7-0</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.3           knitr_1.49          rlang_1.1.4        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.50           textshaping_0.4.1   jsonlite_1.8.9     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.0         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.3.3          sass_0.4.9         </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.4.2          evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       mvtnorm_1.3-3      </span></span>
-<span><span class="co">#&gt; [19] numDeriv_2016.8-1.1 yaml_2.3.10         lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] compiler_4.4.2      codetools_0.2-20    fs_1.6.5           </span></span>
-<span><span class="co">#&gt; [25] Rcpp_1.0.13-1       future_1.34.0       systemfonts_1.1.0  </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      digest_0.6.37       R6_2.5.1           </span></span>
-<span><span class="co">#&gt; [31] parallelly_1.41.0   parallel_4.4.2      splines_4.4.2      </span></span>
-<span><span class="co">#&gt; [34] bslib_0.8.0         Matrix_1.7-1        tools_4.4.2        </span></span>
-<span><span class="co">#&gt; [37] globals_0.16.3      pkgdown_2.1.1       cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [40] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 

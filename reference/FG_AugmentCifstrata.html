@@ -28,7 +28,7 @@ $$E(\beta^p,t)$$ is given. Assumes that no strata for baseline of ine-Gay model 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -250,7 +250,7 @@ the augmented FG-score.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">fgaugS</span> <span class="op">&lt;-</span> <span class="fu">FG_AugmentCifstrata</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu">strata</span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fg</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fgaugS</span> <span class="op">&lt;-</span> <span class="fu">FG_AugmentCifstrata</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fg</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
@@ -259,16 +259,16 @@ the augmented FG-score.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  400 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  0.011964  0.130065  0.136124  0.9267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z2 -0.159372  0.261106  0.272436  0.5416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  0.028262  0.130145  0.136188  0.8281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z2 -0.149224  0.260989  0.272379  0.5675</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  1.01204 0.78430 1.3059</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z2  0.85268 0.51113 1.4225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  1.02866 0.79707 1.3276</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z2  0.86138 0.51646 1.4366</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="va">fgaugS2</span> <span class="op">&lt;-</span> <span class="fu">FG_AugmentCifstrata</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu">strata</span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fgaugS2</span> <span class="op">&lt;-</span> <span class="fu">FG_AugmentCifstrata</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,E<span class="op">=</span><span class="va">fgaugS</span><span class="op">$</span><span class="va">E</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fgaugS2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
@@ -277,13 +277,13 @@ the augmented FG-score.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  400 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  0.011671  0.130043  0.136123  0.9285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z2 -0.159569  0.261106  0.272437  0.5411</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  0.028262  0.130145  0.136188  0.8281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z2 -0.149224  0.260989  0.272379  0.5675</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  1.01174 0.78411 1.3055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z2  0.85251 0.51103 1.4222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z1  1.02866 0.79707 1.3276</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z2  0.86138 0.51646 1.4366</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>

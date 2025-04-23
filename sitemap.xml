@@ -33,7 +33,7 @@
 <url><loc>/reference/EVaddGam.html</loc></url>
 <url><loc>/reference/Effbinreg.html</loc></url>
 <url><loc>/reference/Event.html</loc></url>
-<url><loc>/reference/EventSplit.html</loc></url>
+<url><loc>/reference/EventSplit2.html</loc></url>
 <url><loc>/reference/FG_AugmentCifstrata.html</loc></url>
 <url><loc>/reference/Grandom.cif.html</loc></url>
 <url><loc>/reference/LinSpline.html</loc></url>
@@ -66,7 +66,6 @@
 <url><loc>/reference/concordanceCor.html</loc></url>
 <url><loc>/reference/cor.cif.html</loc></url>
 <url><loc>/reference/count.history.html</loc></url>
-<url><loc>/reference/covarianceRecurrent.html</loc></url>
 <url><loc>/reference/daggregate.html</loc></url>
 <url><loc>/reference/dby.html</loc></url>
 <url><loc>/reference/dcor.html</loc></url>
@@ -104,7 +103,7 @@
 <url><loc>/reference/hapfreqs.html</loc></url>
 <url><loc>/reference/haplo.surv.discrete.html</loc></url>
 <url><loc>/reference/haploX.html</loc></url>
-<url><loc>/reference/hfaction_cpx12.html</loc></url>
+<url><loc>/reference/hfactioncpx12.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/internal.html</loc></url>
 <url><loc>/reference/interval.logitsurv.discrete.html</loc></url>
@@ -129,9 +128,11 @@
 <url><loc>/reference/phreg_IPTW.html</loc></url>
 <url><loc>/reference/phreg_rct.html</loc></url>
 <url><loc>/reference/plack.cif.html</loc></url>
+<url><loc>/reference/plot.phreg.html</loc></url>
 <url><loc>/reference/pmvn.html</loc></url>
 <url><loc>/reference/predict.phreg.html</loc></url>
-<url><loc>/reference/predictRisk.phreg.html</loc></url>
+<url><loc>/reference/predictRisk.binreg.html</loc></url>
+<url><loc>/reference/predictRisk.html</loc></url>
 <url><loc>/reference/print.casewise.html</loc></url>
 <url><loc>/reference/prob.exceed.recurrent.html</loc></url>
 <url><loc>/reference/prt.html</loc></url>

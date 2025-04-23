@@ -20,7 +20,7 @@ randomizations. The function was implemented to deal with recurrent events (star
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -136,6 +136,7 @@ randomizations. The function was implemented to deal with recurrent events (star
 <span>  cens.code <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  typesR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R0"</span>, <span class="st">"R1"</span>, <span class="st">"R01"</span><span class="op">)</span>,</span>
 <span>  typesC <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>, <span class="st">"dynC"</span><span class="op">)</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  augmentR0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  augmentR1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  augmentC <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -149,6 +150,7 @@ randomizations. The function was implemented to deal with recurrent events (star
 <span>  pi0 <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  base.augment <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return.augmentR0 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mlogit <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -158,7 +160,8 @@ randomizations. The function was implemented to deal with recurrent events (star
 
 
 <dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>formula with 'Surv' or 'Event' outcome (see <code>coxph</code>) and treatment (randomization 0/1)</p></dd>
+<dd><p>formula with 'Surv' or 'Event' outcome (see <code>coxph</code>) and
+treatment (randomization 0/1)</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
@@ -181,20 +184,25 @@ randomizations. The function was implemented to deal with recurrent events (star
 <dd><p>augmentations used for censoring</p></dd>
 
 
+<dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
+<dd><p>weights for score equation</p></dd>
+
+
 <dt id="arg-augmentr-">augmentR0<a class="anchor" aria-label="anchor" href="#arg-augmentr-"></a></dt>
-<dd><p>formula for the randomization augmentation  (~age+sex)</p></dd>
+<dd><p>formula for the randomization augmentation (~age+sex)</p></dd>
 
 
 <dt id="arg-augmentr-">augmentR1<a class="anchor" aria-label="anchor" href="#arg-augmentr-"></a></dt>
-<dd><p>formula for the randomization augmentation  (~age+sex)</p></dd>
+<dd><p>formula for the randomization augmentation (~age+sex)</p></dd>
 
 
 <dt id="arg-augmentc">augmentC<a class="anchor" aria-label="anchor" href="#arg-augmentc"></a></dt>
-<dd><p>formula for the censoring augmentation  (~age+sex)</p></dd>
+<dd><p>formula for the censoring augmentation (~age+sex)</p></dd>
 
 
 <dt id="arg-treat-model">treat.model<a class="anchor" aria-label="anchor" href="#arg-treat-model"></a></dt>
-<dd><p>propensity score model, default is ~+1, assuming RCT study</p></dd>
+<dd><p>propensity score model, default is ~+1, assuming RCT
+study</p></dd>
 
 
 <dt id="arg-rct">RCT<a class="anchor" aria-label="anchor" href="#arg-rct"></a></dt>
@@ -202,19 +210,23 @@ randomizations. The function was implemented to deal with recurrent events (star
 
 
 <dt id="arg-treat-var">treat.var<a class="anchor" aria-label="anchor" href="#arg-treat-var"></a></dt>
-<dd><p>in case of twostage randomization, this variable is 1 for the treatment times, if start,stop then default assumes that only one treatment at first record</p></dd>
+<dd><p>in case of twostage randomization, this variable is 1 for
+the treatment times, if start,stop then default assumes that only one
+treatment at first record</p></dd>
 
 
 <dt id="arg-km">km<a class="anchor" aria-label="anchor" href="#arg-km"></a></dt>
-<dd><p>use Kaplan-Meier for the censoring weights (stratified on treatment)</p></dd>
+<dd><p>use Kaplan-Meier for the censoring weights (stratified on
+treatment)</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
 <dd><p>of confidence intervals</p></dd>
 
 
-<dt id="arg-cens-model-">cens.model, <a class="anchor" aria-label="anchor" href="#arg-cens-model-"></a></dt>
-<dd><p>default is censoring model ~strata(treatment) but any model can be used to make censoring martingales</p></dd>
+<dt id="arg-cens-model">cens.model<a class="anchor" aria-label="anchor" href="#arg-cens-model"></a></dt>
+<dd><p>default is censoring model ~strata(treatment) but any
+model can be used to make censoring martingales</p></dd>
 
 
 <dt id="arg-estpr">estpr<a class="anchor" aria-label="anchor" href="#arg-estpr"></a></dt>
@@ -226,11 +238,17 @@ randomizations. The function was implemented to deal with recurrent events (star
 
 
 <dt id="arg-base-augment">base.augment<a class="anchor" aria-label="anchor" href="#arg-base-augment"></a></dt>
-<dd><p>TRUE to covariate augment baselines (only for R0 augmentation)</p></dd>
+<dd><p>TRUE to covariate augment baselines (only for R0
+augmentation)</p></dd>
 
 
 <dt id="arg-return-augmentr-">return.augmentR0<a class="anchor" aria-label="anchor" href="#arg-return-augmentr-"></a></dt>
 <dd><p>to return augmentation data</p></dd>
+
+
+<dt id="arg-mlogit">mlogit<a class="anchor" aria-label="anchor" href="#arg-mlogit"></a></dt>
+<dd><p>if TRUE then forces use of this function for propensity
+scores, default for binary treatment is glm</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -239,8 +257,9 @@ randomizations. The function was implemented to deal with recurrent events (star
 </dl></div>
     <div id="references">
     <h2>References</h2>
-    <p>Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679–694
-Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,</p>
+    <p>Lu, Tsiatis (2008), Improving the efficiency of the log-rank
+  test using auxiliary covariates, Biometrika, 679–694</p>
+<p>Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -256,9 +275,9 @@ Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,</p>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">phreg_rct</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z.f</span>,data<span class="op">=</span><span class="va">data</span>,augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span><span class="op">:</span><span class="va">X</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  Estimate   Std.Err       2.5%     97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal-Z.f1 -0.40140174 0.2919064 -0.9735277 0.1707242 0.1690990</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R0_C:Z.f1     -0.05926166 0.2062552 -0.4635144 0.3449911 0.7738657</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R0_dynC:Z.f1  -0.02840076 0.2030039 -0.4262811 0.3694796 0.8887370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal-Z.f1 -0.06901840 0.2812214 -0.6202023 0.4821655 0.8061284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R0_C:Z.f1     -0.06134086 0.1841637 -0.4222951 0.2996134 0.7390755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R0_dynC:Z.f1  -0.04499244 0.1798990 -0.3975881 0.3076032 0.8025113</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.phreg_rct"</span>
 </code></pre></div>

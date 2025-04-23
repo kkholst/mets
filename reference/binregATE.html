@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -238,7 +238,8 @@
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>The first covariate in the specification of the competing risks regression model must be the treatment effect that is a factor. If the factor has more than two levels
+    <p>The first covariate in the specification of the competing risks regression model must be the treatment variable that should be coded as a factor.
+If the factor has more than two levels
 then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling.</p>
 <p>Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.</p>
