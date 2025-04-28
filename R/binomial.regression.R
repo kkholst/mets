@@ -348,6 +348,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$outcome <- outcome[1]
   val$Yipcw <- Yipcw
   val$Causes <- Causes
+  val$nevent <- nevent
 
   class(val) <- "binreg"
   return(val)

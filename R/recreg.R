@@ -2447,6 +2447,7 @@ obs <- (exit<=time & (!statusC)) | (exit>=time)/Gc
 NtD <- sumstrata(marksxx*(xx$status!=0)*(xx$time<times),xx$id,nid)
 Ydata <- Y <- obs*NtD/pmin(times,Dtime)
 }
+nevent <- sum((xx$status!=0)*(xx$time<times))
 
 ## back to ordering in data
 Ydata <- Y <- Y[id[data$rid__==1]+1]
@@ -2469,7 +2470,6 @@ if (is.null(beta)) beta <- rep(0,ncol(X))
 ## take iid vession of data 
 dataiid <- data[data$rid__==1,]
 
-nevent <- sum(status %in% cause)
 
 if (type[1]=="II") {# {{{ type="II" default augmentation
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
@@ -2614,6 +2614,7 @@ val$model.estimator <- estimator
 val$augmentation <- augmentation
 val$type <- type
 val$cumhazP <- cumhazP
+val$nevent <- nevent
 class(val) <- c("binreg", "resmean")
 return(val)
 } # }}}
