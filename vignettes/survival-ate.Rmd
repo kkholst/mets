@@ -50,11 +50,11 @@ data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 dfactor(bmt) <- tcell~tcell
 bmt$event <- (bmt$cause!=0)*1
 
-fg1 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,propodds=NULL)
-summary(survivalG(fg1,bmt,50))
+fg1 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=1)
+summary(survivalG(fg1,bmt,time=50))
 
-fg2 <- cifreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,propodds=NULL)
-summary(survivalG(fg2,bmt,50))
+fg2 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=2)
+summary(survivalG(fg2,bmt,time=50))
 
 cif1time <- survivalGtime(fg1,bmt)
 plot(cif1time,type="risk"); 
@@ -64,7 +64,7 @@ Now looking at the survival probability
 
 ```{r}
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
-sss <- survivalG(ss,bmt,50)
+sss <- survivalG(ss,bmt,time=50)
 summary(sss)
 
 Gtime <- survivalGtime(ss,bmt)
