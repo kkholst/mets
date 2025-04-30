@@ -34,8 +34,8 @@ and the mean of the subject specific events per time-unit
  E( \frac{N(D \wedge t)}{D \wedge t} ) 
 \end{align*}
 for two treatment-groups in the case of an RCT. 
-For the laste mean of events per time-unit it has been seen that when the sample size is to great
-it can improve the finite sample properties to employ a transformation such as square or cube-root, and
+For the mean of events per time-unit it has been seen that when the sample size is small 
+one can improve the finite sample properties by employing a transformation such as square or cube-root, and
 thus consider 
 \begin{align*}
  E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
