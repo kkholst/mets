@@ -36,7 +36,7 @@ to an IPCW adjusted estmating equation (EE) with response  $Y(t)=I(T \leq t, \ep
  U(\beta) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
 \end{align*}
 with $G_c(t)=P(C>t)$, the  censoring survival distribution, and  with $\Delta(t) = I( C_i > T_i \wedge t)$
-the indicator of being uncensored at time $t$. 
+the indicator of being uncensored at time $t$ (type="I"). 
 The default type="II" is to augment with a censoring term, that is solve 
 \begin{align*}
   &  U(\beta) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
