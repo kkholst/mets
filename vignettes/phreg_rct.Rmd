@@ -202,7 +202,6 @@ $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$,
 We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similary, for those that end being consistent with $B2$.
 Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
 
-
   - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
   - the treatment model may also depend on a response value
   - standard errors are based on influence functions and is also computed for the baseline

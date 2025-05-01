@@ -31,7 +31,7 @@ Overview
 Simulation of survival data is important for both
 theoretical and practical work. In a practical setting we might wish to
 validate that standard errors are valid even in a rather small sample,
-or validate that a more complicated procedure is doing as intended. 
+or validate that a complicated procedure is doing as intended. 
 Therefore it is useful to have simple tools for generating survival data
 that looks as much as possible like particular data. In a theoretical
 setting we often are interested in evaluating the finite sample
