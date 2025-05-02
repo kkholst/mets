@@ -1262,13 +1262,6 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
      }
   }
 
-###  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
-###     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-###     else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
-###     else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
-###     else stop("outcome not defined") 
-###  }
-
  nevent <- sum((status %in% cause)*(exit<=time))
 
 obj <- function(pp,all=FALSE)
@@ -1306,29 +1299,6 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   }  
  structure(-ploglik,gradient=-gradient,hessian=hessian)
 }  # }}}
-
-###  opt <- NULL
-###  if (p>0) {
-###  if (no.opt==FALSE) {
-###      if (tolower(method)=="nr") {
-###	  tim <- system.time(opt <- lava::NR(beta,obj,...))
-###	  opt$timing <- tim
-###	  opt$estimate <- opt$par
-###      } else {
-###	  opt <- nlm(obj,beta,...)
-###	  opt$method <- "nlm"
-###      }
-###      cc <- opt$estimate; 
-###      val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-###      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
-###  } else {
-###      val <- obj(0,all=TRUE)
-###  }
-###
-###  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
-###  val <- c(val,list(time=time,formula=formula,formC=formC,
-###    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-###    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
 
   val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,
 	cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,
