@@ -1419,7 +1419,6 @@ if (is.null(x$cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
    return(IIDrecreg(x$cox.prep,x,time=time,fixbeta=fixbeta,beta.iid=beta.iid,adm.cens=x$adm.cens,tminus=tminus,...))
 } # }}}
 
-
 recregO <- function(formula,data,cause=1,death.code=c(2),cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,
 		   augmentation.type=c("lindyn.augment","lin.augment"),...)
 {# {{{
@@ -2159,7 +2158,6 @@ out <- FGprediid(...,model="GL")
 return(out)
 }# }}}
 
-
 ##' @export
 IC.recreg <- function(x, ...) {# {{{
   res <- with(x, iid * NROW(iid))
@@ -2227,7 +2225,6 @@ rownames(ret) <- NULL
 class(ret) <- "summarypredictrecreg"
 return(ret)
 }# }}}
-
 
 ##' @export
 plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)
@@ -2618,7 +2615,6 @@ val$nevent <- nevent
 class(val) <- c("binreg", "resmean")
 return(val)
 } # }}}
-
 
 ##' @export
 strataAugment <- survival::strata
