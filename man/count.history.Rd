@@ -9,10 +9,11 @@ count.history(
   data,
   status = "status",
   id = "id",
-  types = 1:2,
+  types = 1,
   names.count = "Count",
   lag = TRUE,
-  multitype = FALSE
+  multitype = FALSE,
+  marks = NULL
 )
 }
 \arguments{
@@ -22,13 +23,15 @@ count.history(
 
 \item{id}{id}
 
-\item{types}{types of the events (code) related to status}
+\item{types}{types of the events (code) related to status (multiple values possible)}
 
 \item{names.count}{name of Counts, for example Count1 Count2 when types=c(1,2)}
 
 \item{lag}{if true counts previously observed, and if lag=FALSE counts up to know}
 
-\item{multitype}{if multitype then count number of types also when types=c(1,2) for example}
+\item{multitype, }{if multitype is true then counts when status %in% types, otherwise counts for each value of type, types=c(1,2)}
+
+\item{marks}{values related to status (== type), counts marks for types, only when multitype=TRUE}
 }
 \description{
 Counts the number of previous events of two types for recurrent events processes
@@ -37,21 +40,17 @@ Counts the number of previous events of two types for recurrent events processes
 ########################################
 ## getting some rates to mimick 
 ########################################
-
 data(base1cumhaz)
 data(base4cumhaz)
 data(drcumhaz)
-dr <- drcumhaz
-base1 <- base1cumhaz
-base4 <- base4cumhaz
 
 ######################################################################
 ### simulating simple model that mimicks data 
 ### now with two event types and second type has same rate as death rate
 ######################################################################
 
-rr <- simRecurrentII(1000,base1,base4,death.cumhaz=dr)
-rr <-  count.history(rr)
+rr <- simRecurrentII(1000,base1cumhaz,base4cumhaz,death.cumhaz=drcumhaz)
+rr <-  count.history(rr,types=1:2)
 dtable(rr,~"Count*"+status,level=1)
 
 }

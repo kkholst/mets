@@ -16,6 +16,7 @@ WA_recurrent(
   augmentR = NULL,
   augmentC = NULL,
   type = NULL,
+  marks = NULL,
   ...
 )
 }
@@ -41,6 +42,8 @@ WA_recurrent(
 \item{augmentC}{covariates for censoring augmentation}
 
 \item{type}{augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"}
+
+\item{marks}{possible marks for composite outcome situation for model for counts with marks}
 
 \item{...}{arguments for binregATE}
 }

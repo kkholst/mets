@@ -48,13 +48,43 @@ dtable(hfactioncpx12,~status)
 dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
 summary(dd)
 
-dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2,trans=.333)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+		   death.code=2,trans=.333)
 summary(dd,type="log")
 ```
 
 We see that the ratio of means are not very different, but that the subject specific 
-mean of events per time-unit shows that those on the active treatment has fewer 
-events per time-unit on average.
+mean of events per time-unit shows that those on the active treatment has fewer events per time-unit on average. 
+
+
+Composite outcomes involving death and marks 
+============================================
+
+The number of events can be generalized in various ways by using other outcomes than $N(D \wedge t)$, for example,  
+\begin{align*}
+ \tilde N(D \wedge t) = \int_0^t I(D \geq s) M(s) dN(s)  +  \sum_j  M_j I(D \leq t,\epsilon=j) ) 
+\end{align*}
+where $M(s)$ are the marks related to $N(s)$ and are $M_j$ marks associated with the different 
+causes of the terminal event. This provides an extension of the weighted 
+composite outcomes  measure of Mao & Lin (2022).
+
+The marks (or here weights) can be stochastic if we are couting hosptial expenses, for example, and is 
+vector on the data-frame. The marks for the event times (defined through the causes) will then be used. 
+
+Here weighting death with weight 2 and otherwise couting the recurrent of events as before (with weight 1)
+
+```{r}
+hfactioncpx12$marks <- runif(nrow(hfactioncpx12))
+
+##ddmg <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+##cause=1:2,death.code=2,marks=hfactioncpx12$marks)
+##summary(ddmg)
+
+ddm <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+cause=1:2,death.code=2,marks=hfactioncpx12$status)
+summary(ddm)
+
+```
 
 SessionInfo
 ============

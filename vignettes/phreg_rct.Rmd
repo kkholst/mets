@@ -234,7 +234,6 @@ summary(pll0,times=1:10)
 The propensity score mode can be extended to use covariates to get increased efficiency.
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
 
-
 We now illustrate how to fit a  Cox model of the form
 \begin{align*}
   & \lambda_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2)
@@ -362,7 +361,7 @@ rr$z1 <- attr(rr,"z")[rr$id]
 rr$A1 <- A1[rr$id]
 rr$A0 <- A0[rr$id]
 rr$lz1 <- log(rr$z1)
-rr <- count.history(rr)
+rr <- count.history(rr,types=1:2)
 rr$A1t <- 0
 rr <- dtransform(rr,A1t=A1,Count2==1) 
 rr$At.f <- rr$A0

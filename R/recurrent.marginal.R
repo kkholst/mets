@@ -1754,37 +1754,37 @@ zs <- cbind(z1,z2,zd)
 ##' @param data data-frame
 ##' @param status name of status 
 ##' @param id  id 
-##' @param types types of the events (code) related to status
+##' @param types types of the events (code) related to status (multiple values possible)
 ##' @param names.count name of Counts, for example Count1 Count2 when types=c(1,2)
 ##' @param lag if true counts previously observed, and if lag=FALSE counts up to know
-##' @param multitype if multitype then count number of types also when types=c(1,2) for example
+##' @param multitype, if multitype is true then counts when status %in% types, otherwise counts for each value of type, types=c(1,2)
+##' @param marks values related to status (== type), counts marks for types, only when multitype=TRUE
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
-##'
 ##' data(base1cumhaz)
 ##' data(base4cumhaz)
 ##' data(drcumhaz)
-##' dr <- drcumhaz
-##' base1 <- base1cumhaz
-##' base4 <- base4cumhaz
 ##'
 ##' ######################################################################
 ##' ### simulating simple model that mimicks data 
 ##' ### now with two event types and second type has same rate as death rate
 ##' ######################################################################
 ##'
-##' rr <- simRecurrentII(1000,base1,base4,death.cumhaz=dr)
-##' rr <-  count.history(rr)
+##' rr <- simRecurrentII(1000,base1cumhaz,base4cumhaz,death.cumhaz=drcumhaz)
+##' rr <-  count.history(rr,types=1:2)
 ##' dtable(rr,~"Count*"+status,level=1)
 ##'
 ##' @aliases count.historyVar 
 ##' @export
-count.history <- function(data,status="status",id="id",types=1:2,names.count="Count",lag=TRUE,multitype=FALSE)
+count.history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
 {# {{{
 stat <- data[,status]
+
+## also allowing marks  when multitype=TRUE
+if (multitype & is.null(marks))  marks <- rep(1,nrow(data))
 
 clusters <- data[,id]
 if (is.numeric(clusters)) {
@@ -1809,12 +1809,11 @@ data[,paste(names.count,i,sep="")] <-
 } else {
 if (lag==TRUE)
 data[,paste(names.count,types[1],sep="")] <- 
-   cumsumidstratasum((stat %in% types),rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
+   cumsumidstratasum((stat %in% types)*marks,rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
    else 
 data[,paste(names.count,types[1],sep="")] <- 
-   cumsumidstratasum((stat %in% types),rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
+   cumsumidstratasum((stat %in% types)*marks,rep(0,nrow(data)),1,clusters,max.clust+1)$sum 
 }
-
 
 return(data)
 }# }}}
@@ -1844,7 +1843,6 @@ data[,names.count] <-
 
 return(data)
 }# }}}
-
 
 ##' Estimation of probability of more that k events for recurrent events process
 ##'
