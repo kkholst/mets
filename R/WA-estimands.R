@@ -99,7 +99,7 @@ treat.formula <- treat.model <- as.formula(paste(treat.name,"~+1",sep=""))
 
 if (is.null(cens.formula)) cens.formula <- as.formula( paste("~strata(",treat.name,")",collapse=""))
 formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in% cens.code)~+cluster(id__)",collapse=""))
-formD <- as.formula( paste("Event(",vars[2],",",vars[3]," )~-1+",treat.name,"+cluster(id__)",collapse=""))
+formD <- as.formula( paste("Event(",vars[2],",",vars[3],"%in% death.code )~-1+",treat.name,"+cluster(id__)",collapse=""))
 form1 <- as.formula( paste("Event(",vars[2],",",vars[3],")~-1+",treat.name,"+cluster(id__)",collapse=""))
 
 ## take out intercept, to get mean in treated/non-treated
@@ -114,7 +114,7 @@ if (!is.null(augmentR)) {
 ###print(form1); print(form1X); print(cens.formula);
 
 ## ratio of means ## {{{
-dd <- resmeanIPCW(formD,data=rrR,cause=death.code,cens.code=cens.code,cens.model=cens.formula,time=time,model="l")
+dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,model="l")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
 		  cens.model=cens.formula,times=time,model="l",marks=marks)
 cc <- c(ddN$coef,dd$coef)
