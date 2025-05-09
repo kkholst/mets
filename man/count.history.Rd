@@ -29,9 +29,9 @@ count.history(
 
 \item{lag}{if true counts previously observed, and if lag=FALSE counts up to know}
 
-\item{multitype, }{if multitype is true then counts when status %in% types, otherwise counts for each value of type, types=c(1,2)}
+\item{multitype, }{if multitype is true then counts when status "in" types, otherwise counts for each value of type, types=c(1,2)}
 
-\item{marks}{values related to status (== type), counts marks for types, only when multitype=TRUE}
+\item{marks}{values related to status ("in" types), counts marks for types, only when multitype=TRUE}
 }
 \description{
 Counts the number of previous events of two types for recurrent events processes

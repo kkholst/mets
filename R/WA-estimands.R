@@ -396,7 +396,7 @@ if (is.null(time)) stop("must give time of response \n")
 ##' @param data data frame
 ##' @param death.code codes for death (terminating event, 2 default)
 ##' @param time for evaluation 
-##' @param marks for terminal events to add marks*I(D \leq t,\epsilon \in mark.codes)  to X(min(D,t))
+##' @param marks for terminal events to add marks*I(D <=t ,epsilon "in" mark.codes)  to X(min(D,t))
 ##' @param mark.codes gives death codes for which to add mark value
 ##' @author Thomas Scheike
 ##' @export

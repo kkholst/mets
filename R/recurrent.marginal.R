@@ -1757,8 +1757,8 @@ zs <- cbind(z1,z2,zd)
 ##' @param types types of the events (code) related to status (multiple values possible)
 ##' @param names.count name of Counts, for example Count1 Count2 when types=c(1,2)
 ##' @param lag if true counts previously observed, and if lag=FALSE counts up to know
-##' @param multitype, if multitype is true then counts when status %in% types, otherwise counts for each value of type, types=c(1,2)
-##' @param marks values related to status (== type), counts marks for types, only when multitype=TRUE
+##' @param multitype, if multitype is true then counts when status "in" types, otherwise counts for each value of type, types=c(1,2)
+##' @param marks values related to status ("in" types), counts marks for types, only when multitype=TRUE
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################

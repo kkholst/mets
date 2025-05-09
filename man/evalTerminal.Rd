@@ -22,7 +22,7 @@ evalTerminal(
 
 \item{time}{for evaluation}
 
-\item{marks}{for terminal events to add marks*I(D \leq t,\epsilon \in mark.codes)  to X(min(D,t))}
+\item{marks}{for terminal events to add marks*I(D <=t ,epsilon "in" mark.codes)  to X(min(D,t))}
 
 \item{mark.codes}{gives death codes for which to add mark value}
 }
