@@ -25,8 +25,6 @@ simRecurrentII(
   cor.mat = NULL,
   cens = NULL,
   gap.time = FALSE,
-  dhaz = NULL,
-  haz2 = NULL,
   ...
 )
 }

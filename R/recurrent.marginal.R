@@ -758,7 +758,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
    lt0 <- length(time0)
    ddp <- duplicated(c(time0,time1))
    if (exit.unique) ties <-ddp[(lt0+1):nrow(data)] else ties <- duplicated(c(time1))
-   nties <- sum(ties)
+   if (length(ties)>0) nties <- sum(ties) else nties <- 0
    if (nties>1) {
 	   ordties <- ord[jumps][ties]
 	   if (is.null(ddt)) {
