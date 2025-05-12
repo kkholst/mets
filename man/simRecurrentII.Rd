@@ -25,6 +25,7 @@ simRecurrentII(
   cor.mat = NULL,
   cens = NULL,
   gap.time = FALSE,
+  max.recurrent = 100,
   ...
 )
 }
@@ -55,9 +56,9 @@ simRecurrentII(
 
 \item{gap.time}{if true simulates gap-times with specified cumulative hazard}
 
-\item{...}{Additional arguments to lower level funtions}
-
 \item{max.recurrent}{limits number recurrent events to 100}
+
+\item{...}{Additional arguments to lower level funtions}
 }
 \description{
 Simulation of recurrent events data based on cumulative hazards

@@ -864,13 +864,19 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' @export
 ##' @aliases sim.recurrent simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
-			   cor.mat=NULL,cens=NULL,gap.time=FALSE,...) 
+			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
 cumhazL <- list(cumhaz,cumhaz2)
 rr <- cbind(r1,r2)
 if (!is.null(death.cumhaz)) death.cumhaz <- list(death.cumhaz)
-data <-     simRecurrentList(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,rd=rd,rc=rc,dependence=dependence,var.z=var.z,
-			     cor.mat=cor.mat,cens=cens,gap.time=gap.time,...)
+if (!is.null(r1)) {
+	if (!is.null(r2)) r2 <- rep(1,length(r1))
+	rr <- cbind(r1,r2)
+}
+data <-     simRecurrentList(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
+		     rd=rd,rc=rc,dependence=dependence,var.z=var.z,
+		     cor.mat=cor.mat,cens=cens,gap.time=gap.time,
+		     max.recurrent=max.recurrent,...)
 return(data)
 }# }}}
 
@@ -968,13 +974,14 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
 	  nn <- nrow(still)
 	  if (i==max.recurrent)  {
              tt <-  still
+	     tt$entry <- tt$time 
 	     tt$time <- max.time
 	     tt$status <- 0
 	  } else tt <- rchazl(cumhaz,rrz[still$id,,drop=FALSE],entry=(1-gap.time)*still$time) 
 	  if (gap.time) {
 		  tt$entry <- still$time
 		  tt$time  <- tt$time+still$time
-		  if (i==max.recurrent) { tt$time <- max.recurent; tt$status <- 0}
+		  if (i==max.recurrent) { tt$time <- max.time; tt$status <- 0}
 	  }
           ###
 	  tt <- cbind(tt,dkeep(still,~id+dtime+death+fdeath),row.names=NULL)
@@ -984,7 +991,6 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
 	  nt <- nrow(tt)
 	  tall <- rbind(tall,tt[1:nn,],row.names=NULL)
   } 
-
 
   dsort(tall) <- ~id+entry+time
   tall$start <- tall$entry
