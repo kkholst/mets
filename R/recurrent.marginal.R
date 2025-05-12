@@ -816,15 +816,11 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
-##'
-##' library(mets)
 ##' data(CPH_HPN_CRBSI)
 ##' dr <- CPH_HPN_CRBSI$terminal
 ##' base1 <- CPH_HPN_CRBSI$crbsi 
 ##' base4 <- CPH_HPN_CRBSI$mechanical
 ##'
-##' cor.mat <- corM <- rbind(c(1.0, 0.6, 0.9), c(0.6, 1.0, 0.5), c(0.9, 0.5, 1.0))
-##' 
 ##' ######################################################################
 ##' ### simulating simple model that mimicks data 
 ##' ######################################################################
