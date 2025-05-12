@@ -66,13 +66,10 @@ Random effect for  death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^
 ########################################
 ## getting some rates to mimick 
 ########################################
-
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-dr <- drcumhaz
-base1 <- base1cumhaz
-base4 <- base4cumhaz
+data(CPH_HPN_CRBSI)
+dr <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi 
+base4 <- CPH_HPN_CRBSI$mechanical
 
 rr <- simRecurrentTS(1000,base1,base4,death.cumhaz=dr)
 dtable(rr,~death+status)

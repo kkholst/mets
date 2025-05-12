@@ -37,20 +37,10 @@ count.history(
 Counts the number of previous events of two types for recurrent events processes
 }
 \examples{
-########################################
-## getting some rates to mimick 
-########################################
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-
-######################################################################
-### simulating simple model that mimicks data 
-### now with two event types and second type has same rate as death rate
-######################################################################
-
-rr <- simRecurrentII(1000,base1cumhaz,base4cumhaz,death.cumhaz=drcumhaz)
-rr <-  count.history(rr,types=1:2)
+data(hfactioncpx12)
+hf <- hfactioncpx12
+dtable(hf,~status)
+rr <-  count.history(hf,types=1:2,id="id",status="status")
 dtable(rr,~"Count*"+status,level=1)
 
 }

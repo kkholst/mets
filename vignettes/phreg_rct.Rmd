@@ -289,12 +289,11 @@ Recurrent events: Simple Randomization
 ```{r}
 n <- 1000
 beta <- 0.15; 
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-dr <- scalecumhaz(drcumhaz,1)
-base1 <- scalecumhaz(base1cumhaz,1)
-base4 <- scalecumhaz(base4cumhaz,0.5)
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- scalecumhaz(CPH_HPN_CRBSI$mechanical,0.5)
+
 cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 ce <- 3; betao1 <- 0
 
