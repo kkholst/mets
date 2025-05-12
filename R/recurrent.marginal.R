@@ -881,11 +881,14 @@ return(data)
 }# }}}
 
 ##' @export
-simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,...) 
+simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
 {# {{{
 ## wrapper for simRecurrentII without type-2 events
 if (!is.null(death.cumhaz)) death.cumhaz <- list(death.cumhaz)
-rr <- simRecurrentList(n,list(cumhaz),death.cumhaz=death.cumhaz,...)
+if (!is.null(r1)) r1 <- as.matrix(r1,ncol=1)
+if (!is.null(rd)) rd <- as.matrix(rd,ncol=1)
+
+rr <- simRecurrentList(n,list(cumhaz),death.cumhaz=death.cumhaz,rr=r1,rd=rd,rc=rc,...)
 return(rr)
 }# }}}
 
@@ -909,8 +912,7 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
      } else if (dependence==4) {
 	      zz <- rgamma(n,1/var.z[1])*var.z[1]
 	      z1 <- zz; z2 <- zz; zd <- rep(1,n) 
-	      z <- z1
-	  if (is.null(zzr)) zzr <- matrix(z,n,length(cumhaz)) 
+	  if (is.null(zzr)) zzr <- matrix(zz,n,length(cumhaz)) 
 	  if (!is.null(death.cumhaz))
 	  if (is.null(zzd)) zzd <- matrix(zd,n,length(death.cumhaz))
      }    else stop("dependence 0,1,4"); # }}}
@@ -961,23 +963,22 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
   }
 # }}}
 
+
 ### fixing the first time to event
   tall$death <- 0
   tall <- dtransform(tall,death=fdeath,time>dtime)
   tall <- dtransform(tall,status=0,time>dtime)
   tall <- dtransform(tall,time=dtime,time>dtime)
   tt <- tall
-  i <- 1; 
+  i <- 0; 
   while (any((tt$time<tt$dtime) & (tt$status!=0) & (i <= max.recurrent))) {
 	  i <- i+1
 	  still <- subset(tt,time<dtime & status!=0)
 	  nn <- nrow(still)
-	  if (i==max.recurrent)  {
-             tt <-  still
-	     tt$entry <- tt$time 
-	     tt$time <- max.time
-	     tt$status <- 0
-	  } else tt <- rchazl(cumhaz,rrz[still$id,,drop=FALSE],entry=(1-gap.time)*still$time) 
+	  tt <- rchazl(cumhaz,rrz[still$id,,drop=FALSE],entry=(1-gap.time)*still$time) 
+	  if (i==max.recurrent) {
+		  tt$time <- max.time; tt$status <- 0
+	  }
 	  if (gap.time) {
 		  tt$entry <- still$time
 		  tt$time  <- tt$time+still$time
@@ -1000,7 +1001,9 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
   attr(tall,"death.cumhaz") <- cumhazd
   attr(tall,"cumhaz") <- cumhaz
   attr(tall,"rr") <- rr
-  attr(tall,"z") <- z
+  attr(tall,"rd") <- rd
+  attr(tall,"z") <- zzr
+  attr(tall,"zd") <- zzd
 
   return(tall)
   }# }}}
