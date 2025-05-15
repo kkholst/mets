@@ -2366,6 +2366,12 @@ else  {
 orig.id <- id.orig <- id+1;
 nid <- length(unique(id))
 
+## make sure id, start in 1,2,  
+dd <- data.frame(id=id)
+dd <- countID(dd,sorted=TRUE)
+## new id 1,2,.... and so on, referring to rows of data
+id <- dd$indexid
+
 ## to avoid Rcheck wawning
 
 if (is.null(marks)) marks <- rep(1,length(id))
@@ -2498,7 +2504,7 @@ EXt  <-  apply(Xt*c(xx$sign),2,revcumsumstrata,xx$strata,xx$nstrata)
 IEXhYtdLam0 <- apply(EXt*c(E)*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 U <- matrix(0,nrow(xx$X),ncol(X))
 U[xx$jumps+1,] <- (resC$jumptimes<times)*E[xx$jumps+1]*EXt[xx$jumps+1,]/c(resC$S0)
-MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign)*c(xx$weights))
+MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign))*c(xx$weights)
 ###
 MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
 MGCiid2 <- MGtiid-MGCiid2
@@ -2565,8 +2571,7 @@ if (se) {# {{{
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
 ## check data sorted in dexit 
-#if (type[1]!="II") 
-Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+if (type!="II") Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
 data$Hst <- Hst
 if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
 ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
@@ -2621,6 +2626,7 @@ val$nevent <- nevent
 class(val) <- c("binreg", "resmean")
 return(val)
 } # }}}
+
 
 strataAugment <- survival::strata
 
