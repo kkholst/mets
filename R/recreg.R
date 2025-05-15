@@ -2571,7 +2571,7 @@ if (se) {# {{{
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
 ## check data sorted in dexit 
-if (type!="II") Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+if (type[1]!="II") Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
 data$Hst <- Hst
 if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
 ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
