@@ -2471,7 +2471,9 @@ dataiid <- data[data$rid__==1,]
 if (type[1]=="II") {# {{{ type="II" default augmentation
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
-data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+#data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+data$Hst <- Hst
 formC <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
 desform <- update.formula(cens.model,as.formula(paste("~ Hst+ . + cluster(id__)")))
 formC[[3]] <- desform[[2]]
@@ -2496,7 +2498,7 @@ EXt  <-  apply(Xt*c(xx$sign),2,revcumsumstrata,xx$strata,xx$nstrata)
 IEXhYtdLam0 <- apply(EXt*c(E)*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 U <- matrix(0,nrow(xx$X),ncol(X))
 U[xx$jumps+1,] <- (resC$jumptimes<times)*E[xx$jumps+1]*EXt[xx$jumps+1,]/c(resC$S0)
-MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign))*c(xx$weights)
+MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign)*c(xx$weights))
 ###
 MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
 MGCiid2 <- MGtiid-MGCiid2
@@ -2562,7 +2564,10 @@ val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=
 if (se) {# {{{
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
-data$Hst <- cumsumstratasum(marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+## check data sorted in dexit 
+#if (type[1]!="II") 
+Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
+data$Hst <- Hst
 if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
 ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
 colnames(HstX) <- ccn
@@ -2584,6 +2589,7 @@ btime <- c(1 * (xx$time < times))
 EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 MGt <- (E[, drop = FALSE] - EdLam0 * c(xx$sign) )*c(xx$weights)
 MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
+#MGCiid <- MGCiid-MGCiid2
 MGCiid <- MGCiid+MGCiid2
 } else  MGCiid <- 0 ## }}}
 
@@ -2616,7 +2622,6 @@ class(val) <- c("binreg", "resmean")
 return(val)
 } # }}}
 
-##' @export
 strataAugment <- survival::strata
 
 ##' @export
