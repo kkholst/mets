@@ -47,7 +47,7 @@ test_recregMarginalIPCW <- function() {
  dif
 
  ## estimate (same) and standard errors (not to far)
- expect_true( ((sum(abs(dif[,1])) < 0.00001) & (sum(abs(dif[,2])) < 0.02)) )
+ expect_true( ((sum(abs(dif[,1])) < 0.00001) & (sum(abs(dif[,2])) < 0.001)) )
 }
 test_recregMarginalIPCW()
 
