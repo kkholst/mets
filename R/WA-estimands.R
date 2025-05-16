@@ -242,7 +242,7 @@ print.WA  <- function(x,type="log",...) {# {{{
 }# }}}
 
 ##' @export
-summary.WA <- function(object,type="p",...) {# {{{
+summary.WA <- function(object,type="p",augtype=NULL,...) {# {{{
 
 rmst <- estimate(object$RAW$rmst)
 rmst.test <- estimate(rmst,contrast=rbind(c(1,-1)))
@@ -256,7 +256,15 @@ meanNtD.test.log <- estimate(meanNtD.log,contrast=rbind(c(1,-1)))
 
 eer <- estimate(object$RAW$ratio.means)
 eedr <- estimate(eer,contrast=rbind(c(1,-1)))
+
+if (is.null(augtype)) {
+   augtype <- "riskDR"
+   if (!is.null(object$ET$riskDRC)) augtype <- "riskDRC" 
+}
+if (augtype=="riskDR")
 ee <- estimate(coef=object$ET$riskDR$riskDR,vcov=object$ET$riskDR$var.riskDR)
+if (augtype=="riskDRC")
+ee <- estimate(coef=object$ET$riskDRC$coef,vcov=object$ET$riskDRC$var)
 eed <- estimate(ee,contrast=rbind(c(1,-1)))
 eer.log <- object$RAW$ratio.means.log
 eedr.log <- estimate(eer.log,contrast=rbind(c(1,-1)))
@@ -264,9 +272,9 @@ eelog <-  estimate(ee,function(p) log(p))
 eedlog <- estimate(eelog,contrast=rbind(c(1,-1)))
 
 res <- list(rmst=rmst,rmst.test=rmst.test,meanNtD=meanNtD,meanNtD.test=meanNtD.test,
-	    ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)
+            ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)
 reslog <- list(rmst=rmst.log,rmst.test=rmst.test.log,
-	       meanNtD=meanNtD.log,meanNtD.test=meanNtD.test.log,
+               meanNtD=meanNtD.log,meanNtD.test=meanNtD.test.log,
     ratio=eer.log,test.ratio=eedr.log,meanpt=eelog,test.meanpt=eedlog)
 class(res) <- "summary.WA"
 class(reslog) <- "summary.WA"
