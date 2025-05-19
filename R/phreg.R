@@ -3062,8 +3062,8 @@ for (ss in us[-1]) {
 ###{{{ summary 
 
 ##' @export
-print.survivalG <- function(object,...) {
-  print(summary(object,...))
+print.survivalG <- function(x,...) {
+  print(summary(x,...))
 }
 
 ##' @export
