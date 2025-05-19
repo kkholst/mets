@@ -570,12 +570,13 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 ###{{{ iid & Robust variances 
 
 ##' @export
-IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
-  if (baseline) {
+IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
+  if (!is.null(baseline)) .Deprecated("argument 'baseline' replaced by 'time'")
+  if (!is.null(time)) {
     if (inherits(x, "cifreg")) {
-      res <- IIDbaseline.cifreg(x, ...)$base.iid
+      res <- IIDbaseline.cifreg(x, time = time, ...)$base.iid
     } else {
-      res <- IIDbaseline.phreg(x, ...)$base.iid
+      res <- IIDbaseline.phreg(x, time = time, ...)$base.iid
     }
     tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
     return(res*NROW(res))
