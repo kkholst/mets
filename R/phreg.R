@@ -570,7 +570,7 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 ###{{{ iid & Robust variances 
 
 ##' @export
-IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
+IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
   if (baseline) {
     res <- iidBaseline(x, ...)$base.iid
     tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
