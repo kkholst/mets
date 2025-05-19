@@ -2657,7 +2657,7 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
         DPai <- fitt$DPai
     } else {
         if (length(pi0)==length(treats$ntreatvar)) wPA <- pi0 
-	else wPA <- 1/ifelse(pi0[1], 1 - pi0[1], treats$ntreatvar == 2)
+	else wPA <- ifelse(treats$ntreatvar==2,pi0[1],1-pi0[1])
         ## pi0 <- rep(pi0, treats$nlev)
         DPai <- matrix(0, nrow(data), 1)
     }

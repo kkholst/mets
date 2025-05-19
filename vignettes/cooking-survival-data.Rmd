@@ -31,7 +31,7 @@ Overview
 Simulation of survival data is important for both
 theoretical and practical work. In a practical setting we might wish to
 validate that standard errors are valid even in a rather small sample,
-or validate that a more complicated procedure is doing as intended. 
+or validate that a complicated procedure is doing as intended. 
 Therefore it is useful to have simple tools for generating survival data
 that looks as much as possible like particular data. In a theoretical
 setting we often are interested in evaluating the finite sample
@@ -274,14 +274,11 @@ First we set up some cumulative hazards, then we simulate some data
 and re-estimate the cumulative baselines
 
 ```{r}
- data(base1cumhaz)
- data(base4cumhaz)
- data(drcumhaz)
- dr <- drcumhaz
- dr2 <- drcumhaz
- dr2[,2] <- 1.5*drcumhaz[,2]
- base1 <- base1cumhaz
- base4 <- base4cumhaz
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- CPH_HPN_CRBSI$mechanical
+ dr2 <- scalecumhaz(dr,1.5)
  cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
  iddata <- simMultistate(nsim,base1,base1,dr,dr2,cens=cens)
@@ -489,12 +486,10 @@ Recurrent events
 See also recurrent events vignette
 
 ```{r}
- data(base1cumhaz)
- data(base4cumhaz)
- data(drcumhaz)
- dr <- drcumhaz
- base1 <- base1cumhaz
- base4 <- base4cumhaz
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- CPH_HPN_CRBSI$mechanical
 
  n <- 100
  rr <- simRecurrent(n,base1,death.cumhaz=dr)
@@ -509,9 +504,9 @@ See also recurrent events vignette
 
  cumhaz <- list(base1,base1,base4)
  drl <- list(dr,base4)
- rr <- simRecurrentIII(n,cumhaz,death.cumhaz=drl)
+ rr <- simRecurrentList(n,cumhaz,death.cumhaz=drl)
  dtable(rr,~death+status)
- showfitsimIII(rr,cumhaz,drl) 
+ showfitsimList(rr,cumhaz,drl) 
 ```
 
  - sim.recurrent can simulate based on cox hazard for events and death based on phreg

@@ -236,33 +236,14 @@ NULL
 NULL
 
 
-##' Rate for leaving HPN program for patients of Copenhagen
+##' Rates for HPN program for patients of Copenhagen Cohort
 ##'
-##' @name drcumhaz
-##' @docType data
-##' @keywords data
-##' @source Estimated data
-NULL
-
-##' rate of CRBSI for HPN patients of Copenhagen
-##'
-##' @name base1cumhaz
-##' @docType data
-##' @keywords data
-##' @source Estimated data
-NULL
-
-##' rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen
-##'
-##' @name base4cumhaz
-##' @docType data
-##' @keywords data
-##' @source Estimated data
-NULL
-
-##' rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen
-##'
-##' @name base44cumhaz
+##' @name CPH_HPN_CRBSI 
+##' @format
+##'  crbsi: cumulative rate of catheter related bloodstream infection in HPN patients of Copenhagen
+##'  mechanical: cumulative rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen
+##' trombo: cumulative rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen
+##' terminal: rate of terminal event, patients leaving the HPN program
 ##' @docType data
 ##' @keywords data
 ##' @source Estimated data

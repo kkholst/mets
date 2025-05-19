@@ -1,3 +1,6 @@
+# mets 1.3.7
+  - While-alive estimation : `WA_recurrent` with marks to handle composite outcomes
+
 # mets 1.3.6
   - While-alive estimation : `WA_recurrent` 
   - Marks for medical cost models : `recreg` `recregIPCW`

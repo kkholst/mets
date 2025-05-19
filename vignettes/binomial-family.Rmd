@@ -26,7 +26,7 @@ Overview
 
 When looking at multivariate binomial data with the aim of learning about the 
 dependence that is present, possibly after correcting for some covariates many
-models are available. 
+models and methods are available: 
 
    *  Random-effects models logistic regression covered elsewhere (glmer in lme4).
 
@@ -44,7 +44,7 @@ in the mets package you can fit the
         such as ACE, ADE ,AE and so forth.
 
 These last three models are all fitted in the mets package using composite 
-likelihoods for pairs of data.  The models can be fitted specifically based 
+likelihoods based on pairs within clusters. The models can be fitted specifically based 
 on specifying which pairs one wants to use for the composite score. 
 
 The models are described in futher details in the binomial-twin vignette. 
@@ -67,24 +67,23 @@ two children. The response is ybin and there is one covariate x.
  head(data)
 ```
 
-We fit the marginal models, and here find a covariate
-effect at 0.3 for x. The marginals can be specified excatly as one
-wants. 
+We fit the marginal models, and here find a covariate effect at 0.3 for x. The marginals can be 
+specified as desired.
 
 ```{r}
  aa <- margbin <- glm(ybin~x,data=data,family=binomial())
  summary(aa)
 ```
 
-Additive gamma model 
+Additive Gamma model 
 ====================
 
-For the additive gamma of this type we set-up the random effects
+For the Additive Gamma model we set-up the random effects
 included in such a family to make the ACE valid using some
 special functions for this. 
 
 The model is constructed with one enviromental effect shared by
-all in the family and 8 genetic random effects with size (1/4) genetic
+all in the family and 8 genetic random effects with size 1/4 genetic
 variance. Looking at the first family we see that the mother and
 father both share half the genes with the children and that the
 two children also share half their genes with this specification.
@@ -104,8 +103,7 @@ We can now fit the model calling the two-stage function
 ```{r}
 # fitting ace model for family structure
 ts <- binomial.twostage(margbin,data=data,clusters=data$cluster,
-theta=c(2,1),
-random.design=out$des.rv,theta.des=out$pardes)
+theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 summary(ts)
 # true variance parameters
 c(2,1)
@@ -125,7 +123,6 @@ A special function writes up all combinations of pairs.
 There are 6 pairs within each family, and we keep track of
 who belongs to the different families. We first simply give the
 pairs and we then should get the same result as before. 
-
 
 
 ```{r}

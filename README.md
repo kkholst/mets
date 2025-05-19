@@ -406,3 +406,20 @@ or the the restricted mean survival (years-lost to different causes)
  summary(out1)
 ```
 
+## Examples: While Alive estimands for recurrent events 
+
+We consider an RCT and aim to describe the treatment effect via while alive estimands
+
+```{r}
+data(hfactioncpx12)
+
+dtable(hfactioncpx12,~status)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+		   death.code=2,trans=.333)
+summary(dd,type="log")
+```
+
+
