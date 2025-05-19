@@ -2887,10 +2887,17 @@ ytreat <- ntreatvar-1
    nlevs <- Avalues
 }
 
+## for cluster case take first record for each subject
+data$id <- x$id
+cid <- countID(data)
+datA <- subset(data,cid$Countid==1)
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
-datA <- dkeep(data,x=all.vars(formulaX))
+datA <- dkeep(datA,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
+
+##### to work with predict in case id used in object
+datA$id <- 1
 
 cumhaz.time <- cpred(x$cumhaz,time)[-1,]
 k <- 1; risks <- c(); DariskG <- list()
@@ -3055,6 +3062,11 @@ for (ss in us[-1]) {
 ###{{{ summary 
 
 ##' @export
+print.survivalG <- function(object,...) {
+  print(summary(object,...))
+}
+
+##' @export
 summary.survivalG <- function(object,...) {
   res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio,survival.ratio=object$survival.ratio)
   class(res) <- "summary.survivalG"
@@ -3064,7 +3076,7 @@ summary.survivalG <- function(object,...) {
 ##' @export
 print.summary.survivalG  <- function(x,...) {
     cat("risk:\n")
-    print(x$risk,...)
+    print(x[["risk"]],...)
     cat("\n")
 
     cat("Average Treatment effects (G-estimator) :\n")
