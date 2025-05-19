@@ -51,8 +51,7 @@ treatment (randomization 0/1)}
 
 \item{augmentC}{formula for the censoring augmentation (~age+sex)}
 
-\item{treat.model}{propensity score model, default is ~+1, assuming RCT
-study}
+\item{treat.model}{propensity score model, default is ~+1, assuming an RCT study}
 
 \item{RCT}{if false will use propensity score adjustment for marginal model}
 

@@ -176,7 +176,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg IIDbaseline.phreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg
+##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -195,7 +195,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' betaiiid <- lava::iid(out1)
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- mets::IIDbaseline.phreg(out1,time=30)
+##' Aiiid <- iidBaseline(out1,time=30)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -572,11 +572,7 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,baseline=FALSE,...) {# {{{
   if (baseline) {
-    if (inherits(x, "cifreg")) {
-      res <- IIDbaseline.cifreg(x, ...)$base.iid
-    } else {
-      res <- IIDbaseline.phreg(x, ...)$base.iid
-    }
+    res <- iidBaseline(x, ...)$base.iid
     tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
     return(res*NROW(res))
   }
@@ -674,11 +670,27 @@ tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
 }
 } # }}}
 
-##' @export IIDbaseline.phreg 
-IIDbaseline.phreg <- function(x,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
+##' Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG
+##'
+##' @title Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG
+##' @param object phreg/recreg/cifregFG object
+##' @param time for baseline IID 
+##' @param ft function to compute IID of baseline integrated against f(t) 
+##' @param fixbeta to fix the coefficients 
+##' @param beta.iid to use these iid of beta 
+##' @param tminus to get predictions in t-  
+##' @param ... additional arguments to lower level functions
+##' @author Thomas Scheike
+##' @aliases iidBaseline
+##' @export
+iidBaseline <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...) UseMethod("iidBaseline")
+
+##' @export 
+iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...)
 {# {{{
 ###  sum_i int_0^t f(s)/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
+  x <- object
   if (!inherits(x,"phreg")) stop("Must be phreg object\n"); 
   if (is.null(time)) stop("Must give time for iid of baseline")
 
@@ -2853,8 +2865,8 @@ survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRU
 
 if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
 
-if (inherits(x,"cifreg"))
-Aiid <- IIDbaseline.cifreg(x,time=time) else Aiid <- IIDbaseline.phreg(x,time=time)
+if (inherits(x,c("cifreg","phreg","recreg")))
+Aiid <- iidBaseline(x,time=time) else stop("Must be cifregFG/phreg/recreg object \n"); 
 
 ### dealing with first variable that is a factor 
 

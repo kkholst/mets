@@ -4,13 +4,10 @@
 \alias{cifreg}
 \alias{vecAllStrata}
 \alias{diffstrata}
-\alias{IIDbaseline.cifreg}
 \alias{FGprediid}
 \alias{indexstratarightR}
 \alias{gofFG}
-\alias{cifregO}
 \alias{cifregFG}
-\alias{IIDbaseline.cifregO}
 \title{CIF regression}
 \usage{
 cifreg(
@@ -65,7 +62,7 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 \examples{
 ## data with no ties
 library(mets)
-data(bmt,package="timereg")
+data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)
 
@@ -96,7 +93,7 @@ plot(sfg)
 ### predictions with CI based on iid decomposition of baseline and beta
 ### these are used in the predict function above
 fg <- cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
-Biid <- IIDbaseline.cifreg(fg,time=20)
+Biid <- iidBaseline(fg,time=20)
 pfg1 <- FGprediid(Biid,nd)
 pfg1
 }

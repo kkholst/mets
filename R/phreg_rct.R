@@ -17,8 +17,7 @@
 ##' @param augmentR0 formula for the randomization augmentation (~age+sex)
 ##' @param augmentR1 formula for the randomization augmentation (~age+sex)
 ##' @param augmentC formula for the censoring augmentation (~age+sex)
-##' @param treat.model propensity score model, default is ~+1, assuming RCT
-##'   study
+##' @param treat.model propensity score model, default is ~+1, assuming an RCT study
 ##' @param RCT if false will use propensity score adjustment for marginal model
 ##' @param treat.var in case of twostage randomization, this variable is 1 for
 ##'   the treatment times, if start,stop then default assumes that only one
@@ -489,7 +488,7 @@ vardynC.improve  <- matrix(apply(gain.times,2,sum),p,p)
 ## U(s) = U(\infty) - \int_0^s (Z-E) w(s)  dM(s)
 ## sum (e_i - \bar e) U(s) Y_i(s)
   ## Lu-Tsiatis augmentation 
-  out1 <- IIDbaseline.phreg(Cfit0,ft=1/St,time=0,fixbeta=0)
+  out1 <- iidBaseline(Cfit0,ft=1/St,time=0,fixbeta=0)
   Hiid <- (out1$beta.iid %*% Cfit0$hessian)
   xxi <- solve(crossprod(Hiid))
   ###

@@ -5,7 +5,6 @@
 \alias{phreg.par}
 \alias{robust.phreg}
 \alias{readPhreg}
-\alias{IIDbaseline.phreg}
 \alias{conftype}
 \alias{plotO.predictphreg}
 \alias{plotpredictphreg}
@@ -53,7 +52,7 @@ plot(rob1,se=TRUE,robust=TRUE)
 betaiiid <- lava::iid(out1)
 
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- mets::IIDbaseline.phreg(out1,time=30)
+Aiiid <- iidBaseline(out1,time=30)
 
 }
 \author{

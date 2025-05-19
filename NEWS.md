@@ -1,5 +1,6 @@
 # mets 1.3.7
   - While-alive estimation : `WA_recurrent` with marks to handle composite outcomes
+  - renaming IIDbaseline to iidBaseline and making a method out of it for phreg/cifreg/recreg
 
 # mets 1.3.6
   - While-alive estimation : `WA_recurrent` 

@@ -113,7 +113,6 @@ showing no problem with the proportionality of the model.
 SE's for the baseline and predictions of FG
 ===========================================
 
-
 The standard errors reported for the FG-estimator are based on the i.i.d 
 decompostion (influence functions) of the estimator that we give later. A similar decompostion
 exist for the baseline and is needed when standard errors of predictions are computed. These
@@ -128,7 +127,7 @@ at time point 5
 ```{r}
 ### predictions with CI based on iid decomposition of baseline and beta
 fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL,cox.prep=TRUE)
-Biid <- IIDbaseline.cifreg(fg,time=5)
+Biid <- iidBaseline(fg,time=5)
 pfgse <- FGprediid(Biid,dd)
 pfgse
 plot(pfg,ylim=c(0,0.2))
