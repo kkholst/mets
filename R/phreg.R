@@ -571,8 +571,8 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
-  if (baseline) {
-    res <- iidBaseline(x, ...)$base.iid
+  if (!is.null(baseline)) {
+    res <- iidBaseline(x,time=time,...)$base.iid
     tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
     return(res*NROW(res))
   }
