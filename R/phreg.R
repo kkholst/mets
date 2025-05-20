@@ -2929,7 +2929,7 @@ risk.iid  <- t(t(risks)-Grisk)
 nid <- max(x$id)
 ndata <- length(unique(x$id[subdata]))
 
-risk.iid <- apply(risk.iid,2,sumstrata,id.data-1,nid)
+risk.iid <- apply(risk.iid,2,sumstrata,id.data-1,nid)/ndata
 ## sorted after x$id
 coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
 
