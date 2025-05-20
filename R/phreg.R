@@ -2888,16 +2888,18 @@ ytreat <- ntreatvar-1
 }
 
 ## for cluster case take first record for each subject
-data$id <- x$id
-cid <- countID(data)
-datA <- subset(data,cid$Countid==1)
+cid <- countID(data.frame(id=x$id))
+FirstId <- which(cid$Countid==1)
+datA <- data[FirstId,]
+id.data <- x$id[FirstId]
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
 datA <- dkeep(datA,x=all.vars(formulaX))
 xlev <- lapply(datA,levels)
 
+idname <- attr(formulaX,"variables")$cluster
 ##### to work with predict in case id used in object
-datA$id <- 1
+datA[,idname] <- 1
 
 cumhaz.time <- cpred(x$cumhaz,time)[-1,]
 k <- 1; risks <- c(); DariskG <- list()
@@ -2922,18 +2924,13 @@ predictAiid <- NULL
 Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
 ###
-nid <- nrow(pp$X) 
-nidcox <- max(x$id)
-mnid <- max(nid,nidcox)
+nid <- max(x$id)
 
+risk.iid <- apply(risk.iid,2,sumstrata,id.data-1,nid)
+## sorted after x$id
 coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
-if (nid!=nidcox) {
-    coxiid <- apply(coxiid,2,sumstrata,x$id-1,mnid)
-} 
 
 if (same.data) {
-   if (is.null(id)) id <- 1:nrow(pp$X) else id <- data[,id];  
-   risk.iid <- apply(risk.iid,2,sumstrata,id-1,mnid)/nid 
    for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/nid
    vv <- crossprod(risk.iid)
 } else {
