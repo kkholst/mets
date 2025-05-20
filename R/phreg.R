@@ -2835,6 +2835,7 @@ return(phw)
 ##' @param varname if given then averages for this variable, default is first variable
 ##' @param same.data assumes that same data is used for fitting of survival model and averaging. 
 ##' @param id might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,  
+##' @param subdata rows or TRUE/FALSE to select which part of the data that is used for the G-computation. Might be treated 
 ##' @author Thomas Scheike
 ##' @examples
 ##' 
@@ -2860,7 +2861,7 @@ return(phw)
 ##' 
 ##' @export
 ##' @aliases survivalGtime
-survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRUE,id=NULL)
+survivalG <- function(x,data,time=NULL,Avalues=c(0,1),varname=NULL,same.data=TRUE,id=NULL,subdata=NULL)
 {# {{{
 
 if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
@@ -2887,11 +2888,12 @@ ytreat <- ntreatvar-1
    nlevs <- Avalues
 }
 
+if (is.null(subdata))  subdata <- 1:length(x$id)
 ## for cluster case take first record for each subject
-cid <- countID(data.frame(id=x$id))
+cid <- countID(data.frame(id=x$id[subdata]))
 FirstId <- which(cid$Countid==1)
-datA <- data[FirstId,]
-id.data <- x$id[FirstId]
+datA <- data[subdata,][FirstId,]
+id.data <- x$id[subdata][FirstId]
 formulaX <- update.formula(x$formula,.~.)
 formulaX <- drop.specials(formulaX,"cluster")
 datA <- dkeep(datA,x=all.vars(formulaX))
@@ -2925,19 +2927,20 @@ Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
 ###
 nid <- max(x$id)
+ndata <- length(unique(x$id[subdata]))
 
 risk.iid <- apply(risk.iid,2,sumstrata,id.data-1,nid)
 ## sorted after x$id
 coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
 
 if (same.data) {
-   for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/nid
+   for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/ndata
    vv <- crossprod(risk.iid)
 } else {
    predictAiid <- matrix(0,nidcox,ncol(risks))
    for (a in seq_along(nlevs))  {
 	risk.iid[,a] <- risk.iid[,a] 
-	predictAiid[,a] <- coxiid %*% DariskG[[a]]/nid
+	predictAiid[,a] <- coxiid %*% DariskG[[a]]/ndata
    }
    vv <- crossprod(risk.iid)+crossprod(predictAiid)
 }
