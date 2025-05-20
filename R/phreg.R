@@ -2937,7 +2937,7 @@ if (same.data) {
    for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/ndata
    vv <- crossprod(risk.iid)
 } else {
-   predictAiid <- matrix(0,nidcox,ncol(risks))
+   predictAiid <- matrix(0,nid,ncol(risks))
    for (a in seq_along(nlevs))  {
 	risk.iid[,a] <- risk.iid[,a] 
 	predictAiid[,a] <- coxiid %*% DariskG[[a]]/ndata
