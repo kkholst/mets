@@ -249,29 +249,16 @@ NULL
 ##' @source Estimated data
 NULL
 
-
-##' hapfreqs data set
+##' haplo fun data 
 ##'
-##' @name hapfreqs
+##' @name haplo 
+##' @format
+##' hapfreqs : haplo frequencies
+##' haploX:  covariates and response for haplo survival discrete survival
+##' ghaplos:  haplo-types for subjects of haploX data
 ##' @docType data
 ##' @keywords data
-##' @source Simulated data
-NULL
-
-##' haploX  covariates and response for haplo survival discrete survival
-##'
-##' @name haploX
-##' @docType data
-##' @keywords data
-##' @source Simulated data
-NULL
-
-##' ghaplos  haplo-types for subjects of haploX data
-##'
-##' @name ghaplos
-##' @docType data
-##' @keywords data
-##' @source Simulated data
+##' @source Estimated data
 NULL
 
 ##' ttpd discrete survival data on interval form

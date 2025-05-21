@@ -104,7 +104,8 @@ can be viewed by design.only=TRUE
 types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
 
 ## some haplotypes frequencies for simulations 
-data(hapfreqs)
+data(haplo)
+hapfreqs <- haplo$hapfreqs 
 
 www <-which(hapfreqs$haplotype \%in\% types)
 hapfreqs$freq[www]
@@ -123,8 +124,8 @@ return(y)
 tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
 0.88830288,0.60756224,0.39802821,0.32706859)
 
-data(hHaplos)
-data(haploX)
+ghaplos <- haplo$ghaplos
+haploX  <- haplo$haploX
 
 haploX$time <- haploX$times
 Xdes <- model.matrix(~factor(time),haploX)
