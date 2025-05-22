@@ -33,20 +33,20 @@ P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta)  = F_1(t,X,\beta)
 \end{align*}
 to an IPCW adjusted estmating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
 \begin{align*}
- U(\beta) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
+ U(\beta,\hat G_c) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
 \end{align*}
 with $G_c(t)=P(C>t)$, the  censoring survival distribution, and  with $\Delta(t) = I( C_i > T_i \wedge t)$
 the indicator of being uncensored at time $t$ (type="I"). 
 The default type="II" is to augment with a censoring term, that is solve 
 \begin{align*}
-  &  U(\beta) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
+  &  U(\beta,\hat G_c) - \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
 \end{align*}
 where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivlent to the 
 pseudo-value approach (see Overgaard (2025)).
 
 The influence function for the type="II" estimator is 
 \begin{align*}
-    U(\beta) - \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
+    U(\beta,G_c) - \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
     + \int_0^t  \frac{E(X| T>u) E(Y| T>u)}{G_c(u)} d M_c(u) + \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u)  
 \end{align*}
 and for type="I"
@@ -58,13 +58,13 @@ estimates of the influence functions.
 
 The function logitIPCW instead considers 
 \begin{align*}
- U^{glm}(\beta) = & \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)}  X  ( Y(t) - \mbox{expit}( X^T \beta)) = 0.
+ U^{glm}(\beta,\hat G_c) = & \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)}  X  ( Y(t) - \mbox{expit}( X^T \beta)) = 0.
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
 
 The logitIPCW has influence function 
 \begin{align*}
-  &  U^{glm}(\beta) + \int_0^t \frac{E( X ( Y - F_1(t,\beta)) | T>u)}{G_c(u)} d M_c(u)  
+  &  U^{glm}(\beta,G_c) + \int_0^t \frac{E( X ( Y - F_1(t,\beta)) | T>u)}{G_c(u)} d M_c(u)  
 \end{align*}
 
 Which estimator performs the best depends on the censoring distribution and it seems that the binreg with type="II" performs 
