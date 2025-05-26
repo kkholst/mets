@@ -532,7 +532,6 @@ See also recurrent events vignette
     - similar to sim.phreg
 
 
-
 ```{r}
 
  data(hfactioncpx12)
@@ -548,11 +547,7 @@ See also recurrent events vignette
 
  recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
  simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
- help(sim.recurrent)
-
-
 ```
-
 
 
 

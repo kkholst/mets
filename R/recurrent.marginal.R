@@ -1051,6 +1051,40 @@ if (3 %in% which) {
 }
 }# }}}
 
+
+##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##'
+##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##'
+##' Must specify two phreg objects, or a phreg and a recreg object. The simulates from two-stage model
+##'
+##'
+##' @param cox/ghosh-lin for recurrent events 
+##' @param cox for terminal event
+##' @param n number of id's 
+##' @param data on which the models are fitted (to draw covariates) 
+##' @param id 
+##' @param varz dependence frailty 
+##' @param share to fit patly shared random effects model
+##' @param cens censoring rate for exponential censoring
+##' @param scale1 to scale baseline of recurrent events model
+##' @param scaled to scale baseline of terminal event
+##' @param dependence if dependence different from NULL, then uses simRecurrentList based on models given 
+##' @param ... Additional arguments to simGLcox, nmin, max regulates linear approaximation grid 
+##' @author Thomas Scheike
+##' @references 
+##' Scheike (2024), Twostage recurrent events models, under review.
+##' @examples
+##' data(hfactioncpx12)
+##' hf <- hfactioncpx12
+##' hf$x <- as.numeric(hf$treatment)
+##' n <- 100
+##' xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
+##' dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
+##' simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
+##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+##'
 #' @export sim.recurrent
 #' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
 sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
@@ -1076,7 +1110,7 @@ LamD <- scalecumhaz(scoxd$cumhaz,scaled); rd <- scoxd$rr
 } else { LamD <- NULL; rd <- NULL; }
 Lam2 <- scalecumhaz(scox1$cumhaz,0)
 if (is.null(dependence) & (!is.null(LamD))) {
-rrs <- simGLcox(n,Lam1,LamD,var.z=varz,r1=r1,rd=rd,rc=rc,model="twostage",cens=cens,type=type,share=share)
+rrs <- simGLcox(n,Lam1,LamD,var.z=varz,r1=r1,rd=rd,rc=rc,model="twostage",cens=cens,type=type,share=share,...)
 } else { 
 if (is.null(dependence)) dependence <- 0
 if (!is.null(LamD)) 
