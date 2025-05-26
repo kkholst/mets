@@ -2,7 +2,6 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{simRecurrentII}
 \alias{simRecurrentII}
-\alias{sim.recurrent}
 \alias{simRecurrent}
 \alias{showfitsim}
 \alias{covIntH1dM1IntH2dM2}

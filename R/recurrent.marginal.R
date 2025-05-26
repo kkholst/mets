@@ -858,7 +858,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @aliases sim.recurrent simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentList showfitsimList
+##' @aliases simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
@@ -1056,21 +1056,22 @@ if (3 %in% which) {
 ##'
 ##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
 ##'
-##' Must specify two phreg objects, or a phreg and a recreg object. The simulates from two-stage model
+##' Must specify two phreg objects, or a phreg and a recreg object, then simulates data from two-stage model
 ##'
-##'
-##' @param cox/ghosh-lin for recurrent events 
-##' @param cox for terminal event
+##' @param cox1 cox/ghosh-lin for recurrent events 
+##' @param coxd cox for terminal event
+##' @param coxc possible cox for censrong 
 ##' @param n number of id's 
 ##' @param data on which the models are fitted (to draw covariates) 
-##' @param id 
+##' @param type to specify type of simulation, if not default
+##' @param id name of id variable
 ##' @param varz dependence frailty 
 ##' @param share to fit patly shared random effects model
 ##' @param cens censoring rate for exponential censoring
 ##' @param scale1 to scale baseline of recurrent events model
 ##' @param scaled to scale baseline of terminal event
 ##' @param dependence if dependence different from NULL, then uses simRecurrentList based on models given 
-##' @param ... Additional arguments to simGLcox, nmin, max regulates linear approaximation grid 
+##' @param ... Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid 
 ##' @author Thomas Scheike
 ##' @references 
 ##' Scheike (2024), Twostage recurrent events models, under review.

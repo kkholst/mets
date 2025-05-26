@@ -59,7 +59,7 @@
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2)
 ##' 
-##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC simGLcox IIDrecreg predicttime
+##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC IIDrecreg predicttime
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 {# {{{
@@ -1374,9 +1374,37 @@ return(val)
 
 strataAugment <- survival::strata
 
+##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##'
+##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure. type=3 will generate
+##' Cox/Cox twostage mode, type=2 will generate Ghosh-Lin/Cox model. 
+##' If the variance is var.z=0, then generates data without any dependence or frailty. If model="twostage" then default is to generate data from Ghosh-Lin/Cox model, and
+##' if type=3 then will generate data with marginal Cox models (Cox/Cox). 
+##' Simulation based on linear aproximation of hazard for two-stage models based on grid on time-scale. Must be sufficientyly fine. 
+##'
+##' Must specify baselines of recurrent events and terminal event and possible covariate effects.
+##'
+##' @param n number of id's 
+##' @param base1 baseline for cox/ghosh-lin models
+##' @param drcumhaz baseline for terminal event
+##' @param var.z variance of gamma frailty 
+##' @param r1 relative risk term for baseline 
+##' @param rd relative risk term for terminal event 
+##' @param rc relative risk term for censorings
+##' @param fz possible transformation (function) of frailty term 
+##' @param fdz possible transformation (function) of frailty term for death 
+##' @param model twostage, frailty, shared (partly shared two-stage model)
+##' @param type type of simulation, default is decided based on model
+##' @param cens to right censor
+##' @param share to fit patly shared random effects model
+##' @param cens censoring rate for exponential censoring
+##' @param nmin default 100, at least nmin or number of rows of the two-baselines max(nmin,nrow(base1),nrow(drcumhaz)) points in time-grid from 0 to maximum time for base1
+##' @param nmax default 1000, at most nmax points in time-grid 
+##' @references 
+##' Scheike (2024), Twostage recurrent events models, under review.
 ##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
-   model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
+   model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 {# {{{
 ## setting up baselines for simulations 
 maxt <- tail(base1[,1],1)
@@ -1448,9 +1476,9 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ##  Z exp(X^t beta_1) d \Lambda_1(t)/S(t|X,Z) 
  ## such that GL model holds with exp(X^t beta_1) \Lambda_1(t)
  ## type=3, observed hazards on Cox form among survivors
- ## W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
- ## or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
- ## or W_2 * W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
+ ## twostage shared<1: W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
+ ## twostage share=1: or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
+ ## multiplicatve:       W_2 * W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
  dcum <- cbind(base1[,1],dbase1)
 ### ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
  ll <- .Call("_mets_simGL",as.matrix(dcum),c(St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
