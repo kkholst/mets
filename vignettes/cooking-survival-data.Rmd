@@ -251,7 +251,7 @@ More Cox games with cause  specific hazards
  cox3 <- phreg(Surv(time,cause==0)~strata(platelet)+bmi,data=bmt)
  coxs <- list(cox1,cox2,cox3)
 
- dd <- sim.phregs(coxs,1000,data=bmt,extend=0.002)
+ dd <- sim.phregs(coxs,n,data=bmt,extend=0.002)
  scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==2)~strata(gage)+tcell+platelet,data=dd)
  scox3 <- phreg(Surv(time,status==3)~strata(platelet)+bmi,data=dd)
@@ -260,7 +260,26 @@ More Cox games with cause  specific hazards
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
+
+ coxs1 <- phreg(Surv(time,cause==1)~strata(tcell),data=bmt)
+ dd <- sim.phreg(coxs1,n,data=bmt)
+ scoxs1 <-  phreg(Surv(time,status==1)~strata(tcell),data=dd)
+ ###
+ plot(coxs1)
+ plot(scoxs1,add=TRUE)
+
+ coxs1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
+ dd <- sim.phreg(coxs1,n,data=bmt)
+ scoxs1 <-  phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
+ ###
+ plot(coxs1)
+ plot(scoxs1,add=TRUE)
+
 ```
+
+
+
+
 
 
 Multistate models: The Illness Death model 
@@ -511,6 +530,28 @@ See also recurrent events vignette
 
  - sim.recurrent can simulate based on cox hazard for events and death based on phreg
     - similar to sim.phreg
+
+
+
+```{r}
+
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
+ hf$x <- as.numeric(hf$treatment) 
+ n <- 100
+
+ ##  to fit non-parametric models with just a baseline 
+ xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
+ dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
+
+ simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+
+ recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
+ simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+ help(sim.recurrent)
+
+
+```
 
 
 
