@@ -310,7 +310,7 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
-#' @aliases sim.phreg read.phreg read.fit sim.base simulate.cox sim.phregs
+#' @aliases sim.phreg read.phreg read.fit sim.base simulate.cox sim.phregs setup.phreg
 #' @export sim.cox
 #' @usage sim.cox(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
 sim.cox <- function(cox,n,data=NULL,cens=NULL,rrc=NULL,entry=NULL,rr=NULL,Z=NULL,extend=TRUE,...)
@@ -571,6 +571,21 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NU
 
 return(ptt)
 }# }}}
+
+#' @export
+setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
+{# {{{
+    cox <- list()
+    cox$cumhaz <- cumhazard
+    cox$coef <- coef
+    if (is.null(strata)) { strata <- rep(0,nrow(cumhazard)); nstrata <- 1} else nstrata <- max(strata)+1
+    cox$strata <- strata
+    cox$nstrata <- nstrata
+    class(cox) <- c("setup","phreg")
+    attr(cox,"znames") <- Znames
+    return(cox)
+}# }}}
+
 
 sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
