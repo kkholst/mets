@@ -2084,7 +2084,7 @@ upper <- cbind(object$time,object$upper[,types])
 if (is.null(times)) 
 out <- list(prob=prob,se=se,lower=lower,upper=upper)
 else {
-   rows <- fast.approx(object$time,take)
+   rows <- fast.approx(object$time,times)
    out <- list(prob=prob[rows,],se=se[rows,],lower=lower[rows,],upper=upper[rows,])
 }
 return(out)
