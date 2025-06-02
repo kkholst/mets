@@ -1006,6 +1006,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   if (is.null(weights)) weights <- rep(1,length(exit)) 
 # }}}
 
+  ## {{{ setting up status, response, censoring model 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
   statusC <- (status %in%cens.code) 
   statusE <- (status %in% cause) & (exit<= time) 
@@ -1056,41 +1057,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 
  nevent <- sum((status %in% cause)*(exit<=time))
 
-obj <- function(pp,all=FALSE)
-{ # {{{
-lp <- c(X %*% pp+offset)
-
-if (outcome[1]!="cif") {
-     if (model[1]=="exp") {
-	 p <- exp(lp) 
-         D2logl <- c(weights*p)*X2 
-     } else {
-	 p <- lp
-         D2logl <- c(weights)*X2
-       }
-} else { 
-	p <- expit(lp)
-        D2logl <- c(weights*p/(1+exp(lp)))*X2
-}
-ploglik <- sum(weights*(Y-p)^2)
-Dlogl <- weights*X*c(Y-p)
-D2log <- apply(D2logl,2,sum)
-gradient <- apply(Dlogl,2,sum)+augmentation
-np <- length(pp)
-hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
-
-  if (all) {
-      ihess <- solve(hessian)
-      beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
-      beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
-      robvar <- crossprod(beta.iid)
-      val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-	 id=id,Dlogl=Dlogl,
-	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
-      return(val)
-  }  
- structure(-ploglik,gradient=-gradient,hessian=hessian)
-}  # }}}
+ ## }}}
 
   val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,
 	cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,

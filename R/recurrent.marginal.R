@@ -2081,7 +2081,12 @@ prob <- cbind(object$time,object$prob[,types])
 se <- cbind(object$time,object$se.prob[,types])
 lower <- cbind(object$time,object$lower[,types])
 upper <- cbind(object$time,object$upper[,types])
+if (is.null(times)) 
 out <- list(prob=prob,se=se,lower=lower,upper=upper)
+else {
+   rows <- fast.approx(object$time,take)
+   out <- list(prob=prob[rows,],se=se[rows,],lower=lower[rows,],upper=upper[rows,])
+}
 return(out)
 } ## }}}
 
