@@ -1087,8 +1087,10 @@ if (3 %in% which) {
 ##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
 ##'
 #' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
-sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
+#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),
+                        id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
+sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,type=c("default","cox-cox","gl-cox"),
+			   id="id",varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...) {# {{{
 ## exp censoring default
 death <- NULL
 
