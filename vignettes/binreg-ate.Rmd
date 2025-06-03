@@ -25,11 +25,13 @@ library(mets)
 Average treatment for Competing risks data 
 ==========================================
 
-The binreg function does direct binomial regression for one time-point, $t$, fitting the model 
+The binreg function does direct binomial regression for one time-point, $t$, 
+fitting the model 
 \begin{align*}
-P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T beta),
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta),
 \end{align*}
-the estimation is based on IPCW adjusted estimating equation (EE)
+for possible right censored data. The estimation procedure 
+is based on IPCW adjusted estimating equation (EE)
 \begin{align*}
  U(\beta) = &  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T \wedge t) - \mbox{expit}( X^T beta) \right) = 0 
 \end{align*}
@@ -42,15 +44,17 @@ The function logitIPCW instead considers  the EE the EE
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric given $X$.
 
- - It seems that the binreg estimating equations most often the preferable ones to use, and the estimating equation used
-   is augmented in the default implementation (see the binreg vignette).
+ - It seems that the binreg estimating equations most often is preferable to use, 
+    and the estimating equation used is also augmented in the default implementation (see the binreg vignette).
 
 Additional functions logitATE, and binregATE computes the average treatment effect. We demonstrate their use below. 
 
 The functions binregATE (recommended) and logitATE also works when there is no censoring and we thus have simple binary outcome. 
 
-Variance is based on  sandwich formula with IPCW adjustment, and naive.var is variance 
-under known censoring model. The influence functions are stored in the output. The standard errors can be
+Variance is based on  sandwich formula with IPCW adjustment, 
+and naive.var is variance 
+under a known censoring model. The influence functions are stored in the 
+output. Further, the standard errors can be
 cluster corrected by specifying the relevant cluster for the working outcome model.
 
  - We estimate the average treatment effect of our binary response $I(T \leq t, \epsilon=1)$
@@ -92,13 +96,15 @@ where
  - $\tilde Y_i = I(T_i \leq t, \epsilon_i=1)$ oucome before censoring.
  - $m_j(X_i)=P(Y_i=1| A_i=j,X_i)$ is outcome model, using binomial regression.
 
- The standard errors are then based on an iid decomposition using taylor-expansion for the
- parameters of the treatment-model and the outcome-model, and the censoring probability. 
+ The standard errors are then based on an iid decomposition using taylor-expansions 
+ for the
+ parameters of the treatment-model and the outcome-model, and the 
+ censoring probability. 
 
  We need that the censoring model is correct, so it can be important to use a sufficiently 
  large censorng model as we also illustrate below. 
 
-   - Censoring model can be specified by strata (used for phreg
+   - The censoring model can be specified by strata (used for phreg
 
 We also compute standard marginalization for average treatment effect  (called differenceG) 
 \begin{align*}
@@ -106,9 +112,18 @@ We also compute standard marginalization for average treatment effect  (called d
 \end{align*}
 and again standard errors are based on the related influcence functions and are also returned. 
 
-For large data where there are more than 2 treatment groups the computations can be memeory extensive when
-there are many covariates due to the multinomial-regression model used for the propensity scores. Otherwise
-the function (binregATE) will run for rather large data and be rather fast.
+For large data where there are more than 2 treatment groups the 
+computations can be memory extensive when
+there are many covariates due to the multinomial-regression model used for the 
+propensity scores. Otherwise
+the function (binregATE) will run for large data.
+
+
+The ATE functions need that the treatment that is given as the first variable on
+the right hand side of the outcome model is a factor. The variable is also
+indentified from the left hand side of the 
+treatment model (treat.model), that per default 
+assumes that treatment does not depend on any covariates. 
 
 
 Average treatment effect 

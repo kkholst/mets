@@ -60,7 +60,7 @@ The function logitIPCW instead considers
 \begin{align*}
  U^{glm}(\beta,\hat G_c) = & \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)}  X  ( Y(t) - \mbox{expit}( X^T \beta)) = 0.
 \end{align*}
-The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric.
+This score equation is quite similar to those of the binreg, and exactly the same when the censoring model is fully-nonparametric.
 
 The logitIPCW has influence function 
 \begin{align*}
@@ -74,12 +74,11 @@ same influence function (see Blanche et al (2023)).
 Additional functions logitATE, and binregATE computes the average treatment effect. 
 We demonstrate this in another vignette. 
 
-The function logitATE can be used there is no censoring and we thus have simple binary outcome. 
+The functions logitATE/binregATE can be used there is no censoring and we thus have simple binary outcome. 
 
-Variance is based on  sandwich formula with IPCW adjustment (using the influence functions), 
-and naive.var is variance under known censoring model. The influence functions are stored in the output. 
+The variance is based on sandwich formula with IPCW adjustment (using the influence functions), 
+and naive.var is the variance under known censoring model. The influence functions are stored in the output. 
 Clusters can be specified to get cluster corrected standard errors. 
-
 
 Examples
 ========
@@ -88,10 +87,10 @@ Examples
 ```{r}
  library(mets)
  options(warn=-1)
- set.seed(1000) # to control output in simulatins for p-values below.
-
+ set.seed(1000) # to control output in random noise just below.
  data(bmt)
  bmt$time <- bmt$time+runif(nrow(bmt))*0.01
+
  # logistic regresion with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
