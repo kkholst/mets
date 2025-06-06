@@ -52,7 +52,7 @@
 ##' out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' 
-##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg
+##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg simTTP predictSurvd plotSurvd 
 ##' @export
 interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)
@@ -299,7 +299,7 @@ hessian <- D2log
 
   val <- c(list(increment=increment,exp.link=exp.link,ntimes=mutimes,utimes=utimes),val)
 
-  class(val) <- c("survd","logistic.survd","cumoddsreg")
+  class(val) <- c("cumoddsreg")
   return(val)
 } ## }}} 
 
@@ -484,7 +484,7 @@ simTTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
  }# }}}
 
 ##' @export
-summary.survd <- function(object,...) { ## {{{ 
+summary.cumoddsreg <- function(object,...) { ## {{{ 
 	ntimes <- object$ntimes
 	coefb <- coef(object)[1:ntimes]
 	vcovb <- object$var[1:object$ntimes,1:object$ntimes]
@@ -504,13 +504,13 @@ summary.survd <- function(object,...) { ## {{{
 
 
 ##' @export
-print.survd <- function(x,...) summary(x,...)
+print.cumoddsreg <- function(x,...) summary(x,...)
 
 ##' @export
-vcov.survd <- function(object,...) return(object$var) 
+vcov.cumoddsreg <- function(object,...) return(object$var) 
 
 ##' @export
-coef.survd <- function(object,...) return(object$coef)
+coef.cumoddsreg <- function(object,...) return(object$coef)
 
 ##' @export
 predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")

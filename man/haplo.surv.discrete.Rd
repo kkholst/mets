@@ -2,9 +2,6 @@
 % Please edit documentation in R/discrete-survival-haplo.R
 \name{haplo.surv.discrete}
 \alias{haplo.surv.discrete}
-\alias{simTTP}
-\alias{predictSurvd}
-\alias{plotSurvd}
 \title{Discrete time to event haplo type analysis}
 \usage{
 haplo.surv.discrete(

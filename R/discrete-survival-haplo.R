@@ -85,7 +85,6 @@
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
 ##' summary(out)
-##' @aliases simTTP  predictSurvd plotSurvd 
 ##' @export
 haplo.surv.discrete <- function (X=NULL,y="y",time.name="time",Haplos=NULL,id="id",desnames=NULL,designfunc=NULL,
     beta=NULL,no.opt=FALSE,method="NR",stderr=TRUE,designMatrix=NULL,response=NULL,idhap=NULL,design.only=FALSE,
@@ -281,7 +280,7 @@ if (!design.only) {
 }  else val <- NULL
 
   val <- c(list(Xhap=Xhap,X=X,Haplos=Haplos),val)
-  class(val) <- "survd"
+  class(val) <- "haplosurvd"
   return(val)
 } ## }}} 
 
@@ -289,4 +288,20 @@ if (!design.only) {
 ## devtools::install_github("scheike/HaploSurvival")
 ## this is only used for simulations 
 ## out <- simHaplo(1,100,tcoef,hapfreqs)
+
+##' @export
+summary.haplosurvd <- function(object,...) { ## {{{ 
+out <- lava::estimate(object,...)
+return(out)
+} ## }}} 
+
+##' @export
+print.haplosurvd <- function(x,...) summary(x,...)
+
+##' @export
+vcov.haplosurvd <- function(object,...) return(object$var) 
+
+##' @export
+coef.haplosurvd <- function(object,...) return(object$coef)
+
 

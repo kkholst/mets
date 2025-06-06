@@ -7,6 +7,9 @@
 \alias{simlogitSurvd}
 \alias{predictlogitSurvd}
 \alias{cumoddsreg}
+\alias{simTTP}
+\alias{predictSurvd}
+\alias{plotSurvd}
 \title{Discrete time to event interval censored data}
 \usage{
 interval.logitsurv.discrete(
