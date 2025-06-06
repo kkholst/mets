@@ -455,3 +455,171 @@ if (missing(Z)) Z <- NULL
 return(preds)
 } ## }}} 
 
+##' @export
+simTTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
+{# {{{
+	  
+  Z <- Xglm  
+  if (!is.null(Z)) n <- nrow(Z) 
+
+  if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
+
+  if (!is.null(times)) {
+     timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+     data <- merge(data,timesf,by.x="id",by.y="id")
+     mt <- model.matrix(~factor(times),data)
+     nm <- match(c("id","times"),names(data))
+     Z <- cbind(mt,data[,-nm])
+  }
+
+  p <- c(expit(as.matrix(Z) %*% coef))
+  y <- rbinom(length(p),1,p)
+
+  data <- cbind(y,data)
+  data <- count.history(data,status="y",id="id",types=1)
+  data <- subset(data,data$Count1<=0)
+
+  attr(data,"coef") <- beta
+  return(data)
+ }# }}}
+
+##' @export
+summary.survd <- function(object,...) { ## {{{ 
+	ntimes <- object$ntimes
+	coefb <- coef(object)[1:ntimes]
+	vcovb <- object$var[1:object$ntimes,1:object$ntimes]
+	outb <- lava::estimate(coef=coefb,vcov=vcovb,...)
+
+	if (length(object$coef)>ntimes) {
+		ll <- length(object$coef)
+		takex <- (ntimes+1):ll
+		coefx <- object$coef[takex]
+		vcovx <- object$var[takex,takex]
+     	        outx <- lava::estimate(coef=coefx,vcov=vcovx,...)
+	        eoutx <- exp(outx$coefmat[,c(1,3,4)])
+	        out <- list(baseline=outb,logor=outx,or=eoutx)
+	} else out <- list(baseline=outb)
+	return(out)
+} ## }}} 
+
+
+##' @export
+print.survd <- function(x,...) summary(x,...)
+
+##' @export
+vcov.survd <- function(object,...) return(object$var) 
+
+##' @export
+coef.survd <- function(object,...) return(object$coef)
+
+##' @export
+predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
+{# {{{
+  if (!is.null(Z)) n <- nrow(Z) 
+  if (!is.null(Z)) data <- Z else data <- data.frame(id=1:n)
+  Z <- data.frame(Z)
+  Z$id <- 1:n
+  ccc <- ds$coef
+
+  if (!se) {# {{{{{{
+	  data <- Z
+	  if (!is.null(times)) {
+	     timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+	     data <- merge(data,timesf,by.x="id",by.y="id")
+	     mt <- model.matrix(~factor(times),data)
+	     nm <- match(c("id","times"),names(data))
+	     Z <- cbind(mt,data[,-nm])
+	  }
+	  if (ncol(Z)!=length(c(ccc))) {
+		  print(head(Z))
+		  print(ccc)
+		  stop("dimension of Z not consistent with length of coefficients"); 
+	  }
+
+	  p <- c(expit(as.matrix(Z) %*% ccc))
+
+	  preds <- data.frame(p=p,id=data$id,times=data$times)
+	  survt <- exp(cumsumstrata(log(1-preds$p),data$id-1,6))
+	  if (type=="prob") pred <- 1-survt
+	  if (type=="surv") pred <- survt
+	  if (type=="hazard") pred <- p
+	  if (type=="rrm") { ## restricted residual mean 
+		  ll <- length(survt)
+	        pred <- cumsum(c(1,survt[-ll]))
+	  }
+	  preds <- cbind(preds,pred)
+# }}}
+  } else {# {{{
+
+    Ft <- function(p)
+    {
+	   xp <- as.matrix(Zi) %*% p
+	   lam <- expit(xp)
+	   st <- cumprod(1-lam)
+	   if (type=="prob") st <- 1-st 
+	   if (type=="surv") st <- st 
+	   if (type=="hazard") st <- lam
+           if (type=="rrm") { ## restricted residual mean 
+		ll <- length(st)
+	        st <- cumsum(c(1,st[-ll]))
+	   }
+	   return(st)
+    }
+
+  preds <- c()
+  for (i in 1:nrow(Z)) {
+     Zi <- data.frame(Z[i,,drop=FALSE])
+     data <- Zi
+     if (!is.null(times)) {
+        timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+        data <- merge(data,timesf,by.x="id",by.y="id")
+        mt <- model.matrix(~factor(times),data)
+        nm <- match(c("id","times"),names(data))
+        Zi <- cbind(mt,data[,-nm])
+     }
+     if (is.null(ds$var)) covv <- vcov(ds)  else covv <- ds$var
+     eud <- estimate(coef=ds$coef,vcov=covv,f=function(p) Ft(p))
+     cmat <- data.frame(eud$coefmat)
+     cmat$id <- i
+     cmat$times <- times
+     names(cmat)[1:4] <- c("pred","se","lower","upper")
+     preds <- rbind(preds,cmat)
+  } 
+
+  }# }}}
+
+return(preds)
+}# }}}
+
+## }}} 
+
+##' @export
+plotSurvd <- function(ds,ids=NULL,add=FALSE,se=FALSE,cols=NULL,ltys=NULL,...)
+{# {{{
+
+ if (is.null(ids)) ids <- unique(ds$id)
+ if (is.null(cols)) cols <- 1:length(ids)
+ if (is.null(ltys)) ltys <- 1:length(ids)
+
+  k <- 1
+  fplot <- 0
+  for (i in ids) {
+	  timei <- ds$time[ds$id==i]
+	  predi <- ds$pred[ds$id==i]
+
+ 	  if (fplot==0) {
+	  if (!add) plot(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+	  if (add) lines(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+	  fplot <- 1
+	  } else lines(timei,predi,type="s",col=cols[k],lty=ltys[k],...)
+
+          if (se) {
+	  loweri <- ds$lower[ds$id==i]
+	  upperi <- ds$upper[ds$id==i]
+	  plotConfRegion(timei,cbind(loweri,upperi),col=cols[k])
+	  }
+	  k <- k+1
+  }
+
+} ## }}} 
+
