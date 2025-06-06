@@ -259,7 +259,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
     ###
     MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
     ### Censoring Variance Adjustment 
-    MGCiid <- MGtiid+ MGCiid-MGCiid2
+    MGCiid <- MGCiid+(MGtiid-MGCiid2)
    }
    ## use data ordered by time (keeping track of id also)
    id <- xx$id
