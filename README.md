@@ -282,7 +282,7 @@ Similarly, the Fine-Gray model can be estimated using IPCW adjustment
 ```
 
 and we can get standard errors for predictions based on the influence functions of 
-the baseline and the regression coefiicients
+the baseline and the regression coefiicients (these are used in the predict function)
 
 ```{r}
 baseid <- IIDbaseline.cifreg(fg,time=40)
@@ -336,8 +336,8 @@ and the regression coefiicients
  plot(pfg,se=1)
 ```
 
-and we can get the influence functions of the baseline and regression coefficients at 
-a specific time-point 
+The influence functions of the baseline and regression coefficients at 
+a specific time-point can be obtained 
 
 ```{r}
 baseid <- IIDbaseline.recreg(gl1,time=2)
