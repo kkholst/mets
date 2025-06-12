@@ -39,15 +39,15 @@ with $G_c(t)=P(C>t)$, the  censoring survival distribution, and  with $\Delta(t)
 the indicator of being uncensored at time $t$ (type="I"). 
 The default type="II" is to augment with a censoring term, that is solve 
 \begin{align*}
-  &  U(\beta,\hat G_c) - \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
+  &  U(\beta,\hat G_c) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
 \end{align*}
 where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivlent to the 
 pseudo-value approach (see Overgaard (2025)).
 
 The influence function for the type="II" estimator is 
 \begin{align*}
-    U(\beta,G_c) - \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
-    + \int_0^t  \frac{E(X| T>u) E(Y| T>u)}{G_c(u)} d M_c(u) + \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u)  
+    U(\beta,G_c) + \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
+    - \int_0^t  \frac{E(X| T>u) E(Y| T>u)}{G_c(u)} d M_c(u) - \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u)  
 \end{align*}
 and for type="I"
 \begin{align*}

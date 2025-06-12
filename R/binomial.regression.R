@@ -334,9 +334,9 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$MGtid <- id
   val$orig.id <- orig.id
   val$iid.origid <- ids 
-  val$iid.naive <- val$iid 
+  val$iid.naive <- val$iid
+  val$naive.var <- NULL 
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  val$naive.var <- val$var
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5

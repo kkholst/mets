@@ -642,7 +642,9 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("c
     cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
     data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
 
+    if (!is.null(rc)) {
     if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)
+    } else censor <- 6 
 
     status=data$status*(data$time<=censor)
     time=pmin(data$time,censor)
