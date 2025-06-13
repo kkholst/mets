@@ -351,7 +351,7 @@ GLprediid(baseid,dd)
 
 ## Examples: Fixed time modelling for recurrent events 
 
-We can fit a log-link regression model at 2 yeas for the expected number of events observed
+We can fit a log-link regression model at 2 years for the expected number of events observed
 before dying (using IPCW adjustment)
 
 ```{r}
