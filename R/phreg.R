@@ -1,3 +1,4 @@
+
 ###{{{ phreg01 
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
              beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
@@ -33,7 +34,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else id <- as.integer(seq_along(entry))-1; 
+   } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X);} 
+
    ## orginal id coding into integers 
    id.orig <- id+1; 
 
@@ -53,7 +55,6 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
       } else {
 	      val <- list(jumps=NULL,ploglik=NULL,U=NULL,gradient=NULL,hessian=NULL,hessiantime=NULL,S2S0=NULL,E=NULL,S0=NULL)
       }
-	 
 
 	  if (all) {
 	      val$time <- dd$time
@@ -70,7 +71,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 	      return(val)
 	  }
           n <- length(dd$time)
-	 with(val,structure(-ploglik/n,gradient=-gradient/n,hessian=-hessian/n))
+	 with(val,structure(-ploglik/nid,gradient=-gradient/nid,hessian=-hessian/nid))
 	}# }}}
 
   opt <- NULL
@@ -92,11 +93,12 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
       val <- obj(0,all=TRUE)
   }
 
+
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
-  if (no.opt==FALSE & p!=0) {
+###  if (no.opt==FALSE & p!=0) {
          II <- - tryCatch(solve(val$hessian),error=function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
-  } else II <- matrix(0,p,p)
+###  } else II <- matrix(0,p,p)
 
   ## Brewslow estimator, to handle also possible weights, caseweights that are 0
   ww <- val$caseweightsJ * val$weightsJ

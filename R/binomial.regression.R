@@ -301,7 +301,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik,gradient=-gradient,hessian=hessian)
+ structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
 }# }}}
 
   p <- ncol(X)
@@ -605,7 +605,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik,gradient=-gradient,hessian=hessian)
+ structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
 }# }}}
 
 	  p <- pd 
@@ -819,7 +819,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik,gradient=-gradient,hessian=hessian)
+ structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
 }# }}}
 
   p <- ncol(X)
@@ -1510,7 +1510,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	 iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik,gradient=-gradient,hessian=hessian)
+ structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
 }# }}}
 
   p <- ncol(X)
@@ -2028,7 +2028,7 @@ BinAugmentCifstrata <- function(formula,data=data,cause=1,cens.code=0,km=TRUE,ti
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else id <- as.integer(seq_along(exit))-1; 
+   } else { id <- as.integer(seq_along(exit))-1;  nid <- length(exit); }
 
 
  p <- ncol(X)

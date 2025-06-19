@@ -274,7 +274,7 @@ hessian <- D2log
 		  se=diag(robvar)^.5,coef=pp,se.coef=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik,gradient=-gradient,hessian=-hessian)
+ structure(-ploglik/nid,gradient=-gradient/nid,hessian=-hessian/nid)
 }# }}}
 
   p <- ncol(X)

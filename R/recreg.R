@@ -424,7 +424,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
         if (all)
             return(out)
         else
-            with(out,structure(-ploglik, gradient=-gradient, hessian=-hessian))
+            with(out,structure(-ploglik/nid, gradient=-gradient/nid, hessian=-hessian/nid))
     }# }}}
 
    if (length(jumps)==0) no.opt <- TRUE

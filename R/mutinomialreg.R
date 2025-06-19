@@ -103,7 +103,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
       if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
       id <- as.integer(factor(id,labels=seq(nid)))-1
      }
-   } else id <- as.integer(seq_along(Y))-1; 
+   } else { id <- as.integer(seq_along(Y))-1;  nid <- length(Y); }
    ## orginal id coding into integers 
    id.orig <- id+1; 
 
