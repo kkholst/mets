@@ -93,12 +93,11 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
       val <- obj(0,all=TRUE)
   }
 
-
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
-###  if (no.opt==FALSE & p!=0) {
+  if (no.opt==FALSE & p!=0) {
          II <- - tryCatch(solve(val$hessian),error=function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
-###  } else II <- matrix(0,p,p)
+  } else II <- matrix(0,p,p)
 
   ## Brewslow estimator, to handle also possible weights, caseweights that are 0
   ww <- val$caseweightsJ * val$weightsJ

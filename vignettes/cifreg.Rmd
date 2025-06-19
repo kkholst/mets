@@ -152,6 +152,7 @@ cbind(cr$coef,diag(cr$var)^.5,fg$coef,fg$se.coef,cr$coef-fg$coef,diag(cr$var)^.5
 #         [,1]      [,2]      [,3]      [,4]          [,5]          [,6]
 # Z1 0.1041234 0.2463099 0.1041235 0.2463099 -5.067153e-08 -2.850970e-09
 # Z2 0.1902561 0.4895381 0.1902562 0.4895381 -8.968781e-08 -6.109376e-09
+}
 ```
 
 Slightly slightly different probably due to convergence settings, because
