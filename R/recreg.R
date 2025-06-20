@@ -1496,6 +1496,8 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ll$statusD <- ll$status
  ll <- dtransform(ll,statusD=3,reverseCountid==1 & death==1)
 
+ attr(ll,"base1events") <- base1
+ attr(ll,"deathcumbase") <- cumD
  return(ll)
 }# }}}
 
