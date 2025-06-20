@@ -503,7 +503,7 @@ outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
 tsout <- twostageREC(outs,out,data=rr,model="shared")
 summary(tsout)
 ###
-rr <- mets:::simGLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2,share=0.5) 
+rr <- mets:::simGLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
 rr <- cbind(rr,X[rr$id+1,])
 outs  <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
 outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,twostage=TRUE,death.code=3)
@@ -512,8 +512,9 @@ outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,twostage=TR
 glout <- twostageREC(outs,outgl,data=rr,theta=1)
 summary(glout)
 ###
-glout <- twostageREC(outs,outgl,data=rr,model="shared",theta=1,nu=0.5)
+glout <- twostageREC(outs,outgl,data=rr,model="shared",theta=1,nu=0.9)
 summary(glout)
+glout$gradient
 ```
 
 Standard errors are computed assuming that the parameters of out and outs are 

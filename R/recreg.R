@@ -1734,7 +1734,7 @@ rrb$strata <- floor((rrb[,id]-0.01)/n)
      drb <- phreg(margsurv$formula,data=rrbs)
     if (inherits(recurrent,"recreg")) {
 	 xrb <- recreg(recurrent$formula,data=rrbs,
-      cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code,cox.prep=TRUE)
+      cause=recurrent$cause,death.code=recurrent$death.code,cens.code=recurrent$cens.code,twostage=TRUE)
     } else xrb <- phreg(recurrent$formula,data=rrbs)
      outbl <- tryCatch(twostageREC(drb,xrb,rrbs,numderiv=0,control=list(stepsize=stepsize),...),error=function(x) NULL)
      if (!is.null(outbl)) outb <- rbind(outb,outbl$coef)
