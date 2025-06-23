@@ -35,9 +35,13 @@ quantities to get some basic understanding of the phenonmenon studied.
 We here demonstrate how one can compute: 
 
  * the marginal mean 
-   * efficient marginal mean estimation
+   * efficient marginal mean estimation with fast computation of standard errors
+   * works for large data
  * the Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
    * efficient regression augmentation of the Ghosh-Lin model
+   * works for large data
+   * clusters can be specfied
+   * allows a stratified baseline 
  * the variance of a recurrent events process
  * the probability of exceeding k events
  * the two-stage recurrent events model

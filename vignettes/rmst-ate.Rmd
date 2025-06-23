@@ -22,6 +22,23 @@ library(mets)
 ```
 
 
+The resmeanATE or resmeanIPCW/rmstIPCW functions can fit an exponential/linear link model with 
+IPCW adjustment for a specific time-point for the resticted mean survival or years lost for 
+competing risks. 
+The function can be used for large data and is completely scalable, that is, linear in the data. 
+The function can thus be used for large data. 
+A nice feature is that influcence functions are computed and are available.
+
+In addition and to summarize
+
+  - the censoring weights can be strata dependent
+  - predictions can be computed with standard errors 
+  - computation time is linear in data
+     - including standard errors
+  - clusters can be given and then cluster corrected standard errors are computed
+
+
+
 RMST 
 ====
 

@@ -24,6 +24,21 @@ library(mets)
 Binomial Regression for censored data 
 =====================================
 
+The binreg function can fit a logistic link model with IPCW adjustment for a specific time-point, 
+and can thus be used for describing survival or competing risks data.
+The function can be used for large data and is completely scalable, that is, linear in the data. 
+A nice feature is that influcence functions are computed and are available, and can thus be
+used for all other settings based on these parameters. 
+
+In addition and to summarize
+
+  - the censoring weights can be strata dependent
+  - predictions can be computed with standard errors 
+  - computation time linear in data
+     - including standard errors
+  - clusters can be given and then cluster corrected standard errors are computed
+
+
 Details
 =======
 

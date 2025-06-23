@@ -32,9 +32,9 @@ We consider the cumulative odds model for the probability of dying before time t
 \end{align*}
 
 Input are intervals given by $]t_l,t_r]$ where t_r can be infinity
-for right-censored intervals. When the data is truly discrete,
-in contrast to grouping of continuous data, $]0,1]$ will be an
-observation at 1, and $]j,j+1]$ will be an observation at j+1.
+for right-censored intervals. When the data is discrete,
+in contrast to grouping of continuous data, $]0,1]$ then
+the intervals $]j,j+1]$ will be equvilant to an observation at j+1 (see below example).
 
 Likelihood is maximized:
 \begin{align*}

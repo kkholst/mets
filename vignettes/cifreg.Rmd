@@ -21,6 +21,24 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
+The cifreg function can fit the Fine-Gray model and the logit-link cumulative incidence function for the 
+cause of interest for competing risks, and is completely scalable, that is, linear in the data. This includes
+computation of standard errors that is also linear in data. In addition for the Fine-Gray model 
+predictions can be provided standard errors for specific time-points based on influence functions 
+for the baseline and the regression coeficients.  The function can thus be used for large data. 
+
+In addition and to summarize
+
+  - the baseline can be stratified 
+  - the censoring weights can be strata dependent
+  - predictions can be computed with standard errors (only for Fine-Gray)
+  - computation time linear in data
+     - including standard errors
+  - only Fine-Gray: influence functions of baseline and regression coefficients computed and given by IC, iid and iidBaseline functions
+  - clusters can be given and then cluster corrected standard errors are computed
+
+
+
 Fine-Gray model
 ================
 
@@ -139,8 +157,7 @@ iid decompostions for $\hat \beta - \beta_0$ are obtained by the command iid()
 
 # Comparison 
 
-We compare with the cmprsk function but without running it to avoid dependencies: 
-
+We compare with the cmprsk function, that gives exactly the same, but without running it to avoid dependencies: 
 
 ```{r,cmprsk}
 run <- 0
@@ -149,14 +166,12 @@ library(cmprsk)
 mm <- model.matrix(~Z1+Z2,dats)[,-1]
 cr <- with(dats,crr(time,status,mm))
 cbind(cr$coef,diag(cr$var)^.5,fg$coef,fg$se.coef,cr$coef-fg$coef,diag(cr$var)^.5-fg$se.coef)
-#         [,1]      [,2]      [,3]      [,4]          [,5]          [,6]
-# Z1 0.1041234 0.2463099 0.1041235 0.2463099 -5.067153e-08 -2.850970e-09
-# Z2 0.1902561 0.4895381 0.1902562 0.4895381 -8.968781e-08 -6.109376e-09
+#          [,1]      [,2]       [,3]      [,4]          [,5]          [,6]
+# Z1  0.6968603 0.3876029  0.6968603 0.3876029 -2.442491e-15 -2.553513e-15
+# Z2 -0.8592892 0.6245258 -0.8592892 0.6245258 -2.997602e-15  1.776357e-15
 }
 ```
 
-Slightly slightly different probably due to convergence settings, because
-we get same standard errors when evaluated at same coefficients.
 
 When comparing with the results from the coxph based on setting up the data using
 the finegray function, we get the same estimates but note that the standard errors
@@ -174,17 +189,17 @@ if (run==1) {
 
  fg0 <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
  cbind( coxfg$coef,fg0$coef, coxfg$coef-fg0$coef)
-#         [,1]      [,2]          [,3]
-# Z1 0.1041235 0.1041235 -2.914335e-16
-# Z2 0.1902562 0.1902562 -3.330669e-16
+#          [,1]       [,2]          [,3]
+# Z1  0.6968603  0.6968603 -1.110223e-16
+# Z2 -0.8592892 -0.8592892 -1.110223e-15
  cbind(diag(coxfg$var)^.5,fg0$se.coef,diag(coxfg$var)^.5-fg0$se.coef)
 #           [,1]      [,2]          [,3]
-# [1,] 0.2471530 0.2463099  0.0008430730
-# [2,] 0.4893451 0.4895381 -0.0001930397
+# [1,] 0.3889129 0.3876029  0.0013099915
+# [2,] 0.6241225 0.6245258 -0.0004033148
  cbind(diag(coxfg$var)^.5,fg0$se1.coef,diag(coxfg$var)^.5-fg0$se1.coef)
 #           [,1]      [,2]          [,3]
-# [1,] 0.2471530 0.2471530  2.775558e-17
-# [2,] 0.4893451 0.4893451 -3.330669e-16
+# [1,] 0.3889129 0.3889129 -2.331468e-15
+# [2,] 0.6241225 0.6241225  2.553513e-15
 }
 ```
 
@@ -206,12 +221,12 @@ datsncf <- rbind(datsnc,datsnc2)
 cifnc <- cifreg(Event(time,status)~Z1+Z2,data=datsnc,cause=1,propodds=NULL)
 cc <- phreg(Surv(entry,time,status==1)~Z1+Z2+cluster(id),datsncf)
 cbind(cc$coef-cifnc$coef, diag(cc$var)^.5-diag(cifnc$var)^.5)
-#             [,1]         [,2]
-# Z1 -9.714451e-17 1.665335e-16
-# Z2  8.826273e-15 2.109424e-15
+#            [,1]          [,2]
+# Z1 1.332268e-15 -4.440892e-16
+# Z2 4.218847e-15  2.220446e-16
 ```
 
-the cmprsk gives almost the same (probably convergence settings)
+the cmprsk also gives the same 
 
 ```{r}
 if (run==1) {
@@ -219,9 +234,9 @@ if (run==1) {
  mm <- model.matrix(~Z1+Z2,datsnc)[,-1]
  cr <- with(datsnc,crr(time,status,mm))
  cbind(cc$coef-cr$coef, diag(cr$var)^.5-diag(cc$var)^.5)
-#            [,1]          [,2]
-# Z1 5.394172e-08 -3.326961e-09
-# Z2 1.078650e-07 -6.884919e-09
+#             [,1]         [,2]
+# Z1 -4.218847e-15 1.443290e-15
+# Z2  7.549517e-15 1.110223e-16
 }
 ```
 
