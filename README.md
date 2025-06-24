@@ -16,8 +16,8 @@
     Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
     Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
     Restricted mean survival time regression and years lost for competing risks. 
-    Average treatment effects and G-computation. 
-
+    Average treatment effects and G-computation.  All functions can be used with
+    clusters and will work for large data. 
 
 ## Installation
 

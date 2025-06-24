@@ -690,7 +690,6 @@ RcppExport SEXP S0_FG_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata
 	return(rres);
 }/*}}}*/
 
-
 // [[Rcpp::export(name="Gcjumps")]] 
 RcppExport SEXP GcjumpsR(SEXP iGc,SEXP istatus,SEXP istrata2,SEXP instrata2,SEXP iGcstart,SEXP injumps) {/*{{{*/
 	colvec Gc = Rcpp::as<colvec>(iGc);
@@ -719,8 +718,6 @@ RcppExport SEXP GcjumpsR(SEXP iGc,SEXP istatus,SEXP istrata2,SEXP instrata2,SEXP
 	rres["Gcjumps"]=Gcjumps;
 	return(rres);
 }/*}}}*/
-
-
 
 // [[Rcpp::export(name="S0FGN")]] 
 RcppExport SEXP S0_FGRN(SEXP ia,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcjumps) {/*{{{*/
