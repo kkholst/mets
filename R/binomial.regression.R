@@ -102,7 +102,7 @@
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst"),model="exp",Ydirect=NULL,...)
+	   outcome=c("cif","rmst","years-lost"),model="exp",Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -162,7 +162,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
-  statusC <- (status %in% cens.code) 
+  statusC <- 1*(status %in% cens.code) 
   statusE <- (status %in% cause) & (exit<= time) 
   if (sum(statusE)==0) warning("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
@@ -202,8 +202,11 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 
  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
      if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-     else { if (!competing) Y <-  c(pmin(exit,time)*obs)/cens.weights 
-             else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+     else { if (!competing) {
+	     if (outcome[1]=="rmst")
+	     Y <-  c(pmin(exit,time)*obs)/cens.weights 
+             else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
  Yipcw <- Y

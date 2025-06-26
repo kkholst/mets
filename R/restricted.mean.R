@@ -36,10 +36,10 @@
 ##'
 ##' @param formula formula with outcome on Event form 
 ##' @param data data frame
-##' @param ... Additional arguments to lower level funtions
+##' @param ... Additional arguments to binreg 
 ##' @author Thomas Scheike
 ##' @examples
-##'
+##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 ##' # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 ##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
@@ -55,6 +55,11 @@
 ##' rm1 <- resmean.phreg(out1,times=30)
 ##' summary(rm1)
 ##' 
+##' ### years lost regression
+##' outl <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,outcome="years-lost",
+##'                              cens.model=~strata(platelet,tcell),model="lin")
+##' estimate(outl)
+##' 
 ##' ## competing risks years-lost for cause 1  
 ##' out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
 ##'                             cens.model=~strata(platelet,tcell),model="lin")
@@ -64,16 +69,17 @@
 ##' summary(rmc1)
 ##' @export
 ##' @aliases rmstIPCW resmeanIPCWold 
-resmeanIPCW  <- function(formula,data,...)
+resmeanIPCW  <- function(formula,data,outcome=c("rmst","years-lost"),...)
 {# {{{
-   out <- binreg(formula,data,outcome="rmst",...)
+   out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
 }# }}}
 
 ##' @export
-rmstIPCW <- function(formula,data,...)
+rmstIPCW <- function(formula,data,outcome=c("rmst","years-lost"),...)
+
 {# {{{
-   out <- binreg(formula,data,outcome="rmst",...)
+   out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
 }# }}}
 

@@ -6,14 +6,14 @@
 \alias{resmeanIPCWold}
 \title{Restricted IPCW mean for censored survival data}
 \usage{
-resmeanIPCW(formula, data, ...)
+resmeanIPCW(formula, data, outcome = c("rmst", "years-lost"), ...)
 }
 \arguments{
 \item{formula}{formula with outcome on Event form}
 
 \item{data}{data frame}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments to binreg}
 }
 \description{
 Simple and fast version for IPCW regression for just one time-point thus fitting the model 
@@ -52,7 +52,7 @@ and alternatively just solved directly (type="I") without any additional terms.
 Censoring model may depend on strata.
 }
 \examples{
-
+library(mets)
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
