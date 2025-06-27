@@ -36,6 +36,7 @@
 ##'
 ##' @param formula formula with outcome on Event form 
 ##' @param data data frame
+##' @param outcome can do either rmst regression ('rmst') or years-lost regression  ('years-lost')
 ##' @param ... Additional arguments to binreg 
 ##' @author Thomas Scheike
 ##' @examples

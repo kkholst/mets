@@ -13,6 +13,8 @@ resmeanIPCW(formula, data, outcome = c("rmst", "years-lost"), ...)
 
 \item{data}{data frame}
 
+\item{outcome}{can do either rmst regression ('rmst') or years-lost regression  ('years-lost')}
+
 \item{...}{Additional arguments to binreg}
 }
 \description{
