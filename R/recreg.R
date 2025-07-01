@@ -1047,6 +1047,7 @@ se.cif=se.cif,se.surv=se.surv)
 return(out)
 } ## }}}
 
+
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
@@ -1098,6 +1099,7 @@ if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 ## }}}
 
 ## {{{
+call.id <- id
 if (!is.null(id)) {
 ids <- unique(id)
 nid <- length(ids)
@@ -1114,7 +1116,7 @@ nid <- length(unique(id))
 ## make sure id, start in 1,2,  
 dd <- data.frame(id=id)
 dd <- countID(dd,sorted=TRUE)
-## new id 1,2,.... and so on, referring to rows of data
+## new id 0,1,2,.... and so on, referring to rows of data
 id <- dd$indexid
 
 ## to avoid Rcheck wawning
@@ -1144,6 +1146,7 @@ cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
 whereC <- which(status %in% cens.code)
 ## }}}
 
+
 if (length(whereC)>0) {# {{{
 ### censoring weights
 strat <- cr$strata[cr$jumps]
@@ -1161,11 +1164,10 @@ St      <- exp(-cumhazD)
 Gc <- St
 ## }}}
 
+
 ###formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
 form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
-###form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
 xr <- phreg(form1L,data=data,no.opt=TRUE,no.var=1,Z=matrix(data$marks__,ncol=1))
-###  ### cook-lawless ghosh-lin
 ###  xr0 <- phreg(form1,data=data,no.opt=TRUE)
 ###  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
 ###  clgl  <- recurrentMarginal(xr0,dr)
@@ -1197,26 +1199,28 @@ Ydata <- Y <- obs*NtD/pmin(times,Dtime)
 }
 nevent <- sum((xx$status!=0)*(xx$time<times))
 
-## back to ordering in data
-Ydata <- Y <- Y[id[data$rid__==1]+1]
+lastrecord <- which(data$rid__==1)
+##  1 record per subject 
+Ydata <- Y 
 ###
 if (is.null(offset)) offset <- rep(0, length(exit))
 if (is.null(weights)) weights <- rep(1, length(exit))
 ###  
 Xorig <- X <- as.matrix(X)
-Xdata <- X <- X[data$rid__==1,,drop=FALSE]
+Xdata <- X <- X[lastrecord,,drop=FALSE]
 px <- ncol(X)
 if (is.null(augmentation))  augmentation=rep(0,px)
-offset <- offset[data$rid__==1]
-weights <- weights[data$rid__==1]
-status <- status[data$rid__==1]
-exit <- exit[data$rid__==1]
-id <- id[data$rid__==1]
+offset <- offset[lastrecord]
+weights <- weights[lastrecord]
+status <- status[lastrecord]
+exit <- exit[lastrecord]
+idR <- id[lastrecord]
+orig.idR <- orig.id[lastrecord]
 X2 <- .Call("vecMatMat", X, X)$vXZ
 ph <- 1
 if (is.null(beta)) beta <- rep(0,ncol(X))
 ## take iid vession of data 
-dataiid <- data[data$rid__==1,]
+dataiid <- data[lastrecord,]
 
 
 if (type[1]=="II") {# {{{ type="II" default augmentation
@@ -1240,7 +1244,7 @@ E[xx$jumps+1,] <- resC$E*((resC$jumptimes<times)*1)
 btime <- c(1 * (xx$time < times))
 EdLam0 <- apply(E*c(S0i)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
 
-mid <- max(id)
+mid <- max(idR)
 MGt <- Xt*c(E[, drop = FALSE] - EdLam0 * c(xx$sign))*c(xx$weights)
 MGtiid <- apply(MGt,2,sumstrata,xx$id,mid+1)
 augmentation <- augmentation+apply(MGtiid,2,sum)
@@ -1255,6 +1259,7 @@ MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
 MGCiid2 <- MGtiid-MGCiid2
 }  else MGCiid2 <- 0   
 ## }}}
+
 
 obj <- function(pp, all = FALSE) {# {{{
 lp <- c(X %*% pp + offset)
@@ -1275,10 +1280,10 @@ hessian <- matrix(D2log, length(pp), length(pp))
 if (all) {
     ihess <- solve(hessian)
     beta.iid <- Dlogl %*% ihess
-    beta.iid <- apply(beta.iid, 2, sumstrata, id, max(id) + 1)
+    beta.iid <- apply(beta.iid, 2, sumstrata, idR, max(id) + 1)
     robvar <- crossprod(beta.iid)
     val <- list(par = pp, ploglik = ploglik, gradient = gradient,
-	hessian = hessian, ihessian = ihess, id = id,
+	hessian = hessian, ihessian = ihess, id = idR,
 	Dlogl = Dlogl, iid = beta.iid, robvar = robvar,
 	var = robvar, se.robust = diag(robvar)^0.5)
     return(val)
@@ -1312,6 +1317,7 @@ if (length(val$coef) == length(colnames(X))) names(val$coef) <- colnames(X)
 
 val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
 
+
 if (se) {# {{{
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
@@ -1343,19 +1349,33 @@ MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
 MGCiid <- MGCiid+MGCiid2
 } else  MGCiid <- 0 ## }}}
 
-if (se) val$MGciid <- MGCiid %*% val$ihessian else val$MGciid <- MGCiid 
+
 val$call <- cl
 val$formula <- formula
 val$model <- model[1]
 val$model.type <- model[1]
-val$id <- id
 val$Y <- Ydata
 val$X <- Xdata
+val$id <- id
 val$orig.id <- orig.id
-val$iid.origid <- ids
 val$iid.naive <- val$iid
-if (se) val$iid <- val$iid + val$MGciid
 val$naive.var <- val$var
+if (se) { 
+	val$MGCiid <- MGCiid
+	MGCiid <- MGCiid %*% val$ihessian 
+	val$iid <- val$iid + MGCiid
+} else val$MGciid <- MGCiid 
+
+## order after orig.id
+idoo <- order(orig.idR)
+ido <- idR[idoo]+1
+val$iid <- val$iid[ido,]
+val$iid.naive <- val$iid.naive[ido,]
+if (se) { 
+   val$MGCiid <- val$MGCiid[ido,]
+}
+
+val$call.id <- call.id
 robvar <- crossprod(val$iid)
 val$var <- val$robvar <- robvar
 val$se.robust <- diag(robvar)^0.5
