@@ -65,20 +65,6 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-###  call.id <- id
-###  if (!is.null(id)) {
-###      ids <- sort(unique(id))
-###      nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###     orig.id <- id
-###   } else { orig.id <- NULL; nid <- nrow(X); 
-###             id <- as.integer(seq_along(exit))-1; ids <- NULL
-###  }
-###
-###  ### id from call coded as numeric 1 -> 
-###
 
   call.id <- id 
   conid <- construct_id(id,nrow(X),as.data=TRUE)
@@ -89,11 +75,9 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   data$id__ <- id 
   ## }}}
 
-  ## use sorted id for all things 
-  cid <- countID(data,"id__")
-  ###  data$id__ <- id
-  ### take last record for everybody to use for RMST
-  rrR <- subset(data,cid$reverseCountid==1)
+## use sorted id for all things  and here indentify last record of each subject
+cid <- countID(data,"id__")
+rrR <- subset(data,cid$reverseCountid==1)
 
 ## first var on rhs of formula
 vars <- all.vars(formula)
@@ -110,6 +94,9 @@ formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in% cens.c
 formD <- as.formula( paste("Event(",vars[2],",",vars[3],"%in% death.code )~-1+",treat.name,"+cluster(id__)",collapse=""))
 form1 <- as.formula( paste("Event(",vars[2],",",vars[3],")~-1+",treat.name,"+cluster(id__)",collapse=""))
 
+## drop id as cluster variable and use id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
 ## take out intercept, to get mean in treated/non-treated
 formrec <- update(formula, reformulate(c(".", "-1")))
 
@@ -118,13 +105,23 @@ if (!is.null(augmentR)) {
    form1X <- update(form1, reformulate(c(".", varsR)))
 } else form1X <- form1
 
-###print(formD); print(formrec); 
-###print(form1); print(form1X); print(cens.formula);
 
 ## ratio of means ## {{{
 dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,model="l")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
-		  cens.model=cens.formula,times=time,model="l",marks=marks)
+  cens.model=cens.formula,times=time,model="l",marks=marks)
+if (is.matrix(dd$iid))  
+	if (nrow(dd$iid)==length(name.id)) {
+		rownames(dd$iid) <- name.id
+		oid <- order(name.id)
+		dd$iid <- dd$iid[oid,]
+}
+if (is.matrix(ddN$iid)) 
+	if (nrow(ddN$iid)==length(name.id)) {
+		rownames(ddN$iid) <- name.id
+		if (is.null(oid)) oid <- order(name.id)
+		ddN$iid <- ddN$iid[oid,]
+}
 cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
 ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) (p[1:2]/p[3:4]))
@@ -163,8 +160,6 @@ outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formu
        cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
 ET <- list(riskDR=outae)
 
-#ids <- countID(data,"id__",sorted=TRUE)
-### assume id is ordered 
 data[,"ratio__"] <- outae$Yipcw[cid$indexid+1]
 
 if (!is.null(augmentC)) { ## {{{
@@ -237,6 +232,22 @@ se.riskDRC <- diag(varDRC)^.5
 riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC)
 ET <- list(riskDRC=riskDRC,riskDR=outae)
 } ## }}}
+
+namesortme <- function(iid,name.id) { ## {{{
+if (is.matrix(iid))  
+	if (nrow(iid)==length(name.id)) {
+		rownames(iid) <- name.id
+		oid <- order(name.id)
+		iid <- iid[oid,]
+}
+return(iid)
+} ## }}}
+
+### sort iid after name.id and put as rownames
+ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
+ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
+ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)
+ET$riskDR$iid <- namesortme(ET$riskDR$iid,name.id)
 
 out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
 	    trans=trans,cause=cause,cens.code=cens.code,death.code,
