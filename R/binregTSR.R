@@ -114,20 +114,20 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  call.id <- id 
-  name.id <- NULL
-  ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-  } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id <- id+1
-  nid <- length(unique(id))
+###  call.id <- id 
+###  name.id <- NULL
+###  ### possible handling of id to code from 0:(antid-1)
+###  if (!is.null(id)) {
+###          orig.id <- id
+###	  ids <- sort(unique(id))
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###  } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
+###  ### id from call coded as numeric 1 -> 
+###  id <- id+1
+###  nid <- length(unique(id))
 
   call.id <- id 
   conid <- construct_id(id,nrow(X),as.data=TRUE)
@@ -254,7 +254,7 @@ if (nlev==2) {
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 } else {  
-   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
    treat <- mlogit(treat.modelid,data)
    iidalpha <- lava::iid(treat)
    pal <- predict(treat,data,se=0,response=FALSE)
@@ -742,11 +742,28 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###
 
 riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
+
+
+namesortme <- function(iid,name.id) { ## {{{
+if (is.matrix(iid))  
+	if (nrow(iid)==length(name.id)) {
+		rownames(iid) <- name.id
+		oid <- order(name.id)
+		iid <- iid[oid,]
+}
+return(iid)
+} ## }}}
+
+riskG.iid <-  namesortme(riskG.iid,name.id)
+riskG0.iid <- namesortme(riskG0.iid,name.id)
+riskG1.iid <- namesortme(riskG1.iid,name.id)
+riskG01.iid <- namesortme(riskG01.iid,name.id)
+
 riskG.iid <- list(riskG.iid=riskG.iid,riskG0.iid=riskG0.iid,
 		  riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
 	  id=id-1,call.id=call.id,name.id=name.id)
 varG <- list(varG=varG,varG0=varG0,varG1=varG1,varG01=varG01)
-val <- list( riskG=riskG,varG=varG,riskG.iid=riskG.iid,
+val <- list(riskG=riskG,varG=varG,riskG.iid=riskG.iid,
 	     MGc=MGc,CensAugment.times=Augment.times,
             dynCens.coef=dynCgammat,dataW=dataW)
 
