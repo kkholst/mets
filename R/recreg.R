@@ -112,13 +112,6 @@ recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0)
         strata.name <- ts$vars
     }  else { strata.name <- NULL; pos.strata <- NULL}
 
-###   if (!is.null(stratapos <- attributes(Terms)$specials$strataAugment)) {
-###    ts <- survival::untangle.specials(Terms, "strataAugment")
-###    Terms  <- Terms[-ts$terms]
-###    strataAugment <- as.numeric(m[[ts$vars]])-1
-###    strataAugment.name <- ts$vars
-###  }  else { strataAugment <- NULL; strataAugment.name <- NULL}
-
     if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
         ts <- survival::untangle.specials(Terms, "offset")
         Terms  <- Terms[-ts$terms]
@@ -202,14 +195,14 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     whereC <- which(status %in% cens.code)
     time <- exit
     statusC <- c(status %in% cens.code)
-    data$id__ <- id
+    data$id__ <- id  
     data$exit__ <- exit
     data$entry__ <- entry
     data$statusC <- statusC
     data$status__ <- (status %in% cause)*1
     cens.strata <- cens.nstrata <- NULL
     ## lag-count to use for augment.model=~Nt+X1+X2
-    data <- count.history(data,status="status__",id="id",types=cause,multitype=TRUE)
+    data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
     data$Nt <- data[,paste("Count",cause[1],sep="")]
 
     ## augmentation model and remove intercept
