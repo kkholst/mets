@@ -36,17 +36,22 @@ Can also get influence functions (possibly robust) via iid() function, response 
 Can fit cumulative odds model as a special case of interval.logitsurv.discrete
 }
 \examples{
-
+library(mets)
 data(bmt)
+bmt$id <- sample(200,408,replace=TRUE)
 dfactor(bmt) <- cause1f~cause
 drelevel(bmt,ref=3) <- cause3f~cause
 dlevels(bmt)
 
-mreg <- mlogit(cause1f~+1,bmt)
+mreg <- mlogit(cause1f~+1+cluster(id),bmt)
 summary(mreg)
+head(iid(mreg))
+dim(iid(mreg))
 
 mreg <- mlogit(cause1f~tcell+platelet,bmt)
 summary(mreg)
+head(iid(mreg))
+dim(iid(mreg))
 
 mreg3 <- mlogit(cause3f~tcell+platelet,bmt)
 summary(mreg3)

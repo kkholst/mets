@@ -127,7 +127,7 @@ Standard errors are estimated using the influence function  of all estimators an
 subsequently.
 }
 \examples{
-
+library(mets)
 ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),

@@ -65,25 +65,33 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-      ids <- sort(unique(id))
-      nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-     orig.id <- id
-   } else { orig.id <- NULL; nid <- nrow(X); 
-             id <- as.integer(seq_along(exit))-1; ids <- NULL
-  }
-  ### id from call coded as numeric 1 -> 
+###  call.id <- id
+###  if (!is.null(id)) {
+###      ids <- sort(unique(id))
+###      nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###     orig.id <- id
+###   } else { orig.id <- NULL; nid <- nrow(X); 
+###             id <- as.integer(seq_along(exit))-1; ids <- NULL
+###  }
+###
+###  ### id from call coded as numeric 1 -> 
+###
+
+  call.id <- id 
+  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
-  data$id__ <- id ## }}}
+  data$id__ <- id 
+  ## }}}
 
   ## use sorted id for all things 
-  cid <- countID(data,"id__",sorted=TRUE)
-  data$id__ <- cid$indexid
+  cid <- countID(data,"id__")
+  ###  data$id__ <- id
   ### take last record for everybody to use for RMST
   rrR <- subset(data,cid$reverseCountid==1)
 
@@ -230,7 +238,8 @@ riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC
 ET <- list(riskDRC=riskDRC,riskDR=outae)
 } ## }}}
 
-out <- list(time=time,id=cid$indexid,orig.id=orig.id,trans=trans,cause=cause,cens.code=cens.code,death.code,
+out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
+	    trans=trans,cause=cause,cens.code=cens.code,death.code,
 	    RAW=RAW,ET=ET,augmentR=augmentR,augmentC=augmentC)
 class(out) <- "WA"
 return(out)
@@ -388,8 +397,8 @@ if (is.null(time)) stop("must give time of response \n")
    MGCiid <- MGCiid/nid
    #
 
-   nid <- max(cr2$id)
-   ids <- headstrata(cr2$id-1,nid)
+   nid <- max(cr2$id)+1
+   ids <- headstrata(cr2$id,nid)
    ids <- cr2$call.id[ids]
 
    res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times, id=ids,n=nid)
@@ -455,26 +464,31 @@ evalTerminal <- function(formula,data=data,death.code=2,time=NULL,marks=NULL,mar
 
    if (is.null(time)) time <- max(exit)+1
 
-   if (!is.null(id)) {
-	   call.id <- id
-        ids <- unique(id)
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <-  fast.approx(ids,id)-1
-        else  {
-            id <- as.integer(factor(id,labels=seq(nid)))-1
-        }
-    } else { call.id <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-    ## orginal id coding into integers 1:...
-   id <- id+1
+###   if (!is.null(id)) {
+###	   call.id <- id
+###        ids <- unique(id)
+###        nid <- length(ids)
+###        if (is.numeric(id))
+###            id <-  fast.approx(ids,id)-1
+###        else  {
+###            id <- as.integer(factor(id,labels=seq(nid)))-1
+###        }
+###    } else { call.id <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+###    ## orginal id coding into integers 1:...
+###   id <- id+1
+
+###   ## new id 1,2,.... and so on, referring to rows of data
+   call.id <- id
+   conid <- construct_id(id,length(exit))
+   id <- conid$id+1; nid <- conid$nid; 
 
    call.marks <- marks
    if (is.null(marks)) marks <- rep(1,length(id))
 
-   dd <- data.frame(id=id)
-   dd <- countID(dd,sorted=TRUE)
-   ## new id 1,2,.... and so on, referring to rows of data
-   id <- dd$indexid+1
+###   dd <- data.frame(id=id)
+###   dd <- countID(dd,sorted=TRUE)
+###   ## new id 1,2,.... and so on, referring to rows of data
+###   id <- dd$indexid+1
 
  ###
  indexD  <- which(exit <= time & (status %in% death.code))

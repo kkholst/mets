@@ -44,6 +44,7 @@ First looking cumulative incidence via the Fine-Gray model for the two causes an
 standardized cumulative incidence for cause 1.
 
 ```{r}
+library(mets)
 set.seed(100)
 
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001

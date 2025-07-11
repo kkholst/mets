@@ -82,7 +82,6 @@ hfactioncpx12$marks <- runif(nrow(hfactioncpx12))
 
 ddm <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
 cause=1:2,death.code=2,marks=hfactioncpx12$status)
-summary(ddm)
 
 ```
 

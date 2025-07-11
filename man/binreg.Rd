@@ -99,6 +99,7 @@ data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
+head(iid(out))
 
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 

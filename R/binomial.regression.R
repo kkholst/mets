@@ -48,6 +48,7 @@
 ##' # logistic regresion with IPCW binomial regression 
 ##' out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 ##' summary(out)
+##' head(iid(out))
 ##'
 ##' predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 ##'
@@ -146,16 +147,21 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- unique(id)
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
+###  call.id <- id
+###  if (!is.null(id)) {
+###          orig.id <- id
+###	  ids <- unique(id)
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
+###  ### id from call coded as numeric 1 -> 
+###  id.orig <- id; 
+
+  call.id <- id 
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -334,12 +340,14 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 
   val$call <- cl
   val$MGciid <- MGCiid
-  val$MGtid <- id
-  val$orig.id <- orig.id
-  val$iid.origid <- ids 
+  val$call.id <- call.id
+  val$id <- id
+  val$name.id <- name.id
+  val$nid <- nid
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
-  if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  if (length(name.id)==nrow(val$iid)) rownames(val$iid) <- name.id
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
@@ -514,16 +522,21 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
+###  call.id <- id
+###  if (!is.null(id)) {
+###          orig.id <- id
+###	  ids <- sort(unique(id))
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
+###  ### id from call coded as numeric 1 -> 
+###  id.orig <- id; 
+  
+  call.id <- id
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -681,9 +694,9 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 
   val$call <- cl
   val$MGciid <- MGCiid
-  val$MGtid <- id
-  val$orig.id <- orig.id
-  val$iid.origid <- ids 
+  val$call.id <- call.id
+  val$name.id <- name.id
+  val$nid <- nid
   val$iid.naive <- val$iid 
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian) else val$iid  <- val$iid
   val$naive.var <- val$var
@@ -746,16 +759,21 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
+###  call.id <- id
+###  if (!is.null(id)) {
+###          orig.id <- id
+###	  ids <- sort(unique(id))
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
+###  ### id from call coded as numeric 1 -> 
+###  id.orig <- id; 
+
+  call.id <- id
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -883,9 +901,10 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
   val$call <- cl
     val$MGciid <- MGCiid
-    val$MGtid <- id
-    val$orig.id <- orig.id
-    val$iid.origid <- ids 
+    val$id <- id
+    val$call.id <- call.id
+    val$name.id <- name.id
+    val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     val$naive.var <- val$var
@@ -994,16 +1013,9 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
+ call.id <- id;
+ conid <- construct_id(id,nrow(X))
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -1021,7 +1033,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   competing  <-  (length(Causes)>1) 
 
   statusC <- (status %in%cens.code) 
-  data$id <- id
+  data$id__ <- id 
   data$exit <- exit
   data$statusC <- statusC 
   n <- length(exit)
@@ -1029,7 +1041,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 
   call.cw <- cens.weights
   if (is.null(cens.weights))  {
-      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
@@ -1068,6 +1080,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
         cens.code=cens.code,no.opt=no.opt,method=method,augmentation=augmentation,
         outcome=outcome[1],model=model[1],Ydirect=Ydirect,...)
 
+
 # {{{ computation of ate, att, atc and their influence functions
 
 ### treatment is rhs of treat.model 
@@ -1097,13 +1110,14 @@ if (nlev==2) {
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 } else {  
-   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
    treat <- mlogit(treat.modelid,data)
    iidalpha <- iid(treat)
    pal <- predict(treat,data,se=0,response=FALSE)
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 }
+
 
    ###########################################################
    ### computes derivative of D (1/Pa) propensity score 
@@ -1171,11 +1185,7 @@ for (a in nlevs) {# {{{
              else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
-###    if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
-###        if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-###        else if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
-###        else if (outcome[1]=="rmst-cause") Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
-###    }
+
     Y <- Y*weights 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -1209,18 +1219,11 @@ for (a in nlevs) {# {{{
 
 ###val$MGciid <- MGCiid
 val$MGciidas <- MGCiidas
-val$MGtid <- id
-val$orig.id <- orig.id
-val$iid.origid <- ids 
-###val$iid.naive <- val$iid 
-###if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-###val$naive.var <- val$var
-###robvar <- crossprod(val$iid)
-###val$var <-  val$robvar <- robvar
-###val$se.robust <- diag(robvar)^.5
+val$call.id <- call.id
+val$id <- id
+val$name.id  <- name.id
+val$nid  <- nid
 val$se.coef <- diag(val$var)^.5
-###val$cause <- cause
-###val$cens.code <- cens.code 
 
 ################################
 ### estimates risk, att, atc
@@ -1233,6 +1236,7 @@ names(val$riskG) <- paste("treat",nlevs,sep="")
 ################################
 ## iid's of marginal risk estimates 
 ################################
+
 k <- 1
 iidrisk <- c()
 riskG.iid <- c()
@@ -1255,6 +1259,7 @@ for (a in nlevs) {
 ### DR-estimator 
 val$var.riskDR <- crossprod(iidrisk); 
 val$se.riskDR <- diag(val$var.riskDR)^.5
+if (nrow(iidrisk)==length(name.id)) rownames(iidrisk) <- name.id
 val$riskDR.iid <- iidrisk
 
 pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
@@ -1270,6 +1275,7 @@ val$var.difriskDR <- mm$vcov
 val$se.difriskDR <- diag(val$var.difriskDR)^.5
 
 ### G-estimator 
+if (nrow(riskG.iid)==length(name.id)) rownames(riskG.iid) <- name.id
 val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
@@ -1434,17 +1440,9 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id.orig <- id; 
+ call.id <- id;
+ conid <- construct_id(id,nrow(X))
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -1457,7 +1455,7 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   kmt <- kaplan.meier
 
   statusC <- (status %in% cens.code) 
-  data$id <- id
+  data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
   n <- length(exit)
@@ -1465,7 +1463,7 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   cens.strata <- cens.nstrata <- NULL 
 
   if (is.null(cens.weights))  {
-      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
@@ -1672,9 +1670,10 @@ DdifriskG <- DriskG1-DriskG0
 
 val$MGciid <- MGCiid
 val$MGciid10 <- MGCiid10
-val$MGtid <- id
-val$orig.id <- orig.id
-val$iid.origid <- ids 
+val$id <- id
+val$call.id <- call.id
+val$name.id <- name.id
+val$nid <- nid
 val$iid.naive <- val$iid 
 if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
 val$naive.var <- val$var
@@ -1758,6 +1757,7 @@ val$se.difriskG <- val$var.difriskG^.5
 # }}}
 
 
+  val$call.id <- call.id
   class(val) <- "binreg"
   return(val)
 }# }}}

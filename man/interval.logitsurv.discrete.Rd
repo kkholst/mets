@@ -79,10 +79,13 @@ Likelihood is maximized:
 }
 }
 \examples{
+library(mets)
 data(ttpd) 
 dtable(ttpd,~entry+time2)
+
 out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
+head(iid(out)) 
 
 pred <- predictlogitSurvd(out,se=FALSE)
 plotSurvd(pred)
@@ -90,6 +93,7 @@ plotSurvd(pred)
 ttpd <- dfactor(ttpd,fentry~entry)
 out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 summary(out)
+head(iid(out)) 
 
 }
 \author{

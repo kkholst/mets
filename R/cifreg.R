@@ -457,19 +457,24 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
 
     trunc <- (!is.null(entry))
     if (!trunc) entry <- rep(0,length(exit))
-    call.id <- id
 
-    if (!is.null(id)) {
-        ids <- unique(id)
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <-  fast.approx(ids,id)-1
-        else  {
-            id <- as.integer(factor(id,labels=seq(nid)))-1
-        }
-    } else id <- as.integer(seq_along(entry))-1;
-    ## orginal id coding into integers
-    id.orig <- id+1;
+###    call.id <- id
+###    if (!is.null(id)) {
+###        ids <- unique(id)
+###        nid <- length(ids)
+###        if (is.numeric(id))
+###            id <-  fast.approx(ids,id)-1
+###        else  {
+###            id <- as.integer(factor(id,labels=seq(nid)))-1
+###        }
+###    } else id <- as.integer(seq_along(entry))-1;
+###    ## orginal id coding into integers
+###    id.orig <- id+1;
+
+
+  call.id <- id;
+  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
     statusC <- (status==cens.code)
     statusE <- (status==cause)

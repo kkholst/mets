@@ -62,7 +62,7 @@
 ##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC IIDrecreg predicttime
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
-{# {{{
+{ ## {{{
 cl <- match.call()
 outi  <- recregBN(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,marks=marks,...)
 
@@ -73,11 +73,13 @@ outi <- outA
 
 outi$call <- cl
 return(outi)
-}# }}}
+} ## }}}
+
 
 recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0),cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,...)
-{# {{{
-    cl <- match.call()# {{{
+{ ## {{{
+
+    cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
     special <- c("strata", "cluster","offset","strataAugment")
     Terms <- terms(formula, special, data = data)
@@ -126,7 +128,7 @@ recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0)
     if (!is.null(intpos  <- attributes(Terms)$intercept)) X <- X[,-intpos,drop=FALSE]
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-    ## }}}
+    #
 
     res <- c(recregN01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,
 		      strata.name=strata.name, cens.model=cens.model,cause=cause,
@@ -139,13 +141,14 @@ recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0)
 
     class(res) <- c("recreg","phreg")
     return(res)
-}# }}}
+} ## }}}
+
 
 recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
           strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=NULL,zero.remove=1,
           case.weights=NULL,cause=1,death.code=2,cens.code=1,Gc=NULL,cens.model=~+1,augmentation=NULL,
-	  cox.prep=TRUE,wcomp=NULL,augment.model=NULL,adm.cens.time=NULL,ftime.augment=NULL,twostage=FALSE,...) {# {{{ 
-    p <- ncol(X)  ## {{{ setting up weights, strata, beta and so forth before the action starts
+	  cox.prep=TRUE,wcomp=NULL,augment.model=NULL,adm.cens.time=NULL,ftime.augment=NULL,twostage=FALSE,...) { ## {{{
+    p <- ncol(X)  # setting up weights, strata, beta and so forth before the action starts
     if (missing(beta)) beta <- rep(0,p)
     if (p==0) X <- cbind(rep(0,length(exit)))
     augmentation.call <- augmentation
@@ -190,26 +193,16 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	    case.weights <- case.weights* wwcomp
     }
     strata.call <- strata
-    call.id <- id
 
-    if (!is.null(id)) {
-        ids <- unique(id)
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <-  fast.approx(ids,id)-1
-        else  {
-            id <- as.integer(factor(id,labels=seq(nid)))-1
-        }
-    } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-    ## orginal id coding into integers 1:...
-    id.orig <- id+1;
-
+  call.id <- id 
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
 ### censoring weights constructed
     whereC <- which(status %in% cens.code)
     time <- exit
     statusC <- c(status %in% cens.code)
-    data$id <- id
+    data$id__ <- id
     data$exit__ <- exit
     data$entry__ <- entry
     data$statusC <- statusC
@@ -222,11 +215,11 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     ## augmentation model and remove intercept
     if (!is.null(augment.model)) { XXA <- model.matrix(augment.model,data)[,-1,drop=FALSE]; namesXXA <- colnames(XXA); } else XXA <- NULL
 
-    if ((length(whereC)>0) & (is.null(adm.cens.time)) ) {# {{{
+    if ((length(whereC)>0) & (is.null(adm.cens.time)) ) {
     if (is.null(Gc)) {
         kmt <- TRUE
         if (class(cens.model)[1]=="formula") {
-            formC <- update.formula(cens.model,Surv(entry__,exit__,statusC)~ . +cluster(id))
+            formC <- update.formula(cens.model,Surv(entry__,exit__,statusC)~ . +cluster(id__))
             cens.model <- phreg(formC,data)
         }
         if (cens.model$p>0) kmt <- FALSE
@@ -249,7 +242,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
         Pcens.model <- list(time=exit,surv=Gc,strata=0)
         nCstrata <- 1
 	cens.strata <- rep(0,length(exit))
-    }# }}}
+    }
 
     Zcall <- cbind(status,cens.strata,Stime,strata,strata,1) ## to keep track of status and Censoring strata
 
@@ -260,7 +253,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     }
 
     ## computing terms for those experiencing another cause, need S0, S1, S2
-    if ((length(other)>=1)) {# {{{
+    if ((length(other)>=1)) {
         weightso <- weights[other]/Stime[other]
        timeoo <- rep(max(exit)+1,length(other))
        if (is.null(adm.cens.time))
@@ -288,14 +281,14 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
         Zcallo[,6] <- 2
 	Zcall <- rbind(Zcall,Zcallo)
 	Zcall <- cbind(Zcall,rbind(XXA,XXA[other,,drop=FALSE]))
-    }# }}}
+    }
 
     stat1 <- 1*(status %in% cause)
     xx2 <- .Call("FastCoxPrepStrata",entry,exit,stat1,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
 
     ### remove all the initial zero's to save space/time, that is, the first streak of sign=-1, 
     ### that is not important for risk and events
-    if (zero.remove==1) {# {{{
+    if (zero.remove==1) {
       first <- which(xx2$sign==1)[1]-1
       if (first >1) {
 	 fentry <- (1:first)
@@ -346,11 +339,10 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	    Gjumps <- 1
 	    Gts <- matrix(1,length(jumps),1)
     } 
-    ## }}}
-    ## }}}
+    #
+    #
 
-
-    obj <- function(pp,all=FALSE) {# {{{
+    obj <- function(pp,all=FALSE) {
 
       rr2 <- c(xx2$sign*exp(xx2$X %*% pp + xx2$offset)*xx2$weights)
       rr2now <- c(xx2$sign*exp(xx2$X %*% pp + xx2$offset))
@@ -425,11 +417,11 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
             return(out)
         else
             with(out,structure(-ploglik/nid, gradient=-gradient/nid, hessian=-hessian/nid))
-    }# }}}
+    }
 
    if (length(jumps)==0) no.opt <- TRUE
    opt <- NULL
-    if (p>0) {# {{{
+    if (p>0) {
         if (no.opt==FALSE) {
             if (tolower(method)=="nr") {
                 opt <- lava::NR(beta,obj,...)
@@ -445,7 +437,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     } else {
 	no.opt <- TRUE
         val <- obj(0,all=TRUE)
-    }# }}}
+    }
 
     beta.s <- val$coef
     if (is.null(beta.s)) beta.s <- 0
@@ -469,10 +461,10 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     varmc <-  crossprod(Uiid)
 
     ## compute regression augmentation for censoring martingale 
-    if ((!is.null(augment.model)) & (length(whereC)>0) & is.null(adm.cens.time)) {## {{{
+    if ((!is.null(augment.model)) & (length(whereC)>0) & is.null(adm.cens.time)) {#
 
 	CovZXstrata <- function(X,Ej,Z,Sign,strata,nstrata,jumps) 
-	{# {{{
+	{
 		strata  <- c(strata); Sign <- c(Sign)
          ###	Ej <- Ej[jumps,,drop=FALSE]; Ej <- Ej
 		ZE <- apply(Z*Sign,2,revcumsumstrata,strata,nstrata)[jumps,,drop=FALSE]; 
@@ -481,13 +473,13 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		EXZ  <- .Call("vecMatMat",Ej,ZE)$vXZ;  
 		out <- XZ-EXZ
 		return(out)
-	}# }}}
+	}
 
        ## regress U(s)=\int_s^\infty (Z-E) w(s) dM(s) on agument-model among survivors 
        ## U(s) = U(\infty) - \int_0^s (Z-E) w(s)  dM(s)
        ## sum (e_i - \bar e) U(s) Y_i(s)
 
-    ## {{{ construct censoring weights going along with all data, with added [D,\infty], start stop
+    # construct censoring weights going along with all data, with added [D,\infty], start stop
     rr0 <- c(xx2$sign)*(typexx2==1)
     jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1 & typexx2==1)
     strataCxx2 <- xx2$Z[,2]
@@ -498,7 +490,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     S0c <- c(S0rrr[jumpsC])
     ## Gc(t) computed  as exp(- Cumhaz) to avoid some "0"s
     Gcj <- Gcxx2 <- exp(-cumsumstrata(S0iC,strataCxx2,nCstrata))[jumpsC]
-    ## }}}
+    #
 
     XXA <- xx2$Z[,-(1:6),drop=FALSE]
     EXXA <- apply(XXA*c(rr0),2,revcumsumstrata,strataCxx2,nCstrata)
@@ -568,7 +560,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
    var.augment  <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
    if (!is.null(augmentation.call)) { ## update variance when called with augmentation
-   #### iid magic  for censoring augmentation martingale{{{
+   #### iid magic  for censoring augmentation martingale
    ### int_0^infty gamma (e_i - ebar(s)) 1/G_c(s) dM_i^c
    S0iG <- S0i <- rep(0,length(xx2$strata))
    S0iG[jumpsC] <- ftime/(S0rrr[jumpsC]*c(Gcj))
@@ -601,7 +593,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
    Uiid <- Uiid.augment.times
    ## scale with G_c(t) to compare with gamma
    gammat <- gammat * c(Gcj)
-# }}}
+
    var.augment <-  varmc  -  iH %*% var.augment %*% iH
    var.augment.times <-  varmc  +  iH %*% var.augment.times %*% iH
    varmc <- var.augment.times
@@ -619,7 +611,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     time.gammat <- gamma <- gammat <- NULL
     ftime.gamma <- NULL
     Gcj <- NULL
-   } ## }}}
+   } #
 
     ### end if (p>0)
     } else {
@@ -646,13 +638,22 @@ varbetat <-   rowSums((DLambeta.t %*% iH)*DLambeta.t)
 var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 colnames(se.cumhaz) <- c("time","se.cumhaz")
+ 
+if (is.matrix(MGc))
+if (length(name.id)==nrow(MGc)) rownames(MGc) <- name.id
+if (is.matrix(Uiid))
+if (length(name.id)==nrow(Uiid)) rownames(Uiid) <- name.id
+if (is.matrix(Uiid.augment)) 
+if (length(name.id)==nrow(Uiid.augment)) rownames(Uiid.augment) <- name.id
+if (is.matrix(Uiid.augment.times)) 
+if (length(name.id)==nrow(Uiid.augment.times)) rownames(Uiid.augment.times) <- name.id
 
 out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
 	iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	hessianttime=opt$hessianttime,
 	ploglik=opt$ploglik,gradient=opt$gradient,
 	cumhaz=cumhaz,se.cumhaz=se.cumhaz,MGciid=MGc,
-	id=id.orig,call.id=call.id,
+	id=id,call.id=call.id,name.id=name.id,nid=nid,
 	strata.jumps=opt$strata,strata=xx2$strata,
 	nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
 	propodds=propodds,
@@ -675,7 +676,8 @@ if (cox.prep) out <- c(out,list(cox.prep=xx2))
 if (twostage) out <- c(out,list(cox.prep.twostage=xxg))
 
 return(out)
-}# }}}
+} ## }}}
+
 
 ##' @export
 IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbeta=NULL,beta.iid=NULL,adm.cens=NULL,tminus=FALSE)
@@ -692,7 +694,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 ###  else other <- which((status %in% death.code) & (xx2$sign==1) )
   whereC <- which( (status %in% cens.code) & xx2$sign==1)
 
-    ## {{{ construct censoring weights going along with all data, with added [D,\infty], start stop
+    # construct censoring weights going along with all data, with added [D,\infty], start stop
     jumps <- xx2$jumps+1
     jumptimes <- xx2$time[jumps]
     strata1jumptimes <- xx2$strata[jumps]
@@ -716,11 +718,11 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	    Gstart <- rep(1,nCstrata)
 	    Gjumps <- Gcxx2[jumps,]
 ###    } else  Gcxx2 <- rep(1,length(xx2$stata))
-    ## }}}
+    #
     if (!is.null(adm.cens)) typexx2 <- 1
 
     ### iid version given G_c when covariates are there 
-    ## {{{ iid robust 
+    # iid robust 
     S0i <- rep(0,length(xx2$strata))
     S0i[jumps] <- 1/x$S0
     Z <- xx2$X
@@ -795,11 +797,11 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	    ff <- function(x) x[lastt][dstrata]-x
 	    EHtinf  <- apply(EGdL,2,ff)
     }
-   } ## }}}
+   } #
 
  if (!is.null(time) & !is.null(adm.cens)) MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
 
-    if ((length(other)>=1) & (length(whereC)>0) & is.null(adm.cens)) { ## {{{
+    if ((length(other)>=1) & (length(whereC)>0) & is.null(adm.cens)) { #
         ### Censoring adjustment for jumps of other type but only for KM-case 
         ### first time we see them with type2 event 
         rrw2j <- -c(rrw2*(xx2$sign==-1))
@@ -830,7 +832,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
            MGBc <- qB2*S0iC-EBdLam0q2*c(xx2$sign)*(typexx2==1)
            MGBc <- apply(MGBc,2,sumstrata,xx2$id,mid+1)
 	}
-        ## }}}
+        #
     } else { MGc <- 0; MGBc <- 0}
 
 
@@ -846,10 +848,10 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	   Uiid.naive <- NULL
    } 
 
-   if ( (!is.null(beta.iid)) | fixbeta==0) { ## {{{
+   if ( (!is.null(beta.iid)) | fixbeta==0) { #
     Htlast <- tailstrata(xx2$strata,xx2$nstrata)
     HtS <- Ht[Htlast,,drop=FALSE]
- } ## }}}
+ } #
 
 ## sum after id's within strata and order 
 if (!is.null(time))  {
@@ -876,6 +878,15 @@ if (!is.null(time))  {
  names(cumhaz.time) <- paste("strata",sus,sep="")
 } else { sus <- MGAiids <- cumhaz.time <- NULL }
 
+ if (is.matrix(MGAiids)) {
+    if (!is.null(x$name.id))
+    if (length(x$name.id)==nrow(MGAiids)) rownames(MGAiids) <- x$name.id
+ }
+ if (is.matrix(Uiid)) {
+ if (!is.null(x$name.id))
+ if (length(x$name.id)==nrow(Uiid)) rownames(Uiid) <- x$name.id
+ }
+
  if (inherits(x,c("cifreg","recreg"))) {
  out <- list(time=time,base.iid=MGAiids,nstrata=xx2$nstrata, beta.iid=Uiid,
 	     strata.call=x$strata.call,id=xx2$id,call.id=x$call.id,
@@ -887,51 +898,52 @@ if (!is.null(time))  {
    out <- list(time=time,base.iid=MGAiid,id=xx2$id,beta.iid=Uiid,beta.iid.naive=Uiid.naive, MGt=UU,MGc=MGc,Ut=U,EdLam0=EdLam0,cumhaz=cumhaz)
  }
    return(out)
-} ## }}}
+}  ## }}}
+
 
 ##' @export
 iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)
-{# {{{
+{ ## {{{
 if (is.null(object$cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
    return(IIDrecreg(object$cox.prep,object,time=time,fixbeta=fixbeta,beta.iid=beta.iid,adm.cens=object$adm.cens,tminus=tminus,...))
-} # }}}
+}  ## }}}
 
 ##' @export
 GLprediid <- function(...)
-{# {{{
+{
 out <- FGprediid(...,model="GL")
 return(out)
-}# }}}
+}
 
 ##' @export
-IC.recreg <- function(x, ...) {# {{{
+IC.recreg <- function(x, ...) {
   res <- with(x, iid * NROW(iid))
   return(res)
 }
-# }}}
+
 
 ##' @export
-plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { ## {{{
+plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { #
  if (inherits(x,"recreg") & is.null(ylab)) ylab <- "Mean number"
 if (!se) baseplot(x,se=se,ylab=ylab,...)
 else {
     warning("Standard errors approximative (but too small), use predict and type='cumhaz' \n")
     baseplot(x,se=se,ylab=ylab,...)
 }
-} ## }}}
+} #
 
 ##' @export
-predict.recreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { ## {{{
+predict.recreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { #
 if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
   out <- predictrecreg(object,newdata,times=times,np=np,...)
 }
 class(out) <- c("predictrecreg",class(object)[1])
 return(out)
-} ## }}}
+} #
 
 ##' @export
-summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cumhaz","surv")[2],np=10,...) {# {{{
+summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cumhaz","surv")[2],np=10,...) { ## {{{
 if (!is.null(times)) {
    indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
 } else {
@@ -969,7 +981,8 @@ rownames(ret) <- NULL
 ###ret$strata <- object$strata; ret$X <- object$X; ret$RR <- object$RR
 class(ret) <- "summarypredictrecreg"
 return(ret)
-}# }}}
+} ## }}}
+
 
 ##' @export
 plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)
@@ -977,6 +990,7 @@ plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)
 if (inherits(x,"predictrecreg") & is.null(ylab)) ylab <- "Mean number"
   plotpredictphreg(x,se=se,ylab=ylab,type=type[1],...)
 } ## }}}
+
 
 ##' @export
 predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,conf.type="log",conf.int=0.95,np=50,...)
@@ -1052,10 +1066,10 @@ return(out)
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
 marks=NULL,weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
-{# {{{
+{ ## {{{
 ## method=c("incIPCW","IPCW","rate")
 estimator=c("incIPCW")
-cl <- match.call()# {{{
+cl <- match.call()
 m <- match.call(expand.dots = TRUE)[1:3]
 special <- c("strata", "cluster","offset")
 Terms <- terms(formula, special, data = data)
@@ -1096,30 +1110,11 @@ X <- model.matrix(Terms, m)
 ###    if (!is.null(intpos  <- attributes(Terms)$intercept))
 ###        X <- X[,-intpos,drop=FALSE]
 if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-## }}}
+#
 
-## {{{
-call.id <- id
-if (!is.null(id)) {
-ids <- unique(id)
-nid <- length(ids)
-if (is.numeric(id))
-    id <-  fast.approx(ids,id)-1
-else  {
-    id <- as.integer(factor(id,labels=seq(nid)))-1
-}
-} else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-## orginal id coding into integers 1:...
-orig.id <- id.orig <- id+1;
-nid <- length(unique(id))
-
-## make sure id, start in 1,2,  
-dd <- data.frame(id=id)
-dd <- countID(dd,sorted=TRUE)
-## new id 0,1,2,.... and so on, referring to rows of data
-id <- dd$indexid
-
-## to avoid Rcheck wawning
+  call.id <- id 
+  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
 if (is.null(marks)) marks <- rep(1,length(id))
 
@@ -1144,10 +1139,10 @@ Dtime <- NULL
 formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
 cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
 whereC <- which(status %in% cens.code)
-## }}}
+#
 
 
-if (length(whereC)>0) {# {{{
+if (length(whereC)>0) {
 ### censoring weights
 strat <- cr$strata[cr$jumps]
 x <- cr
@@ -1162,7 +1157,7 @@ St      <- exp(-cumhazD)
 } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
 } else  St <- rep(1,nrow(xx$strata))
 Gc <- St
-## }}}
+#
 
 
 ###formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
@@ -1215,7 +1210,6 @@ weights <- weights[lastrecord]
 status <- status[lastrecord]
 exit <- exit[lastrecord]
 idR <- id[lastrecord]
-orig.idR <- orig.id[lastrecord]
 X2 <- .Call("vecMatMat", X, X)$vXZ
 ph <- 1
 if (is.null(beta)) beta <- rep(0,ncol(X))
@@ -1223,7 +1217,7 @@ if (is.null(beta)) beta <- rep(0,ncol(X))
 dataiid <- data[lastrecord,]
 
 
-if (type[1]=="II") {# {{{ type="II" default augmentation
+if (type[1]=="II") { 
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
 Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
@@ -1258,10 +1252,9 @@ MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0*c(xx$sign))*c(xx$weights)
 MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
 MGCiid2 <- MGtiid-MGCiid2
 }  else MGCiid2 <- 0   
-## }}}
+#
 
-
-obj <- function(pp, all = FALSE) {# {{{
+obj <- function(pp, all = FALSE) { ## {{{
 lp <- c(X %*% pp + offset)
 if (model == "exp") p <- exp(lp) else p <- lp
 if (model == "dexp") p <- exp(lp) 
@@ -1289,7 +1282,7 @@ if (all) {
     return(val)
 }
 structure(-ploglik, gradient = -gradient, hessian = hessian)
-}# }}}
+} ## }}}
 
 p <- ncol(X)
 opt <- NULL
@@ -1318,7 +1311,7 @@ if (length(val$coef) == length(colnames(X))) names(val$coef) <- colnames(X)
 val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
 
 
-if (se) {# {{{
+if (se) {
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
 Gcdata[Gcdata<0.000001] <- 0.00001
 ## check data sorted in dexit 
@@ -1347,7 +1340,7 @@ MGt <- (E[, drop = FALSE] - EdLam0 * c(xx$sign) )*c(xx$weights)
 MGCiid <- apply(MGt, 2, sumstrata, xx$id, max(id) + 1)
 #MGCiid <- MGCiid-MGCiid2
 MGCiid <- MGCiid+MGCiid2
-} else  MGCiid <- 0 ## }}}
+} else  MGCiid <- 0 
 
 
 val$call <- cl
@@ -1357,25 +1350,27 @@ val$model.type <- model[1]
 val$Y <- Ydata
 val$X <- Xdata
 val$id <- id
-val$orig.id <- orig.id
+val$call.id <- call.id
+val$nid <- nid
+val$name.id <- name.id
 val$iid.naive <- val$iid
 val$naive.var <- val$var
 if (se) { 
 	val$MGCiid <- MGCiid
 	MGCiid <- MGCiid %*% val$ihessian 
 	val$iid <- val$iid + MGCiid
-} else val$MGciid <- MGCiid 
-
-## order after orig.id
-idoo <- order(orig.idR)
-ido <- idR[idoo]+1
-val$iid <- val$iid[ido,]
-val$iid.naive <- val$iid.naive[ido,]
-if (se) { 
-   val$MGCiid <- val$MGCiid[ido,]
+} else val$MGCiid <- MGCiid 
+if (is.matrix(val$iid)) 
+if (length(name.id)==nrow(val$iid)) {
+	rownames(val$iid) <- name.id
+	oid <- order(name.id)  
+	val$iid <- val$iid[oid,,drop=FALSE]
+}
+if (is.matrix(val$MGCiid))  {
+if (length(name.id)==nrow(val$MGCiid)) rownames(val$MGCiid) <- name.id
+	val$MGCiid <- val$MGCiid[oid,,drop=FALSE]
 }
 
-val$call.id <- call.id
 robvar <- crossprod(val$iid)
 val$var <- val$robvar <- robvar
 val$se.robust <- diag(robvar)^0.5
@@ -1390,7 +1385,7 @@ val$cumhazP <- cumhazP
 val$nevent <- nevent
 class(val) <- c("binreg", "resmean")
 return(val)
-} # }}}
+} ## }}}
 
 strataAugment <- survival::strata
 
@@ -1425,7 +1420,7 @@ strataAugment <- survival::strata
 ##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
    model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
-{# {{{
+{ ## {{{
 ## setting up baselines for simulations 
 maxt <- tail(base1[,1],1)
 base1 <- as.matrix(base1); drcumhaz <- as.matrix(drcumhaz)
@@ -1519,11 +1514,12 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  attr(ll,"base1events") <- base1
  attr(ll,"deathcumbase") <- cumD
  return(ll)
-}# }}}
+} ## }}}
+
 
 simGLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 	     model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
-{# {{{
+{ ## {{{
 ## setting up baselines for simulations 
 maxt <- tail(base1[,1],1)
 seqt <- seq(by,maxt,by=by)
@@ -1601,11 +1597,12 @@ if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
  ll <- dtransform(ll,statusD=3,reverseCountid==1 & death==1)
 
  return(ll)
-}# }}}
+} ## }}}
+
 
 simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
                      model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
-{# {{{
+{ ## {{{
   if (is.null(r1)) r1 <- rep(1,n)
   if (is.null(r2)) r2 <- rep(1,n)
   if (is.null(rd)) rd <- rep(1,n)
@@ -1646,7 +1643,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  XX <- c()
  nks <- 0
  k <- 1
- if (model[1]!="random") {# {{{
+ if (model[1]!="random") {
      for (rdss in rds) {
 	  lam1ms <- (dbase1)/St^rdss
           where <- which(rdss==rd)
@@ -1662,9 +1659,9 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
     nks <- nks+nk
     data <- rbind(data,as.matrix(datss))
     }
- }# }}}
+ }
 
- if (model[1]=="random") {# {{{
+ if (model[1]=="random") {
  for (k in 1:n) {
     rdss <- rd[k]
     if (frailty==TRUE) lam1ms <- (z[k]^alpha/mza)*(dbase1)/St^(z[k]*rdss) else {
@@ -1686,7 +1683,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
     nks <- nks+nk
     data <- rbind(data,as.matrix(datss))
  }
- }# }}}
+ }
 
  rownames(XX) <- NULL
  rownames(data) <- NULL
@@ -1700,12 +1697,12 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
  data <- dtransform(data,statusD=death.code,death==1)
 
  return(data)
-}# }}}
+} ## }}}
+
 
 simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
 			       beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),X=NULL,...)
-{# {{{
-###
+{ ## {{{
 
 ### to avoid R-check error
  revnr <- death <- status <- NULL
@@ -1726,23 +1723,24 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
  if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
  if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2
  return(rr)
-}# }}}
+}
 
 ##' @export
 scalecumhaz <- function(cumt,k)
-{# {{{
+{
 	return( t(t(cumt)*c(1,k)))
-}# }}}
+}
 
 ##' @export
 GLprediid <- function(...)
-{# {{{
+{
 out <- FGprediid(...,model="GL")
 return(out)
-}# }}}
+} ## }}}
+
 
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsize=0.5,...) 
-{# {{{
+{ ## {{{
 n <- max(margsurv$id)
 K <- bootstrap
 formid <- as.formula(paste("~",id))
@@ -1768,13 +1766,14 @@ rrb$strata <- floor((rrb[,id]-0.01)/n)
   varr <- cov(outr)
 
   list(outb=outb,var=varb,se=diag(varb)^.5,se.coxD=diag(vard)^.5,se.coxR=diag(varr)^.5)
-}# }}}
+} ## }}}
+
 
 ##' @export
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=NULL,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
   fnu=NULL,nufix=0,nu=NULL,at.risk=1,numderiv=1,derivmethod=c("simple","Richardson"),newrec=1,...)
-{# {{{
+{ ## {{{
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
     if (is.null(recurrent$cox.prep) & newrec==0) stop("recreg must be called with cox.prep=TRUE\n")
@@ -1853,7 +1852,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     ###
     idD <- xx$id[statusxx==1]
 
-    obj <- function(par, all = FALSE) {# {{{
+    obj <- function(par, all = FALSE) {
         if (var.link == 1) epar <- c(exp(c(par))) else epar <- c(par)
         thetav <- c(as.matrix(theta.des) %*% c(epar))
         thetai <- thetav[firstid]
@@ -1914,9 +1913,9 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
             return(val)
         with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
     }
-# }}}
 
-    objNonShared <- function(par, all = FALSE) {# {{{
+
+    objNonShared <- function(par, all = FALSE) {
         if (var.link == 1) epar <- c(exp(c(par))) else epar <- c(par)
         thetav <- c(as.matrix(theta.des) %*% c(epar))
         thetai <- thetav[firstid]
@@ -1965,7 +1964,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
             return(val)
         with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
     }
-# }}}
+
 
     ## default is simple identity 
 ###    if (is.null(fnu)) { fw <- function(x) 1/(1+exp(x)); Dfw <- function(x) -exp(x)/(1+exp(x))^2;} else { 
@@ -1973,7 +1972,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
    nudes <- theta.des  
    p <- ncol(theta.des)
 
-    objShared <- function(par, all = FALSE) {# {{{
+    objShared <- function(par, all = FALSE) {
         if (var.link == 1) epar <- c(exp(par[1:p])) else epar <- c(par[1:p])
         thetav <- c(as.matrix(theta.des) %*% epar)
 	if (nufix==1) nu1 <- c(as.matrix(nudes) %*% nu)
@@ -2062,7 +2061,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 ###        with(val, structure(-ploglik, gradient = -gradient, hessian = -hessian))
         with(val, structure(-ploglik, gradient = -gradient, hessian = hess2))
     }
-# }}}
+
 
    if (model[1]=="shared") obj <- objShared
    if (model[1]=="non-shared") obj <- objNonShared
@@ -2138,11 +2137,10 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     attr(val, "additive-gamma") <- 0
     attr(val, "twostage") <- "two.stage"
     return(val)
-}
-# }}}
+} ## }}}
 
 ##' @export
-summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
+summary.twostageREC <- function(object,vcov=NULL,delta=0,...) { ## {{{
     I <- -solve(object$hessian)
     if (!is.null(vcov)) V <- vcov else V <- object$var
     ncluster <- object$n
@@ -2163,10 +2161,10 @@ summary.twostageREC <- function(object,vcov=NULL,delta=0,...) {# {{{
 	      ghosh.lin=object$ghosh.lin)
   class(res) <- "summary.twostageREC"
   res
-} # }}}
+}  ## }}}
 
 ##' @export
-print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
+print.summary.twostageREC  <- function(x,max.strata=5,...) { ## {{{
   if (x$ghosh.lin==0) cat("Cox(recurrent)-Cox(terminal) intensity model\n"); 
   if (x$ghosh.lin==1) cat("Ghosh-Lin(recurrent)-Cox(terminal) mean model\n"); 
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
@@ -2179,10 +2177,11 @@ print.summary.twostageREC  <- function(x,max.strata=5,...) {# {{{
     printCoefmat(x$exp.coef,...)
   }
   cat("\n")
-} # }}}
+}  ## }}}
+
 
 ##' @export
-print.twostageREC  <- function(x,...) {# {{{
+print.twostageREC  <- function(x,...) {
   print(summary(x),...)
-} # }}}
+} 
 

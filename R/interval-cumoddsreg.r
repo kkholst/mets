@@ -40,10 +40,13 @@
 ##' @param ... Additional arguments to lower level funtions lava::NR  optimizer or nlm
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' data(ttpd) 
 ##' dtable(ttpd,~entry+time2)
+##' 
 ##' out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 ##' summary(out)
+##' head(iid(out)) 
 ##' 
 ##' pred <- predictlogitSurvd(out,se=FALSE)
 ##' plotSurvd(pred)
@@ -51,6 +54,7 @@
 ##' ttpd <- dfactor(ttpd,fentry~entry)
 ##' out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 ##' summary(out)
+##' head(iid(out)) 
 ##' 
 ##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg simTTP predictSurvd plotSurvd 
 ##' @export
@@ -101,15 +105,19 @@ interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   X <- X[,-intpos,drop=FALSE]
   if (ncol(X)>0) X.names <- colnames(X) else X.names <- NULL
 
-  if (!is.null(id)) {
-	  ids <- unique(id)
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { id <- as.integer(seq_along(time2))-1; nid <- length(time2) }
-   ## orginal id coding into integers 
-   id.orig <- id+1; 
+###  if (!is.null(id)) {
+###	  ids <- unique(id)
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else { id <- as.integer(seq_along(time2))-1; nid <- length(time2) }
+###   ## orginal id coding into integers 
+###   id.orig <- id+1; 
+
+  call.id <- id
+  conid <- construct_id(id,nrow(X))
+  id <- conid$id; nid <- conid$nid; name.id <- conid$name.id
 
   ## times 1 -> mutimes , 0 til start
   utimes <- sort(unique(c(time2,entrytime)))
@@ -297,11 +305,18 @@ hessian <- D2log
   Xnames <- c(paste("time",uu[-1],sep=""),X.names)
   if (length(val$coef)==length(Xnames)) names(val$coef) <- Xnames
 
-  val <- c(list(increment=increment,exp.link=exp.link,ntimes=mutimes,utimes=utimes),val)
+  if (is.matrix(val$iid)) 
+	  if (length(name.id)==nrow(val$iid)) rownames(val$iid) <- name.id
+
+  val <- c(list(increment=increment,exp.link=exp.link,ntimes=mutimes,utimes=utimes,
+		name.id=name.id,call.id=call.id,nid=nid),val)
 
   class(val) <- c("cumoddsreg")
   return(val)
 } ## }}} 
+
+##' @export
+IC.cumoddsreg <- function(x,...) { x$iid*NROW(x$iid) }
 
 ##' @export
 cumoddsreg <- function (formula,data,...)

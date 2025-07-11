@@ -35,11 +35,13 @@ influence functions (iid) will follow numerical order of given cluster variable
 so ordering after $id will give iid in order of data-set.
 }
 \examples{
+library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
 out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
 ## robust standard errors default 
 summary(out1)
+head(iid(out1))
 
 par(mfrow=c(1,2))
 plot(out1)
@@ -53,6 +55,7 @@ betaiiid <- lava::iid(out1)
 
 ## making iid decomposition of baseline at a specific time-point
 Aiiid <- iidBaseline(out1,time=30)
+head(Aiiid$base.iid)
 
 }
 \author{

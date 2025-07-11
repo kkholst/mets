@@ -229,8 +229,9 @@ library(mets)
  bmt$event <- (bmt$cause!=0)*1
  dfactor(bmt) <- tcell.f~tcell
 
- ss <- phreg_IPTW(Surv(time,event)~tcell.f,data=bmt,treat.model=tcell.f~platelet+age) 
+ ss <- phreg_IPTW(Surv(time,event)~tcell.f+cluster(id),data=bmt,treat.model=tcell.f~platelet+age) 
  summary(ss)
+ head(iid(ss))
 ```
 
 ## Examples: Competing risks regression, Binomial Regression
@@ -242,6 +243,7 @@ We can fit the logistic regression model at a specific time-point with IPCW adju
  # logistic regresion with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
+ head(iid(out))
 
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 ```
@@ -359,6 +361,7 @@ data(hfactioncpx12)
 
 e2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2,time=2)
 summary(e2)
+head(iid(e2))
 ```
 
 ## Examples: Regression for RMST/Restricted mean survival for survival and competing risks  using IPCW  
@@ -373,6 +376,7 @@ estimates via IPCW adjustment and then we can do regression
  out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
                          cens.model=~strata(platelet,tcell),model="lin")
  estimate(out)
+ head(iid(out))
  ## same as 
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  rm1 <- resmean.phreg(out1,times=30)
@@ -397,6 +401,8 @@ probabilty of dying
  brs <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,
 	  treat.model=tcell~platelet+age)
  summary(brs)
+ head(brs$riskDR.iid)
+ head(brs$riskG.iid)
 ```
 
 or the the restricted mean survival or years-lost to cause 1 
@@ -404,7 +410,9 @@ or the the restricted mean survival or years-lost to cause 1
 ```{r}
  out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
  summary(out)
- 
+ head(out$riskDR.iid)
+ head(out$riskG.iid)
+
  out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
                     treat.model=tcell~platelet)
  summary(out1)

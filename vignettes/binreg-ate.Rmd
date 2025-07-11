@@ -41,8 +41,6 @@ Average treatment for Competing risks data
 ==========================================
 
 
-
-
 The binreg function does direct binomial regression for one time-point, $t$, 
 fitting the model 
 \begin{align*}
@@ -171,30 +169,29 @@ sample size we still see that we recover the parameters of cause 2.
 
 
 ```{r}
+###install.packages("mets")
+
 library(mets) 
 set.seed(100)
-
+###
 n <- 400
 kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
 dtable(kumar,~cause)
 dfactor(kumar) <- gp.f~gp
-
-### censoring model must be adapted to size of data
-###c2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
-###	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr,preauto,ttt24))
-###summary(c2)
-
-c2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
-	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
-summary(c2)
-
-c1 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
-		treat.model=gp.f~dnr+preauto+ttt24,time=60)
-summary(c1)
-
+kumar$id <- 1:400
+kumar$idc <- sample(100,400,TRUE)
+kumar$ids <- sample(400,400)
+kumar$id2 <- sample(400,400)
+kumar2 <- kumar[order(kumar$id2),]
 kumar$int <- interaction(kumar$gp,kumar$dnr)
+kumar2$int <- interaction(kumar2$gp,kumar2$dnr)
+clust <- 0
+
+b2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar2,cause=2,
+	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
+summary(b2)
 
 b5 <- binregATE(Event(time,cause)~int+preauto+ttt24,kumar,cause=2,
 		treat.model=int~preauto+ttt24,cens.code=0,time=60)

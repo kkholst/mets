@@ -1,4 +1,32 @@
 
+construct_id <- function(id,nid,as.data=FALSE) { ## {{{ 
+  call.id <- id
+
+  if (!is.null(id)) {
+	  ids <- unique(id)
+	  nid <- length(ids)
+      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+      id <- as.integer(factor(id,labels=seq(nid)))-1
+     }
+     order.ids <- order(ids)
+     id.name <- ids[order.ids]
+   } else { 
+	   id <- 1:nid-1;  
+	   ids <- id+1
+	   order.ids <- ids
+	   id.name <- ids
+   } 
+   ## orginal id coding into integers 
+   ## id from 0,1,...,nid-1
+
+    if (as.data) {
+        id  <- (0:(nid - 1))[order(ids)][id +1]
+        id.name <- ids
+    }
+
+  return(list(call.id=call.id,id=id,nid=nid,unique.id=ids,name.id=id.name))
+} ## }}} 
+
 ###{{{ phreg01 
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
              beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
@@ -26,22 +54,25 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 
   trunc <- (!is.null(entry))
   if (!trunc) entry <- rep(0,length(exit))
-  call.id <- id
 
-  if (!is.null(id)) {
-	  ids <- unique(id)
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X);} 
+###  call.id <- id
+###  if (!is.null(id)) {
+###	  ids <- unique(id)
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X);} 
+###   ## orginal id coding into integers 
+###   id.orig <- id+1; 
 
-   ## orginal id coding into integers 
-   id.orig <- id+1; 
+  conid <- construct_id(id,nrow(X))
+  call.id <- conid$call.id; id <- conid$id; nid <- conid$nid
+  name.id <- conid$name.id
 
-   dd <- .Call("FastCoxPrepStrata", entry,exit,status,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
+  dd <- .Call("FastCoxPrepStrata", entry,exit,status,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
 
-   dd$nstrata <- nstrata 
+  dd$nstrata <- nstrata 
    obj <- function(pp,U=FALSE,all=FALSE) {# {{{
       if (length(dd$jumps) >0) {
 	      if (is.null(propodds) & is.null(AddGam)) {
@@ -131,19 +162,11 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   res <- c(val,
            list(cox.prep=dd,
                 strata.call=strata.call, strata.level=strata.level,
-                entry=entry,
-                exit=exit,
-                status=status,                
-                p=p,
-                X=X,
-                offsets=offset,
-                weights=weights,
-                id=id.orig, call.id=call.id,
-                opt=opt,
-                no.opt=no.opt,
-                cumhaz=cumhaz, se.cumhaz=se.cumhaz,
-                lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz,
-                ihessian=II,
+                entry=entry, exit=exit, status=status, X=X,
+                p=p, offsets=offset, weights=weights,
+                id=id,call.id=call.id,nid=nid,name.id=name.id,
+                opt=opt, no.opt=no.opt, cumhaz=cumhaz, se.cumhaz=se.cumhaz,
+                lcumhaz=lcumhaz, lse.cumhaz=lse.cumhaz, ihessian=II,
                 II=II,strata.name=strata.name,propodds=propodds))
   class(res) <- "phreg"
 
@@ -151,6 +174,8 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   if (p>0 & no.var==0) {
   beta.iid <- iid(res)
   phvar <- crossprod(beta.iid)
+###  estimate.beta <- estimate(coef=val$coef,IC=nrow(beta.iid)*beta.iid,id=name.id)
+###  res$estimate.beta <- estimate.beta
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
   res$beta.iid <- beta.iid
@@ -179,11 +204,13 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @author Klaus K. Holst, Thomas Scheike
 ##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg
 ##' @examples
+##' library(mets)
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
 ##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
 ##' ## robust standard errors default 
 ##' summary(out1)
+##' head(iid(out1))
 ##' 
 ##' par(mfrow=c(1,2))
 ##' plot(out1)
@@ -197,6 +224,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' 
 ##' ## making iid decomposition of baseline at a specific time-point
 ##' Aiiid <- iidBaseline(out1,time=30)
+##' head(Aiiid$base.iid)
 ##' 
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -657,9 +685,10 @@ if (is.null(x$propodds)) {
       UU <- MGt
   }
  res <- structure(UU %*% invhess, invhess = invhess, ncluster = ncluster)
- if (is.null(colnames(res)))
-   colnames(res) <- names(coef(x))
-tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
+ if (is.null(colnames(res))) colnames(res) <- names(coef(x))
+ if (is.null(rownames(res))) 
+    if (length(x$name.id)==nrow(res)) rownames(res) <- x$name.id
+### if (is.null(rownames(res)) tryCatch(rownames(res) <- rownames(x$X), error=function(...) NULL)
  res <- res*NROW(res)
  return(res)
 } else if (inherits(x,c("cifreg","recreg","IPTW"))) {
@@ -757,7 +786,13 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
          MGAiids <- cbind(MGAiids,MGAiidl)
  }
  MGAiid <- MGAiids
- colnames(MGAiid) <- paste("strata",sus,sep="")
+ if (is.matrix(MGAiid)) {
+    colnames(MGAiid) <- paste("strata",sus,sep="")
+    if (length(x$name.id)==nrow(MGAiid)) rownames(MGAiid) <- x$name.id
+ }
+ if (is.matrix(MGtiid)) {
+ if (length(x$name.id)==nrow(MGtiid)) rownames(MGtiid) <- x$name.id
+ }
 
  return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,
 	     id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
@@ -2570,25 +2605,28 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
         pos.cluster <- ts$terms
         Terms <- Terms[-ts$terms]
         id <- m[[ts$vars]]
-    }
-    else pos.cluster <- NULL
-    if (!is.null(id)) {
-        orig.id <- id
-        ids <- sort(unique(id))
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <- fast.approx(ids, id) - 1
-        else {
-            id <- as.integer(factor(id, labels = seq(nid))) -
-                1
-        }
-    }
-    else {
-        orig.id <- NULL
-        nid <- length(exit)
-        id <- 0:(nid - 1)
-        ids <- NULL
-    }
+    } else pos.cluster <- NULL
+
+###    if (!is.null(id)) {
+###        orig.id <- id
+###        ids <- sort(unique(id))
+###        nid <- length(ids)
+###        if (is.numeric(id))
+###            id <- fast.approx(ids, id) - 1
+###        else {
+###            id <- as.integer(factor(id, labels = seq(nid))) - 1
+###        }
+###    }
+###    else {
+###        orig.id <- NULL
+###        nid <- length(exit)
+###        id <- 0:(nid - 1)
+###        ids <- NULL
+###    }
+
+ call.id <- id;
+ conid <- construct_id(id,length(exit))
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
     if (!is.null(se.cluster)) {
         sds <- sort(unique(se.cluster))
@@ -2809,6 +2847,9 @@ if (estpr[1] == 1) {
 } 
 
 
+if (is.matrix(phw$IID)) 
+	if (nrow(phw$IID)==length(name.id)) rownames(phw$IID) <- name.id
+
 if (!is.null(se.cluster)) {
 	phw$IID.simple <- phw$IID
 	phw$var.simple <- phw$var
@@ -2927,10 +2968,10 @@ predictAiid <- NULL
 Grisk <- apply(risks,2,mean)
 risk.iid  <- t(t(risks)-Grisk)
 ###
-nid <- max(x$id)
+nid <- x$nid
 ndata <- length(unique(x$id[subdata]))
 
-risk.iid <- apply(risk.iid,2,sumstrata,id.data-1,nid)/ndata
+risk.iid <- apply(risk.iid,2,sumstrata,id.data,nid)/ndata
 ## sorted after x$id
 coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
 

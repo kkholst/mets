@@ -55,7 +55,7 @@
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' 
+##' library(mets)
 ##' ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 ##' 
 ##' bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),
@@ -114,6 +114,8 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
+  call.id <- id 
+  name.id <- NULL
   ### possible handling of id to code from 0:(antid-1)
   if (!is.null(id)) {
           orig.id <- id
@@ -126,6 +128,10 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
   ### id from call coded as numeric 1 -> 
   id <- id+1
   nid <- length(unique(id))
+
+  call.id <- id 
+  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -306,9 +312,10 @@ treats1 <- treats(treatvar1)
 ###idR1 <- id[data$response__==1 & data$rid__==1] ## first record with first randomization info
 idR1 <- dataR1[,"id__"]
 dataR1[,treat.name1] <- treatvar1
+
 if (estpr[2]==1) {
 fit1 <- fittreat(treat.model1,dataR1,idR1,treats1$ntreatvar,treats1$nlev)
-## put iid in matrix after nid 
+##### put iid in matrix after nid 
 iidalpha1 <- apply(fit1$iidalpha,2,sumstrata,sort(idR1)-1,nid) ## *(nrow(dataR1)/nid)
 }
 
@@ -735,9 +742,9 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###
 
 riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
-riskG.iid <- list(riskG.iid=riskG.iid,
-  riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
-	  id=id,orig.id=orig.id)
+riskG.iid <- list(riskG.iid=riskG.iid,riskG0.iid=riskG0.iid,
+		  riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
+	  id=id-1,call.id=call.id,name.id=name.id)
 varG <- list(varG=varG,varG0=varG0,varG1=varG1,varG01=varG01)
 val <- list( riskG=riskG,varG=varG,riskG.iid=riskG.iid,
 	     MGc=MGc,CensAugment.times=Augment.times,
@@ -746,6 +753,7 @@ val <- list( riskG=riskG,varG=varG,riskG.iid=riskG.iid,
   class(val) <- "binregTSR"
   return(val)
 }# }}}
+
 
 ##' @export
 print.binregTSR  <- function(x,...) {# {{{

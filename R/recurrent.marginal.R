@@ -104,14 +104,18 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
     X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  id.orig <- id; 
-  if (!is.null(id)) {
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else id <- as.integer(seq_along(exit))-1; 
+###  id.orig <- id; 
+###  if (!is.null(id)) {
+###	  ids <- sort(unique(id))
+###	  nid <- length(ids)
+###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
+###      id <- as.integer(factor(id,labels=seq(nid)))-1
+###     }
+###   } else id <- as.integer(seq_along(exit))-1; 
+
+ call.id <- id;
+ conid <- construct_id(id,nrow(X),as.data=TRUE)
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   statusE <- 1*(status %in% cause)
 ###  if (is.null(death.code)) statusD <- 1*(!(status %in% cens.code)) else 
@@ -121,7 +125,7 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
   data$strata__  <- strata
 
   ### setting up formulae for the two phreg (cause of interest and death)
-  if (is.null(id.orig)) { 
+  if (is.null(call.id)) { 
      formid <- update.formula(formula,~.+cluster(id)) 
      data$id <- id
      tt <- terms(formid)
@@ -1848,20 +1852,24 @@ prob.exceed.recurrent <- function(formula,data,
     ## }}}
 
    ## {{{
-   if (!is.null(id)) {
-        ids <- unique(id)
-        nid <- length(ids)
-        if (is.numeric(id))
-            id <-  fast.approx(ids,id)-1
-        else  {
-            id <- as.integer(factor(id,labels=seq(nid)))-1
-        }
-    } else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-    ## orginal id coding into integers 1:...
-    orig.id <- id.orig <- id+1;
-    nid <- length(unique(id))
+###   if (!is.null(id)) {
+###        ids <- unique(id)
+###        nid <- length(ids)
+###        if (is.numeric(id))
+###            id <-  fast.approx(ids,id)-1
+###        else  {
+###            id <- as.integer(factor(id,labels=seq(nid)))-1
+###        }
+###    } else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+###    ## orginal id coding into integers 1:...
+###    orig.id <- id.orig <- id+1;
+###    nid <- length(unique(id))
     ## }}}
-    times <- NULL
+ call.id <- id;
+ conid <- construct_id(id,nrow(X),as.data=TRUE)
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+
+times <- NULL
 
 statusD <- (status %in% death.code)*1
 statusE <- (status %in% cause)*1
