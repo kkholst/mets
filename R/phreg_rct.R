@@ -82,20 +82,6 @@ phreg_rct <- function(formula,data,cause=1,cens.code=0,
     id <- m[[ts$vars]]
   } else pos.cluster <- NULL
 
-###  ### possible handling of id to code from 0:(antid-1)
-###  ### same processing inside phreg call 
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- sort(unique(id))
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###      }
-###  } else { orig.id <- NULL; nid <- length(exit); id <- 0:(nid-1); ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###  id <- id+1
-###  nid <- length(unique(id))
-
  call.id <- id;
  conid <- construct_id(id,length(exit),as.data=TRUE)
  name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
@@ -229,6 +215,9 @@ else
 rformulaS <-as.formula( paste("Surv(",rsss[1],",",rsss[2],",",rsss[3],"==",cause,")~."))
 formula <- update(formula,rformulaS)
 
+## change id from call to id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
 
 if (RCT) {
 ### ... for phreg
@@ -632,7 +621,6 @@ if (typeR!=typeC) {
       baselinecox <- list(phreg=fitts,beta.iid=iid[[j]],XR0pi=XR0pi,gamR0Base=gamR0Base)
    } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL  ## }}}
 
-
    if (fit0$p>0)  {
      coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
      nnn <- paste(typeR,typeC,sep="_")
@@ -646,7 +634,27 @@ if (typeR!=typeC) {
 names(iid) <- iidn
 # }}}
 
-out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,AugClt=AugClt,
+
+namesortme <- function(iid,name.id) { ## {{{
+if (is.matrix(iid))  
+	if (nrow(iid)==length(name.id)) {
+		rownames(iid) <- name.id
+		oid <- order(name.id)
+		iid <- iid[oid,]
+}
+return(iid)
+} ## }}}
+
+### sort iid after name.id and put as rownames
+ea.iid <- namesortme(ea.iid,name.id)
+for (l in 1:length(iid)) iid[[l]] <- namesortme(iid[[l]],name.id)
+AugC.iid <- namesortme(AugC.iid,name.id)
+AugClt.iid <- namesortme(AugClt.iid,name.id)
+
+###AugR0.iid <- namesortme(AugR0.iid,name.id)
+
+out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
+    AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
     formula=formula,formulaC=formulaC,treat.model=treat.model,
     id=id-1,call.id=call.id,name.id=name.id,
