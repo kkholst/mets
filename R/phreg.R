@@ -2597,23 +2597,6 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
         id <- m[[ts$vars]]
     } else pos.cluster <- NULL
 
-###    if (!is.null(id)) {
-###        orig.id <- id
-###        ids <- sort(unique(id))
-###        nid <- length(ids)
-###        if (is.numeric(id))
-###            id <- fast.approx(ids, id) - 1
-###        else {
-###            id <- as.integer(factor(id, labels = seq(nid))) - 1
-###        }
-###    }
-###    else {
-###        orig.id <- NULL
-###        nid <- length(exit)
-###        id <- 0:(nid - 1)
-###        ids <- NULL
-###    }
-
  call.id <- id;
  conid <- construct_id(id,length(exit))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
@@ -2649,8 +2632,7 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
             spp <- 1/pal[, 1]
         }
         else {
-            treat.modelid <- update.formula(treat.model, . ~
-                . + cluster(id__))
+            treat.modelid <- update.formula(treat.model, . ~ . + cluster(id__))
             treat <- mlogit(treat.modelid, data)
             iidalpha <- lava::iid(treat)
             pal <- predict(treat, data, se = 0, response = FALSE)

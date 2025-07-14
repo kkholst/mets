@@ -83,12 +83,12 @@ phreg_rct <- function(formula,data,cause=1,cens.code=0,
   } else pos.cluster <- NULL
 
  call.id <- id;
- conid <- construct_id(id,length(exit),as.data=TRUE)
+ conid <- construct_id(id,length(exit))
  name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
 
-  data$id__  <-  id
-  data$cid__ <- cumsumstrata(rep(1,length(id)),id-1,nid)
-  expit <- lava::expit
+ data$id__  <-  id
+ data$cid__ <- cumsumstrata(rep(1,length(id)),id-1,nid)
+ expit <- lava::expit
 
 sides <- function(formula,vars) {# {{{
 lhs <- update(formula,.~+1)
@@ -283,7 +283,6 @@ if (!is.null(augmentR0)) {# {{{
       }
 
 } # }}}
-
 
 if (!is.null(augmentR1)) {# {{{
    ff1 <- sides(augmentR1,all.vars(ssform$rhs)[2])
