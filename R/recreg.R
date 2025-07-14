@@ -190,6 +190,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
   call.id <- id 
   conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  call.id.id <- id
 
 ### censoring weights constructed
     whereC <- which(status %in% cens.code)
@@ -632,21 +633,26 @@ var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 colnames(se.cumhaz) <- c("time","se.cumhaz")
  
-if (is.matrix(MGc))
-if (length(name.id)==nrow(MGc)) rownames(MGc) <- name.id
-if (is.matrix(Uiid))
-if (length(name.id)==nrow(Uiid)) rownames(Uiid) <- name.id
-if (is.matrix(Uiid.augment)) 
-if (length(name.id)==nrow(Uiid.augment)) rownames(Uiid.augment) <- name.id
-if (is.matrix(Uiid.augment.times)) 
-if (length(name.id)==nrow(Uiid.augment.times)) rownames(Uiid.augment.times) <- name.id
+MGc <-  namesortme(MGc,name.id)
+Uiid <- namesortme(Uiid,name.id)
+Uiid.augment <- namesortme(Uiid.augment,name.id)
+Uiid.augment.times  <- namesortme(Uiid.augment.times,name.id)
+
+###if (is.matrix(MGc))
+###if (length(name.id)==nrow(MGc)) rownames(MGc) <- name.id
+###if (is.matrix(Uiid))
+###if (length(name.id)==nrow(Uiid)) rownames(Uiid) <- name.id
+###if (is.matrix(Uiid.augment)) 
+###if (length(name.id)==nrow(Uiid.augment)) rownames(Uiid.augment) <- name.id
+###if (is.matrix(Uiid.augment.times)) 
+###if (length(name.id)==nrow(Uiid.augment.times)) rownames(Uiid.augment.times) <- name.id
 
 out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
-	iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
+iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 	hessianttime=opt$hessianttime,
 	ploglik=opt$ploglik,gradient=opt$gradient,
 	cumhaz=cumhaz,se.cumhaz=se.cumhaz,MGciid=MGc,
-	id=id,call.id=call.id,name.id=name.id,nid=nid,
+	id=call.id.id,call.id=call.id,name.id=name.id,nid=nid,
 	strata.jumps=opt$strata,strata=xx2$strata,
 	nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
 	propodds=propodds,
@@ -1103,11 +1109,11 @@ X <- model.matrix(Terms, m)
 ###    if (!is.null(intpos  <- attributes(Terms)$intercept))
 ###        X <- X[,-intpos,drop=FALSE]
 if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-#
 
-  call.id <- id 
-  conid <- construct_id(id,nrow(X),as.data=TRUE)
-  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+call.id <- id 
+conid <- construct_id(id,nrow(X))
+name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+orig.id <- id
 
 if (is.null(marks)) marks <- rep(1,length(id))
 
@@ -1132,8 +1138,6 @@ Dtime <- NULL
 formC <- update.formula(cens.model,Surv(entry__,exit__,statusC__)~ .+cluster(id__))
 cr <- phreg(formC,data=data,no.opt=TRUE,no.var=1)
 whereC <- which(status %in% cens.code)
-#
-
 
 if (length(whereC)>0) {
 ### censoring weights
@@ -1148,10 +1152,8 @@ if (!km) {
 cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
 St      <- exp(-cumhazD)
 } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-} else  St <- rep(1,nrow(xx$strata))
+} else  St <- rep(1,length(exit))
 Gc <- St
-#
-
 
 ###formD <- as.formula(Surv(entry__,exit__,death__)~cluster(id__))
 form1L <- as.formula(Surv(entry__,exit__,status__cause)~Count1__+death__+statusC__+cluster(id__))
@@ -1195,20 +1197,22 @@ if (is.null(offset)) offset <- rep(0, length(exit))
 if (is.null(weights)) weights <- rep(1, length(exit))
 ###  
 Xorig <- X <- as.matrix(X)
-Xdata <- X <- X[lastrecord,,drop=FALSE]
 px <- ncol(X)
 if (is.null(augmentation))  augmentation=rep(0,px)
-offset <- offset[lastrecord]
-weights <- weights[lastrecord]
-status <- status[lastrecord]
-exit <- exit[lastrecord]
-idR <- id[lastrecord]
+
+## order after id, similar to Y
+oid <- order(id[lastrecord])
+Xdata <- X <- X[lastrecord,,drop=FALSE][oid,]
+offset <- offset[lastrecord][oid]
+weights <- weights[lastrecord][oid]
+status <- status[lastrecord][oid]
+exit <- exit[lastrecord][oid]
+idR <- id[lastrecord][oid]
 X2 <- .Call("vecMatMat", X, X)$vXZ
 ph <- 1
 if (is.null(beta)) beta <- rep(0,ncol(X))
 ## take iid vession of data 
-dataiid <- data[lastrecord,]
-
+dataiid <- data[lastrecord,][oid,]
 
 if (type[1]=="II") { 
 Gcdata <- suppressWarnings(predict(cr,data,times=dexit,individual.time=TRUE,se=FALSE,km=km,tminus=TRUE)$surv)
@@ -1342,7 +1346,7 @@ val$model <- model[1]
 val$model.type <- model[1]
 val$Y <- Ydata
 val$X <- Xdata
-val$id <- id
+val$id <- orig.id
 val$call.id <- call.id
 val$nid <- nid
 val$name.id <- name.id
@@ -1379,6 +1383,7 @@ val$nevent <- nevent
 class(val) <- c("binreg", "resmean")
 return(val)
 } ## }}}
+
 
 strataAugment <- survival::strata
 

@@ -119,8 +119,9 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
  call.id <- id;
- conid <- construct_id(id,nrow(X),as.data=TRUE)
+ conid <- construct_id(id,nrow(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+ orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -169,7 +170,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"
             Y <- cbind(c((time-pmin(exit,time))*obs)/cens.weights, c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights)
      }
   }
- Yipcw <- Y
+  Yipcw <- Y
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -219,7 +220,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
       }
       cc <- opt$estimate; 
       val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
+  } else val <- c(list(coef=beta),obj(beta,all=TRUE))
 
  coefI <- val$coef
  gradientI <- val$gradient
@@ -241,6 +242,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
     lp <- c(X %*% val$coef+offset)
     p <- expit(lp)
     Yo <- Y[,1]*p-Y[,2]
+    id <- id[ord]
 
     xx <- resC$cox.prep
     S0i2 <- S0i <- rep(0,length(xx$strata))
@@ -281,7 +283,8 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
     MGCiid <- MGCiid+(MGtiid-MGCiid2)
    }
    ## use data ordered by time (keeping track of id also)
-   id <- xx$id
+   ## since X; Y and so forth are ordered in time
+###   id <- xx$id
    }  else {
 	 MGCiidI <-  MGCiid <- 0
   }## }}}
@@ -311,7 +314,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 
   val$call <- cl
   val$MGciid <- MGCiid
-  val$id <- id
+  val$id <- orig.id
   val$call.id <- call.id
   val$name.id <- name.id
   val$nid <- nid
@@ -320,18 +323,8 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$iidI <- iidI
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
   if (se) val$iidI  <- iidI+(MGCiidI %*% ihessianI)
-  if (is.matrix(val$iid)) 
-     if (length(name.id)==nrow(val$iid)) {
-	     rownames(val$iid) <- name.id
-	     oid <- order(name.id)
-	     val$iid <- val$iid[oid,]
-     }
- if (is.matrix(val$iidI)) 
-     if (length(name.id)==nrow(val$iidI)) {
-	     rownames(val$iidI) <- name.id
-	     if (is.null(oid)) oid <- order(name.id)
-	     val$iidI <- val$iidI[oid,]
-     }
+  val$iid <- namesortme(val$iid,name.id)
+  val$iidI <- namesortme(val$iidI,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5

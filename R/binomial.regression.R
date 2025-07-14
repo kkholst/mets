@@ -147,21 +147,11 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-###  call.id <- id
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- unique(id)
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###  id.orig <- id; 
-
   call.id <- id 
   conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  ## id before time-sorting later 
+  orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -177,7 +167,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   ccc <- which(ucauses %in% cens.code)
   if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
   competing  <-  (length(Causes)>1) 
-  data$id <- id
+  data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
   cens.strata <- cens.nstrata <- NULL 
@@ -187,7 +177,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
  obs <- (exit<=time & (!statusC)) | (exit>=time)
 
   if (is.null(cens.weights))  {
-      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
@@ -341,13 +331,13 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$call <- cl
   val$MGciid <- MGCiid
   val$call.id <- call.id
-  val$id <- id
+  val$id <- orig.id
   val$name.id <- name.id
   val$nid <- nid
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
   if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  if (length(name.id)==nrow(val$iid)) rownames(val$iid) <- name.id
+  val$iid <- namesortme(val$iid,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
@@ -537,6 +527,8 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
   call.id <- id
   conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  ## id before time-sorting
+  orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -549,13 +541,13 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
   kmt <- kaplan.meier
 
   statusC <- (status %in% cens.code) 
-  data$id <- id
+  data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
   cens.strata <- cens.nstrata <- NULL 
 
   if (is.null(cens.weights))  {
-      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       cens.weights <- c()
@@ -696,6 +688,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   val$MGciid <- MGCiid
   val$call.id <- call.id
   val$name.id <- name.id
+  val$.id <- orig.id
   val$nid <- nid
   val$iid.naive <- val$iid 
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian) else val$iid  <- val$iid
@@ -758,22 +751,10 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-###  call.id <- id
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- sort(unique(id))
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###  id.orig <- id; 
-
   call.id <- id
   conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -786,14 +767,14 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   kmt <- kaplan.meier
 
   statusC <- (status %in%cens.code) 
-  data$id <- id
+  data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
 
   cens.strata <- cens.nstrata <- NULL 
 
   if (is.null(cens.weights))  {
-      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id))
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
       exittime <- pmin(exit,time)
@@ -901,12 +882,13 @@ hessian <- matrix(D2log,length(pp),length(pp))
 
   val$call <- cl
     val$MGciid <- MGCiid
-    val$id <- id
+    val$id <- orig.id
     val$call.id <- call.id
     val$name.id <- name.id
     val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+    val$iid <- namesortme(val$iid,name.id)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar

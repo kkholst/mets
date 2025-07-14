@@ -1,3 +1,15 @@
+
+##' @export
+namesortme <- function(iid,name.id) { ## {{{
+if (is.matrix(iid))  
+	if (nrow(iid)==length(name.id)) {
+		rownames(iid) <- name.id
+		oid <- order(name.id)
+		iid <- iid[oid,,drop=FALSE]
+}
+return(iid)
+} ## }}}
+
 ##' 2 Stage Randomization for Survival Data or competing Risks Data 
 ##'
 ##' Under two-stage randomization we can estimate the average treatment effect E(Y(i,j)) of treatment regime (i,j). 
@@ -742,17 +754,6 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###
 
 riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
-
-
-namesortme <- function(iid,name.id) { ## {{{
-if (is.matrix(iid))  
-	if (nrow(iid)==length(name.id)) {
-		rownames(iid) <- name.id
-		oid <- order(name.id)
-		iid <- iid[oid,]
-}
-return(iid)
-} ## }}}
 
 riskG.iid <-  namesortme(riskG.iid,name.id)
 riskG0.iid <- namesortme(riskG0.iid,name.id)

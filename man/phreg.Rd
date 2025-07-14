@@ -11,6 +11,7 @@
 \alias{predictO.phreg}
 \alias{predictrecreg}
 \alias{summarybase.phreg}
+\alias{namesortme}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)

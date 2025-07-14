@@ -1,4 +1,5 @@
 
+##' @export
 construct_id <- function(id,nid,as.data=FALSE) { ## {{{ 
   call.id <- id
 
@@ -54,17 +55,6 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 
   trunc <- (!is.null(entry))
   if (!trunc) entry <- rep(0,length(exit))
-
-###  call.id <- id
-###  if (!is.null(id)) {
-###	  ids <- unique(id)
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###   } else { id <- as.integer(seq_along(entry))-1;  nid <- nrow(X);} 
-###   ## orginal id coding into integers 
-###   id.orig <- id+1; 
 
   conid <- construct_id(id,nrow(X))
   call.id <- conid$call.id; id <- conid$id; nid <- conid$nid
@@ -202,7 +192,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg
+##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg namesortme
 ##' @examples
 ##' library(mets)
 ##' data(TRACE)
@@ -2974,6 +2964,8 @@ ndata <- length(unique(x$id[subdata]))
 risk.iid <- apply(risk.iid,2,sumstrata,id.data,nid)/ndata
 ## sorted after x$id
 coxiid <- cbind(Aiid$base.iid,Aiid$beta.iid)
+if (nrow(risk.iid)==nrow(Aiid$beta.iid))
+        rownames(risk.iid) <- rownames(Aiid$beta.iid)
 
 if (same.data) {
    for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ coxiid %*% DariskG[[a]]/ndata

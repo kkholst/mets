@@ -634,7 +634,6 @@ if (typeR!=typeC) {
 names(iid) <- iidn
 # }}}
 
-
 namesortme <- function(iid,name.id) { ## {{{
 if (is.matrix(iid))  
 	if (nrow(iid)==length(name.id)) {
@@ -657,7 +656,7 @@ out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
     AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
     formula=formula,formulaC=formulaC,treat.model=treat.model,
-    id=id-1,call.id=call.id,name.id=name.id,
+    id=id,call.id=call.id,name.id=name.id,
     cumhaz=cumhazR0,se.cumhaz=se.R0cumhaz,
     cumhaz.noAug=cumhaz,se.cumhaz.noAug=se.cumhaz, 
     strata=fit0$strata.jumps,nstrata=fit0$nstrata,jumps=seq_along(fit0$strata.jumps),
