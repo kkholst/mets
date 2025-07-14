@@ -67,8 +67,9 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   ### possible handling of id to code from 0:(antid-1)
 
   call.id <- id 
-  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -105,23 +106,10 @@ if (!is.null(augmentR)) {
    form1X <- update(form1, reformulate(c(".", varsR)))
 } else form1X <- form1
 
-
 ## ratio of means ## {{{
 dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,model="l")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
   cens.model=cens.formula,times=time,model="l",marks=marks)
-if (is.matrix(dd$iid))  
-	if (nrow(dd$iid)==length(name.id)) {
-		rownames(dd$iid) <- name.id
-		oid <- order(name.id)
-		dd$iid <- dd$iid[oid,]
-}
-if (is.matrix(ddN$iid)) 
-	if (nrow(ddN$iid)==length(name.id)) {
-		rownames(ddN$iid) <- name.id
-		if (is.null(oid)) oid <- order(name.id)
-		ddN$iid <- ddN$iid[oid,]
-}
 cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
 ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) (p[1:2]/p[3:4]))
@@ -185,8 +173,7 @@ if (nlev == 2) {
     pal <- cbind(1 - pal, pal)
     ppp <- (pal/pal[, 1])
     spp <- 1/pal[, 1]
-}
-else {
+} else {
     treat.modelid <- update.formula(treat.model, . ~ . + cluster(id__))
     treat <- mlogit(treat.modelid, data)
     iidalpha <- lava::iid(treat)
@@ -233,17 +220,7 @@ riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC
 ET <- list(riskDRC=riskDRC,riskDR=outae)
 } ## }}}
 
-namesortme <- function(iid,name.id) { ## {{{
-if (is.matrix(iid))  
-	if (nrow(iid)==length(name.id)) {
-		rownames(iid) <- name.id
-		oid <- order(name.id)
-		iid <- iid[oid,]
-}
-return(iid)
-} ## }}}
-
-### sort iid after name.id and put as rownames
+###### sort iid after name.id and put as rownames
 ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
 ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
 ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)

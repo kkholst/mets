@@ -56,9 +56,9 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   trunc <- (!is.null(entry))
   if (!trunc) entry <- rep(0,length(exit))
 
+  call.id <- id; 
   conid <- construct_id(id,nrow(X))
-  call.id <- conid$call.id; id <- conid$id; nid <- conid$nid
-  name.id <- conid$name.id
+  id <- conid$id; nid <- conid$nid; name.id <- conid$name.id
 
   dd <- .Call("FastCoxPrepStrata", entry,exit,status,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
 
