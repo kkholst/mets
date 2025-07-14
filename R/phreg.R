@@ -192,7 +192,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg namesortme
+##' @aliases phreg phreg.par robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg namesortme construct_id
 ##' @examples
 ##' library(mets)
 ##' data(TRACE)
@@ -351,7 +351,7 @@ return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=cl
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases  FastCoxPLstrataR
+##' @aliases  FastCoxPLstrataR 
 ##' 
 ##' @export
 phregR <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
