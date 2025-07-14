@@ -77,7 +77,7 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   ## }}}
 
 ## use sorted id for all things  and here indentify last record of each subject
-cid <- countID(data,"id__")
+cid <- countID(data,"id__",sorted=TRUE)
 rrR <- subset(data,cid$reverseCountid==1)
 
 ## first var on rhs of formula
@@ -148,6 +148,7 @@ outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formu
        cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
 ET <- list(riskDR=outae)
 
+##  Yipcw as it comes in data frame 
 data[,"ratio__"] <- outae$Yipcw[cid$indexid+1]
 
 if (!is.null(augmentC)) { ## {{{
@@ -203,9 +204,10 @@ treats <- treats(treatsvar)
 fitt <- fittreat(treat.model, rrR, idW, treats$ntreatvar, treats$nlev)
 iidalpha0 <- fitt$iidalpha
 wPA <- c(fitt$pA)
+## ordered after idW
+wPA <- wPA[order(idW)]
 
 riskDRC <- outae$riskDR+c(dc0$augment,dc1$augment)/nid
-
 MGC0 <- sumstrata(dc0$MGCiid/c(wPA[dc0$id+1]),dc0$id,nid)*dc0$n
 MGC1 <- sumstrata(dc1$MGCiid/c(wPA[dc1$id+1]),dc1$id,nid)*dc1$n
 MGC <- cbind(MGC0,MGC1)
@@ -218,6 +220,7 @@ se.riskDRC <- diag(varDRC)^.5
 
 riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC)
 ET <- list(riskDRC=riskDRC,riskDR=outae)
+###	   MGC=MGC,Y=data[,"ratio__"],dc0=dc0,dc1=dc1,wPA=wPA)
 } ## }}}
 
 ###### sort iid after name.id and put as rownames
@@ -232,6 +235,8 @@ out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
 class(out) <- "WA"
 return(out)
 } ## }}}
+
+
 
 ##' @export
 print.WA  <- function(x,type="log",...) {# {{{
@@ -319,8 +324,6 @@ if (is.null(time)) stop("must give time of response \n")
    data$Y__ <- data[,response]
    varsC <- c("Y__",attr(terms(augmentC), "term.labels"))
    formCC <- update(formC, reformulate(c(".", varsC)))
-###	www <- rep(1,nrow(data))
-###	if (treat.specific.cens==1)  www <-data$WW1__;  
    cr2 <- phreg(formCC, data = data, no.opt = TRUE, no.var = 1,Z=Z)
    xx <- cr2$cox.prep
    icoxS0 <- rep(0,length(cr2$S0))
@@ -383,14 +386,12 @@ if (is.null(time)) stop("must give time of response \n")
    MGCt <- Ut[,drop=FALSE]-(XgammadLam0-gammaEsdLam0)*c(rr0)
    MGCiid <- apply(MGCt,2,sumstrata,xx$id,nid)
    MGCiid <- MGCiid/nid
-   #
 
    nid <- max(cr2$id)+1
-   ids <- headstrata(cr2$id,nid)
-   ids <- cr2$call.id[ids]
-
-   res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times, id=ids,n=nid)
+   res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times,
+	       id=cr2$name.id,n=nid)
 } ## }}}
+
 
 ##' Evaluates piece constant covariates at min(D,t) where D is a terminal event
 ##'
