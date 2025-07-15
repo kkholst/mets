@@ -38,7 +38,7 @@ out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
                    treat.model=tcell~platelet)
 summary(out1)
 
-ratioATE(out,out1)
+ratioATE(out,out1,h=function(x) log(x))
 }
 \author{
 Thomas Scheike
