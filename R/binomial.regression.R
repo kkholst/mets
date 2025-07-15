@@ -952,7 +952,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst"),model="exp",Ydirect=NULL,...)
+	   outcome=c("cif","rmst","rmtl"),model="exp",Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -1047,11 +1047,12 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 
  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
      if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-     else { if (!competing) Y <-  c(pmin(exit,time)*obs)/cens.weights 
-             else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+     else { if (!competing) {
+	     if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+	     else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
-
  nevent <- sum((status %in% cause)*(exit<=time))
 
  ## }}}
@@ -1163,8 +1164,10 @@ for (a in nlevs) {# {{{
 
  if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
      if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
-     else { if (!competing) Y <-  c(pmin(exit,time)*obs)/cens.weights 
-             else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+     else { if (!competing) {
+	     if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+	     else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
 

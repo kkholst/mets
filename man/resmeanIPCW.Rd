@@ -6,14 +6,14 @@
 \alias{resmeanIPCWold}
 \title{Restricted IPCW mean for censored survival data}
 \usage{
-resmeanIPCW(formula, data, outcome = c("rmst", "years-lost"), ...)
+resmeanIPCW(formula, data, outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
 \item{formula}{formula with outcome on Event form}
 
 \item{data}{data frame}
 
-\item{outcome}{can do either rmst regression ('rmst') or years-lost regression  ('years-lost')}
+\item{outcome}{can do either rmst regression ('rmst') or years-lost regression  ('rmtl')}
 
 \item{...}{Additional arguments to binreg}
 }

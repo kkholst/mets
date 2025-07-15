@@ -36,7 +36,7 @@
 ##'
 ##' @param formula formula with outcome on Event form 
 ##' @param data data frame
-##' @param outcome can do either rmst regression ('rmst') or years-lost regression  ('years-lost')
+##' @param outcome can do either rmst regression ('rmst') or years-lost regression  ('rmtl')
 ##' @param ... Additional arguments to binreg 
 ##' @author Thomas Scheike
 ##' @examples
@@ -70,15 +70,14 @@
 ##' summary(rmc1)
 ##' @export
 ##' @aliases rmstIPCW resmeanIPCWold 
-resmeanIPCW  <- function(formula,data,outcome=c("rmst","years-lost"),...)
+resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
 }# }}}
 
 ##' @export
-rmstIPCW <- function(formula,data,outcome=c("rmst","years-lost"),...)
-
+rmstIPCW <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
@@ -159,6 +158,7 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data-frame 
 ##' @param model possible exp model for relevant mean model that is exp(X^t beta) 
+##' @param outcome restricted mean time (rmst) or restricted mean time lost (rmtl)
 ##' @param ... Additional arguments to pass to binregATE 
 ##' @author Thomas Scheike
 ##' @examples
@@ -170,18 +170,37 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##'                    treat.model=tcell~platelet)
 ##' summary(out1)
 ##' 
+##' ratioATE(out,out1)
 ##' @export
-##' @aliases rmstATE
-resmeanATE <- function(formula,data,model="exp",...)
+##' @aliases rmstATE ratioATE
+resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
-out <- 	binregATE(formula,data,outcome="rmst",model=model,...) 
+out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)
 }# }}}
 
 ##' @export
-rmstATE <- function(formula,data,model="exp",...)
+rmstATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
-out <- 	binregATE(formula,data,outcome="rmst",model=model,...) 
+out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)
 }# }}}
+
+##' @export
+ratioATE <- function(rmtl,rmtl1) { ## {{{
+
+coefG <- c(rmtl$riskG,rmtl1$riskG)
+iidG <- cbind( rmtl$riskG.iid, rmtl1$riskG.iid)
+covG <- crossprod(iidG)
+###
+coefDR <- c(rmtl$riskDR,rmtl1$riskDR)
+iidDR <- cbind(rmtl$riskDR.iid, rmtl1$riskDR.iid)
+covDR <- crossprod(iidDR)
+
+ratioG <- estimate(coef=coefG,vcov=covG,f=function(p) c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))
+ratioDR <- estimate(coef=coefDR,vcov=covDR,f=function(p) c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))
+out <- list(ratioG=ratioG,ratioDR=ratioDR)
+return(out)
+
+} ## }}}
 

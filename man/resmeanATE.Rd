@@ -3,9 +3,10 @@
 \name{resmeanATE}
 \alias{resmeanATE}
 \alias{rmstATE}
+\alias{ratioATE}
 \title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
 \usage{
-resmeanATE(formula, data, model = "exp", ...)
+resmeanATE(formula, data, model = "exp", outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}
@@ -13,6 +14,8 @@ resmeanATE(formula, data, model = "exp", ...)
 \item{data}{data-frame}
 
 \item{model}{possible exp model for relevant mean model that is exp(X^t beta)}
+
+\item{outcome}{restricted mean time (rmst) or restricted mean time lost (rmtl)}
 
 \item{...}{Additional arguments to pass to binregATE}
 }
@@ -35,6 +38,7 @@ out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
                    treat.model=tcell~platelet)
 summary(out1)
 
+ratioATE(out,out1)
 }
 \author{
 Thomas Scheike
