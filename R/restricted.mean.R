@@ -170,7 +170,7 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##'                    treat.model=tcell~platelet)
 ##' summary(out1)
 ##' 
-##' ratioATE(out,out1)
+##' ratioATE(out,out1,h=function(x) log(x))
 ##' @export
 ##' @aliases rmstATE ratioATE
 resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
@@ -187,7 +187,9 @@ return(out)
 }# }}}
 
 ##' @export
-ratioATE <- function(rmtl,rmtl1) { ## {{{
+ratioATE <- function(rmtl,rmtl1,h=NULL) { ## {{{
+
+if (is.null(h)) h <- function(x) x
 
 coefG <- c(rmtl$riskG,rmtl1$riskG)
 iidG <- cbind( rmtl$riskG.iid, rmtl1$riskG.iid)
@@ -197,8 +199,8 @@ coefDR <- c(rmtl$riskDR,rmtl1$riskDR)
 iidDR <- cbind(rmtl$riskDR.iid, rmtl1$riskDR.iid)
 covDR <- crossprod(iidDR)
 
-ratioG <- estimate(coef=coefG,vcov=covG,f=function(p) c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))
-ratioDR <- estimate(coef=coefDR,vcov=covDR,f=function(p) c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))
+ratioG <- estimate(coef=coefG,vcov=covG,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4]))))
+ratioDR <- estimate(coef=coefDR,vcov=covDR,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4]))))
 out <- list(ratioG=ratioG,ratioDR=ratioDR)
 return(out)
 
