@@ -224,10 +224,12 @@ ET <- list(riskDRC=riskDRC,riskDR=outae)
 } ## }}}
 
 ###### sort iid after name.id and put as rownames
-ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
-ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
-ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)
-ET$riskDR$iid <- namesortme(ET$riskDR$iid,name.id)
+if (!is.null(call.id)) {
+	ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
+	ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
+	ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)
+	ET$riskDR$iid <- namesortme(ET$riskDR$iid,name.id)
+}
 
 out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
 	    trans=trans,cause=cause,cens.code=cens.code,death.code,

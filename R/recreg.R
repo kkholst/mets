@@ -631,11 +631,13 @@ var.cumhaz <- cumsumstrata(1/opt$S0^2,strata,nstrata)+varbetat
 se.cumhaz <- cbind(jumptimes,(var.cumhaz)^.5)
 colnames(se.cumhaz) <- c("time","se.cumhaz")
  
+if (!is.null(call.id)) {
 MGc <-  namesortme(MGc,name.id)
 Uiid <- namesortme(Uiid,name.id)
 UUiid <- namesortme(UUiid,name.id)
 Uiid.augment <- namesortme(Uiid.augment,name.id)
 Uiid.augment.times  <- namesortme(Uiid.augment.times,name.id)
+}
 
 out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
         iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
@@ -866,8 +868,10 @@ if (!is.null(time))  {
  names(cumhaz.time) <- paste("strata",sus,sep="")
 } else { sus <- MGAiids <- cumhaz.time <- NULL }
 
-MGAiids <- namesortme(MGAiids,x$name.id)
-Uiid    <- namesortme(Uiid,x$name.id)
+if (!is.null(x$call.id)) {
+   MGAiids <- namesortme(MGAiids,x$name.id)
+   Uiid    <- namesortme(Uiid,x$name.id)
+}
 
  if (inherits(x,c("cifreg","recreg"))) {
  out <- list(time=time,base.iid=MGAiids,nstrata=xx2$nstrata, beta.iid=Uiid,

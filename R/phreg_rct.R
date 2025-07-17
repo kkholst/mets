@@ -644,10 +644,12 @@ return(iid)
 } ## }}}
 
 ### sort iid after name.id and put as rownames
+if (!is.null(call.id)) {
 ea.iid <- namesortme(ea.iid,name.id)
 for (l in 1:length(iid)) iid[[l]] <- namesortme(iid[[l]],name.id)
 AugC.iid <- namesortme(AugC.iid,name.id)
 AugClt.iid <- namesortme(AugClt.iid,name.id)
+}
 
 ###AugR0.iid <- namesortme(AugR0.iid,name.id)
 

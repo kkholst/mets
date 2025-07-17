@@ -337,7 +337,8 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
   if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  val$iid <- namesortme(val$iid,name.id)
+  if (!is.null(call.id))
+	  val$iid <- namesortme(val$iid,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
@@ -875,6 +876,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
+  if (!is.null(call.id))
     val$iid <- namesortme(val$iid,name.id)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
@@ -1043,6 +1045,10 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
  nevent <- sum((status %in% cause)*(exit<=time))
 
  ## }}}
+
+## change id from call to id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
 
   val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,
 	cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,
@@ -1218,10 +1224,10 @@ for (a in nlevs) {
 	iidpala <- c(DaPsia[[k]] %*% t(iidalpha))
 	if (se)  iidGca <- MGCiidas[,k] else iidGca<-0 
         ###
-	iidriska <- (iidbasea+iidcifa+iidpala+iidGca)/n
+	iidriska <- (iidbasea+iidcifa+iidpala+iidGca)/nid
         iidrisk <- cbind(iidrisk,iidriska)
 	iidriskG <- c(sumstrata(riskG[,k]-val$riskG[k],id,nid))
-	riskGa.iid <- c(iidriskG)/n+c(DariskG[[k]] %*% t(val$iid))/n
+	riskGa.iid <- c(iidriskG)/nid+c(DariskG[[k]] %*% t(val$iid))/nid
         riskG.iid <- cbind(riskG.iid,riskGa.iid)
 	k <- k+1
 }
@@ -1231,7 +1237,7 @@ for (a in nlevs) {
 ### DR-estimator 
 val$var.riskDR <- crossprod(iidrisk); 
 val$se.riskDR <- diag(val$var.riskDR)^.5
-iidrisk <- namesortme(iidrisk,name.id)
+if (!is.null(call.id)) iidrisk <- namesortme(iidrisk,name.id)
 val$riskDR.iid <- iidrisk
 
 pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
@@ -1246,9 +1252,8 @@ names(val$difriskDR) <-  rownames(contrast)
 val$var.difriskDR <- mm$vcov 
 val$se.difriskDR <- diag(val$var.difriskDR)^.5
 
-### G-estimator 
-riskG.iid <-  namesortme(riskG.iid,name.id)
-if (nrow(riskG.iid)==length(name.id)) rownames(riskG.iid) <- name.id
+### G-estimator ; sort after name.id
+if (!is.null(call.id)) riskG.iid <-  namesortme(riskG.iid,name.id)
 val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
@@ -1263,6 +1268,7 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 ###{{{ summary 
 
@@ -1353,6 +1359,8 @@ Gest <- list(Gest=Grisk,iid=t(t(risks)-Grisk))
 
 nid <- max(x$id)+1
 risk.iid <- apply(Gest$iid,2,sumstrata,x$id,nid)/nid 
+if (!is.null(x$call.id)) risk.iid <- namesortme(risk.iid,x$name.id)
+
 for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[a]])/nid
 vv <- crossprod(risk.iid)
 
