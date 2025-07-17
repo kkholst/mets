@@ -148,7 +148,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 
   ### possible handling of id to code from 0:(antid-1)
   call.id <- id 
-  conid <- construct_id(id,nrow(X))
+  conid <- construct_id(id,nrow(X),namesX=rownames(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
   ## id before time-sorting later 
   orig.id <- id
@@ -511,21 +511,8 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-###  call.id <- id
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- sort(unique(id))
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###   } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###  id.orig <- id; 
-  
   call.id <- id
-  conid <- construct_id(id,nrow(X))
+  conid <- construct_id(id,nrow(X),namesX=rownames(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
   ## id before time-sorting
   orig.id <- id
@@ -752,7 +739,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   call.id <- id
-  conid <- construct_id(id,nrow(X))
+  conid <- construct_id(id,nrow(X),namesX=rownames(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
   orig.id <- id
 
@@ -996,7 +983,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
  call.id <- id;
- conid <- construct_id(id,nrow(X))
+ conid <- construct_id(id,nrow(X),namesX=rownames(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
@@ -1244,7 +1231,7 @@ for (a in nlevs) {
 ### DR-estimator 
 val$var.riskDR <- crossprod(iidrisk); 
 val$se.riskDR <- diag(val$var.riskDR)^.5
-if (nrow(iidrisk)==length(name.id)) rownames(iidrisk) <- name.id
+iidrisk <- namesortme(iidrisk,name.id)
 val$riskDR.iid <- iidrisk
 
 pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
@@ -1260,6 +1247,7 @@ val$var.difriskDR <- mm$vcov
 val$se.difriskDR <- diag(val$var.difriskDR)^.5
 
 ### G-estimator 
+riskG.iid <-  namesortme(riskG.iid,name.id)
 if (nrow(riskG.iid)==length(name.id)) rownames(riskG.iid) <- name.id
 val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
@@ -1426,7 +1414,7 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
  call.id <- id;
- conid <- construct_id(id,nrow(X))
+ conid <- construct_id(id,nrow(X),namesX=rownames(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 

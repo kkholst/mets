@@ -67,7 +67,7 @@
 ##' Biid <- iidBaseline(fg,time=20)
 ##' pfg1 <- FGprediid(Biid,nd)
 ##' pfg1
-##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG  cifregFG
+##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG cifregFG
 ##' @export
 cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,...)
 {# {{{
@@ -110,15 +110,21 @@ return(cif)
 } # }}}
 
 ##' @export
-iidBaseline.cifreg <- function(object,...)
+iidBaseline.cifreg <- function(object,time=NULL,...)
 {# {{{
-  out <- iidBaseline.recreg(object,...)
-   return(out)
+  out <- iidBaseline.recreg(object,time=time,...)
+  return(out)
 } # }}}
 
 ##' @export
-IC.cifreg <- function(x, ...) {# {{{
+IC.cifreg <- function(x,time=NULL,sort=TRUE,...) {# {{{
+if (!is.null(time)) {
+    res <- iidBaseline.recreg(x,time=time,...)$base.iid
+###if (sort) res <- namesortme(res,x$name.id)
+    return(res*NROW(res))
+  }
   res <- with(x, iid * NROW(iid))
+###  if (sort) res <- namesortme(res,x$name.id)
   return(res)
 }
 # }}}

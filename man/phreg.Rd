@@ -41,9 +41,7 @@ library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
 out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
-## robust standard errors default 
 summary(out1)
-head(iid(out1))
 
 par(mfrow=c(1,2))
 plot(out1)
@@ -52,12 +50,16 @@ plot(out1)
 rob1 <- robust.phreg(out1)
 plot(rob1,se=TRUE,robust=TRUE)
 
-## taking iid decomposition of regression parameters
-betaiiid <- lava::iid(out1)
-
+## iid decomposition, with scaled influence functions
+## for regression parameters
+head(iid(out1))
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- iidBaseline(out1,time=30)
-head(Aiiid$base.iid)
+Aiiid <- iid(out1,time=30)
+head(Aiiid)
+## both iid decompositions
+dd <- iidBaseline(out1,time=30)
+head(dd$beta.iid)
+head(dd$base.iid)
 
 }
 \author{

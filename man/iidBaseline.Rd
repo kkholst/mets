@@ -11,6 +11,7 @@ iidBaseline(
   fixbeta = NULL,
   beta.iid = NULL,
   tminus = FALSE,
+  sort = TRUE,
   ...
 )
 }
@@ -26,6 +27,8 @@ iidBaseline(
 \item{beta.iid}{to use these iid of beta}
 
 \item{tminus}{to get predictions in t-}
+
+\item{sort}{to sort after object$name.id when returning iid decomposition}
 
 \item{...}{additional arguments to lower level functions}
 }

@@ -754,7 +754,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
    time <- data[,stop]
    if (is.null(cause)) cause <- unique(stat)
    type0 <- which(cause %in% cens.code)
-   cause <- cause[-type0]
+   if (length(type0)>0) cause <- cause[-type0]
    jumps <- stat %in% cause
    dupexit <- duplicated(time)
    time1 <- data[jumps,stop]

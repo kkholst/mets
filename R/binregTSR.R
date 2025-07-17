@@ -1,15 +1,4 @@
 
-##' @export
-namesortme <- function(iid,name.id) { ## {{{
-if (is.matrix(iid))  
-	if (nrow(iid)==length(name.id)) {
-		rownames(iid) <- name.id
-		oid <- order(name.id)
-		iid <- iid[oid,,drop=FALSE]
-}
-return(iid)
-} ## }}}
-
 ##' 2 Stage Randomization for Survival Data or competing Risks Data 
 ##'
 ##' Under two-stage randomization we can estimate the average treatment effect E(Y(i,j)) of treatment regime (i,j). 
@@ -126,23 +115,9 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-###  call.id <- id 
-###  name.id <- NULL
-###  ### possible handling of id to code from 0:(antid-1)
-###  if (!is.null(id)) {
-###          orig.id <- id
-###	  ids <- sort(unique(id))
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###  } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-###  ### id from call coded as numeric 1 -> 
-###  id <- id+1
-###  nid <- length(unique(id))
 
   call.id <- id 
-  conid <- construct_id(id,nrow(X),as.data=TRUE)
+  conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
@@ -771,7 +746,6 @@ val <- list(riskG=riskG,varG=varG,riskG.iid=riskG.iid,
   class(val) <- "binregTSR"
   return(val)
 }# }}}
-
 
 ##' @export
 print.binregTSR  <- function(x,...) {# {{{
