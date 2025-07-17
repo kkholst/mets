@@ -211,7 +211,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' library(mets)
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
-##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4)+cluster(id),data=TRACE)
 ##' summary(out1)
 ##' 
 ##' par(mfrow=c(1,2))
@@ -605,24 +605,137 @@ FastCoxPLstrataR <- function(beta, X, XX, Sign, Jumps, strata, nstrata, weights,
 ###{{{ iid & Robust variances
 
 ##' @export
+IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
+    if (!is.null(time)) {
+        res <- iidBaseline(x, time = time,...)$base.iid
+        return(res * NROW(res))
+    }
+    classes1 <- "mlogit"
+    if ((length(class(x)) == 1) || inherits(x, classes1)) {
+        invhess <- -solve(x$hessian)
+        orig.order <- FALSE
+        if (is.null(x$propodds)) {
+            if (type == "robust") {
+                xx <- x$cox.prep
+                ii <- invhess
+                S0i <- rep(0, length(xx$strata))
+                S0i[xx$jumps + 1] <- 1/x$S0
+                Z <- xx$X
+                U <- E <- matrix(0, nrow(xx$X), x$p)
+                E[xx$jumps + 1, ] <- x$E
+                U[xx$jumps + 1, ] <- x$U
+                cumhaz <- cbind(xx$time, cumsumstrata(S0i, xx$strata,
+                  xx$nstrata))
+                EdLam0 <- apply(E * S0i, 2, cumsumstrata, xx$strata,
+                  xx$nstrata)
+                rr <- c(xx$sign * exp(Z %*% coef(x) + xx$offset))
+                MGt <- U[, drop = FALSE] - (Z * cumhaz[, 2] -
+                  EdLam0) * rr * c(xx$weights)
+                if (orig.order) {
+                  oo <- (1:nrow(xx$X))[xx$ord + 1]
+                  oo <- order(oo)
+                  MGt <- MGt[oo, , drop = FALSE]
+                  id <- xx$id[oo]
+                }
+                else id <- xx$id
+            }
+            else {
+                MGt <- x$U
+                MG.base <- 1/x$S0
+            }
+        }
+        else {
+            xx <- x$cox.prep
+            ii <- invhess
+            S0i <- rep(0, length(xx$strata))
+            S0i[xx$jumps + 1] <- 1/x$S0
+            Z <- xx$X
+            U <- E <- matrix(0, nrow(xx$X), x$p)
+            E[xx$jumps + 1, ] <- x$E
+            U[xx$jumps + 1, ] <- x$U
+            cumhazA <- cumsumstratasum(S0i, xx$strata, xx$nstrata,
+                type = "all")
+            cumhaz <- c(cumhazA$sum)
+            cumhazm <- cumhazA$lagsum
+            EdLam0 <- apply(E * S0i, 2, cumsumstrata, xx$strata,
+                xx$nstrata)
+            rr <- c(xx$sign * exp(Z %*% coef(x) + xx$offset))
+            rro <- c(exp(Z %*% coef(x) + xx$offset))
+            S0star <- revcumsumstrata(rr/(1 + rro * cumhazm),
+                xx$strata, xx$nstrata)
+            S0 <- revcumsumstrata(rr, xx$strata, xx$nstrata)
+            S1 <- apply(Z * rr, 2, revcumsumstrata, xx$strata,
+                xx$nstrata)
+            Et <- S1/c(S0)
+            lt <- apply((Z - Et) * c(rr * rro/(1 + rro * cumhazm)),
+                2, revcumsumstrata, xx$strata, xx$nstrata)
+            Estar <- S0star/S0
+            EstardLam <- cumsumstrata(Estar * S0i, xx$strata,
+                xx$nstrata)
+            k <- exp(-EstardLam)
+            basecor <- apply(lt * c(k * S0i), 2, revcumsumstrata,
+                xx$strata, xx$nstrata)
+            basecor <- basecor/c(k * S0)
+            www <- x$propoddsW * x$weightsJ
+            U[xx$jumps + 1, ] <- U[xx$jumps + 1, ] - c(www) *
+                basecor[xx$jumps + 1, ]
+            MGt <- U
+            if (type == "robust") {
+                baseDLam0 <- apply(basecor * S0i, 2, cumsumstrata,
+                  xx$strata, xx$nstrata)
+                MGt <- U[, drop = FALSE] - (Z * cumhaz - EdLam0 -
+                  baseDLam0) * rr * c(xx$weights)
+            }
+            else MGt <- MGt[xx$jumps + 1, ]
+            MG.base <- 1/x$S0
+            id <- xx$id
+        }
+        ncluster <- NULL
+        if (type == "robust" & (!is.null(x$id) | any(x$entry >
+            0))) {
+            if (type == "martingale")
+                id <- x$id[x$jumps]
+            UU <- apply(MGt, 2, sumstrata, id, max(id) + 1)
+            ncluster <- nrow(UU)
+        }
+        else {
+            UU <- MGt
+        }
+        res <- structure(UU %*% invhess, invhess = invhess, ncluster = ncluster)
+        if (is.null(colnames(res)))
+            colnames(res) <- names(coef(x))
+        res <- namesortme(res, x$name.id)
+        res <- res * NROW(res)
+        return(res)
+    }
+    else if (inherits(x, c("cifreg", "recreg", "IPTW"))) {
+        if (inherits(x, c("IPTW")))
+            res <- x$IID
+        else res <- x$iid
+        if (is.null(colnames(res)))
+            colnames(res) <- names(coef(x))
+        res <- res * NROW(res)
+        return(res)
+    }
+} ## }}}
 
-##' Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG
+##' Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
 ##'
-##' @title Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG
+##' @title Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
 ##' @param object phreg/recreg/cifregFG object
 ##' @param time for baseline IID 
 ##' @param ft function to compute IID of baseline integrated against f(t) 
 ##' @param fixbeta to fix the coefficients 
 ##' @param beta.iid to use these iid of beta 
 ##' @param tminus to get predictions in t-  
-##' @param sort to sort after object$name.id when returning iid decomposition
 ##' @param ... additional arguments to lower level functions
 ##' @author Thomas Scheike
 ##' @aliases iidBaseline
 ##' @export
-iidBaseline <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,sort=TRUE,...) UseMethod("iidBaseline")
+iidBaseline <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...) UseMethod("iidBaseline")
+
 ##' @export 
-iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,sort=FALSE,...)
+iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...)
 {# {{{
 ###  sum_i int_0^t f(s)/S_0(s) dM_{ki}(s) - P(t) \beta_k
 ###  with possible strata and cluster "k", and i in clusters 
@@ -694,10 +807,10 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
  MGAiid <- MGAiids
  if (is.matrix(MGAiid)) {
     colnames(MGAiid) <- paste("strata",sus,sep="")
-    MGAiid <- namesortme(MGAiid,x$name.id,sort=sort)
+    MGAiid <- namesortme(MGAiid,x$name.id)
     ###    if (length(x$name.id)==nrow(MGAiid)) rownames(MGAiid) <- x$name.id
  }
- MGtiid <- namesortme(MGtiid,x$name.id,sort=sort)
+ MGtiid <- namesortme(MGtiid,x$name.id)
 
  return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,
 	     id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))

@@ -191,7 +191,6 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
   conid <- construct_id(id,nrow(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
   orig.id <- id
-  print(conid)
 
 ### censoring weights constructed
     whereC <- which(status %in% cens.code)
@@ -447,7 +446,6 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
     UUiid <- dd$beta.iid
     UU <- dd$MGt
     MGc <- dd$MGc
-    print(xx2$id)
 
     Uiid <-  (UU+MGc) %*% iH
     UUiid <- UU %*% iH

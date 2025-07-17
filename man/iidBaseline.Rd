@@ -2,7 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{iidBaseline}
 \alias{iidBaseline}
-\title{Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG}
+\title{Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG}
 \usage{
 iidBaseline(
   object,
@@ -11,7 +11,6 @@ iidBaseline(
   fixbeta = NULL,
   beta.iid = NULL,
   tminus = FALSE,
-  sort = TRUE,
   ...
 )
 }
@@ -28,12 +27,10 @@ iidBaseline(
 
 \item{tminus}{to get predictions in t-}
 
-\item{sort}{to sort after object$name.id when returning iid decomposition}
-
 \item{...}{additional arguments to lower level functions}
 }
 \description{
-Influence functions or IID decomposition of baseine for recrec/phreg/cifregFG
+Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
 }
 \author{
 Thomas Scheike
