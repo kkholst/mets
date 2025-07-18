@@ -793,10 +793,13 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
 
  ## sum after id's within strata and order 
  MGAiids <- c()
+ cumhaz.time <- c()
  sus <- sort(unique(xx$strata))
  for (i in sus)  { 
 	 wi <- which(xx$strata==i)
          MGAiidl <- sumstrata(MGAiid[xx$strata==i],xx$id[xx$strata==i],mid)
+	 cumhazs <- rbind(0,x$cumhaz[x$strata[x$jumps]==i,])
+	 cumhaz.time <- c(cumhaz.time,cpred(cumhazs,time,tminus=tminus)[,2])
 
         if (fixbeta==0) {
            UU <-  apply(HtS[i+1,]*t(MGtiid),2,sum)
@@ -807,12 +810,19 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
  MGAiid <- MGAiids
  if (is.matrix(MGAiid)) {
     colnames(MGAiid) <- paste("strata",sus,sep="")
+if (!is.null(x$call.id)) {
     MGAiid <- namesortme(MGAiid,x$name.id)
+}
     ###    if (length(x$name.id)==nrow(MGAiid)) rownames(MGAiid) <- x$name.id
  }
- MGtiid <- namesortme(MGtiid,x$name.id)
 
- return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,
+
+ cumhaz <- x$cumhaz
+### iss <- indexstratarightR(x$cumhaz[,1],x$strata.jumps,rep(time,x$nstrata),seq(x$nstrata)-1,x$nstrata,type="left")
+### cumhaz.time <- cumhaz[iss,2]
+
+ return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,coef=x$coef,
+	     cumhaz=cumhaz,cumhaz.time=cumhaz.time,
 	     id=id,beta.iid=MGtiid,model.frame=x$model.frame,formula=x$formula))
 } # }}}
 
