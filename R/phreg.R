@@ -2449,7 +2449,10 @@ return(out)
 ##' @export
 summary.resmean_phreg <- function(object,...)
 {# {{{
-if (is.null(object$intkmtimes)) return(cbind(object$cumhaz,object$se.cumhaz[,2])) else return(object$intkmtimes)
+if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,2]) else  {
+	out <- object$intkmtimes
+}
+return(out)
 }# }}}
 
 ##' @export

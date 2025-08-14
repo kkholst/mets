@@ -250,11 +250,6 @@ the covariates
  fgcm <- cifregFG(Event(time,status)~Z1+Z2,data=dats,cause=1,cens.model=~strata(Z1,Z2))
  summary(fgcm)
  summary(fg)
- cengroup <- with(data,strata(Z1,Z2))
-
-cr <- with(dats,crr(time,status,mm,cengroup=cengroup))
-cr
-
 ```
 
 We note that the standard errors are slightly smaller for the more efficient estimator.
