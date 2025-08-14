@@ -248,7 +248,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 
     ## computing terms for those experiencing another cause, need S0, S1, S2
     if ((length(other)>=1)) { ## {{{ 
-        weightso <- weights[other]/Stime[other]
+       weightso <- weights[other]/Stime[other]
        timeoo <- rep(max(exit)+1,length(other))
        if (is.null(adm.cens.time))
         timeoo <- rep(max(exit)+1,length(other)) else timeoo <- adm.cens.time[other] 

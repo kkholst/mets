@@ -2461,7 +2461,8 @@ print(summary.resmean_phreg(x,...))
 ##' @export
 plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
     lty=NULL,col=NULL,lwd=NULL,legend=TRUE,ylab=NULL,xlab=NULL,
-    polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,years.lost=FALSE,cause=1,...) {# {{{
+    polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,years.lost=FALSE,cause=1,
+    conf.type=c("log","plain"),...) {# {{{
 
 	if (inherits(x,"phreg") & is.null(ylab)) ylab <- "Cumulative hazard"
 	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
@@ -2470,6 +2471,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 	if (inherits(x,"resmean_phreg") & !is.null(x$intF1times)) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (years.lost) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (is.null(xlab)) xlab <- "time"
+	ci.level <- level
    level <- -qnorm((1-level)/2)
    if (years.lost) rr <- range(x$cumhaz[,1]-x$cumhaz[,cause+1])  else rr <- range(x$cumhaz[,cause+1]) 
    strat <- x$strata[x$jumps]
@@ -2536,8 +2538,11 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
        if (se==TRUE) {
 	    if (robust==TRUE) secumhazard  <- x$robse.cumhaz[strat==j,c(1,cause+1),drop=FALSE]
 	    else secumhazard <- x$se.cumhaz[strat==j,c(1,cause+1),drop=FALSE]
-		 ul <-cbind(cumhazard[,1],cumhazard[,2]+level*secumhazard[,2])
-		 nl <-cbind(cumhazard[,1],cumhazard[,2]-level*secumhazard[,2])
+            xx <- conftype(cumhazard[,2],secumhazard[,2],conf.type=conf.type[1],restrict="positive",conf.int=ci.level)
+	    ul <-cbind(cumhazard[,1],xx$upper)
+	    nl <-cbind(cumhazard[,1],xx$lower)
+	    ul[is.na(ul)] <- 0
+	    nl[is.na(nl)] <- 0
 		 if (inherits(x,"km")) { ul[,2] <- x$upper[x$strata==j]; 
 		                          nl[,2] <- x$lower[x$strata==j];
 		                          wna <- which(is.na(ul[,2]))
