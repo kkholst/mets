@@ -2447,9 +2447,9 @@ return(out)
 ##' @export
 summary.resmean_phreg <- function(object,level=0.95,...)
 {# {{{
-if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,2]) else  {
-   out <- object$intkmtimes
+if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,-1]) else  {
 
+out <- object$intkmtimes
 if (ncol(out)==5) {  
    mu <- out[,3]; se <- out[,4]; 
    xx <- conftype(mu,se,conf.int=level)
