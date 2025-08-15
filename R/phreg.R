@@ -2090,6 +2090,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 ##' 
@@ -2189,7 +2190,11 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
     intkmtimes=data.frame(intkmtimes)
 ###    logintkmtimes=cbind(intkmtimes[,1:2],log(intkmtimes[,3]),se.intkmtimes/intkmtimes[,3])
 ###    colnames(logintkmtimes) <- c("strata","times","log-rmean","log-se.rmean")
-  } else intkmtimes <- se.intkmtimes <- NULL
+     coef <- intkmtimes[,3];
+     var  <- diag(intkmtimes[,4]^2)
+  } else {
+	  coef <- var <- intkmtimes <- se.intkmtimes <- NULL
+  }
 
   rmst <- cbind(meanm[,1],vecAllStrata(meanm[,2],strata.jumps,nstrata))
   se.rmst <- cbind(se.mm[,1],vecAllStrata(se.mm[,2],strata.jumps,nstrata))
@@ -2198,9 +2203,7 @@ resmean.phreg <- function(x,times=NULL,covs=NULL,...)
        time=time,strata=strata.jumps,nstrata=nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
-       intkmtimes=intkmtimes,
-       rmst=rmst,se.rmst=se.rmst,
-       coef=intkmtimes[,3],var=diag(intkmtimes[,4]^2))
+       intkmtimes=intkmtimes, rmst=rmst,se.rmst=se.rmst, coef=coef,var=var)
 class(out) <- c("resmean_phreg")
 return(out)
 }# }}}
@@ -2208,14 +2211,14 @@ return(out)
 ##' @export
 vcov.resmean_phreg <- function(object,cause=1,...) 
 {# {{{
-if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF1",cause,sep="") else name <- "se.rmean"
+if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
 return(diag(object$intkmtimes[,name]^2))
 }# }}}
 
 ##' @export
 coef.resmean_phreg <- function(object,cause=1,...) 
 {# {{{
-if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF1",cause,sep="") else name <- "rmean"
+if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF_",cause,sep="") else name <- "rmean"
 return(object$intkmtimes[,name])
 }# }}}
 
@@ -2277,7 +2280,7 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 	   strata.jumps <- x$strata.jumps; 
 	   nstrata <- x$nstrata; 
 	   jumptimes <- x$jumptimes; 
-           cause.jumps <- x$U+x$E
+           cause.jumps <- x$cox.prep$Z[x$cox.prep$jumps+1]
 	   S0i <- c(1/x$S0)
 	   S0i2 <- c(1/(x$S0*(x$S0-1)))
 	   S0i2[x$S0==1] <- 0
@@ -2285,7 +2288,7 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 
  ### formula from Pepe-Mori: SIM 93, 737-
  pepemori <- 0
- ### formula from PKA SIM 2013
+ ### formula from PKA SIM 2013, not corect, missing some terms  
  pka <- 0
 
   years.lostF1 <- se.years.lostF1m  <- se.years.lostF1 <- se.years.lostF1pm <- c()
@@ -2402,7 +2405,6 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
  years.lostF1 <- cbind(jumptimes,years.lostF1)
  colnames(years.lostF1) <- c("time",paste("intF_",causes,sep=""))
 
-
   ### make output at specified times
   if (!is.null(times)) {
     intF1times <- years.lostF1[newtimes,]
@@ -2411,47 +2413,65 @@ cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
     se.intF1mtimes <- se.years.lostF1m[newtimes,]
     stratatimes <- strata.jumps[newtimes]
     intF1mtimes <- cbind(stratatimes,intF1times,se.intF1mtimes,years.lost)
-    colnames(intF1mtimes) <- c("strata","times",
-			      paste0("intF1",causes),paste0("se.intF1",causes),"total-years-lost")
+    colnames(intF1mtimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes),"total-years-lost")
     rownames(intF1mtimes) <- rep(x$strata.level,length(times)); 
     intF1mtimes=data.frame(intF1mtimes)
     if (pka==1) { 
 	    intF1pkatimes <- cbind(stratatimes,intF1times,se.intF1times)
-            colnames(intF1pkatimes) <- c("strata","times",
-			      paste0("intF1",causes),paste0("se.intF1",causes))
+            colnames(intF1pkatimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes))
             intF1pkatimes=data.frame(intF1times)
     } else intF1pkatimes <- NULL 
     if (pepemori==1) {
           se.intF1pmtimes <- se.years.lostF1pm[newtimes,]
           intF1pmtimes <- cbind(stratatimes,intF1times,se.intF1pmtimes)
-          colnames(intF1pmtimes) <- c("strata","times",
-			      paste0("intF1",causes),paste0("se.intF1",causes))
+          colnames(intF1pmtimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes))
          intF1pmtimes=data.frame(intF1pmtimes)
     } else intF1pmtimes <- NULL
-  } else intF1pmtimes <-intF1mtimes <- intF1pkatimes <- NULL
+  } else coef <- var <- intF1pmtimes <-intF1mtimes <- intF1pkatimes <- NULL
 
  se.years.lostF1 <- cbind(jumptimes,se.years.lostF1m)
  colnames(se.years.lostF1) <- c("time",paste("intF_",causes,sep=""))
 
-
- ## name things to make use of other programs
+## name things to make use of other programs
  out <- list(cumhaz=years.lostF1,se.cumhaz=se.years.lostF1,
        time=jumptimes, strata=strata.jumps,nstrata=nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
        intkmtimes=intF1mtimes, intF1times=intF1mtimes,
-       intF1pmtimes=intF1pmtimes, intF1pkatimes=intF1pkatimes
+       intF1pmtimes=intF1pmtimes, intF1pkatimes=intF1pkatimes,causes=causes
        )
 class(out) <- c("resmean_phreg")
 return(out)
 }# }}}
 
 ##' @export
-summary.resmean_phreg <- function(object,...)
+summary.resmean_phreg <- function(object,level=0.95,...)
 {# {{{
 if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,2]) else  {
-	out <- object$intkmtimes
+   out <- object$intkmtimes
+
+if (ncol(out)==5) {  
+   mu <- out[,3]; se <- out[,4]; 
+   xx <- conftype(mu,se,conf.int=level)
+   lower <- xx$lower
+   upper <- xx$upper
+   years.lost <- out[,5]
+   out <- cbind(out[,-5],lower,upper,years.lost)
+} else {
+	for (i in object$causes) {
+                   name <- paste("intF_",i,sep="") 
+                   sename <- paste("se.intF_",i,sep="") 
+		    mu <- out[,name]; 
+		   se <- out[,sename]; 
+                   xx <- conftype(mu,se,conf.int=level)
+		   loweri <- paste0("lower_",name)
+		   upperi <- paste0("upper_",name)
+		   out[,loweri] <- xx$lower
+		   out[,upperi] <- xx$upper
+	}
 }
+}
+
 return(out)
 }# }}}
 
