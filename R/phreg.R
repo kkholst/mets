@@ -2100,7 +2100,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' plot(rm1,se=1)
 ##' plot(rm1,years.lost=TRUE,se=1)
 ##' 
-##' ## comparing populations  
+##' ## comparing populations, can also be done using rmstIPCW via influence functions
 ##' rm1 <- resmean.phreg(out1,times=40)
 ##' e1 <- estimate(rm1)
 ##' e1
@@ -2111,7 +2111,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 ##' summary(drm1)
 ##' 
-##' ## comparing populations  
+##' ## comparing populations, can also be done using rmstIPCW via influence functions
 ##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
 ##' summary(drm1)
 ##' ## first cause 
