@@ -695,7 +695,8 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 ##' @export
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,outcome=c("cif","rmst","years-lost"),model="exp",
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
+	   outcome=c("cif","rmst","years-lost"),model="exp",
 	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -792,7 +793,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	     if (outcome[1]=="rmst")
 	     Y <-  c(pmin(exit,time)) 
              else Y <-  c((time-pmin(exit,time)))
-            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time)))
      }
   }
   Yipcw <- Y
