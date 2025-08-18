@@ -337,8 +337,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
   if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  if (!is.null(call.id))
-	  val$iid <- namesortme(val$iid,name.id)
+  if (!is.null(call.id)) val$iid <- namesortme(val$iid,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
@@ -696,7 +695,8 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 ##' @export
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
-	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,Ydirect=NULL,...)
+	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,outcome=c("cif","rmst","years-lost"),model="exp",
+	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -758,6 +758,10 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
+  ucauses  <-  sort(unique(status))
+  ccc <- which(ucauses %in% cens.code)
+  if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
+  competing  <-  (length(Causes)>1) 
 
   cens.strata <- cens.nstrata <- NULL 
 
@@ -777,13 +781,22 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
   p <- ncol(X)
 
   X <-  as.matrix(X)
-  X2  <- .Call("vecMatMat",X,X)$vXZ
+  X2  <- .Call("vecCPMat",X)$XX
   obs <- (exit<=time & status!=cens.code) | (exit>=time)
   weights <- obs*weights/c(cens.weights)
   cens.weights <- c(cens.weights)
-  Y <- c((status==cause)*(exit<=time))
-  if (!is.null(Ydirect)) Y <- Ydirect
 
+  if (!is.null(Ydirect)) Y <-  Ydirect else {
+     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time))
+     else { if (!competing) {
+	     if (outcome[1]=="rmst")
+	     Y <-  c(pmin(exit,time)) 
+             else Y <-  c((time-pmin(exit,time)))
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)
+     }
+  }
+  Yipcw <- Y
+ 
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum(Y)
 
@@ -791,14 +804,28 @@ obj <- function(pp,all=FALSE)
 { # {{{
 
 lp <- c(X %*% pp+offset)
-p <- expit(lp)
+
+if (outcome[1]!="cif") {
+     if (model[1]=="exp") {
+	 p <- exp(lp) 
+         D2logl <- c(weights*p)*X2 
+     } else {
+	 p <- lp
+         D2logl <- c(weights)*X2
+       }
+} else { 
+   p <- expit(lp)
+   D2logl <- c(weights*p/(1+exp(lp)))*X2
+}
 ploglik <- sum(weights*(Y-p)^2)
 
+
 Dlogl <- weights*X*c(Y-p)
-D2logl <- c(weights*p/(1+exp(lp)))*X2
+###D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
-hessian <- matrix(D2log,length(pp),length(pp))
+np <- length(pp)
+hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
       ihess <- solve(hessian)
@@ -868,7 +895,10 @@ hessian <- matrix(D2log,length(pp),length(pp))
 	  MGCiid <- 0
   }## }}}
 
-  val$call <- cl
+    val$Y <- Yipcw
+    val$model <- model[1]
+    val$outcome <- outcome[1]
+    val$call <- cl
     val$MGciid <- MGCiid
     val$id <- orig.id
     val$call.id <- call.id
@@ -876,16 +906,15 @@ hessian <- matrix(D2log,length(pp),length(pp))
     val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  if (!is.null(call.id))
-    val$iid <- namesortme(val$iid,name.id)
+    if (!is.null(call.id)) val$iid <- namesortme(val$iid,name.id)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
     val$se.robust <- diag(robvar)^.5
     val$se.coef <- diag(val$var)^.5
-  val$cause <- cause
-  val$cens.code <- cens.code 
-  val$augmentation <- augmentation
+    val$cause <- cause
+    val$cens.code <- cens.code 
+    val$augmentation <- augmentation
 
   class(val) <- "binreg"
   return(val)

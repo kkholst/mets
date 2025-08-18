@@ -61,6 +61,16 @@ out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
                 time=50,cens.model=~strata(platelet),model="exp")
 summary(out)
 
+## weighted GLM version   RMST
+out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
+            time=50,cens.model=~strata(platelet),model="exp",outcome="rmst")
+summary(out2)
+
+### time-lost
+outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
+                time=50,cens.model=~strata(platelet),model="exp",outcome="rmtl")
+summary(outtl)
+
 ### same as Kaplan-Meier for full censoring model 
 bmt$int <- with(bmt,strata(tcell,platelet))
 out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
@@ -82,6 +92,7 @@ estimate(out)
 ## same as integrated cumulative incidence 
 rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
 summary(rmc1)
+
 }
 \author{
 Thomas Scheike
