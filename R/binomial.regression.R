@@ -37,8 +37,8 @@
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
 ##' @param augmentation to augment binomial regression 
-##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
-##' @param model  possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta) 
+##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "years-lost"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
+##' @param model  link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be 
 ##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
@@ -103,7 +103,8 @@
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model="exp",Ydirect=NULL,...)
+	   outcome=c("cif","rmst","years-lost"),model=c(NULL,"logit","exp","lin"),
+	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -266,22 +267,29 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	  MGCiid <- 0
   }## }}}
 
+ ## default links
+ if (is.null(model[1])) {
+	 if (outcome[1]=="cif") model <- "logit"
+	 if (outcome[1]=="rmst") model <- "exp"
+	 if (outcome[1]=="rmtl") model <- "exp"
+	 if (outcome[1]=="years-lost") model <- "exp"
+ }
+
 obj <- function(pp,all=FALSE)
 { # {{{
 lp <- c(X %*% pp+offset)
 
-if (outcome[1]!="cif") {
      if (model[1]=="exp") {
 	 p <- exp(lp) 
          D2logl <- c(weights*p)*X2 
-     } else {
+     } else if (model[1]=="lin") {
 	 p <- lp
          D2logl <- c(weights)*X2
        }
-} else { 
+     else if (model[1]=="logit") {
 	p <- expit(lp)
         D2logl <- c(weights*p/(1+exp(lp)))*X2
-}
+} else stop("link functions must be logit,exp,lin\n") 
 ploglik <- sum(weights*(Y-p)^2)
 
 Dlogl <- weights*X*c(Y-p)
@@ -355,6 +363,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   return(val)
 }# }}}
 
+
 ##' @export
 IC.binreg  <- function(x,...) {# {{{
   x$iid*NROW(x$iid)
@@ -424,7 +433,7 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
   if (length(clusterTerm)>=1) 
 	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
 
-  if (!inherits(object,"resmean")) {
+  if (object$model[1]=="logit") {
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
   preds <- p
@@ -445,12 +454,12 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
   } else {
 
   lp <- c(Z %*% object$coef)
-  if (object$model.type=="exp") p <- exp(lp) else p <- lp
+  if (object$model[1]=="exp") p <- exp(lp) else p <- lp
   preds <- p
 
   if (se) {
      if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
-     if (object$model.type=="exp") Dpv <- Z*p else Dpv <- Z 
+     if (object$model[1]=="exp") Dpv <- Z*p else Dpv <- Z 
      se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
      cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
@@ -696,7 +705,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model="exp",
+	   outcome=c("cif","rmst","years-lost"),model=c(NULL,"logit","exp","lin"),
 	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -801,25 +810,32 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
  if (is.null(augmentation))  augmentation=rep(0,p)
  nevent <- sum(Y)
 
+ ## default links
+ if (is.null(model[1])) {
+	 if (outcome[1]=="cif") model <- "logit"
+	 if (outcome[1]=="rmst") model <- "exp"
+	 if (outcome[1]=="years-lost") model <- "exp"
+	 if (outcome[1]=="rmtl") model <- "exp"
+ }
+
+
 obj <- function(pp,all=FALSE)
 { # {{{
 
 lp <- c(X %*% pp+offset)
 
-if (outcome[1]!="cif") {
      if (model[1]=="exp") {
 	 p <- exp(lp) 
          D2logl <- c(weights*p)*X2 
-     } else {
+     } else if (model[1]=="lin") {
 	 p <- lp
          D2logl <- c(weights)*X2
        }
-} else { 
-   p <- expit(lp)
-   D2logl <- c(weights*p/(1+exp(lp)))*X2
-}
+     else if (model[1]=="logit") {
+	p <- expit(lp)
+        D2logl <- c(weights*p/(1+exp(lp)))*X2
+} else stop("link functions must be logit,exp,lin\n") 
 ploglik <- sum(weights*(Y-p)^2)
-
 
 Dlogl <- weights*X*c(Y-p)
 ###D2logl <- c(weights*p/(1+exp(lp)))*X2
@@ -971,7 +987,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","rmtl"),model="exp",Ydirect=NULL,...)
+	   outcome=c("cif","rmst","rmtl"),model=c(NULL,"logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -1154,7 +1170,7 @@ for (a in nlevs) {# {{{
 	datA[,treat.name] <- a
 	Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
         lpa <- Xa %*% val$coef+offset
-	if (outcome[1]=="cif") {
+	if (model[1]=="cif") {
 	   ma <- expit(lpa); Dma  <-  Xa*c(ma/(1+exp(lpa)))
 	} else {
 	    if (model[1]=="exp") { ma <- exp(lpa);  Dma<-c(ma)*Xa; } else { ma <- lpa; Dma <- Xa }
@@ -1298,7 +1314,6 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
-
 
 ###{{{ summary 
 
