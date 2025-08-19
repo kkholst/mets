@@ -2458,7 +2458,7 @@ return(out)
 }# }}}
 
 ##' @export
-summary.resmean_phreg <- function(object,level=0.95,...)
+summary.resmean_phreg <- function(object,level=0.95,contrast=NULL,...)
 {# {{{
 if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,-1]) else  {
 
@@ -2470,7 +2470,14 @@ if (ncol(out)==5) {
    upper <- xx$upper
    years.lost <- out[,5]
    out <- cbind(out[,-5],lower,upper,years.lost)
+   if (!is.null(contrast)) {
+	   test <- estimate(object,contrast=contrast)
+	   out <- list(estimates=out,test=test)
+   }
+   outl <- out
 } else {
+        outl <- list()
+	k <- 1
 	for (i in object$causes) {
                    name <- paste("intF_",i,sep="") 
                    sename <- paste("se.intF_",i,sep="") 
@@ -2481,11 +2488,17 @@ if (ncol(out)==5) {
 		   upperi <- paste0("upper_",name)
 		   out[,loweri] <- xx$lower
 		   out[,upperi] <- xx$upper
+		   if (!is.null(contrast)) {
+                   test <- estimate(coef=mu,vcov=diag(se^2),contrast=contrast)
+		   testname <- paste0("test",name)
+		   outl[[testname]] <- test
+		   }
 	}
+        outl$estimate <- out
 }
 }
 
-return(out)
+return(outl)
 }# }}}
 
 ##' @export
