@@ -103,7 +103,7 @@
 binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model=c(NULL,"logit","exp","lin"),
+	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),
 	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -177,7 +177,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
  ## if event before time or alive, then uncensored, equality for both censored and events  
  obs <- (exit<=time & (!statusC)) | (exit>=time)
 
-  if (is.null(cens.weights))  {
+  if (is.null(cens.weights))  { ## {{{
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
       resC <- phreg(formC,data)
       if (resC$p>0) kmt <- FALSE
@@ -186,7 +186,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
       ## strata from original data 
       cens.strata <- resC$strata[order(resC$ord)]
       cens.nstrata <- resC$nstrata
-  } else { se <- FALSE; resC <- formC <- NULL}
+  } else { se <- FALSE; resC <- formC <- NULL} ## }}}
   expit  <- function(z) 1/(1+exp(-z)) ## expit
 
   p <- ncol(X)
@@ -268,7 +268,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   }## }}}
 
  ## default links
- if (is.null(model[1])) {
+ if (model[1]=="default") {
 	 if (outcome[1]=="cif") model <- "logit"
 	 if (outcome[1]=="rmst") model <- "exp"
 	 if (outcome[1]=="rmtl") model <- "exp"
@@ -363,7 +363,6 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   return(val)
 }# }}}
 
-
 ##' @export
 IC.binreg  <- function(x,...) {# {{{
   x$iid*NROW(x$iid)
@@ -378,11 +377,15 @@ print.binreg  <- function(x,...) {# {{{
 summary.binreg <- function(object,...) {# {{{
 
 cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
-
-expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
 V=object$var
 
-res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,ncluster=object$ncluster,var=V,exp.coef=expC)
+res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,
+	    ncluster=object$ncluster,var=V,model=object$model[1])
+
+if (object$model[1]=="exp" | object$model[1]=="logit") {
+expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
+res <- c(res,list(exp.coef=expC))
+}
 
 ## to add marginal estimates for binregATE 
 if (!is.null(object$riskDR))  {
@@ -403,9 +406,56 @@ if (!is.null(object$riskDR))  {
     }
 }
 
-class(res) <- "summary.phreg"
+class(res) <- "summary.binreg"
 return(res)
 }# }}}
+
+##' @export
+print.summary.binreg <- function(x,max.strata=5,...) { ## {{{
+
+  nn <- cbind(x$n, x$nevent)
+  rownames(nn) <- levels(x$strata); colnames(nn) <- c("n","events")
+  if (is.null(rownames(nn))) rownames(nn) <- rep("",NROW(nn))
+  if (length(x$strata)>max.strata) {
+      nn <- rbind(c(colSums(nn),length(x$strata)));
+      colnames(nn) <- c("n","events","stratas")
+      rownames(nn) <- ""
+  } 
+  print(nn,quote=FALSE)  
+  if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
+  if (!is.null(x$coef)) {
+    cat("coeffients:\n")
+    printCoefmat(x$coef,...)
+    cat("\n")
+    if (x$model[1]=="exp" | x$model[1]=="logit") {
+    cat("exp(coeffients):\n")
+    printCoefmat(x$exp.coef,...)
+    }
+  }
+  cat("\n")
+
+ ## for binreg ATE
+ if (!is.null(x$ateDR)) {
+    cat("Average Treatment effects (G-formula) :\n")
+    printCoefmat(x$ateG,...)
+    cat("\n")
+
+    cat("Average Treatment effects (double robust) :\n")
+    printCoefmat(x$ateDR,...)
+    cat("\n")
+
+###    if (!is.null(x$attc)) {
+###    cat("Average Treatment effects on Treated/Non-Treated (DR) :\n")
+###    printCoefmat(x$attc,...)
+###    cat("\n")
+###    }
+
+  }
+  cat("\n")
+
+} ## }}}
+
+###}}} 
 
 ##' @export
 vcov.binreg <- function(object,...) {# {{{
@@ -695,6 +745,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   val$se.coef <- diag(val$var)^.5
   val$cause <- cause
   val$cens.code <- cens.code 
+  val$model <- "logit"
 
 
   class(val) <- "binreg"
@@ -705,7 +756,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model=c(NULL,"logit","exp","lin"),
+	   outcome=c("cif","rmst","years-lost"),model=c("default","logit","exp","lin"),
 	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
@@ -811,7 +862,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
  nevent <- sum(Y)
 
  ## default links
- if (is.null(model[1])) {
+ if (model[1]=="default") {
 	 if (outcome[1]=="cif") model <- "logit"
 	 if (outcome[1]=="rmst") model <- "exp"
 	 if (outcome[1]=="years-lost") model <- "exp"
@@ -1992,12 +2043,13 @@ normalATE <- function(formula,data,binreg=TRUE,model="lin",...)
 ##' @param ... Additional arguments to binreg function.
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' data(bmt)
 ##' dcut(bmt,breaks=2) <- ~age 
 ##' out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
 ##'			  strata(platelet,agecat.2),data=bmt,cause=1,time=40)
 ##' summary(out1)
-##'
+##' 
 ##' out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
 ##'     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
 ##' summary(out2)
@@ -2208,7 +2260,7 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
  bra$robvar <- bra$var
  bra$se.robust <-bra$se.coef
  bra$MGciid <- MGiid
-
+ bra$model <- "logit"
 
  allAugment <- list(MGiid=MGiid,augment=augment,id=id,id.orig=id.orig,
 	       cif=cif1,St=St,Gc=Gc,strata=xxstrata,strataC=xxstrataC,time=dd$time)

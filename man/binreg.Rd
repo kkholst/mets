@@ -23,8 +23,8 @@ binreg(
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmst", "years-lost"),
-  model = c(NULL, "logit", "exp", "lin"),
+  outcome = c("cif", "rmst", "rmtl"),
+  model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
   ...
 )

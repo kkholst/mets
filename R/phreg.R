@@ -1069,25 +1069,6 @@ print.summary.phreg  <- function(x,max.strata=5,...) { ## {{{
   }
   cat("\n")
 
- ## for binreg ATE
- if (!is.null(x$ateDR)) {
-    cat("Average Treatment effects (G-formula) :\n")
-    printCoefmat(x$ateG,...)
-    cat("\n")
-
-    cat("Average Treatment effects (double robust) :\n")
-    printCoefmat(x$ateDR,...)
-    cat("\n")
-
-###    if (!is.null(x$attc)) {
-###    cat("Average Treatment effects on Treated/Non-Treated (DR) :\n")
-###    printCoefmat(x$attc,...)
-###    cat("\n")
-###    }
-
-  }
-  cat("\n")
-
 } ## }}}
 
 ###}}} 

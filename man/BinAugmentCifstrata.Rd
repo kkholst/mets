@@ -51,6 +51,7 @@ related to \deqn{F_1^*(t,s)} and \deqn{s} is strata, \deqn{S^*(t,s) = 1 - F_1^*(
 Standard errors computed under assumption of correct \deqn{G_c(s)} model.
 }
 \examples{
+library(mets)
 data(bmt)
 dcut(bmt,breaks=2) <- ~age 
 out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+

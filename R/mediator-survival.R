@@ -76,7 +76,7 @@ return(wdata)
 ##' @param ... Additional arguments to survival model 
 ##' @author Thomas Scheike
 ##' @examples
-##' 
+##' library(mets)
 ##' n <- 400
 ##' dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
 ##'           beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
@@ -169,11 +169,15 @@ iid.tot2 <- iids -  iid.w
 robvar <- crossprod(iid.tot)
 robvar2 <- crossprod(iid.tot2)
 
+if (inherits(survmodel,"binreg")) model <- survmodel$model
+if (inherits(survmodel,"phreg")) model <- "exp"
+if (inherits(survmodel,"aalenMets")) model <- "lin"
+
 out <- list(coef=survmodel$coef,iid=iid.tot,
 	    var=robvar,se=diag(robvar)^.5,
 	    var2=robvar2,se2=diag(robvar2)^.5,
        n=survmodel$n,ncluster=survmodel$ncluster,nevent=survmodel$nevent,iDPbeta=iiDD,
-       iid.w=iid.w,iid.surv=iids)
+       iid.w=iid.w,iid.surv=iids,model=model)
    class(out) <- c("binreg","medSurv")
    return(out)
 }# }}}

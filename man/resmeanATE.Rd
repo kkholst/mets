@@ -6,14 +6,20 @@
 \alias{ratioATE}
 \title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
 \usage{
-resmeanATE(formula, data, model = "exp", outcome = c("rmst", "rmtl"), ...)
+resmeanATE(
+  formula,
+  data,
+  model = "exp",
+  outcome = c("rmst", "years-lost"),
+  ...
+)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}
 
 \item{data}{data-frame}
 
-\item{model}{possible exp model for relevant mean model that is exp(X^t beta)}
+\item{model}{exp ("exp") or identity link ("lin")}
 
 \item{outcome}{restricted mean time (rmst) or restricted mean time lost (rmtl)}
 

@@ -88,7 +88,7 @@ resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
 }# }}}
 
 ##' @export
-rmstIPCW <- function(formula,data,outcome=c("rmst","rmtl"),...)
+	rmstIPCW <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
@@ -168,7 +168,7 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##'
 ##' @param formula formula with 'Event' outcome 
 ##' @param data data-frame 
-##' @param model possible exp model for relevant mean model that is exp(X^t beta) 
+##' @param model exp ("exp") or identity link ("lin") 
 ##' @param outcome restricted mean time (rmst) or restricted mean time lost (rmtl)
 ##' @param ... Additional arguments to pass to binregATE 
 ##' @author Thomas Scheike
@@ -184,14 +184,14 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' ratioATE(out,out1,h=function(x) log(x))
 ##' @export
 ##' @aliases rmstATE ratioATE
-resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
+resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","years-lost"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)
 }# }}}
 
 ##' @export
-rmstATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
+rmstATE <- function(formula,data,model="exp",outcome=c("rmst","years-lost"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)

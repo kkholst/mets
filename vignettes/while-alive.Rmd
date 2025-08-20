@@ -51,6 +51,7 @@ summary(dd)
 dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
 		   death.code=2,trans=.333)
 summary(dd,type="log")
+
 ```
 
 We see that the ratio of means are not very different, but that the subject specific 

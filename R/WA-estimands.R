@@ -106,10 +106,12 @@ if (!is.null(augmentR)) {
    form1X <- update(form1, reformulate(c(".", varsR)))
 } else form1X <- form1
 
+
 ## ratio of means ## {{{
-dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,model="l")
+dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,
+		  model="lin")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
-  cens.model=cens.formula,times=time,model="l",marks=marks)
+  cens.model=cens.formula,times=time,model="lin",marks=marks)
 cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
 ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) (p[1:2]/p[3:4]))
@@ -145,7 +147,7 @@ if (is.null(type)) {
 }
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
-       cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
+      cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
 ET <- list(riskDR=outae)
 
 ##  Yipcw as it comes in data frame 
@@ -237,8 +239,6 @@ out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
 class(out) <- "WA"
 return(out)
 } ## }}}
-
-
 
 ##' @export
 print.WA  <- function(x,type="log",...) {# {{{
@@ -393,7 +393,6 @@ if (is.null(time)) stop("must give time of response \n")
    res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times,
 	       id=cr2$name.id,n=nid)
 } ## }}}
-
 
 ##' Evaluates piece constant covariates at min(D,t) where D is a terminal event
 ##'
