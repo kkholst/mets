@@ -392,8 +392,10 @@ print.binreg  <- function(x,...) {# {{{
 ##' @export
 summary.binreg <- function(object,...) {# {{{
 
+if (!is.null(object$gradient)) { ## write warning if gradient not small 
 gradient <- max(abs(object$gradient))
 if (gradient > 0.000001) { cat("gradient:\n"); print(object$gradient) }
+}
 
 cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
 V=object$var
