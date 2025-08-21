@@ -894,23 +894,19 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 
-###     if (model[1]=="dexp") {
-###	 p <- exp(lp) 
-###         D2logl <- c(weights*p^2)*X2 
-###     } else 
     if (model[1]=="exp") {
 	 p <- exp(lp) 
          D2logl <- c(weights*p)*X2 
      } else if (model[1]=="lin") {
 	 p <- lp
          D2logl <- c(weights)*X2
-       } else if (model[1]=="logit") {
+     } else if (model[1]=="logit") {
 	p <- expit(lp)
         D2logl <- c(weights*p/(1+exp(lp)))*X2
-        } else stop("link functions must be logit,exp,lin\n") 
+     } else stop("link functions must be logit,exp,lin\n") 
 ploglik <- sum(weights*(Y-p)^2)
 
-###if (model[1]=="dexp") Dlogl <- weights*X*c(p*(Y-p)) else  
+if (model[1]=="exp") ploglik <- 0
 Dlogl <- weights*X*c(Y-p)
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
@@ -926,7 +922,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
+ structure(-ploglik,gradient=-gradient,hessian=hessian)
 }# }}}
 
   if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
