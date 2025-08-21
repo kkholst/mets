@@ -37,8 +37,8 @@
 ##' @param no.opt to not optimize 
 ##' @param method for optimization 
 ##' @param augmentation to augment binomial regression 
-##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "years-lost"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
-##' @param model  link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be 
+##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
+##' @param model link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)
 ##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
@@ -756,8 +756,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model=c("default","logit","exp","lin"),
-	   Ydirect=NULL,...)
+	   outcome=c("cif","rmst","years-lost"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -1038,7 +1037,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","rmtl"),model=c(NULL,"logit","exp","lin"),Ydirect=NULL,...)
+	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -1204,7 +1203,7 @@ if (nlev==2) {
    for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
    DPai <- -1*Dp/pA^2
    p1lp <-   X %*% val$coef+offset
-  if (outcome[1]=="cif") { p1 <- expit(p1lp) } else {
+   if (model[1]=="logit") { p1 <- expit(p1lp) } else {
     if (model[1]=="exp") { p1 <- exp(p1lp); } else { p1 <- p1lp;}
    }
 
@@ -1221,7 +1220,7 @@ for (a in nlevs) {# {{{
 	datA[,treat.name] <- a
 	Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
         lpa <- Xa %*% val$coef+offset
-	if (model[1]=="cif") {
+	if (model[1]=="logit") {
 	   ma <- expit(lpa); Dma  <-  Xa*c(ma/(1+exp(lpa)))
 	} else {
 	    if (model[1]=="exp") { ma <- exp(lpa);  Dma<-c(ma)*Xa; } else { ma <- lpa; Dma <- Xa }
@@ -1444,9 +1443,17 @@ datA[,treat.name] <- a
 Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
 lpa <- Xa %*% x$coef
 ## only for logit link so far 
-pa <- expit(lpa)
+if (x$model[1]=="logit") {
+   pa <- expit(lpa)
+   Dma  <-  Xa*c(pa/(1+exp(lpa)))
+} else if (x$model[1]=="exp") {
+   pa <- exp(lpa)
+   Dma  <-  Xa*c(pa) 
+} else {
+   pa <- lpa
+   Dma  <-  Xa
+}
 risks <- cbind(risks,pa)
-Dma  <-  Xa*c(pa/(1+exp(lpa)))
 DariskG[[k]] <- apply(Dma,2,sum)
 }# }}}
 
@@ -1463,7 +1470,7 @@ vv <- crossprod(risk.iid)
 Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <-  estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]-p[1])
 rd <- estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]/p[1],null=1)
-out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv)
+out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv,model=x$model[1])
 class(out) <- "survivalG"
 return(out)
 } ## }}}
