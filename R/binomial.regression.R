@@ -193,8 +193,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
   if (is.null(beta)) beta <- rep(0,p)
   if (is.null(augmentation))  augmentation=rep(0,p)
   X <-  as.matrix(X)
-###  X2  <- .Call("vecMatMat",X,X)$vXZ
-###  Y <- c((status %in% cause)*(exit<=time)/cens.weights)
   X2  <- .Call("vecCPMat",X)$XX
 
  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
@@ -206,7 +204,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
             } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
      }
   }
- Yipcw <- Y
+  Yipcw <- Y
 
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -279,7 +277,7 @@ obj <- function(pp,all=FALSE)
 { # {{{
 lp <- c(X %*% pp+offset)
 
-     if (model[1]=="exp") {
+    if (model[1]=="exp") {
 	 p <- exp(lp) 
          D2logl <- c(weights*p)*X2 
      } else if (model[1]=="lin") {
@@ -291,15 +289,17 @@ lp <- c(X %*% pp+offset)
         D2logl <- c(weights*p/(1+exp(lp)))*X2
 } else stop("link functions must be logit,exp,lin\n") 
 ploglik <- sum(weights*(Y-p)^2)
+## to avoid using ploglik for fitting, with exp only solve estimating equation
+if (model[1]=="exp") ploglik <- 0
 
 Dlogl <- weights*X*c(Y-p)
-###D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 np <- length(pp)
 hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
+      ploglik <- sum(weights*(Y-p)^2)
       ihess <- solve(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
@@ -308,15 +308,29 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 	 id=id,Dlogl=Dlogl,iid=beta.iid,robvar=robvar,var=robvar,se.robust=diag(robvar)^.5)
       return(val)
   }  
- structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
+ structure(-ploglik,gradient=-gradient,hessian=hessian)
 }# }}}
+
+###dots <- list(...)
+###print(names(dots[[1]]))
+###print(names(names(dots)))
+###
+###if ("stepsize" %in% names(dots[[1]])) {
+###	dotsarg <- TRUE
+###        print("ljlj")
+###} else {
+###     dotsarg <- FALSE
+###     if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
+###}
+
+if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
 
   p <- ncol(X)
   opt <- NULL
   if (p>0) {
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
-	  tim <- system.time(opt <- lava::NR(beta,obj,...))
+          tim <- system.time(opt <- lava::NR(beta,obj,control=control))
 	  opt$timing <- tim
 	  opt$estimate <- opt$par
       } else {
@@ -326,7 +340,9 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
       cc <- opt$estimate; 
 ###	      if (!se) return(cc)
       val <- c(list(coef=cc),obj(opt$estimate,all=TRUE))
-      } else val <- c(list(coef=beta),obj(beta,all=TRUE))
+      } else {
+	      val <- c(list(coef=beta),obj(beta,all=TRUE))
+  }
   } else {
       val <- obj(0,all=TRUE)
   }
@@ -375,6 +391,9 @@ print.binreg  <- function(x,...) {# {{{
 
 ##' @export
 summary.binreg <- function(object,...) {# {{{
+
+gradient <- max(abs(object$gradient))
+if (gradient > 0.000001) { cat("gradient:\n"); print(object$gradient) }
 
 cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
 V=object$var
@@ -509,6 +528,7 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,...)
 
   if (se) {
      if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
+###     if (object$model[1]=="dexp") Dpv <- Z*p^2 else 
      if (object$model[1]=="exp") Dpv <- Z*p else Dpv <- Z 
      se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
      cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
@@ -874,21 +894,24 @@ obj <- function(pp,all=FALSE)
 
 lp <- c(X %*% pp+offset)
 
-     if (model[1]=="exp") {
+###     if (model[1]=="dexp") {
+###	 p <- exp(lp) 
+###         D2logl <- c(weights*p^2)*X2 
+###     } else 
+    if (model[1]=="exp") {
 	 p <- exp(lp) 
          D2logl <- c(weights*p)*X2 
      } else if (model[1]=="lin") {
 	 p <- lp
          D2logl <- c(weights)*X2
-       }
-     else if (model[1]=="logit") {
+       } else if (model[1]=="logit") {
 	p <- expit(lp)
         D2logl <- c(weights*p/(1+exp(lp)))*X2
-} else stop("link functions must be logit,exp,lin\n") 
+        } else stop("link functions must be logit,exp,lin\n") 
 ploglik <- sum(weights*(Y-p)^2)
 
+###if (model[1]=="dexp") Dlogl <- weights*X*c(p*(Y-p)) else  
 Dlogl <- weights*X*c(Y-p)
-###D2logl <- c(weights*p/(1+exp(lp)))*X2
 D2log <- apply(D2logl,2,sum)
 gradient <- apply(Dlogl,2,sum)+augmentation
 np <- length(pp)
@@ -906,12 +929,14 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
  structure(-ploglik/nid,gradient=-gradient/nid,hessian=hessian/nid)
 }# }}}
 
+  if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
+
   p <- ncol(X)
   opt <- NULL
   if (p>0) {
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
-	  tim <- system.time(opt <- lava::NR(beta,obj,...))
+	  tim <- system.time(opt <- lava::NR(beta,obj,control=control))
 	  opt$timing <- tim
 	  opt$estimate <- opt$par
       } else {
