@@ -315,6 +315,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 dots <- list(...)
 if (length(dots)==0) {
    if (model[1]=="exp") control <- list(tol=1e-10,stepsize=0.5)  
+   else control <- NULL
 } else control <- dots[[1]]
 
   p <- ncol(X)
@@ -923,6 +924,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 dots <- list(...)
 if (length(dots)==0) {
    if (model[1]=="exp") control <- list(tol=1e-10,stepsize=0.5)  
+   else control <- NULL
 } else control <- dots[[1]]
 
   p <- ncol(X)
