@@ -1054,7 +1054,7 @@ return(out)
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
-marks=NULL,weights=NULL,model="exp",no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
+marks=NULL,weights=NULL,model=c("exp","lin"),no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
 { ## {{{
 ## method=c("incIPCW","IPCW","rate")
 estimator=c("incIPCW")
@@ -1243,21 +1243,22 @@ MGCiid2 <- MGtiid-MGCiid2
 
 obj <- function(pp, all = FALSE) { ## {{{
 lp <- c(X %*% pp + offset)
-if (model == "exp") p <- exp(lp) else p <- lp
-if (model == "dexp") p <- exp(lp) 
-ploglik <- sum(weights * (Y - p)^2)
-if (model == "dexp") {
+if (model[1] == "exp") p <- exp(lp) else p <- lp
+if (model[1] == "dexp") p <- exp(lp) 
+if (model[1] == "dexp") {
     Dlogl <- weights * X *p * c(Y - p)
     D2logl <- c(weights) *p^2* X2
 } else {
     Dlogl <- weights *  X * c(Y - p)
-if (model=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
+if (model[1]=="exp") D2logl <- c(weights) * c(p)* X2 else D2logl <- c(weights) * X2
 }
+if (model[1] == "exp") ploglik <- 0 else ploglik <- sum(weights * (Y - p)^2)
 D2log <- apply(D2logl, 2, sum)
 gradient <- apply(Dlogl, 2, sum) + augmentation
 hessian <- matrix(D2log, length(pp), length(pp))
 
 if (all) {
+    ploglik <- sum(weights * (Y - p)^2)
     ihess <- solve(hessian)
     beta.iid <- Dlogl %*% ihess
     beta.iid <- apply(beta.iid, 2, sumstrata, idR, max(id) + 1)
@@ -1271,12 +1272,14 @@ if (all) {
 structure(-ploglik, gradient = -gradient, hessian = hessian)
 } ## }}}
 
+if (model[1]=="exp") control <- list(tole=1e-10,stepsize=0.5)  else control <- list(tol=1e-10)
+
 p <- ncol(X)
 opt <- NULL
 if (p > 0) {
 if (no.opt == FALSE) {
     if (tolower(method) == "nr") {
-	tim <- system.time(opt <- lava::NR(beta, obj, ...))
+	tim <- system.time(opt <- lava::NR(beta, obj,control=control))
 	opt$timing <- tim
 	opt$estimate <- opt$par
     }
@@ -1304,7 +1307,7 @@ Gcdata[Gcdata<0.000001] <- 0.00001
 ## check data sorted in dexit 
 if (type[1]!="II") Hst <- Y[data$id__ +1]-cumsumstratasum((dexit<times)*marks*(dstatus %in% cause)/Gcdata,data$id__,nid)$lagsum
 data$Hst <- Hst
-if (model=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
+if (model[1]=="dexp") HstX <-c(exp(as.matrix(Xorig) %*% val$coef))*Xorig*c(data$Hst) else HstX <- Xorig*c(data$Hst) 
 ccn <- paste("nn__nn",1:ncol(Xorig),sep="")
 colnames(HstX) <- ccn
 nncovs <- c()

@@ -195,6 +195,7 @@ np <- length(pp)
 hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
+      ploglik <- sum(weights*(Y[,1]*p-Y[,2])^2)
       ihess <- solve(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
@@ -206,12 +207,16 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
  structure(0,gradient=-gradient/nid,hessian=-hessian/nid)
 }# }}}
 
+ if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
+
+  
+
   ## first run without pseudo-value augmentation
   p <- ncol(X)
   opt <- NULL
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
-	  tim <- system.time(opt <- lava::NR(beta,obj,...))
+	  tim <- system.time(opt <- lava::NR(beta,obj,control=control))
 	  opt$timing <- tim
 	  opt$estimate <- opt$par
       } else {
