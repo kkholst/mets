@@ -3159,7 +3159,7 @@ summary.survivalG <- function(object,...) {
 
 ##' @export
 print.summary.survivalG  <- function(x,...) {
-    cat("risk:\n")
+    cat("G-estimator :\n")
     print(x[["risk"]],...)
     cat("\n")
 

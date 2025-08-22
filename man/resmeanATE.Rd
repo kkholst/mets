@@ -6,13 +6,7 @@
 \alias{ratioATE}
 \title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
 \usage{
-resmeanATE(
-  formula,
-  data,
-  model = "exp",
-  outcome = c("rmst", "years-lost"),
-  ...
-)
+resmeanATE(formula, data, model = "exp", outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
 \item{formula}{formula with 'Event' outcome}

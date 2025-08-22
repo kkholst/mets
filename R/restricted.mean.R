@@ -88,7 +88,7 @@ resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
 }# }}}
 
 ##' @export
-	rmstIPCW <- function(formula,data,outcome=c("rmst","rmtl"),...)
+rmstIPCW <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)
    return(out)
@@ -184,14 +184,14 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' ratioATE(out,out1,h=function(x) log(x))
 ##' @export
 ##' @aliases rmstATE ratioATE
-resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","years-lost"),...)
+resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)
 }# }}}
 
 ##' @export
-rmstATE <- function(formula,data,model="exp",outcome=c("rmst","years-lost"),...)
+rmstATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
 return(out)
