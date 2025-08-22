@@ -323,7 +323,8 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 ###     if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
 ###}
 
-if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
+if (model[1]=="exp") control <- list(tole=1e-10,stepsize=0.5,nstepsize=5)  else 
+	control <- list(tol=1e-10)
 
   p <- ncol(X)
   opt <- NULL
