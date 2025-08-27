@@ -62,9 +62,9 @@ binreg(
 
 \item{augmentation}{to augment binomial regression}
 
-\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "years-lost"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
+\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
 
-\item{model}{link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be}
+\item{model}{link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
 
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
 

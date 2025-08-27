@@ -3159,19 +3159,19 @@ summary.survivalG <- function(object,...) {
 
 ##' @export
 print.summary.survivalG  <- function(x,...) {
-    cat("risk:\n")
+    cat("G-estimator :\n")
     print(x[["risk"]],...)
     cat("\n")
 
-    cat("Average Treatment effects (G-estimator) :\n")
+    cat("Average Treatment effect: difference (G-estimator) :\n")
     print(x$difference,...)
     cat("\n")
 
-    cat("Average Treatment effect risk-ratio (G-estimator) :\n")
+    cat("Average Treatment effect: ratio (G-estimator) :\n")
     print(x$ratio$coefmat,...)
     cat("\n")
 
-    cat("Average Treatment effect (1-risk=survival)-ratio (G-estimator) :\n")
+    cat("Average Treatment effect: 1-G (survival)-ratio (G-estimator) :\n")
     print(x$survival.ratio$coefmat,...)
     cat("\n")
 
