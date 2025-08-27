@@ -1,8 +1,8 @@
 Package: mets
 Type: Package
 Title: Analysis of Multivariate Event Times
-Version: 1.3.7
-Date: 2025-04-22
+Version: 1.3.8
+Date: 2025-08-27
 Authors@R: c(person("Klaus K.", "Holst", email="klaus@holst.it", role=c("aut", "cre")),
              person("Thomas Scheike", role=c("aut")))
 Author: Klaus K. Holst [aut, cre], Thomas Scheike [aut]
@@ -21,8 +21,7 @@ Depends:
     R (>= 3.5)
 Imports:
     Rcpp,
-    compiler,
-    lava (>= 1.8.0),
+    lava (>= 1.8.1),
     methods,
     mvtnorm,
     numDeriv,
@@ -31,9 +30,8 @@ Imports:
     timereg (>= 1.9.4)
 Suggests:
     cmprsk,
-    cowplot,
-    ggplot2,
     icenReg,
+    KernSmooth,
     knitr,
     mets,
     optimx,

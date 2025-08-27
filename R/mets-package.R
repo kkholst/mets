@@ -21,7 +21,7 @@
 ##' @importFrom timereg two.stage predict.two.stage
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline title
-##'   matlines legend
+##'   matlines legend mtext layout axis
 ##' @importFrom methods hasArg
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @aliases mets mets-package
