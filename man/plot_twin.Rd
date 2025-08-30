@@ -21,6 +21,9 @@ plot_twin(
 \arguments{
 \item{data}{bivariate data to plot (data.frame or matrix with 2 columns)}
 
+\item{marginal.args}{argumemts to marginal estimator (`density` continuous
+data, `barplot` for categorical )}
+
 \item{kernsmooth.args}{arguments to 2d-kernel smoother}
 
 \item{xlab}{x-axis label}
@@ -35,10 +38,10 @@ plot_twin(
 
 \item{grid}{should grid be added to the plot}
 
-\item{...}{arguments to lower level plot functions}
+\item{side.plot}{If TRUE subplots of the marginal distributions are added to
+the plot}
 
-\item{density.args}{argumnets to marginal estimator (`density`
-continuous data, `barplot` for categorical )}
+\item{...}{arguments to lower level plot functions}
 }
 \description{
 Scatterplot with contours of the (kernel) estimated density

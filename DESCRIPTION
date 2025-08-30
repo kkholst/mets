@@ -23,6 +23,7 @@ Imports:
     Rcpp,
     lava (>= 1.8.1),
     methods,
+    mvtnorm,
     numDeriv,
     splines,
     survival (>= 2.43-1),

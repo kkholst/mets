@@ -2,8 +2,8 @@
 ##'
 ##' @title Scatter plot function
 ##' @param data bivariate data to plot (data.frame or matrix with 2 columns)
-##' @param density.args argumnets to marginal estimator (`density`
-##'  continuous data, `barplot` for categorical )
+##' @param marginal.args argumemts to marginal estimator (`density` continuous
+##'   data, `barplot` for categorical )
 ##' @param kernsmooth.args arguments to 2d-kernel smoother
 ##' @param xlab x-axis label
 ##' @param ylab y-axis label
@@ -11,9 +11,10 @@
 ##' @param col2 color of contour / density plot
 ##' @param alpha transparency level of points
 ##' @param grid should grid be added to the plot
+##' @param side.plot If TRUE subplots of the marginal distributions are added to
+##'   the plot
 ##' @param ... arguments to lower level plot functions
 ##' @author Klaus Kähler Holst
-##' @inheritParams graphics::mosaicplot
 ##' @export
 ##' @examples
 ##' data("twinbmi", package="mets")
