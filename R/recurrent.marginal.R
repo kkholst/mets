@@ -61,8 +61,15 @@
 ##' @export
 recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
 {# {{{
-  if (inherits(formula,"phreg")) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
-  if (inherits(data,"phreg")) return(recurrentMarginalPhreg(formula,data,...)) else stop("You can give 2 phreg objects \n"); 
+  if (missing(formula)) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
+    return(recurrentMarginalPhreg(...))
+  }
+  if (inherits(formula,"phreg")) { # Fall-back to recurrentMarginalPhreg
+    if (inherits(data, "phreg")) {
+        return(recurrentMarginalPhreg(formula, data, ...))
+    } else {
+        stop("You can give 2 phreg objects \n")
+    }
   }
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
