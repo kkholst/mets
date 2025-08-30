@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">resmeanATE</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, model <span class="op">=</span> <span class="st">"exp"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">resmeanATE</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, model <span class="op">=</span> <span class="st">"exp"</span>, outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rmst"</span>, <span class="st">"rmtl"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -139,7 +139,11 @@
 
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>possible exp model for relevant mean model that is exp(X^t beta)</p></dd>
+<dd><p>exp ("exp") or identity link ("lin")</p></dd>
+
+
+<dt id="arg-outcome">outcome<a class="anchor" aria-label="anchor" href="#arg-outcome"></a></dt>
+<dd><p>restricted mean time (rmst) or restricted mean time lost (rmtl)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -163,7 +167,6 @@ the number of causes. The default model is the exp(X^ beta) and otherwise a line
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">cause</span><span class="op">!=</span><span class="fl">0</span>; <span class="fu"><a href="drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tcell</span><span class="op">~</span><span class="va">tcell</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">resmeanATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,time<span class="op">=</span><span class="fl">40</span>,treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    241</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -171,20 +174,20 @@ the number of causes. The default model is the exp(X^ beta) and otherwise a line
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  2.852563  0.062496  2.730074  2.975052  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1       0.021289  0.122983 -0.219753  0.262330  0.8626</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.303313  0.090772  0.125404  0.481222  0.0008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1       0.021286  0.122983 -0.219757  0.262329  0.8626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.303306  0.090772  0.125396  0.481215  0.0008</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate     2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 17.33214 15.33402 19.5906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1       1.02152  0.80272  1.3000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     1.35434  1.13361  1.6181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate     2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 17.33214 15.33402 19.591</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1       1.02151  0.80271  1.300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     1.35433  1.13360  1.618</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (G-formula) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate  Std.Err     2.5%    97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    19.25887  0.95918 17.37892 21.13882  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    19.67326  2.22868 15.30513 24.04139  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0  0.41439  2.41150 -4.31207  5.14085  0.8636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    19.25882  0.95918 17.37887 21.13877  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    19.67316  2.22868 15.30502 24.04129  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0  0.41434  2.41151 -4.31213  5.14081  0.8636</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (double robust) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Std.Err    2.5%   97.5% P-value</span>
@@ -197,28 +200,27 @@ the number of causes. The default model is the exp(X^ beta) and otherwise a line
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">resmeanATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,time<span class="op">=</span><span class="fl">40</span>,</span></span>
 <span class="r-in"><span>                   treat.model<span class="op">=</span><span class="va">tcell</span><span class="op">~</span><span class="va">platelet</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    157</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  2.806269  0.069619  2.669817  2.942721  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1      -0.374141  0.247689 -0.859602  0.111320  0.1309</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.491646  0.164934 -0.814911 -0.168381  0.0029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate  Std.Err     2.5%    97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  2.80626  0.06962  2.66981  2.94271  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell1      -0.37413  0.24769 -0.85960  0.11133  0.1309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.49164  0.16493 -0.81490 -0.16837  0.0029</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate     2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 16.54807 14.43733 18.9674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) 16.54790 14.43717 18.9672</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tcell1       0.68788  0.42333  1.1178</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.61162  0.44268  0.8450</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (G-formula) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate  Std.Err     2.5%    97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    14.53176  0.95705 12.65599 16.40754  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     9.99611  2.37816  5.33501 14.65721  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -4.53566  2.57515 -9.58286  0.51155  0.0782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    14.53165  0.95705 12.65587 16.40742  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     9.99609  2.37815  5.33499 14.65718  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -4.53556  2.57515 -9.58276  0.51164  0.0782</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (double robust) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate     Std.Err        2.5%       97.5% P-value</span>
@@ -228,6 +230,21 @@ the number of causes. The default model is the exp(X^ beta) and otherwise a line
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">ratioATE</span><span class="op">(</span><span class="va">out</span>,<span class="va">out1</span>,h<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ratioG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate Std.Err    2.5%    97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    -0.2816  0.1075 -0.4924 -0.07093 0.00880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    -0.6771  0.3183 -1.3008 -0.05328 0.03339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0.1  -0.3954  0.3363 -1.0545  0.26370 0.23966</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1.1   0.3954  0.3363 -0.2637  1.05454 0.23966</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ratioDR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate Std.Err    2.5%   97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    -0.2857  0.1097 -0.5008 -0.0707 0.009206</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    -0.8240  0.3669 -1.5430 -0.1050 0.024695</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0.1  -0.5383  0.3894 -1.3014  0.2249 0.166831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1.1   0.5383  0.3894 -0.2249  1.3014 0.166831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>
@@ -242,7 +259,7 @@ the number of causes. The default model is the exp(X^ beta) and otherwise a line
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

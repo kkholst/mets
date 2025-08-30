@@ -18,7 +18,7 @@ Robust variance is default variance with the summary."><!-- mathjax --><script s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -171,16 +171,15 @@ so ordering after $id will give iid in order of data-set.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate       S.E.    dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.0129550  0.0041289  0.2304014  0.0017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.0087450  0.0028057  0.1664292  0.0018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.0066194  0.0013877  0.0789185  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.0129630  0.0041295  0.2303820  0.0017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.0087405  0.0028057  0.1664364  0.0018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.0066215  0.0013881  0.0789239  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.98713 0.97917 0.9951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.99129 0.98586 0.9968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.98712 0.97916 0.9951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.99130 0.98586 0.9968</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> age       1.00664 1.00391 1.0094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## out2 &lt;- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)</span></span></span>
@@ -200,7 +199,7 @@ so ordering after $id will give iid in order of data-set.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

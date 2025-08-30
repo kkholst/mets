@@ -20,7 +20,7 @@ randomizations. The function was implemented to deal with recurrent events (star
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -201,8 +201,7 @@ treatment (randomization 0/1)</p></dd>
 
 
 <dt id="arg-treat-model">treat.model<a class="anchor" aria-label="anchor" href="#arg-treat-model"></a></dt>
-<dd><p>propensity score model, default is ~+1, assuming RCT
-study</p></dd>
+<dd><p>propensity score model, default is ~+1, assuming an RCT study</p></dd>
 
 
 <dt id="arg-rct">RCT<a class="anchor" aria-label="anchor" href="#arg-rct"></a></dt>
@@ -274,10 +273,10 @@ scores, default for binary treatment is glm</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">phreg_rct</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z.f</span>,data<span class="op">=</span><span class="va">data</span>,augmentR0<span class="op">=</span><span class="op">~</span><span class="va">X</span>,augmentC<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span><span class="op">:</span><span class="va">X</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  Estimate   Std.Err       2.5%     97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal-Z.f1 -0.06901840 0.2812214 -0.6202023 0.4821655 0.8061284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R0_C:Z.f1     -0.06134086 0.1841637 -0.4222951 0.2996134 0.7390755</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R0_dynC:Z.f1  -0.04499244 0.1798990 -0.3975881 0.3076032 0.8025113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate   Std.Err       2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal-Z.f1  0.1781155 0.2639114 -0.3391412 0.6953723 0.4997350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R0_C:Z.f1     -0.0175242 0.2071406 -0.4235122 0.3884638 0.9325790</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R0_dynC:Z.f1   0.1109733 0.2022974 -0.2855223 0.5074689 0.5833039</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.phreg_rct"</span>
 </code></pre></div>
@@ -294,7 +293,7 @@ scores, default for binary treatment is glm</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

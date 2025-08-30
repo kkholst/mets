@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -127,10 +127,11 @@
 <span>  <span class="va">data</span>,</span>
 <span>  status <span class="op">=</span> <span class="st">"status"</span>,</span>
 <span>  id <span class="op">=</span> <span class="st">"id"</span>,</span>
-<span>  types <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
+<span>  types <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  names.count <span class="op">=</span> <span class="st">"Count"</span>,</span>
 <span>  lag <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  multitype <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  multitype <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  marks <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -151,7 +152,7 @@
 
 
 <dt id="arg-types">types<a class="anchor" aria-label="anchor" href="#arg-types"></a></dt>
-<dd><p>types of the events (code) related to status</p></dd>
+<dd><p>types of the events (code) related to status (multiple values possible)</p></dd>
 
 
 <dt id="arg-names-count">names.count<a class="anchor" aria-label="anchor" href="#arg-names-count"></a></dt>
@@ -162,8 +163,12 @@
 <dd><p>if true counts previously observed, and if lag=FALSE counts up to know</p></dd>
 
 
-<dt id="arg-multitype">multitype<a class="anchor" aria-label="anchor" href="#arg-multitype"></a></dt>
-<dd><p>if multitype then count number of types also when types=c(1,2) for example</p></dd>
+<dt id="arg-multitype-">multitype, <a class="anchor" aria-label="anchor" href="#arg-multitype-"></a></dt>
+<dd><p>if multitype is true then counts when status "in" types, otherwise counts for each value of type, types=c(1,2)</p></dd>
+
+
+<dt id="arg-marks">marks<a class="anchor" aria-label="anchor" href="#arg-marks"></a></dt>
+<dd><p>values related to status ("in" types), counts marks for types, only when multitype=TRUE</p></dd>
 
 </dl></div>
     <div id="author">
@@ -173,39 +178,28 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">########################################</span></span></span>
-<span class="r-in"><span><span class="co">## getting some rates to mimick </span></span></span>
-<span class="r-in"><span><span class="co">########################################</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base1cumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base4cumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">drcumhaz</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span></span>
-<span class="r-in"><span><span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">base1cumhaz</span></span></span>
-<span class="r-in"><span><span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">base4cumhaz</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">######################################################################</span></span></span>
-<span class="r-in"><span><span class="co">### simulating simple model that mimicks data </span></span></span>
-<span class="r-in"><span><span class="co">### now with two event types and second type has same rate as death rate</span></span></span>
-<span class="r-in"><span><span class="co">######################################################################</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="simRecurrentII.html">simRecurrentII</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,<span class="va">base4</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu">count.history</span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="st">"Count*"</span><span class="op">+</span><span class="va">status</span>,level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Count1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1076  722  515  417  355  292  229  188  136  102   68   51   36   23   16   12 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   16   17 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5    3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Count2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2    3    4    5    6 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3015  883  244   83   17    2    2 </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">hf</span> <span class="op">&lt;-</span> <span class="va">hfactioncpx12</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">hf</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> status</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1000 2844  402 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  617 1391  124 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span>  <span class="fu">count.history</span><span class="op">(</span><span class="va">hf</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,id<span class="op">=</span><span class="st">"id"</span>,status<span class="op">=</span><span class="st">"status"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="st">"Count*"</span><span class="op">+</span><span class="va">status</span>,level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Count1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0   1   2   3   4   5   6   7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 741 507 319 209 146  97  67  46 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Count2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2132 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  617 1391  124 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -222,7 +216,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ The treatment's must be given as factors."><!-- mathjax --><script src="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -318,7 +318,7 @@ subsequently.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ddf</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">gsim</span><span class="op">(</span><span class="fl">200</span>,covs<span class="op">=</span><span class="fl">1</span>,null<span class="op">=</span><span class="fl">0</span>,cens<span class="op">=</span><span class="fl">1</span>,ce<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu">binregTSR</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">ddf</span><span class="op">$</span><span class="va">datat</span>,time<span class="op">=</span><span class="fl">2</span>,cause<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span></span>
@@ -329,31 +329,31 @@ subsequently.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bb</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple estimator :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              coef           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.7628301 0.06084409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.7889500 0.05753351</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3884881 0.09272852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.4774000 0.09913209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.5973346 0.06741269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.7989301 0.06842393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3327747 0.07150476</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.3240653 0.07402359</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First Randomization Augmentation :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              coef           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.7573443 0.05919468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.7886973 0.05520420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3899854 0.09279993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.4864415 0.09734758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.5870854 0.06725571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.8046055 0.06813286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3294242 0.07116377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.3200976 0.07455184</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Second Randomization Augmentation :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              coef           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.7893959 0.05495817</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.8054557 0.05952212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.4225051 0.08859703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.4313716 0.11025773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.5961775 0.06499758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.8035470 0.06483341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3372532 0.07258110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.3121596 0.07871542</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1st and 2nd Randomization Augmentation :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              coef           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.7977441 0.05247239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.8220827 0.05527522</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.4336067 0.08753893</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.4440423 0.10770202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=1 0.5936725 0.06223468</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=1, response*A1.f=2 0.8084049 0.06466502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=1 0.3401991 0.07134539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A0.f=2, response*A1.f=2 0.3133418 0.07761599</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
@@ -369,7 +369,7 @@ subsequently.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

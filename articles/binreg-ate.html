@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@ risks and binary outcomes</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/binreg-ate.Rmd" class="external-link"><code>vignettes/binreg-ate.Rmd</code></a></small>
       <div class="hidden name"><code>binreg-ate.Rmd</code></div>
@@ -151,6 +151,24 @@ risks and binary outcomes</h1>
 
     
     
+<p>The binregATE function can fit a logistic link model with IPCW
+adjustment for a specific time-point, and can thus be used for
+describing survival or competing risks data. The function can be used
+for large data and is completely scalable, that is, linear in the data.
+A nice feature is that influcence functions are computed and are
+available.</p>
+<p>In addition and to summarize</p>
+<ul>
+<li>the censoring weights can be strata dependent</li>
+<li>predictions can be computed with standard errors</li>
+<li>computation time is linear in data
+<ul>
+<li>including standard errors</li>
+</ul>
+</li>
+<li>clusters can be given and then cluster corrected standard errors are
+computed</li>
+</ul>
 <div class="section level2">
 <h2 id="average-treatment-for-competing-risks-data">Average treatment for Competing risks data<a class="anchor" aria-label="anchor" href="#average-treatment-for-competing-risks-data"></a>
 </h2>
@@ -158,20 +176,20 @@ risks and binary outcomes</h1>
 time-point,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
 fitting the model
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>b</mi><mi>e</mi><mi>t</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T beta),
-\end{align*}</annotation></semantics></math> the estimation is based on
-IPCW weighted EE
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T \beta),
+\end{align*}</annotation></semantics></math> for possible right censored
+data. The estimation procedure is based on IPCW adjusted estimating
+equation (EE)
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>X</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>b</mi><mi>e</mi><mi>t</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  U(\beta) = &amp;  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T \wedge t) - \mbox{expit}( X^T beta) \right) = 0 
-\end{align*}</annotation></semantics></math> for IPCW adjusted responses
-and with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math>
-indicator of death and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>G</mi><mi>c</mi></msub><annotation encoding="application/x-tex">G_c</annotation></semantics></math>
-censoring survival distribution. With
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta(t) = I( C &gt; T \wedge t)</annotation></semantics></math>.</p>
-<p>The function logitIPCW instead considers
+\end{align*}</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G_c(t)=P(C &gt; t)</annotation></semantics></math>,
+the censoring survival distribution, and with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta(t) = I( C &gt; T \wedge t)</annotation></semantics></math>
+the indicator of being uncensored at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
+<p>The function logitIPCW instead considers the EE the EE
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>X</mi><mfrac><mrow><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>b</mi><mi>e</mi><mi>t</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
  U(\beta) = &amp;  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
 \end{align*}</annotation></semantics></math> The two score equations are
@@ -179,32 +197,36 @@ quite similar, and exactly the same when the censoring model is
 fully-nonparametric given
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
 <ul>
-<li>It seems that the binreg estimating equations most often the
-preferable ones to use.</li>
+<li>It seems that the binreg estimating equations most often is
+preferable to use, and the estimating equation used is also augmented in
+the default implementation (see the binreg vignette).</li>
 </ul>
 <p>Additional functions logitATE, and binregATE computes the average
 treatment effect. We demonstrate their use below.</p>
 <p>The functions binregATE (recommended) and logitATE also works when
 there is no censoring and we thus have simple binary outcome.</p>
 <p>Variance is based on sandwich formula with IPCW adjustment, and
-naive.var is variance under known censoring model. The influence
-functions are stored in the output.</p>
+naive.var is variance under a known censoring model. The influence
+functions are stored in the output. Further, the standard errors can be
+cluster corrected by specifying the relevant cluster for the working
+outcome model.</p>
 <ul>
 <li>We estimate the average treatment effect of our binary response
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(T \leq t, \epsilon=1)</annotation></semantics></math><ul>
-<li>Using a working logistic model for the resonse</li>
+<li>Using a working logistic model for the resonse (possibly with a
+cluster specification)</li>
 <li>Using a working logistic model for treatment given covariates
 <ul>
 <li>The binregATE can also handle a factor with more than two levels and
 then uses the mlogit multinomial regression function (of mets).</li>
 </ul>
 </li>
-<li>Using a working model for censoring given covariates, here a
+<li>Using a working model for censoring given covariates, this must be a
 stratified Kaplan-Meier.</li>
 </ul>
 </li>
 </ul>
-<p>If there are no censoring then the censoring weights are simply put
+<p>If there are no censoring then the censoring weights are simply set
 to 1.</p>
 <p>The average treatment effect is
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
@@ -244,27 +266,32 @@ outcome, that in case of censoring is censoring adjusted
 oucome before censoring.</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>A</mi><mi>i</mi></msub><mo>=</mo><mi>j</mi><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">m_j(X_i)=P(Y_i=1| A_i=j,X_i)</annotation></semantics></math>
-is outcome model, using binomial regression to estimate.</li>
+is outcome model, using binomial regression.</li>
 </ul>
 <p>The standard errors are then based on an iid decomposition using
-taylor-expansion for the parameters of the treatment-model and the
+taylor-expansions for the parameters of the treatment-model and the
 outcome-model, and the censoring probability.</p>
-<p>Needs that the censoring model is correct, so it can be important to
-use a sufficiently large censorng model as we also illustrate below.</p>
+<p>We need that the censoring model is correct, so it can be important
+to use a sufficiently large censorng model as we also illustrate
+below.</p>
 <ul>
-<li>Censoring model by strata used for phreg</li>
+<li>The censoring model can be specified by strata (used for phreg</li>
 </ul>
-<p>Also compute standard marginalization for average treatment effect
+<p>We also compute standard marginalization for average treatment effect
 (called differenceG)
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>∑</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>m</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>m</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
 \sum \left[  m_1(X_i) - m_0(X_i) \right]
 \end{align*}</annotation></semantics></math> and again standard errors
 are based on the related influcence functions and are also returned.</p>
 <p>For large data where there are more than 2 treatment groups the
-computations can be memeory extensive when there are many covariates due
+computations can be memory extensive when there are many covariates due
 to the multinomial-regression model used for the propensity scores.
-Otherwise the function (binregATE) will run for rather large data and be
-rather quick.</p>
+Otherwise the function (binregATE) will run for large data.</p>
+<p>The ATE functions need that the treatment that is given as the first
+variable on the right hand side of the outcome model is a factor. The
+variable is also indentified from the left hand side of the treatment
+model (treat.model), that per default assumes that treatment does not
+depend on any covariates.</p>
 </div>
 <div class="section level2">
 <h2 id="average-treatment-effect">Average treatment effect<a class="anchor" aria-label="anchor" href="#average-treatment-effect"></a>
@@ -295,9 +322,11 @@ bound that
 But as we increase the sample size we still see that we recover the
 parameters of cause 2.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span> </span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co">###install.packages("mets")</span></span>
 <span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">###</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span><span class="va">kumar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">kumarsim</a></span><span class="op">(</span><span class="va">n</span>,depcens<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">kumar</span><span class="op">$</span><span class="va">cause</span> <span class="op">&lt;-</span> <span class="va">kumar</span><span class="op">$</span><span class="va">status</span></span>
@@ -308,16 +337,18 @@ parameters of cause 2.</p>
 <span><span class="co">#&gt;   0   1   2 </span></span>
 <span><span class="co">#&gt; 122 126 152</span></span>
 <span><span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">kumar</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">gp.f</span><span class="op">~</span><span class="va">gp</span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">400</span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">idc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">400</span>,<span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">400</span>,<span class="fl">400</span><span class="op">)</span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">id2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">400</span>,<span class="fl">400</span><span class="op">)</span></span>
+<span><span class="va">kumar2</span> <span class="op">&lt;-</span> <span class="va">kumar</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">id2</span><span class="op">)</span>,<span class="op">]</span></span>
+<span><span class="va">kumar</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">gp</span>,<span class="va">kumar</span><span class="op">$</span><span class="va">dnr</span><span class="op">)</span></span>
+<span><span class="va">kumar2</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">kumar2</span><span class="op">$</span><span class="va">gp</span>,<span class="va">kumar2</span><span class="op">$</span><span class="va">dnr</span><span class="op">)</span></span>
+<span><span class="va">clust</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span></span>
-<span><span class="co">### censoring model must be adapted to size of data</span></span>
-<span><span class="co">###c2 &lt;- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,</span></span>
-<span><span class="co">### treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr,preauto,ttt24))</span></span>
-<span><span class="co">###summary(c2)</span></span>
-<span></span>
-<span><span class="va">c2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
+<span><span class="va">b2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar2</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
 <span>    treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,time<span class="op">=</span><span class="fl">40</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gp</span>,<span class="va">dnr</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">c2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    n events</span></span>
 <span><span class="co">#&gt;  400    144</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -339,60 +370,20 @@ parameters of cause 2.</p>
 <span><span class="co">#&gt; ttt24        1.08902 0.63479 1.8683</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0    0.339665 0.040722 0.259851 0.419479  0.0000</span></span>
-<span><span class="co">#&gt; treat1    0.496244 0.041593 0.414724 0.577764  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 0.156579 0.060890 0.037238 0.275921  0.0101</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
-<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0    0.312520 0.041063 0.232038 0.393001  0.0000</span></span>
-<span><span class="co">#&gt; treat1    0.496336 0.043116 0.411829 0.580843  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 0.183816 0.059701 0.066804 0.300828  0.0021</span></span>
-<span></span>
-<span></span>
-<span><span class="va">c1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
-<span>        treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,time<span class="op">=</span><span class="fl">60</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">c1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  400    150</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  400 clusters</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;             Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.94651  0.24478 -1.42627 -0.46675  0.0001</span></span>
-<span><span class="co">#&gt; gp.f1        0.67100  0.27922  0.12373  1.21826  0.0163</span></span>
-<span><span class="co">#&gt; dnr          0.30329  0.30045 -0.28557  0.89215  0.3128</span></span>
-<span><span class="co">#&gt; preauto      0.36563  0.27464 -0.17266  0.90392  0.1831</span></span>
-<span><span class="co">#&gt; ttt24        0.41933  0.29841 -0.16554  1.00420  0.1600</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  0.38809 0.24020 0.6270</span></span>
-<span><span class="co">#&gt; gp.f1        1.95619 1.13171 3.3813</span></span>
-<span><span class="co">#&gt; dnr          1.35431 0.75158 2.4404</span></span>
-<span><span class="co">#&gt; preauto      1.44142 0.84142 2.4693</span></span>
-<span><span class="co">#&gt; ttt24        1.52094 0.84744 2.7297</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0    0.374046 0.051584 0.272943 0.475150  0.0000</span></span>
-<span><span class="co">#&gt; treat1    0.533138 0.036168 0.462251 0.604025  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 0.159092 0.065189 0.031323 0.286860  0.0147</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.432117  0.053841  0.326590  0.537644  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.467468  0.039788  0.389485  0.545450  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0  0.035351  0.068851 -0.099594  0.170295  0.6076</span></span>
-<span></span>
-<span><span class="va">kumar</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">gp</span>,<span class="va">kumar</span><span class="op">$</span><span class="va">dnr</span><span class="op">)</span></span>
+<span><span class="co">#&gt; treat0    -0.684331  0.183487 -1.043959 -0.324702  0.0002</span></span>
+<span><span class="co">#&gt; treat1    -0.014931  0.171518 -0.351101  0.321239  0.9306</span></span>
+<span><span class="co">#&gt; treat:1-0  0.669400  0.259837  0.160129  1.178670  0.0100</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
+<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0    0.317773 0.040256 0.238872 0.396673  0.0000</span></span>
+<span><span class="co">#&gt; treat1    0.496173 0.043239 0.411427 0.580920  0.0000</span></span>
+<span><span class="co">#&gt; treat:1-0 0.178401 0.058844 0.063068 0.293734  0.0024</span></span>
 <span></span>
 <span><span class="va">b5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">binregATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">int</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
 <span>        treat.model<span class="op">=</span><span class="va">int</span><span class="op">~</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,cens.code<span class="op">=</span><span class="fl">0</span>,time<span class="op">=</span><span class="fl">60</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
 <span><span class="co">#&gt;  400    150</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -417,39 +408,39 @@ parameters of cause 2.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
 <span><span class="co">#&gt;                Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0.0       0.330393  0.058669  0.215404  0.445382  0.0000</span></span>
-<span><span class="co">#&gt; treat1.0       0.529404  0.041929  0.447225  0.611584  0.0000</span></span>
-<span><span class="co">#&gt; treat0.1       0.474113  0.101946  0.274303  0.673923  0.0000</span></span>
-<span><span class="co">#&gt; treat1.1       0.541508  0.071126  0.402103  0.680913  0.0000</span></span>
-<span><span class="co">#&gt; treat:1.0-0.0  0.199011  0.072251  0.057402  0.340621  0.0059</span></span>
-<span><span class="co">#&gt; treat:0.1-0.0  0.143720  0.116578 -0.084770  0.372209  0.2176</span></span>
-<span><span class="co">#&gt; treat:1.1-0.0  0.211115  0.096285  0.022399  0.399831  0.0283</span></span>
-<span><span class="co">#&gt; treat:0.1-1.0 -0.055292  0.112083 -0.274970  0.164387  0.6218</span></span>
-<span><span class="co">#&gt; treat:1.1-1.0  0.012104  0.082916 -0.150409  0.174617  0.8839</span></span>
-<span><span class="co">#&gt; treat:1.1-0.1  0.067395  0.125308 -0.178205  0.312995  0.5907</span></span>
+<span><span class="co">#&gt; treat0.0      -0.724432  0.269297 -1.252245 -0.196620  0.0071</span></span>
+<span><span class="co">#&gt; treat1.0       0.122134  0.173553 -0.218023  0.462290  0.4816</span></span>
+<span><span class="co">#&gt; treat0.1      -0.105381  0.420091 -0.928745  0.717983  0.8019</span></span>
+<span><span class="co">#&gt; treat1.1       0.172123  0.292009 -0.400204  0.744450  0.5556</span></span>
+<span><span class="co">#&gt; treat:1.0-0.0  0.846566  0.320929  0.217557  1.475575  0.0083</span></span>
+<span><span class="co">#&gt; treat:0.1-0.0  0.619052  0.494731 -0.350604  1.588707  0.2108</span></span>
+<span><span class="co">#&gt; treat:1.1-0.0  0.896555  0.410239  0.092501  1.700609  0.0289</span></span>
+<span><span class="co">#&gt; treat:0.1-1.0 -0.227514  0.462117 -1.133247  0.678219  0.6225</span></span>
+<span><span class="co">#&gt; treat:1.1-1.0  0.049989  0.342303 -0.620913  0.720891  0.8839</span></span>
+<span><span class="co">#&gt; treat:1.1-0.1  0.277504  0.515530 -0.732917  1.287924  0.5904</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
 <span><span class="co">#&gt;                Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0.0       0.342990  0.056843  0.231580  0.454400  0.0000</span></span>
-<span><span class="co">#&gt; treat1.0       0.463549  0.061125  0.343746  0.583352  0.0000</span></span>
-<span><span class="co">#&gt; treat0.1       0.621419  0.277953  0.076641  1.166197  0.0254</span></span>
-<span><span class="co">#&gt; treat1.1       0.563236  0.182607  0.205333  0.921140  0.0020</span></span>
-<span><span class="co">#&gt; treat:1.0-0.0  0.120559  0.084016 -0.044109  0.285226  0.1513</span></span>
-<span><span class="co">#&gt; treat:0.1-0.0  0.278429  0.284145 -0.278485  0.835343  0.3271</span></span>
-<span><span class="co">#&gt; treat:1.1-0.0  0.220246  0.192172 -0.156404  0.596896  0.2518</span></span>
-<span><span class="co">#&gt; treat:0.1-1.0  0.157871  0.304865 -0.439654  0.755395  0.6046</span></span>
-<span><span class="co">#&gt; treat:1.1-1.0  0.099688  0.199010 -0.290365  0.489740  0.6164</span></span>
-<span><span class="co">#&gt; treat:1.1-0.1 -0.058183  0.297915 -0.642086  0.525720  0.8452</span></span></code></pre></div>
-<p>We note that correct estimates that found using the large censoring
-model are very different from those using the simple Kaplan-Meier
-weights that are severely biased for these data. This is due to a stong
-censoring dependence.</p>
+<span><span class="co">#&gt; treat0.0       0.354351  0.057164  0.242312  0.466391  0.0000</span></span>
+<span><span class="co">#&gt; treat1.0       0.464900  0.079669  0.308752  0.621048  0.0000</span></span>
+<span><span class="co">#&gt; treat0.1       0.597978  0.616708 -0.610748  1.806704  0.3322</span></span>
+<span><span class="co">#&gt; treat1.1       0.545436  0.637030 -0.703121  1.793992  0.3919</span></span>
+<span><span class="co">#&gt; treat:1.0-0.0  0.110549  0.097618 -0.080779  0.301876  0.2574</span></span>
+<span><span class="co">#&gt; treat:0.1-0.0  0.243627  0.624019 -0.979428  1.466681  0.6962</span></span>
+<span><span class="co">#&gt; treat:1.1-0.0  0.191084  0.642422 -1.068039  1.450207  0.7661</span></span>
+<span><span class="co">#&gt; treat:0.1-1.0  0.133078  0.629442 -1.100606  1.366762  0.8326</span></span>
+<span><span class="co">#&gt; treat:1.1-1.0  0.080536  0.625281 -1.144992  1.306064  0.8975</span></span>
+<span><span class="co">#&gt; treat:1.1-0.1 -0.052542  0.596654 -1.221962  1.116877  0.9298</span></span></code></pre></div>
+<p>We note that the estimates found using the large censoring model are
+very different from those using the simple Kaplan-Meier weights that are
+severely biased for these data. This is due to a stong censoring
+dependence.</p>
 <p>The average treatment is around
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.17</mn><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">0.17 = E(Y(1) - Y(0))</annotation></semantics></math>
 at time 60 for the transplant period, under the standard causal
-assumptions. We here use the logistic model and a treat model that is
-also logistic. The 1/0 variable used for the causal computation is found
-as the rhs of the treat.model.</p>
+assumptions. The 1/0 treatment variable used for the causal computation
+is found as the right hand side (rhs) of the treat.model or as the first
+argument on the rhs of the response model.</p>
 </div>
 <div class="section level2">
 <h2 id="average-treatment-effect-for-binary-or-continuous-responses">Average treatment effect for binary or continuous responses<a class="anchor" aria-label="anchor" href="#average-treatment-effect-for-binary-or-continuous-responses"></a>
@@ -460,14 +451,13 @@ done</p>
 <ul>
 <li>the binary/numeric outcome must be a variable in the data-frame</li>
 </ul>
-<p>First binnary outcome (can also use binregATE koding cause without
+<p>Running the code (can also use binregATE koding cause without
 censorings values, so setting cens.code=2, and time large)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kumar</span><span class="op">$</span><span class="va">cause2</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">logitATE</a></span><span class="op">(</span><span class="va">cause2</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
 <span><span class="co">#&gt;  400    400</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -489,16 +479,16 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">#&gt; ttt24        1.49282 0.92469 2.4100</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.345704  0.037959  0.271306  0.420102  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.404802  0.033367  0.339404  0.470200  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0  0.059098  0.052111 -0.043037  0.161232  0.2568</span></span>
+<span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0    -0.65978  0.17273 -0.99833 -0.32122  0.0001</span></span>
+<span><span class="co">#&gt; treat1    -0.39748  0.14485 -0.68139 -0.11357  0.0061</span></span>
+<span><span class="co">#&gt; treat:1-0  0.26230  0.23212 -0.19265  0.71724  0.2585</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.331726  0.039466  0.254375  0.409078  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.398074  0.034407  0.330637  0.465511  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0  0.066348  0.052260 -0.036080  0.168775  0.2042</span></span>
+<span><span class="co">#&gt; treat0     0.340232  0.040085  0.261667  0.418798   0.000</span></span>
+<span><span class="co">#&gt; treat1     0.398325  0.034951  0.329823  0.466828   0.000</span></span>
+<span><span class="co">#&gt; treat:1-0  0.058093  0.052008 -0.043842  0.160027   0.264</span></span>
 <span></span>
 <span><span class="co">###library(targeted)</span></span>
 <span><span class="co">###b3a &lt;- ate(cause2~gp.f|dnr+preauto+ttt24| dnr+preauto+ttt24,kumar,family=binomial)</span></span>
@@ -507,12 +497,11 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">## calculate also relative risk</span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; treat0   0.8333  0.1223 0.5936 1.073 9.589e-12</span></span></code></pre></div>
+<span><span class="co">#&gt; treat0   0.8542  0.1228 0.6135 1.095 3.506e-12</span></span></code></pre></div>
 <p>Or with continuous response using normal estimating equations</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">normalATE</a></span><span class="op">(</span><span class="va">time</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
 <span><span class="co">#&gt;  400    400</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -525,13 +514,6 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">#&gt; preauto       1.66745   2.93033  -4.07590   7.41080  0.5693</span></span>
 <span><span class="co">#&gt; ttt24        -1.12151   3.27807  -7.54640   5.30338  0.7323</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;               Estimate       2.5%      97.5%</span></span>
-<span><span class="co">#&gt; (Intercept) 1.1843e+12 1.8277e+09 7.6737e+14</span></span>
-<span><span class="co">#&gt; gp.f1       1.0588e-07 1.7948e-10 1.0000e-04</span></span>
-<span><span class="co">#&gt; dnr         1.4788e-03 2.9885e-06 7.3180e-01</span></span>
-<span><span class="co">#&gt; preauto     5.2986e+00 1.6977e-02 1.6537e+03</span></span>
-<span><span class="co">#&gt; ttt24       3.2579e-01 5.2801e-04 2.0102e+02</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
 <span><span class="co">#&gt;           Estimate  Std.Err     2.5%    97.5% P-value</span></span>
@@ -550,9 +532,9 @@ censorings values, so setting cens.code=2, and time large)</p>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -571,23 +553,23 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.1   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.20.0 lava_1.8.1         </span></span>
 <span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.1          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.1      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.1.0          future_1.67.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-7      systemfonts_1.2.3   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.45.1   parallel_4.5.1     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.1       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.1         globals_0.18.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.3       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 
@@ -606,7 +588,7 @@ censorings values, so setting cens.code=2, and time large)</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

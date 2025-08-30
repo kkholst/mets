@@ -26,7 +26,7 @@ cumulative incidence."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -171,96 +171,194 @@ cumulative incidence.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean.phreg</span><span class="op">(</span><span class="va">out1</span>,times<span class="op">=</span><span class="fl">10</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       strata times     rmean  se.rmean years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0        0    10  5.863335 0.2565971   4.136665</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1        1    10  7.631973 0.3423832   2.368027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0        2    10  7.277572 0.7092852   2.722428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1        3    10  7.670164 0.5624534   2.329836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1      0    20  9.888950 0.5393857  10.111050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1      1    20 13.506463 0.8000204   6.493537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1      2    20 12.102970 1.5545626   7.897030</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1      3    20 12.787746 1.4675818   7.212254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2      0    30 13.602940 0.8315420  16.397060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2      1    30 18.901294 1.2693245  11.098706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2      2    30 16.191143 2.4006207  13.808857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2      3    30 17.766101 2.4422016  12.233899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3      0    40 17.159951 1.1235967  22.840049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3      1    40 23.883707 1.7372982  16.116293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3      2    40 19.549215 3.2030980  20.450785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3      3    40 22.433310 3.3838363  17.566690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4      0    50 20.482466 1.4110541  29.517534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4      1    50 28.330744 2.1961702  21.669256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4      2    50 22.746018 4.0537116  27.253982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4      3    50 26.115616 4.2306828  23.884384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5      0    60 23.741474 1.7038102  36.258526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5      1    60 32.771271 2.6865715  27.228729</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5      2    60 25.942822 4.9476044  34.057178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5      3    60 29.671584 5.1599164  30.328416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       strata times     rmean  se.rmean     lower     upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0        0    10  5.863334 0.2565972  5.381378  6.388454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1        1    10  7.631962 0.3423844  6.989557  8.333409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0        2    10  7.277547 0.7092878  6.012081  8.809378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1        3    10  7.670151 0.5624447  6.643335  8.855675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1      0    20  9.888950 0.5393859  8.886321 11.004704</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1      1    20 13.506451 0.8000225 12.026032 15.169111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1      2    20 12.102974 1.5545669  9.409347 15.567709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1      3    20 12.787703 1.4675824 10.211846 16.013298</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2      0    30 13.602941 0.8315422 12.066997 15.334387</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2      1    30 18.901103 1.2693108 16.570072 21.560058</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2      2    30 16.191150 2.4006235 12.107990 21.651268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2      3    30 17.766058 2.4422068 13.570032 23.259549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3      0    40 17.159947 1.1235964 15.093192 19.509708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3      1    40 23.880230 1.7372347 20.706917 27.539849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3      2    40 19.549194 3.2030958 14.179509 26.952342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3      3    40 22.433326 3.3838505 16.691606 30.150130</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4      0    50 20.482456 1.4110537 17.895426 23.443477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4      1    50 28.324342 2.1962403 24.330921 32.973202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4      2    50 22.745997 4.0537112 16.040092 32.255450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4      3    50 26.115635 4.2306912 19.011102 35.875163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5      0    60 23.741470 1.7038104 20.626283 27.327142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5      1    60 32.761949 2.6868298 27.897296 38.474886</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5      2    60 25.942800 4.9476052 17.851818 37.700861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5      3    60 29.671603 5.1599206 21.101641 41.722064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       years.lost</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0     4.136666</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1     2.368038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0     2.722453</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1     2.329849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1  10.111050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1   6.493549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1   7.897026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1   7.212297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2  16.397059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2  11.098897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2  13.808850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2  12.233942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3  22.840053</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3  16.119770</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3  20.450806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3  17.566674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4  29.517544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4  21.675658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4  27.254003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4  23.884365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5  36.258530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5  27.238051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5  34.057200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5  30.328397</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>,years.lost<span class="op">=</span><span class="cn">TRUE</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="resmean.phreg-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## comparing populations, can also be done using rmstIPCW via influence functions</span></span></span>
+<span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean.phreg</span><span class="op">(</span><span class="va">out1</span>,times<span class="op">=</span><span class="fl">40</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">e1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1    17.16   1.124 14.96 19.36 1.169e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p2    23.88   1.737 20.48 27.29 5.374e-43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p3    19.55   3.203 13.27 25.83 1.040e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p4    22.43   3.384 15.80 29.07 3.368e-11</span>
+<span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">e1</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err   2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [p1] - [p2]    -6.72   2.069 -10.78 -2.665 0.001161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [p1] - [p2] = 0 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## years.lost decomposed into causes</span></span></span>
 <span class="r-in"><span><span class="va">drm1</span> <span class="op">&lt;-</span> <span class="fu">cif.yearslost</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">10</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">drm1</span>,cause<span class="op">=</span><span class="fl">1</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">drm1</span>,cause<span class="op">=</span><span class="fl">2</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="resmean.phreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">drm1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       strata times    intF11     intF12 se.intF11 se.intF12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0        0    10  3.117729  1.0189359 0.2487178 0.1703643</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1        1    10  1.710893  0.6571334 0.3238355 0.1870577</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0        2    10  1.876139  0.8462887 0.6339031 0.4726389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1        3    10  1.358613  0.9712227 0.5303130 0.3617332</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1      0    20  7.517571  2.5934794 0.5441136 0.3861264</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1      1    20  4.230923  2.2626139 0.7414037 0.5327583</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1      2    20  4.568447  3.3285831 1.4876765 1.1718408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1      3    20  3.569497  3.6427573 1.3003045 1.1906597</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2      0    30 12.105134  4.2919265 0.8508105 0.6161437</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2      1    30  6.884157  4.2145481 1.1740966 0.9057017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2      2    30  7.260755  6.5481018 2.3532864 1.9703466</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2      3    30  5.780382  6.4535180 2.0925012 2.0815185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3      0    40 16.718645  6.1214041 1.1626278 0.8509979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3      1    40  9.727977  6.3883168 1.6094938 1.2998314</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3      2    40  9.953062 10.4977225 3.2212048 2.8144174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3      3    40  8.302412  9.2642786 2.8717935 2.9840842</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4      0    50 21.367829  8.1497050 1.4766462 1.0945192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4      1    50 12.979220  8.6900356 2.0475113 1.7124389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4      2    50 12.645370 14.6086116 4.0899622 3.7302664</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4      3    50 11.809345 12.0750393 3.6736885 3.8902170</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5      0    60 26.017013 10.2415133 1.7930407 1.3471498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5      1    60 16.236975 10.9917545 2.5097367 2.1389877</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5      2    60 15.337678 18.7195007 4.9591177 4.6873882</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5      3    60 15.442616 14.8858000 4.5899675 4.7978962</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       total.years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0           4.136665</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1           2.368027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0           2.722428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1           2.329836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1        10.111050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1         6.493537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1         7.897030</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1         7.212254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2        16.397060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2        11.098706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2        13.808857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2        12.233899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3        22.840049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3        16.116293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3        20.450785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3        17.566690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4        29.517534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4        21.669256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4        27.253982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4        23.884384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5        36.258526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5        27.228729</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5        34.057178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5        30.328416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       strata times    intF_1     intF_2 se.intF_1 se.intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0        0    10  3.117736  1.0189303 0.2487181 0.1703638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1        1    10  1.710919  0.6571189 0.3238389 0.1870534</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0        2    10  1.876128  0.8463247 0.6339008 0.4726505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1        3    10  1.358619  0.9712306 0.5303101 0.3617258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1      0    20  7.517574  2.5934760 0.5441141 0.3861258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1      1    20  4.230933  2.2626159 0.7414077 0.5327563</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1      2    20  4.568436  3.3285906 1.4876734 1.1718504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1      3    20  3.569503  3.6427943 1.3003048 1.1906650</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2      0    30 12.105137  4.2919222 0.8508109 0.6161432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2      1    30  6.884351  4.2145454 1.1740900 0.9057005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2      2    30  7.260743  6.5481063 2.3532831 1.9703533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2      3    30  5.780387  6.4535549 2.0925023 2.0815282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3      0    40 16.718644  6.1214091 1.1626282 0.8509973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3      1    40  9.731560  6.3882101 1.6095851 1.2998270</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3      2    40  9.953051 10.4977551 3.2212013 2.8144216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3      3    40  8.302359  9.2643156 2.8717953 2.9840956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4      0    50 21.367828  8.1497159 1.4766465 1.0945192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4      1    50 12.985924  8.6897341 2.0479350 1.7124152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4      2    50 12.645359 14.6086442 4.0899587 3.7302723</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4      3    50 11.809289 12.0750763 3.6736823 3.8902292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5      0    60 26.017013 10.2415177 1.7930408 1.3471502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5      1    60 16.246793 10.9912582 2.5105732 2.1389316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5      2    60 15.337666 18.7195333 4.9591142 4.6873951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5      3    60 15.442561 14.8858369 4.5899564 4.7979091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       total.years.lost lower_intF_1 upper_intF_1 lower_intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0           4.136666    2.6664563     3.645391    0.7342174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1           2.368038    1.1806362     2.479380    0.3761349</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0           2.722453    0.9675221     3.638011    0.2832454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1           2.329849    0.6321902     2.919761    0.4680587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1        10.111050    6.5233192     8.663368    1.9371014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1         6.493549    3.0010682     5.964809    1.4262203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1         7.897026    2.4131302     8.648768    1.6695128</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1         7.212297    1.7479562     7.289285    1.9196201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2        16.397059   10.5473388    13.893015    3.2393239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2        11.098897    4.9282764     9.616809    2.7658498</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2        13.808850    3.8467834    13.704539    3.6306595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2        12.233942    2.8432933    11.751470    3.4296725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3        22.840053   14.5884048    19.159947    4.6614122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3        16.119770    7.0371214    13.457671    4.2872897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3        20.450806    5.2780526    18.768897    6.2071388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3        17.566674    4.2147313    16.354342    4.9276047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4        29.517544   18.6610984    24.467161    6.2636115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4        21.675658    9.5331137    17.689311    5.9056422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4        27.254003    6.7084519    23.836364    8.8564203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4        23.884365    6.4184249    21.727964    6.4218203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5        36.258530   22.7297317    29.779716    7.9140511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5        27.238051   12.0014512    21.993864    7.5058702</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5        34.057200    8.1384377    28.905303   11.4591673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5        30.328397    8.6241967    27.651581    7.9144246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       upper_intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0       1.414048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1       1.148006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0       2.528781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1       2.015322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1     3.472259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1     3.589509</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1     6.636376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1     6.912800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2     5.686556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2     6.422038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2    11.809892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2    12.143542</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3     8.038690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3     9.518654</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3    17.754213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3    17.417701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4    10.603766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4    12.786328</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4    24.096924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4    22.705006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5    13.253476</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5    16.095103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5    30.579964</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5    27.998010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## comparing populations, can also be done using rmstIPCW via influence functions</span></span></span>
+<span class="r-in"><span><span class="va">drm1</span> <span class="op">&lt;-</span> <span class="fu">cif.yearslost</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span>,times<span class="op">=</span><span class="fl">40</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">drm1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     strata times    intF_1    intF_2 se.intF_1 se.intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0      0    40 16.718644  6.121409  1.162628 0.8509973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1      1    40  9.731560  6.388210  1.609585 1.2998270</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0      2    40  9.953051 10.497755  3.221201 2.8144216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1      3    40  8.302359  9.264316  2.871795 2.9840956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     total.years.lost lower_intF_1 upper_intF_1 lower_intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0         22.84005    14.588405     19.15995     4.661412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1         16.11977     7.037121     13.45767     4.287290</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0         20.45081     5.278053     18.76890     6.207139</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1         17.56667     4.214731     16.35434     4.927605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     upper_intF_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0     8.038690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1     9.518654</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    17.754213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    17.417701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co">## first cause </span></span></span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">drm1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">e1</span>,<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [p1] - [p2]    6.987   1.986 3.095 10.88 0.0004333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [p1] - [p2] = 0 </span>
 </code></pre></div>
     </div>
   </div>
@@ -275,7 +373,7 @@ cumulative incidence.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ derivative wrt parameters for weighting.  See vignette for more examples."><!-- 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -177,7 +177,7 @@ derivative wrt parameters for weighting.  See vignette for more examples.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="binregATE.html">kumarsimRCT</a></span><span class="op">(</span><span class="va">n</span>,rho1<span class="op">=</span><span class="fl">0.5</span>,rho2<span class="op">=</span><span class="fl">0.5</span>,rct<span class="op">=</span><span class="fl">2</span>,censpar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>          beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.67</span>, <span class="fl">0.59</span>, <span class="fl">0.55</span>, <span class="fl">0.25</span>, <span class="fl">0.98</span>, <span class="fl">0.18</span>, <span class="fl">0.45</span>, <span class="fl">0.31</span><span class="op">)</span>,</span></span>
@@ -202,26 +202,25 @@ derivative wrt parameters for weighting.  See vignette for more examples.</p>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://optimizer.r-forge.r-project.org/" class="external-link">numDeriv</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu">mediatorSurv</span><span class="op">(</span><span class="va">aaMss</span>,<span class="va">fit</span>,data<span class="op">=</span><span class="va">dat</span>,wdata<span class="op">=</span><span class="va">wdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  800    366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  800    364</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  400 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.354894  0.163604 -0.675552 -0.034237  0.0301</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f01     -0.075193  0.253862 -0.572754  0.422368  0.7671</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f11      0.256899  0.082387  0.095423  0.418374  0.0018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> preauto      0.499033  0.232544  0.043255  0.954812  0.0319</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ttt24        0.269618  0.261502 -0.242916  0.782153  0.3025</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.277563  0.165585 -0.602103  0.046978  0.0937</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f01     -0.013552  0.264909 -0.532765  0.505661  0.9592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f11      0.243449  0.081661  0.083396  0.403502  0.0029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> preauto      0.317339  0.234407 -0.142091  0.776768  0.1758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ttt24        0.331677  0.264380 -0.186498  0.849853  0.2096</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.70125 0.50888 0.9663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f01      0.92756 0.56397 1.5256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f11      1.29291 1.10012 1.5195</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> preauto      1.64713 1.04420 2.5982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ttt24        1.30946 0.78434 2.1862</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.75763 0.54766 1.0481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f01      0.98654 0.58698 1.6581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dnr.f11      1.27564 1.08697 1.4971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> preauto      1.37347 0.86754 2.1744</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ttt24        1.39330 0.82986 2.3393</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co">## not run bootstrap (to save time)</span></span></span>
@@ -241,7 +240,7 @@ derivative wrt parameters for weighting.  See vignette for more examples.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

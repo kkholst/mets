@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/interval-discrete-survival.Rmd" class="external-link"><code>vignettes/interval-discrete-survival.Rmd</code></a></small>
       <div class="hidden name"><code>interval-discrete-survival.Rmd</code></div>
@@ -153,18 +153,21 @@
 <div class="section level2">
 <h2 id="discrete-inteval-censored-survival-times">Discrete Inteval Censored survival times<a class="anchor" aria-label="anchor" href="#discrete-inteval-censored-survival-times"></a>
 </h2>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-   \mbox{logit}(P(T &gt;t | x)) &amp; = \log(G(t)) + x^T \beta              \\
-                P(T &gt;t | x)  &amp; =  \frac{1}{1 + G(t) exp( x^T \beta) }         
+<p>We consider the cumulative odds model for the probability of dying
+before time t:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+   \mbox{logit}(P(T \leq t | x)) &amp; = \log(G(t)) + x^T \beta              \\
+                P(T \leq t | x)  &amp; =  \frac{G(t) exp( x^T \beta)}{1 + G(t) exp( x^T \beta) }          \\
+                P(T &gt;t | x)  &amp; =  \frac{1}{1 + G(t) exp( x^T \beta) }          
 \end{align*}</annotation></semantics></math></p>
 <p>Input are intervals given by
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><msub><mi>t</mi><mi>l</mi></msub><mo>,</mo><msub><mi>t</mi><mi>r</mi></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]t_l,t_r]</annotation></semantics></math>
 where t_r can be infinity for right-censored intervals. When the data is
-truly discrete, in contrast to grouping of continuous data,
+discrete, in contrast to grouping of continuous data,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]0,1]</annotation></semantics></math>
-will be an observation at 1, and
+then the intervals
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><mi>j</mi><mo>,</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]j,j+1]</annotation></semantics></math>
-will be an observation at j+1.</p>
+will be equvilant to an observation at j+1 (see below example).</p>
 <p>Likelihood is maximized:
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∏</mo><mi>i</mi></munder><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>&gt;</mo><msub><mi>t</mi><mrow><mi>i</mi><mi>l</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>&gt;</mo><msub><mi>t</mi><mrow><mi>i</mi><mi>r</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
     \prod_i  P(T_i &gt;t_{il} | x) - P(T_i&gt; t_{ir}| x).            
@@ -208,17 +211,56 @@ cumulative odds model by constructing the intervals appropriately:</p>
 <span><span class="co">#&gt; 6             0   0   0   0   0   0 220</span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Estimate Std.Err     2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; time1  -2.0064  0.1523 -2.30496 -1.7079 1.273e-39</span></span>
-<span><span class="co">#&gt; time2  -2.1749  0.1599 -2.48838 -1.8614 4.118e-42</span></span>
-<span><span class="co">#&gt; time3  -1.4581  0.1544 -1.76071 -1.1554 3.636e-21</span></span>
-<span><span class="co">#&gt; time4  -2.9260  0.2453 -3.40677 -2.4453 8.379e-33</span></span>
-<span><span class="co">#&gt; time5  -1.2051  0.1706 -1.53946 -0.8706 1.633e-12</span></span>
-<span><span class="co">#&gt; time6  -0.9102  0.1860 -1.27468 -0.5457 9.843e-07</span></span>
-<span><span class="co">#&gt; X1      0.9913  0.1179  0.76024  1.2223 4.100e-17</span></span>
-<span><span class="co">#&gt; X2      0.6962  0.1162  0.46847  0.9238 2.064e-09</span></span>
-<span><span class="co">#&gt; X3      0.3466  0.1159  0.11941  0.5738 2.788e-03</span></span>
-<span><span class="co">#&gt; X4      0.3223  0.1151  0.09668  0.5478 5.111e-03</span></span></code></pre></div>
+<span><span class="co">#&gt; $baseline</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0064  0.1523 -2.305 -1.7079 1.273e-39</span></span>
+<span><span class="co">#&gt; time2  -2.1749  0.1599 -2.488 -1.8614 4.118e-42</span></span>
+<span><span class="co">#&gt; time3  -1.4581  0.1544 -1.761 -1.1554 3.636e-21</span></span>
+<span><span class="co">#&gt; time4  -2.9260  0.2453 -3.407 -2.4453 8.379e-33</span></span>
+<span><span class="co">#&gt; time5  -1.2051  0.1706 -1.539 -0.8706 1.633e-12</span></span>
+<span><span class="co">#&gt; time6  -0.9102  0.1860 -1.275 -0.5457 9.843e-07</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $logor</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; X1   0.9913  0.1179 0.76024 1.2223 4.100e-17</span></span>
+<span><span class="co">#&gt; X2   0.6962  0.1162 0.46847 0.9238 2.064e-09</span></span>
+<span><span class="co">#&gt; X3   0.3466  0.1159 0.11941 0.5738 2.788e-03</span></span>
+<span><span class="co">#&gt; X4   0.3223  0.1151 0.09668 0.5478 5.111e-03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $or</span></span>
+<span><span class="co">#&gt;    Estimate     2.5%    97.5%</span></span>
+<span><span class="co">#&gt; X1 2.694610 2.138791 3.394874</span></span>
+<span><span class="co">#&gt; X2 2.006032 1.597554 2.518953</span></span>
+<span><span class="co">#&gt; X3 1.414239 1.126834 1.774950</span></span>
+<span><span class="co">#&gt; X4 1.380231 1.101503 1.729490</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">entry.f</span><span class="op">~</span><span class="va">entry</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">cumoddsreg</a></span><span class="op">(</span><span class="va">entry.f</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $baseline</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0064  0.1523 -2.305 -1.7079 1.273e-39</span></span>
+<span><span class="co">#&gt; time2  -2.1749  0.1599 -2.488 -1.8614 4.118e-42</span></span>
+<span><span class="co">#&gt; time3  -1.4581  0.1544 -1.761 -1.1554 3.636e-21</span></span>
+<span><span class="co">#&gt; time4  -2.9260  0.2453 -3.407 -2.4453 8.379e-33</span></span>
+<span><span class="co">#&gt; time5  -1.2051  0.1706 -1.539 -0.8706 1.633e-12</span></span>
+<span><span class="co">#&gt; time6  -0.9102  0.1860 -1.275 -0.5457 9.843e-07</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $logor</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; X1   0.9913  0.1179 0.76024 1.2223 4.100e-17</span></span>
+<span><span class="co">#&gt; X2   0.6962  0.1162 0.46847 0.9238 2.064e-09</span></span>
+<span><span class="co">#&gt; X3   0.3466  0.1159 0.11941 0.5738 2.788e-03</span></span>
+<span><span class="co">#&gt; X4   0.3223  0.1151 0.09668 0.5478 5.111e-03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $or</span></span>
+<span><span class="co">#&gt;    Estimate     2.5%    97.5%</span></span>
+<span><span class="co">#&gt; X1 2.694610 2.138791 3.394874</span></span>
+<span><span class="co">#&gt; X2 2.006032 1.597554 2.518953</span></span>
+<span><span class="co">#&gt; X3 1.414239 1.126834 1.774950</span></span>
+<span><span class="co">#&gt; X4 1.380231 1.101503 1.729490</span></span></code></pre></div>
+<p>We note that the probability of dying is increased considerably for
+all covariates.</p>
 <p>Now using this discrete survival model we simulate some data from
 this model</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -230,20 +272,31 @@ this model</p>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">outsim</span>,right<span class="op">=</span><span class="cn">Inf</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $baseline</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err    2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; time1 -2.01544  0.3698 -2.7402 -1.2906 5.036e-08</span></span>
-<span><span class="co">#&gt; time2 -1.54735  0.3473 -2.2281 -0.8666 8.385e-06</span></span>
-<span><span class="co">#&gt; time3 -0.81192  0.3411 -1.4804 -0.1434 1.729e-02</span></span>
-<span><span class="co">#&gt; time4 -2.00852  0.5102 -3.0084 -1.0086 8.248e-05</span></span>
-<span><span class="co">#&gt; time5 -0.21848  0.3858 -0.9746  0.5376 5.711e-01</span></span>
-<span><span class="co">#&gt; time6  0.26367  0.4618 -0.6415  1.1689 5.681e-01</span></span>
-<span><span class="co">#&gt; X1     1.27893  0.2804  0.7293  1.8286 5.106e-06</span></span>
-<span><span class="co">#&gt; X2     0.39293  0.2635 -0.1235  0.9094 1.359e-01</span></span>
-<span><span class="co">#&gt; X3    -0.09008  0.2524 -0.5847  0.4045 7.211e-01</span></span>
-<span><span class="co">#&gt; X4     0.20766  0.2627 -0.3072  0.7225 4.292e-01</span></span>
+<span><span class="co">#&gt; time1  -2.0154  0.3698 -2.7402 -1.2906 5.036e-08</span></span>
+<span><span class="co">#&gt; time2  -1.5474  0.3473 -2.2281 -0.8666 8.385e-06</span></span>
+<span><span class="co">#&gt; time3  -0.8119  0.3411 -1.4804 -0.1434 1.729e-02</span></span>
+<span><span class="co">#&gt; time4  -2.0085  0.5102 -3.0084 -1.0086 8.248e-05</span></span>
+<span><span class="co">#&gt; time5  -0.2185  0.3858 -0.9746  0.5376 5.711e-01</span></span>
+<span><span class="co">#&gt; time6   0.2637  0.4618 -0.6415  1.1689 5.681e-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $logor</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; X1  1.27893  0.2804  0.7293 1.8286 5.106e-06</span></span>
+<span><span class="co">#&gt; X2  0.39293  0.2635 -0.1235 0.9094 1.359e-01</span></span>
+<span><span class="co">#&gt; X3 -0.09008  0.2524 -0.5847 0.4045 7.211e-01</span></span>
+<span><span class="co">#&gt; X4  0.20766  0.2627 -0.3072 0.7225 4.292e-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $or</span></span>
+<span><span class="co">#&gt;    Estimate      2.5%    97.5%</span></span>
+<span><span class="co">#&gt; X1 3.592796 2.0735647 6.225116</span></span>
+<span><span class="co">#&gt; X2 1.481310 0.8838237 2.482711</span></span>
+<span><span class="co">#&gt; X3 0.913858 0.5572845 1.498582</span></span>
+<span><span class="co">#&gt; X4 1.230798 0.7355301 2.059553</span></span>
 <span></span>
 <span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/haplo.surv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interval-discrete-survival_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <p>Finally, we look at some data and compare with the icenReg package
 that can also fit the proportional odds model for continous or discrete
@@ -317,7 +370,9 @@ approaches.</p>
 <span><span class="co">## outss &lt;- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Also agrees with the cumulative link regression of the ordinal
-package, although the baseline is parametrized differently.</p>
+package, although the baseline is parametrized differently. In additon
+the clm is describing the probability of surviving rather than the
+probabibility of dying.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> </span>
@@ -332,26 +387,37 @@ package, although the baseline is parametrized differently.</p>
 <span><span class="co">#&gt; 4             0   0   0   0  90   0   0</span></span>
 <span><span class="co">#&gt; 5             0   0   0   0   0  68   0</span></span>
 <span><span class="co">#&gt; 6             0   0   0   0   0   0 220</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="va">ttpd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">ttpd</span>,<span class="va">fentry</span><span class="op">~</span><span class="va">entry</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">cumoddsreg</a></span><span class="op">(</span><span class="va">fentry</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Estimate Std.Err     2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; time1  -2.0064  0.1523 -2.30496 -1.7079 1.273e-39</span></span>
-<span><span class="co">#&gt; time2  -2.1749  0.1599 -2.48838 -1.8614 4.118e-42</span></span>
-<span><span class="co">#&gt; time3  -1.4581  0.1544 -1.76071 -1.1554 3.636e-21</span></span>
-<span><span class="co">#&gt; time4  -2.9260  0.2453 -3.40677 -2.4453 8.379e-33</span></span>
-<span><span class="co">#&gt; time5  -1.2051  0.1706 -1.53946 -0.8706 1.633e-12</span></span>
-<span><span class="co">#&gt; time6  -0.9102  0.1860 -1.27468 -0.5457 9.843e-07</span></span>
-<span><span class="co">#&gt; X1      0.9913  0.1179  0.76024  1.2223 4.100e-17</span></span>
-<span><span class="co">#&gt; X2      0.6962  0.1162  0.46847  0.9238 2.064e-09</span></span>
-<span><span class="co">#&gt; X3      0.3466  0.1159  0.11941  0.5738 2.788e-03</span></span>
-<span><span class="co">#&gt; X4      0.3223  0.1151  0.09668  0.5478 5.111e-03</span></span>
+<span><span class="co">#&gt; $baseline</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
+<span><span class="co">#&gt; time1  -2.0064  0.1523 -2.305 -1.7079 1.273e-39</span></span>
+<span><span class="co">#&gt; time2  -2.1749  0.1599 -2.488 -1.8614 4.118e-42</span></span>
+<span><span class="co">#&gt; time3  -1.4581  0.1544 -1.761 -1.1554 3.636e-21</span></span>
+<span><span class="co">#&gt; time4  -2.9260  0.2453 -3.407 -2.4453 8.379e-33</span></span>
+<span><span class="co">#&gt; time5  -1.2051  0.1706 -1.539 -0.8706 1.633e-12</span></span>
+<span><span class="co">#&gt; time6  -0.9102  0.1860 -1.275 -0.5457 9.843e-07</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $logor</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
+<span><span class="co">#&gt; X1   0.9913  0.1179 0.76024 1.2223 4.100e-17</span></span>
+<span><span class="co">#&gt; X2   0.6962  0.1162 0.46847 0.9238 2.064e-09</span></span>
+<span><span class="co">#&gt; X3   0.3466  0.1159 0.11941 0.5738 2.788e-03</span></span>
+<span><span class="co">#&gt; X4   0.3223  0.1151 0.09668 0.5478 5.111e-03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $or</span></span>
+<span><span class="co">#&gt;    Estimate     2.5%    97.5%</span></span>
+<span><span class="co">#&gt; X1 2.694610 2.138791 3.394874</span></span>
+<span><span class="co">#&gt; X2 2.006032 1.597554 2.518953</span></span>
+<span><span class="co">#&gt; X3 1.414239 1.126834 1.774950</span></span>
+<span><span class="co">#&gt; X4 1.380231 1.101503 1.729490</span></span>
 <span></span>
 <span><span class="va">out</span><span class="op">$</span><span class="va">ploglik</span></span>
 <span><span class="co">#&gt; [1] -1676.456</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
 <span><span class="co">### library(ordinal)</span></span>
-<span><span class="co">### ttpd &lt;- dfactor(ttpd,fentry~entry)</span></span>
 <span><span class="co">### out1 &lt;- clm(fentry~X1+X2+X3+X4,data=ttpd)</span></span>
 <span><span class="co">### summary(out1)</span></span>
 <span></span>
@@ -385,9 +451,9 @@ package, although the baseline is parametrized differently.</p>
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -406,23 +472,23 @@ package, although the baseline is parametrized differently.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.1   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.20.0 lava_1.8.1         </span></span>
 <span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.1          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.1      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.1.0          future_1.67.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-7      systemfonts_1.2.3   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.45.1   parallel_4.5.1     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.1       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.1         globals_0.18.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.3       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 
@@ -441,7 +507,7 @@ package, although the baseline is parametrized differently.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

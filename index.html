@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -143,7 +143,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="multivariate-event-times-mets-">Multivariate Event Times (<code>mets</code>) <img src="reference/figures/timerrr.png" align="right" height="150"><a class="anchor" aria-label="anchor" href="#multivariate-event-times-mets-"></a>
 </h1></div>
-<p>Implementation of various statistical models for multivariate event history data <a href="doi:10.1007/s10985-013-9244-x" class="uri">doi:10.1007/s10985-013-9244-x</a>. Including multivariate cumulative incidence models <a href="doi:10.1002/sim.6016" class="uri">doi:10.1002/sim.6016</a>, and bivariate random effects probit models (Liability models) <a href="doi:10.1016/j.csda.2015.01.014" class="uri">doi:10.1016/j.csda.2015.01.014</a>. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions. Restricted mean survival time regression and years lost for competing risks. Average treatment effects and G-computation.</p>
+<p>Implementation of various statistical models for multivariate event history data <a href="doi:10.1007/s10985-013-9244-x" class="uri">doi:10.1007/s10985-013-9244-x</a>. Including multivariate cumulative incidence models <a href="doi:10.1002/sim.6016" class="uri">doi:10.1002/sim.6016</a>, and bivariate random effects probit models (Liability models) <a href="doi:10.1016/j.csda.2015.01.014" class="uri">doi:10.1016/j.csda.2015.01.014</a>. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions. Restricted mean survival time regression and years lost for competing risks. Average treatment effects and G-computation. All functions can be used with clusters and will work for large data.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -269,8 +269,10 @@ summary(b1)</code></pre>
 <p>ss &lt;- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) summary(survivalG(ss,bmt,50))</p>
 <p>sst &lt;- survivalGtime(ss,bmt,n=50) plot(sst,type=c(“survival”,“risk”,“survival.ratio”)[1])</p>
 <pre><code>
-Based on the phreg, that can be used to get the the Kaplan-Meier, we can also compute
-restricted mean survival times and years lost
+Based on the phreg we can also compute  the
+restricted mean survival time and years lost (via Kaplan-Meier estimates). The function does it
+for all times at once and can be plotted as restricted mean survival or years lost at the different
+time horizons
 
 
 ```{r}
@@ -281,17 +283,17 @@ restricted mean survival times and years lost
  par(mfrow=c(1,2))
  plot(rm1,se=1)
  plot(rm1,years.lost=TRUE,se=1)</code></pre>
-<p>and for competing risks the years lost can be decomposed into different causes</p>
-<p><code>{r}  ## years.lost decomposed into causes  drm1 &lt;- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);  summary(drm1)</code></p>
+<p>For competing risks the years lost can be decomposed into different causes and is based on the integrated Aalen-Johansen estimators for the different strata</p>
+<p><code>{r}  ## years.lost decomposed into causes  drm1 &lt;- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")  summary(drm1)</code></p>
+<p>Computations are again done for all time horizons at once as illustrated in the plot.</p>
 </div>
 <div class="section level2">
 <h2 id="examples-cox-model-iptw">Examples: Cox model IPTW<a class="anchor" aria-label="anchor" href="#examples-cox-model-iptw"></a>
 </h2>
-<p>We can fit the Cox model with inverse probabilty of treatment weights based on logistic regression. The treatment weights can be time-dependent and then mutiplicative weights are applied.</p>
+<p>We can fit the Cox model with inverse probabilty of treatment weights based on logistic regression. The treatment weights can be time-dependent and then mutiplicative weights are applied (see details and vignette).</p>
 <p>```{r} library(mets) data(bmt); bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>&lt;</mo><mo>−</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">time &lt;- bmt</annotation></semantics></math>time+runif(408)<em>0.001 bmt<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>v</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo>&lt;</mo><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mi>b</mi><mi>m</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">event &lt;- (bmt</annotation></semantics></math>cause!=0)</em>1 dfactor(bmt) &lt;- tcell.f~tcell</p>
-<p>ss &lt;- phreg_IPTW(Surv(time,event)<sub>tcell.f,data=bmt,treat.model=tcell.f</sub>platelet+age) summary(ss)</p>
+<p>ss &lt;- phreg_IPTW(Surv(time,event)<sub>tcell.f+cluster(id),data=bmt,treat.model=tcell.f</sub>platelet+age) summary(ss) head(iid(ss))</p>
 <pre><code>
-
 ## Examples: Competing risks regression, Binomial Regression
 
 We can fit the logistic regression model at a specific time-point with IPCW adjustment
@@ -301,6 +303,7 @@ We can fit the logistic regression model at a specific time-point with IPCW adju
  # logistic regresion with IPCW binomial regression
  out &lt;- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
+ head(iid(out))
 
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)</code></pre>
 </div>
@@ -326,8 +329,8 @@ Similarly, the Fine-Gray model can be estimated using IPCW adjustment
 
  ## influence functions of regression coefficients
  head(iid(fg))</code></pre>
-<p>and we can get standard errors for predictions based on the influence functions of the baseline and the regression coefiicients</p>
-<p><code>{r} baseid &lt;- IIDbaseline.cifreg(fg,time=40) FGprediid(baseid,nd)</code></p>
+<p>and we can get standard errors for predictions based on the influence functions of the baseline and the regression coefiicients (these are used in the predict function)</p>
+<p><code>{r} baseid &lt;- iidBaseline(fg,time=40) FGprediid(baseid,nd)</code></p>
 <p>further G-estimation can be done</p>
 <p><code>{r}  dfactor(bmt) &lt;- tcell.f~tcell  fg1 &lt;- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,propodds=NULL)  summary(survivalG(fg1,bmt,50))</code></p>
 </div>
@@ -354,15 +357,15 @@ summary(gl1)
 head(iid(gl1))</code></pre>
 <p>and we can get standard errors for predictions based on the influence functions of the baseline and the regression coefiicients</p>
 <p><code>{r}  nd=data.frame(treatment=levels(hfactioncpx12$treatment),id=1)  pfg &lt;- predict(gl1,nd,se=1)  summary(pfg,times=1:5)  plot(pfg,se=1)</code></p>
-<p>and we can get the influence functions of the baseline and regression coefficients at a specific time-point</p>
-<p><code>{r} baseid &lt;- IIDbaseline.recreg(gl1,time=2) dd &lt;- data.frame(treatment=levels(hfactioncpx12$treatment),id=1) GLprediid(baseid,dd)</code></p>
+<p>The influence functions of the baseline and regression coefficients at a specific time-point can be obtained</p>
+<p><code>{r} baseid &lt;- iidBaseline(gl1,time=2) dd &lt;- data.frame(treatment=levels(hfactioncpx12$treatment),id=1) GLprediid(baseid,dd)</code></p>
 </div>
 <div class="section level2">
 <h2 id="examples-fixed-time-modelling-for-recurrent-events">Examples: Fixed time modelling for recurrent events<a class="anchor" aria-label="anchor" href="#examples-fixed-time-modelling-for-recurrent-events"></a>
 </h2>
-<p>We can fit a log-link regression model at 2 yeas for the expected number of events observed before dying (using IPCW adjustment)</p>
+<p>We can fit a log-link regression model at 2 years for the expected number of events observed before dying (using IPCW adjustment)</p>
 <p>```{r} data(hfactioncpx12)</p>
-<p>e2 &lt;- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2,time=2) summary(e2)</p>
+<p>e2 &lt;- recregIPCW(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,cause=1,death.code=2,time=2) summary(e2) head(iid(e2))</p>
 <pre><code>
 ## Examples: Regression for RMST/Restricted mean survival for survival and competing risks  using IPCW
 
@@ -376,6 +379,7 @@ estimates via IPCW adjustment and then we can do regression
  out &lt;- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
                          cens.model=~strata(platelet,tcell),model="lin")
  estimate(out)
+ head(iid(out))
  ## same as
  out1 &lt;- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  rm1 &lt;- resmean.phreg(out1,times=30)
@@ -393,10 +397,29 @@ estimates via IPCW adjustment and then we can do regression
 <h2 id="examples-average-treatment-effects-ate-for-survival-or-competing-risks">Examples: Average treatment effects (ATE) for survival or competing risks<a class="anchor" aria-label="anchor" href="#examples-average-treatment-effects-ate-for-survival-or-competing-risks"></a>
 </h2>
 <p>We can compute ATE for survival or competing risks data for the probabilty of dying</p>
-<p><code>{r}  bmt$event &lt;- bmt$cause!=0; dfactor(bmt) &lt;- tcell~tcell  brs &lt;- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,       treat.model=tcell~platelet+age)  summary(brs)</code></p>
-<p>or the the restricted mean survival (years-lost to different causes)</p>
-<p>```{r} out &lt;- resmeanATE(Event(time,event)<sub>tcell+platelet,data=bmt,time=40,treat.model=tcell</sub>platelet) summary(out)</p>
-<p>out1 &lt;- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40, treat.model=tcell~platelet) summary(out1) ```</p>
+<p><code>{r}  bmt$event &lt;- bmt$cause!=0; dfactor(bmt) &lt;- tcell~tcell  brs &lt;- binregATE(Event(time,cause)~tcell+platelet+age,bmt,time=50,cause=1,       treat.model=tcell~platelet+age)  summary(brs)  head(brs$riskDR.iid)  head(brs$riskG.iid)</code></p>
+<p>or the the restricted mean survival or years-lost to cause 1</p>
+<p>```{r} out &lt;- resmeanATE(Event(time,event)<sub>tcell+platelet,data=bmt,time=40,treat.model=tcell</sub>platelet) summary(out) head(out<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mi>i</mi><mi>s</mi><mi>k</mi><mi>D</mi><mi>R</mi><mi>.</mi><mi>i</mi><mi>i</mi><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mi>h</mi><mi>e</mi><mi>a</mi><mi>d</mi><mo stretchy="false" form="prefix">(</mo><mi>o</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">riskDR.iid)
+ head(out</annotation></semantics></math>riskG.iid)</p>
+<p>out1 &lt;- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40, treat.model=tcell~platelet) summary(out1)</p>
+<pre><code>
+Here event is 0/1 thus leading to restricted mean and cause taking the values 0,1,2  produces
+regression for the years lost due to cause 1.
+
+## Examples: While Alive estimands for recurrent events
+
+We consider an RCT and aim to describe the treatment effect via while alive estimands
+
+```{r}
+data(hfactioncpx12)
+
+dtable(hfactioncpx12,~status)
+dd &lt;- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+
+dd &lt;- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+           death.code=2,trans=.333)
+summary(dd,type="log")</code></pre>
 </div>
 </div>
 
@@ -430,8 +453,8 @@ estimates via IPCW adjustment and then we can do regression
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Thomas Scheike <br><small class="roles"> Author </small>  </li>
+<li>Klaus K. Holst <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Thomas Scheike <br><small class="roles"> Author </small>   </li>
 </ul>
 </div>
 
@@ -456,7 +479,7 @@ estimates via IPCW adjustment and then we can do regression
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

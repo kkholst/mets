@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -262,14 +262,14 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">a</span>, mean.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span>, cor.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate   Std.Err       Z p-value    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   -0.019527  0.019359 -1.0087 0.31313    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x             -0.068969  0.031698 -2.1758 0.02957 *  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) -0.089362  0.038512 -2.3204 0.02032 *  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:x            1.036086  0.071560 14.4785 &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.0056117 0.0199701  0.2810  0.7787    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x             0.0545437 0.0332679  1.6395  0.1011    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) 0.0137029 0.0383044  0.3577  0.7205    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:x           1.0147379 0.0708594 14.3204  &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2644.232  mean(score^2): 2.228e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2652.029  mean(score^2): 2.661e-05 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n pairs </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4000  2000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -278,13 +278,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Mean          [(Intercept)] + 0.5[x] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.28859  1.21904 1.35814</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      2.96270  2.29563 3.82361</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.40422  0.31571 0.48575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.30136  1.23958 1.36314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.72995  2.88854 4.81645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.47853  0.39549 0.55381</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.29499  0.26887 0.32253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.61654  0.58058 0.65127</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.47846  0.45557 0.50145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.34263  0.31526 0.37110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.66775  0.63482 0.69911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.51312  0.48942 0.53676</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">a</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,by<span class="op">=</span><span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p00</span><span class="op">~</span><span class="va">x</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="biprobit-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -339,7 +339,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

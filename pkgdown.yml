@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
@@ -23,4 +23,4 @@ articles:
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
   while-alive: while-alive.html
-last_built: 2025-04-23T15:18Z
+last_built: 2025-08-30T14:46Z

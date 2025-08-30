@@ -21,7 +21,7 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -176,8 +176,9 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">408</span>,replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">cause1f</span><span class="op">~</span><span class="va">cause</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">drelevel</a></span><span class="op">(</span><span class="va">bmt</span>,ref<span class="op">=</span><span class="fl">3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">cause3f</span><span class="op">~</span><span class="va">cause</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">dlevels</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span></span>
@@ -188,7 +189,7 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2" "0" "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -----------------------------------------</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">mreg</span> <span class="op">&lt;-</span> <span class="fu">mlogit</span><span class="op">(</span><span class="va">cause1f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">bmt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mreg</span> <span class="op">&lt;-</span> <span class="fu">mlogit</span><span class="op">(</span><span class="va">cause1f</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n events</span>
@@ -197,15 +198,24 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1224 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate       S.E.    dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  0.0062305  0.1116297  0.1116297  0.9555</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3 -0.6092657  0.1332076  0.1332076  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  0.0062305  0.1187375  0.1116297  0.9582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3 -0.6092657  0.1414469  0.1332076  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  1.00625 0.80851 1.2523</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  0.54375 0.41881 0.7060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  1.00625 0.79733 1.2699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  0.54375 0.41210 0.7175</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   XX(Intercept).2 XX(Intercept).3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -6.288820e-03   -1.005747e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1.692758e-17    1.149425e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    6.172360e-03   -6.250000e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    6.211180e-03    2.298851e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1.242236e-02   -2.801584e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    3.246739e-17    2.298851e-02</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 174   2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mreg</span> <span class="op">&lt;-</span> <span class="fu">mlogit</span><span class="op">(</span><span class="va">cause1f</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,<span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span></span></span>
@@ -232,7 +242,23 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        1.65707 0.81062 3.3874</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3     0.69844 0.39462 1.2362</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   XX(Intercept).2    XXtcell.2 XXplatelet.2 XX(Intercept).3   XXtcell.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   XXplatelet.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.01569271</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 408   6</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mreg3</span> <span class="op">&lt;-</span> <span class="fu">mlogit</span><span class="op">(</span><span class="va">cause3f</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,<span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mreg3</span><span class="op">)</span></span></span>
@@ -258,7 +284,6 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  2.26070 1.64100 3.1144</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        0.45433 0.21053 0.9804</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3     0.72093 0.39713 1.3087</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## inverse information standard errors </span></span></span>
@@ -299,7 +324,7 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

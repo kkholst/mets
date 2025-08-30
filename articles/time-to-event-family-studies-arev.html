@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@ Lifetime Data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/time-to-event-family-studies-arev.Rmd" class="external-link"><code>vignettes/time-to-event-family-studies-arev.Rmd</code></a></small>
       <div class="hidden name"><code>time-to-event-family-studies-arev.Rmd</code></div>
@@ -622,13 +622,13 @@ the standard error. We also do this ignoring country differences.</p>
 <code class="sourceCode R"><span> <span class="va">cse</span> </span>
 <span><span class="co">#&gt; $coef</span></span>
 <span><span class="co">#&gt;     Estimate      2.5%     97.5%</span></span>
-<span><span class="co">#&gt; p1 0.1586277 0.1029195 0.2444898</span></span>
-<span><span class="co">#&gt; p2 0.4041311 0.2843829 0.5743030</span></span>
+<span><span class="co">#&gt; p1 0.1586277 0.1445496 0.1740770</span></span>
+<span><span class="co">#&gt; p2 0.4041311 0.3682646 0.4434908</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $logcoef</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err   2.5%   97.5%   P-value</span></span>
-<span><span class="co">#&gt; p1   -1.841  0.2207 -2.274 -1.4086 7.331e-17</span></span>
-<span><span class="co">#&gt; p2   -0.906  0.1793 -1.257 -0.5546 4.346e-07</span></span></code></pre></div>
+<span><span class="co">#&gt; p1   -1.841 0.04742 -1.934 -1.7483 0.000e+00</span></span>
+<span><span class="co">#&gt; p2   -0.906 0.04742 -0.999 -0.8131 2.208e-81</span></span></code></pre></div>
 <p>It can be useful also to simply model the concordance given
 covariates, and in this case we might find it important to adjust for
 country, or to see if the differences between MZ and DZ are comparable
@@ -665,8 +665,8 @@ incidence of prostate cancer.</p>
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;                Estimate   2.5%  97.5%</span></span>
 <span><span class="co">#&gt; countryFinland   3.6850 1.8462 7.3552</span></span>
-<span><span class="co">#&gt; countryNorway    2.5620 1.1698 5.6111</span></span>
-<span><span class="co">#&gt; countrySweden    2.9593 1.5729 5.5676</span></span>
+<span><span class="co">#&gt; countryNorway    2.5619 1.1698 5.6111</span></span>
+<span><span class="co">#&gt; countrySweden    2.9592 1.5729 5.5676</span></span>
 <span><span class="co">#&gt; zygMZ            2.7825 1.8697 4.1408</span></span>
 <span><span class="co">### library(Publish)</span></span>
 <span><span class="co">### publish(round(slr$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)</span></span></code></pre></div>
@@ -914,12 +914,12 @@ the IPCW weighted AIC measure</p>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.281   0.260   0.235</span></span>
+<span><span class="co">#&gt;   0.272   0.283   0.227</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">a.dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,</span>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.340   0.291   0.304</span></span>
+<span><span class="co">#&gt;   0.339   0.290   0.302</span></span>
 <span></span>
 <span><span class="co">#system.time(a.zyg &lt;- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, </span></span>
 <span><span class="co">#                               cens.formula = Event(time,status==0)~1,</span></span>
@@ -1109,9 +1109,9 @@ the IPCW weighted AIC measure</p>
 </h2>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1130,23 +1130,23 @@ the IPCW weighted AIC measure</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] prodlim_2024.06.25 mets_1.3.6        </span></span>
+<span><span class="co">#&gt; [1] prodlim_2025.04.28 mets_1.3.7        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-3        future.apply_1.11.3 jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [4] compiler_4.5.0      Rcpp_1.0.14         parallel_4.5.0     </span></span>
-<span><span class="co">#&gt;  [7] jquerylib_0.1.4     globals_0.17.0      splines_4.5.0      </span></span>
-<span><span class="co">#&gt; [10] systemfonts_1.2.2   textshaping_1.0.0   yaml_2.3.10        </span></span>
-<span><span class="co">#&gt; [13] fastmap_1.2.0       lattice_0.22-6      R6_2.6.1           </span></span>
-<span><span class="co">#&gt; [16] knitr_1.50          future_1.40.0       desc_1.4.3         </span></span>
+<span><span class="co">#&gt;  [1] Matrix_1.7-3        future.apply_1.20.0 jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [4] compiler_4.5.1      Rcpp_1.1.0          parallel_4.5.1     </span></span>
+<span><span class="co">#&gt;  [7] jquerylib_0.1.4     globals_0.18.0      splines_4.5.1      </span></span>
+<span><span class="co">#&gt; [10] systemfonts_1.2.3   textshaping_1.0.1   yaml_2.3.10        </span></span>
+<span><span class="co">#&gt; [13] fastmap_1.2.0       lattice_0.22-7      R6_2.6.1           </span></span>
+<span><span class="co">#&gt; [16] knitr_1.50          future_1.67.0       desc_1.4.3         </span></span>
 <span><span class="co">#&gt; [19] bslib_0.9.0         rlang_1.1.6         cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [22] xfun_0.52           fs_1.6.6            sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [25] cli_3.6.5           pkgdown_2.1.1       digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [28] grid_4.5.0          mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [31] lava_1.8.1          timereg_2.0.6       evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [34] data.table_1.17.0   numDeriv_2016.8-1.1 listenv_0.9.1      </span></span>
+<span><span class="co">#&gt; [22] xfun_0.53           fs_1.6.6            sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [25] cli_3.6.5           pkgdown_2.1.3       digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [28] grid_4.5.1          mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [31] lava_1.8.1          timereg_2.0.7       evaluate_1.0.5     </span></span>
+<span><span class="co">#&gt; [34] data.table_1.17.8   numDeriv_2016.8-1.1 listenv_0.9.1      </span></span>
 <span><span class="co">#&gt; [37] codetools_0.2-20    ragg_1.4.0          survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] parallelly_1.43.0   rmarkdown_2.29      tools_4.5.0        </span></span>
+<span><span class="co">#&gt; [40] parallelly_1.45.1   rmarkdown_2.29      tools_4.5.1        </span></span>
 <span><span class="co">#&gt; [43] htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
   </div>
@@ -1166,7 +1166,7 @@ the IPCW weighted AIC measure</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

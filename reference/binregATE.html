@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -141,8 +141,8 @@
 <span>  no.opt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"nr"</span>,</span>
 <span>  augmentation <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cif"</span>, <span class="st">"rmst"</span><span class="op">)</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"exp"</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cif"</span>, <span class="st">"rmst"</span>, <span class="st">"rmtl"</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"default"</span>, <span class="st">"logit"</span>, <span class="st">"exp"</span>, <span class="st">"lin"</span><span class="op">)</span>,</span>
 <span>  Ydirect <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -257,7 +257,6 @@ Rather than binomial regression we also consider a IPCW weighted version of stan
 <span class="r-in"><span><span class="va">brs</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  treat.model<span class="op">=</span><span class="va">tcell.f</span><span class="op">~</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">brs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -278,22 +277,21 @@ Rather than binomial regression we also consider a IPCW weighted version of stan
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (G-formula) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.428748  0.027511  0.374828  0.482668  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.289931  0.065905  0.160761  0.419102  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.138817  0.071772 -0.279487  0.001854  0.0531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    -0.307192  0.118354 -0.539162 -0.075222  0.0094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    -0.944412  0.336399 -1.603741 -0.285083  0.0050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.637221  0.356617 -1.336177  0.061735  0.0740</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (double robust) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.428344  0.027643  0.374165  0.482523  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.254841  0.064224  0.128964  0.380718  0.0001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.173503  0.069680 -0.310073 -0.036933  0.0128</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.428293  0.027602  0.374195  0.482391   0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.181946  0.089033  0.007445  0.356447   0.041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.246347  0.092828 -0.428287 -0.064407   0.008</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">brsi</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">platelet</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  treat.model<span class="op">=</span><span class="va">tcell.f</span><span class="op">~</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">brsi</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -318,15 +316,15 @@ Rather than binomial regression we also consider a IPCW weighted version of stan
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (G-formula) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.427718  0.027557  0.373706  0.481729  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.265587  0.069738  0.128903  0.402272  0.0001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.162130  0.074795 -0.308726 -0.015535  0.0302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0    -0.315241  0.119941 -0.550320 -0.080161  0.0086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1    -1.044839  0.394830 -1.818691 -0.270987  0.0081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.729599  0.411640 -1.536397  0.077200  0.0763</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effects (double robust) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.428319  0.027644  0.374137  0.482501  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.257520  0.066230  0.127711  0.387329  0.0001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.170799  0.071580 -0.311093 -0.030505  0.0170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    Std.Err       2.5%      97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0     0.4282788  0.0276055  0.3741731  0.4823846  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1     0.2079729  0.1071709 -0.0020782  0.4180240  0.0523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.2203059  0.1104736 -0.4368301 -0.0037817  0.0461</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -344,7 +342,7 @@ Rather than binomial regression we also consider a IPCW weighted version of stan
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

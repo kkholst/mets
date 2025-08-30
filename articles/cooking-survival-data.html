@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@
       <h1 data-toc-skip>WIP: Cooking survival data, 5 minute
 recipes</h1>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cooking-survival-data.Rmd" class="external-link"><code>vignettes/cooking-survival-data.Rmd</code></a></small>
       <div class="hidden name"><code>cooking-survival-data.Rmd</code></div>
@@ -155,7 +155,7 @@ recipes</h1>
 <p>Simulation of survival data is important for both theoretical and
 practical work. In a practical setting we might wish to validate that
 standard errors are valid even in a rather small sample, or validate
-that a more complicated procedure is doing as intended. Therefore it is
+that a complicated procedure is doing as intended. Therefore it is
 useful to have simple tools for generating survival data that looks as
 much as possible like particular data. In a theoretical setting we often
 are interested in evaluating the finite sample properties of a new
@@ -441,19 +441,35 @@ or use sim.phreg</li>
 <span> <span class="va">cox3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span><span class="op">+</span><span class="va">bmi</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">cox2</span>,<span class="va">cox3</span><span class="op">)</span></span>
 <span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phregs</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="fl">1000</span>,data<span class="op">=</span><span class="va">bmt</span>,extend<span class="op">=</span><span class="fl">0.002</span><span class="op">)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phregs</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span>,extend<span class="op">=</span><span class="fl">0.002</span><span class="op">)</span></span>
 <span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gage</span><span class="op">)</span><span class="op">+</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span><span class="op">+</span><span class="va">bmi</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox3</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]       [,2]       [,3]       [,4]         [,5]        [,6]</span></span>
-<span><span class="co">#&gt; tcell    -0.5658612 -0.6729732  0.3034864  0.6921346 -0.002832589 -0.01303545</span></span>
-<span><span class="co">#&gt; platelet -0.5658612 -0.6729732 -0.2159670 -0.1964693 -0.002832589 -0.01303545</span></span>
+<span><span class="co">#&gt;                [,1]      [,2]       [,3]        [,4]         [,5]       [,6]</span></span>
+<span><span class="co">#&gt; tcell    -0.5658612 -0.429617  0.3034864 -0.85401909 -0.002832589 -0.1609228</span></span>
+<span><span class="co">#&gt; platelet -0.5658612 -0.429617 -0.2159670 -0.06919742 -0.002832589 -0.1609228</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox3</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox3</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png" width="600px"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span> <span class="va">coxs1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs1</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">scoxs1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="co">###</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs1</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scoxs1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span> <span class="va">coxs1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs1</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">scoxs1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="co">###</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs1</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scoxs1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-2.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="multistate-models-the-illness-death-model">Multistate models: The Illness Death model<a class="anchor" aria-label="anchor" href="#multistate-models-the-illness-death-model"></a>
@@ -463,26 +479,26 @@ simulate data from for example the general illness-death model. Here the
 cumulative hazards need to be specified.</p>
 <p>First we set up some cumulative hazards, then we simulate some data
 and re-estimate the cumulative baselines</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base1cumhaz</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base4cumhaz</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">drcumhaz</span><span class="op">)</span></span>
-<span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span>
-<span> <span class="va">dr2</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span>
-<span> <span class="va">dr2</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.5</span><span class="op">*</span><span class="va">drcumhaz</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
-<span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">base1cumhaz</span></span>
-<span> <span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">base4cumhaz</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CPH_HPN_CRBSI</span><span class="op">)</span></span>
+<span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">terminal</span></span>
+<span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">crbsi</span> </span>
+<span> <span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">mechanical</span></span>
+<span> <span class="va">dr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recreg.html">scalecumhaz</a></span><span class="op">(</span><span class="va">dr</span>,<span class="fl">1.5</span><span class="op">)</span></span>
 <span> <span class="va">cens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5110</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="va">iddata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simMultistate.html">simMultistate</a></span><span class="op">(</span><span class="va">nsim</span>,<span class="va">base1</span>,<span class="va">base1</span>,<span class="va">dr</span>,<span class="va">dr2</span>,cens<span class="op">=</span><span class="va">cens</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dprint.html">dlist</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">id</span><span class="op">&lt;</span><span class="fl">3</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; id: 1</span></span>
 <span><span class="co">#&gt;       time status entry death from to start     stop</span></span>
-<span><span class="co">#&gt; 1 107.7307      3     0     1    1  3     0 107.7307</span></span>
+<span><span class="co">#&gt; 1 519.3023      3     0     1    1  3     0 519.3023</span></span>
 <span><span class="co">#&gt; ------------------------------------------------------------ </span></span>
 <span><span class="co">#&gt; id: 2</span></span>
-<span><span class="co">#&gt;       time status entry death from to start     stop</span></span>
-<span><span class="co">#&gt; 2 132.6563      3     0     1    1  3     0 132.6563</span></span>
+<span><span class="co">#&gt;          time status     entry death from to     start      stop</span></span>
+<span><span class="co">#&gt; 2    17.40157      2   0.00000     0    1  2   0.00000  17.40157</span></span>
+<span><span class="co">#&gt; 201  20.25793      1  17.40157     0    2  1  17.40157  20.25793</span></span>
+<span><span class="co">#&gt; 316 161.85915      2  20.25793     0    1  2  20.25793 161.85915</span></span>
+<span><span class="co">#&gt; 375 411.88521      3 161.85915     1    2  3 161.85915 411.88521</span></span>
 <span>  </span>
 <span> <span class="co">### estimating rates from simulated data  </span></span>
 <span> <span class="va">c0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">iddata</span><span class="op">)</span></span>
@@ -549,7 +565,7 @@ compute.</p>
 <h2 id="cumulative-incidence-i">Cumulative incidence I<a class="anchor" aria-label="anchor" href="#cumulative-incidence-i"></a>
 </h2>
 <p>We here simulate two causes of death with two binary covariates</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">100</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.1</span>,<span class="fl">0.15</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cif2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">100</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.4</span>,<span class="fl">0.45</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -589,7 +605,7 @@ compute.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
 <span><span class="co">#&gt;  0  1  2 </span></span>
-<span><span class="co">#&gt; 18 23 59</span></span>
+<span><span class="co">#&gt; 23 26 51</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">lrr1</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>;<span class="va">lrr2</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span></span>
@@ -645,7 +661,7 @@ restriction. Here
 will be on the specified form, and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mn>2</mn></msub><annotation encoding="application/x-tex">F_2</annotation></semantics></math>
 not.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="co">################################################################</span></span>
 <span> <span class="co">#  simulating several causes with specific cumulatives </span></span>
@@ -661,12 +677,12 @@ not.</p>
 <span>    </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scif1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell -0.7966937 -0.5350636</span></span>
-<span><span class="co">#&gt; age    0.4164386  0.5673141</span></span>
+<span><span class="co">#&gt; tcell -0.7966937 -1.8115642</span></span>
+<span><span class="co">#&gt; age    0.4164386  0.5283466</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scif2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell  0.66688270  0.6762935</span></span>
-<span><span class="co">#&gt; age   -0.03248603 -0.7120689</span></span>
+<span><span class="co">#&gt;              [,1]        [,2]</span></span>
+<span><span class="co">#&gt; tcell  0.66688269  1.00744800</span></span>
+<span><span class="co">#&gt; age   -0.03248603 -0.01984653</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>   </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
@@ -692,7 +708,7 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>2</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mn>0.5</mn><mo>,</mo><mn>0.3</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta_2 = (-0.5,0.3)</annotation></semantics></math>,
 a parametrization that satisfies the constraint
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">F_1+F_2 \leq 1</annotation></semantics></math>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span> <span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="va">nsim</span></span>
@@ -755,13 +771,11 @@ is a uniform, will have distribution given by
 <h2 id="recurrent-events">Recurrent events<a class="anchor" aria-label="anchor" href="#recurrent-events"></a>
 </h2>
 <p>See also recurrent events vignette</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base1cumhaz</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">base4cumhaz</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">drcumhaz</span><span class="op">)</span></span>
-<span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">drcumhaz</span></span>
-<span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">base1cumhaz</span></span>
-<span> <span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">base4cumhaz</span></span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CPH_HPN_CRBSI</span><span class="op">)</span></span>
+<span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">terminal</span></span>
+<span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">crbsi</span> </span>
+<span> <span class="va">base4</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">mechanical</span></span>
 <span></span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span> <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrent</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">base1</span>,death.cumhaz<span class="op">=</span><span class="va">dr</span><span class="op">)</span></span>
@@ -774,24 +788,24 @@ is a uniform, will have distribution given by
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       status   0   1   2</span></span>
 <span><span class="co">#&gt; death                   </span></span>
-<span><span class="co">#&gt; 0             13 301  39</span></span>
-<span><span class="co">#&gt; 1             87   0   0</span></span>
+<span><span class="co">#&gt; 0              9 277  36</span></span>
+<span><span class="co">#&gt; 1             91   0   0</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsim</a></span><span class="op">(</span>causes<span class="op">=</span><span class="fl">2</span>,<span class="va">rr</span>,<span class="va">dr</span>,<span class="va">base1</span>,<span class="va">base4</span>,which<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="va">cumhaz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">base1</span>,<span class="va">base1</span>,<span class="va">base4</span><span class="op">)</span></span>
 <span> <span class="va">drl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">dr</span>,<span class="va">base4</span><span class="op">)</span></span>
-<span> <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentIII</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">cumhaz</span>,death.cumhaz<span class="op">=</span><span class="va">drl</span><span class="op">)</span></span>
+<span> <span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simRecurrentII.html">simRecurrentList</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">cumhaz</span>,death.cumhaz<span class="op">=</span><span class="va">drl</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">rr</span>,<span class="op">~</span><span class="va">death</span><span class="op">+</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       status   0   1   2   3</span></span>
 <span><span class="co">#&gt; death                       </span></span>
-<span><span class="co">#&gt; 0              8 221 237  32</span></span>
-<span><span class="co">#&gt; 1             75   0   0   0</span></span>
-<span><span class="co">#&gt; 2             17   0   0   0</span></span>
-<span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsimIII</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">cumhaz</span>,<span class="va">drl</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="co">#&gt; 0              7 239 287  38</span></span>
+<span><span class="co">#&gt; 1             65   0   0   0</span></span>
+<span><span class="co">#&gt; 2             28   0   0   0</span></span>
+<span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsimList</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">cumhaz</span>,<span class="va">drl</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png" width="600px"><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-3.png" width="600px"></p>
 <ul>
 <li>sim.recurrent can simulate based on cox hazard for events and death
@@ -801,15 +815,30 @@ based on phreg
 </ul>
 </li>
 </ul>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span>
+<span> <span class="va">hf</span> <span class="op">&lt;-</span> <span class="va">hfactioncpx12</span></span>
+<span> <span class="va">hf</span><span class="op">$</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">hf</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span> </span>
+<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span></span>
+<span> <span class="co">##  to fit non-parametric models with just a baseline </span></span>
+<span> <span class="va">xr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">hf</span><span class="op">)</span></span>
+<span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">hf</span><span class="op">)</span></span>
+<span></span>
+<span> <span class="va">simcoxcox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.recurrent.html">sim.recurrent</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">dr</span>,n<span class="op">=</span><span class="va">n</span>,data<span class="op">=</span><span class="va">hf</span><span class="op">)</span></span>
+<span></span>
+<span> <span class="va">recGL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recreg.html">recreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">hf</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span> <span class="va">simglcox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.recurrent.html">sim.recurrent</a></span><span class="op">(</span><span class="va">recGL</span>,<span class="va">dr</span>,n<span class="op">=</span><span class="va">n</span>,data<span class="op">=</span><span class="va">hf</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -828,23 +857,23 @@ based on phreg
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.6</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.52           textshaping_1.0.0   jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.11.3 lava_1.8.1         </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.1   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.20.0 lava_1.8.1         </span></span>
 <span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.0          evaluate_1.0.3     </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.1          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.6       compiler_4.5.0      codetools_0.2-20   </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.0.14         future_1.40.0      </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-6      systemfonts_1.2.2   digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.43.0   parallel_4.5.0     </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.0       Matrix_1.7-3        bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.0         globals_0.17.0      survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] pkgdown_2.1.1       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.1      codetools_0.2-20   </span></span>
+<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.1.0          future_1.67.0      </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-7      systemfonts_1.2.3   digest_0.6.37      </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.45.1   parallel_4.5.1     </span></span>
+<span><span class="co">#&gt; [34] splines_4.5.1       Matrix_1.7-3        bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [37] tools_4.5.1         globals_0.18.0      survival_3.8-3     </span></span>
+<span><span class="co">#&gt; [40] pkgdown_2.1.3       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 
@@ -863,7 +892,7 @@ based on phreg
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>

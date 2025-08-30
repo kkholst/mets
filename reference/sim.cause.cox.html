@@ -20,7 +20,7 @@ with replacement. This gives covariates like the data."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -183,10 +183,10 @@ if "is.matrix" then uses cumulative.
 <span class="r-in"><span><span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.5658612 -0.7840772</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.5658612 -0.9357739</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]    [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell 0.4153706 1.17674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell 0.4153706 0.7107733</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span></span>
@@ -206,7 +206,7 @@ if "is.matrix" then uses cumulative.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

@@ -18,7 +18,7 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$"><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -142,8 +142,8 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
 <span>  no.opt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"nr"</span>,</span>
 <span>  augmentation <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cif"</span>, <span class="st">"rmst"</span><span class="op">)</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"exp"</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cif"</span>, <span class="st">"rmst"</span>, <span class="st">"rmtl"</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"default"</span>, <span class="st">"logit"</span>, <span class="st">"exp"</span>, <span class="st">"lin"</span><span class="op">)</span>,</span>
 <span>  Ydirect <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -218,11 +218,11 @@ $$P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) $$</p>
 
 
 <dt id="arg-outcome">outcome<a class="anchor" aria-label="anchor" href="#arg-outcome"></a></dt>
-<dd><p>can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)</p></dd>
+<dd><p>can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)</p></dd>
 
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)</p></dd>
+<dd><p>link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)</p></dd>
 
 
 <dt id="arg-ydirect">Ydirect<a class="anchor" aria-label="anchor" href="#arg-ydirect"></a></dt>
@@ -261,70 +261,75 @@ under known censoring model.</p>
 <span class="r-in"><span><span class="co"># logistic regresion with IPCW binomial regression </span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">binreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.180389  0.126750 -0.428815  0.068038  0.1547</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.419079  0.345487 -1.096221  0.258063  0.2251</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.436963  0.240975 -0.909265  0.035338  0.0698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.180339  0.126754 -0.428773  0.068095  0.1548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.418248  0.345428 -1.095275  0.258779  0.2260</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.437644  0.240971 -0.909938  0.034650  0.0693</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.83495 0.65128 1.0704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.65765 0.33413 1.2944</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.64600 0.40282 1.0360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.83499 0.65131 1.0705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.65820 0.33445 1.2953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.64556 0.40255 1.0353</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]        [,3]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.006946389 0.004004234 0.006177038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.006946389 0.004004234 0.006177038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.006946389 0.004004234 0.006177038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.006946389 0.004004234 0.006177038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.006946389 0.004004234 0.006177038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.006946389 0.004004234 0.006177038</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">out</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tcell<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>,platelet<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        pred         se     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3503839 0.04848565 0.2553521 0.4454158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.2618392 0.06969476 0.1252374 0.3984409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3502403 0.04847344 0.2552323 0.4452483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.2618778 0.06969023 0.1252850 0.3984707</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">outs</span> <span class="op">&lt;-</span> <span class="fu">binreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.180650  0.127412 -0.430373  0.069073  0.1562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.366536  0.350628 -1.053754  0.320682  0.2959</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.432322  0.240356 -0.903411  0.038767  0.0721</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.180703  0.127413 -0.430429  0.069022  0.1561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.365924  0.350632 -1.053150  0.321302  0.2967</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.433487  0.240270 -0.904408  0.037433  0.0712</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.83473 0.65027 1.0715</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.69313 0.34863 1.3781</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.64900 0.40519 1.0395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.83468 0.65023 1.0715</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.69356 0.34884 1.3789</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.64824 0.40478 1.0381</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## glm with IPCW weights </span></span></span>
 <span class="r-in"><span><span class="va">outl</span> <span class="op">&lt;-</span> <span class="fu">logitIPCW</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outl</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408    160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.241503  0.131457 -0.499154  0.016148  0.0662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.344892  0.368352 -1.066848  0.377064  0.3491</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.292631  0.262667 -0.807450  0.222187  0.2652</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -0.241513  0.131457 -0.499164  0.016138  0.0662</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell       -0.344686  0.368367 -1.066671  0.377299  0.3494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.292897  0.262665 -0.807711  0.221918  0.2648</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.78545 0.60704 1.0163</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.70830 0.34409 1.4580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.74630 0.44599 1.2488</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.78544 0.60704 1.0163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.70844 0.34415 1.4583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.74610 0.44588 1.2485</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -360,86 +365,82 @@ under known censoring model.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="cif.html">cif</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cif2</span> <span class="op">&lt;-</span> <span class="fu"><a href="cif.html">cif</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">cif2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="binreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cifs1</span> <span class="op">&lt;-</span> <span class="fu">binreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span>,time<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cifs2</span> <span class="op">&lt;-</span> <span class="fu">binreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span>,time<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cifs1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408     85</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.321992  0.157775 -1.631225 -1.012759  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.747597  0.352327  0.057049  1.438146  0.0338</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.019491  0.277007 -0.562415  0.523432  0.9439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.072305  0.141684 -0.350001  0.205391  0.6098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.321995  0.157777 -1.631233 -1.012758  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.747294  0.352319  0.056761  1.437826  0.0339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.019451  0.277005 -0.562372  0.523469  0.9440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.072282  0.141683 -0.349976  0.205412  0.6099</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.26660 0.19569 0.3632</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        2.11192 1.05871 4.2129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.98070 0.56983 1.6878</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.93025 0.70469 1.2280</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        2.11128 1.05840 4.2115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.98074 0.56986 1.6879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.93027 0.70471 1.2280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cifs2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408     85</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.321992  0.157775 -1.631225 -1.012759  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.747597  0.352327  0.057049  1.438146  0.0338</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.019491  0.277007 -0.562415  0.523432  0.9439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.072305  0.141684 -0.350001  0.205391  0.6098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.321995  0.157777 -1.631233 -1.012758  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        0.747294  0.352319  0.056761  1.437826  0.0339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet    -0.019451  0.277005 -0.562372  0.523469  0.9440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age         -0.072282  0.141683 -0.349976  0.205412  0.6099</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate    2.5%  97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.26660 0.19569 0.3632</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        2.11192 1.05871 4.2129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.98070 0.56983 1.6878</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.93025 0.70469 1.2280</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell        2.11128 1.05840 4.2115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet     0.98074 0.56986 1.6879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.93027 0.70471 1.2280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cifdob</span> <span class="op">&lt;-</span> <span class="fu">binreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span></span></span>
 <span class="r-in"><span>   <span class="va">tcell</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span><span class="va">age</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span></span></span>
-<span class="r-in"><span>   <span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">bmtdob</span>,cause<span class="op">=</span><span class="fl">1</span>,time<span class="op">=</span><span class="fl">50</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">bmtdob</span>,cause<span class="op">=</span><span class="fl">1</span>,time<span class="op">=</span><span class="fl">50</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cifdob</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  816    245</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate   Std.Err      2.5%     97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)1          -0.199015  0.130984 -0.455739  0.057709  0.1287</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2          -1.321992  0.157775 -1.631225 -1.012759  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell                    -0.637921  0.356676 -1.336993  0.061151  0.0737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet                 -0.344154  0.246034 -0.826371  0.138063  0.1619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                       0.437363  0.107271  0.227116  0.647610  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:tcell     1.385518  0.601030  0.207521  2.563516  0.0212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:platelet  0.324662  0.432059 -0.522158  1.171483  0.4524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:age      -0.509668  0.208101 -0.917538 -0.101797  0.0143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)1          -0.198956  0.130987 -0.455685  0.057773  0.1288</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2          -1.321995  0.157777 -1.631233 -1.012758  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell                    -0.637010  0.356610 -1.335954  0.061934  0.0741</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet                 -0.344885  0.246012 -0.827058  0.137289  0.1609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age                       0.437259  0.107266  0.227021  0.647497  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:tcell     1.384304  0.600983  0.206399  2.562209  0.0213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:platelet  0.325433  0.432030 -0.521331  1.172197  0.4513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:age      -0.509541  0.208100 -0.917410 -0.101672  0.0143</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          Estimate    2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)1           0.81954 0.63398  1.0594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)1           0.81959 0.63401  1.0595</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2           0.26660 0.19569  0.3632</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell                     0.52839 0.26263  1.0631</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet                  0.70882 0.43763  1.1480</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                       1.54862 1.25498  1.9110</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:tcell     3.99690 1.23062 12.9814</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:platelet  1.38356 0.59324  3.2268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:age       0.60070 0.39950  0.9032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell                     0.52887 0.26291  1.0639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet                  0.70830 0.43733  1.1472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age                       1.54846 1.25486  1.9108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:tcell     3.99205 1.22924 12.9644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:platelet  1.38463 0.59373  3.2291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(strata)2:age       0.60077 0.39955  0.9033</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -452,7 +453,7 @@ under known censoring model.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">cifdob</span>,f<span class="op">=</span><span class="va">riskratio</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5% 97.5% P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6602  0.2737 0.1237 1.197 0.01586</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6604  0.2738 0.1238 1.197 0.01585</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -468,7 +469,7 @@ under known censoring model.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

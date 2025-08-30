@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
       </span>
     </div>
 
@@ -228,127 +228,109 @@
 <span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d2</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span>, <span class="va">mean</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num       mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.6258272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -0.6258272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 -0.6258272</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num       mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  0.3647540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1  0.3647540</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d2</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, <span class="va">cumsum</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num      cumsum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 -0.65666950</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.54382867</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  1.70532587</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 -0.97774138</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -1.33320083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.74909958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1  0.05404795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 -1.10592944</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 -0.57377160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -1.69526903</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -1.87748151</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num     cumsum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1 -1.2150233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 -1.6995472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  0.9195522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -2.2188069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -1.1752811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 -0.5394503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  0.7295079</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>,<span class="va">y</span> <span class="op">~</span> <span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, <span class="va">dlag</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num        dlag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.65666950</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  0.11284083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -0.97774138</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.35545945</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2  0.05404795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.57377160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -1.12149743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num       dlag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 -1.2150233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 -0.4845239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -1.9064389</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 -0.5394503</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>,<span class="va">y</span> <span class="op">~</span> <span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, <span class="va">dlag</span>, ARGS<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num       dlag1      dlag2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.65666950         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  0.11284083 -0.6566695</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -0.97774138         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.35545945 -0.9777414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2  0.05404795         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.57377160         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -1.12149743 -0.5737716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num      dlag1      dlag2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 -1.2150233         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 -0.4845239 -1.2150233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -0.3123679         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -1.9064389 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 -0.5394503         NA</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>,<span class="va">y</span> <span class="op">~</span> <span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, <span class="va">dlag</span>, ARGS<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>, NAMES<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l1"</span>,<span class="st">"l2"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num          l1         l2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.65666950         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  0.11284083 -0.6566695</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -0.97774138         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.35545945 -0.9777414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2  0.05404795         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1          NA         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.57377160         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -1.12149743 -0.5737716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num         l1         l2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 -1.2150233         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 -0.4845239 -1.2150233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -0.3123679         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -1.9064389 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 -0.5394503         NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, mean<span class="op">=</span><span class="va">mean</span>, csum<span class="op">=</span><span class="va">cumsum</span>, n<span class="op">=</span><span class="va">length</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num       mean        csum n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  0.5684420 -0.65666950 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  0.5684420 -0.54382867 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  0.5684420  1.70532587 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 -0.2496999 -0.97774138 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -0.2496999 -1.33320083 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.2496999 -0.74909958 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 -0.5529647  0.05404795 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 -0.5529647 -1.10592944 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 -0.6258272 -0.57377160 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.6258272 -1.69526903 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -0.6258272 -1.87748151 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num       mean       csum n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  0.3065174 -1.2150233 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2  0.3065174 -1.6995472 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  0.3065174  0.9195522 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 -0.3917604 -0.3123679 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -0.3917604 -2.2188069 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -0.3917604 -1.1752811 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 -0.8944838 -0.8944838 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1  0.3647540 -0.5394503 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  0.3647540  0.7295079 2</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d2</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, a<span class="op">=</span><span class="va">cumsum</span>, b<span class="op">=</span><span class="va">mean</span>, N<span class="op">=</span><span class="va">length</span>,</span></span>
 <span class="r-in"><span>  l1<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num           a          b N         l1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 -0.65666950  0.5684420 3         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.54382867  0.5684420 3 -0.6566695</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  1.70532587  0.5684420 3  2.2491545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 -0.97774138 -0.2496999 3         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 -1.33320083 -0.2496999 3 -0.9777414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 -0.74909958 -0.2496999 3  0.5841013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1  0.05404795 -0.5529647 2         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 -1.10592944 -0.5529647 2 -1.1599774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 -0.57377160 -0.6258272 3         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -1.69526903 -0.6258272 3 -0.5737716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -1.87748151 -0.6258272 3 -0.1822125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num          a          b N         l1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1 -1.2150233  0.3065174 3         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 -1.6995472  0.3065174 3 -1.2150233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  0.9195522  0.3065174 3  2.6190994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 -0.3123679 -0.3917604 3         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -2.2188069 -0.3917604 3 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 -1.1752811 -0.3917604 3  1.0435257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 -0.8944838 -0.8944838 1 -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 -0.5394503  0.3647540 2         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  0.7295079  0.3647540 2  1.2689582</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, nn<span class="op">=</span><span class="va">seq_along</span>, n<span class="op">=</span><span class="va">length</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num nn n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  3 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3  3 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1  1 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2  2 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num nn n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  1 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2  2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1  1 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2  2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1  1 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1  1 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  2 2</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, nn<span class="op">=</span><span class="va">seq_along</span>, n<span class="op">=</span><span class="va">length</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num nn n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3  3 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3  3 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1  1 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2  2 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1  1 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2  2 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num nn n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  1 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2  2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1  1 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2  2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3  3 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1  1 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1  1 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  2 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">x</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>z<span class="op">=</span><span class="va">mean</span><span class="op">)</span></span></span>
@@ -359,18 +341,16 @@
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'f' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>,<span class="va">y</span><span class="op">+</span><span class="va">x</span><span class="op">~</span><span class="va">id</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">num</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num         z         _11        _12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 1.0000000 -0.65666950  0.3064051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 1.0000000  0.11284083  0.0211384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 0.8761094  2.24915454 -1.1170657</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 0.8761094 -0.97774138 -1.5214842</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 0.8761094 -0.35545945 -0.7846569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 0.8761094  0.58410126 -0.1862686</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 0.8761094  0.05404795 -0.3898105</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 0.8761094 -1.15997739 -1.1005508</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 1.0000000 -0.57377160  0.5216237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 0.8761094 -1.12149743 -0.6417276</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 1.0000000 -0.18221248  0.9872356</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num         z        _11        _12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1 1.0000000 -1.2150233  0.3308853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 0.8475856 -0.4845239 -1.1121771</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 1.0000000  2.6190994  0.7257837</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 0.8475856 -0.3123679 -0.5940380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 1.0000000 -1.9064389  0.8263667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 0.8475856  1.0435257 -1.2821343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 0.8475856 -0.8944838 -0.7110099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 0.8475856 -0.5394503 -1.9165302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 0.8475856  1.2689582 -0.1237129</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">+</span><span class="va">x</span><span class="op">~</span><span class="va">id</span>, <span class="va">f</span><span class="op">)</span></span></span>
@@ -380,126 +360,99 @@
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">d</span></span></span>
 <span class="r-in"><span><span class="fu">dby2</span><span class="op">(</span><span class="va">a</span>, <span class="va">mean</span>, <span class="va">median</span>, REGEX<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">'^[y|x]'</span><span class="op">~</span><span class="va">id</span></span></span>
 <span class="r-in"><span><span class="va">a</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num         z     mean.y     mean.x   median.y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 1.0000000  0.5684420 -0.2631740  0.1128408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 1.0000000  0.5684420 -0.2631740  0.1128408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 0.8761094  0.5684420 -0.2631740  0.1128408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 0.8761094 -0.2496999 -0.8308032 -0.3554594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 0.8761094 -0.2496999 -0.8308032 -0.3554594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 0.8761094 -0.2496999 -0.8308032 -0.3554594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 0.8761094 -0.5529647 -0.7451807 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 0.8761094 -0.5529647 -0.7451807 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 1.0000000 -0.6258272  0.2890439 -0.5737716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 0.8761094 -0.6258272  0.2890439 -0.5737716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 1.0000000 -0.6258272  0.2890439 -0.5737716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      median.x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.0211384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.0211384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.0211384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.7846569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.7846569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.7846569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.7451807</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.7451807</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.5216237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.5216237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.5216237</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num         z     mean.y      mean.x   median.y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1 1.0000000  0.3065174 -0.01850271 -0.4845239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 0.8475856  0.3065174 -0.01850271 -0.4845239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 1.0000000  0.3065174 -0.01850271 -0.4845239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 0.8475856 -0.3917604 -0.34993519 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 1.0000000 -0.3917604 -0.34993519 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 0.8475856 -0.3917604 -0.34993519 -0.3123679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 0.8475856 -0.8944838 -0.71100994 -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 0.8475856  0.3647540 -1.02012154  0.3647540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 0.8475856  0.3647540 -1.02012154  0.3647540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     median.x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.3308853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.3308853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.3308853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.5940380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -0.5940380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -0.5940380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.7110099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -1.0201215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 -1.0201215</span>
 <span class="r-in"><span><span class="co">## wildcards </span></span></span>
 <span class="r-in"><span><span class="fu">dby2</span><span class="op">(</span><span class="va">a</span>,<span class="st">'y*'</span><span class="op">+</span><span class="st">'x*'</span><span class="op">~</span><span class="va">id</span>,<span class="va">mean</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num         z   median.y   median.x     mean.y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 1.0000000  0.1128408  0.0211384  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 1.0000000  0.1128408  0.0211384  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 0.8761094  0.1128408  0.0211384  0.5684420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 0.8761094 -0.3554594 -0.7846569 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 0.8761094 -0.3554594 -0.7846569 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 0.8761094 -0.3554594 -0.7846569 -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 0.8761094 -0.5529647 -0.7451807 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 0.8761094 -0.5529647 -0.7451807 -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 1.0000000 -0.5737716  0.5216237 -0.6258272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 0.8761094 -0.5737716  0.5216237 -0.6258272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 1.0000000 -0.5737716  0.5216237 -0.6258272</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num         z   median.y   median.x     mean.y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1 1.0000000 -0.4845239  0.3308853  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 0.8475856 -0.4845239  0.3308853  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3 1.0000000 -0.4845239  0.3308853  0.3065174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 0.8475856 -0.3123679 -0.5940380 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 1.0000000 -0.3123679 -0.5940380 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 0.8475856 -0.3123679 -0.5940380 -0.3917604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 0.8475856 -0.8944838 -0.7110099 -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 0.8475856  0.3647540 -1.0201215  0.3647540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 0.8475856  0.3647540 -1.0201215  0.3647540</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mean.x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.2631740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.2631740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.2631740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.8308032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.8308032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.8308032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.7451807</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -0.7451807</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.2890439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.2890439</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.2890439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.01850271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.01850271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.01850271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.34993519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -0.34993519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -0.34993519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.71100994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -1.02012154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 -1.02012154</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## subset</span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">x</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>z<span class="op">=</span><span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num  z</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num  z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 NA</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">x</span><span class="op">&gt;</span><span class="op">-</span><span class="fl">1</span>, v<span class="op">=</span><span class="va">mean</span>,z<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num           v  z</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1 -0.27191433  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2 -0.27191433  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3          NA NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1          NA NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2  0.11432090  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3  0.11432090  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1  0.05404795  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2          NA NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1 -0.62582717  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 -0.62582717  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3 -0.62582717  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num          v  z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  0.7020380  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2         NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  0.7020380  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 -1.1094034  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2 -1.1094034  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3         NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 -0.8944838  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1         NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2  1.2689582  1</span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">+</span><span class="va">x</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">x</span><span class="op">&gt;</span><span class="op">-</span><span class="fl">1</span>, <span class="va">mean</span>, <span class="va">median</span>, COLUMN<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num  z      mean.y     mean.x    median.y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.65666950  0.3064051  1   1  1 -0.27191433  0.1637718 -0.27191433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.11284083  0.0211384  1   2  1 -0.27191433  0.1637718 -0.27191433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 NA          NA         NA          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 NA          NA         NA          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 NA  0.11432090 -0.4854627  0.11432090</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 NA  0.11432090 -0.4854627  0.11432090</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 NA  0.05404795 -0.3898105  0.05404795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 NA          NA         NA          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.57377160  0.5216237  4   1  1 -0.62582717  0.2890439 -0.57377160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 NA -0.62582717  0.2890439 -0.57377160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 -0.18221248  0.9872356  4   3  1 -0.62582717  0.2890439 -0.57377160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      median.x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.1637718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.1637718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.4854627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.4854627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.3898105</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.5216237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.5216237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.5216237</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num  z     mean.y     mean.x   median.y   median.x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.2150233  0.3308853  1   1  1  0.7020380  0.5283345  0.7020380  0.5283345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 NA         NA         NA         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.6190994  0.7257837  1   3  1  0.7020380  0.5283345  0.7020380  0.5283345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 NA -1.1094034  0.1161644 -1.1094034  0.1161644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.9064389  0.8263667  2   2  1 -1.1094034  0.1161644 -1.1094034  0.1161644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 NA         NA         NA         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 NA -0.8944838 -0.7110099 -0.8944838 -0.7110099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 NA         NA         NA         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 NA  1.2689582 -0.1237129  1.2689582 -0.1237129</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby2</span><span class="op">(</span><span class="va">d</span>, <span class="va">y</span><span class="op">+</span><span class="va">x</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">x</span><span class="op">&gt;</span><span class="fl">0</span>, <span class="va">mean</span>, REDUCE<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id     mean.y    mean.x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 -0.2719143 0.1637718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  4 -0.3779920 0.7544297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id    mean.y    mean.x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  0.702038 0.5283345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 -1.906439 0.8263667</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dby</span><span class="op">(</span><span class="va">d</span>,<span class="va">y</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">x</span><span class="op">&lt;</span><span class="fl">0</span>,<span class="va">mean</span>,ALL<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              y          x id num  z       mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2.24915454 -1.1170657  1   3 NA  2.2491545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.97774138 -1.5214842  2   1 NA -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.35545945 -0.7846569  2   2 NA -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.58410126 -0.1862686  2   3 NA -0.2496999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.05404795 -0.3898105  3   1 NA -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.15997739 -1.1005508  3   2 NA -0.5529647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.12149743 -0.6417276  4   2 NA -1.1214974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            y          x id num  z       mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.4845239 -1.1121771  1   2 NA -0.4845239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.3123679 -0.5940380  2   1 NA  0.3655789</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1.0435257 -1.2821343  2   3 NA  0.3655789</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -0.8944838 -0.7110099  3   1 NA -0.8944838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -0.5394503 -1.9165302  4   1 NA  0.3647540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.2689582 -0.1237129  4   2 NA  0.3647540</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">iris</span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">dby</span><span class="op">(</span><span class="va">a</span>,y<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -518,7 +471,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

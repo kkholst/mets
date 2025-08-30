@@ -28,6 +28,7 @@
 <url><loc>/reference/ACTG175.html</loc></url>
 <url><loc>/reference/BinAugmentCifstrata.html</loc></url>
 <url><loc>/reference/Bootphreg.html</loc></url>
+<url><loc>/reference/CPH_HPN_CRBSI.html</loc></url>
 <url><loc>/reference/ClaytonOakes.html</loc></url>
 <url><loc>/reference/Dbvn.html</loc></url>
 <url><loc>/reference/EVaddGam.html</loc></url>
@@ -42,9 +43,6 @@
 <url><loc>/reference/aalenMets.html</loc></url>
 <url><loc>/reference/aalenfrailty.html</loc></url>
 <url><loc>/reference/back2timereg.html</loc></url>
-<url><loc>/reference/base1cumhaz.html</loc></url>
-<url><loc>/reference/base44cumhaz.html</loc></url>
-<url><loc>/reference/base4cumhaz.html</loc></url>
 <url><loc>/reference/basehazplot.phreg.html</loc></url>
 <url><loc>/reference/bicomprisk.html</loc></url>
 <url><loc>/reference/binomial.twostage.html</loc></url>
@@ -52,6 +50,7 @@
 <url><loc>/reference/binregATE.html</loc></url>
 <url><loc>/reference/binregCasewise.html</loc></url>
 <url><loc>/reference/binregG.html</loc></url>
+<url><loc>/reference/binregRatio.html</loc></url>
 <url><loc>/reference/binregTSR.html</loc></url>
 <url><loc>/reference/biprobit.html</loc></url>
 <url><loc>/reference/blocksample.html</loc></url>
@@ -78,7 +77,6 @@
 <url><loc>/reference/dlag.html</loc></url>
 <url><loc>/reference/doubleFGR.html</loc></url>
 <url><loc>/reference/dprint.html</loc></url>
-<url><loc>/reference/drcumhaz.html</loc></url>
 <url><loc>/reference/dreg.html</loc></url>
 <url><loc>/reference/drelevel.html</loc></url>
 <url><loc>/reference/dsort.html</loc></url>
@@ -94,16 +92,15 @@
 <url><loc>/reference/fast.approx.html</loc></url>
 <url><loc>/reference/fast.pattern.html</loc></url>
 <url><loc>/reference/fast.reshape.html</loc></url>
-<url><loc>/reference/ghaplos.html</loc></url>
 <url><loc>/reference/glm_IPTW.html</loc></url>
 <url><loc>/reference/gof.phreg.html</loc></url>
 <url><loc>/reference/gofG.phreg.html</loc></url>
 <url><loc>/reference/gofM.phreg.html</loc></url>
 <url><loc>/reference/gofZ.phreg.html</loc></url>
-<url><loc>/reference/hapfreqs.html</loc></url>
+<url><loc>/reference/haplo.html</loc></url>
 <url><loc>/reference/haplo.surv.discrete.html</loc></url>
-<url><loc>/reference/haploX.html</loc></url>
 <url><loc>/reference/hfactioncpx12.html</loc></url>
+<url><loc>/reference/iidBaseline.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/internal.html</loc></url>
 <url><loc>/reference/interval.logitsurv.discrete.html</loc></url>
@@ -129,6 +126,7 @@
 <url><loc>/reference/phreg_rct.html</loc></url>
 <url><loc>/reference/plack.cif.html</loc></url>
 <url><loc>/reference/plot.phreg.html</loc></url>
+<url><loc>/reference/plot_twin.html</loc></url>
 <url><loc>/reference/pmvn.html</loc></url>
 <url><loc>/reference/predict.phreg.html</loc></url>
 <url><loc>/reference/predictRisk.binreg.html</loc></url>
@@ -150,9 +148,11 @@
 <url><loc>/reference/sim.cause.cox.html</loc></url>
 <url><loc>/reference/sim.cif.html</loc></url>
 <url><loc>/reference/sim.cox.html</loc></url>
+<url><loc>/reference/sim.recurrent.html</loc></url>
 <url><loc>/reference/simAalenFrailty.html</loc></url>
 <url><loc>/reference/simClaytonOakes.html</loc></url>
 <url><loc>/reference/simClaytonOakesWei.html</loc></url>
+<url><loc>/reference/simGLcox.html</loc></url>
 <url><loc>/reference/simMultistate.html</loc></url>
 <url><loc>/reference/simRecurrentII.html</loc></url>
 <url><loc>/reference/simRecurrentTS.html</loc></url>
