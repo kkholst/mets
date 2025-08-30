@@ -6,20 +6,20 @@
 \usage{
 plot_twin(
   data,
-  density.args = list(),
+  marginal.args = list(),
   kernsmooth.args = list(),
   xlab,
   ylab,
   col = "black",
   col2 = "lightblue",
   alpha = 0.3,
-  grid = TRUE
+  grid = TRUE,
+  side.plot = TRUE,
+  ...
 )
 }
 \arguments{
 \item{data}{bivariate data to plot (data.frame or matrix with 2 columns)}
-
-\item{density.args}{argumnets to (1d) density estimator}
 
 \item{kernsmooth.args}{arguments to 2d-kernel smoother}
 
@@ -34,9 +34,37 @@ plot_twin(
 \item{alpha}{transparency level of points}
 
 \item{grid}{should grid be added to the plot}
+
+\item{...}{arguments to lower level plot functions}
+
+\item{density.args}{argumnets to marginal estimator (`density`
+continuous data, `barplot` for categorical )}
 }
 \description{
 Scatterplot with contours of the (kernel) estimated density
+}
+\examples{
+data("twinbmi", package="mets")
+twinwide <- fast.reshape(twinbmi, id="tvparnr",varying=c("bmi"))
+datamz <- log(subset(twinwide, zyg=="MZ")[,c("bmi1","bmi2")])
+
+# continuous variables
+plot_twin(datamz)
+
+# categorical variables
+datamz2 <- datamz
+datamz2[, 1] <- cut(datamz[, 1], 4)
+datamz2[, 2] <- cut(datamz[, 2], 4)
+plot_twin(datamz2, color = TRUE)
+
+# survival variables
+cens1 <- rbinom(nrow(datamz), 1, 0.5)
+cens2 <- rbinom(nrow(datamz), 1, 0.5)
+datamz2[, 1] <- Event(datamz[, 1], cens1)
+datamz2[, 2] <- suppressWarnings(Event(datamz[, 2], cens2))
+plot_twin(datamz2)
+
+rm(datamz, datamz2, cens1, cens2)
 }
 \author{
 Klaus Kähler Holst
