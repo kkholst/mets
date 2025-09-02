@@ -1173,6 +1173,7 @@ formula <- update(formula, .~.+cluster(id__))
         cens.code=cens.code,no.opt=no.opt,method=method,augmentation=augmentation,
         outcome=outcome[1],model=model[1],Ydirect=Ydirect,...)
 
+model <- val$model[1]
 
 # {{{ computation of ate, att, atc and their influence functions
 
