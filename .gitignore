@@ -26,6 +26,7 @@ vignettes/*.tex
 vignettes/*.pdf
 vignettes/*.R
 vignettes/*.r
+vignettes/*.diff
 vignettes/*.Rout
 vignettes/*.org
 vignettes/auto
