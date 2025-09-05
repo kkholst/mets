@@ -2955,9 +2955,7 @@ if (is.null(time)) stop("Give time for estimation of survival/cumulative inciden
 
 if (inherits(x,c("cifreg","phreg","recreg")))
 Aiid <- iidBaseline(x,time=time) else stop("Must be cifregFG/phreg/recreg object \n"); 
-
 ### dealing with first variable that is a factor 
-
 if (is.null(varname))  {
 treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 } else treat.name <- varname

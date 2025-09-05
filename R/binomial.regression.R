@@ -1056,6 +1056,357 @@ if (length(dots)==0) {
 ##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT 
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
+   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
+   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
+   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
+{# {{{
+  cl <- match.call()# {{{
+  m <- match.call(expand.dots = TRUE)[1:3]
+  special <- c("strata", "cluster","offset")
+  Terms <- terms(formula, special, data = data)
+  m$formula <- Terms
+  m[[1]] <- as.name("model.frame")
+  m <- eval(m, parent.frame())
+  Y <- model.extract(m, "response")
+  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+  if (ncol(Y)==2) {
+    exit <- Y[,1]
+    entry <- NULL ## rep(0,nrow(Y))
+    status <- Y[,2]
+  } else {
+    stop("only right censored data, will not work for delayed entry\n"); 
+    entry <- Y[,1]
+    exit <- Y[,2]
+    status <- Y[,3]
+  }
+  id <- strata <- NULL
+  if (!is.null(attributes(Terms)$specials$cluster)) {
+    ts <- survival::untangle.specials(Terms, "cluster")
+    pos.cluster <- ts$terms
+    Terms  <- Terms[-ts$terms]
+    id <- m[[ts$vars]]
+  } else pos.cluster <- NULL
+  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+    ts <- survival::untangle.specials(Terms, "strata")
+    pos.strata <- ts$terms
+    Terms  <- Terms[-ts$terms]
+    strata <- m[[ts$vars]]
+    strata.name <- ts$vars
+  }  else { strata.name <- NULL; pos.strata <- NULL}
+  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+    ts <- survival::untangle.specials(Terms, "offset")
+    Terms  <- Terms[-ts$terms]
+    offset <- m[[ts$vars]]
+  }  
+  X <- model.matrix(Terms, m)
+  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+ call.id <- id;
+ conid <- construct_id(id,nrow(X),namesX=rownames(X))
+ name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+ idclust <- id; nclust <- nid
+ if (nid!=length(id)) { nid <- length(id); id <- 0:(nid-1); }
+
+  if (is.null(offset)) offset <- rep(0,length(exit)) 
+  if (is.null(weights)) weights <- rep(1,length(exit)) 
+# }}}
+
+  ## {{{ setting up status, response, censoring model 
+  if (is.null(time)) stop("Must give time for logistic modelling \n"); 
+  statusC <- (status %in%cens.code) 
+  statusE <- (status %in% cause) & (exit<= time) 
+  if (sum(statusE)==0) warning("No events of type 1 before time \n"); 
+  kmt <- kaplan.meier
+  ucauses  <-  sort(unique(status))
+  ccc <- which(ucauses %in% cens.code)
+  if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
+  competing  <-  (length(Causes)>1) 
+
+  statusC <- (status %in%cens.code) 
+  data$id__ <- id 
+  data$exit <- exit
+  data$statusC <- statusC 
+  n <- length(exit)
+  cens.strata <- cens.nstrata <- NULL 
+
+  call.cw <- cens.weights
+  if (is.null(cens.weights))  {
+      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
+      resC <- phreg(formC,data)
+      if (resC$p>0) kmt <- FALSE
+      exittime <- pmin(exit,time)
+      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv)
+      ## strata from original data 
+      cens.strata <- resC$strata[order(resC$ord)]
+      cens.nstrata <- resC$nstrata
+  } else formC <- NULL
+  expit  <- function(z) 1/(1+exp(-z)) ## expit
+
+  p <- ncol(X)
+  if (is.null(beta)) beta <- rep(0,p)
+  X <-  as.matrix(X)
+  ###  X2  <- .Call("vecMatMat",X,X)$vXZ
+  X2  <- .Call("vecCPMat",X)$XX
+  ###
+  ucauses  <-  sort(unique(status))
+  ccc <- which(ucauses %in% cens.code)
+  if (length(ccc)>=1) Causes <- ucauses[-ccc] else Causes <- ucauses
+  obs <- (exit<=time & (status %in% Causes)) | (exit>=time)
+
+ if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
+     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
+     else { if (!competing) {
+	     if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+	     else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+     }
+  }
+ nevent <- sum((status %in% cause)*(exit<=time))
+
+ ## }}}
+
+## change id from call to id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
+
+  val <- binreg(formula,data,cause=cause,time=time,beta=beta,type=type,
+	cens.model=cens.model,se=se,kaplan.meier=kaplan.meier,
+        offset=offset,weights=weights,cens.weights=call.cw,
+        cens.code=cens.code,no.opt=no.opt,method=method,augmentation=augmentation,
+        outcome=outcome[1],model=model[1],Ydirect=Ydirect,...)
+
+model <- val$model[1]
+
+# {{{ computation of ate, att, atc and their influence functions
+
+### treatment is rhs of treat.model 
+if (length(all.vars(treat.model))==0) 
+{ respformula  <-  as.formula( paste(all.vars(formula)[3],"~."))
+  treat.model  <- update.formula(treat.model,respformula)
+###  cat("Using propensity score model :\n "); print(treat.model)
+}
+treat.name <-  all.vars(treat.model)[1]
+treatvar <- data[,treat.name]
+if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as factor \n",sep="")); 
+## treatvar, 1,2,...,nlev or 1,2
+nlev <- nlevels(treatvar)
+nlevs <- levels(treatvar)
+###treatvar <- as.numeric(treatvar)
+ntreatvar <- as.numeric(treatvar)
+ytreat <- ntreatvar-1
+
+## dropping cluster here 
+if (nlev==2) {
+   treat.model <- drop.specials(treat.model,"cluster")
+   treat <- glm(treat.model,data,family="binomial")
+   iidalpha <- iid(treat,id=id)
+   lpa <- treat$linear.predictors 
+   pal <- expit(lpa)
+   pal <-cbind(1-pal,pal)
+   ppp <- (pal/pal[,1])
+   spp <- 1/pal[,1]
+} else {  
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
+   treat <- mlogit(treat.modelid,data)
+   iidalpha <- iid(treat)
+   pal <- predict(treat,data,se=0,response=FALSE)
+   ppp <- (pal/pal[,1])
+   spp <- 1/pal[,1]
+}
+
+
+   ###########################################################
+   ### computes derivative of D (1/Pa) propensity score 
+   ###########################################################
+   Xtreat <- model.matrix(treat.model,data)
+   tvg2 <- 1*(ntreatvar>=2)
+   pA <- c(mdi(pal, 1:length(treatvar), ntreatvar))
+   pppy <- c(mdi(ppp,1:length(treatvar), ntreatvar))
+   Dppy <-  (spp*tvg2-pppy) 
+   Dp <- c()
+   for (i in seq(nlev-1)) Dp <- cbind(Dp,Xtreat*ppp[,i+1]*Dppy/spp^2);  
+   DPai <- -1*Dp/pA^2
+   p1lp <-   X %*% val$coef+offset
+   if (model[1]=="logit") { p1 <- expit(p1lp) } else {
+    if (model[1]=="exp") { p1 <- exp(p1lp); } else { p1 <- p1lp;}
+   }
+
+
+k <- 0
+DePsia <- DariskG <- DaPsia <- list(); 
+Ya <- riskG <- riska <- c(); 
+datA <- dkeep(data,x=all.vars(formula))
+xlev <- lapply(datA,levels)
+formulanc <- drop.specials(formula,"cluster")
+a <- nlevs[1]
+for (a in nlevs) {# {{{
+	k <- k+1
+	datA[,treat.name] <- a
+	Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
+        lpa <- Xa %*% val$coef+offset
+	if (model[1]=="logit") {
+	   ma <- expit(lpa); Dma  <-  Xa*c(ma/(1+exp(lpa)))
+	} else {
+	    if (model[1]=="exp") { ma <- exp(lpa);  Dma<-c(ma)*Xa; } else { ma <- lpa; Dma <- Xa }
+	}
+	paka <- pal[,k]
+	riska <- cbind(riska,((treatvar==a)/paka)*(Y-ma)+ma)
+	riskG <- cbind(riskG,ma)
+	Ya <- cbind(Ya,Y*((treatvar==a)/paka))
+        DariskG[[k]] <- apply(Dma,2,sum)
+        DePsia[[k]] <-  apply(Dma*(1-(treatvar==a)/paka),2,sum)
+        DaPsia[[k]] <-  apply(DPai*(treatvar==a)*c(Y-p1),2,sum)
+}# }}}
+
+ if (se) {## {{{ censoring adjustment of variance 
+    ### order of sorted times
+    ord <- resC$ord
+    X <-  X[ord,,drop=FALSE]
+    Xtreat <- Xtreat[ord,,drop=FALSE]
+    ytreat <- ytreat[ord]
+    status <- status[ord]
+    exit <- exit[ord]
+    weights <- weights[ord]
+    offset <- offset[ord]
+    Ya <- Ya[ord,]
+    pal <- pal[ord]
+    cens.weights <- cens.weights[ord]
+    lp <- c(X %*% val$coef+offset)
+    obs <- obs[ord]
+    p <- expit(lp)
+
+ if (!is.null(Ydirect)) Y <-  Ydirect[ord]*obs/cens.weights else {
+     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
+     else { if (!competing) {
+	     if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)*obs)/cens.weights 
+	     else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+     }
+  }
+
+    Y <- Y*weights 
+    xx <- resC$cox.prep
+    S0i2 <- S0i <- rep(0,length(xx$strata))
+    S0i[xx$jumps+1]  <- 1/resC$S0
+    S0i2[xx$jumps+1] <- 1/resC$S0^2
+    ## compute function h(s) = \sum_i X_i Y_i(t) I(s \leq T_i \leq t) 
+    ## to make \int h(s)/Ys  dM_i^C(s) 
+    h  <-  apply(X*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    has  <-  apply(Ya,2,revcumsumstrata,xx$strata,xx$nstrata)
+###    hattc  <-  apply(cbind(ytreat-pal*(1-ytreat)/(1-pal),-(1-ytreat)+(1-pal)*ytreat/pal)*Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    ### Cens-Martingale as a function of time and for all subjects to handle strata 
+    ## to make \int h(s)/Ys  dM_i^C(s)  = \int h(s)/Ys  dN_i^C(s) - dLambda_i^C(s)
+    btime <- 1*(exit<time)
+    IhdLam0 <- apply(h*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    U <- matrix(0,nrow(xx$X),ncol(X))
+    U[xx$jumps+1,] <- (resC$jumptimes<time)*h[xx$jumps+1,]/c(resC$S0)
+    MGt <- (U[,drop=FALSE]-IhdLam0)*c(xx$weights)
+
+    IhdLamhas <- apply(has*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    Uas <- matrix(0,nrow(xx$X),ncol(has))
+    Uas[xx$jumps+1,] <- (resC$jumptimes<time)*has[xx$jumps+1,] /c(resC$S0)
+    MGtas <- (Uas[,drop=FALSE]-IhdLamhas)*c(xx$weights)
+
+    ### Censoring Variance Adjustment  \int h^2(s) / y.(s) d Lam_c(s) estimated by \int h^2(s) / y.(s)^2  d N.^C(s) 
+    mid <- max(xx$id)+1
+    MGCiid <- apply(MGt,2,sumstrata,xx$id,mid)
+    MGCiidas <- apply(MGtas,2,sumstrata,xx$id,mid)
+ 
+  }  else { MGCiid <- MGCiidas <- 0 }
+## }}}
+
+val$call.id <- call.id
+val$name.id  <- name.id
+val$id <- id
+val$nid  <- nid
+val$se.coef <- diag(val$var)^.5
+
+################################
+### estimates risk, att, atc
+################################
+val$riskDR <- apply(riska,2,mean)
+val$riskG<-  apply(riskG,2,mean)
+names(val$riskDR) <- paste("treat",nlevs,sep="")
+names(val$riskG) <- paste("treat",nlevs,sep="")
+
+################################
+## iid's of marginal risk estimates 
+################################
+
+k <- 1
+iidrisk <- c()
+riskG.iid <- c()
+for (a in nlevs) {
+	iidbasea <- c(sumstrata(riska[,k]-val$riskDR[k],id,nid))
+	iidcifa <- c(DePsia[[k]] %*% t(val$iid))
+	iidpala <- c(DaPsia[[k]] %*% t(iidalpha))
+	if (se)  iidGca <- MGCiidas[,k] else iidGca<-0 
+        ###
+	iidriska <- (iidbasea+iidcifa+iidpala+iidGca)/nid
+        iidrisk <- cbind(iidrisk,iidriska)
+	iidriskG <- c(sumstrata(riskG[,k]-val$riskG[k],id,nid))
+	riskGa.iid <- c(iidriskG)/nid+c(DariskG[[k]] %*% t(val$iid))/nid
+        riskG.iid <- cbind(riskG.iid,riskGa.iid)
+	k <- k+1
+}
+# }}}
+
+# {{{ output variances and se for ate; cluster correction
+val$id <- idclust
+val$nid  <- nclust
+
+val$iid <- apply(val$iid,2,sumstrata,idclust,nclust)
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
+val$MGciid <- NULL
+val$iid.naive <- NULL
+
+## outcome model from binreg
+iidrisk <- apply(iidrisk,2,sumstrata,idclust,nclust)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+
+pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
+contrast <- -pdiff(length(nlevs))
+nncont <- c()
+for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
+rownames(contrast) <- nncont
+
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=contrast)
+val$difriskDR <- mm$coef 
+names(val$difriskDR) <-  rownames(contrast) 
+val$var.difriskDR <- mm$vcov 
+val$se.difriskDR <- diag(val$var.difriskDR)^.5
+
+riskG.iid <- apply(riskG.iid,2,sumstrata,idclust,nclust)
+###
+val$riskG.iid <- riskG.iid
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+###
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+val$difriskG <- mm$coef 
+names(val$difriskG) <-  rownames(contrast) 
+val$var.difriskG <- mm$vcov 
+val$se.difriskG <- diag(val$var.difriskG)^.5
+
+### DR-estimator ; G -estimator sort after namid; also outcome model
+if (!is.null(call.id)) {
+	iidrisk <- namesortme(iidrisk,name.id)
+	riskG.iid <-  namesortme(riskG.iid,name.id)
+	val$iid <-  namesortme(val$iid,name.id)
+}
+## }}}
+
+  class(val) <- "binreg"
+  return(val)
+}# }}}
+
+
+binregATEo <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
 	   offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
@@ -1387,32 +1738,6 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
   return(val)
 }# }}}
 
-###{{{ summary 
-
-##' @export
-summary.survivalG <- function(object,...) {
-  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio)
-  class(res) <- "summary.survivalG"
-  res
-}
-
-##' @export
-print.summary.survivalG  <- function(x,...) {
-    cat("risk:\n")
-    print(x$risk,...)
-    cat("\n")
-
-    cat("Average Treatment effects (G-estimator) :\n")
-    print(x$difference,...)
-    cat("\n")
-
-    cat("Average Treatment effect ratio (G-estimator) :\n")
-    print(x$ratio$coefmat,...)
-    cat("\n")
-
-}
-
-###}}} summary 
 
 ##' G-estimator for binomial regression model (Standardized estimates) 
 ##'
@@ -1483,10 +1808,15 @@ Grisk <- apply(risks,2,mean)
 Gest <- list(Gest=Grisk,iid=t(t(risks)-Grisk))
 
 nid <- max(x$id)+1
-risk.iid <- apply(Gest$iid,2,sumstrata,x$id,nid)/nid 
+n <- length(x$id)
+risk.iid <- apply(Gest$iid,2,sumstrata,x$id,nid)/n 
 if (!is.null(x$call.id)) risk.iid <- namesortme(risk.iid,x$name.id)
+DGiid <- risk.iid
 
-for (a in seq_along(nlevs)) risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[a]])/nid
+for (a in seq_along(nlevs)) {
+	DGiid[,1] <- c(x$iid  %*% DariskG[[a]])/n
+	risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[a]])/n
+}
 vv <- crossprod(risk.iid)
 
 Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
@@ -1496,7 +1826,6 @@ out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv,model=x$m
 class(out) <- "survivalG"
 return(out)
 } ## }}}
-
 
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
@@ -2297,5 +2626,4 @@ if (is.null(strataC)) { strataC <- rep(0,length(exit)); nstrataC <- 1; strataC.l
 
  return(bra)
 }# }}})
-
 
