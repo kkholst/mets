@@ -382,7 +382,7 @@ if (is.null(time)) stop("must give time of response \n")
    gammattt[jumpsCt,] <- gammatt
    gammaEsdLam0 <- apply(gammasE*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
    gammadLam0 <-   apply(gammattt*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
-   XgammadLam0 <- .Call("CubeMattime",gammadLam0,xx$X[,-1],pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
+   XgammadLam0 <- .Call("CubeMattime",gammadLam0,xx$X[,-1,drop=FALSE],pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
    Ut <- Et <- matrix(0,length(xx$strata),1)
    Ut[jumpsCt,] <- augmentt.times
    MGCt <- Ut[,drop=FALSE]-(XgammadLam0-gammaEsdLam0)*c(rr0)
