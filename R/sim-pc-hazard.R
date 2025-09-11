@@ -830,7 +830,7 @@ id <- 1:nrow(Z)
 }
 
 if (!inherits(cif,"phreg")) {
-if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,pU=pU,...) else ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,pU=pU,...)
+if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,...) else ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,...)
     ptt <- cbind(ptt,Z)
 } else { ### phreg class# {{{
 	ptt <- data.frame()
@@ -841,16 +841,16 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
 			if (!is.null(U)) Uj <- U[des$strataid==j] else Uj <- NULL
 			if (!is.null(pU)) pUj <- pU[des$strataid==j] else pUj <- NULL
 			if (model[3]) 
-		          pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="cloglog",U=Uj,pU=pUj) else 
-	                  pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="logistic",U=Uj,pU=pUj) 
+		          pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="cloglog",U=Uj) else 
+	                  pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="logistic",U=Uj) 
 			Zj <- Z[des$strataid==j,,drop=FALSE]
 			pttj <- cbind(pttj,Zj)
 			ptt  <-  rbind(ptt,pttj)
 			ptt  <-  rbind(ptt,pttj)
 		}
 	} else {
-	if (model[3]) ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,pU=pU,...) else 
-	              ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,pU=pU,...) 
+	if (model[3]) ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,...) else 
+	              ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,...) 
 		ptt <- cbind(ptt,Z)
 	}
  }# }}}
@@ -894,9 +894,8 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   F2tau <- sim2$F1tau
   ###
  if (!is.null(pU)) {
-      outcome <- 1*(pU> sim1$Ftau)+ 1*(pU> F2tau)
-      rt <- (outcome>=1)*1
-      rb <- outcome 
+      rt <- 1*(pU< pmin(ptot,1))
+      rb <- 1*(pU< sim1$F1tau) 
   } else {
       rt <- rbinom(n,1,pmin(ptot,1))
       rb <- rbinom(n,1,sim1$F1tau/ptot)
@@ -950,9 +949,8 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   F2tau <- sim2$F1tau*(1-sim1$F1tau)
   ###
   if (!is.null(pU)) {
-      outcome <- 1*(pU> sim1$Ftau)+ 1*(pU> F2tau)
-      rt <- (outcome>=1)*1
-      rb <- outcome 
+      rt <- 1*(pU< pmin(ptot,1))
+      rb <- 1*(pU< sim1$F1tau) 
   } else {
       rt <- rbinom(n,1,pmin(ptot,1))
       rb <- rbinom(n,1,sim1$F1tau/ptot)
