@@ -634,7 +634,7 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
 }# }}})
 
 ##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL) {# {{{
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL,U=NULL,pU=NULL) {# {{{
     p=length(beta)/2
     tt <- seq(0,6,by=0.1)
     if (length(rate)==1) rate <- rep(rate,2)
@@ -651,7 +651,7 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("c
 
     cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
     cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
-    data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
+    data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z,U=U,pU=pU)
 
     if (!is.null(rc)) {
     if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)

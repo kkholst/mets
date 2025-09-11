@@ -687,7 +687,7 @@ return(dt)
 }# }}}
 
 #' @export
-simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(0,0),...)
+simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(0,0),U=NULL,...)
 {# {{{
   ## Fine-Gray model cloglog F1= 1-exp(-cum(t)*rr)
   ## logistic                F1= cum(t)*rr/(1+cum(t)*rr)
@@ -703,16 +703,18 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(
   mm <- tail(breaks,1)
   n <- length(rr)
 
+  if (is.null(U)) U <- runif(n)
+
   if (type=="cloglog") {
       F1tau <- 1-exp(-tail(cumh,1)*rr)
-      ttt <- -log(1-runif(n)*F1tau)/rr
+      ttt <- -log(1-U*F1tau)/rr
   } else if (type=="logistic") {
      F1tau <- tail(cumh,1)*rr/(1+tail(cumh,1)*rr)
-     v <- runif(n)*F1tau
+     v <- U*F1tau
      ttt <- exp(logit(v))/rr; 
   }  else if (type=="rr" | type=="cif") {
      F1tau <- tail(cumh,1)
-     ttt <- runif(n)*F1tau
+     ttt <- U*F1tau
      ## rr only affects binomial draw 
      F1tau <- F1tau*rr 
   } else stop(" cloglog or logistic or give function (fun=) \n"); 
@@ -778,7 +780,9 @@ subdist <- function(F1,times)
 #' given then takes average rate of in simulated data from cox model.
 #' @param rrc possible vector of relative risk for cox-type censoring.
 #' @param cumstart to start cumulatives at time 0 in 0. 
-#' @param ... arguments for invsubdist
+#' @param U uniforms to use for drawing of timing for cumulative incidence. 
+#' @param pU uniforms to use for drawing event type (F1,F2,1-F1-F2). 
+#' @param ... arguments for simsubdist (for example Uniform variable for realizations)
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
@@ -804,8 +808,8 @@ subdist <- function(F1,times)
 #' plot(cif2); plot(scif2,add=TRUE,col=2)
 #' @export sim.cif
 #' @aliases sim.cif sim.cifs subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
-#' @usage sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
-sim.cif <- function(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
+#' @usage sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,...)
+sim.cif <- function(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,...)
 {# {{{
 ## also extracts coefficients and baseline from coxph, cox.aalen, phreg
 ## and uses them assuming that the model is cloglog unless otherwise
@@ -826,7 +830,7 @@ id <- 1:nrow(Z)
 }
 
 if (!inherits(cif,"phreg")) {
-if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="logistic",...) else ptt <- simsubdist(cumhaz,rr,type="cloglog",...)
+if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,pU=pU,...) else ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,pU=pU,...)
     ptt <- cbind(ptt,Z)
 } else { ### phreg class# {{{
 	ptt <- data.frame()
@@ -834,17 +838,19 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
 		stratj <- cif$strata[cif$jumps]
 		for (j in 0:(cif$nstrata-1)) {
                         cumhazardj <- rbind(c(0,0),cif$cumhaz[stratj==j,])
+			if (!is.null(U)) Uj <- U[des$strataid==j] else Uj <- NULL
+			if (!is.null(pU)) pUj <- pU[des$strataid==j] else pUj <- NULL
 			if (model[3]) 
-		          pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="cloglog") else 
-	                  pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="logistic") 
+		          pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="cloglog",U=Uj,pU=pUj) else 
+	                  pttj <- simsubdist(cumhazardj,rr[des$strataid==j],type="logistic",U=Uj,pU=pUj) 
 			Zj <- Z[des$strataid==j,,drop=FALSE]
 			pttj <- cbind(pttj,Zj)
 			ptt  <-  rbind(ptt,pttj)
 			ptt  <-  rbind(ptt,pttj)
 		}
 	} else {
-	if (model[3]) ptt <- simsubdist(cumhaz,rr,type="cloglog") else 
-	              ptt <- simsubdist(cumhaz,rr,type="logistic") 
+	if (model[3]) ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,pU=pU,...) else 
+	              ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,pU=pU,...) 
 		ptt <- cbind(ptt,Z)
 	}
  }# }}}
@@ -857,7 +863,6 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
  }
 
 
-
    attr(ptt,"model") <- model
    attr(ptt,"id") <-  id
    attr(ptt,"znames") <- znames
@@ -865,7 +870,7 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
 }# }}}
 
 #' @export sim.cifs
-sim.cifs <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),...)
+sim.cifs <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),U=NULL,pU=NULL,...)
 {# {{{
 
 if (!is.list(cifs)) stop("Cif models in list form\n"); 
@@ -874,21 +879,28 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   cifs <- pre.cifs(cifs,max.times=max.times)
 
   tau <- tail(cifs[[1]]$cum[,1],1)
-  sim1 <- sim.cif(cifs[[1]],n,data=data,Z=Z)
+  sim1 <- sim.cif(cifs[[1]],n,data=data,Z=Z,U=U)
   Z <- sim1[,attr(sim1,"znames")]
   if (!inherits(cifs[[2]],"defined"))  {
       sim2p <- read.fit(cifs[[2]],1,data=data,Z=NULL)
       Z2 <- data[attr(sim1,"id"),names(sim2p$Z)]
-      sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,drawZ=FALSE)
+      sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,drawZ=FALSE,U=U)
   } else { 
         Z2 <- Z[,attr(cifs[[2]],"znames")]
-	sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2)
+	sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,U=U)
   }
 
   ptot <- sim1$F1tau+sim2$F1tau
+  F2tau <- sim2$F1tau
   ###
-  rt <- rbinom(n,1,pmin(ptot,1))
-  rb <- rbinom(n,1,sim1$F1tau/ptot)
+ if (!is.null(pU)) {
+      outcome <- 1*(pU> sim1$Ftau)+ 1*(pU> F2tau)
+      rt <- (outcome>=1)*1
+      rb <- outcome 
+  } else {
+      rt <- rbinom(n,1,pmin(ptot,1))
+      rb <- rbinom(n,1,sim1$F1tau/ptot)
+  }
   cause=ifelse(rb==1,1,2)
   time=ifelse(cause==causes[1],sim1$timecause,sim2$timecause)
   cause <- rt*cause
@@ -914,7 +926,7 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
 }# }}}
 
 #' @export sim.cifsRestrict
-sim.cifsRestrict <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),...)
+sim.cifsRestrict <- function(cifs,n,data=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),U=NULL,pU=NULL,...)
 {# {{{
 
 if (!is.list(cifs)) stop("Cif models in list form\n"); 
@@ -923,22 +935,28 @@ if (!is.list(cifs)) stop("Cif models in list form\n");
   cifs <- pre.cifs(cifs,max.times=max.times)
 
   tau <- tail(cifs[[1]]$cum[,1],1)
-  sim1 <- sim.cif(cifs[[1]],n,data=data,Z=Z)
+  sim1 <- sim.cif(cifs[[1]],n,data=data,Z=Z,U=U)
   Z <- sim1[,attr(sim1,"znames")]
   if (!inherits(cifs[[2]],"defined"))  {
       sim2p <- read.fit(cifs[[2]],1,data=data,Z=NULL)
       Z2 <- data[attr(sim1,"id"),names(sim2p$Z)]
-      sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,drawZ=FALSE)
+      sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,drawZ=FALSE,U=U)
   } else { 
         Z2 <- Z[,attr(cifs[[2]],"znames")]
-	sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2)
+	sim2 <- sim.cif(cifs[[2]],n,data=data,Z=Z2,U=U)
   }
 
-
   ptot <- sim1$F1tau+sim2$F1tau*(1-sim1$F1tau)
+  F2tau <- sim2$F1tau*(1-sim1$F1tau)
   ###
-  rt <- rbinom(n,1,pmin(ptot,1))
-  rb <- rbinom(n,1,sim1$F1tau/ptot)
+  if (!is.null(pU)) {
+      outcome <- 1*(pU> sim1$Ftau)+ 1*(pU> F2tau)
+      rt <- (outcome>=1)*1
+      rb <- outcome 
+  } else {
+      rt <- rbinom(n,1,pmin(ptot,1))
+      rb <- rbinom(n,1,sim1$F1tau/ptot)
+  }
   cause=ifelse(rb==1,1,2)
   time=ifelse(cause==causes[1],sim1$timecause,sim2$timecause)
   cause <- rt*cause
