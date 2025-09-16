@@ -1858,6 +1858,7 @@ val$se.difriskG <- val$var.difriskG^.5
 # }}}
 
 
+  val$model <- "logit"
   val$call.id <- call.id
   class(val) <- "binreg"
   return(val)

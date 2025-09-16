@@ -174,16 +174,16 @@ sample size we still see that we recover the parameters of cause 2.
 library(mets) 
 set.seed(100)
 ###
-n <- 400
+n <- 40000
 kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
 dtable(kumar,~cause)
 dfactor(kumar) <- gp.f~gp
-kumar$id <- 1:400
-kumar$idc <- sample(100,400,TRUE)
-kumar$ids <- sample(400,400)
-kumar$id2 <- sample(400,400)
+kumar$id <- 1:n
+kumar$idc <- sample(100,n,TRUE)
+kumar$ids <- sample(n,n)
+kumar$id2 <- sample(n,n)
 kumar2 <- kumar[order(kumar$id2),]
 kumar$int <- interaction(kumar$gp,kumar$dnr)
 kumar2$int <- interaction(kumar2$gp,kumar2$dnr)
@@ -206,6 +206,35 @@ The average treatment is around $0.17 = E(Y(1) - Y(0))$ at time 60 for the
 transplant period, under the standard causal assumptions. 
 The 1/0 treatment variable used for the causal computation is found as the right hand side (rhs) of the treat.model 
 or as the first argument on the rhs of the response model. 
+
+The binregATE default uses binreg with its default to fit the working model and is 
+recommended, but the logitIPCW and logitIPCWATE can also be used and are GLM-type 
+IPCW weighted models (see binreg help page/vignette). 
+
+```{r}
+ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar2,cause=2,
+	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
+summary(ib2)
+
+
+ib5 <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,
+		 time=60,cens.model=~strata(gp,dnr))
+summary(ib5)
+
+
+library(riskRegression)
+ib5 <- wglm(SEvent(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,time=60)
+ate(ib5)
+
+iib5 <- wglm(regressor.event = ~ X1,
+                      formula.censor = Surv(time,event==0) ~ strata(X1),
+                      times = tau, data = d, cause = 1, product.limit = TRUE)
+     eCR.wglm
+ 
+
+```
+
+
 
 
 Average treatment effect for binary or continuous responses
