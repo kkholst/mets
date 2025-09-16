@@ -169,12 +169,10 @@ sample size we still see that we recover the parameters of cause 2.
 
 
 ```{r}
-###install.packages("mets")
-
 library(mets) 
 set.seed(100)
 ###
-n <- 40000
+n <- 400
 kumar <- kumarsim(n,depcens=1)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
@@ -220,8 +218,25 @@ ib5 <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.cod
 	 time=60,cens.model=~strata(gp,dnr))
 summary(ib5)
 
+ibs <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,time=60)
+summary(ibs)
+
+check <- 0
+if (check==1) {
+library(riskRegression)
+e.wglm <- wglm( regressor.event=~gp.f+dnr+preauto+ttt24, formula.censor = Surv(time,cause==0)~+1, times = 60, data = kumar, product.limit=TRUE,cause=2)
+summary(e.wglm)$coef
+estimate(ibs)
+
+es.wglm <- wglm( regressor.event=~gp.f+dnr+preauto+ttt24, 
+formula.censor = Surv(time,cause==0)~strata(gp,dnr), times = 60, 
+data = kumar, product.limit=TRUE,cause=2)
+summary(es.wglm)$coef
+estimate(ib5)
+}
 ```
 
+The cluster argument should not be used for the logitIPCWATE, but works for binregATE.
 
 
 Average treatment effect for binary or continuous responses
