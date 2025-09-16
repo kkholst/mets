@@ -1016,18 +1016,22 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
   }# }}}
 
 ##' @export
-showfitsimList <- function(rr,cumhaz,dr)  {# {{{
+showfitsimList <- function(rr,cumhaz,dr,...)  {# {{{
  colp <- max(length(cumhaz),length(dr))
  par(mfrow=c(2,colp))
+ if (!is.null(cumhaz)) {
  for (i in 1:length(cumhaz)) {
 	 pp <- phreg(Surv(entry,time,status==i)~+1,rr)
-	 plot(pp); 
+	 plot(pp,main=paste("status=",i),...); 
 	 lines(cumhaz[[i]],col=2,lwd=2)
  }
+ }
+ if (!is.null(dr)) {
  for (i in 1:length(dr)) {
 	 pp <- phreg(Surv(entry,time,death==i)~+1,rr)
-	 plot(pp); 
+	 plot(pp,main=paste("death=",i),...); 
 	 lines(dr[[i]],col=2,lwd=2)
+ }
  }
 }
 # }}}
@@ -1062,7 +1066,6 @@ if (3 %in% which) {
 }
 }# }}}
 
-
 ##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
 ##'
 ##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
@@ -1070,8 +1073,8 @@ if (3 %in% which) {
 ##' Must specify two phreg objects, or a phreg and a recreg object, then simulates data from two-stage model
 ##'
 ##' @param cox1 cox/ghosh-lin for recurrent events 
-##' @param coxd cox for terminal event
-##' @param coxc possible cox for censrong 
+##' @param coxd cox for terminal event (phreg)
+##' @param coxc possible cox for censoring (phreg)
 ##' @param n number of id's 
 ##' @param data on which the models are fitted (to draw covariates) 
 ##' @param type to specify type of simulation, if not default

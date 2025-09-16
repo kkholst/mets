@@ -88,22 +88,21 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
 }# }}}
 
 #' @export
-lin.approx <- function(x2,xfx,x=1)
-{# {{{
-   ### x=1   gives  f(x2) 
-   ### x=-1  gives  f^-1(x2) 
-   breaks <- xfx[,x]
-   fx     <- xfx[,-x]
-   ri <- fast.approx(breaks,x2,type="left")
-   maxindex <- which(ri==length(breaks))
-   rip1 <- ri+1
-   rip1[maxindex] <- length(breaks)
-   rrr <- (x2-breaks[ri])/(breaks[rip1]-breaks[ri])
-   rrr[maxindex] <- 0
-   res <- rrr*(fx[rip1]-fx[ri])+fx[ri]
-   res[is.na(res)] <- tail(fx,1)
-   return(res)
-}# }}}
+lin.approx <- function (x2, xfx, x = 1)
+{ ## {{{ 
+    breaks <- xfx[, x]
+    fx <- xfx[, -x]
+    ri <- fast.approx(breaks, x2, type = "left")
+    maxindex <- which(ri == length(breaks))
+    rip1 <- ri + 1
+    rip1[maxindex] <- length(breaks)
+    rrr <- (x2 - breaks[ri])/(breaks[rip1] - breaks[ri])
+    rrr[maxindex] <- 0
+    res <- rrr * (fx[rip1] - fx[ri]) + fx[ri]
+    res[is.na(res)] <- tail(fx, 1)
+    res[is.na(rrr)] <- fx[ri][is.na(rrr)]
+    return(res)
+} ## }}}
 
 #' @export
 addCums <- function(cumB,cumA,max=NULL)

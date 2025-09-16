@@ -11,9 +11,9 @@ varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
 \arguments{
 \item{cox1}{cox/ghosh-lin for recurrent events}
 
-\item{coxd}{cox for terminal event}
+\item{coxd}{cox for terminal event (phreg)}
 
-\item{coxc}{possible cox for censrong}
+\item{coxc}{possible cox for censoring (phreg)}
 
 \item{n}{number of id's}
 

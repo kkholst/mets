@@ -518,7 +518,6 @@ See also recurrent events vignette
 
  rr <- simRecurrentII(n,base1,base4,death.cumhaz=dr)
  dtable(rr,~death+status)
- par(mfrow=c(2,2))
  showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 
  cumhaz <- list(base1,base1,base4)
