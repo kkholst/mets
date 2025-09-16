@@ -189,7 +189,7 @@ kumar$int <- interaction(kumar$gp,kumar$dnr)
 kumar2$int <- interaction(kumar2$gp,kumar2$dnr)
 clust <- 0
 
-b2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar2,cause=2,
+b2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(b2)
 
@@ -212,28 +212,15 @@ recommended, but the logitIPCW and logitIPCWATE can also be used and are GLM-typ
 IPCW weighted models (see binreg help page/vignette). 
 
 ```{r}
-ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar2,cause=2,
+ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(ib2)
 
-
 ib5 <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,
-		 time=60,cens.model=~strata(gp,dnr))
+	 time=60,cens.model=~strata(gp,dnr))
 summary(ib5)
 
-
-library(riskRegression)
-ib5 <- wglm(SEvent(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,time=60)
-ate(ib5)
-
-iib5 <- wglm(regressor.event = ~ X1,
-                      formula.censor = Surv(time,event==0) ~ strata(X1),
-                      times = tau, data = d, cause = 1, product.limit = TRUE)
-     eCR.wglm
- 
-
 ```
-
 
 
 
