@@ -39,9 +39,13 @@ properties of a new procedure in different settings that often are
 motivated by a specific practical problem. The aim is 
 provide such tools.
 
-Bender et al. in a nice recent paper also discussed how to generate
+Bender et al. in a nice paper discussed how to generate
 survival data based on the Cox model, and restricted attention to some
 of the many useful parametric survival models (weibull, exponential).
+We here use piecwise linear baseline functions that make it easy to simulate
+data that follows closely the baseline given by the data using semi or 
+nonparametric models. THis makes it easy to capture important aspects of the
+data. 
 
 Different survival models can be cooked, and we here give recipes for
 hazard and cumulative incidence based simulations. More recipes are
@@ -50,6 +54,7 @@ given in vignette about recurrent events.
   - hazard based.
   - cumulative incidence.
   - recurrent events (see recurrent events vignette).
+
 
 ```{r}
  library(mets)
@@ -110,7 +115,8 @@ This is again a consequence of a simple calculation
   P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) > t) = P_X(E > HR( \Lambda(t) - \Lambda(s)) ) = P_X(T>t | T>s)
 \]
 
-The engine is to simulate data with a given linear cumulative hazard.
+The engine is to simulate data with a given linear cumulative hazard. First generating survival data based on
+the cumulative hazard cumhaz:j
 
 ```{r}
  nsim <- 200
@@ -125,7 +131,8 @@ The engine is to simulate data with a given linear cumulative hazard.
  pctimecox <- rchaz(cumhaz,rrcox)
 ```
 
-Now we generate data that resemble Cox models for the bmt data
+Now we generate data that resemble Cox models for the bmt data doing it by drawing the covariates and using the
+baseline from the fitted Cox models.   
 
 ```{r}
  data(bmt); 
@@ -151,7 +158,7 @@ Now we generate data that resemble Cox models for the bmt data
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 ```
 
-Now model with no covariates and specific call of sim.base function
+Now fully nonparametric model with stratified baselines and specific call of sim.base function
 
 ```{r}
  data(sTRACE)
@@ -163,45 +170,8 @@ Now model with no covariates and specific call of sim.base function
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 ```
 
-More Cox games 
-
-```{r}
- cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
- sim1 <- sim.cox(cox,nsim,data=sTRACE)
- cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
- cbind(cox$coef,cc$coef)
- cor(sim1[,c("vf","chf","wmi")])
- cor(sTRACE[,c("vf","chf","wmi")])
- 
- cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
- sim3 <- sim.cox(cox,nsim,data=sTRACE)
- cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
- cbind(cox$coef,cc$coef)
- plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
- 
- coxs <-  phreg(Surv(time,status==9)~strata(chf,vf)+wmi,data=sTRACE)
- sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
- cc <-   phreg(Surv(time, status)~strata(chf,vf)+wmi,data=sim3)
- cbind(coxs$coef,cc$coef)
- plot(coxs,col=1); plot(cc,add=TRUE,col=2)
-```
-
-More Cox games with cause  specific hazards
-
-```{r}
- data(bmt)
- # coxph          
- cox1 <- survival::coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
- cox2 <- survival::coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
- coxs <- list(cox1,cox2)
- dd <- sim.cause.cox(coxs,nsim,data=bmt)
- scox1 <- survival::coxph(Surv(time,status==1)~tcell+platelet,data=dd)
- scox2 <- survival::coxph(Surv(time,status==2)~tcell+platelet,data=dd)
- cbind(cox1$coef,scox1$coef)
- cbind(cox2$coef,scox2$coef)
-```
- 
- Stratified Cox models using phreg
+We now fit 3 cause-specific hazard models and generate competing risks data with hazards taken
+from the fitted Cox models. Here a complex situation with stratified baselines of some of the models.
 
 ```{r}
  ## stratified with phreg 
@@ -209,7 +179,11 @@ More Cox games with cause  specific hazards
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
  coxs <- list(cox0,cox1,cox2)
- dd <- sim.cause.cox(coxs,nsim,data=bmt)
+### dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ dd <- sim.phregs(coxs,n,data=bmt)
+
+ ## checking that  cause specific hazards are as given, make n larger
+
  scox0 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
  scox1 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==3)~strata(tcell)+platelet,data=dd)
@@ -221,10 +195,15 @@ More Cox games with cause  specific hazards
  plot(cox1); plot(scox1,add=TRUE,col=2); 
  plot(cox2); plot(scox2,add=TRUE,col=2); 
  
+ ########################################
+ ## second example 
+ ########################################
+
  cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
  coxs <- list(cox1,cox2)
- dd <- sim.cause.cox(coxs,nsim,data=bmt)
+### dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ dd <- sim.phregs(coxs,n,data=bmt)
  scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
  cbind(cox1$coef,scox1$coef)
@@ -234,10 +213,12 @@ More Cox games with cause  specific hazards
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
- - sim.phreg only for phreg, but a bit more flexible, can deal with strata 
- - sim.cox can only deal with covariates that can be identified from
-     the names of its coefficients (so factors should be coded accordingly) or use sim.phreg
+ - sim.phreg only for phreg, but can deal with strata 
+ - sim.cox for other cox models, see last part of vignette, can only deal with covariates that can be identified from
+     the names of its coefficients (so factors should be coded accordingly).
 
+
+One more example 
 
 ```{r}
  library(mets)
@@ -246,14 +227,15 @@ More Cox games with cause  specific hazards
  bmt$bmi <- rnorm(408)
  dcut(bmt) <- gage~age
  data <- bmt
- cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
- cox2 <- phreg(Surv(time,cause==2)~strata(gage)+tcell+platelet,data=bmt)
+ cox1 <- phreg(Surv(time,cause==1)~strata(tcell,platelet),data=bmt)
+ cox2 <- phreg(Surv(time,cause==2)~strata(gage,tcell),data=bmt)
  cox3 <- phreg(Surv(time,cause==0)~strata(platelet)+bmi,data=bmt)
  coxs <- list(cox1,cox2,cox3)
 
  dd <- sim.phregs(coxs,n,data=bmt,extend=0.002)
- scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
- scox2 <- phreg(Surv(time,status==2)~strata(gage)+tcell+platelet,data=dd)
+ dtable(dd,~status)
+ scox1 <- phreg(Surv(time,status==1)~strata(tcell,platelet),data=dd)
+ scox2 <- phreg(Surv(time,status==2)~strata(gage,tcell),data=dd)
  scox3 <- phreg(Surv(time,status==3)~strata(platelet)+bmi,data=dd)
  cbind(coef(cox1),coef(scox1), coef(cox2),coef(scox2), coef(cox3),coef(scox3))
  par(mfrow=c(1,3))
@@ -261,24 +243,7 @@ More Cox games with cause  specific hazards
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
 
- coxs1 <- phreg(Surv(time,cause==1)~strata(tcell),data=bmt)
- dd <- sim.phreg(coxs1,n,data=bmt)
- scoxs1 <-  phreg(Surv(time,status==1)~strata(tcell),data=dd)
- ###
- plot(coxs1)
- plot(scoxs1,add=TRUE)
-
- coxs1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
- dd <- sim.phreg(coxs1,n,data=bmt)
- scoxs1 <-  phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
- ###
- plot(coxs1)
- plot(scoxs1,add=TRUE)
-
 ```
-
-
-
 
 
 
@@ -323,7 +288,6 @@ and re-estimate the cumulative baselines
  lines(base1,lwd=2)
  
 ```
-
 
 
 
@@ -411,7 +375,6 @@ matlines(cifm1[,1],cifm1[,-1],col=1,lwd=2)
 plot(pcif2,ylim=c(0,0.7))
 matlines(cifm2[,1],cifm2[,-1],col=1,lwd=2)
 ```
-
 
 
 Cumulative incidence regression models
@@ -532,7 +495,6 @@ See also recurrent events vignette
 
 
 ```{r}
-
  data(hfactioncpx12)
  hf <- hfactioncpx12
  hf$x <- as.numeric(hf$treatment) 
@@ -549,6 +511,46 @@ See also recurrent events vignette
 ```
 
 
+Simulations based on coxph 
+===========================
+
+
+```{r}
+ cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
+ sim1 <- sim.cox(cox,nsim,data=sTRACE)
+ cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
+ cbind(cox$coef,cc$coef)
+ cor(sim1[,c("vf","chf","wmi")])
+ cor(sTRACE[,c("vf","chf","wmi")])
+ 
+ cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
+ sim3 <- sim.cox(cox,nsim,data=sTRACE)
+ cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
+ cbind(cox$coef,cc$coef)
+ plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
+ 
+ coxs <-  phreg(Surv(time,status==9)~strata(chf,vf)+wmi,data=sTRACE)
+ sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
+ cc <-   phreg(Surv(time, status)~strata(chf,vf)+wmi,data=sim3)
+ cbind(coxs$coef,cc$coef)
+ plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+```
+
+More Cox games with cause  specific hazards
+
+```{r}
+ data(bmt)
+ # coxph          
+ cox1 <- survival::coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
+ cox2 <- survival::coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
+ coxs <- list(cox1,cox2)
+ dd <- sim.cause.cox(coxs,nsim,data=bmt)
+ scox1 <- survival::coxph(Surv(time,status==1)~tcell+platelet,data=dd)
+ scox2 <- survival::coxph(Surv(time,status==2)~tcell+platelet,data=dd)
+ cbind(cox1$coef,scox1$coef)
+ cbind(cox2$coef,scox2$coef)
+```
+ 
 
 SessionInfo
 ============

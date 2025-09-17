@@ -771,7 +771,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmst","years-lost"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
+	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -879,8 +879,8 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
  if (model[1]=="default") {
 	 if (outcome[1]=="cif") model <- "logit"
 	 if (outcome[1]=="rmst") model <- "exp"
-	 if (outcome[1]=="years-lost") model <- "exp"
 	 if (outcome[1]=="rmtl") model <- "exp"
+	 if (outcome[1]=="years-lost") model <- "exp"
  }
 
 
@@ -1493,6 +1493,7 @@ class(out) <- "survivalG"
 return(out)
 } ## }}}
 
+
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -1863,6 +1864,7 @@ val$se.difriskG <- val$var.difriskG^.5
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 ##' @export
 kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
