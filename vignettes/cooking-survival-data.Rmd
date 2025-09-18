@@ -296,21 +296,25 @@ Cumulative incidence
 
 In this section we discuss how to simulate competing risks data that have a specfied cumulative 
 incidence function.  We consider for simplicity a competing risks model with two causes and denote the
-cumulative incidence curves as $F_1(t) = P(T < t, \epsilon=1)$ and  $F_2(t) = P(T < t, \epsilon=2)$.
+cumulative incidence curves as $F_1(t,X) = P(T < t, \epsilon=1|X)$ and  $F_2(t,X) = P(T < t, \epsilon=2|X)$.
+Here given some covariate $X$.
 
 To generate data with the required cumulative incidence functions a simple approach is to first figure out
 if the subject dies and then from what cause, then finally draw the survival time according to the
-conditional distribution. 
+conditional distribution.
 
 For simplicity we consider survival times in a fixed interval $[0,\tau]$, and first flip a coin with 
-and probabilities $1-F_1(\tau)-F_2(\tau)$ to decide if the subject is a survivor or dies. If the subject
-dies we then flip a coin with probabilities $F_1(\tau)/(F_1(\tau)+F_2(\tau))$ and 
-$F_2(\tau)/(F_1(\tau)+F_2(\tau))$ to decide if $\epsilon=1$ or $\epsilon=2$, and finally draw a
-$T = (\tilde F_1^{-1}(U)$ with $\tilde F_1(s) = F_1(s)/F_1(\tau)$ and $U$ is a uniform.
+and probabilities $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or dies. 
+Then if subject dies we then flip a coin with probabilities $F_1(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ and 
+$F_2(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ to decide if it is a cause $!$,  $\epsilon=1$, or a cause 2, $\epsilon=2$. 
+Finally we draw the survival time using the cumulative incidence distribution.
+The timing of a cause $j$ event is  thus 
+$T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
 
+Then indeed $P(T \leq t, \epsilon=j|X) = F_j(t,X)$ for $j=1,2$.
 
-We again note that if $\tilde F_1(s)$ and $F_1(s)$ are piecewise linear
-continuous functions then the inverses are easy to compute. 
+We again note and use that if $\tilde F_j(s)$ and $F_j(s)$ are piecewise linear
+continuous functions then the inverse is easy to compute. 
 
 
 Cumulative incidence I
@@ -333,7 +337,8 @@ The baselines are given as $\Lambda_j(t) = \rho_1 (1- exp(-t/r_j))$ where $\rho_
 and $r_j$ are postive constants, and here $\tau=6$. 
 
 To simulate the survival time we use a piecwise linear approximation of the cumulative
-incidence functions
+incidence functions and will thus depends on some grid for linear approximation. Our linear 
+approximation can be made arbitrarily close to any specific smooth cumulative incidence function.
 
 
 ```{r}
