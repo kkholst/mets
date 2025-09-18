@@ -322,11 +322,11 @@ F_1(t,X)  &= \frac{ \Lambda_1(t,\rho_1) exp(X^T  \beta)}{1+\Lambda_1(t,\rho_1) e
 \end{align*}
 and $F_2$ here enforcing the sum condition $F_1+F_2 \leq 1$
 \begin{align*}
-F_2(t,X)  & =  \frac{ \Lambda_1(t,\rho_1) exp(X^T  \beta)}{1+\Lambda_1(t,\rho_1) exp(X^T  \beta)} [ 1- F_1(\tau,X) ]
+F_2(t,X)  & =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta)} [ 1- F_1(\tau,X) ]
 \end{align*}
 or not 
 \begin{align*}
-F_2(t,X)  & =  \frac{ \Lambda_1(t,\rho_1) exp(X^T  \beta)}{1+\Lambda_1(t,\rho_1) exp(X^T  \beta)}
+F_2(t,X)  & =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta)}
 \end{align*}
 
 The baselines are given as $\Lambda_j(t) = \rho_1 (1- exp(-t/r_j))$ where $\rho_j$ 
