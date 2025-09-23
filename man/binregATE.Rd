@@ -88,7 +88,7 @@ Estimates the ATE using the the standard binary double robust estimating equatio
 Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.
 }
 \examples{
-data(bmt)
+library(mets); data(bmt)
 dfactor(bmt)  <-  ~.
 
 brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
@@ -98,6 +98,7 @@ summary(brs)
 brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
   treat.model=tcell.f~platelet+age)
 summary(brsi)
+
 
 }
 \author{

@@ -1042,7 +1042,7 @@ if (length(dots)==0) {
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' data(bmt)
+##' library(mets); data(bmt)
 ##' dfactor(bmt)  <-  ~.
 ##'
 ##' brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
@@ -1052,6 +1052,7 @@ if (length(dots)==0) {
 ##' brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
 ##'	  treat.model=tcell.f~platelet+age)
 ##' summary(brsi)
+##'
 ##'
 ##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT 
 ##' @export
@@ -1426,6 +1427,7 @@ if (!is.null(call.id)) {
 ##' b1 <- binreg(Event(time,cause)~age+tcell+platelet,bmt,cause=1,time=50)
 ##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 ##' summary(sb1)
+##'
 ##' @export
 binregG <- function(x,data,Avalues=c(0,1),varname=NULL)
 {# {{{
@@ -1493,7 +1495,6 @@ class(out) <- "survivalG"
 return(out)
 } ## }}}
 
-
 ##' @export
 logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   treat.model=~+1, cens.model=~+1,
@@ -1542,9 +1543,15 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
+### call.id <- id;
+### conid <- construct_id(id,nrow(X),namesX=rownames(X))
+### name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+
  call.id <- id;
  conid <- construct_id(id,nrow(X),namesX=rownames(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+ idclust <- id; nclust <- nid
+ if (nid!=length(id)) { nid <- length(id); id <- 0:(nid-1); }
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -1820,18 +1827,23 @@ iidrisk <- cbind(iidrisk1,iidrisk0)/n
 
 ###iidatt <- att-ytreat*val$att
 ###iidatc <- atc-(1-ytreat)*val$atc
-
 ###iidcifatt <- c(c(DePsiatt) %*% t(val$iid))
 ###iidpalatt <- c(c(DaPsiatt) %*% t(iidalpha))  
 ###iidcifatc <- c(c(DePsiatc) %*% t(val$iid))
 ###iidpalatc <- c(c(DaPsiatc) %*% t(iidalpha)) 
-
 ###iidatt <- iidatt+iidcifatt+iidpalatt+iidGatt
 ###iidatc <- iidatc+iidcifatc+iidpalatc+iidGatc
 
 # }}}
 
 
+val$call.id <- call.id
+val$name.id  <- name.id
+val$id <- id
+val$nid  <- nid
+
+gammel <- 0
+if (gammel==1) {
 # {{{ output ate, att, atc
 
 val$var.riskDR <- crossprod(iidrisk); 
@@ -1844,6 +1856,7 @@ val$se.difriskDR <- val$var.difriskDR^.5
 
 val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
 	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
+
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 
@@ -1857,14 +1870,68 @@ val$se.difriskG <- val$var.difriskG^.5
 ###val$var.attc <- crossprod(val$attc.iid)
 ###val$se.attc <- diag(val$var.attc)^.5
 # }}}
+}
 
+# {{{ output variances and se for ate; cluster correction
+val$id <- idclust
+val$nid  <- nclust
+
+val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
+	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
+
+val$iid <- apply(val$iid,2,sumstrata,idclust,nclust)
+robvar <- crossprod(val$iid)
+val$var <-  val$robvar <- robvar
+val$se.robust <- diag(robvar)^.5
+val$se.coef <- diag(val$var)^.5
+val$MGciid <- NULL
+val$iid.naive <- NULL
+
+## outcome model from binreg
+iidrisk <- apply(iidrisk,2,sumstrata,idclust,nclust)
+val$var.riskDR <- crossprod(iidrisk); 
+val$se.riskDR <- diag(val$var.riskDR)^.5
+val$riskDR.iid <- iidrisk
+
+###nlevs <- 2
+###pdiff <- function(x) lava::contr(lapply(seq(x-1), function(z) seq(z,x)))
+###contrast <- -pdiff(length(nlevs))
+###nncont <- c()
+###for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
+###rownames(contrast) <- nncont
+contrast <- rbind(c(1,-1))
+
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=rbind(c(1,-1)))
+val$difriskDR <- mm$coef 
+names(val$difriskDR) <-  rownames(contrast) 
+val$var.difriskDR <- mm$vcov 
+val$se.difriskDR <- diag(val$var.difriskDR)^.5
+
+riskG.iid <- apply(val$riskG.iid,2,sumstrata,idclust,nclust)
+###
+val$riskG.iid <- riskG.iid
+val$var.riskG <- crossprod(val$riskG.iid)
+val$se.riskG <- diag(val$var.riskG)^.5
+###
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+val$difriskG <- mm$coef 
+names(val$difriskG) <-  rownames(contrast) 
+val$var.difriskG <- mm$vcov 
+val$se.difriskG <- diag(val$var.difriskG)^.5
+
+### DR-estimator ; G -estimator sort after namid; also outcome model
+if (!is.null(call.id)) {
+	iidrisk <- namesortme(iidrisk,name.id)
+	riskG.iid <-  namesortme(riskG.iid,name.id)
+	val$iid <-  namesortme(val$iid,name.id)
+}
+## }}}
 
   val$model <- "logit"
   val$call.id <- call.id
   class(val) <- "binreg"
   return(val)
 }# }}}
-
 
 ##' @export
 kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
