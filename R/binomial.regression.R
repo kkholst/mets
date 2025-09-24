@@ -1793,7 +1793,6 @@ val$se.coef <- diag(val$var)^.5
 val$cause <- cause
 val$cens.code <- cens.code 
 
-
 ### estimates risk, att, atc
 val$riskDR <- c(mean(risk1),mean(risk0))
 val$riskG<- c(mean(riskG1),mean(riskG0))
@@ -1842,43 +1841,15 @@ val$name.id  <- name.id
 val$id <- id
 val$nid  <- nid
 
-gammel <- 0
-if (gammel==1) {
-# {{{ output ate, att, atc
-
-val$var.riskDR <- crossprod(iidrisk); 
-val$se.riskDR <- diag(val$var.riskDR)^.5
-val$riskDR.iid <- iidrisk
-val$difriskDR <- val$riskDR[1]-val$riskDR[2]
-names(val$difriskDR) <- "Difference"
-val$var.difriskDR <- sum(difriskiid^2)
-val$se.difriskDR <- val$var.difriskDR^.5
-
-val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
-	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
-
-val$var.riskG <- crossprod(val$riskG.iid)
-val$se.riskG <- diag(val$var.riskG)^.5
-
-val$difriskG <- mean(p11)-mean(p10)
-names(val$difriskG) <- "Difference"
-val$difriskG.iid <- val$riskG.iid[,1]- val$riskG.iid[,2]
-val$var.difriskG <- sum(val$difriskG.iid^2)
-val$se.difriskG <- val$var.difriskG^.5
-
-###val$attc.iid <- cbind(iidatt/ntreat,iidatc/(n-ntreat))
-###val$var.attc <- crossprod(val$attc.iid)
-###val$se.attc <- diag(val$var.attc)^.5
-# }}}
-}
-
 # {{{ output variances and se for ate; cluster correction
 val$id <- idclust
 val$nid  <- nclust
 
-val$riskG.iid <- cbind(c(p11-val$riskG[1])/n + c(DriskG1 %*% t(val$iid))/n,
-	               c(p10-val$riskG[2])/n + c(DriskG0 %*% t(val$iid))/n)
+## make iid form before combining into clusters 
+riskG.iid <- cbind(c(p11-val$riskG[1]) + c(DriskG1 %*% t(val$iid)),
+	          c(p10-val$riskG[2]) + c(DriskG0 %*% t(val$iid)))/n
 
+## outcome model from IPCW logistic regression 
 val$iid <- apply(val$iid,2,sumstrata,idclust,nclust)
 robvar <- crossprod(val$iid)
 val$var <-  val$robvar <- robvar
@@ -1887,7 +1858,7 @@ val$se.coef <- diag(val$var)^.5
 val$MGciid <- NULL
 val$iid.naive <- NULL
 
-## outcome model from binreg
+## DR estimates 
 iidrisk <- apply(iidrisk,2,sumstrata,idclust,nclust)
 val$var.riskDR <- crossprod(iidrisk); 
 val$se.riskDR <- diag(val$var.riskDR)^.5
@@ -1907,10 +1878,10 @@ names(val$difriskDR) <-  rownames(contrast)
 val$var.difriskDR <- mm$vcov 
 val$se.difriskDR <- diag(val$var.difriskDR)^.5
 
-riskG.iid <- apply(val$riskG.iid,2,sumstrata,idclust,nclust)
+riskG.iid <- apply(riskG.iid,2,sumstrata,idclust,nclust)
 ###
 val$riskG.iid <- riskG.iid
-val$var.riskG <- crossprod(val$riskG.iid)
+val$var.riskG <- crossprod(riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 ###
 mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
