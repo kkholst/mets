@@ -131,8 +131,39 @@ the cumulative hazard cumhaz:j
  pctimecox <- rchaz(cumhaz,rrcox)
 ```
 
-Now we generate data that resemble Cox models for the bmt data doing it by drawing the covariates and using the
-baseline from the fitted Cox models.   
+Now looking at a simple cox model 
+
+```{r}
+ library(mets)
+ n <- 100
+ data(bmt)
+ bmt$bmi <- rnorm(408)
+ dcut(bmt) <- gage~age
+ data <- bmt
+ cox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+
+ dd <- sim.phreg(cox1,n,data=bmt)
+ dtable(dd,~status)
+ scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
+ cbind(coef(cox1),coef(scox1))
+ par(mfrow=c(1,1))
+ plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
+
+ ## changing the parametes 
+ cox10 <- cox1
+ cox10$coef <- c(0,0.4,0.3)
+ dd <- sim.phreg(cox10,n,data=bmt)
+ dtable(dd,~status)
+ scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
+ cbind(coef(cox10),coef(scox1))
+ par(mfrow=c(1,1))
+ plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
+```
+
+
+Multiple Cox models for cause specific hazards can be combined, and we start by drawing the 
+covariates manually, below we just call the sim.phregs function that draws covariates from
+the data, 
 
 ```{r}
  data(bmt); 
@@ -156,6 +187,9 @@ baseline from the fitted Cox models.
  plot(cox1); plot(scox1,add=TRUE,col=2)
  plot(cox2); plot(scox2,add=TRUE,col=2)
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
+
+
+
 ```
 
 Now fully nonparametric model with stratified baselines and specific call of sim.base function

@@ -1660,7 +1660,7 @@ if (!is.null(call.id)) {
 ##' @param varname if given then averages for this variable, default is first variable
 ##' @author Thomas Scheike
 ##' @examples
-##' 
+##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
 ##'
@@ -1729,7 +1729,7 @@ vv <- crossprod(risk.iid)
 
 Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <-  estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]-p[1])
-rd <- estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]/p[1],null=1)
+rd <- estimate(coef=Gest$Gest,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
 out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv,model=x$model[1])
 class(out) <- "survivalG"
 return(out)

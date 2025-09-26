@@ -3033,14 +3033,14 @@ if (inherits(x,"phreg"))  {
 out <- estimate(coef=1-Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])/(1-p[1]),null=1)
-srd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) log((1-p[-1])/(1-p[1])),null=0)
+srd <- estimate(coef=Grisk,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
 out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,survival.ratio=srd,vcov=vv)
 } 
 if (inherits(x,"cifreg") | inherits(x,"recreg")) { 
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])-(p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])/(p[1]),null=1)
+rd <- estimate(coef=Grisk,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 }
 
@@ -3067,13 +3067,15 @@ for (tt in time) {
   survivalG <- rbind(survivalG,cbind(tt,Gt$survivalG$coefmat))
   risk <- rbind(risk,cbind(tt,Gt$risk$coefmat))
   difference <- rbind(difference,cbind(tt,Gt$difference$coefmat))
-  ratio <- rbind(ratio,cbind(tt,Gt$ratio$coefmat))
-  survival.ratio <- rbind(survival.ratio,cbind(tt,Gt$survival.ratio$coefmat))
+  ratio <- rbind(ratio,cbind(tt,exp(Gt$ratio$coefmat)))
+  if (!is.null(Gt$survival.ratio$coefmat))
+  survival.ratio <- rbind(survival.ratio,cbind(tt,exp(Gt$survival.ratio$coefmat)))
 }
   colnames(survivalG)[1] <- "time"
   colnames(risk)[1] <- "time"
   colnames(difference)[1] <- "time"
   colnames(ratio)[1] <- "time"
+  if (!is.null(survival.ratio))
   colnames(survival.ratio)[1] <- "time"
   strata <- strata(rownames(risk))
 out <- list(time=time,survivalG=survivalG,risk=risk,difference=difference,
@@ -3166,7 +3168,11 @@ print.summary.survivalG  <- function(x,...) {
     cat("\n")
 
     cat("Average Treatment effect: ratio (G-estimator) :\n")
+    cat("log-ratio: \n")
     print(x$ratio$coefmat,...)
+    cat("ratio: \n")
+    ratio <- exp(x$ratio$coefmat[,c(1,3:4)])
+    print(ratio,...)
     cat("\n")
 
     cat("Average Treatment effect: 1-G (survival)-ratio (G-estimator) :\n")
