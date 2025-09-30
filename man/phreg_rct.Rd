@@ -96,10 +96,9 @@ out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z
 summary(out)
 }
 \references{
-Lu, Tsiatis (2008), Improving the efficiency of the log-rank
-  test using auxiliary covariates, Biometrika, 679--694
+Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
 
-Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,
+Scheike, Nerstr\o m and Martinussen (2025), Randomized clinical trials and the proportional hazards model for recurrent events.
 }
 \author{
 Thomas Scheike

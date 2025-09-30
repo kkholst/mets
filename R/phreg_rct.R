@@ -36,10 +36,10 @@
 ##'   scores, default for binary treatment is glm
 ##' @param ... Additional arguments to phreg function
 ##' @author Thomas Scheike
-##' @references Lu, Tsiatis (2008), Improving the efficiency of the log-rank
-##'   test using auxiliary covariates, Biometrika, 679--694
+##' @references 
+##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
 ##' 
-##' Scheike et al. (2024), WIP, Two-stage randomization for recurrent events, 
+##' Scheike, Nerstr\o m and Martinussen (2025), Randomized clinical trials and the proportional hazards model for recurrent events.
 ##' @examples
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,100)
@@ -666,6 +666,7 @@ out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
+
 
 ##' @export
 plot.phreg_rct  <- function(x,...)  { ## {{{
