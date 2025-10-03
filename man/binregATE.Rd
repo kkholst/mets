@@ -90,7 +90,8 @@ then it uses the mlogit for propensity score modelling. If there are no censorin
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
 Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
 
-typeATE="II" will augment the estimating equation with \deqn{ (A/\pi(X)) \int E( O(t) | T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) }
+typeATE="II" will augment the estimating equation with \deqn{ (A/\pi(X)) \int E( O(t) | T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) } when estimating the mean
+outcome for the treated.
 }
 \examples{
 library(mets); data(bmt)
