@@ -1282,7 +1282,7 @@ if (length(dots)==0) {
 ##' @param outcome can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X) depending on the number of the number of causes. 
 ##' @param model exp or linear model for E( min(T, t) | X)=exp(X^t beta), or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta) 
 ##' @param Ydirect use this outcome Y with IPCW vesion
-##' @param typeATE="II" to censor augment  the estimating equation
+##' @param typeATE "II" to censor augment  the estimating equation
 ##' @param ... Additional arguments to lower level funtions (binreg that fits outcome model)
 ##' @author Thomas Scheike
 ##' @examples

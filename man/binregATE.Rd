@@ -75,9 +75,9 @@ binregATE(
 
 \item{Ydirect}{use this outcome Y with IPCW vesion}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{typeATE}{"II" to censor augment  the estimating equation}
 
-\item{typeATE="II"}{to censor augment  the estimating equation}
+\item{...}{Additional arguments to lower level funtions (binreg that fits outcome model)}
 }
 \description{
 Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
