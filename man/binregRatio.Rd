@@ -102,11 +102,10 @@ estimate(rmst301)
 estimate(rmst302)
 
 ## percentage of total cumulative incidence due to cause 1
-rmstratioI <- rmstRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,
-                        cause=1,outcome="rmst")
-summary(rmstratioI)
+rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+summary(rmtlratioI)
 
-pp <- predict(rmstratioI,bmt)
+pp <- predict(rmtlratioI,bmt)
 ppb <- cbind(pp,bmt)
 
 ## percentage of total cumulative incidence due to cause 1
@@ -114,11 +113,11 @@ cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1
 summary(cifratio)
 pp <- predict(cifratio,bmt)
 
-rmstratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
+rmtlratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
                                time=30,cause=1,outcome="rmtl")
-summary(rmstratioI)
+summary(rmtlratioI)
 
-pp <- predict(rmstratioI,bmt)
+pp <- predict(rmtlratioI,bmt)
 ppb <- cbind(pp,bmt)
 }
 \author{
