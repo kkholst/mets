@@ -69,7 +69,7 @@
 ##' 
 ##' pp <- predict(rmtlratioI,bmt)
 ##' ppb <- cbind(pp,bmt)
-##' @aliases rmstRatio
+##' @aliases rmtlRatio
 ##' @export
 binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
