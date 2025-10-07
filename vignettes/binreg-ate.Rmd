@@ -223,7 +223,7 @@ summary(ibs)
 
 check <- 0
 if (check==1) {
-library(riskRegression)
+require(riskRegression)
 e.wglm <- wglm( regressor.event=~gp.f+dnr+preauto+ttt24, formula.censor = Surv(time,cause==0)~+1, times = 60, data = kumar, product.limit=TRUE,cause=2)
 summary(e.wglm)$coef
 estimate(ibs)

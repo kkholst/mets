@@ -807,7 +807,8 @@ subdist <- function(F1,times)
 #' plot(cif2); plot(scif2,add=TRUE,col=2)
 #' @export sim.cif
 #' @aliases sim.cif sim.cifs subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
-#' @usage sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,...)
+#' @usage sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
+#'                 cumstart=c(0,0),U=NULL,pU=NULL,...)
 sim.cif <- function(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,...)
 {# {{{
 ## also extracts coefficients and baseline from coxph, cox.aalen, phreg
