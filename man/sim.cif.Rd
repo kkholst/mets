@@ -10,7 +10,8 @@
 \alias{invsubdist}
 \title{Simulation of output from Cumulative incidence regression model}
 \usage{
-sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,...)
+sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
+                cumstart=c(0,0),U=NULL,pU=NULL,...)
 }
 \arguments{
 \item{cif}{output form prop.odds.subdist or ccr (cmprsk), can also call invsubdist with 

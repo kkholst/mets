@@ -2,7 +2,7 @@
 % Please edit documentation in R/ratio.regression.R
 \name{binregRatio}
 \alias{binregRatio}
-\alias{rmstRatio}
+\alias{rmtlRatio}
 \title{Percentage of years lost due to cause regression}
 \usage{
 binregRatio(
