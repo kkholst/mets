@@ -65,7 +65,7 @@
 ##' pp <- predict(cifratio,bmt)
 ##' 
 ##' rmstratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
-##'                                time=30,cause=1,outcome="rmst")
+##'                                time=30,cause=1,outcome="rmtl")
 ##' summary(rmstratioI)
 ##' 
 ##' pp <- predict(rmstratioI,bmt)
@@ -357,7 +357,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 }# }}}
 
 ##' @export
-rmstRatio <- function(formula,data,outcome=c("rmst","years-lost"),...)
+rmtlRatio <- function(formula,data,outcome=c("rmtl"),...)
 {# {{{
    out <- binregRatio(formula,data,outcome=outcome[1],...)
    return(out)
