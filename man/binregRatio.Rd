@@ -115,7 +115,7 @@ summary(cifratio)
 pp <- predict(cifratio,bmt)
 
 rmstratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
-                               time=30,cause=1,outcome="rmst")
+                               time=30,cause=1,outcome="rmtl")
 summary(rmstratioI)
 
 pp <- predict(rmstratioI,bmt)
