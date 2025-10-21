@@ -1702,7 +1702,6 @@ zs <- cbind(z1,z2,zd)
   return(tall)
   }# }}}
 
-
 ##' Counts the number of previous events of two types for recurrent events processes
 ##'
 ##' Counts the number of previous events of two types for recurrent events processes
