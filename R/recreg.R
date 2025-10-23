@@ -59,7 +59,7 @@
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2)
 ##' 
-##' @aliases strataAugment scalecumhaz GLprediid recregIPCW twostageREC IIDrecreg predicttime
+##' @aliases strataAugment scalecumhaz GLprediid recregIPCW IIDrecreg predicttime
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 { ## {{{
@@ -1192,7 +1192,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
 	## order after id, similar to Y
 	oid <- order(id[lastrecord])
-	Xdata <- X <- X[lastrecord,,drop=FALSE][oid,]
+	Xdata <- X <- X[lastrecord,,drop=FALSE][oid,,drop=FALSE]
 	offset <- offset[lastrecord][oid]
 	weights <- weights[lastrecord][oid]
 	status <- status[lastrecord][oid]
@@ -1412,7 +1412,7 @@ strataAugment <- survival::strata
 ##' @param nmin default 100, at least nmin or number of rows of the two-baselines max(nmin,nrow(base1),nrow(drcumhaz)) points in time-grid from 0 to maximum time for base1
 ##' @param nmax default 1000, at most nmax points in time-grid 
 ##' @references 
-##' Scheike (2024), Twostage recurrent events models, under review.
+##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
 ##' @export
 simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
@@ -1764,12 +1764,37 @@ boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsi
   list(outb=outb,var=varb,se=diag(varb)^.5,se.coxD=diag(vard)^.5,se.coxR=diag(varr)^.5)
 } ## }}}
 
-
+##' Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals 
+##'
+##' Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals. Random
+##' effects model fore recurrent events with terminal  event. Marginal models fitted first and given to twostageREC function.
+##'
+##' @param margsurv marginal model for terminal event 
+##' @param recurrent marginal model for recurrent events
+##' @param data used for fitting
+##' @param theta starting value for total variance of gamma frailty
+##' @param model can fully shared "full", partly shared "shared", or non-shared where the random effect acts only on recurrent events
+##' @param ghosh.lin to force use ghosh.lin marginals based on recurrent (taking baseline and coefficients) 
+##' @param theta.des regression design for variance
+##' @param var.link possible link  function 1 is exponential link
+##' @param method NR
+##' @param no.opt to not optimize
+##' @param weights possible weights
+##' @param se.cluster  to combine influence functions for naive variance based on these clusters GEE style
+##' @param fnu a function to make transformation for nu (amount shared)
+##' @param nufix to fix the amount shared
+##' @param nu starting value for amount shared
+##' @param numderiv uses numerical derivatives for some derivatives
+##' @param derivmethod method for numerical derivative
+##' @param ... arguments for 
+##' @references 
+##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
 ##' @export
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=NULL,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
-  fnu=NULL,nufix=0,nu=NULL,at.risk=1,numderiv=1,derivmethod=c("simple","Richardson"),newrec=1,...)
+  fnu=NULL,nufix=0,nu=NULL,numderiv=1,derivmethod=c("simple","Richardson"),...)
 { ## {{{
+    newrec <- 1; at.risk <- 1
     if (!inherits(margsurv, "phreg")) stop("Must use phreg for death model\n")
     if (!inherits(recurrent, "phreg")) stop("Must use phreg for recurrent model\n")
     if (is.null(recurrent$cox.prep) & newrec==0) stop("recreg must be called with cox.prep=TRUE\n")

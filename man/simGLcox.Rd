@@ -64,5 +64,5 @@ Simulation based on linear aproximation of hazard for two-stage models based on 
 Must specify baselines of recurrent events and terminal event and possible covariate effects.
 }
 \references{
-Scheike (2024), Twostage recurrent events models, under review.
+Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
 }
