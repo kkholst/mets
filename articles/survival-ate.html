@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
     </li>
     <li>
-      <a href="../articles/phreg_rct.html">Two-Stage Randomization for Cox Type rate models </a>
+      <a href="../articles/phreg_rct.html">Randomization for Cox Type rate models </a>
     </li>
     <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
@@ -142,7 +142,7 @@ Fine-Gray and binomial regression models for survival data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-08-30</h4>
+            <h4 data-toc-skip class="date">2025-10-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/survival-ate.Rmd" class="external-link"><code>vignettes/survival-ate.Rmd</code></a></small>
       <div class="hidden name"><code>survival-ate.Rmd</code></div>
@@ -192,8 +192,12 @@ for cause 1.</p>
 <span><span class="co">#&gt; ps0  -0.1605 0.06353 -0.285 -0.03597 0.01153</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;        Estimate  Std.Err      2.5%     97.5%    P-value</span></span>
-<span><span class="co">#&gt; [ps0] 0.6295004 0.139248 0.3565794 0.9024214 0.00779742</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
+<span><span class="co">#&gt;         Estimate   Std.Err       2.5%       97.5%    P-value</span></span>
+<span><span class="co">#&gt; [ps0] -0.4628288 0.2212039 -0.8963806 -0.02927703 0.03641016</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
+<span><span class="co">#&gt; 0.6295004 0.4080439 0.9711474 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
 <span><span class="co">#&gt; NULL</span></span>
@@ -210,8 +214,12 @@ for cause 1.</p>
 <span><span class="co">#&gt; ps0   0.1208 0.07189 -0.02009 0.2617 0.09285</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;       Estimate   Std.Err      2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; [ps0] 1.567915 0.3627528 0.8569321 2.278897 0.1174496</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
+<span><span class="co">#&gt;        Estimate   Std.Err         2.5%     97.5%   P-value</span></span>
+<span><span class="co">#&gt; [ps0] 0.4497465 0.2313601 -0.003710973 0.9032039 0.0519046</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
+<span><span class="co">#&gt; 1.5679146 0.9962959 2.4674960 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
 <span><span class="co">#&gt; NULL</span></span>
@@ -234,12 +242,16 @@ for cause 1.</p>
 <span><span class="co">#&gt; ps0 -0.08992  0.0629 -0.2132 0.03337  0.1529</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;        Estimate    Std.Err      2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; [ps0] 0.8624974 0.09446477 0.6773499 1.047645 0.1455042</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
+<span><span class="co">#&gt;         Estimate   Std.Err       2.5%      97.5%   P-value</span></span>
+<span><span class="co">#&gt; [ps0] -0.1479231 0.1095247 -0.3625876 0.06674132 0.1768263</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
+<span><span class="co">#&gt; 0.8624974 0.6958733 1.0690189 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;       Estimate   Std.Err      2.5%    97.5%   P-value</span></span>
-<span><span class="co">#&gt; [ps0] 1.259836 0.1894627 0.8884963 1.631176 0.1702385</span></span>
+<span><span class="co">#&gt;        Estimate   Std.Err       2.5%     97.5%   P-value</span></span>
+<span><span class="co">#&gt; [ps0] 0.2309818 0.1503867 -0.0637708 0.5257343 0.1245583</span></span>
 <span></span>
 <span><span class="va">Gtime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survivalG.html">survivalGtime</a></span><span class="op">(</span><span class="va">ss</span>,<span class="va">bmt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Gtime</span><span class="op">)</span></span></code></pre></div>
@@ -277,21 +289,21 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; age          1.41049 1.12462 1.7690</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
-<span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.521758  0.121476  0.283669  0.759846  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.498083  0.323887 -0.136725  1.132891  0.1241</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.023675  0.346994 -0.703770  0.656420  0.9456</span></span>
+<span><span class="co">#&gt;             Estimate    Std.Err       2.5%      97.5% P-value</span></span>
+<span><span class="co">#&gt; treat0     0.6230976  0.0273827  0.5694284  0.6767667  0.0000</span></span>
+<span><span class="co">#&gt; treat1     0.6177595  0.0731712  0.4743466  0.7611723  0.0000</span></span>
+<span><span class="co">#&gt; treat:1-0 -0.0053381  0.0783973 -0.1589940  0.1483179  0.9457</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.622969  0.027450  0.569168  0.676771  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.607296  0.100270  0.410771  0.803821  0.0000</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.015673  0.103731 -0.218982  0.187636  0.8799</span></span>
+<span><span class="co">#&gt; treat0     0.622698  0.027460  0.568878  0.676518   0.000</span></span>
+<span><span class="co">#&gt; treat1     0.637785  0.085242  0.470714  0.804857   0.000</span></span>
+<span><span class="co">#&gt; treat:1-0  0.015087  0.089442 -0.160215  0.190389   0.866</span></span>
 <span></span>
 <span><span class="co">## relative risk effect </span></span>
 <span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          Estimate Std.Err  2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; [treat1]   0.9748  0.1662 0.649 1.301  0.8797</span></span>
+<span><span class="co">#&gt;          Estimate Std.Err   2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; [treat1]    1.024   0.144 0.7421 1.306  0.8664</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [treat1] = 1</span></span>
@@ -320,15 +332,15 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (G-formula) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0    -0.358395  0.118278 -0.590216 -0.126574  0.0024</span></span>
-<span><span class="co">#&gt; treat1    -1.071275  0.331947 -1.721878 -0.420671  0.0012</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.712880  0.351489 -1.401786 -0.023974  0.0425</span></span>
+<span><span class="co">#&gt; treat0     0.417746  0.027030  0.364768  0.470724  0.0000</span></span>
+<span><span class="co">#&gt; treat1     0.267097  0.061849  0.145874  0.388319  0.0000</span></span>
+<span><span class="co">#&gt; treat:1-0 -0.150649  0.067578 -0.283100 -0.018199  0.0258</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effects (double robust) :</span></span>
 <span><span class="co">#&gt;            Estimate   Std.Err      2.5%     97.5% P-value</span></span>
-<span><span class="co">#&gt; treat0     0.417302  0.027089  0.364208  0.470395  0.0000</span></span>
-<span><span class="co">#&gt; treat1     0.153517  0.087910 -0.018785  0.325818  0.0808</span></span>
-<span><span class="co">#&gt; treat:1-0 -0.263785  0.091551 -0.443222 -0.084348  0.0040</span></span></code></pre></div>
+<span><span class="co">#&gt; treat0     0.417121  0.027112  0.363983  0.470259  0.0000</span></span>
+<span><span class="co">#&gt; treat1     0.227776  0.061240  0.107748  0.347803  0.0002</span></span>
+<span><span class="co">#&gt; treat:1-0 -0.189345  0.066600 -0.319878 -0.058812  0.0045</span></span></code></pre></div>
 <p>and using the specialized function</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">br1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binreg.html">binreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,time<span class="op">=</span><span class="fl">40</span><span class="op">)</span></span>
@@ -344,8 +356,12 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; p1  -0.1506 0.06758 -0.2831 -0.0182  0.0258</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;       Estimate   Std.Err      2.5%     97.5%    P-value</span></span>
-<span><span class="co">#&gt; [p1] 0.6393758 0.1538551 0.3378254 0.9409262 0.01908221</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
+<span><span class="co">#&gt;        Estimate   Std.Err       2.5%      97.5%    P-value</span></span>
+<span><span class="co">#&gt; [p1] -0.4472628 0.2406332 -0.9188953 0.02436964 0.06307095</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
+<span><span class="co">#&gt; 0.6393758 0.3989595 1.0246690 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
 <span><span class="co">#&gt; NULL</span></span>
@@ -363,8 +379,12 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; p1   0.2066 0.04996 0.1086 0.3045 3.564e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt;      Estimate   Std.Err     2.5%    97.5%      P-value</span></span>
-<span><span class="co">#&gt; [p1] 1.525375 0.1325776 1.265528 1.785223 7.408296e-05</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
+<span><span class="co">#&gt;       Estimate    Std.Err      2.5%     97.5%      P-value</span></span>
+<span><span class="co">#&gt; [p1] 0.4222406 0.08691473 0.2518908 0.5925903 1.185167e-06</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt; Estimate     2.5%    97.5% </span></span>
+<span><span class="co">#&gt; 1.525375 1.286456 1.808667 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
@@ -395,23 +415,24 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.7</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.1   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
 <span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.20.0 lava_1.8.1         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.1          evaluate_1.0.5     </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.30      grid_4.5.1          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.1      codetools_0.2-20   </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.1.0          future_1.67.0      </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-7      systemfonts_1.2.3   digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.45.1   parallel_4.5.1     </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.1       Matrix_1.7-3        bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.1         globals_0.18.0      survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] pkgdown_2.1.3       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
+<span><span class="co">#&gt; [28] future_1.67.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.37       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [34] parallel_4.5.1      splines_4.5.1       Matrix_1.7-3       </span></span>
+<span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.1         globals_0.18.0     </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.1.3       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [43] desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 

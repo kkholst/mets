@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
     </li>
     <li>
-      <a href="../articles/phreg_rct.html">Two-Stage Randomization for Cox Type rate models </a>
+      <a href="../articles/phreg_rct.html">Randomization for Cox Type rate models </a>
     </li>
     <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
@@ -142,7 +142,7 @@ Lifetime Data</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-08-30</h4>
+            <h4 data-toc-skip class="date">2025-10-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/time-to-event-family-studies-arev.Rmd" class="external-link"><code>vignettes/time-to-event-family-studies-arev.Rmd</code></a></small>
       <div class="hidden name"><code>time-to-event-family-studies-arev.Rmd</code></div>
@@ -914,12 +914,12 @@ the IPCW weighted AIC measure</p>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                                breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.272   0.283   0.227</span></span>
+<span><span class="co">#&gt;   0.277   0.283   0.231</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">a.dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/biprobit.html">biprobit.time</a></span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span>, id<span class="op">=</span><span class="st">"id"</span>, data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt0</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span>,</span>
 <span>                               cens.formula <span class="op">=</span> <span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fl">1</span>, pairs.only<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>                               breaks<span class="op">=</span><span class="va">tt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.339   0.290   0.302</span></span>
+<span><span class="co">#&gt;   0.335   0.296   0.305</span></span>
 <span></span>
 <span><span class="co">#system.time(a.zyg &lt;- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, </span></span>
 <span><span class="co">#                               cens.formula = Event(time,status==0)~1,</span></span>
@@ -1130,24 +1130,24 @@ the IPCW weighted AIC measure</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] prodlim_2025.04.28 mets_1.3.7        </span></span>
+<span><span class="co">#&gt; [1] prodlim_2025.04.28 mets_1.3.8        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-3        future.apply_1.20.0 jsonlite_2.0.0     </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.5.1      Rcpp_1.1.0          parallel_4.5.1     </span></span>
 <span><span class="co">#&gt;  [7] jquerylib_0.1.4     globals_0.18.0      splines_4.5.1      </span></span>
-<span><span class="co">#&gt; [10] systemfonts_1.2.3   textshaping_1.0.1   yaml_2.3.10        </span></span>
+<span><span class="co">#&gt; [10] systemfonts_1.3.1   textshaping_1.0.4   yaml_2.3.10        </span></span>
 <span><span class="co">#&gt; [13] fastmap_1.2.0       lattice_0.22-7      R6_2.6.1           </span></span>
-<span><span class="co">#&gt; [16] knitr_1.50          future_1.67.0       desc_1.4.3         </span></span>
-<span><span class="co">#&gt; [19] bslib_0.9.0         rlang_1.1.6         cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [22] xfun_0.53           fs_1.6.6            sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [25] cli_3.6.5           pkgdown_2.1.3       digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [28] grid_4.5.1          mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [31] lava_1.8.1          timereg_2.0.7       evaluate_1.0.5     </span></span>
-<span><span class="co">#&gt; [34] data.table_1.17.8   numDeriv_2016.8-1.1 listenv_0.9.1      </span></span>
-<span><span class="co">#&gt; [37] codetools_0.2-20    ragg_1.4.0          survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] parallelly_1.45.1   rmarkdown_2.29      tools_4.5.1        </span></span>
-<span><span class="co">#&gt; [43] htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt; [16] knitr_1.50          htmlwidgets_1.6.4   future_1.67.0      </span></span>
+<span><span class="co">#&gt; [19] desc_1.4.3          bslib_0.9.0         rlang_1.1.6        </span></span>
+<span><span class="co">#&gt; [22] cachem_1.1.0        xfun_0.53           fs_1.6.6           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.10         cli_3.6.5           pkgdown_2.1.3      </span></span>
+<span><span class="co">#&gt; [28] digest_0.6.37       grid_4.5.1          mvtnorm_1.3-3      </span></span>
+<span><span class="co">#&gt; [31] lifecycle_1.0.4     lava_1.8.1          timereg_2.0.7      </span></span>
+<span><span class="co">#&gt; [34] evaluate_1.0.5      data.table_1.17.8   numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [37] listenv_0.9.1       codetools_0.2-20    ragg_1.5.0         </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      parallelly_1.45.1   rmarkdown_2.30     </span></span>
+<span><span class="co">#&gt; [43] tools_4.5.1         htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
   </div>
 

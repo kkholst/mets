@@ -21,7 +21,7 @@ and if continuous then considered covariate values are given by Avalues."><!-- m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@ and if continuous then considered covariate values are given by Avalues."><!-- m
       <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
     </li>
     <li>
-      <a href="../articles/phreg_rct.html">Two-Stage Randomization for Cox Type rate models </a>
+      <a href="../articles/phreg_rct.html">Randomization for Cox Type rate models </a>
     </li>
     <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
@@ -204,8 +204,12 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ps0  -0.1605  0.0635 -0.285 -0.03607 0.01147</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate   Std.Err     2.5%     97.5%     P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.6293888 0.1391897 0.356582 0.9021956 0.007753179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Estimate   Std.Err       2.5%       97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] -0.4630061 0.2211506 -0.8964533 -0.02955888 0.03629353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.6293888 0.4080142 0.9708737 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
@@ -223,12 +227,16 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ps0 -0.08992 0.06291 -0.2132 0.03338  0.1529</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate    Std.Err      2.5%    97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.8624767 0.09448404 0.6772914 1.047662 0.1455257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Estimate   Std.Err       2.5%      97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] -0.1479471 0.1095497 -0.3626606 0.06676628 0.1768548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.8624767 0.6958226 1.0690456 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate   Std.Err      2.5%    97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 1.259784 0.1894364 0.8884958 1.631073 0.1702646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate   Std.Err        2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.2309406 0.1503721 -0.06378329 0.5256645 0.1245888</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell.f</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span><span class="op">)</span> </span></span>
@@ -243,15 +251,23 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ps0 -0.02687 0.07622 -0.1763 0.1225  0.7244</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate   Std.Err      2.5%    97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.9582769 0.1177235 0.7275431 1.189011 0.7230267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate   Std.Err       2.5%     97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] -0.04261856 0.1228491 -0.2833984 0.1981613 0.728653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.9582769 0.7532197 1.2191590 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate   Std.Err      2.5%    97.5%  P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 1.075499 0.2162594 0.6516383 1.499359 0.727005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Estimate   Std.Err       2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.07278456 0.2010782 -0.3213214 0.4668906 0.7173734</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sst</span> <span class="op">&lt;-</span> <span class="fu">survivalGtime</span><span class="op">(</span><span class="va">ss</span>,<span class="va">bmt</span>,n<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NaNs produced</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NaNs produced</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NaNs produced</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NaNs produced</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sst</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="survivalG-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

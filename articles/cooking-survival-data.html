@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mets</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <a href="../articles/mediation-survival.html">Mediation Analysis for survival data</a>
     </li>
     <li>
-      <a href="../articles/phreg_rct.html">Two-Stage Randomization for Cox Type rate models </a>
+      <a href="../articles/phreg_rct.html">Randomization for Cox Type rate models </a>
     </li>
     <li>
       <a href="../articles/quantitative-twin.html">Twin models</a>
@@ -140,7 +140,7 @@
       <h1 data-toc-skip>WIP: Cooking survival data, 5 minute
 recipes</h1>
             
-            <h4 data-toc-skip class="date">2025-08-30</h4>
+            <h4 data-toc-skip class="date">2025-10-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cooking-survival-data.Rmd" class="external-link"><code>vignettes/cooking-survival-data.Rmd</code></a></small>
       <div class="hidden name"><code>cooking-survival-data.Rmd</code></div>
@@ -161,10 +161,13 @@ much as possible like particular data. In a theoretical setting we often
 are interested in evaluating the finite sample properties of a new
 procedure in different settings that often are motivated by a specific
 practical problem. The aim is provide such tools.</p>
-<p>Bender et al. in a nice recent paper also discussed how to generate
-survival data based on the Cox model, and restricted attention to some
-of the many useful parametric survival models (weibull,
-exponential).</p>
+<p>Bender et al. in a nice paper discussed how to generate survival data
+based on the Cox model, and restricted attention to some of the many
+useful parametric survival models (weibull, exponential). We here use
+piecwise linear baseline functions that make it easy to simulate data
+that follows closely the baseline given by the data using semi or
+nonparametric models. THis makes it easy to capture important aspects of
+the data.</p>
 <p>Different survival models can be cooked, and we here give recipes for
 hazard and cumulative incidence based simulations. More recipes are
 given in vignette about recurrent events.</p>
@@ -261,8 +264,9 @@ has the distributiion we are after.</p>
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>X</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>Λ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>Λ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>E</mi><mi>/</mi><mi>H</mi><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>P</mi><mi>X</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>E</mi><mo>&gt;</mo><mi>H</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Λ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Λ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>P</mi><mi>X</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo>&gt;</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
   P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) &gt; t) = P_X(E &gt; HR( \Lambda(t) - \Lambda(s)) ) = P_X(T&gt;t | T&gt;s)
 </annotation></semantics></math></p>
-<p>The engine is to simulate data with a given linear cumulative
-hazard.</p>
+<p>The engine is to simulate data with a given linear cumulative hazard.
+First generating survival data based on the cumulative hazard
+cumhaz:j</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
 <span> <span class="va">chaz</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1.5</span>,<span class="fl">2</span>,<span class="fl">2.1</span><span class="op">)</span></span>
@@ -274,8 +278,55 @@ hazard.</p>
 <span> </span>
 <span> <span class="va">pctime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rchaz.html">rchaz</a></span><span class="op">(</span><span class="va">cumhaz</span>,n<span class="op">=</span><span class="va">nsim</span><span class="op">)</span></span>
 <span> <span class="va">pctimecox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rchaz.html">rchaz</a></span><span class="op">(</span><span class="va">cumhaz</span>,<span class="va">rrcox</span><span class="op">)</span></span></code></pre></div>
-<p>Now we generate data that resemble Cox models for the bmt data</p>
+<p>Now looking at a simple cox model</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">bmt</span><span class="op">$</span><span class="va">bmi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="../reference/dcut.html">dcut</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">gage</span><span class="op">~</span><span class="va">age</span></span>
+<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bmt</span></span>
+<span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dd</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; status</span></span>
+<span><span class="co">#&gt;  0  1 </span></span>
+<span><span class="co">#&gt; 54 46</span></span>
+<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                [,1]       [,2]</span></span>
+<span><span class="co">#&gt; tcell    -0.6517920 -0.8108950</span></span>
+<span><span class="co">#&gt; platelet -0.5207454 -0.5471871</span></span>
+<span><span class="co">#&gt; age       0.4083098  0.4390413</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-1.png" width="600px"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span> <span class="co">## changing the parametes </span></span>
+<span> <span class="va">cox10</span> <span class="op">&lt;-</span> <span class="va">cox1</span></span>
+<span> <span class="va">cox10</span><span class="op">$</span><span class="va">coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.4</span>,<span class="fl">0.3</span><span class="op">)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">cox10</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dd</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; status</span></span>
+<span><span class="co">#&gt;  0  1 </span></span>
+<span><span class="co">#&gt; 41 59</span></span>
+<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox10</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          [,1]      [,2]</span></span>
+<span><span class="co">#&gt; tcell     0.0 0.1752103</span></span>
+<span><span class="co">#&gt; platelet  0.4 0.4409485</span></span>
+<span><span class="co">#&gt; age       0.3 0.1086505</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox10</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-2.png" width="600px"></p>
+<p>Multiple Cox models for cause specific hazards can be combined, and
+we start by drawing the covariates manually, below we just call the
+sim.phregs function that draws covariates from the data,</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; </span>
 <span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
@@ -296,15 +347,15 @@ hazard.</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-1.png" width="600px"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-5-1.png" width="600px"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]        [,2]       [,3]       [,4]</span></span>
-<span><span class="co">#&gt; tcell    -0.4232606  0.01031389  0.3991068  0.6726477</span></span>
-<span><span class="co">#&gt; platelet -0.5654438 -1.04826712 -0.2461474 -0.7363505</span></span></code></pre></div>
-<p>Now model with no covariates and specific call of sim.base
-function</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;                [,1]       [,2]       [,3]       [,4]</span></span>
+<span><span class="co">#&gt; tcell    -0.4232606 -0.6808494  0.3991068  0.2044248</span></span>
+<span><span class="co">#&gt; platelet -0.5654438 -0.3404486 -0.2461474 -0.1388716</span></span></code></pre></div>
+<p>Now fully nonparametric model with stratified baselines and specific
+call of sim.base function</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sTRACE</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">sTRACE</span>,<span class="op">~</span><span class="va">chf</span><span class="op">+</span><span class="va">diabetes</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -317,159 +368,99 @@ function</p>
 <span> <span class="va">simb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.base</a></span><span class="op">(</span><span class="va">coxs</span><span class="op">$</span><span class="va">cumhaz</span>,<span class="va">nsim</span>,stratajump<span class="op">=</span><span class="va">coxs</span><span class="op">$</span><span class="va">strata.jumps</span>,strata<span class="op">=</span><span class="va">strata</span><span class="op">)</span></span>
 <span> <span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span>,data<span class="op">=</span><span class="va">simb</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-5-1.png" width="600px"></p>
-<p>More Cox games</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">cox</span> <span class="op">&lt;-</span>  <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">sim1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.cox</a></span><span class="op">(</span><span class="va">cox</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim1</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1]       [,2]</span></span>
-<span><span class="co">#&gt; vf   0.2970218 -0.7517229</span></span>
-<span><span class="co">#&gt; chf  0.8018334  0.5057257</span></span>
-<span><span class="co">#&gt; wmi -0.8920005 -1.2261934</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             vf        chf        wmi</span></span>
-<span><span class="co">#&gt; vf   1.0000000  0.1376494 -0.1295427</span></span>
-<span><span class="co">#&gt; chf  0.1376494  1.0000000 -0.3077879</span></span>
-<span><span class="co">#&gt; wmi -0.1295427 -0.3077879  1.0000000</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sTRACE</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              vf        chf         wmi</span></span>
-<span><span class="co">#&gt; vf   1.00000000  0.1346711 -0.08966805</span></span>
-<span><span class="co">#&gt; chf  0.13467109  1.0000000 -0.37464791</span></span>
-<span><span class="co">#&gt; wmi -0.08966805 -0.3746479  1.00000000</span></span>
-<span> </span>
-<span> <span class="va">cox</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">sim3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.cox</a></span><span class="op">(</span><span class="va">cox</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">cc</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1]       [,2]</span></span>
-<span><span class="co">#&gt; vf   0.2970218  0.2963088</span></span>
-<span><span class="co">#&gt; chf  0.8018334  0.8389057</span></span>
-<span><span class="co">#&gt; wmi -0.8920005 -0.8798035</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-6-1.png" width="600px"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> </span>
-<span> <span class="va">coxs</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span>,<span class="va">vf</span><span class="op">)</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">sim3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
-<span> <span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span>,<span class="va">vf</span><span class="op">)</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">coxs</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1]       [,2]</span></span>
-<span><span class="co">#&gt; wmi -0.8683355 -0.8091527</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-6-2.png" width="600px"></p>
-<p>More Cox games with cause specific hazards</p>
+<p>We now fit 3 cause-specific hazard models and generate competing
+risks data with hazards taken from the fitted Cox models. Here a complex
+situation with stratified baselines of some of the models.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="co"># coxph          </span></span>
-<span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">cox2</span><span class="op">)</span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cause.cox.html">sim.cause.cox</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
-<span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell    -0.4231551 -0.6451949</span></span>
-<span><span class="co">#&gt; platelet -0.5646181 -0.5227571</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]        [,2]</span></span>
-<span><span class="co">#&gt; tcell     0.3991911  0.43995438</span></span>
-<span><span class="co">#&gt; platelet -0.2456203 -0.06619207</span></span></code></pre></div>
-<p>Stratified Cox models using phreg</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="co">## stratified with phreg </span></span>
 <span> <span class="va">cox0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox0</span>,<span class="va">cox1</span>,<span class="va">cox2</span><span class="op">)</span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cause.cox.html">sim.cause.cox</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span><span class="co">### dd &lt;- sim.cause.cox(coxs,nsim,data=bmt)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phregs</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span></span>
+<span> <span class="co">## checking that  cause specific hazards are as given, make n larger</span></span>
+<span></span>
 <span> <span class="va">scox0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox0</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox0</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell    0.1912407 0.09341160</span></span>
-<span><span class="co">#&gt; platelet 0.1563789 0.02747202</span></span>
+<span><span class="co">#&gt; tcell    0.1912407 0.04260751</span></span>
+<span><span class="co">#&gt; platelet 0.1563789 0.62751528</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell    -0.4232606 -0.5166656</span></span>
-<span><span class="co">#&gt; platelet -0.5654438 -0.3012561</span></span>
+<span><span class="co">#&gt; tcell    -0.4232606 -0.5092389</span></span>
+<span><span class="co">#&gt; platelet -0.5654438 -0.4858872</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]       [,2]</span></span>
-<span><span class="co">#&gt; platelet -0.2271912 0.08914999</span></span>
+<span><span class="co">#&gt;                [,1]      [,2]</span></span>
+<span><span class="co">#&gt; platelet -0.2271912 0.2167204</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox0</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox0</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-8-1.png" width="600px"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-1.png" width="600px"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> </span>
+<span> <span class="co">########################################</span></span>
+<span> <span class="co">## second example </span></span>
+<span> <span class="co">########################################</span></span>
+<span></span>
 <span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">cox2</span><span class="op">)</span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cause.cox.html">sim.cause.cox</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span><span class="co">### dd &lt;- sim.cause.cox(coxs,nsim,data=bmt)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phregs</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                [,1]       [,2]</span></span>
-<span><span class="co">#&gt; platelet -0.5658612 -0.3535558</span></span>
+<span><span class="co">#&gt; platelet -0.5658612 -0.6092701</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            [,1]      [,2]</span></span>
-<span><span class="co">#&gt; tcell 0.4153706 0.7640276</span></span>
+<span><span class="co">#&gt; tcell 0.4153706 0.5130511</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-8-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-2.png" width="600px"></p>
 <ul>
-<li>sim.phreg only for phreg, but a bit more flexible, can deal with
-strata</li>
-<li>sim.cox can only deal with covariates that can be identified from
-the names of its coefficients (so factors should be coded accordingly)
-or use sim.phreg</li>
+<li>sim.phreg only for phreg, but can deal with strata</li>
+<li>sim.cox for other cox models, see last part of vignette, can only
+deal with covariates that can be identified from the names of its
+coefficients (so factors should be coded accordingly).</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>One more example</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">bmt</span><span class="op">$</span><span class="va">bmi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dcut.html">dcut</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">gage</span><span class="op">~</span><span class="va">age</span></span>
 <span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bmt</span></span>
-<span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gage</span><span class="op">)</span><span class="op">+</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gage</span>,<span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">cox3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span><span class="op">+</span><span class="va">bmi</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">cox2</span>,<span class="va">cox3</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phregs</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span>,extend<span class="op">=</span><span class="fl">0.002</span><span class="op">)</span></span>
-<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
-<span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gage</span><span class="op">)</span><span class="op">+</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dd</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; status</span></span>
+<span><span class="co">#&gt;  0  1  2  3 </span></span>
+<span><span class="co">#&gt;  9 46 17 28</span></span>
+<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gage</span>,<span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="va">scox3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span><span class="op">)</span><span class="op">+</span><span class="va">bmi</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cox3</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">scox3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                [,1]      [,2]       [,3]        [,4]         [,5]       [,6]</span></span>
-<span><span class="co">#&gt; tcell    -0.5658612 -0.429617  0.3034864 -0.85401909 -0.002832589 -0.1609228</span></span>
-<span><span class="co">#&gt; platelet -0.5658612 -0.429617 -0.2159670 -0.06919742 -0.002832589 -0.1609228</span></span>
+<span><span class="co">#&gt;          [,1]      [,2]</span></span>
+<span><span class="co">#&gt; bmi 0.1281967 0.2921947</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox3</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox3</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png" width="600px"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span> <span class="va">coxs1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs1</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">scoxs1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
-<span> <span class="co">###</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs1</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scoxs1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span> <span class="va">coxs1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs1</span>,<span class="va">n</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
-<span> <span class="va">scoxs1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
-<span> <span class="co">###</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs1</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scoxs1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-8-1.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="multistate-models-the-illness-death-model">Multistate models: The Illness Death model<a class="anchor" aria-label="anchor" href="#multistate-models-the-illness-death-model"></a>
@@ -479,7 +470,7 @@ simulate data from for example the general illness-death model. Here the
 cumulative hazards need to be specified.</p>
 <p>First we set up some cumulative hazards, then we simulate some data
 and re-estimate the cumulative baselines</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CPH_HPN_CRBSI</span><span class="op">)</span></span>
 <span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">terminal</span></span>
 <span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">crbsi</span> </span>
@@ -491,14 +482,11 @@ and re-estimate the cumulative baselines</p>
 <span> <span class="fu"><a href="../reference/dprint.html">dlist</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">id</span><span class="op">&lt;</span><span class="fl">3</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; id: 1</span></span>
 <span><span class="co">#&gt;       time status entry death from to start     stop</span></span>
-<span><span class="co">#&gt; 1 519.3023      3     0     1    1  3     0 519.3023</span></span>
+<span><span class="co">#&gt; 1 119.8711      3     0     1    1  3     0 119.8711</span></span>
 <span><span class="co">#&gt; ------------------------------------------------------------ </span></span>
 <span><span class="co">#&gt; id: 2</span></span>
-<span><span class="co">#&gt;          time status     entry death from to     start      stop</span></span>
-<span><span class="co">#&gt; 2    17.40157      2   0.00000     0    1  2   0.00000  17.40157</span></span>
-<span><span class="co">#&gt; 201  20.25793      1  17.40157     0    2  1  17.40157  20.25793</span></span>
-<span><span class="co">#&gt; 316 161.85915      2  20.25793     0    1  2  20.25793 161.85915</span></span>
-<span><span class="co">#&gt; 375 411.88521      3 161.85915     1    2  3 161.85915 411.88521</span></span>
+<span><span class="co">#&gt;       time status entry death from to start     stop</span></span>
+<span><span class="co">#&gt; 2 682.9688      3     0     1    1  3     0 682.9688</span></span>
 <span>  </span>
 <span> <span class="co">### estimating rates from simulated data  </span></span>
 <span> <span class="va">c0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">iddata</span><span class="op">)</span></span>
@@ -518,7 +506,7 @@ and re-estimate the cumulative baselines</p>
 <span> <span class="co">###</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c2</span>,main<span class="op">=</span><span class="st">"rate 2-&gt;1"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">base1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-10-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="cumulative-incidence">Cumulative incidence<a class="anchor" aria-label="anchor" href="#cumulative-incidence"></a>
@@ -527,9 +515,11 @@ and re-estimate the cumulative baselines</p>
 have a specfied cumulative incidence function. We consider for
 simplicity a competing risks model with two causes and denote the
 cumulative incidence curves as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(t) = P(T &lt; t, \epsilon=1)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(t,X) = P(T &lt; t, \epsilon=1|X)</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(t) = P(T &lt; t, \epsilon=2)</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>2</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(t,X) = P(T &lt; t, \epsilon=2|X)</annotation></semantics></math>.
+Here given some covariate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
 <p>To generate data with the required cumulative incidence functions a
 simple approach is to first figure out if the subject dies and then from
 what cause, then finally draw the survival time according to the
@@ -537,131 +527,113 @@ conditional distribution.</p>
 <p>For simplicity we consider survival times in a fixed interval
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>τ</mi><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,\tau]</annotation></semantics></math>,
 and first flip a coin with and probabilities
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">1-F_1(\tau)-F_2(\tau)</annotation></semantics></math>
-to decide if the subject is a survivor or dies. If the subject dies we
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">1-F_1(\tau,X)-F_2(\tau,X)</annotation></semantics></math>
+to decide if the subject is a survivor or dies. Then if subject dies we
 then flip a coin with probabilities
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(\tau)/(F_1(\tau)+F_2(\tau))</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(\tau)/(F_1(\tau)+F_2(\tau))</annotation></semantics></math>
-to decide if
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\epsilon=1</annotation></semantics></math>
-or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\epsilon=2</annotation></semantics></math>,
-and finally draw a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msubsup><mover><mi>F</mi><mo accent="true">̃</mo></mover><mn>1</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>U</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">T = (\tilde F_1^{-1}(U)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))</annotation></semantics></math>
+to decide if it is a cause
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>!</mi><annotation encoding="application/x-tex">!</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\epsilon=1</annotation></semantics></math>,
+or a cause 2,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\epsilon=2</annotation></semantics></math>.
+Finally we draw the survival time using the cumulative incidence
+distribution. The timing of a cause
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+event is thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msubsup><mover><mi>F</mi><mo accent="true">̃</mo></mover><mn>1</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>U</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">T = (\tilde F_1^{-1}(U,X)</annotation></semantics></math>
 with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̃</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde F_1(s) = F_1(s)/F_1(\tau)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̃</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
 is a uniform.</p>
-<p>We again note that if
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̃</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde F_1(s)</annotation></semantics></math>
+<p>Then indeed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mi>j</mi><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>F</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(T \leq t, \epsilon=j|X) = F_j(t,X)</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">j=1,2</annotation></semantics></math>.</p>
+<p>We again note and use that if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̃</mo></mover><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde F_j(s)</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(s)</annotation></semantics></math>
-are piecewise linear continuous functions then the inverses are easy to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_j(s)</annotation></semantics></math>
+are piecewise linear continuous functions then the inverse is easy to
 compute.</p>
 </div>
 <div class="section level2">
 <h2 id="cumulative-incidence-i">Cumulative incidence I<a class="anchor" aria-label="anchor" href="#cumulative-incidence-i"></a>
 </h2>
-<p>We here simulate two causes of death with two binary covariates</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">100</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.1</span>,<span class="fl">0.15</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cif2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">100</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.4</span>,<span class="fl">0.45</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span>; <span class="va">lrr1</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>; <span class="va">lrr2</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>; <span class="va">cens</span><span class="op">=</span><span class="cn">NULL</span></span>
-<span><span class="co">### A binary, L binary</span></span>
-<span><span class="va">A</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="va">L</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">rr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">A</span>,<span class="va">L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">lrr1</span><span class="op">)</span></span>
-<span><span class="va">rr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">A</span>,<span class="va">L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">lrr2</span><span class="op">)</span></span>
-<span><span class="co">## model is fine</span></span>
-<span><span class="va">mmm</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">rr1</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">rr2</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">mcif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">mcif2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">mmm</span><span class="op">&gt;</span><span class="fl">1</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">" models not satisfying sum &lt;=1\n"</span><span class="op">)</span></span>
-<span><span class="co">### here log-link model </span></span>
-<span><span class="va">T1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cif.html">simsubdist</a></span><span class="op">(</span><span class="va">cif1</span>,<span class="va">rr1</span>,type<span class="op">=</span><span class="st">"cif"</span><span class="op">)</span></span>
-<span><span class="va">T2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cif.html">simsubdist</a></span><span class="op">(</span><span class="va">cif2</span>,<span class="va">rr2</span>,type<span class="op">=</span><span class="st">"cif"</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">dies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="va">rr1</span><span class="op">*</span><span class="va">mcif1</span><span class="op">+</span><span class="va">rr2</span><span class="op">*</span><span class="va">mcif2</span><span class="op">)</span></span>
-<span><span class="va">sel1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="va">mcif2</span><span class="op">/</span><span class="op">(</span><span class="va">mcif1</span><span class="op">+</span><span class="va">mcif2</span><span class="op">)</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span></span>
-<span><span class="va">epsilon</span>  <span class="op">&lt;-</span> <span class="va">dies</span><span class="op">*</span><span class="op">(</span><span class="va">sel1</span><span class="op">)</span></span>
-<span><span class="va">T1</span><span class="op">$</span><span class="va">epsilon</span> <span class="op">&lt;-</span> <span class="va">epsilon</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">T1</span><span class="op">$</span><span class="va">A</span> <span class="op">&lt;-</span> <span class="va">A</span>; <span class="va">T1</span><span class="op">$</span><span class="va">L</span> <span class="op">&lt;-</span> <span class="va">L</span></span>
-<span><span class="co">## times given </span></span>
-<span><span class="va">T1</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">T1</span><span class="op">$</span><span class="va">timecause</span></span>
-<span><span class="va">T1</span><span class="op">$</span><span class="va">time2</span> <span class="op">&lt;-</span> <span class="va">T2</span><span class="op">$</span><span class="va">timecause</span></span>
-<span><span class="va">T1</span><span class="op">$</span><span class="va">status</span> <span class="op">&lt;-</span> <span class="va">epsilon</span></span>
-<span><span class="va">T1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">T1</span>,time<span class="op">=</span><span class="fl">100</span>,<span class="va">epsilon</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="va">T1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">T1</span>,status<span class="op">=</span><span class="fl">0</span>,<span class="va">epsilon</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">T1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">T1</span>,time<span class="op">=</span><span class="va">time2</span>,<span class="va">epsilon</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">T1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">T1</span>,status<span class="op">=</span><span class="fl">2</span>,<span class="va">epsilon</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">T1</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; status</span></span>
-<span><span class="co">#&gt;  0  1  2 </span></span>
-<span><span class="co">#&gt; 23 26 51</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">lrr1</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>;<span class="va">lrr2</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="va">pcif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cif.html">cif</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A</span>,<span class="va">L</span><span class="op">)</span>,<span class="va">T1</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">pcif2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cif.html">cif</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">A</span>,<span class="va">L</span><span class="op">)</span>,<span class="va">T1</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">newd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>A<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>,L<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">rr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">newd</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">lrr1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">rr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">newd</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">lrr2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="va">cifm1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cif1</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/outer.html" class="external-link">%o%</a></span> <span class="va">rr1</span><span class="op">)</span></span>
-<span><span class="va">cifm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cif2</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/outer.html" class="external-link">%o%</a></span> <span class="va">rr2</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcif1</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>; </span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matlines</a></span><span class="op">(</span><span class="va">cifm1</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cifm1</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>,col<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">###</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcif2</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matlines</a></span><span class="op">(</span><span class="va">cifm2</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cifm2</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>,col<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png" width="600px"></p>
-</div>
-<div class="section level2">
-<h2 id="cumulative-incidence-regression-models">Cumulative incidence regression models<a class="anchor" aria-label="anchor" href="#cumulative-incidence-regression-models"></a>
-</h2>
-<p>Now assume that given covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(t;X) = P(T &lt; t, \epsilon=1|X)</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>2</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(t;X) = P(T &lt; t, \epsilon=2|X)</annotation></semantics></math>
-are two cumulative incidence functions that satistifes the needed
-constraints.</p>
-<p>Possibly
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(t;X) = 1 - \exp( \Lambda_1(t) \exp( X^T \beta_1)</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(t;X) = 1 - \exp( \Lambda_2(t) \exp( X^T \beta_2)</annotation></semantics></math>
-given estimators of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Λ</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\Lambda_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\lambda_2</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\beta_2</annotation></semantics></math>.
-We can obtain a piecewise linear continuous approximation,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>F</mi><mn>1</mn><mi>L</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1^L(t;X)</annotation></semantics></math><br>
-by linearly connecting estimates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>j</mi></msub><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Λ</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\hat F_1(t_j;X) = 1 - \exp( \hat \Lambda_1(t) \exp( X^T \hat \beta_1)</annotation></semantics></math>.
-Now with these at hand<br><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>F</mi><mn>1</mn><mi>L</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1^L(t;X)</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>F</mi><mn>2</mn><mi>L</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2^L(t;X)</annotation></semantics></math>
-we can generate data with these cumulative incidence functions.</p>
-<p>Here both the cumulative incidence are on the specified form if the
-restriction is not important. Using sim.cifs but sim.cifs enforces the
-restriction. Here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mn>1</mn></msub><annotation encoding="application/x-tex">F_1</annotation></semantics></math>
-will be on the specified form, and
+<p>We here simulate two causes of death with two binary covarites of
+logistic type
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+F_1(t,X)  &amp;= \frac{ \Lambda_1(t,\rho_1) exp(X^T  \beta)}{1+\Lambda_1(t,\rho_1) exp(X^T  \beta)}
+\end{align*}</annotation></semantics></math> and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mn>2</mn></msub><annotation encoding="application/x-tex">F_2</annotation></semantics></math>
-not.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+here enforcing the sum condition
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">F_1+F_2 \leq 1</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">[</mo><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+F_2(t,X)  &amp; =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta)} [ 1- F_1(\tau,X) ]
+\end{align*}</annotation></semantics></math> or not
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>ρ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+F_2(t,X)  &amp; =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta)}
+\end{align*}</annotation></semantics></math></p>
+<p>The baselines are given as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>ρ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>t</mi><mi>/</mi><msub><mi>r</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Lambda_j(t) = \rho_1 (1- exp(-t/r_j))</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\rho_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>j</mi></msub><annotation encoding="application/x-tex">r_j</annotation></semantics></math>
+are postive constants, and here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\tau=6</annotation></semantics></math>.</p>
+<p>To simulate the survival time we use a piecwise linear approximation
+of the cumulative incidence functions and will thus depends on some grid
+for linear approximation. Our linear approximation can be made
+arbitrarily close to any specific smooth cumulative incidence
+function.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.4</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span>,<span class="fl">0.3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">nsim</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,depcens<span class="op">=</span><span class="fl">0</span>,type<span class="op">=</span><span class="st">"logistic"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fitting regression model with CIF logistic-link </span></span>
+<span><span class="va">cif1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,<span class="va">dats</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  100     13</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  100 clusters</span></span>
+<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.19032  0.30822  0.27962  0.5369</span></span>
+<span><span class="co">#&gt; Z2 -0.82349  0.64255  0.60309  0.2000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
+<span><span class="co">#&gt; Z1  1.20964 0.66114 2.2132</span></span>
+<span><span class="co">#&gt; Z2  0.43890 0.12457 1.5463</span></span>
+<span></span>
+<span></span>
+<span><span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,depcens<span class="op">=</span><span class="fl">0</span>,type<span class="op">=</span><span class="st">"cloglog"</span><span class="op">)</span></span>
+<span><span class="va">ciff</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifregFG</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,<span class="va">dats</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ciff</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  100     26</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  100 clusters</span></span>
+<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
+<span><span class="co">#&gt; Z1  0.33760  0.19992  0.20825  0.0913</span></span>
+<span><span class="co">#&gt; Z2 -0.62671  0.38164  0.40632  0.1006</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
+<span><span class="co">#&gt; Z1  1.40158 0.94722 2.0739</span></span>
+<span><span class="co">#&gt; Z2  0.53435 0.25291 1.1290</span></span></code></pre></div>
+<p>We can also use the parameters based on fitted models</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
 <span> <span class="co">################################################################</span></span>
 <span> <span class="co">#  simulating several causes with specific cumulatives </span></span>
@@ -677,65 +649,16 @@ not.</p>
 <span>    </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scif1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             [,1]       [,2]</span></span>
-<span><span class="co">#&gt; tcell -0.7966937 -1.8115642</span></span>
-<span><span class="co">#&gt; age    0.4164386  0.5283466</span></span>
+<span><span class="co">#&gt; tcell -0.7966937 -2.5383710</span></span>
+<span><span class="co">#&gt; age    0.4164386  0.5450321</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scif2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              [,1]        [,2]</span></span>
-<span><span class="co">#&gt; tcell  0.66688269  1.00744800</span></span>
-<span><span class="co">#&gt; age   -0.03248603 -0.01984653</span></span>
+<span><span class="co">#&gt;              [,1]      [,2]</span></span>
+<span><span class="co">#&gt; tcell  0.66688269 1.7602329</span></span>
+<span><span class="co">#&gt; age   -0.03248603 0.4363223</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>   </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png" width="600px"></p>
-<ul>
-<li>Parametric form with baselines
-<ul>
-<li>Fine-Gray form</li>
-<li>logistic link</li>
-</ul>
-</li>
-</ul>
-<p>We assumed that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_1(t,X) = 1-\exp( \Lambda_1(t) \exp( X^T \beta_1))</annotation></semantics></math>
-with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>ρ</mi><mn>1</mn></msub><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Lambda_1(t) = \rho_1 \cdot (1-exp(-t))</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mo>−</mo><mn>0.1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta_1 = (0,-0.1)</annotation></semantics></math>,
-and that the other cause was given by<br><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mo>+</mo><mi>∞</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_2(t,X) = 1-\exp( \Lambda_2(t) \exp( X^T \beta_2)) ( 1 - F_1(+\infty,X))</annotation></semantics></math>
-with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>ρ</mi><mn>2</mn></msub><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Lambda_2(t) =  \rho_2 \cdot (1-exp(-t))</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>2</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mn>0.5</mn><mo>,</mo><mn>0.3</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta_2 = (-0.5,0.3)</annotation></semantics></math>,
-a parametrization that satisfies the constraint
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">F_1+F_2 \leq 1</annotation></semantics></math>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
-<span> <span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="va">nsim</span></span>
-<span> <span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>,<span class="op">-</span><span class="fl">0.1</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
-<span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dats</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; status</span></span>
-<span><span class="co">#&gt;   0   1   2 </span></span>
-<span><span class="co">#&gt;  10  30 160</span></span>
-<span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">dats</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">time</span></span>
-<span> <span class="va">fg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span>,propodds<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  200     30</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  200 clusters</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;    Estimate     S.E.  dU^-1/2 P-value</span></span>
-<span><span class="co">#&gt; Z1 -0.19833  0.18429  0.18671  0.2819</span></span>
-<span><span class="co">#&gt; Z2 -0.34715  0.36728  0.37344  0.3446</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;    Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; Z1  0.82010 0.57148 1.1769</span></span>
-<span><span class="co">#&gt; Z2  0.70670 0.34404 1.4516</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="cif-delayed-entry">CIF Delayed entry<a class="anchor" aria-label="anchor" href="#cif-delayed-entry"></a>
@@ -771,7 +694,7 @@ is a uniform, will have distribution given by
 <h2 id="recurrent-events">Recurrent events<a class="anchor" aria-label="anchor" href="#recurrent-events"></a>
 </h2>
 <p>See also recurrent events vignette</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CPH_HPN_CRBSI</span><span class="op">)</span></span>
 <span> <span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">terminal</span></span>
 <span> <span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">crbsi</span> </span>
@@ -788,12 +711,9 @@ is a uniform, will have distribution given by
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       status   0   1   2</span></span>
 <span><span class="co">#&gt; death                   </span></span>
-<span><span class="co">#&gt; 0              9 277  36</span></span>
-<span><span class="co">#&gt; 1             91   0   0</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsim</a></span><span class="op">(</span>causes<span class="op">=</span><span class="fl">2</span>,<span class="va">rr</span>,<span class="va">dr</span>,<span class="va">base1</span>,<span class="va">base4</span>,which<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 0             10 280  40</span></span>
+<span><span class="co">#&gt; 1             90   0   0</span></span>
+<span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsim</a></span><span class="op">(</span>causes<span class="op">=</span><span class="fl">2</span>,<span class="va">rr</span>,<span class="va">dr</span>,<span class="va">base1</span>,<span class="va">base4</span>,which<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span> <span class="va">cumhaz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">base1</span>,<span class="va">base1</span>,<span class="va">base4</span><span class="op">)</span></span>
 <span> <span class="va">drl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">dr</span>,<span class="va">base4</span><span class="op">)</span></span>
@@ -802,11 +722,11 @@ is a uniform, will have distribution given by
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       status   0   1   2   3</span></span>
 <span><span class="co">#&gt; death                       </span></span>
-<span><span class="co">#&gt; 0              7 239 287  38</span></span>
-<span><span class="co">#&gt; 1             65   0   0   0</span></span>
-<span><span class="co">#&gt; 2             28   0   0   0</span></span>
+<span><span class="co">#&gt; 0              2 194 192  30</span></span>
+<span><span class="co">#&gt; 1             71   0   0   0</span></span>
+<span><span class="co">#&gt; 2             27   0   0   0</span></span>
 <span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsimList</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">cumhaz</span>,<span class="va">drl</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png" width="600px"><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-3.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png" width="600px"><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-2.png" width="600px"></p>
 <ul>
 <li>sim.recurrent can simulate based on cox hazard for events and death
 based on phreg
@@ -815,9 +735,8 @@ based on phreg
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span>
 <span> <span class="va">hf</span> <span class="op">&lt;-</span> <span class="va">hfactioncpx12</span></span>
 <span> <span class="va">hf</span><span class="op">$</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">hf</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span> </span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
@@ -832,9 +751,71 @@ based on phreg
 <span> <span class="va">simglcox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.recurrent.html">sim.recurrent</a></span><span class="op">(</span><span class="va">recGL</span>,<span class="va">dr</span>,n<span class="op">=</span><span class="va">n</span>,data<span class="op">=</span><span class="va">hf</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="simulations-based-on-coxph">Simulations based on coxph<a class="anchor" aria-label="anchor" href="#simulations-based-on-coxph"></a>
+</h2>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="va">cox</span> <span class="op">&lt;-</span>  <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">sim1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.cox</a></span><span class="op">(</span><span class="va">cox</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim1</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           [,1]       [,2]</span></span>
+<span><span class="co">#&gt; vf   0.2970218 -0.2184569</span></span>
+<span><span class="co">#&gt; chf  0.8018334  0.5825885</span></span>
+<span><span class="co">#&gt; wmi -0.8920005 -1.8603130</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             vf        chf         wmi</span></span>
+<span><span class="co">#&gt; vf  1.00000000  0.1435916  0.06617519</span></span>
+<span><span class="co">#&gt; chf 0.14359163  1.0000000 -0.50148928</span></span>
+<span><span class="co">#&gt; wmi 0.06617519 -0.5014893  1.00000000</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">sTRACE</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vf"</span>,<span class="st">"chf"</span>,<span class="st">"wmi"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              vf        chf         wmi</span></span>
+<span><span class="co">#&gt; vf   1.00000000  0.1346711 -0.08966805</span></span>
+<span><span class="co">#&gt; chf  0.13467109  1.0000000 -0.37464791</span></span>
+<span><span class="co">#&gt; wmi -0.08966805 -0.3746479  1.00000000</span></span>
+<span> </span>
+<span> <span class="va">cox</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">sim3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.cox</a></span><span class="op">(</span><span class="va">cox</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">cc</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">vf</span><span class="op">+</span><span class="va">chf</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           [,1]       [,2]</span></span>
+<span><span class="co">#&gt; vf   0.2970218  0.1326161</span></span>
+<span><span class="co">#&gt; chf  0.8018334  1.0879842</span></span>
+<span><span class="co">#&gt; wmi -0.8920005 -0.5919069</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> </span>
+<span> <span class="va">coxs</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span>,<span class="va">vf</span><span class="op">)</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">sim3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.phreg</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
+<span> <span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span>,<span class="va">vf</span><span class="op">)</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sim3</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">coxs</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cc</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           [,1]       [,2]</span></span>
+<span><span class="co">#&gt; wmi -0.8683355 -0.9816674</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png" width="600px"></p>
+<p>More Cox games with cause specific hazards</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="co"># coxph          </span></span>
+<span> <span class="va">cox1</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">cox2</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">coxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cox1</span>,<span class="va">cox2</span><span class="op">)</span></span>
+<span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cause.cox.html">sim.cause.cox</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="va">bmt</span><span class="op">)</span></span>
+<span> <span class="va">scox1</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="va">scox2</span> <span class="op">&lt;-</span> <span class="fu">survival</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span>,data<span class="op">=</span><span class="va">dd</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                [,1]       [,2]</span></span>
+<span><span class="co">#&gt; tcell    -0.4231551 -0.9391252</span></span>
+<span><span class="co">#&gt; platelet -0.5646181 -0.1879697</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                [,1]       [,2]</span></span>
+<span><span class="co">#&gt; tcell     0.3991911  0.0480784</span></span>
+<span><span class="co">#&gt; platelet -0.2456203 -0.3839736</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -857,23 +838,24 @@ based on phreg
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.7</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.1   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.53           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
 <span><span class="co">#&gt;  [7] listenv_0.9.1       future.apply_1.20.0 lava_1.8.1         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.29      grid_4.5.1          evaluate_1.0.5     </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.30      grid_4.5.1          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.1      codetools_0.2-20   </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6            Rcpp_1.1.0          future_1.67.0      </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-7      systemfonts_1.2.3   digest_0.6.37      </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1            parallelly_1.45.1   parallel_4.5.1     </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.1       Matrix_1.7-3        bslib_0.9.0        </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.1         globals_0.18.0      survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [40] pkgdown_2.1.3       cachem_1.1.0        desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
+<span><span class="co">#&gt; [28] future_1.67.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.37       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [34] parallel_4.5.1      splines_4.5.1       Matrix_1.7-3       </span></span>
+<span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.1         globals_0.18.0     </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.1.3       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [43] desc_1.4.3</span></span></code></pre></div>
 </div>
   </div>
 
