@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 
-# Multivariate Event Times (`mets`) <img src=man/figures/timerrr.png align="right" height="150">
+# Multivariate Event Times (`mets`) <img src=man/figures/logohex.png align="right" height="200">
 
  Implementation of various statistical models for multivariate
     event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
