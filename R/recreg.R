@@ -136,7 +136,6 @@ recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0)
 	return(res)
 } ## }}}
 
-
 recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 		      strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=NULL,zero.remove=1,
 		      case.weights=NULL,cause=1,death.code=2,cens.code=1,Gc=NULL,cens.model=~+1,augmentation=NULL,

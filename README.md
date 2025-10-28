@@ -356,7 +356,7 @@ years lost at the different time horizons
 ``` r
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  
- rm1 <- resmean.phreg(out1,times=50)
+ rm1 <- resmean.phreg(out1,times=c(50,60))
  summary(rm1)
 #>                     strata times    rmean se.rmean    lower    upper years.lost
 #> tcell=0, platelet=0      0    50 20.48245 1.411055 17.89542 23.44348   29.51755
@@ -376,7 +376,7 @@ different strata
 
 ``` r
  ## years.lost decomposed into causes
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
+ drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*5)
  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")
 ```
 
