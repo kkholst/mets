@@ -376,7 +376,7 @@ different strata
 
 ``` r
  ## years.lost decomposed into causes
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*5)
+ drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")
 ```
 
@@ -386,80 +386,20 @@ different strata
  summary(drm1)
 #> $estimate
 #>                       strata times    intF_1     intF_2 se.intF_1 se.intF_2
-#> tcell.0..platelet.0        0    10  3.117746  1.0189361 0.2487194 0.1703643
-#> tcell.0..platelet.1        1    10  1.710931  0.6571440 0.3238407 0.1870606
-#> tcell.1..platelet.0        2    10  1.876196  0.8462898 0.6339263 0.4726281
-#> tcell.1..platelet.1        3    10  1.358655  0.9711963 0.5303246 0.3617178
-#> tcell.0..platelet.0.1      0    20  7.517584  2.5934872 0.5441151 0.3861267
-#> tcell.0..platelet.1.1      1    20  4.230946  2.2626301 0.7414097 0.5327619
-#> tcell.1..platelet.0.1      2    20  4.568503  3.3285422 1.4876970 1.1718320
-#> tcell.1..platelet.1.1      3    20  3.569540  3.6427256 1.3003187 1.1906483
-#> tcell.0..platelet.0.2      0    30 12.105147  4.2919345 0.8508118 0.6161444
-#> tcell.0..platelet.1.2      1    30  6.884182  4.2145554 1.1741018 0.9057049
-#> tcell.1..platelet.0.2      2    30  7.260811  6.5480736 2.3533061 1.9703360
-#> tcell.1..platelet.1.2      3    30  5.780424  6.4534862 2.0925159 2.0815077
-#> tcell.0..platelet.0.3      0    40 16.718654  6.1214106 1.1626290 0.8509987
-#> tcell.0..platelet.1.3      1    40  9.728002  6.3883279 1.6094986 1.2998337
-#> tcell.1..platelet.0.3      2    40  9.953119 10.4977207 3.2212240 2.8144071
-#> tcell.1..platelet.1.3      3    40  8.302442  9.2642469 2.8718084 2.9840737
 #> tcell.0..platelet.0.4      0    50 21.367838  8.1497111 1.4766473 1.0945200
 #> tcell.0..platelet.1.4      1    50 12.979243  8.6900468 2.0475160 1.7124412
 #> tcell.1..platelet.0.4      2    50 12.645426 14.6086098 4.0899812 3.7302594
 #> tcell.1..platelet.1.4      3    50 11.809344 12.0750076 3.6737009 3.8902066
-#> tcell.0..platelet.0.5      0    60 26.017022 10.2415183 1.7930416 1.3471506
-#> tcell.0..platelet.1.5      1    60 16.236998 10.9917656 2.5097411 2.1389901
-#> tcell.1..platelet.0.5      2    60 15.337734 18.7194989 4.9591366 4.6873833
-#> tcell.1..platelet.1.5      3    60 15.442616 14.8857682 4.5899750 4.7978860
 #>                       total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
-#> tcell.0..platelet.0           4.136682    2.6664640     3.645403    0.7342222
-#> tcell.0..platelet.1           2.368075    1.1806442     2.479395    0.3761492
-#> tcell.1..platelet.0           2.722485    0.9675543     3.638152    0.2832357
-#> tcell.1..platelet.1           2.329852    0.6322072     2.919841    0.4680376
-#> tcell.0..platelet.0.1        10.111072    6.5233279     8.663381    1.9371110
-#> tcell.0..platelet.1.1         6.493577    3.0010779     5.964826    1.4262265
-#> tcell.1..platelet.0.1         7.897045    2.4131642     8.648903    1.6694898
-#> tcell.1..platelet.1.1         7.212265    1.7479738     7.289362    1.9195780
-#> tcell.0..platelet.0.2        16.397082   10.5473476    13.893027    3.2393340
-#> tcell.0..platelet.1.2        11.098738    4.9280986     9.616684    2.7658536
-#> tcell.1..platelet.0.2        13.808885    3.8468181    13.704671    3.6306496
-#> tcell.1..platelet.1.2        12.233910    2.8433112    11.751546    3.4296343
-#> tcell.0..platelet.0.3        22.840064   14.5884128    19.159958    4.6614116
-#> tcell.0..platelet.1.3        16.116330    7.0338371    13.454111    4.2873915
-#> tcell.1..platelet.0.3        20.450839    5.2780876    18.769027    6.2071246
-#> tcell.1..platelet.1.3        17.566689    4.2147894    16.354445    4.9275679
 #> tcell.0..platelet.0.4        29.517549   18.6611064    24.467172    6.2636056
 #> tcell.0..platelet.1.4        21.669290    9.5272967    17.681906    5.9059020
 #> tcell.1..platelet.0.4        27.254036    6.7084870    23.836494    8.8564043
 #> tcell.1..platelet.1.4        23.884352    6.4184533    21.728071    6.4217842
-#> tcell.0..platelet.0.5        36.258540   22.7297398    29.779727    7.9140511
-#> tcell.0..platelet.1.5        27.228764   11.9932295    21.982413    7.5062706
-#> tcell.1..platelet.0.5        34.057233    8.1384730    28.905433   11.4591501
-#> tcell.1..platelet.1.5        30.328384    8.6242250    27.651688    7.9143890
 #>                       upper_intF_2
-#> tcell.0..platelet.0       1.414055
-#> tcell.0..platelet.1       1.148050
-#> tcell.1..platelet.0       2.528659
-#> tcell.1..platelet.1       2.015270
-#> tcell.0..platelet.0.1     3.472272
-#> tcell.0..platelet.1.1     3.589538
-#> tcell.1..platelet.0.1     6.636275
-#> tcell.1..platelet.1.1     6.912691
-#> tcell.0..platelet.0.2     5.686571
-#> tcell.0..platelet.1.2     6.422060
-#> tcell.1..platelet.0.2    11.809806
-#> tcell.1..platelet.1.2    12.143419
-#> tcell.0..platelet.0.3     8.038695
-#> tcell.0..platelet.1.3     9.518779
-#> tcell.1..platelet.0.3    17.754137
-#> tcell.1..platelet.1.3    17.417573
 #> tcell.0..platelet.0.4    10.603763
 #> tcell.0..platelet.1.4    12.786686
 #> tcell.1..platelet.0.4    24.096854
 #> tcell.1..platelet.1.4    22.704875
-#> tcell.0..platelet.0.5    13.253477
-#> tcell.0..platelet.1.5    16.095731
-#> tcell.1..platelet.0.5    30.579898
-#> tcell.1..platelet.1.5    27.997878
 ```
 
 Computations are again done for all time horizons at once as illustrated
