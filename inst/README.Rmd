@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Multivariate Event Times (`mets`) <img src="man/figures/logohex.png" align="right" height="250" style="float:right; height:250px;"  alt="mets website">
+# Multivariate Event Times (`mets`) <img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="mets website">
 
  Implementation of various statistical models for multivariate
     event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
