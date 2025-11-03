@@ -12,8 +12,8 @@ Description: Implementation of various statistical models for multivariate
     cumulative incidence models <doi:10.1002/sim.6016>, and  bivariate random
     effects probit models (Liability models) <doi:10.1016/j.csda.2015.01.014>.
     Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
-    Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
-License: GPL (>=2)
+    Ghosh-Lin, Binomial regression) with fast computation of influence functions.
+License: Apache License (== 2.0)
 LazyLoad: yes
 URL: https://kkholst.github.io/mets/
 BugReports: https://github.com/kkholst/mets/issues
