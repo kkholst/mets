@@ -75,8 +75,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Twin models</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Twin models</h1>
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
@@ -317,13 +316,13 @@ and DZ correlation:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ace0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                   Estimate  Std. Error Z value Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; bmi             1.8599e+01  2.5576e-01  72.720   &lt;2e-16</span></span>
-<span><span class="co">#&gt; sd(A)           2.7270e+00  4.2658e-02  63.927   &lt;2e-16</span></span>
-<span><span class="co">#&gt; sd(C)          -1.7030e-06  3.1064e-01   0.000        1</span></span>
-<span><span class="co">#&gt; sd(E)           2.0276e+00  3.4787e-02  58.286   &lt;2e-16</span></span>
-<span><span class="co">#&gt; bmi~age         1.1892e-01  5.6246e-03  21.142   &lt;2e-16</span></span>
-<span><span class="co">#&gt; bmi~gendermale  1.3846e+00  8.8748e-02  15.601   &lt;2e-16</span></span>
+<span><span class="co">#&gt;                  Estimate Std. Error Z value Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; bmi            1.8599e+01 2.5576e-01  72.720   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(A)          2.7270e+00 4.2658e-02  63.927   &lt;2e-16</span></span>
+<span><span class="co">#&gt; sd(C)          1.7129e-06 3.1064e-01   0.000        1</span></span>
+<span><span class="co">#&gt; sd(E)          2.0276e+00 3.4787e-02  58.286   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~age        1.1892e-01 5.6246e-03  21.142   &lt;2e-16</span></span>
+<span><span class="co">#&gt; bmi~gendermale 1.3846e+00 8.8748e-02  15.601   &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MZ-pairs DZ-pairs </span></span>
 <span><span class="co">#&gt;     1483     2788 </span></span>
