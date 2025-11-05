@@ -120,6 +120,9 @@ summary(rmtlratioI)
 pp <- predict(rmtlratioI,bmt)
 ppb <- cbind(pp,bmt)
 }
+\references{
+Scheike & Tanaka (2025), Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
+}
 \author{
 Thomas Scheike
 }

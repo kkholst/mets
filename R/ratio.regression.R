@@ -38,6 +38,8 @@
 ##' @param model  logit, exp or lin(ear) 
 ##' @param Ydirect use this Y instead of outcome constructed inside the program, should be a matrix with two column for numerator and denominator.
 ##' @param ... Additional arguments to lower level funtions
+##' @references 
+##' Scheike & Tanaka (2025), Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
 ##' @author Thomas Scheike
 ##' @examples
 ##' library(mets)

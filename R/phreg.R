@@ -2925,7 +2925,7 @@ return(phw)
 ##' @param subdata rows or TRUE/FALSE to select which part of the data that is used for the G-computation. Might be treated 
 ##' @author Thomas Scheike
 ##' @examples
-##' 
+##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
 ##' dfactor(bmt) <- tcell.f~tcell
@@ -3035,7 +3035,9 @@ sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
 ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
 rd <- estimate(coef=Grisk,vcov=vv,f=function(p) log((1-p[-1])/(1-p[1])),null=0)
 srd <- estimate(coef=Grisk,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
-out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,survival.ratio=srd,vcov=vv)
+ssd <- estimate(coef=Grisk,vcov=vv,f=function(p) p[-1]-p[1])
+out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,
+	    survival.ratio=srd, survival.difference=ssd,vcov=vv)
 } 
 if (inherits(x,"cifreg") | inherits(x,"recreg")) { 
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",nlevs,sep=""))
@@ -3048,15 +3050,66 @@ class(out) <- "survivalG"
 return(out)
 } ## }}}
 
+###{{{ summary  survivalG
+
+##' @export
+print.survivalG <- function(x,...) {
+  print(summary(x,...))
+}
+
+##' @export
+summary.survivalG <- function(object,...) {
+  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio,
+	      survival.ratio=object$survival.ratio,survival.difference=object$survival.difference)
+  class(res) <- "summary.survivalG"
+  res
+}
+
+##' @export
+print.summary.survivalG  <- function(x,...) {
+    cat("G-estimator :\n")
+    print(x[["risk"]],...)
+    cat("\n")
+
+    cat("Average Treatment effect: difference (G-estimator) :\n")
+    print(x$difference,...)
+    cat("\n")
+
+    cat("Average Treatment effect: ratio (G-estimator) :\n")
+    cat("log-ratio: \n")
+    print(x$ratio$coefmat,...)
+    cat("ratio: \n")
+    ratio <- exp(x$ratio$coefmat[,c(1,3:4)])
+    print(ratio,...)
+    cat("\n")
+
+    if (!is.null(x$survival.difference)) {
+    cat("Average Treatment effect:  survival-difference (G-estimator) :\n")
+    print(x$survival.difference$coefmat,...)
+    cat("\n")
+    }
+
+    if (!is.null(x$survival.ratio)) {
+    cat("Average Treatment effect: 1-G (survival)-ratio (G-estimator) :\n")
+    cat("log-ratio: \n")
+    print(x$survival.ratio$coefmat,...)
+    cat("ratio: \n")
+    ratio <- exp(x$survival.ratio$coefmat[,c(1,3:4)])
+    print(ratio,...)
+    cat("\n")
+    }
+
+}
+
+###}}} summary 
+
 ##' @export
 survivalGtime <- function(x,data,time=NULL,n=100,...)
 {# {{{
 
-if (!is.null(time)) if (time=="all") time <- x$cumhaz[,1] 
-
 if (is.null(time)) {
        rr <- range(x$cumhaz[,1])
-       time <- seq(rr[1],rr[2],length=n)
+       if (!is.null(n)) time <- seq(rr[1],rr[2],length=n) else time <- x$cumhaz[,1] 
 }
 
 survivalG <- risk <- difference <- ratio <- survival.ratio <- c()
@@ -3142,46 +3195,6 @@ for (ss in us[-1]) {
 
 }
 # }}}
-
-###{{{ summary 
-
-##' @export
-print.survivalG <- function(x,...) {
-  print(summary(x,...))
-}
-
-##' @export
-summary.survivalG <- function(object,...) {
-  res <- list(risk=object$risk,difference=object$difference,ratio=object$ratio,survival.ratio=object$survival.ratio)
-  class(res) <- "summary.survivalG"
-  res
-}
-
-##' @export
-print.summary.survivalG  <- function(x,...) {
-    cat("G-estimator :\n")
-    print(x[["risk"]],...)
-    cat("\n")
-
-    cat("Average Treatment effect: difference (G-estimator) :\n")
-    print(x$difference,...)
-    cat("\n")
-
-    cat("Average Treatment effect: ratio (G-estimator) :\n")
-    cat("log-ratio: \n")
-    print(x$ratio$coefmat,...)
-    cat("ratio: \n")
-    ratio <- exp(x$ratio$coefmat[,c(1,3:4)])
-    print(ratio,...)
-    cat("\n")
-
-    cat("Average Treatment effect: 1-G (survival)-ratio (G-estimator) :\n")
-    print(x$survival.ratio$coefmat,...)
-    cat("\n")
-
-}
-
-###}}} summary 
 
 ##' Fast additive hazards model with robust standard errors 
 ##'

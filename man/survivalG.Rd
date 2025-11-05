@@ -41,7 +41,7 @@ based on  these.  If first covariate is a factor then all contrast are computed,
 and if continuous then considered covariate values are given by Avalues.
 }
 \examples{
-
+library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 bmt$event <- (bmt$cause!=0)*1
 dfactor(bmt) <- tcell.f~tcell
