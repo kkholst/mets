@@ -206,6 +206,7 @@ Also works with mediator with more than two levels
  * exposure: age in 4 categories
 
 ```{r, label=multinom, cache=TRUE, eval=fullVignette}
+library(mets)
 data(tTRACE)
 dcut(tTRACE) <- ~. 
 
@@ -216,6 +217,7 @@ aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data
 		time=7,weights=wdata$weights,cause=9)
 summary(aaMss)
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
+summary(MultMed)
 ```
 
 ```{r  results="hide", echo=FALSE }

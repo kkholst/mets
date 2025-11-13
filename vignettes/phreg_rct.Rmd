@@ -1,5 +1,5 @@
 ---
-title: "Two-Stage Randomization for Cox Type rate models "
+title: "Randomization for Cox Type rate models "
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5        
 vignette: >
-  %\VignetteIndexEntry{Two-Stage Randomization for Competing risks and Survival outcomes}
+  %\VignetteIndexEntry{Randomization for Cox Type rate models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -202,7 +202,6 @@ $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$,
 We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similary, for those that end being consistent with $B2$.
 Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
 
-
   - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
   - the treatment model may also depend on a response value
   - standard errors are based on influence functions and is also computed for the baseline
@@ -234,7 +233,6 @@ summary(pll0,times=1:10)
 
 The propensity score mode can be extended to use covariates to get increased efficiency.
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
-
 
 We now illustrate how to fit a  Cox model of the form
 \begin{align*}
@@ -291,12 +289,11 @@ Recurrent events: Simple Randomization
 ```{r}
 n <- 1000
 beta <- 0.15; 
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-dr <- scalecumhaz(drcumhaz,1)
-base1 <- scalecumhaz(base1cumhaz,1)
-base4 <- scalecumhaz(base4cumhaz,0.5)
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- scalecumhaz(CPH_HPN_CRBSI$mechanical,0.5)
+
 cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 ce <- 3; betao1 <- 0
 
@@ -363,7 +360,7 @@ rr$z1 <- attr(rr,"z")[rr$id]
 rr$A1 <- A1[rr$id]
 rr$A0 <- A0[rr$id]
 rr$lz1 <- log(rr$z1)
-rr <- count.history(rr)
+rr <- count.history(rr,types=1:2)
 rr$A1t <- 0
 rr <- dtransform(rr,A1t=A1,Count2==1) 
 rr$At.f <- rr$A0

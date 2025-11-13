@@ -12,7 +12,8 @@ survivalG(
   Avalues = c(0, 1),
   varname = NULL,
   same.data = TRUE,
-  id = NULL
+  id = NULL,
+  subdata = NULL
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ survivalG(
 \item{same.data}{assumes that same data is used for fitting of survival model and averaging.}
 
 \item{id}{might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,}
+
+\item{subdata}{rows or TRUE/FALSE to select which part of the data that is used for the G-computation. Might be treated}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
@@ -38,7 +41,7 @@ based on  these.  If first covariate is a factor then all contrast are computed,
 and if continuous then considered covariate values are given by Avalues.
 }
 \examples{
-
+library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 bmt$event <- (bmt$cause!=0)*1
 dfactor(bmt) <- tcell.f~tcell

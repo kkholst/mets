@@ -27,9 +27,10 @@ binregATE(
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmst"),
-  model = "exp",
+  outcome = c("cif", "rmst", "rmtl"),
+  model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
+  typeATE = "II",
   ...
 )
 }
@@ -74,7 +75,9 @@ binregATE(
 
 \item{Ydirect}{use this outcome Y with IPCW vesion}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{typeATE}{"II" to censor augment  the estimating equation}
+
+\item{...}{Additional arguments to lower level funtions (binreg that fits outcome model)}
 }
 \description{
 Under the standard causal assumptions  we can estimate the average treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep A given X), and positivity.
@@ -85,10 +88,13 @@ If the factor has more than two levels
 then it uses the mlogit for propensity score modelling. If there are no censorings this is the same as ordinary logistic regression modelling. 
 
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
-Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE.
+Rather than binomial regression we also consider a IPCW weighted version of standard logistic regression logitIPCWATE. 
+
+typeATE="II" will augment the estimating equation with \deqn{ (A/\pi(X)) \int E( O(t) | T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) } when estimating the mean
+outcome for the treated.
 }
 \examples{
-data(bmt)
+library(mets); data(bmt)
 dfactor(bmt)  <-  ~.
 
 brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
@@ -98,6 +104,7 @@ summary(brs)
 brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
   treat.model=tcell.f~platelet+age)
 summary(brsi)
+
 
 }
 \author{

@@ -2,15 +2,10 @@
 % Please edit documentation in R/recreg.R
 \name{recreg}
 \alias{recreg}
-\alias{IIDbaseline.recreg}
 \alias{strataAugment}
 \alias{scalecumhaz}
 \alias{GLprediid}
 \alias{recregIPCW}
-\alias{twostageREC}
-\alias{simGLcox}
-\alias{recregO}
-\alias{IIDbaseline.recregO}
 \alias{IIDrecreg}
 \alias{predicttime}
 \title{Recurrent events regression with terminal event}

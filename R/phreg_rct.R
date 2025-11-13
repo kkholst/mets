@@ -17,8 +17,7 @@
 ##' @param augmentR0 formula for the randomization augmentation (~age+sex)
 ##' @param augmentR1 formula for the randomization augmentation (~age+sex)
 ##' @param augmentC formula for the censoring augmentation (~age+sex)
-##' @param treat.model propensity score model, default is ~+1, assuming RCT
-##'   study
+##' @param treat.model propensity score model, default is ~+1, assuming an RCT study
 ##' @param RCT if false will use propensity score adjustment for marginal model
 ##' @param treat.var in case of twostage randomization, this variable is 1 for
 ##'   the treatment times, if start,stop then default assumes that only one
@@ -37,10 +36,10 @@
 ##'   scores, default for binary treatment is glm
 ##' @param ... Additional arguments to phreg function
 ##' @author Thomas Scheike
-##' @references Lu, Tsiatis (2008), Improving the efficiency of the log-rank
-##'   test using auxiliary covariates, Biometrika, 679--694
+##' @references 
+##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
 ##' 
-##' Scheike et al. (2024), WIP, Two-stage randomization for recurrent events, 
+##' Scheike, Nerstroem and Martinussen (2025), Randomized clinical trials and the proportional hazards model for recurrent events.
 ##' @examples
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,100)
@@ -83,22 +82,13 @@ phreg_rct <- function(formula,data,cause=1,cens.code=0,
     id <- m[[ts$vars]]
   } else pos.cluster <- NULL
 
-  ### possible handling of id to code from 0:(antid-1)
-  ### same processing inside phreg call 
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-      }
-  } else { orig.id <- NULL; nid <- length(exit); id <- 0:(nid-1); ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id <- id+1
-  nid <- length(unique(id))
-  data$id__  <-  id
-  data$cid__ <- cumsumstrata(rep(1,length(id)),id-1,nid)
-  expit <- lava::expit
+ call.id <- id;
+ conid <- construct_id(id,length(exit))
+ name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
+
+ data$id__  <-  id
+ data$cid__ <- cumsumstrata(rep(1,length(id)),id-1,nid)
+ expit <- lava::expit
 
 sides <- function(formula,vars) {# {{{
 lhs <- update(formula,.~+1)
@@ -225,6 +215,9 @@ else
 rformulaS <-as.formula( paste("Surv(",rsss[1],",",rsss[2],",",rsss[3],"==",cause,")~."))
 formula <- update(formula,rformulaS)
 
+## change id from call to id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
 
 if (RCT) {
 ### ... for phreg
@@ -290,7 +283,6 @@ if (!is.null(augmentR0)) {# {{{
       }
 
 } # }}}
-
 
 if (!is.null(augmentR1)) {# {{{
    ff1 <- sides(augmentR1,all.vars(ssform$rhs)[2])
@@ -489,7 +481,7 @@ vardynC.improve  <- matrix(apply(gain.times,2,sum),p,p)
 ## U(s) = U(\infty) - \int_0^s (Z-E) w(s)  dM(s)
 ## sum (e_i - \bar e) U(s) Y_i(s)
   ## Lu-Tsiatis augmentation 
-  out1 <- IIDbaseline.phreg(Cfit0,ft=1/St,time=0,fixbeta=0)
+  out1 <- iidBaseline(Cfit0,ft=1/St,time=0,fixbeta=0)
   Hiid <- (out1$beta.iid %*% Cfit0$hessian)
   xxi <- solve(crossprod(Hiid))
   ###
@@ -628,7 +620,6 @@ if (typeR!=typeC) {
       baselinecox <- list(phreg=fitts,beta.iid=iid[[j]],XR0pi=XR0pi,gamR0Base=gamR0Base)
    } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL  ## }}}
 
-
    if (fit0$p>0)  {
      coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
      nnn <- paste(typeR,typeC,sep="_")
@@ -642,9 +633,31 @@ if (typeR!=typeC) {
 names(iid) <- iidn
 # }}}
 
-out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,AugClt=AugClt,
+namesortme <- function(iid,name.id) { ## {{{
+if (is.matrix(iid))  
+	if (nrow(iid)==length(name.id)) {
+		rownames(iid) <- name.id
+		oid <- order(name.id)
+		iid <- iid[oid,]
+}
+return(iid)
+} ## }}}
+
+### sort iid after name.id and put as rownames
+if (!is.null(call.id)) {
+ea.iid <- namesortme(ea.iid,name.id)
+for (l in 1:length(iid)) iid[[l]] <- namesortme(iid[[l]],name.id)
+AugC.iid <- namesortme(AugC.iid,name.id)
+AugClt.iid <- namesortme(AugClt.iid,name.id)
+}
+
+###AugR0.iid <- namesortme(AugR0.iid,name.id)
+
+out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
+    AugClt=AugClt,
     coefs=coefs,iid=iid,AugC.iid=AugC.iid,AugClt.iid=AugClt.iid,Cox.iid=ea.iid,
     formula=formula,formulaC=formulaC,treat.model=treat.model,
+    id=id,call.id=call.id,name.id=name.id,
     cumhaz=cumhazR0,se.cumhaz=se.R0cumhaz,
     cumhaz.noAug=cumhaz,se.cumhaz.noAug=se.cumhaz, 
     strata=fit0$strata.jumps,nstrata=fit0$nstrata,jumps=seq_along(fit0$strata.jumps),
@@ -653,6 +666,7 @@ out <- list(marginal=fit0,AugR0=AugR0,AugR1=AugR1,AugR01=AugR01,AugCdyn=AugCdyn,
 class(out) <- "phreg_rct"
 return(out)
 } ## }}} 
+
 
 ##' @export
 plot.phreg_rct  <- function(x,...)  { ## {{{

@@ -2,8 +2,10 @@
 .DS_Store
 *_cache
 test.R
-README.Rmd
-README.html
+inst/README.html
+inst/README_files
+inst/README.md
+inst/man
 docs
 *.gcno
 TAGS
@@ -26,6 +28,7 @@ vignettes/*.tex
 vignettes/*.pdf
 vignettes/*.R
 vignettes/*.r
+vignettes/*.diff
 vignettes/*.Rout
 vignettes/*.org
 vignettes/auto

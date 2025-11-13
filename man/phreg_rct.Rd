@@ -51,8 +51,7 @@ treatment (randomization 0/1)}
 
 \item{augmentC}{formula for the censoring augmentation (~age+sex)}
 
-\item{treat.model}{propensity score model, default is ~+1, assuming RCT
-study}
+\item{treat.model}{propensity score model, default is ~+1, assuming an RCT study}
 
 \item{RCT}{if false will use propensity score adjustment for marginal model}
 
@@ -97,10 +96,9 @@ out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z
 summary(out)
 }
 \references{
-Lu, Tsiatis (2008), Improving the efficiency of the log-rank
-  test using auxiliary covariates, Biometrika, 679--694
+Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
 
-Scheike et al. (2024), WIP, Two-stage randomization for recurrent events,
+Scheike, Nerstroem and Martinussen (2025), Randomized clinical trials and the proportional hazards model for recurrent events.
 }
 \author{
 Thomas Scheike

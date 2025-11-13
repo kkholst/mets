@@ -6,14 +6,16 @@
 \alias{resmeanIPCWold}
 \title{Restricted IPCW mean for censored survival data}
 \usage{
-resmeanIPCW(formula, data, ...)
+resmeanIPCW(formula, data, outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
 \item{formula}{formula with outcome on Event form}
 
 \item{data}{data frame}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{outcome}{can do either rmst regression ('rmst') or years-lost regression  ('rmtl')}
+
+\item{...}{Additional arguments to binreg}
 }
 \description{
 Simple and fast version for IPCW regression for just one time-point thus fitting the model 
@@ -52,12 +54,22 @@ and alternatively just solved directly (type="I") without any additional terms.
 Censoring model may depend on strata.
 }
 \examples{
-
+library(mets)
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
                 time=50,cens.model=~strata(platelet),model="exp")
 summary(out)
+
+## weighted GLM version   RMST
+out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
+            time=50,cens.model=~strata(platelet),model="exp",outcome="rmst")
+summary(out2)
+
+### time-lost
+outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
+                time=50,cens.model=~strata(platelet),model="exp",outcome="rmtl")
+summary(outtl)
 
 ### same as Kaplan-Meier for full censoring model 
 bmt$int <- with(bmt,strata(tcell,platelet))
@@ -68,6 +80,11 @@ out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 rm1 <- resmean.phreg(out1,times=30)
 summary(rm1)
 
+### years lost regression
+outl <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,outcome="years-lost",
+                             cens.model=~strata(platelet,tcell),model="lin")
+estimate(outl)
+
 ## competing risks years-lost for cause 1  
 out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
                             cens.model=~strata(platelet,tcell),model="lin")
@@ -75,6 +92,7 @@ estimate(out)
 ## same as integrated cumulative incidence 
 rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
 summary(rmc1)
+
 }
 \author{
 Thomas Scheike

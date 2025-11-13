@@ -69,17 +69,14 @@ Must give cumulative hazards on some time-range
 ########################################
 ## getting some rates to mimick 
 ########################################
-data(base1cumhaz)
-data(base4cumhaz)
-data(drcumhaz)
-dr <- drcumhaz
-dr2 <- drcumhaz
-dr2[,2] <- 1.5*drcumhaz[,2]
-base1 <- base1cumhaz
-base4 <- base4cumhaz
+data(CPH_HPN_CRBSI)
+dr <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi 
+base4 <- CPH_HPN_CRBSI$mechanical
+dr2 <- scalecumhaz(dr,1.5)
 cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
-iddata <- simMultistate(10000,base1,base1,dr,dr2,cens=cens)
+iddata <- simMultistate(1000,base1,base1,dr,dr2,cens=cens)
 dlist(iddata,.~id|id<3,n=0)
  
 ### estimating rates from simulated data  

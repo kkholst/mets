@@ -21,7 +21,7 @@
 ##' @importFrom timereg two.stage predict.two.stage
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline title
-##'   matlines legend
+##'   matlines legend mtext layout axis barplot mosaicplot
 ##' @importFrom methods hasArg
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @aliases mets mets-package
@@ -236,61 +236,29 @@ NULL
 NULL
 
 
-##' Rate for leaving HPN program for patients of Copenhagen
+##' Rates for HPN program for patients of Copenhagen Cohort
 ##'
-##' @name drcumhaz
+##' @name CPH_HPN_CRBSI 
+##' @format
+##'  crbsi: cumulative rate of catheter related bloodstream infection in HPN patients of Copenhagen
+##'  mechanical: cumulative rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen
+##' trombo: cumulative rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen
+##' terminal: rate of terminal event, patients leaving the HPN program
 ##' @docType data
 ##' @keywords data
 ##' @source Estimated data
 NULL
 
-##' rate of CRBSI for HPN patients of Copenhagen
+##' haplo fun data 
 ##'
-##' @name base1cumhaz
+##' @name haplo 
+##' @format
+##' hapfreqs : haplo frequencies
+##' haploX:  covariates and response for haplo survival discrete survival
+##' ghaplos:  haplo-types for subjects of haploX data
 ##' @docType data
 ##' @keywords data
 ##' @source Estimated data
-NULL
-
-##' rate of Mechanical (hole/defect) complication for catheter of HPN patients of Copenhagen
-##'
-##' @name base4cumhaz
-##' @docType data
-##' @keywords data
-##' @source Estimated data
-NULL
-
-##' rate of Occlusion/Thrombosis complication for catheter of HPN patients of Copenhagen
-##'
-##' @name base44cumhaz
-##' @docType data
-##' @keywords data
-##' @source Estimated data
-NULL
-
-
-##' hapfreqs data set
-##'
-##' @name hapfreqs
-##' @docType data
-##' @keywords data
-##' @source Simulated data
-NULL
-
-##' haploX  covariates and response for haplo survival discrete survival
-##'
-##' @name haploX
-##' @docType data
-##' @keywords data
-##' @source Simulated data
-NULL
-
-##' ghaplos  haplo-types for subjects of haploX data
-##'
-##' @name ghaplos
-##' @docType data
-##' @keywords data
-##' @source Simulated data
 NULL
 
 ##' ttpd discrete survival data on interval form

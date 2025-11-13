@@ -10,7 +10,8 @@
 \alias{invsubdist}
 \title{Simulation of output from Cumulative incidence regression model}
 \usage{
-sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),...)
+sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
+                cumstart=c(0,0),U=NULL,pU=NULL,...)
 }
 \arguments{
 \item{cif}{output form prop.odds.subdist or ccr (cmprsk), can also call invsubdist with 
@@ -33,7 +34,11 @@ given then takes average rate of in simulated data from cox model.}
 
 \item{cumstart}{to start cumulatives at time 0 in 0.}
 
-\item{...}{arguments for invsubdist}
+\item{U}{uniforms to use for drawing of timing for cumulative incidence.}
+
+\item{pU}{uniforms to use for drawing event type (F1,F2,1-F1-F2).}
+
+\item{...}{arguments for simsubdist (for example Uniform variable for realizations)}
 }
 \description{
 Simulates data that looks like fit from fitted cumulative incidence model

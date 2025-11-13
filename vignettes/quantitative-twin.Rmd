@@ -30,14 +30,14 @@ knitr::opts_chunk$set(
 library("mets")
 ```
 
-\(
+$$
 \newcommand{\cov}{\mathbb{C}\text{ov}}
 \newcommand{\cor}{\mathbb{C}\text{or}}
 \newcommand{\var}{\mathbb{V}\text{ar}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\unitfrac}[2]{#1/#2}
 \newcommand{\n}{}
-\)
+$$
 
  <!-- 
  The development version may be installed from *github*: 
@@ -78,46 +78,17 @@ head(twinwide)
 
 Next we plot the association within each zygosity group
 
-```{r  scatterdens, echo=FALSE,message=FALSE,warning=FALSE }
-library("cowplot")
-
-scatterdens <- function(x) {
-    require(ggplot2)
-    sp <- ggplot(x,
-                aes_string(colnames(x)[1], colnames(x)[2])) +
-        theme_minimal() +
-        geom_point(alpha=0.3) + geom_density_2d()
-    xdens <- ggplot(x, aes_string(colnames(x)[1],fill=1)) +
-        theme_minimal() +
-        geom_density(alpha=.5)+
-        theme(axis.text.x = element_blank(),
-	      legend.position = "none") + labs(x=NULL)
-    ydens <- ggplot(x, aes_string(colnames(x)[2],fill=1)) +
-        theme_minimal() +
-        geom_density(alpha=.5) +
-        theme(axis.text.y = element_blank(),
-	      axis.text.x = element_text(angle=90, vjust=0),
-	      legend.position = "none") +
-        labs(x=NULL) +
-        coord_flip()
-    g <- plot_grid(xdens,NULL,sp,ydens,
-                  ncol=2,nrow=2,
-                  rel_widths=c(4,1.4),rel_heights=c(1.4,4))
-    return(g)
-}
-```
-
 We here show the log-transformed data which is slightly more symmetric
 and more appropiate for the twin analysis (see Figure \@ref(fig:scatter1) and \@ref(fig:scatter2))
 
 ```{r  scatter1, warning=FALSE,message=FALSE,fig.cap="Scatter plot of logarithmic BMI measurements in MZ twins" }
 mz <- log(subset(twinwide, zyg=="MZ")[,c("bmi1","bmi2")])
-scatterdens(mz)
+plot_twin(mz)
 ```
 
 ```{r  scatter2, warning=FALSE,message=FALSE,fig.cap="Scatter plot of logarithmic BMI measurements in DZ twins" }
 dz <- log(subset(twinwide, zyg=="DZ")[,c("bmi1","bmi2")])
-scatterdens(dz)
+plot_twin(dz)
 ```
 
 The plots and raw association measures shows considerable stronger

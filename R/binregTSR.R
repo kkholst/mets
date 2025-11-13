@@ -1,3 +1,4 @@
+
 ##' 2 Stage Randomization for Survival Data or competing Risks Data 
 ##'
 ##' Under two-stage randomization we can estimate the average treatment effect E(Y(i,j)) of treatment regime (i,j). 
@@ -55,7 +56,7 @@
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' 
+##' library(mets)
 ##' ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 ##' 
 ##' bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),
@@ -114,18 +115,10 @@ binregTSR <- function(formula,data,cause=1,time=NULL,cens.code=0,
   X <- model.matrix(Terms, m)
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-  } else { orig.id <- NULL; nid <- nrow(X); id <- as.integer(seq_along(exit))-1; ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id <- id+1
-  nid <- length(unique(id))
+
+  call.id <- id 
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id+1; nid <- conid$nid
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
@@ -248,7 +241,7 @@ if (nlev==2) {
    ppp <- (pal/pal[,1])
    spp <- 1/pal[,1]
 } else {  
-   treat.modelid <- update.formula(treat.model,.~.+cluster(id))
+   treat.modelid <- update.formula(treat.model,.~.+cluster(id__))
    treat <- mlogit(treat.modelid,data)
    iidalpha <- lava::iid(treat)
    pal <- predict(treat,data,se=0,response=FALSE)
@@ -306,9 +299,10 @@ treats1 <- treats(treatvar1)
 ###idR1 <- id[data$response__==1 & data$rid__==1] ## first record with first randomization info
 idR1 <- dataR1[,"id__"]
 dataR1[,treat.name1] <- treatvar1
+
 if (estpr[2]==1) {
 fit1 <- fittreat(treat.model1,dataR1,idR1,treats1$ntreatvar,treats1$nlev)
-## put iid in matrix after nid 
+##### put iid in matrix after nid 
 iidalpha1 <- apply(fit1$iidalpha,2,sumstrata,sort(idR1)-1,nid) ## *(nrow(dataR1)/nid)
 }
 
@@ -735,11 +729,19 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 ###
 
 riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
-riskG.iid <- list(riskG.iid=riskG.iid,
-  riskG0.iid=riskG0.iid,riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
-	  id=id,orig.id=orig.id)
+
+if (!is.null(call.id)) {
+	riskG.iid <-  namesortme(riskG.iid,name.id)
+	riskG0.iid <- namesortme(riskG0.iid,name.id)
+	riskG1.iid <- namesortme(riskG1.iid,name.id)
+	riskG01.iid <- namesortme(riskG01.iid,name.id)
+}
+
+riskG.iid <- list(riskG.iid=riskG.iid,riskG0.iid=riskG0.iid,
+		  riskG1.iid=riskG1.iid,riskG01.iid=riskG01.iid,
+	  id=id-1,call.id=call.id,name.id=name.id)
 varG <- list(varG=varG,varG0=varG0,varG1=varG1,varG01=varG01)
-val <- list( riskG=riskG,varG=varG,riskG.iid=riskG.iid,
+val <- list(riskG=riskG,varG=varG,riskG.iid=riskG.iid,
 	     MGc=MGc,CensAugment.times=Augment.times,
             dynCens.coef=dynCgammat,dataW=dataW)
 

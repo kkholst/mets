@@ -52,7 +52,8 @@ We are particularly interested in the types haplotypes:
 types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
 
 ## some haplotypes frequencies for simulations 
-data(hapfreqs)
+data(haplo)
+hapfreqs <- haplo$hapfreqs 
 print(hapfreqs)
 ```
 
@@ -70,14 +71,14 @@ baseline
 We have cycle specific data with $id$ and outcome $y$
 
 ```{r}
-data(haploX)
+haploX  <- haplo$haploX
 dlist(haploX,.~id|id %in% c(1,4,7))
 ```
 and a list of possible haplo-types for each id and how likely they are  $p$ 
 (the sum of within each id is 1): 
 
 ```{r}
-data(hHaplos) ## loads ghaplos 
+ghaplos <- haplo$ghaplos
 head(ghaplos)
 ```
 

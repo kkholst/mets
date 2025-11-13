@@ -6,6 +6,8 @@
 \alias{mets}
 \title{mets: Analysis of Multivariate Event Times}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Implementation of various statistical models for multivariate event history data \doi{10.1007/s10985-013-9244-x}. Including multivariate cumulative incidence models \doi{10.1002/sim.6016}, and bivariate random effects probit models (Liability models) \doi{10.1016/j.csda.2015.01.014}. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions.
 
 Implementation of various statistical models for multivariate

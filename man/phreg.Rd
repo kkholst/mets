@@ -5,13 +5,14 @@
 \alias{phreg.par}
 \alias{robust.phreg}
 \alias{readPhreg}
-\alias{IIDbaseline.phreg}
 \alias{conftype}
 \alias{plotO.predictphreg}
 \alias{plotpredictphreg}
 \alias{predictO.phreg}
 \alias{predictrecreg}
 \alias{summarybase.phreg}
+\alias{namesortme}
+\alias{construct_id}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)
@@ -36,10 +37,10 @@ influence functions (iid) will follow numerical order of given cluster variable
 so ordering after $id will give iid in order of data-set.
 }
 \examples{
+library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
-## robust standard errors default 
+out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4)+cluster(id),data=TRACE)
 summary(out1)
 
 par(mfrow=c(1,2))
@@ -49,11 +50,16 @@ plot(out1)
 rob1 <- robust.phreg(out1)
 plot(rob1,se=TRUE,robust=TRUE)
 
-## taking iid decomposition of regression parameters
-betaiiid <- lava::iid(out1)
-
+## iid decomposition, with scaled influence functions
+## for regression parameters
+head(iid(out1))
 ## making iid decomposition of baseline at a specific time-point
-Aiiid <- mets::IIDbaseline.phreg(out1,time=30)
+Aiiid <- iid(out1,time=30)
+head(Aiiid)
+## both iid decompositions
+dd <- iidBaseline(out1,time=30)
+head(dd$beta.iid)
+head(dd$base.iid)
 
 }
 \author{

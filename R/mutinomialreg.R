@@ -21,17 +21,22 @@
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##'
+##' library(mets)
 ##' data(bmt)
+##' bmt$id <- sample(200,408,replace=TRUE)
 ##' dfactor(bmt) <- cause1f~cause
 ##' drelevel(bmt,ref=3) <- cause3f~cause
 ##' dlevels(bmt)
 ##'
-##' mreg <- mlogit(cause1f~+1,bmt)
+##' mreg <- mlogit(cause1f~+1+cluster(id),bmt)
 ##' summary(mreg)
+##' head(iid(mreg))
+##' dim(iid(mreg))
 ##'
 ##' mreg <- mlogit(cause1f~tcell+platelet,bmt)
 ##' summary(mreg)
+##' head(iid(mreg))
+##' dim(iid(mreg))
 ##' 
 ##' mreg3 <- mlogit(cause3f~tcell+platelet,bmt)
 ##' summary(mreg3)
@@ -81,7 +86,6 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
   return(res)
 }# }}}
 
-
 mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
        strata.name=NULL,cumhaz=FALSE,
        beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,
@@ -97,15 +101,8 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   if (!is.null(Z)) Zcall <- Z
   if (is.null(case.weights)) case.weights <- rep(1,length(Y)) 
 
-  if (!is.null(id)) {
-	  ids <- unique(id)
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-   } else id <- as.integer(seq_along(Y))-1; 
-   ## orginal id coding into integers 
-   id.orig <- id+1; 
+  call.id <- id
+  if (is.null(id)) id <- 1:nrow(X)
 
   types <- unique(as.numeric(Y))
   nlev <- length(types)
@@ -148,13 +145,12 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   loffset <- offset[idrow]
   lweights<- weights[idrow]
 
-###  print(list(...))
   res <- phreg(Surv(time,status)~XX+strata(idrow)+cluster(id),datph,weights=lweights,offset=loffset,...)
-
   res$model.frame <- model.frame.call
   res$formula <- formula.call
   res$X  <-  X.call 
   res$Y <- Y.call 
+###  res$name.id <- name.id
 
   res$px <- px
   res$nlev <- nlev

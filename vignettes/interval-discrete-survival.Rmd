@@ -24,16 +24,17 @@ library(mets)
 Discrete Inteval Censored survival times 
 ========================================
 
+We consider the cumulative odds model for the probability of dying before time t: 
 \begin{align*}
-   \mbox{logit}(P(T >t | x)) & = \log(G(t)) + x^T \beta              \\
-                P(T >t | x)  & =  \frac{1}{1 + G(t) exp( x^T \beta) }         
+   \mbox{logit}(P(T \leq t | x)) & = \log(G(t)) + x^T \beta              \\
+                P(T \leq t | x)  & =  \frac{G(t) exp( x^T \beta)}{1 + G(t) exp( x^T \beta) }          \\
+                P(T >t | x)  & =  \frac{1}{1 + G(t) exp( x^T \beta) }          
 \end{align*}
- 
 
 Input are intervals given by $]t_l,t_r]$ where t_r can be infinity
-for right-censored intervals. When the data is truly discrete,
-in contrast to grouping of continuous data, $]0,1]$ will be an
-observation at 1, and $]j,j+1]$ will be an observation at j+1.
+for right-censored intervals. When the data is discrete,
+in contrast to grouping of continuous data, $]0,1]$ then
+the intervals $]j,j+1]$ will be equvilant to an observation at j+1 (see below example).
 
 Likelihood is maximized:
 \begin{align*}
@@ -68,7 +69,13 @@ data(ttpd)
 dtable(ttpd,~entry+time2)
 out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
+
+dfactor(ttpd) <- entry.f~entry
+out <- cumoddsreg(entry.f~X1+X2+X3+X4,ttpd)
+summary(out)
 ```
+
+We note that the probability of dying is increased considerably for all covariates. 
 
 Now using this discrete survival model we simulate some data from this model 
 
@@ -167,20 +174,22 @@ summary(fit)
 ```
 
 Also agrees with the cumulative link regression of the ordinal package,
-although the baseline is parametrized differently.
+although the baseline is parametrized differently. In additon the clm is
+describing the probability of surviving rather than the probabibility of 
+dying. 
 
 ```{r}
 
 data(ttpd) 
 dtable(ttpd,~entry+time2)
-out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+ttpd <- dfactor(ttpd,fentry~entry)
+out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 summary(out)
 
 out$ploglik
 
 if (test==1) {
 ### library(ordinal)
-### ttpd <- dfactor(ttpd,fentry~entry)
 ### out1 <- clm(fentry~X1+X2+X3+X4,data=ttpd)
 ### summary(out1)
 

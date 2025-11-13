@@ -15,11 +15,12 @@
 ##' @param augmentR covariates for model of mean ratio
 ##' @param augmentC covariates for censoring augmentation
 ##' @param type augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"
+##' @param marks possible marks for composite outcome situation for model for counts with marks
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
-	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,...)
+	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,marks=NULL,...)
 { ## {{{
   cl <- match.call() ## {{{
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -64,28 +65,21 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
-  if (!is.null(id)) {
-      ids <- sort(unique(id))
-      nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-     orig.id <- id
-   } else { orig.id <- NULL; nid <- nrow(X); 
-             id <- as.integer(seq_along(exit))-1; ids <- NULL
-  }
-  ### id from call coded as numeric 1 -> 
+
+  call.id <- id 
+  conid <- construct_id(id,nrow(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  orig.id <- id
 
   if (is.null(offset)) offset <- rep(0,length(exit)) 
   if (is.null(weights)) weights <- rep(1,length(exit)) 
-  data$id__ <- id ## }}}
+  data$id__ <- id 
+  ## }}}
 
-  ## use sorted id for all things 
-  cid <- countID(data,"id__",sorted=TRUE)
-###  cid <- countID(data,"id__")
-  data$id__ <- cid$indexid
-
+## use sorted id for all things  and here indentify last record of each subject
+cid <- countID(data,"id__",sorted=TRUE)
 rrR <- subset(data,cid$reverseCountid==1)
+
 ## first var on rhs of formula
 vars <- all.vars(formula)
 treat.name <- vars[4]
@@ -97,15 +91,14 @@ ntreatvar <- as.numeric(treatvar)-1
 treat.formula <- treat.model <- as.formula(paste(treat.name,"~+1",sep=""))
 
 if (is.null(cens.formula)) cens.formula <- as.formula( paste("~strata(",treat.name,")",collapse=""))
-formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"==cens.code)~+cluster(id__)",collapse=""))
-formD <- as.formula( paste("Event(",vars[2],",",vars[3],"!=cens.code)~-1+",treat.name,"+cluster(id__)",collapse=""))
+formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in% cens.code)~+cluster(id__)",collapse=""))
+formD <- as.formula( paste("Event(",vars[2],",",vars[3],"%in% death.code )~-1+",treat.name,"+cluster(id__)",collapse=""))
 form1 <- as.formula( paste("Event(",vars[2],",",vars[3],")~-1+",treat.name,"+cluster(id__)",collapse=""))
 
-### varR <- all.vars(augmentR)
-### newaugR <- paste(c(varR),sep="",collapse="+")
-### varsR <- c(attr(terms(augmentR), "term.labels"))
-
-## take out intercept
+## drop id as cluster variable and use id__
+formula <- drop.specials(formula,"cluster")
+formula <- update(formula, .~.+cluster(id__))
+## take out intercept, to get mean in treated/non-treated
 formrec <- update(formula, reformulate(c(".", "-1")))
 
 if (!is.null(augmentR)) {
@@ -113,11 +106,12 @@ if (!is.null(augmentR)) {
    form1X <- update(form1, reformulate(c(".", varsR)))
 } else form1X <- form1
 
-###print(formD); print(formrec); print(form1); print(form1X); print(cens.formula);
 
 ## ratio of means ## {{{
-dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.model=cens.formula,time=time,model="l")
-ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.model=cens.formula,times=time,model="l")
+dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,
+		  model="lin")
+ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
+  cens.model=cens.formula,times=time,model="lin",marks=marks)
 cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
 ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) (p[1:2]/p[3:4]))
@@ -126,14 +120,22 @@ ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) log(p[1:
 RAW <- list(iid=cciid,coef=cc,time=time,rmst=dd,meanN=ddN,ratio.means=ratio.means,ratio.means.log=ratio.means.log)
 ## }}}
 
-data <- count.history(data,id="id__",types=cause,status=vars[3])
-nameCount <- paste("Count",cause,sep="")
+data <- count.history(data,id="id__",lag=TRUE,types=cause,status=vars[3],marks=marks,multitype=TRUE)
+
+nameCount <- paste("Count",cause[1],sep="")
 formulaCount <- update.formula(formula,.~+1)
 cform <- as.formula(paste("~",nameCount,"+cluster(id__)",sep=""))
 formulaCount <- update.formula(formulaCount,cform)
 
 ## While-Alive mean of events per time-unit 
-dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code)
+## with possible marks for death.codes 
+if (any(cause %in% death.code)) {
+	wd <- match(cause,death.code,nomatch=0)
+	mark.codes <- death.code[wd]
+} else mark.codes <- NULL
+dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code, mark.codes=mark.codes,marks=marks)
+
+### setting new response , Ratio of composite outcome
 rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,"ratio"]
 if (!is.null(trans)) {
      rrR[,"ratio__"] <- rrR[,"ratio__"]^trans
@@ -141,15 +143,14 @@ if (!is.null(trans)) {
 Yr <- rrR[,"ratio__"]
 
 if (is.null(type)) {
-	if (is.null(augmentC)) type <- "II" else type <- "I"
+    if (is.null(augmentC)) type <- "II" else type <- "I"
 }
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
-               Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
+      cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
 ET <- list(riskDR=outae)
 
-#ids <- countID(data,"id__",sorted=TRUE)
-### assume id is ordered 
+##  Yipcw as it comes in data frame 
 data[,"ratio__"] <- outae$Yipcw[cid$indexid+1]
 
 if (!is.null(augmentC)) { ## {{{
@@ -175,8 +176,7 @@ if (nlev == 2) {
     pal <- cbind(1 - pal, pal)
     ppp <- (pal/pal[, 1])
     spp <- 1/pal[, 1]
-}
-else {
+} else {
     treat.modelid <- update.formula(treat.model, . ~ . + cluster(id__))
     treat <- mlogit(treat.modelid, data)
     iidalpha <- lava::iid(treat)
@@ -206,9 +206,10 @@ treats <- treats(treatsvar)
 fitt <- fittreat(treat.model, rrR, idW, treats$ntreatvar, treats$nlev)
 iidalpha0 <- fitt$iidalpha
 wPA <- c(fitt$pA)
+## ordered after idW
+wPA <- wPA[order(idW)]
 
 riskDRC <- outae$riskDR+c(dc0$augment,dc1$augment)/nid
-
 MGC0 <- sumstrata(dc0$MGCiid/c(wPA[dc0$id+1]),dc0$id,nid)*dc0$n
 MGC1 <- sumstrata(dc1$MGCiid/c(wPA[dc1$id+1]),dc1$id,nid)*dc1$n
 MGC <- cbind(MGC0,MGC1)
@@ -221,9 +222,19 @@ se.riskDRC <- diag(varDRC)^.5
 
 riskDRC <- list(riskDRC=riskDRC,iid=iidDRC,var=varDRC,coef=riskDRC,se=se.riskDRC)
 ET <- list(riskDRC=riskDRC,riskDR=outae)
+###	   MGC=MGC,Y=data[,"ratio__"],dc0=dc0,dc1=dc1,wPA=wPA)
 } ## }}}
 
-out <- list(time=time,id=cid$indexid,orig.id=orig.id,trans=trans,cause=cause,cens.code=cens.code,death.code,
+###### sort iid after name.id and put as rownames
+if (!is.null(call.id)) {
+	ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
+	ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
+	ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)
+	ET$riskDR$iid <- namesortme(ET$riskDR$iid,name.id)
+}
+
+out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,
+	    trans=trans,cause=cause,cens.code=cens.code,death.code,
 	    RAW=RAW,ET=ET,augmentR=augmentR,augmentC=augmentC)
 class(out) <- "WA"
 return(out)
@@ -235,7 +246,7 @@ print.WA  <- function(x,type="log",...) {# {{{
 }# }}}
 
 ##' @export
-summary.WA <- function(object,type="p",...) {# {{{
+summary.WA <- function(object,type="p",augtype=NULL,...) {# {{{
 
 rmst <- estimate(object$RAW$rmst)
 rmst.test <- estimate(rmst,contrast=rbind(c(1,-1)))
@@ -249,7 +260,15 @@ meanNtD.test.log <- estimate(meanNtD.log,contrast=rbind(c(1,-1)))
 
 eer <- estimate(object$RAW$ratio.means)
 eedr <- estimate(eer,contrast=rbind(c(1,-1)))
+
+if (is.null(augtype)) {
+   augtype <- "riskDR"
+   if (!is.null(object$ET$riskDRC)) augtype <- "riskDRC" 
+}
+if (augtype=="riskDR")
 ee <- estimate(coef=object$ET$riskDR$riskDR,vcov=object$ET$riskDR$var.riskDR)
+if (augtype=="riskDRC")
+ee <- estimate(coef=object$ET$riskDRC$coef,vcov=object$ET$riskDRC$var)
 eed <- estimate(ee,contrast=rbind(c(1,-1)))
 eer.log <- object$RAW$ratio.means.log
 eedr.log <- estimate(eer.log,contrast=rbind(c(1,-1)))
@@ -257,9 +276,9 @@ eelog <-  estimate(ee,function(p) log(p))
 eedlog <- estimate(eelog,contrast=rbind(c(1,-1)))
 
 res <- list(rmst=rmst,rmst.test=rmst.test,meanNtD=meanNtD,meanNtD.test=meanNtD.test,
-	    ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)
+            ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)
 reslog <- list(rmst=rmst.log,rmst.test=rmst.test.log,
-	       meanNtD=meanNtD.log,meanNtD.test=meanNtD.test.log,
+               meanNtD=meanNtD.log,meanNtD.test=meanNtD.test.log,
     ratio=eer.log,test.ratio=eedr.log,meanpt=eelog,test.meanpt=eedlog)
 class(res) <- "summary.WA"
 class(reslog) <- "summary.WA"
@@ -307,8 +326,6 @@ if (is.null(time)) stop("must give time of response \n")
    data$Y__ <- data[,response]
    varsC <- c("Y__",attr(terms(augmentC), "term.labels"))
    formCC <- update(formC, reformulate(c(".", varsC)))
-###	www <- rep(1,nrow(data))
-###	if (treat.specific.cens==1)  www <-data$WW1__;  
    cr2 <- phreg(formCC, data = data, no.opt = TRUE, no.var = 1,Z=Z)
    xx <- cr2$cox.prep
    icoxS0 <- rep(0,length(cr2$S0))
@@ -365,21 +382,136 @@ if (is.null(time)) stop("must give time of response \n")
    gammattt[jumpsCt,] <- gammatt
    gammaEsdLam0 <- apply(gammasE*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
    gammadLam0 <-   apply(gammattt*S0i*xxtime,2,cumsumstrata,xx$strata,xx$nstrata)
-   XgammadLam0 <- .Call("CubeMattime",gammadLam0,xx$X[,-1],pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
+   XgammadLam0 <- .Call("CubeMattime",gammadLam0,xx$X[,-1,drop=FALSE],pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
    Ut <- Et <- matrix(0,length(xx$strata),1)
    Ut[jumpsCt,] <- augmentt.times
    MGCt <- Ut[,drop=FALSE]-(XgammadLam0-gammaEsdLam0)*c(rr0)
    MGCiid <- apply(MGCt,2,sumstrata,xx$id,nid)
    MGCiid <- MGCiid/nid
-   #
 
-   nid <- max(cr2$id)
-   ids <- headstrata(cr2$id-1,nid)
-   ids <- cr2$call.id[ids]
-
-   res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times, id=ids,n=nid)
+   nid <- max(cr2$id)+1
+   res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times,
+	       id=cr2$name.id,n=nid)
 } ## }}}
 
+##' Evaluates piece constant covariates at min(D,t) where D is a terminal event
+##'
+##' returns X(min(D,t)) and min(D,t) and their ratio. for censored observation 0. 
+##' to use with the IPCW models implemented. 
+##'
+##' @param formula formula with 'Event' outcome and X to evaluate at min(D,t)
+##' @param data data frame
+##' @param death.code codes for death (terminating event, 2 default)
+##' @param time for evaluation 
+##' @param marks for terminal events to add marks*I(D <=t ,epsilon "in" mark.codes)  to X(min(D,t))
+##' @param mark.codes gives death codes for which to add mark value
+##' @author Thomas Scheike
+##' @export
+evalTerminal <- function(formula,data=data,death.code=2,time=NULL,marks=NULL,mark.codes=NULL)
+{# {{{
+    cl <- match.call()# {{{
+    m <- match.call(expand.dots = TRUE)[1:3]
+    special <- c("strata", "cluster","offset")
+    Terms <- terms(formula, special, data = data)
+    m$formula <- Terms
+    m[[1]] <- as.name("model.frame")
+    m <- eval(m, parent.frame())
+    Y <- model.extract(m, "response")
+    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+    if (ncol(Y)==2) {
+        exit <- Y[,1]
+        entry <- NULL ## rep(0,nrow(Y))
+        status <- Y[,2]
+    } else {
+        entry <- Y[,1]
+        exit <- Y[,2]
+        status <- Y[,3]
+    }
+    id <- strata <- NULL
+    if (!is.null(attributes(Terms)$specials$cluster)) {
+        ts <- survival::untangle.specials(Terms, "cluster")
+        pos.cluster <- ts$terms
+        Terms  <- Terms[-ts$terms]
+        id <- m[[ts$vars]]
+    } else pos.cluster <- NULL
+###    if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+###        ts <- survival::untangle.specials(Terms, "strata")
+###        pos.strata <- ts$terms
+###        Terms  <- Terms[-ts$terms]
+###        strata <- m[[ts$vars]]
+###        strata.name <- ts$vars
+###    }  else { strata.name <- NULL; pos.strata <- NULL}
+###    if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+###        ts <- survival::untangle.specials(Terms, "offset")
+###        Terms  <- Terms[-ts$terms]
+###        offset <- m[[ts$vars]]
+###    }
+    X <- model.matrix(Terms, m)
+    if (!is.null(intpos  <- attributes(Terms)$intercept))
+        X <- X[,-intpos,drop=FALSE]
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+    ## }}}
 
+   if (is.null(time)) time <- max(exit)+1
 
+###   if (!is.null(id)) {
+###	   call.id <- id
+###        ids <- unique(id)
+###        nid <- length(ids)
+###        if (is.numeric(id))
+###            id <-  fast.approx(ids,id)-1
+###        else  {
+###            id <- as.integer(factor(id,labels=seq(nid)))-1
+###        }
+###    } else { call.id <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
+###    ## orginal id coding into integers 1:...
+###   id <- id+1
+
+###   ## new id 1,2,.... and so on, referring to rows of data
+   call.id <- id
+   conid <- construct_id(id,length(exit))
+   id <- conid$id+1; nid <- conid$nid; 
+
+   call.marks <- marks
+   if (is.null(marks)) marks <- rep(1,length(id))
+
+###   dd <- data.frame(id=id)
+###   dd <- countID(dd,sorted=TRUE)
+###   ## new id 1,2,.... and so on, referring to rows of data
+###   id <- dd$indexid+1
+
+ ###
+ indexD  <- which(exit <= time & (status %in% death.code))
+ indexDM  <- which(exit <= time & (status %in% mark.codes))
+ idD <- id[indexD]
+ idDM <- id[indexDM]
+ obsid <- MarkDid <- Dmintid <- rep(0,nid)
+ Dmintid[idD] <- exit[indexD]
+ MarkDid[idDM] <- marks[idDM]
+ ### 
+ indexA<- which(entry <= time & time <= exit)
+ idA <- id[indexA]
+ Dmintid[idA] <- time
+ obsid[idA] <- 1
+ Dmint <- Dmintid[id]
+ obsid[idA] <- 1
+ obsid[idD] <- 1
+ ###
+ XminDtid <- matrix(0,nid,ncol(X))
+ colnames(XminDtid) <- colnames(X)
+ XminDtid[idD,] <- X[indexD,]
+ XminDtid[idA,]  <- X[indexA,]
+ if (length(idDM)>0) XminDtid  <- XminDtid+MarkDid
+ XminDt <- XminDtid[id,,drop=FALSE]
+ ratio <- rep(0,length(exit))
+ obs <- obsid[id]
+ ratio[obs==1] <- XminDt[obs==1]/Dmint[obs==1]
+
+ nX <- colnames(XminDt) <- paste(colnames(X),"minDt",sep="") 
+ if (ncol(X)==1) nR <- "ratio" else nR <- paste(colnames(X),"ratio",sep="") 
+ dd <- data.frame(cbind(XminDt,Dmint,id,call.id,obs,ratio))
+ colnames(dd) <- c(nX,"minDt","nid","call.id","uncensored",nR)
+
+ return(dd)
+} # }}}
 

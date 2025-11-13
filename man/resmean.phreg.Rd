@@ -30,6 +30,7 @@ the last event time withn a strata the curves are extrapolated using the estimat
 cumulative incidence.
 }
 \examples{
+library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 
@@ -39,10 +40,23 @@ par(mfrow=c(1,2))
 plot(rm1,se=1)
 plot(rm1,years.lost=TRUE,se=1)
 
+## comparing populations, can also be done using rmstIPCW via influence functions
+rm1 <- resmean.phreg(out1,times=40)
+e1 <- estimate(rm1)
+e1
+estimate(e1,rbind(c(1,-1,0,0)))
+
 ## years.lost decomposed into causes
 drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
 par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 summary(drm1)
+
+## comparing populations, can also be done using rmstIPCW via influence functions
+drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
+summary(drm1)
+## first cause 
+e1 <- estimate(drm1)
+estimate(e1,rbind(c(1,-1,0,0)))
 }
 \author{
 Thomas Scheike

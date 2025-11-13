@@ -23,8 +23,8 @@ binreg(
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmst"),
-  model = "exp",
+  outcome = c("cif", "rmst", "rmtl"),
+  model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
   ...
 )
@@ -62,9 +62,9 @@ binreg(
 
 \item{augmentation}{to augment binomial regression}
 
-\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or "rmst-cause"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
+\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
 
-\item{model}{possible exp model for E( min(T, t) | X)=exp(X^t beta) , or E( I(epsilon==cause) ( t - mint(T,t)) ) | X)=exp(X^t beta)}
+\item{model}{link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
 
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
 
@@ -99,6 +99,7 @@ data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
+head(iid(out))
 
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 
@@ -126,8 +127,8 @@ dtable(bmtdob,cause+status~strata)
 
 cif1 <- cif(Event(time,cause)~+1,bmt,cause=1)
 cif2 <- cif(Event(time,cause)~+1,bmt,cause=2)
-bplot(cif1)
-bplot(cif2,add=TRUE,col=2)
+plot(cif1)
+plot(cif2,add=TRUE,col=2)
 
 cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
 cifs2 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
@@ -136,7 +137,7 @@ summary(cifs2)
 
 cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
-	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata)+cluster(id))
+	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
 summary(cifdob)
 
 riskratio <- function(p) {
