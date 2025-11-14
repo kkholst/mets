@@ -17,6 +17,7 @@ cifreg(
   cause = 1,
   cens.code = 0,
   no.codes = NULL,
+  death.code = NULL,
   ...
 )
 }
@@ -32,6 +33,8 @@ cifreg(
 \item{cens.code}{code of censoring}
 
 \item{no.codes}{certain event codes to be ignored when finding competing causes}
+
+\item{death.code}{can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)}
 
 \item{...}{Additional arguments to recreg}
 }
@@ -78,10 +81,15 @@ plot(por)
 ## Fine-Gray model
 fg=cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 summary(fg)
+##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)
+##summary(fg)
 plot(fg)
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pfg <- predict(fg,nd,se=1)
 plot(pfg,se=1)
+
+## bt <- iidBaseline(fg,time=30)
+## bt <- IIDrecreg(fg$cox.prep,fg,time=30)
 
 ## not run to avoid timing issues
 ## gofFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
