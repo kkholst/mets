@@ -8,7 +8,8 @@ phreg_weibull(formula, shape.formula = ~1, data, control = list())
 }
 \arguments{
 \item{formula}{Formula for proportional hazards. The right-handside must be
-an [Event] or [Surv] object.}
+an [Event] or [Surv] object (with right-censoring and possibly delayed
+entry).}
 
 \item{shape.formula}{Formula for shape parameter}
 
@@ -20,28 +21,25 @@ an [Event] or [Surv] object.}
 `phreg.par` object
 }
 \description{
-Fits a Cox-Weibull with cumulative hazard given by
-\deqn{
- \Lambda(t) = \lambda \cdot t^s
-}
-where \eqn{s} is the shape parameter, and \eqn{\lambda} the rate parameter.
-We here allow a regression model for both parameters
-\deqn{\lambda := \exp(\beta^\top X)}
-\deqn{s := \exp(\gamma^\top Z)}
-as defined by `formula` and `shape.formula` respectively.
+Fits a Cox-Weibull with cumulative hazard given by \deqn{
+  \Lambda(t) = \lambda \cdot t^s } where \eqn{s} is the shape parameter, and
+  \eqn{\lambda} the rate parameter. We here allow a regression model for
+  both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
+  \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
+  respectively.
 }
 \examples{
 data(sTRACE, package="mets")
 sTRACE$entry <- 0
 fit1 <- phreg_weibull(Event(entry, time, status == 9) ~ age,
              shape.formula = ~age, data = sTRACE)
-tt <- seq(0,10, length.out=50)
+tt <- seq(0,10, length.out=100)
 pr1 <- predict(fit1, newdata = sTRACE[1, ], times = tt)
 fit2 <- phreg(Event(time, status == 9) ~ age, data = sTRACE)
 pr2 <- predict(fit2, newdata = sTRACE[1, ], se = FALSE)
 if (interactive()) {
-   plot(pr2$times, pr2$surv)
-   points(tt, pr[,1,1], col="red", cex=0.5)
+   plot(pr2$times, pr2$surv, type="s")
+   lines(tt, pr1[,1,1], col="red", lwd=2)
 }
 }
 \seealso{
