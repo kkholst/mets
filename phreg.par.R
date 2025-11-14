@@ -1,4 +1,4 @@
-###{{{ Weibull
+## Weibull
 
 info_phreg_weibull <- function(...) {
     list(npar = 2,
@@ -13,9 +13,9 @@ info_phreg_weibull <- function(...) {
          )
 }
 
-logl_phreg_weibull <- function(theta, time, status,
+logl_phreg_weibull <- function(theta, start, stop, status,
                                X=NULL, theta.idx=NULL,
-                              indiv=FALSE) {
+                               indiv=FALSE) {
   if (!is.null(theta.idx)) {
     offsets <- which(is.na(theta.idx))
     theta <- theta[theta.idx]
@@ -31,8 +31,9 @@ logl_phreg_weibull <- function(theta, time, status,
   }
 
   val <- status*log(lambda*p) +
-    status*(p-1)*log(lambda*time) +
-    status*eta - (lambda*time)^p*exp(eta)
+    status*(p-1)*log(lambda*stop) +
+    status*eta - (lambda*stop)^p*exp(eta) +
+    (lambda*start)^p*exp(eta) # truncation
   if (indiv)
     return(val)
   sum(val)
@@ -41,7 +42,24 @@ logl_phreg_weibull <- function(theta, time, status,
 obj_phreg_weibull <- function(...)
   -logl_phreg_weibull(...)
 
-score_phreg_weibull <- function(theta, time, status,
+
+dcumhaz_weibull <- function(theta1, theta2, time, x = 1) {
+  L <- (theta1 * time) ** theta2
+  d1 <- theta2 / theta1 * L
+  d2 <- log(theta2) * L
+  d11 <- -d1/theta1 + theta2 / theta1 * d1
+  d22 <- 1 / theta2 * L + log(theta2) * d2
+  d12 <- log(theta2) * d1
+  return(
+    list(d1 = d1,
+       d2 = d2,
+       d11 = d11,
+       d22 = d22,
+       d12 = d12)
+  )
+}
+
+score_phreg_weibull <- function(theta, start, stop, status,
                                 X=NULL, theta.idx=NULL, indiv=FALSE) {
   if (!is.null(theta.idx)) {
     offsets <- which(is.na(theta.idx))
@@ -50,9 +68,12 @@ score_phreg_weibull <- function(theta, time, status,
   }
   lambda <- exp(theta[1])
   p <- exp(theta[2])
-  lambdaT <- lambda*time
+  lambdaT <- lambda*stop
   loglambdaT <- log(lambdaT)
   lambdaTp <- exp(loglambdaT*p)
+  lambdaS <- lambda*start
+  loglambdaS <- log(lambdaS)
+  lambdaSp <- exp(loglambdaS*p)
 
   if (is.null(X)) {
     eta <- 0
@@ -64,9 +85,11 @@ score_phreg_weibull <- function(theta, time, status,
     expeta <- exp(eta)
     dbeta <- ((status-expeta*lambdaTp) %x% rbind(rep(1, NCOL(X))))*X
   }
-  dp <- status*(1/p + loglambdaT) - loglambdaT*lambdaTp*expeta
+  dp <- status*(1/p + loglambdaT) - loglambdaT*lambdaTp*expeta +
+    loglambdaS*lambdaSp*expeta
   dlogp <- p*dp
-  dlambda <- status*(p/lambda) - p*lambdaTp/lambda*expeta
+  dlambda <- status*(p/lambda) - p*lambdaTp/lambda*expeta +
+    p*lambdaSp/lambda*expeta
   dloglambda <- lambda*dlambda
   S <- cbind(dloglambda, dlogp, dbeta)
   if (!is.null(theta.idx)) {
@@ -82,103 +105,115 @@ score_phreg_weibull <- function(theta, time, status,
   colSums(S)
 }
 
-hessian_phreg_weibull <- function(theta, time, status,
-                                  X=NULL, theta.idx=NULL,
-                                  all=FALSE) {
-  if (!is.null(theta.idx)) {
-    offsets <- which(is.na(theta.idx))
-    theta <- theta[theta.idx]
-    theta[offsets] <- 1
-  }
-  lambda <- exp(theta[1])
-  p <- exp(theta[2])
-  lambdaT <- lambda*time
-  loglambdaT <- log(lambdaT)
-  Tp <- time^p
-  lambdaTp <- lambda^p*Tp
-    if (is.null(X)) {
-    eta <- 0
-    expeta <- 1
-    d2dlogpdbeta <- d2dlogpdbeta <- d2beta <- NULL
-  } else {
-    beta <- theta[-c(1:2)]
-    eta <- X %*% beta
-    expeta <- exp(eta)
-    ## D(beta,beta)
-    U <- ((expeta*Tp) %x% rbind(rep(1, NCOL(X))))*X
-    d2beta <- -t(lambda^p*U) %*% X
-    ## D(p,beta)
-    d2dpdbeta <-  colSums(-((loglambdaT*lambdaTp*expeta) %x%
-                            rbind(rep(1, NCOL(X))))*X)
-    d2dlogpdbeta <- d2dpdbeta*p
-    ## D(lambda,beta)
-    d2dlambdadbeta <- -U*p*lambda^(p-1)
-    d2dloglambdadbeta <- colSums(d2dlambdadbeta)*lambda
-  }
-  ## D(p,p)
-  dp <- status*(1/p + loglambdaT) - loglambdaT*lambdaTp*expeta
-  d2p <- -sum(status/(p^2) + loglambdaT^2*expeta*lambdaTp)
-  dlogp <- p*dp
-  d2logp <- sum(dlogp)+p^2*d2p
-  ## D(lambda,lambda)
-  dlambda <- status*(p/lambda) - p*lambdaTp/lambda*expeta
-  d2lambda <- -sum(status*(p/lambda^2) + p*(p-1)*lambdaTp/(lambda^2)*expeta)
-  dloglambda <- lambda*dlambda
-  d2loglambda <- sum(dloglambda)+lambda^2*d2lambda
-  ## D(p,lambda)
-  d2dpdlambda <- -status/(p^2) - loglambdaT^2*expeta*lambdaTp
-  d2dpdlambda <- status/lambda - lambdaTp/lambda*expeta -
-    p*loglambdaT*lambdaTp/lambda*expeta
-  d2dlogpdloglambda <- sum(d2dpdlambda)*p*lambda
-  ## Hessian:
-  H <- matrix(0, length(theta), length(theta))
-  H[1, 1] <- d2loglambda
-  H[2, 2] <- d2logp
-  H[1, 2] <- H[2, 1] <- d2dlogpdloglambda
-  if (!is.null(X)) {
-    H[3:length(theta), 3:length(theta)] <- d2beta
-    H[2, 3:length(theta)] <- H[3:length(theta), 2] <- d2dlogpdbeta
-    H[1, 3:length(theta)] <- H[3:length(theta), 1] <- d2dloglambdadbeta
-  }
-  if (!is.null(theta.idx)) {
-    u.idx <- na.omit(unique(theta.idx))
-    newH <- matrix(0, length(u.idx), length(u.idx))
-    for (i in u.idx) {
-      for (j in u.idx) {
-        newH[i, j] <- sum(H[which(theta.idx==i), which(theta.idx==j)])
-      }
-    }
-    H <- newH
-  }
-  if (all) {
-    ## Score:
-    if (is.null(X)) dbeta <- NULL else dbeta <- status*X-lambda^p*U
-    S <- cbind(dloglambda, dlogp, dbeta)
-    if (!is.null(theta.idx)) {
-      u.idx <- na.omit(unique(theta.idx))
-      newS <- matrix(0, ncol=length(u.idx), nrow=nrow(S))
-      for (i in u.idx) {
-        newS[, i] <- cbind(rowSums(S[, which(theta.idx==i), drop=FALSE]))
-      }
-      S <- newS
-    }
-    attributes(H)$grad <- colSums(S)
-    attributes(H)$score <- S
-    ## LogLik
-    attributes(H)$logL <- sum(status*log(lambda*p) +
-                              status*(p-1)*loglambdaT +
-                              status*eta - lambdaTp*expeta)
-  }
-  return(H)
-}
+## hessian_phreg_weibull <- function(theta, start, stop, status,
+##                                   X=NULL, theta.idx=NULL,
+##                                   all=FALSE) {
+##   if (!is.null(theta.idx)) {
+##     offsets <- which(is.na(theta.idx))
+##     theta <- theta[theta.idx]
+##     theta[offsets] <- 1
+##   }
+##   lambda <- exp(theta[1])
+##   p <- exp(theta[2])
+##   D <- dcumhaz_weibull(lambda, p, stop)
 
-###}}} Weibull
-
-###{{{ Generalized-Gamma
+##   return(D)
 
 
-## http://www.stanford.edu/~lutian/coursepdf/unit1.pdf
+## }
 
+## hessian_phreg_weibull <- function(theta, start, stop, status,
+##                                   X=NULL, theta.idx=NULL,
+##                                   all=FALSE) {
+##   if (!is.null(theta.idx)) {
+##     offsets <- which(is.na(theta.idx))
+##     theta <- theta[theta.idx]
+##     theta[offsets] <- 1
+##   }
+##   lambda <- exp(theta[1])
+##   p <- exp(theta[2])
+##   lambdaT <- lambda*time
+##   loglambdaT <- log(lambdaT)
+##   Tp <- time^p
+##   lambdaTp <- lambda^p*Tp
+##     if (is.null(X)) {
+##     eta <- 0
+##     expeta <- 1
+##     d2dlogpdbeta <- d2dlogpdbeta <- d2beta <- NULL
+##   } else {
+##     beta <- theta[-c(1:2)]
+##     eta <- X %*% beta
+##     expeta <- exp(eta)
+##     ## D(beta,beta)
+##     U <- ((expeta*Tp) %x% rbind(rep(1, NCOL(X))))*X
+##     d2beta <- -t(lambda^p*U) %*% X
+##     ## D(p,beta)
+##     d2dpdbeta <-  colSums(-((loglambdaT*lambdaTp*expeta) %x%
+##                             rbind(rep(1, NCOL(X))))*X)
+##     d2dlogpdbeta <- d2dpdbeta*p
+##     ## D(lambda,beta)
+##     d2dlambdadbeta <- -U*p*lambda^(p-1)
+##     d2dloglambdadbeta <- colSums(d2dlambdadbeta)*lambda
+##   }
+##   ## D(p,p)
+##   dp <- status*(1/p + loglambdaT) - loglambdaT*lambdaTp*expeta
+##   d2p <- -sum(status/(p^2) + loglambdaT^2*expeta*lambdaTp)
+##   dlogp <- p*dp
+##   d2logp <- sum(dlogp)+p^2*d2p
+##   ## D(lambda,lambda)
+##   dlambda <- status*(p/lambda) - p*lambdaTp/lambda*expeta
+##   d2lambda <- -sum(status*(p/lambda^2) + p*(p-1)*lambdaTp/(lambda^2)*expeta)
+##   dloglambda <- lambda*dlambda
+##   d2loglambda <- sum(dloglambda)+lambda^2*d2lambda
+##   ## D(p,lambda)
+##   d2dpdlambda <- -status/(p^2) - loglambdaT^2*expeta*lambdaTp
+##   d2dpdlambda <- status/lambda - lambdaTp/lambda*expeta -
+##     p*loglambdaT*lambdaTp/lambda*expeta
+##   d2dlogpdloglambda <- sum(d2dpdlambda)*p*lambda
+##   ## Hessian:
+##   H <- matrix(0, length(theta), length(theta))
+##   H[1, 1] <- d2loglambda
+##   H[2, 2] <- d2logp
+##   H[1, 2] <- H[2, 1] <- d2dlogpdloglambda
+##   if (!is.null(X)) {
+##     H[3:length(theta), 3:length(theta)] <- d2beta
+##     H[2, 3:length(theta)] <- H[3:length(theta), 2] <- d2dlogpdbeta
+##     H[1, 3:length(theta)] <- H[3:length(theta), 1] <- d2dloglambdadbeta
+##   }
+##   if (!is.null(theta.idx)) {
+##     u.idx <- na.omit(unique(theta.idx))
+##     newH <- matrix(0, length(u.idx), length(u.idx))
+##     for (i in u.idx) {
+##       for (j in u.idx) {
+##         newH[i, j] <- sum(H[which(theta.idx==i), which(theta.idx==j)])
+##       }
+##     }
+##     H <- newH
+##   }
+##   if (all) {
+##     ## Score:
+##     if (is.null(X)) dbeta <- NULL else dbeta <- status*X-lambda^p*U
+##     S <- cbind(dloglambda, dlogp, dbeta)
+##     if (!is.null(theta.idx)) {
+##       u.idx <- na.omit(unique(theta.idx))
+##       newS <- matrix(0, ncol=length(u.idx), nrow=nrow(S))
+##       for (i in u.idx) {
+##         newS[, i] <- cbind(rowSums(S[, which(theta.idx==i), drop=FALSE]))
+##       }
+##       S <- newS
+##     }
+##     attributes(H)$grad <- colSums(S)
+##     attributes(H)$score <- S
+##     ## LogLik
+##     attributes(H)$logL <- sum(status*log(lambda*p) +
+##                               status*(p-1)*loglambdaT +
+##                               status*eta - lambdaTp*expeta)
+##   }
+##   return(H)
+## }
+
+
+## Generalized Gamma
 gengamma_phreg_f <- function(t, p, lambda, alpha, ...) {
     p*lambda*(lambda*t)^(alpha-1)*exp(-(lambda*t)^p)/gamma(alpha/p)
 }
@@ -223,7 +258,7 @@ info_phreg_gengamma <- function(...) {
     list(npar=3, start=c(-1, -1, -1), name="gengamma")
 }
 
-###}}} Generalized-Gamma
+
 
 ##' @export
 predict.phreg.par <- function(object, p=coef(object),
@@ -237,52 +272,62 @@ predict.phreg.par <- function(object, p=coef(object),
     exp(-(info$cumhaz(time, info$partrans(p))*exp(eta)))
 }
 
-
-
-###{{{ phreg.par + methods
-
 ##' @export
+##' @param formula
+##' @param data
+##' @param formula2
+##' @param time
+##' @param status
+##' @param X
+##' @param model
+##' @param theta.idx
+##' @param theta0
+##' @param niter
+##' @param tol1
+##' @param tol2
+##' @param lambda1
+##' @param lambda2
+##' @param trace
+##' @param ...
+##'
+##' @examples
+##' m <- lava::lvm(y~x) |>
+##'     distribution(~y, value = coxWeibull.lvm(shape=3,scale=5)) |>
+##'     transform(~status) <- function(...) TRUE
+##'
+##' d <- lava::sim(m,2e4,p=c("y~x"=2))
 phreg.par <- function(formula, data=parent.frame(),
-                      time, status, X=NULL, model="weibull",
+                      entry, exit, status, strata, X=NULL,
+                      model="weibull",
                       theta.idx=NULL, theta0,
-                      niter=100, tol1=1e-9, tol2=1e-9,
-                      lambda1=0.5, lambda2=1, trace=0, ...) {
+                      control = list(
+                        niter=100,
+                        tol1=1e-9,
+                        tol2=1e-9,
+                        lambda1=0.5,
+                        lambda2=1,
+                        trace=0
+                      ), ...) {
 
     if (!missing(formula)) {
         cl <- match.call()
-        m <- match.call(expand.dots = TRUE)[1:3]
-        special <- c("strata", "cluster")
-        Terms <- terms(formula, special, data = data)
-        m$formula <- Terms
-        m[[1]] <- as.name("model.frame")
-        m <- eval(m, parent.frame())
-        Y <- model.extract(m, "response")
-        if (!is.Surv(Y)) stop("Expected a 'Surv'-object")
+        des <- targeted::design(formula, data=data,
+                                specials=c("strata", "cluster"),
+                                intercept=FALSE)
+        Y <- des$y
+        if (!inherits(Y, c("Event", "Surv"))) stop("Expected 'Event' or 'Surv'-object")
         if (ncol(Y)==2) {
-            exit <- eval(Y[, 1], data)
-            entry <- NULL ## rep(0,nrow(Y))
+            exit <- Y[, 1]
+            entry <- rep(0,nrow(Y))
             status <- Y[, 2]
         } else {
             entry <- Y[, 1]
             exit <- Y[, 2]
             status <- Y[, 3]
         }
-        id <- strata <- NULL
-        if (!is.null(attributes(Terms)$specials$cluster)) {
-            ts <- survival::untangle.specials(Terms, "cluster")
-            Terms  <- Terms[-ts$terms]
-            id <- m[[ts$vars]]
-        }
-        if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-            ts <- survival::untangle.specials(Terms, "strata")
-            Terms  <- Terms[-ts$terms]
-            strata <- m[[ts$vars]]
-        }
-
-        X <- model.matrix(Terms, m)
-        if (!is.null(intpos  <- attributes(Terms)$intercept))
-            X <- X[, -intpos, drop=FALSE]
-        if (ncol(X)==0) X <- NULL
+        id <- des$cluster
+        strata <- des$strata
+        X <- des$x
         time <- exit
     }
 
@@ -361,6 +406,7 @@ phreg.par <- function(formula, data=parent.frame(),
                  time=time, status=status, X=X),
             class=c("phreg.par", "phreg"))
 }
+
 
 ##' @export
 print.phreg.par <- function(x, ...) {

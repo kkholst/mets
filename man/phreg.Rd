@@ -2,7 +2,6 @@
 % Please edit documentation in R/phreg.R
 \name{phreg}
 \alias{phreg}
-\alias{phreg.par}
 \alias{robust.phreg}
 \alias{readPhreg}
 \alias{conftype}

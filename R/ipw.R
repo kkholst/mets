@@ -44,8 +44,10 @@ ipw <- function(formula,data,cluster,
 
     ##cens.args <- c(list(formula,n.sim=0,robust=0,data=eval(data)),list(...))
     if (tolower(cens.model)%in%c("weibull","phreg.par","phreg.weibull")) {
-	ud.cens <- phreg.par(formula,data,...)
-        pr <- predict(ud.cens)
+        ud.cens <- phreg_weibull(formula, data, ...)
+        pr <- predict(ud.cens,
+                      newdata = data, times = ud.cens$response$exit,
+                      individual.times = TRUE)[, 1]
         noncens <- which(!ud.cens$status)        
     } else { ## {{{ 
         m <- match.call(expand.dots = FALSE)
