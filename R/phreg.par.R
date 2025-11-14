@@ -34,7 +34,6 @@ pred_weibull <- function(object, X, Z,
       est_arr <- array(dim = c(nt, 4, n))
       newtime <- times
     }
-    time <- times
     for (i in seq_len(n)) {
         if (individual.times) {
             newtime <- times[i]
@@ -43,14 +42,14 @@ pred_weibull <- function(object, X, Z,
             pr <- estimate(
                 coef = par[i, ],
                 vcov = var_arr[, , i], f = survf, ...
-            ) |>
-             lava::parameter()
+            )
+            pr <- lava::parameter(pr)
         } else {
             pr <- estimate(
                 coef = par[i, ],
                 vcov = var_arr[, , i], f = haz, ...
-            ) |>
-             lava::parameter()
+            )
+            pr <- lava::parameter(pr)
         }
         if (individual.times) {
             est_arr[i, ] <- pr[1:4]
@@ -116,12 +115,12 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
 ##' @description
 ##' Fits a Cox-Weibull with cumulative hazard given by
 ##' \deqn{
-##'  \Lambda(t) = \alpha t^s
+##'  \Lambda(t) = \lambda \cdot t^s
 ##' }
-##' where \eqn{s} is the shape parameter, and \eqn{\alpha} the scale parameter.
+##' where \eqn{s} is the shape parameter, and \eqn{\lambda} the rate parameter.
 ##' We here allow a regression model for both parameters
-##' \deqn{alpha := \beta^\top X}
-##' \deqn{s := \gamma^\top Z}
+##' \deqn{\lambda := \exp(\beta^\top X)}
+##' \deqn{s := \exp(\gamma^\top Z)}
 ##' as defined by `formula` and `shape.formula` respectively.
 ##' @title Weibull-Cox regression
 ##' @param formula Formula for proportional hazards. The right-handside must be
@@ -151,13 +150,13 @@ phreg_weibull <- function(formula,
                           data,
                           control = list()) {
     cl <- match.call()
-    des <- targeted::design(
+    des <- proc_design(
         formula,
         data = data,
         specials = c("offset", "weights", "cluster"),
         intercept = TRUE
     )
-    des2 <- targeted::design(shape.formula, data = data, intercept = TRUE)
+    des2 <- proc_design(shape.formula, data = data, intercept = TRUE)
     Y <- des$y
     if (!inherits(Y, c("Event", "Surv"))) {
         stop("Expected a 'Surv' or 'Event'-object")
@@ -261,8 +260,8 @@ predict.phreg.par <- function(object,
                               surv = TRUE,
                               level = 0.05,
                               ...) {
-    x <- update(object$design, data = newdata)$x
-    z <- update(object$shape.design, data = newdata)$x
+    x <- update_design(object$design, data = newdata)$x
+    z <- update_design(object$shape.design, data = newdata)$x
     pr <- pred_weibull(object,
         X = x, Z = z,
         times = times,

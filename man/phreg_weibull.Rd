@@ -22,12 +22,12 @@ an [Event] or [Surv] object.}
 \description{
 Fits a Cox-Weibull with cumulative hazard given by
 \deqn{
- \Lambda(t) = \alpha t^s
+ \Lambda(t) = \lambda \cdot t^s
 }
-where \eqn{s} is the shape parameter, and \eqn{\alpha} the scale parameter.
+where \eqn{s} is the shape parameter, and \eqn{\lambda} the rate parameter.
 We here allow a regression model for both parameters
-\deqn{alpha := \beta^\top X}
-\deqn{s := \gamma^\top Z}
+\deqn{\lambda := \exp(\beta^\top X)}
+\deqn{s := \exp(\gamma^\top Z)}
 as defined by `formula` and `shape.formula` respectively.
 }
 \examples{
