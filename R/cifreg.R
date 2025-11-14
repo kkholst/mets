@@ -28,6 +28,7 @@
 ##' @param cause of interest
 ##' @param cens.code code of censoring
 ##' @param no.codes certain event codes to be ignored when finding competing causes
+##' @param death.code can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)
 ##' @param ... Additional arguments to recreg 
 ##' @author Thomas Scheike
 ##' @examples
@@ -49,10 +50,15 @@
 ##' ## Fine-Gray model
 ##' fg=cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 ##' summary(fg)
+##' ##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)
+##' ##summary(fg)
 ##' plot(fg)
 ##' nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 ##' pfg <- predict(fg,nd,se=1)
 ##' plot(pfg,se=1)
+##' 
+##' ## bt <- iidBaseline(fg,time=30)
+##' ## bt <- IIDrecreg(fg$cox.prep,fg,time=30)
 ##' 
 ##' ## not run to avoid timing issues
 ##' ## gofFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
@@ -69,7 +75,7 @@
 ##' pfg1
 ##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG cifregFG
 ##' @export
-cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,...)
+cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,death.code=NULL,...)
 {# {{{
     cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
@@ -94,7 +100,8 @@ cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,..
     codes <- c(cause,cens.code) 
     if (!is.null(no.codes)) codes <- c(codes,no.codes) 
     mcodes <- match(codes,all.codes,nomatch=0)
-    death.code <- all.codes[-mcodes]
+    ## default death.code are all other codes 
+    if (is.null(death.code)) death.code <- all.codes[-mcodes]
 
     cif <- recreg(formula,data,propodds=propodds,cause=cause,cens.code=cens.code,death.code=death.code,...)
     class(cif) <- c("cifreg","phreg")
