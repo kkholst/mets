@@ -28,6 +28,9 @@ Fits a Cox-Weibull with cumulative hazard given by \deqn{
   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
   respectively.
 }
+\details{
+The parametrization
+}
 \examples{
 data(sTRACE, package="mets")
 sTRACE$entry <- 0

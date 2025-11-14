@@ -118,6 +118,8 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
 ##'   both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
 ##'   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
 ##'   respectively.
+##' @details
+##' The parametrization
 ##' @title Weibull-Cox regression
 ##' @param formula Formula for proportional hazards. The right-handside must be
 ##'   an [Event] or [Surv] object (with right-censoring and possibly delayed
@@ -221,7 +223,7 @@ print.phreg.par <- function(x, ...) {
     n <- length(x$response$status)
     events <- sum(x$response$status)
     nn <- rbind(c(n, events, sum(dur)))
-    colnames(nn) <- c("n","events","exposure-time")
+    colnames(nn) <- c("n","events","obs.time")
     rownames(nn) <- ""
     print(nn, quote=FALSE)
     cat("\n")
@@ -267,4 +269,24 @@ predict.phreg.par <- function(object,
         surv = surv, ...
     )
     return(pr)
+}
+
+##' @export
+##' @description Simulate observations from the model with cumulative hazard
+##'   given by \deqn{\Lambda(t) = \lambda\cdot t^s} where \eqn{\lambda} is the
+##'   \emph{rate parameter} and \eqn{s} is the \emph{shape parameter}.
+##' @details [stats::rweibull()] uses a different parametrization with
+##'   cumulative hazard given by
+##' \deqn{H(t) = (t/b)^a,}
+##' i.e., the shape is the same \eqn{a:=s} but the scale paramter \eqn{b}
+##' is related to rate paramter \eqn{r} by
+##' \deqn{r := b^{-a}}
+##' @seealso [stats::rweibull()]
+##' @title Simulate observations from a Weibull distribution
+##' @param n (integer) number of observations
+##' @param rate (numeric) rate parameter (can be a vector of size n)
+##' @param shape (numeric) shape parameter (can be a vector of size n)
+rweibullcox <- function(n, rate, shape) {
+  # F(t) = 1-exp(-H(t)) = 1-exp(-lambda t^s). Inversion=>
+  (-log(1-runif(n))/rate)^(1/shape)
 }
