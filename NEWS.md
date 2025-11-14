@@ -1,5 +1,9 @@
 # mets 1.3.9
-  - development version
+  Development version
+  
+  - `phreg_weibull`: allows for regression design on both rate and shape
+    parameter. Replaces `phreg.par`
+  - TODO: Clean-up `Event` and methods?  
 
 # mets 1.3.8
   - Updated vignette on simulation of survival data
