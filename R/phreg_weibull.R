@@ -112,19 +112,16 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
     return(cbind(X, Z))
 }
 
-##' @description
-##' Fits a Cox-Weibull with cumulative hazard given by
-##' \deqn{
-##'  \Lambda(t) = \lambda \cdot t^s
-##' }
-##' where \eqn{s} is the shape parameter, and \eqn{\lambda} the rate parameter.
-##' We here allow a regression model for both parameters
-##' \deqn{\lambda := \exp(\beta^\top X)}
-##' \deqn{s := \exp(\gamma^\top Z)}
-##' as defined by `formula` and `shape.formula` respectively.
+##' @description Fits a Cox-Weibull with cumulative hazard given by \deqn{
+##'   \Lambda(t) = \lambda \cdot t^s } where \eqn{s} is the shape parameter, and
+##'   \eqn{\lambda} the rate parameter. We here allow a regression model for
+##'   both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
+##'   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
+##'   respectively.
 ##' @title Weibull-Cox regression
 ##' @param formula Formula for proportional hazards. The right-handside must be
-##'   an [Event] or [Surv] object.
+##'   an [Event] or [Surv] object (with right-censoring and possibly delayed
+##'   entry).
 ##' @param shape.formula Formula for shape parameter
 ##' @param data data.frame
 ##' @param control control arguments to optimization routine [stats::nlmbin]
@@ -135,13 +132,13 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
 ##' sTRACE$entry <- 0
 ##' fit1 <- phreg_weibull(Event(entry, time, status == 9) ~ age,
 ##'              shape.formula = ~age, data = sTRACE)
-##' tt <- seq(0,10, length.out=50)
+##' tt <- seq(0,10, length.out=100)
 ##' pr1 <- predict(fit1, newdata = sTRACE[1, ], times = tt)
 ##' fit2 <- phreg(Event(time, status == 9) ~ age, data = sTRACE)
 ##' pr2 <- predict(fit2, newdata = sTRACE[1, ], se = FALSE)
 ##' if (interactive()) {
-##'    plot(pr2$times, pr2$surv)
-##'    points(tt, pr[,1,1], col="red", cex=0.5)
+##'    plot(pr2$times, pr2$surv, type="s")
+##'    lines(tt, pr1[,1,1], col="red", lwd=2)
 ##' }
 ##' @export
 ##' @return `phreg.par` object
