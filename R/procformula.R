@@ -501,6 +501,7 @@ update_design <- function(object, data = NULL, response=FALSE,  ...) {
       data = data,
       design.matrix = object$design.matrix,
       levels = object$levels,
+      response = response,
       intercept = object$intercept,
       specials = object$specials,
       specials.call = object$specials.call
