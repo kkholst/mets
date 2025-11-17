@@ -320,7 +320,7 @@ model.extract2 <- function(frame, component) {
 # #' @param specials character vector specifying functions in the formula that
 # #'   should be marked as special in the [terms] object
 # #' @param specials.call (call) specials optionally defined as a call-type
-# #' @param xlev a named list of character vectors giving the full set of levels
+# #' @param levels a named list of character vectors giving the full set of levels
 # #'   to be assumed for each factor
 # #' @param design.matrix (logical) if FALSE then only response and specials are
 # #'   returned. Otherwise, the design.matrix `x` is als part of the returned
@@ -346,7 +346,7 @@ proc_design <- function(formula, data, ..., # nolint
                    rm_envir = FALSE,
                    specials = NULL,
                    specials.call = NULL,
-                   xlev = NULL,
+                   levels = NULL,
                    design.matrix = TRUE) {
   dots <- substitute(list(...))
   if ("subset" %in% names(dots)) stop(
@@ -387,6 +387,8 @@ proc_design <- function(formula, data, ..., # nolint
     }
   }
 
+  xlev <- levels
+  xlev[["response_"]] <- NULL
   if (!design.matrix) { # only extract specials, response
     des <- attr(tt, "factors")
     fs <- update(formula, ~1)
@@ -398,10 +400,10 @@ proc_design <- function(formula, data, ..., # nolint
     mf <- model.frame(fs, data=data, ...)
   } else { # also extract design matrix
     mf <- model.frame(tt,
-                      data = data, ...,
-                      xlev = xlev,
-                      drop.unused.levels = FALSE
-                      )
+        data = data, ...,
+        xlev = xlev,
+        drop.unused.levels = FALSE
+        )
     if (is.null(xlev)) {
       xlev <- .getXlevels(tt, mf)
     }
@@ -411,6 +413,19 @@ proc_design <- function(formula, data, ..., # nolint
   y <- NULL
   if (response) {
       y <- model.response(mf, type = "any")
+      if (is.factor(y) || is.character(y)) {
+          ylev <- levels[["response_"]]
+          if (!is.null(ylev)) {
+              factor(y, levels = ylev)
+          } else {
+              ylev <- if (is.factor(y)) {
+                  levels(y)
+              } else if (is.character(y)) {
+                  levels(as.factor(y))
+              }
+              levels[["response_"]] <- ylev
+          }
+      }
   }
   has_intercept <- attr(tt, "intercept") == 1L
   specials <- union(
@@ -460,12 +475,13 @@ proc_design <- function(formula, data, ..., # nolint
   if (rm_envir) attr(tt, ".Environment") <- NULL
   if (is.null(specials.call)) specials.call <- dots
 
+  xlev[["response_"]] <- levels[["response_"]]
   res <- c(
     list(
       formula = formula, # formula without specials
       terms = tt,
       term.labels = term.labels,
-      xlevels = xlev,
+      levels = xlev,
       x = x, y = y,
       design.matrix = design.matrix,
       intercept = has_intercept,
@@ -484,7 +500,7 @@ update_design <- function(object, data = NULL, response=FALSE,  ...) {
     proc_design(object$terms,
       data = data,
       design.matrix = object$design.matrix,
-      xlev = object$xlevels,
+      levels = object$levels,
       intercept = object$intercept,
       specials = object$specials,
       specials.call = object$specials.call
