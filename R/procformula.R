@@ -328,7 +328,7 @@ model.extract2 <- function(frame, component) {
 # #' @return An object of class 'mets.design'
 proc_design <- function(formula, data, ..., # nolint
                    intercept = FALSE,
-                   response = FALSE,
+                   response = TRUE,
                    rm_envir = FALSE,
                    specials = NULL,
                    specials.call = NULL,
@@ -340,6 +340,9 @@ proc_design <- function(formula, data, ..., # nolint
   )
   tt <- terms(formula, data = data, specials = specials)
   term.labels <- attr(tt, "term.labels") # predictors
+
+  # delete response to generate design matrix when making predictions
+  if (!response) tt <- delete.response(tt)
 
   sterm.list <- c()
   if (length(specials) > 0) {
@@ -391,7 +394,10 @@ proc_design <- function(formula, data, ..., # nolint
     xlev0 <- xlev
   }
 
-  y <- model.response(mf, type = "any")
+  y <- NULL
+  if (response) {
+      y <- model.response(mf, type = "any")
+  }
   has_intercept <- attr(tt, "intercept") == 1L
   specials <- union(
     specials,
@@ -437,9 +443,6 @@ proc_design <- function(formula, data, ..., # nolint
     x <- NULL
   }
 
-  # delete response to generate design matrix when making predictions
-  if (!response) tt <- delete.response(tt)
-
   if (rm_envir) attr(tt, ".Environment") <- NULL
   if (is.null(specials.call)) specials.call <- dots
 
@@ -461,7 +464,7 @@ proc_design <- function(formula, data, ..., # nolint
   return(structure(res, class="mets.design"))
 }
 
-update_design <- function(object, data = NULL, ...) {
+update_design <- function(object, data = NULL, response=FALSE,  ...) {
   if (is.null(data)) data <- object$data
   return(
     proc_design(object$terms,
