@@ -326,6 +326,20 @@ model.extract2 <- function(frame, component) {
 # #'   returned. Otherwise, the design.matrix `x` is als part of the returned
 # #'   object.
 # #' @return An object of class 'mets.design'
+# #' @examples
+# #' n <- 1e3
+# #' a <- rbinom(n, 1, 0.5)
+# #' t <- rweibull(n, shape=0.5, exp(3 + a))
+# #' d <- data.frame(time=t, status=TRUE, a=a, id=seq(n), x=rnorm(n))
+# #' des <- proc_design(
+# #' Surv(time, status) ~ x + strata(a) + cluster(id),
+# #'   specials = c("strata", "cluster"),
+# #'   data=d)
+# #' new <- update_design(des, head(d))
+# #' new$strata
+# #' new$cluster
+# #' new$y
+# #' new$x
 proc_design <- function(formula, data, ..., # nolint
                    intercept = FALSE,
                    response = TRUE,
