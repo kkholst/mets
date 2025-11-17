@@ -151,7 +151,7 @@ symmetric and more appropiate for the twin analysis (see Figure
 <code class="sourceCode R"><span><span class="va">mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_twin.html">plot_twin</a></span><span class="op">(</span><span class="va">mz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/scatter1-1.png" alt="Scatter plot of logarithmic BMI measurements in MZ twins" width="600px"><p class="caption">
+<img src="quantitative-twin_files/figure-html/scatter1-1.png" class="r-plt" alt="Scatter plot of logarithmic BMI measurements in MZ twins" width="600px"><p class="caption">
 Scatter plot of logarithmic BMI measurements in MZ twins
 </p>
 </div>
@@ -159,7 +159,7 @@ Scatter plot of logarithmic BMI measurements in MZ twins
 <code class="sourceCode R"><span><span class="va">dz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinwide</span>, <span class="va">zyg</span><span class="op">==</span><span class="st">"DZ"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bmi1"</span>,<span class="st">"bmi2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_twin.html">plot_twin</a></span><span class="op">(</span><span class="va">dz</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/scatter2-1.png" alt="Scatter plot of logarithmic BMI measurements in DZ twins" width="600px"><p class="caption">
+<img src="quantitative-twin_files/figure-html/scatter2-1.png" class="r-plt" alt="Scatter plot of logarithmic BMI measurements in DZ twins" width="600px"><p class="caption">
 Scatter plot of logarithmic BMI measurements in DZ twins
 </p>
 </div>
@@ -192,7 +192,7 @@ trait</p>
 independence)</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">-</span><span class="fl">40</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l0</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l0</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             Estimate  Std.Err    2.5%   97.5%    P-value</span></span>
 <span><span class="co">#&gt; (Intercept)  23.3687 0.054534 23.2618 23.4756  0.000e+00</span></span>
 <span><span class="co">#&gt; gendermale    1.4077 0.073216  1.2642  1.5512  2.230e-82</span></span>
@@ -200,13 +200,13 @@ independence)</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"splines"</span><span class="op">)</span></span>
 <span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">gender</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age</span>,<span class="fl">3</span><span class="op">)</span>, data<span class="op">=</span><span class="va">twinbmi</span><span class="op">)</span></span>
-<span><span class="va">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l1</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">marg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">l1</span>, id<span class="op">=</span><span class="va">twinbmi</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
+<code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
 <span>        bmi<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span><span class="op">)</span>,</span>
 <span>        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">twinbmi</span>,</span>
 <span>        bmi<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        gender<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"female"</span><span class="op">)</span>,</span>
 <span>        age<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">33</span>,<span class="fl">61</span>,length.out<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
@@ -219,7 +219,7 @@ independence)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>,<span class="st">"Female"</span><span class="op">)</span>,</span>
 <span>       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="st">"red"</span><span class="op">)</span>, lty<span class="op">=</span><span class="fl">1</span>, bty<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="quantitative-twin_files/figure-html/marg1-1.png" alt="Marginal association between BMI and Age for males and females." width="600px"><p class="caption">
+<img src="quantitative-twin_files/figure-html/marg1-1.png" class="r-plt" alt="Marginal association between BMI and Age for males and females." width="600px"><p class="caption">
 Marginal association between BMI and Age for males and females.
 </p>
 </div>
@@ -295,7 +295,7 @@ pair)</p>
 <p>Same marginals but free correlation with MZ, DZ</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"eqmarg"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      Estimate  Std.Err    2.5%   97.5%    P-value</span></span>
 <span><span class="co">#&gt; bmi.1@1               18.6037 0.251036 18.1116 19.0957  0.000e+00</span></span>
 <span><span class="co">#&gt; bmi.1~age.1@1          0.1189 0.005635  0.1078  0.1299  9.177e-99</span></span>
@@ -306,7 +306,7 @@ pair)</p>
 <p>A formal test of genetic effects can be obtained by comparing the MZ
 and DZ correlation:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
 <span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -369,7 +369,7 @@ of adult twins, <i>Obesity (Silver Spring)</i>, <b>16(4)</b>, 847-852
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

@@ -7,7 +7,7 @@ and if continuous then considered covariate values are given by Avalues."><meta 
 for the Cox model based on phreg og the Fine-Gray model based on the
 cifreg function. Gives influence functions of these risk estimates and SE's are
 based on  these.  If first covariate is a factor then all contrast are computed,
-and if continuous then considered covariate values are given by Avalues."><meta property="og:image" content="/logo.png"></head><body>
+and if continuous then considered covariate values are given by Avalues."><meta property="og:image" content="http://kkholst.github.io/mets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -129,7 +129,7 @@ and if continuous then considered covariate values are given by Avalues.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
 <span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bmt</span><span class="op">$</span><span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tcell.f</span><span class="op">~</span><span class="va">tcell</span></span></span>
@@ -154,9 +154,6 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.6293888 0.4080142 0.9708737 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">survivalG</span><span class="op">(</span><span class="va">ss</span>,<span class="va">bmt</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -177,9 +174,17 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.8624767 0.6958226 1.0690456 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect:  survival-difference (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate   Std.Err        2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ps0 0.08992126 0.0629098 -0.03337969 0.2132222 0.1528985</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate   Std.Err        2.5%     97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.2309406 0.1503721 -0.06378329 0.5256645 0.1245888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.2597844 0.9382083 1.6915826 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell.f</span><span class="op">)</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span><span class="op">)</span> </span></span>
@@ -201,9 +206,17 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.9582769 0.7532197 1.2191590 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect:  survival-difference (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate    Std.Err      2.5%    97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ps0 0.02687251 0.07621848 -0.122513 0.176258 0.7244093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         Estimate   Std.Err       2.5%     97.5%   P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.07278456 0.2010782 -0.3213214 0.4668906 0.7173734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.0754988 0.7251901 1.5950269 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sst</span> <span class="op">&lt;-</span> <span class="fu">survivalGtime</span><span class="op">(</span><span class="va">ss</span>,<span class="va">bmt</span>,n<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
@@ -229,7 +242,7 @@ and if continuous then considered covariate values are given by Avalues.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-11-05</h4>
+            <h4 data-toc-skip class="date">2025-11-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/recurrent-events.Rmd" class="external-link"><code>vignettes/recurrent-events.Rmd</code></a></small>
       <div class="d-none name"><code>recurrent-events.Rmd</code></div>
@@ -365,7 +365,7 @@ function</p>
 <span><span class="co"># marginal mean of expected number of recurrent events </span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-4-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="600px"></p>
 <p>We can also extract the estimate in different time-points</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span>,times<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
@@ -387,7 +387,7 @@ function</p>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginal</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
 <span>             data<span class="op">=</span><span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="600px"></p>
 <p>Further, if we adjust for covariates for the two rates we can still
 do predictions of marginal mean, what can be plotted is the baseline
 marginal mean, that is for the covariates equal to 0 for both models.
@@ -407,7 +407,7 @@ standard error computation).</p>
 <span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recurrentMarginal.html">recurrentMarginalPhreg</a></span><span class="op">(</span><span class="va">xr</span>,<span class="va">xdr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span>,ylab<span class="op">=</span><span class="st">"marginal mean"</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="600px"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">#### predictions witout se's </span></span>
@@ -425,7 +425,7 @@ death</p>
 <span><span class="co">#&gt;     1  56   0   0   0</span></span>
 <span><span class="co">#&gt;     2  13   0   0   0</span></span>
 <span><span class="fu">mets</span><span class="fu">:::</span><span class="fu"><a href="../reference/simRecurrentII.html">showfitsimList</a></span><span class="op">(</span><span class="va">rr</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">base1</span>,<span class="va">base1</span>,<span class="va">base4</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">dr</span>,<span class="va">base4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="improving-efficiency">Improving efficiency<a class="anchor" aria-label="anchor" href="#improving-efficiency"></a>
@@ -516,7 +516,7 @@ developed in Cortese and Scheike (2022).</p>
 <span>    <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">k</span><span class="op">+</span><span class="fl">1</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Eff-pred"</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-9-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="600px"></p>
 <p>In the case where covariates might be important but we are still
 interested in the marginal mean we can also augment wrt these
 covariates</p>
@@ -617,7 +617,7 @@ the death rate given covariates are on Cox form with baseline dr:</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outs</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu"><a href="../reference/recreg.html">scalecumhaz</a></span><span class="op">(</span><span class="va">base1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="fl">3</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="600px"></p>
 <p>We note that for the extended censoring model we gain a little
 efficiency and that the estimates are close to the true values.</p>
 <p>Also possible to do IPCW regression at fixed time-point</p>
@@ -646,8 +646,8 @@ E(N_1(t) + I(D&lt;t,\epsilon=3) | X) &amp;  = \Lambda_0(t)  \exp(X^T \beta)
 <span>        death.code<span class="op">=</span><span class="fl">3</span>,cens.code<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span></span>
 <span><span class="co">#&gt;      Estimate      S.E.    dU^-1/2   P-value</span></span>
-<span><span class="co">#&gt; X1  0.4896610 0.3403976 0.07609363 0.1502931</span></span>
-<span><span class="co">#&gt; X2 -0.3056174 0.3395604 0.07595286 0.3680998</span></span></code></pre></div>
+<span><span class="co">#&gt; X1  0.4896610 0.3460183 0.07609363 0.1570303</span></span>
+<span><span class="co">#&gt; X2 -0.3056174 0.3459166 0.07595286 0.3769660</span></span></code></pre></div>
 <p>Also demonstrate that this can be done with competing risks death
 (change some of the cause 3 deaths to cause 4)
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>N</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>w</mi><mn>2</mn></msub><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mo>&lt;</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mi>Λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
@@ -679,7 +679,7 @@ that follow the causes, here 1 and 3.</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span>,ylab<span class="op">=</span><span class="st">"Mean composite"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outC</span>,col<span class="op">=</span><span class="fl">2</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outCW</span>,col<span class="op">=</span><span class="fl">3</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" width="600px"></p>
 <p>Predictions and standard errors can be computed via the iid
 decompositions of the baseline and the regression coefficients. We
 illustrate this for the standard Ghosh-Lin model and it requires that
@@ -705,11 +705,11 @@ the model is fitted with the option cox.prep=TRUE</p>
 <span><span class="va">baseiid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/iidBaseline.html">iidBaseline</a></span><span class="op">(</span><span class="va">out</span>,time<span class="op">=</span><span class="fl">3000</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/recreg.html">GLprediid</a></span><span class="op">(</span><span class="va">baseiid</span>,<span class="va">rr</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          pred    se-log    lower     upper</span></span>
-<span><span class="co">#&gt; [1,] 9.117785 0.3788898 4.338882 19.160237</span></span>
-<span><span class="co">#&gt; [2,] 3.876474 0.3881948 1.811361  8.296003</span></span>
-<span><span class="co">#&gt; [3,] 3.876474 0.3881948 1.811361  8.296003</span></span>
-<span><span class="co">#&gt; [4,] 3.876474 0.3881948 1.811361  8.296003</span></span>
-<span><span class="co">#&gt; [5,] 6.516666 0.2461914 4.022230 10.558056</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,] 9.117785 0.3716211 4.401137 18.889209</span></span>
+<span><span class="co">#&gt; [2,] 3.876474 0.3854773 1.821034  8.251935</span></span>
+<span><span class="co">#&gt; [3,] 3.876474 0.3854773 1.821034  8.251935</span></span>
+<span><span class="co">#&gt; [4,] 3.876474 0.3854773 1.821034  8.251935</span></span>
+<span><span class="co">#&gt; [5,] 6.516666 0.2216876 4.220119 10.062971</span></span></code></pre></div>
 <p>The Ghosh-Lin model can be made more efficient by the regression
 augmentation method. First computing the augmentation and then in a
 second step the augmented estimator (Cortese and Scheike (2023)):</p>
@@ -889,18 +889,18 @@ form and the rate among survivors is on Cox form.</p>
 <span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">X</span><span class="op">[</span><span class="va">rr</span><span class="op">$</span><span class="va">id</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">margsurv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">rr</span><span class="op">)</span></span>
 <span><span class="va">recurrent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">statusD</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">rr</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">margsurv</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">margsurv</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; X1   0.2535  0.2553 -0.2469 0.7538  0.3208</span></span>
 <span><span class="co">#&gt; X2  -0.2595  0.2637 -0.7764 0.2574  0.3252</span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">recurrent</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">recurrent</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err     2.5%   97.5% P-value</span></span>
 <span><span class="co">#&gt; X1   0.6675  0.3019  0.07583 1.25921 0.02702</span></span>
 <span><span class="co">#&gt; X2  -0.4356  0.2637 -0.95247 0.08135 0.09864</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>; </span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">margsurv</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">dr</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">)</span>; </span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">recurrent</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">base1</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-19-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" width="600px"></p>
 <p>We can simulate data with underlying dependence fromm the two-stage
 model (simGLcox) or using simRecurrent random effects models, for
 Cox-Cox or Ghosh-Lin-Cox models.</p>
@@ -987,14 +987,14 @@ function</p>
 <span></span>
 <span><span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prob.exceed.recurrent.html">prob.exceed.recurrent</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">statusD</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">rr</span>,cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oo</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-21-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" width="600px"></p>
 <p>We can also look at the mean and variance based on the estimators
 just described</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">meanN</span>,col<span class="op">=</span><span class="fl">2</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">oo</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">varN</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="recurrent-events_files/figure-html/unnamed-chunk-22-1.png" width="600px"></p>
+<p><img src="recurrent-events_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="multiple-events">Multiple events<a class="anchor" aria-label="anchor" href="#multiple-events"></a>
@@ -1144,11 +1144,11 @@ event</li>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
-<span><span class="co">#&gt; [28] future_1.67.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.37       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  </span></span>
 <span><span class="co">#&gt; [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       </span></span>
 <span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     </span></span>
-<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.1.3       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       </span></span>
 <span><span class="co">#&gt; [43] desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -1162,7 +1162,7 @@ event</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

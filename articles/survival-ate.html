@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-11-05</h4>
+            <h4 data-toc-skip class="date">2025-11-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/survival-ate.Rmd" class="external-link"><code>vignettes/survival-ate.Rmd</code></a></small>
       <div class="d-none name"><code>survival-ate.Rmd</code></div>
@@ -133,10 +133,7 @@ for cause 1.</p>
 <span><span class="co">#&gt; [ps0] -0.4628288 0.2212039 -0.8963806 -0.02927703 0.03641016</span></span>
 <span><span class="co">#&gt; ratio: </span></span>
 <span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
-<span><span class="co">#&gt; 0.6295004 0.4080439 0.9711474 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; 0.6295004 0.4080439 0.9711474</span></span>
 <span></span>
 <span><span class="va">fg2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifregFG</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/survivalG.html">survivalG</a></span><span class="op">(</span><span class="va">fg2</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
@@ -155,14 +152,11 @@ for cause 1.</p>
 <span><span class="co">#&gt; [ps0] 0.4497465 0.2313601 -0.003710973 0.9032039 0.0519046</span></span>
 <span><span class="co">#&gt; ratio: </span></span>
 <span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
-<span><span class="co">#&gt; 1.5679146 0.9962959 2.4674960 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; 1.5679146 0.9962959 2.4674960</span></span>
 <span></span>
 <span><span class="va">cif1time</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survivalG.html">survivalGtime</a></span><span class="op">(</span><span class="va">fg1</span>,<span class="va">bmt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif1time</span>,type<span class="op">=</span><span class="st">"risk"</span><span class="op">)</span>; </span></code></pre></div>
-<p><img src="survival-ate_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p><img src="survival-ate_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="700"></p>
 <p>Now looking at the survival probability</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span><span class="op">)</span></span>
@@ -185,13 +179,21 @@ for cause 1.</p>
 <span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
 <span><span class="co">#&gt; 0.8624974 0.6958733 1.0690189 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Average Treatment effect:  survival-difference (G-estimator) :</span></span>
+<span><span class="co">#&gt;       Estimate    Std.Err        2.5%     97.5%   P-value</span></span>
+<span><span class="co">#&gt; ps0 0.08991862 0.06290398 -0.03337092 0.2132082 0.1528725</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
+<span><span class="co">#&gt; log-ratio: </span></span>
 <span><span class="co">#&gt;        Estimate   Std.Err       2.5%     97.5%   P-value</span></span>
 <span><span class="co">#&gt; [ps0] 0.2309818 0.1503867 -0.0637708 0.5257343 0.1245583</span></span>
+<span><span class="co">#&gt; ratio: </span></span>
+<span><span class="co">#&gt; Estimate     2.5%    97.5% </span></span>
+<span><span class="co">#&gt; 1.259836 0.938220 1.691701</span></span>
 <span></span>
 <span><span class="va">Gtime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survivalG.html">survivalGtime</a></span><span class="op">(</span><span class="va">ss</span>,<span class="va">bmt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Gtime</span><span class="op">)</span></span></code></pre></div>
-<p><img src="survival-ate_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p><img src="survival-ate_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="g-computation-for-the-binomial-regression">G-computation for the binomial regression<a class="anchor" aria-label="anchor" href="#g-computation-for-the-binomial-regression"></a>
@@ -237,7 +239,7 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; treat:1-0  0.015087  0.089442 -0.160215  0.190389   0.866</span></span>
 <span></span>
 <span><span class="co">## relative risk effect </span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          Estimate Std.Err   2.5% 97.5% P-value</span></span>
 <span><span class="co">#&gt; [treat1]    1.024   0.144 0.7421 1.306  0.8664</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -297,10 +299,7 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; [p1] -0.4472628 0.2406332 -0.9188953 0.02436964 0.06307095</span></span>
 <span><span class="co">#&gt; ratio: </span></span>
 <span><span class="co">#&gt;  Estimate      2.5%     97.5% </span></span>
-<span><span class="co">#&gt; 0.6393758 0.3989595 1.0246690 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; 0.6393758 0.3989595 1.0246690</span></span>
 <span></span>
 <span><span class="co">## contrasting average age to +2-sd age, Avalues</span></span>
 <span><span class="va">Gbr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregG.html">binregG</a></span><span class="op">(</span><span class="va">br1</span>,data<span class="op">=</span><span class="va">bmt</span>,varname<span class="op">=</span><span class="st">"age"</span>,Avalues<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -320,10 +319,7 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; [p1] 0.4222406 0.08691473 0.2518908 0.5925903 1.185167e-06</span></span>
 <span><span class="co">#&gt; ratio: </span></span>
 <span><span class="co">#&gt; Estimate     2.5%    97.5% </span></span>
-<span><span class="co">#&gt; 1.525375 1.286456 1.808667 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; 1.525375 1.286456 1.808667</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
@@ -363,11 +359,11 @@ takes less memory and is quicker (for large data).</p>
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
-<span><span class="co">#&gt; [28] future_1.67.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.37       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  </span></span>
 <span><span class="co">#&gt; [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       </span></span>
 <span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     </span></span>
-<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.1.3       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       </span></span>
 <span><span class="co">#&gt; [43] desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -381,7 +377,7 @@ takes less memory and is quicker (for large data).</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

@@ -13,7 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Analysis of Multivariate Event Times">
 <meta name="description" content="Implementation of various statistical models for multivariate event history data &lt;doi:10.1007/s10985-013-9244-x&gt;. Including multivariate cumulative incidence models &lt;doi:10.1002/sim.6016&gt;, and bivariate random effects probit models (Liability models) &lt;doi:10.1016/j.csda.2015.01.014&gt;. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions.">
 <meta property="og:description" content="Implementation of various statistical models for multivariate event history data &lt;doi:10.1007/s10985-013-9244-x&gt;. Including multivariate cumulative incidence models &lt;doi:10.1002/sim.6016&gt;, and bivariate random effects probit models (Liability models) &lt;doi:10.1016/j.csda.2015.01.014&gt;. Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, Ghosh-Lin, Binomial regression) with fast computation of influence functions.">
-<meta property="og:image" content="/logo.png">
+<meta property="og:image" content="http://kkholst.github.io/mets/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -440,7 +440,7 @@
 <span><span class="co">#&gt; exp(coeffients):</span></span>
 <span><span class="co">#&gt;          Estimate    2.5%  97.5%</span></span>
 <span><span class="co">#&gt; tcell.f1  0.89716 0.60675 1.3266</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    tcell.f1</span></span>
 <span><span class="co">#&gt; 1 -1.639213</span></span>
 <span><span class="co">#&gt; 2 -1.669024</span></span>
@@ -473,7 +473,7 @@
 <span><span class="co">#&gt; (Intercept)  0.83499 0.65131 1.0705</span></span>
 <span><span class="co">#&gt; tcell        0.65823 0.33447 1.2954</span></span>
 <span><span class="co">#&gt; platelet     0.64554 0.40254 1.0352</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           [,1]     [,2]     [,3]</span></span>
 <span><span class="co">#&gt; [1,] -2.834135 1.633735 2.520232</span></span>
 <span><span class="co">#&gt; [2,] -2.834135 1.633735 2.520232</span></span>
@@ -550,7 +550,7 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">## influence functions of regression coefficients</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         platelet           age</span></span>
 <span><span class="co">#&gt; [1,] 0.004953454  0.0001245448</span></span>
 <span><span class="co">#&gt; [2,] 0.005348468 -0.0022341780</span></span>
@@ -650,7 +650,7 @@
 <span><span class="co">#&gt; treatment1  0.89547 0.76754 1.0447</span></span>
 <span></span>
 <span><span class="co">## influence functions of regression coefficients</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">gl1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">gl1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      treatment1</span></span>
 <span><span class="co">#&gt; 1 -1.266428e-04</span></span>
 <span><span class="co">#&gt; 2 -6.112340e-04</span></span>
@@ -721,7 +721,7 @@
 <span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
 <span><span class="co">#&gt; (Intercept)  1.57213 1.39548 1.7711</span></span>
 <span><span class="co">#&gt; treatment1   0.92467 0.76974 1.1108</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">e2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">e2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            [,1]          [,2]</span></span>
 <span><span class="co">#&gt; 1  1.959479e-04 -2.266440e-04</span></span>
 <span><span class="co">#&gt; 2  2.237613e-03 -2.227140e-03</span></span>
@@ -739,13 +739,13 @@
 <span> <span class="va">bmt</span><span class="op">$</span><span class="va">int</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">bmt</span>,<span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>,<span class="va">platelet</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,</span>
 <span>                         cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span>,<span class="va">tcell</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"lin"</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                        Estimate Std.Err  2.5% 97.5%   P-value</span></span>
 <span><span class="co">#&gt; inttcell=0, platelet=0    13.61  0.8314 11.98 15.24 3.338e-60</span></span>
 <span><span class="co">#&gt; inttcell=0, platelet=1    18.90  1.2693 16.42 21.39 3.643e-50</span></span>
 <span><span class="co">#&gt; inttcell=1, platelet=0    16.19  2.4056 11.48 20.91 1.671e-11</span></span>
 <span><span class="co">#&gt; inttcell=1, platelet=1    17.77  2.4531 12.96 22.58 4.368e-13</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             [,1] [,2] [,3] [,4]</span></span>
 <span><span class="co">#&gt; [1,] -0.05340931    0    0    0</span></span>
 <span><span class="co">#&gt; [2,] -0.05342287    0    0    0</span></span>
@@ -771,7 +771,7 @@
 <span> <span class="co">## competing risks years-lost for cause 1  </span></span>
 <span> <span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/resmeanIPCW.html">resmeanIPCW</a></span><span class="op">(</span><span class="fu"><a href="reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">int</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">30</span>,cause<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                       cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">platelet</span>,<span class="va">tcell</span><span class="op">)</span>,model<span class="op">=</span><span class="st">"lin"</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                        Estimate Std.Err   2.5%  97.5%   P-value</span></span>
 <span><span class="co">#&gt; inttcell=0, platelet=0   12.102  0.8506 10.435 13.770 6.171e-46</span></span>
 <span><span class="co">#&gt; inttcell=0, platelet=1    6.883  1.1738  4.582  9.183 4.534e-09</span></span>
@@ -1091,7 +1091,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

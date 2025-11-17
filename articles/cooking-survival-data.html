@@ -77,7 +77,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>WIP: Cooking survival data, 5 minute recipes</h1>
             
-            <h4 data-toc-skip class="date">2025-11-05</h4>
+            <h4 data-toc-skip class="date">2025-11-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cooking-survival-data.Rmd" class="external-link"><code>vignettes/cooking-survival-data.Rmd</code></a></small>
       <div class="d-none name"><code>cooking-survival-data.Rmd</code></div>
@@ -238,7 +238,7 @@ cumhaz:j</p>
 <span><span class="co">#&gt; age       0.4083098  0.4390413</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="600px"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span> <span class="co">## changing the parametes </span></span>
@@ -258,7 +258,7 @@ cumhaz:j</p>
 <span><span class="co">#&gt; age       0.3 0.1086505</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox10</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-4-2.png" class="r-plt" width="600px"></p>
 <p>Multiple Cox models for cause specific hazards can be combined, and
 we start by drawing the covariates manually, below we just call the
 sim.phregs function that draws covariates from the data,</p>
@@ -283,7 +283,7 @@ sim.phregs function that draws covariates from the data,</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-5-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="600px"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox1</span><span class="op">$</span><span class="va">coef</span>,<span class="va">cox2</span><span class="op">$</span><span class="va">coef</span>,<span class="va">scox2</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                [,1]       [,2]       [,3]       [,4]</span></span>
@@ -304,7 +304,7 @@ call of sim.base function</p>
 <span> <span class="va">simb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cox.html">sim.base</a></span><span class="op">(</span><span class="va">coxs</span><span class="op">$</span><span class="va">cumhaz</span>,<span class="va">nsim</span>,stratajump<span class="op">=</span><span class="va">coxs</span><span class="op">$</span><span class="va">strata.jumps</span>,strata<span class="op">=</span><span class="va">strata</span><span class="op">)</span></span>
 <span> <span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span>,data<span class="op">=</span><span class="va">simb</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-6-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="600px"></p>
 <p>We now fit 3 cause-specific hazard models and generate competing
 risks data with hazards taken from the fitted Cox models. Here a complex
 situation with stratified baselines of some of the models.</p>
@@ -337,7 +337,7 @@ situation with stratified baselines of some of the models.</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox0</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox0</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="600px"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> </span>
 <span> <span class="co">########################################</span></span>
@@ -360,7 +360,7 @@ situation with stratified baselines of some of the models.</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-7-2.png" class="r-plt" width="600px"></p>
 <ul>
 <li>sim.phreg only for phreg, but can deal with strata</li>
 <li>sim.cox for other cox models, see last part of vignette, can only
@@ -396,7 +396,7 @@ coefficients (so factors should be coded accordingly).</li>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox1</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox2</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scox3</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox3</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-8-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="multistate-models-the-illness-death-model">Multistate models: The Illness Death model<a class="anchor" aria-label="anchor" href="#multistate-models-the-illness-death-model"></a>
@@ -442,7 +442,7 @@ and re-estimate the cumulative baselines</p>
 <span> <span class="co">###</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c2</span>,main<span class="op">=</span><span class="st">"rate 2-&gt;1"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">base1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="cumulative-incidence">Cumulative incidence<a class="anchor" aria-label="anchor" href="#cumulative-incidence"></a>
@@ -594,7 +594,7 @@ function.</p>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>   </span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cif2</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scif2</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="600px"></p>
 </div>
 <div class="section level2">
 <h2 id="cif-delayed-entry">CIF Delayed entry<a class="anchor" aria-label="anchor" href="#cif-delayed-entry"></a>
@@ -662,7 +662,7 @@ is a uniform, will have distribution given by
 <span><span class="co">#&gt; 1             71   0   0   0</span></span>
 <span><span class="co">#&gt; 2             27   0   0   0</span></span>
 <span> <span class="fu"><a href="../reference/simRecurrentII.html">showfitsimList</a></span><span class="op">(</span><span class="va">rr</span>,<span class="va">cumhaz</span>,<span class="va">drl</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png" width="600px"><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="600px"><img src="cooking-survival-data_files/figure-html/unnamed-chunk-12-2.png" class="r-plt" width="600px"></p>
 <ul>
 <li>sim.recurrent can simulate based on cox hazard for events and death
 based on phreg
@@ -718,7 +718,7 @@ based on phreg
 <span><span class="co">#&gt; chf  0.8018334  1.0879842</span></span>
 <span><span class="co">#&gt; wmi -0.8920005 -0.5919069</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cox</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" width="600px"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> </span>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">chf</span>,<span class="va">vf</span><span class="op">)</span><span class="op">+</span><span class="va">wmi</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
@@ -728,7 +728,7 @@ based on phreg
 <span><span class="co">#&gt;           [,1]       [,2]</span></span>
 <span><span class="co">#&gt; wmi -0.8683355 -0.9816674</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png" width="600px"></p>
+<p><img src="cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png" class="r-plt" width="600px"></p>
 <p>More Cox games with cause specific hazards</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span></span>
@@ -786,11 +786,11 @@ based on phreg
 <span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
-<span><span class="co">#&gt; [28] future_1.67.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.37       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  </span></span>
 <span><span class="co">#&gt; [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       </span></span>
 <span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     </span></span>
-<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.1.3       cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       </span></span>
 <span><span class="co">#&gt; [43] desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -804,7 +804,7 @@ based on phreg
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
