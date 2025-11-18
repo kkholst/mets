@@ -320,7 +320,8 @@ model.extract2 <- function(frame, component) {
 # #' @param specials character vector specifying functions in the formula that
 # #'   should be marked as special in the [terms] object
 # #' @param specials.call (call) specials optionally defined as a call-type
-# #' @param levels a named list of character vectors giving the full set of levels
+# #' @param levels a named list of character vectors giving the full set of
+# #'   levels
 # #'   to be assumed for each factor
 # #' @param design.matrix (logical) if FALSE then only response and specials are
 # #'   returned. Otherwise, the design.matrix `x` is als part of the returned
@@ -355,13 +356,12 @@ proc_design <- function(formula, data, ..., # nolint
   tt <- terms(formula, data = data, specials = specials)
   term.labels <- attr(tt, "term.labels") # predictors
 
-  if (inherits(
-      try(model.response(update(tt, ~1), type = "any"), silent=TRUE),
+  if (response && inherits(
+      try(model.frame(update(tt, ~1), data=data), silent=TRUE),
       "try-error"
   )) {
       response <- FALSE
   }
-
   # delete response to generate design matrix when making predictions
   if (!response) tt <- delete.response(tt)
   sterm.list <- c()
