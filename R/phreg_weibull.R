@@ -150,10 +150,10 @@ phreg_weibull <- function(formula,
                           control = list()) {
     cl <- match.call()
     des <- proc_design(
-        formula,
-        data = data,
-        specials = c("offset", "weights", "cluster"),
-        intercept = TRUE
+      formula,
+      data = data,
+      specials = c("offset", "weights", "cluster"),
+      intercept = TRUE
     )
     des2 <- proc_design(shape.formula, data = data, intercept = TRUE)
     Y <- des$y
