@@ -64,32 +64,6 @@
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
   cl <- match.call()
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  X <- model.matrix(Terms, m)
-###  if (!is.null(intpos  <- attributes(Terms)$intercept))
-###    X <- X[,-intpos,drop=FALSE]
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
@@ -98,23 +72,21 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
         intercept = TRUE
     )
     Y <- des$y
-###    if (!inherits(Y, c("Event", "Surv"))) {
-###        stop("Expected a 'Surv' or 'Event'-object")
-###    }
-###    if (ncol(Y) == 2) {
-###        exit <- Y[, 1]
-###        entry <- rep(0, nrow(Y))
-###        status <- Y[, 2]
-###    } else {
-###        entry <- Y[, 1]
-###        exit <- Y[, 2]
-###        status <- Y[, 3]
-###    }
     X <- des$x
     des.weights <- des$weights
     des.offset  <- des$offset
     id      <- des$cluster
-    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+ ## take offset and weight first from formula, but then from arguments
+  if (is.null(des.offset)) {
+	  if (is.null(offset)) offset <- rep(0,length(exit)) 
+  } else offset <- des.offset
+  if (is.null(des.weights)) {
+	  if (is.null(weights)) weights <- rep(1,length(exit)) 
+  } else weights <- des.weights
+
+   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+   strata.name <- NULL
 
   res <- mlogit01(X,Y,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,
 		  fix.X=fix.X,Y.call=Y,X.call=X,formula.call=formula,model.frame.call=m,...) ###,
