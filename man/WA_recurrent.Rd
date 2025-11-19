@@ -52,6 +52,13 @@ Considers the ratio of means \deqn{E(N(min(D,t)))/E(min(D,t))} and the
 the mean of the events per time unit \deqn{E(N(min(D,t))/min(D,t))} both based on
 IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator.
 }
+\examples{
+data(hfactioncpx12)
+
+dtable(hfactioncpx12,~status)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+}
 \author{
 Thomas Scheike
 }

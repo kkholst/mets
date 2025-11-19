@@ -119,7 +119,7 @@ The engine is to simulate data with a given linear cumulative hazard. First gene
 the cumulative hazard cumhaz:j
 
 ```{r}
- nsim <- 200
+ nsim <- 10000
  chaz <-  c(0,1,1.5,2,2.1)
  breaks <- c(0,10,   20,  30,   40)
  cumhaz <- cbind(breaks,chaz)
@@ -135,7 +135,7 @@ Now looking at a simple cox model
 
 ```{r}
  library(mets)
- n <- 100
+ n <- nsim
  data(bmt)
  bmt$bmi <- rnorm(408)
  dcut(bmt) <- gage~age
@@ -187,9 +187,6 @@ the data,
  plot(cox1); plot(scox1,add=TRUE,col=2)
  plot(cox2); plot(scox2,add=TRUE,col=2)
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
-
-
-
 ```
 
 Now fully nonparametric model with stratified baselines and specific call of sim.base function
@@ -200,8 +197,13 @@ Now fully nonparametric model with stratified baselines and specific call of sim
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
  strata <- sample(0:3,nsim,replace=TRUE)
  simb <- sim.base(coxs$cumhaz,nsim,stratajump=coxs$strata.jumps,strata=strata)
+
  cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+
+ simb1 <- sim.phreg(coxs,nsim,data=sTRACE)
+ cc1 <-   phreg(Surv(time,status)~strata(diabetes,chf),data=simb1)
+ plot(cc1,add=TRUE,col=3)
 ```
 
 We now fit 3 cause-specific hazard models and generate competing risks data with hazards taken
@@ -213,11 +215,9 @@ from the fitted Cox models. Here a complex situation with stratified baselines o
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
  coxs <- list(cox0,cox1,cox2)
-### dd <- sim.cause.cox(coxs,nsim,data=bmt)
  dd <- sim.phregs(coxs,n,data=bmt)
 
  ## checking that  cause specific hazards are as given, make n larger
-
  scox0 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
  scox1 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==3)~strata(tcell)+platelet,data=dd)
@@ -236,7 +236,6 @@ from the fitted Cox models. Here a complex situation with stratified baselines o
  cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
  coxs <- list(cox1,cox2)
-### dd <- sim.cause.cox(coxs,nsim,data=bmt)
  dd <- sim.phregs(coxs,n,data=bmt)
  scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
@@ -256,7 +255,7 @@ One more example
 
 ```{r}
  library(mets)
- n <- 100
+ n <- nsim
  data(bmt)
  bmt$bmi <- rnorm(408)
  dcut(bmt) <- gage~age
@@ -276,7 +275,6 @@ One more example
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
-
 ```
 
 
@@ -383,14 +381,18 @@ beta <- c(0.3,-0.3,-0.3,0.3)
 
 dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="logistic")
 
+par(mfrow=c(1,2))
 # Fitting regression model with CIF logistic-link 
 cif1 <- cifreg(Event(time,status)~Z1+Z2,dats)
 summary(cif1)
+plot(cif1)
+lines(attr(dats,"Lam1"))
 
-
-dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
+dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
 ciff <- cifregFG(Event(time,status)~Z1+Z2,dats)
 summary(ciff)
+plot(ciff)
+lines(attr(dats,"Lam1"))
 ```
 
 We can also use the parameters based on fitted models 
@@ -403,11 +405,10 @@ We can also use the parameters based on fitted models
  cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
  cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
 
- ## dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
- dds <- sim.cifsRestrict(list(cif1,cif2),nsim,data=bmt)
+ dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
 
- scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=1)
- scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=2)
+ scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
+ scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
     
  cbind(cif1$coef,scif1$coef)
  cbind(cif2$coef,scif2$coef)
@@ -484,6 +485,7 @@ See also recurrent events vignette
 
  recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
  simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
 ```
 
 
@@ -492,15 +494,15 @@ Simulations based on coxph
 
 
 ```{r}
- cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
- sim1 <- sim.cox(cox,nsim,data=sTRACE)
- cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
- cbind(cox$coef,cc$coef)
- cor(sim1[,c("vf","chf","wmi")])
- cor(sTRACE[,c("vf","chf","wmi")])
+### cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
+### sim1 <- sim.cox(cox,nsim,data=sTRACE)
+### cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
+### cbind(cox$coef,cc$coef)
+### cor(sim1[,c("vf","chf","wmi")])
+### cor(sTRACE[,c("vf","chf","wmi")])
  
  cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
- sim3 <- sim.cox(cox,nsim,data=sTRACE)
+ sim3 <- sim.phreg(cox,nsim,data=sTRACE)
  cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
  cbind(cox$coef,cc$coef)
  plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
@@ -512,21 +514,6 @@ Simulations based on coxph
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 ```
 
-More Cox games with cause  specific hazards
-
-```{r}
- data(bmt)
- # coxph          
- cox1 <- survival::coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
- cox2 <- survival::coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
- coxs <- list(cox1,cox2)
- dd <- sim.cause.cox(coxs,nsim,data=bmt)
- scox1 <- survival::coxph(Surv(time,status==1)~tcell+platelet,data=dd)
- scox2 <- survival::coxph(Surv(time,status==2)~tcell+platelet,data=dd)
- cbind(cox1$coef,scox1$coef)
- cbind(cox2$coef,scox2$coef)
-```
- 
 
 SessionInfo
 ============

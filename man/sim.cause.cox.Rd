@@ -11,8 +11,7 @@ sim.cause.cox(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
 
 \item{n}{number of simulations.}
 
-\item{data}{to extract covariates for simulations (draws from observed
-covariates).}
+\item{data}{to extract covariates for simulations (draws from observed covariates).}
 
 \item{cens}{specifies censoring model, if NULL then only censoring for 
   each cause at end of last event of this type. 
@@ -29,17 +28,20 @@ if "is.matrix" then uses cumulative.
 Simulates data that looks like fit from cause specific Cox models. 
 Censor data automatically. When censoring is given in the  list of causes this
 will give censoring that looks like the data.  Covariates are drawn from data-set
-with replacement. This gives covariates like the data.
+with replacement. This gives covariates like the data.  Calls sim.phregs
 }
 \examples{
+library(mets)
 nsim <- 100; data(bmt)
 
-cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
+cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=bmt)
 cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
 coxs <- list(cox1,cox2)
-dd <- sim.cause.cox(coxs,nsim,data=bmt)
-scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
+## just calls sim.phregs !
+dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
+scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet+age,data=dd)
 scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+
 cbind(cox1$coef,scox1$coef)
 cbind(cox2$coef,scox2$coef)
 par(mfrow=c(1,2))

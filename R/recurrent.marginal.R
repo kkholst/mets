@@ -71,44 +71,83 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
         stop("You can give 2 phreg objects \n")
     }
   }
+
+  ## {{{
   cl <- match.call()
-  m <- match.call(expand.dots = TRUE)[1:3]
-  special <- c("strata", "cluster","offset")
-  Terms <- terms(formula, special, data = data)
-  m$formula <- Terms
-  m[[1]] <- as.name("model.frame")
-  m <- eval(m, parent.frame())
-  Y <- model.extract(m, "response")
-  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-  if (ncol(Y)==2) {
-    exit <- Y[,1]
-    entry <- NULL ## rep(0,nrow(Y))
-    status <- Y[,2]
-  } else {
-    entry <- Y[,1]
-    exit <- Y[,2]
-    status <- Y[,3]
-  }
-  id <- strata <- NULL
-  if (!is.null(attributes(Terms)$specials$cluster)) {
-    ts <- survival::untangle.specials(Terms, "cluster")
-    Terms  <- Terms[-ts$terms]
-    id <- m[[ts$vars]]
-  }
-  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+    m <- match.call(expand.dots = TRUE)[1:3]
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("offset", "weights", "cluster","strata"),
+        intercept = FALSE
+    )
+    Y <- des$y
+    if (!inherits(Y, c("Event", "Surv"))) {
+        stop("Expected a 'Surv' or 'Event'-object")
+    }
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
+        entry <- rep(0, nrow(Y))
+        status <- Y[, 2]
+    } else {
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
+    }
+    X <- des$x
+    strata <- des$strata
+    specials = c("offset", "weights", "cluster","strata")
+    Terms <- terms(formula, specials, data = data)
     ts <- survival::untangle.specials(Terms, "strata")
-    Terms  <- Terms[-ts$terms]
-    strata <- m[[ts$vars]]
-    strata.name <- ts$vars
-  }  else strata.name <- NULL
-  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-    ts <- survival::untangle.specials(Terms, "offset")
-    Terms  <- Terms[-ts$terms]
-    offset <- m[[ts$vars]]
-  }  
-  X <- model.matrix(Terms, m)
-  if (!is.null(intpos  <- attributes(Terms)$intercept))
-    X <- X[,-intpos,drop=FALSE]
+    if (!is.null(strata)) strata.name <- ts$vars else strata.name <- NULL
+###    if (!is.null(strata)) strata.name <- names(des$xlevels) 
+###    else strata.name <- NULL
+    pos.strata <- NULL
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    id      <- des$cluster
+    ## no use of 
+    pos.cluster <- NULL
+ ## }}}
+
+###  cl <- match.call()
+###  m <- match.call(expand.dots = TRUE)[1:3]
+###  special <- c("strata", "cluster","offset")
+###  Terms <- terms(formula, special, data = data)
+###  m$formula <- Terms
+###  m[[1]] <- as.name("model.frame")
+###  m <- eval(m, parent.frame())
+###  Y <- model.extract(m, "response")
+###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+###  if (ncol(Y)==2) {
+###    exit <- Y[,1]
+###    entry <- NULL ## rep(0,nrow(Y))
+###    status <- Y[,2]
+###  } else {
+###    entry <- Y[,1]
+###    exit <- Y[,2]
+###    status <- Y[,3]
+###  }
+###  id <- strata <- NULL
+###  if (!is.null(attributes(Terms)$specials$cluster)) {
+###    ts <- survival::untangle.specials(Terms, "cluster")
+###    Terms  <- Terms[-ts$terms]
+###    id <- m[[ts$vars]]
+###  }
+###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+###    ts <- survival::untangle.specials(Terms, "strata")
+###    Terms  <- Terms[-ts$terms]
+###    strata <- m[[ts$vars]]
+###    strata.name <- ts$vars
+###  }  else strata.name <- NULL
+###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+###    ts <- survival::untangle.specials(Terms, "offset")
+###    Terms  <- Terms[-ts$terms]
+###    offset <- m[[ts$vars]]
+###  }  
+###  X <- model.matrix(Terms, m)
+###  if (!is.null(intpos  <- attributes(Terms)$intercept))
+###    X <- X[,-intpos,drop=FALSE]
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
 ###  id.orig <- id; 
@@ -1122,9 +1161,9 @@ death <- NULL
 if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox" 
 if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
 
-scox1 <- read.phreg(cox1,n,data=data)
-if (!is.null(coxd)) scoxd <- read.phreg(coxd,n,data=data,drawZ=FALSE,id=scox1$id)
-if (!is.null(coxc)) scoxc <- read.phreg(coxc,n,data=data,drawZ=FALSE,id=scox1$id)
+scox1 <- draw.phreg(cox1,n,data=data)
+if (!is.null(coxd)) scoxd <- draw.phreg(coxd,n,data=data,drawZ=FALSE,id=scox1$id)
+if (!is.null(coxc)) scoxc <- draw.phreg(coxc,n,data=data,drawZ=FALSE,id=scox1$id)
 if (type[1]=="cox-cox") type <- 3 else type <- 2
 data <- scox1$data
 ind <-  match(names(scox1$data), names(scoxd$data))

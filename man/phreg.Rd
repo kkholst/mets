@@ -60,6 +60,10 @@ dd <- iidBaseline(out1,time=30)
 head(dd$beta.iid)
 head(dd$base.iid)
 
+outs <- phreg(Surv(time,status==9)~strata(vf,wmicat.4)+cluster(id),data=TRACE)
+summary(outs)
+par(mfrow=c(1,2))
+plot(outs)
 }
 \author{
 Klaus K. Holst, Thomas Scheike

@@ -45,44 +45,80 @@
 ##' lava::estimate(coef=mreg3$coef,vcov=mreg3$II)
 ##' 
 ##' ## predictions based on seen response or not 
-##' newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
 ##' ## all probabilities
-##' predict(mreg,newdata,response=FALSE)
+##' head(predict(mreg,response=FALSE))
+##' head(predict(mreg))
+##' ## using newdata 
+##' newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","2","0"))
 ##' ## only probability of seen response 
+##' predict(mreg,newdata)
+##' ## without response
+##' predict(mreg,newdata,response=FALSE)
+##' ## given indexx of P(Y=j)
+##' predict(mreg,newdata,Y=c(1,2,3))
+##' ##  reponse not given 
+##' newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1))
 ##' predict(mreg,newdata)
 ##' @export
 ##' @aliases predict 
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
   cl <- match.call()
-  m <- match.call(expand.dots = TRUE)[1:3]
-  special <- c("strata", "cluster","offset")
-  Terms <- terms(formula, special, data = data)
-  m$formula <- Terms
-  m[[1]] <- as.name("model.frame")
-  m <- eval(m, parent.frame())
-  Y <- model.extract(m, "response")
-  id <- strata <- NULL
-  if (!is.null(attributes(Terms)$specials$cluster)) {
-    ts <- survival::untangle.specials(Terms, "cluster")
-    pos.cluster <- ts$terms
-    Terms  <- Terms[-ts$terms]
-    id <- m[[ts$vars]]
-  } else pos.cluster <- NULL
-  if (!is.null(attributes(Terms)$specials$strata)) {
-    ts <- survival::untangle.specials(Terms, "strata")
-    pos.strata <- ts$terms
-    Terms  <- Terms[-ts$terms]
-    strata <- m[[ts$vars]]
-    strata.name <- ts$vars
-  }  else { strata.name <- NULL; pos.strata <- NULL}
-  X <- model.matrix(Terms, m)
+###  m <- match.call(expand.dots = TRUE)[1:3]
+###  special <- c("strata", "cluster","offset")
+###  Terms <- terms(formula, special, data = data)
+###  m$formula <- Terms
+###  m[[1]] <- as.name("model.frame")
+###  m <- eval(m, parent.frame())
+###  Y <- model.extract(m, "response")
+###  id <- strata <- NULL
+###  if (!is.null(attributes(Terms)$specials$cluster)) {
+###    ts <- survival::untangle.specials(Terms, "cluster")
+###    pos.cluster <- ts$terms
+###    Terms  <- Terms[-ts$terms]
+###    id <- m[[ts$vars]]
+###  } else pos.cluster <- NULL
+###  if (!is.null(attributes(Terms)$specials$strata)) {
+###    ts <- survival::untangle.specials(Terms, "strata")
+###    pos.strata <- ts$terms
+###    Terms  <- Terms[-ts$terms]
+###    strata <- m[[ts$vars]]
+###    strata.name <- ts$vars
+###  }  else { strata.name <- NULL; pos.strata <- NULL}
+###  X <- model.matrix(Terms, m)
 ###  if (!is.null(intpos  <- attributes(Terms)$intercept))
 ###    X <- X[,-intpos,drop=FALSE]
-  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+    m <- match.call(expand.dots = TRUE)[1:3]
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("offset", "weights", "cluster"),
+        intercept = TRUE
+    )
+    Y <- des$y
+###    if (!inherits(Y, c("Event", "Surv"))) {
+###        stop("Expected a 'Surv' or 'Event'-object")
+###    }
+###    if (ncol(Y) == 2) {
+###        exit <- Y[, 1]
+###        entry <- rep(0, nrow(Y))
+###        status <- Y[, 2]
+###    } else {
+###        entry <- Y[, 1]
+###        exit <- Y[, 2]
+###        status <- Y[, 3]
+###    }
+    X <- des$x
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    id      <- des$cluster
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   res <- mlogit01(X,Y,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,
 		  fix.X=fix.X,Y.call=Y,X.call=X,formula.call=formula,model.frame.call=m,...) ###,
+  res$design <- des
   return(res)
 }# }}}
 
@@ -159,32 +195,53 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 }# }}}
 
 ##' @export
-predict.mlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,alpha=0.05,...)
+predict.mlogit <- function (object, newdata , se = TRUE, response=TRUE , Y=NULL,level=0.95,...)
 {# {{{
-   ## when response not given, not used for predictions
-   if (!missing(newdata)) 
-   if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
 
-    if (missing(newdata)) {
-        X <- object$X
-        if (response)  Y <- as.numeric(object$Y) 
-    } else {
-	pclust <- grep("cluster",names(object$model.frame))
-	if (length(pclust)>=1) {
-	      object$model.frame <- object$model.frame[,-pclust]
-	      formula <- drop.specials(object$formula,"cluster") } else { formula <- object$formula }
+  ylev <- levels(object$design$y)
+  if (missing(newdata)) {
+     X <- object$design$x
+     ## take response from newdata if it is there and it is not given  
+     if (response) Y <- as.numeric(object$design$y) 
+  }  else {
+     respindata <- length((grep(all.vars(object$formula)[1],names(newdata))))
+     if (respindata>0 & response) x <- update_design(object$design,data = newdata,response=TRUE)
+     else x <- update_design(object$design,data = newdata)
+     X <- x$x
+     ## take response from newdata if it is there and it is not given  
+     if (is.null(Y))  { 
+         if (response & !is.null(x$y))   
+	   Y <- as.numeric(factor(x$y,levels=ylev))
+     } else {
+	     if (!is.numeric(Y)) 
+		     Y <- as.numeric(factor(Y,levels=ylev))
+     }
+  }
+###  print(Y)
 
-    
-        xlev <- lapply(object$model.frame, levels)
-        ylev <- xlev[[1]]
-        ff <- unlist(lapply(object$model.frame, is.factor))
-        upf <- update(formula,~.)
-        tt <- terms(upf)
-        allvar <- all.vars(tt)
-	tt <- delete.response(tt)
-        X <- as.matrix(model.matrix(formula, data = newdata, xlev = xlev))
-        if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
-    }
+###   ## when response not given, not used for predictions
+###   if (!missing(newdata)) 
+###   if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
+###
+###    if (missing(newdata)) {
+###        X <- object$X
+###        if (response)  Y <- as.numeric(object$Y) 
+###    } else {
+###	pclust <- grep("cluster",names(object$model.frame))
+###	if (length(pclust)>=1) {
+###	      object$model.frame <- object$model.frame[,-pclust]
+###	      formula <- drop.specials(object$formula,"cluster") } else { formula <- object$formula }
+###    
+###        xlev <- lapply(object$model.frame, levels)
+###        ylev <- xlev[[1]]
+###        ff <- unlist(lapply(object$model.frame, is.factor))
+###        upf <- update(formula,~.)
+###        tt <- terms(upf)
+###        allvar <- all.vars(tt)
+###	tt <- delete.response(tt)
+###        X <- as.matrix(model.matrix(formula, data = newdata, xlev = xlev))
+###        if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
+###    }
 
   refg <- 1  ### else refg <- match(ref,types)
   nrefs <- (1:(object$nlev-1))
@@ -192,12 +249,12 @@ predict.mlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,a
   Xbeta <- c()
   for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
 
-###  X %*% object$coef[(1:px)+px]
-
   ppp <- cbind(1,exp(Xbeta))
   spp <- apply(ppp,1,sum)
   pp <- ppp/spp
   colnames(pp) <- ylev
+  alpha <- 1-level
+  crit <- -qnorm(1-alpha/2)
 
   if (!is.null(Y)) {
 	  Yg2 <- 1*(Y>=2)
@@ -209,8 +266,7 @@ predict.mlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,a
              for (i in nrefs) Dp <- cbind(Dp,X*ppp[,i+1]*Dppy/spp^2);  
              if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
 	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
-	     rr <- qnorm(1-alpha/2)
-	     cmat <- data.frame(pred = p, se = se, lower = p - rr * se, upper = p + rr * se)
+	     cmat <- data.frame(pred = p, se = se, lower = p - crit * se, upper = p + crit * se)
              names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
              pp <- cmat
      }
@@ -219,59 +275,3 @@ predict.mlogit <- function (object, newdata, se = TRUE, response=TRUE , Y=NULL,a
   return(pp)
 }# }}}
 
-
-###predict <- function (object, newdata, se = TRUE, response=TRUE , ...)
-###{# {{{
-###    Y <- NULL
-###   ## when response not given, not used for predictions
-###   if (!missing(newdata)) 
-###   if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
-###
-###    if (missing(newdata)) {
-###        X <- object$X
-###        if (response)  Y <- as.numeric(object$Y) 
-###    } else {
-###        xlev <- lapply(object$model.frame, levels)
-###        ylev <- xlev[[1]]
-###        ff <- unlist(lapply(object$model.frame, is.factor))
-###        upf <- update(object$formula,~.)
-###        tt <- terms(upf)
-###        allvar <- all.vars(tt)
-###	tt <- delete.response(tt)
-###        X <- as.matrix(model.matrix(object$formula, data = newdata, xlev = xlev))
-###        if (response) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
-###    }
-###
-###  refg <- 1  ### else refg <- match(ref,types)
-###  nrefs <- (1:(object$nlev-1))
-###  px <- ncol(X)
-###  Xbeta <- c()
-###  for (i in nrefs) { Xbeta <- cbind(Xbeta,X %*% object$coef[(1:px)+px*(i-1)]);  }
-###
-###  ppp <- cbind(1,exp(Xbeta))
-###  spp <- apply(ppp,1,sum)
-###  pp <- ppp/spp
-###  colnames(pp) <- ylev
-###
-###  if (!is.null(Y)) {
-###	  Yg2 <- which(Y>=2)
-###          pp <- p <- c(mdi(pp,1:length(Y),Y)) 
-###          pppy <- c(mdi(ppp,1:length(Y),Y)) 
-###     if (se) {
-###	     Dpp0 <- -ppp[,-1,drop=FALSE]/spp^2
-###	     Dppy <- (spp[Yg2]*pppy[Yg2]-pppy[Yg2]^2)/spp[Yg2]^2
-###	     ## asign Dppy in specified locations when Yg2
-###	     if (length(Yg2)>=1) Dpp0 <- mdi(Dpp0,(1:length(Y))[Yg2],Y[Yg2]-1,xvec=Dppy)
-###	     Dp <- c()
-###             for (i in nrefs) Dp <- cbind(Dp,X*Dpp0[,i]);  
-###             if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
-###	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
-###	     cmat <- data.frame(pred = p, se = se, lower = p - 1.96 * se, upper = p + 1.96 * se)
-###             names(cmat)[1:4] <- c("pred", "se", "lower", "upper")
-###             pp <- cmat
-###     }
-### }
-###
-###  return(pp)
-###}# }}}
-###

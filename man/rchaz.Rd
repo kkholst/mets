@@ -46,7 +46,7 @@ This quantity has survival function
 \deqn{P(T > t | T>x) = exp(-RR (\Lambda(t) - \Lambda(x)))}.
 }
 \examples{
-
+library(mets)
 chaz <-  c(0,1,1.5,2,2.1)
 breaks <- c(0,10,   20,  30,   40)
 cumhaz <- cbind(breaks,chaz)

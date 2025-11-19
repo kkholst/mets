@@ -406,6 +406,7 @@ back2timereg <- function(obj)
 ##' @param ... to pass to estimate function
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' data(prt)
 ##' prt <- force.same.cens(prt,cause="status")
 ##' 
@@ -420,7 +421,6 @@ back2timereg <- function(obj)
 ##' ## marginal estimates 
 ##' mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
 ##' mc <- predict(mbcif1,newdata)
-##' mc
 ##' 
 ##' cse <- binregCasewise(bcif1,mbcif1)
 ##' cse
@@ -453,5 +453,4 @@ binregCasewise <- function(concbreg,margbreg,zygs=c("DZ","MZ"),newdata=NULL,...)
   res <- list(coef=expcoef,logcoef=dd)
   return(res)
 }# }}}
-
 

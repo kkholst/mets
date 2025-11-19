@@ -167,8 +167,8 @@ cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,.
 offsets <- cox1$X %*% cox1$coef
 if (!is.null(offset)) offsets <- offsets*offset
 if (!is.null(cox1$strata.name)) 
-     coxM <- phreg(cox1$model.frame[,1]~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
-else coxM <- phreg(cox1$model.frame[,1]~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
+     coxM <- phreg(cox1$design$y~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
+else coxM <- phreg(cox1$design$y~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
 nnames <- colnames(modelmatrix)
 
 Ut <- apply(coxM$U,2,cumsum)
@@ -371,8 +371,6 @@ cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks
 ##' gofG.phreg(m1)
 ##' gofG.phreg(m2)
 ##' 
-##' bplot(m1,log="y")
-##' bplot(m2,log="y")
 ##' @export
 gofG.phreg  <- function(x,sim=0,silent=1,lm=TRUE,...)
 {# {{{
@@ -384,8 +382,9 @@ nstrata <- x$nstrata
 jumptimes <- x$jumptimes
 cumhaz <- x$cumhaz
 
-ms <- match(x$strata.name,names(x$model.frame))
-lstrata <- levels(x$model.frame[,ms])
+##ms <- match(x$strata.name,names(x$model.frame))
+##lstrata <- levels(x$model.frame[,ms])
+lstrata <- as.numeric(x$design$strata)-1
 stratn <-  substring(x$strata.name,8,nchar(x$strata.name)-1)
 stratnames <- paste(stratn,lstrata,sep=":")
 
@@ -394,20 +393,21 @@ if (nstrata==1) stop("Stratified Cox to look at baselines");
 
 if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
 
+
 for (i in 0:(nstrata-2))
 for (j in (i+1):(nstrata-1)) { 
       iij <- which(strata %in% c(i,j))
       ii <- which(strata %in% i)
       ij <- which(strata %in% j)
       dijjumps  <- jumptimes[iij] 
-      cumhazi <- cpred(cumhaz[ii,],dijjumps)
-      cumhazj <- cpred(cumhaz[ij,],dijjumps)
+      cumhazi <- predictCumhaz(rbind(0,cumhaz[ii,]),dijjumps)
+      cumhazj <- predictCumhaz(rbind(0,cumhaz[ij,]),dijjumps)
 
       plot(cumhazj[,2],cumhazi[,2],type="s",lwd=2,xlab=stratnames[j+1],ylab=stratnames[i+1])
       graphics::title(paste("Stratified baselines for",stratn))
       if ((fixbeta==0 | sim==0) & lm ) 
       graphics::legend("topleft",c("Nonparametric","lm"),lty=1,col=1:2)
-      ab <- lm(cumhazi[,2]~-1+cumhazj[,2])
+###      ab <- lm(cumhazi[,2]~-1+cumhazj[,2])
       ## TODO: simBandCumHazCox
       ## if (sim==1 & fixbeta==0) {
       ##   Pt <- DLambeta.t <- apply(x$E/c(x$S0),2,cumsumstrata,strata,nstrata)
@@ -422,8 +422,8 @@ for (j in (i+1):(nstrata-1)) {
 	  ##     lines(cumhazj[,2]+dj,cumhazi[,2]+di,type="s",lwd=0.1,col=3)
       ##   }
       ## }
-      lines(cumhazj[,2],cumhazi[,2],type="s",lwd=2,col=1)
-      if (lm==TRUE) abline(c(0,coef(ab)),col=2,lwd=2)
+###      lines(cumhazj[,2],cumhazi[,2],type="s",lwd=2,col=1)
+###      if (lm==TRUE) abline(c(0,coef(ab)),col=2,lwd=2)
 }
 
 }# }}}

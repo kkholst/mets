@@ -110,6 +110,7 @@ summary(outs)
 outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(outl)
 
+
 ##########################################
 ### risk-ratio of different causes #######
 ##########################################
@@ -130,7 +131,7 @@ cif2 <- cif(Event(time,cause)~+1,bmt,cause=2)
 plot(cif1)
 plot(cif2,add=TRUE,col=2)
 
-cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
+cifs1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=50)
 cifs2 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=2,time=50)
 summary(cifs1)
 summary(cifs2)
@@ -139,15 +140,20 @@ cifdob <- binreg(Event(time,status)~-1+factor(strata)+
 	 tcell*factor(strata)+platelet*factor(strata)+age*factor(strata)
 	 +cluster(id),bmtdob,cause=1,time=50,cens.model=~strata(strata))
 summary(cifdob)
+head(iid(cifdob)) 
 
+newdata <- data.frame(tcell=1,platelet=1,age=0,strata=1:2,id=1)
 riskratio <- function(p) {
-  Z <- rbind(c(1,0,1,1,0,0,0,0), c(0,1,1,1,0,1,1,0))
-  lp <- c(Z \%*\% p)
-  p <- lava::expit(lp)
+  cifdob$coef <- p
+  p <- predict(cifdob,newdata,se=0)
   return(p[1]/p[2])
 }
-
 lava::estimate(cifdob,f=riskratio)
+
+predict(cifdob,newdata)
+(p1 <- predict(cifs1,newdata))
+(p2 <- predict(cifs2,newdata))
+p1[1,1]/p2[1,1]
 
 }
 \author{

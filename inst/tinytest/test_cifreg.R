@@ -7,7 +7,8 @@ test_cifreg <- function() {
   data(bmt)
   bmt$time <-  bmt$time + runif(nrow(bmt)) * 0.001
 
-  fg <- cifreg(Event(time,cause)~tcell+age+platelet,bmt,prop=NULL)
+  fg <- cifregFG(Event(time,cause)~tcell+age+platelet,bmt)
+
   if (requireNamespace("cmprsk")) {
     library("cmprsk")
     mm <- model.matrix(~ tcell + age + platelet, bmt)[, -1]

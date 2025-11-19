@@ -95,6 +95,7 @@ cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,de
         exit <- Y[,2]
         status <- Y[,3]
     }
+
     ## default version of codes, otherwise call recregN directly
     all.codes <-  unique(status)
     codes <- c(cause,cens.code) 
@@ -122,6 +123,14 @@ iidBaseline.cifreg <- function(object,time=NULL,...)
   out <- iidBaseline.recreg(object,time=time,...)
   return(out)
 } # }}}
+
+iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)
+{ ## {{{
+	if (is.null(object$cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
+	out <- IIDrecreg(object$cox.prep,object,time=time,fixbeta=fixbeta,beta.iid=beta.iid,adm.cens=object$adm.cens,tminus=tminus,...)
+	out$design <- object$design
+	return(out)
+}  ## }}}
 
 ##' @export
 IC.cifreg <- function(x,time=NULL,sort=TRUE,...) {# {{{
@@ -343,6 +352,7 @@ strataC <- survival::strata
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' set.seed(100)
 ##' rho1 <- 0.2; rho2 <- 10
 ##' n <- 400
@@ -658,7 +668,8 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("c
 
     cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
     cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
-    data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z,U=U,pU=pU)
+
+    data <- sim.cifs(list(cif1,cif2),n,Z=Z,U=U,pU=pU,type=type[1])
 
     if (!is.null(rc)) {
     if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)
@@ -667,7 +678,10 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("c
     status=data$status*(data$time<=censor)
     time=pmin(data$time,censor)
     data <- data.frame(time=time,status=status)
-    return(cbind(data,Z))
+    data <- cbind(data,Z)
+    attr(data,"Lam1") <- cbind(tt,Lam1)
+    attr(data,"Lam2") <- cbind(tt,Lam2)
+    return(data)
 
 }# }}}
 
@@ -681,7 +695,7 @@ simul.mod <- function(n,rho1,rho2,beta,rc=0.5,k=1,depcens=0) {# {{{
     colnames(Z) <- paste("Z",1:2,sep="")
     cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
     cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
-    data <- sim.cifsRestrict(list(cif1,cif2),n,Z=Z)
+    data <- sim.cifs(list(cif1,cif2),n,Z=Z)
 
     censhaz  <-  cbind(tt,k*tt)
     if (depcens==1) {
@@ -700,8 +714,13 @@ setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
 {# {{{
     cif <- list()
     cif$cumhaz <- cumhazard
+    cif$se.cumhaz <- cumhazard
     cif$coef <- coef
     cif$model <- type
+    cif$strata <- rep(0,nrow(cumhazard))
+    cif$jumps <- 1:nrow(cumhazard)
+
+    cif$nstrata <- 1
     class(cif) <- "defined"
     attr(cif,"znames") <- Znames
     return(cif)

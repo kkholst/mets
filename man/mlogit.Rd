@@ -60,10 +60,19 @@ summary(mreg3)
 lava::estimate(coef=mreg3$coef,vcov=mreg3$II)
 
 ## predictions based on seen response or not 
-newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","1","0"))
 ## all probabilities
-predict(mreg,newdata,response=FALSE)
+head(predict(mreg,response=FALSE))
+head(predict(mreg))
+## using newdata 
+newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","2","0"))
 ## only probability of seen response 
+predict(mreg,newdata)
+## without response
+predict(mreg,newdata,response=FALSE)
+## given indexx of P(Y=j)
+predict(mreg,newdata,Y=c(1,2,3))
+##  reponse not given 
+newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1))
 predict(mreg,newdata)
 }
 \author{

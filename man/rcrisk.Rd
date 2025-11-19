@@ -41,7 +41,7 @@ rcrisk(
 \description{
 Simulates data from piecwise constant baseline hazard that can also be of
 Cox type. Censor data at highest value of the break points for either of the
-cumulatives.
+cumulatives, see also sim.phregs
 }
 \examples{
 data(bmt); 

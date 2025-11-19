@@ -23,6 +23,7 @@ cif(formula, data = data, cause = 1, cens.code = 0, death.code = NULL, ...)
 Cumulative incidence with robust standard errors
 }
 \examples{
+library(mets)
 data(bmt)
 bmt$cluster <- sample(1:100,408,replace=TRUE)
 out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)

@@ -66,6 +66,7 @@ the augmented FG-score.
 Standard errors computed under assumption of correct \deqn{G_c} model.
 }
 \examples{
+library(mets)
 set.seed(100)
 rho1 <- 0.2; rho2 <- 10
 n <- 400

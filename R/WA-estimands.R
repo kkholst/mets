@@ -18,62 +18,112 @@
 ##' @param marks possible marks for composite outcome situation for model for counts with marks
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
+##' @examples
+##' data(hfactioncpx12)
+##' 
+##' dtable(hfactioncpx12,~status)
+##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+##' summary(dd)
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
 	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,marks=NULL,...)
 { ## {{{
   cl <- match.call() ## {{{
-  m <- match.call(expand.dots = TRUE)[1:3]
-  special <- c("strata", "cluster","offset")
-  Terms <- terms(formula, special, data = data)
-  m$formula <- Terms
-  m[[1]] <- as.name("model.frame")
-  m <- eval(m, parent.frame())
-  Y <- model.extract(m, "response")
-  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-  if (ncol(Y)==2) {
-    stop("must give start stop formulation \n"); 
-    exit <- Y[,1]
-    entry <- NULL ## rep(0,nrow(Y))
-    status <- Y[,2]
-  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-    entry <- Y[,1]
-    exit <- Y[,2]
-    status <- Y[,3]
-  }
-  id <- strata <- NULL
-  if (!is.null(attributes(Terms)$specials$cluster)) {
-    ts <- survival::untangle.specials(Terms, "cluster")
-    pos.cluster <- ts$terms
-    Terms  <- Terms[-ts$terms]
-    id <- m[[ts$vars]]
-  } else pos.cluster <- NULL
-  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-    ts <- survival::untangle.specials(Terms, "strata")
-    pos.strata <- ts$terms
-    Terms  <- Terms[-ts$terms]
-    strata <- m[[ts$vars]]
-    strata.name <- ts$vars
-  }  else { strata.name <- NULL; pos.strata <- NULL}
-  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-    ts <- survival::untangle.specials(Terms, "offset")
-    Terms  <- Terms[-ts$terms]
-    offset <- m[[ts$vars]]
-  }  
-  X <- model.matrix(Terms, m)
-  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+###  m <- match.call(expand.dots = TRUE)[1:3]
+###  special <- c("strata", "cluster","offset")
+###  Terms <- terms(formula, special, data = data)
+###  m$formula <- Terms
+###  m[[1]] <- as.name("model.frame")
+###  m <- eval(m, parent.frame())
+###  Y <- model.extract(m, "response")
+###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
+###  if (ncol(Y)==2) {
+###    stop("must give start stop formulation \n"); 
+###    exit <- Y[,1]
+###    entry <- NULL ## rep(0,nrow(Y))
+###    status <- Y[,2]
+###  } else {
+######    stop("only right censored data, will not work for delayed entry\n"); 
+###    entry <- Y[,1]
+###    exit <- Y[,2]
+###    status <- Y[,3]
+###  }
+###  id <- strata <- NULL
+###  if (!is.null(attributes(Terms)$specials$cluster)) {
+###    ts <- survival::untangle.specials(Terms, "cluster")
+###    pos.cluster <- ts$terms
+###    Terms  <- Terms[-ts$terms]
+###    id <- m[[ts$vars]]
+###  } else pos.cluster <- NULL
+###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
+###    ts <- survival::untangle.specials(Terms, "strata")
+###    pos.strata <- ts$terms
+###    Terms  <- Terms[-ts$terms]
+###    strata <- m[[ts$vars]]
+###    strata.name <- ts$vars
+###  }  else { strata.name <- NULL; pos.strata <- NULL}
+###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
+###    ts <- survival::untangle.specials(Terms, "offset")
+###    Terms  <- Terms[-ts$terms]
+###    offset <- m[[ts$vars]]
+###  }  
+###  X <- model.matrix(Terms, m)
+###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+    m <- match.call(expand.dots = TRUE)[1:3]
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("offset", "weights", "cluster"),
+        intercept = TRUE
+    )
+    Y <- des$y
+    if (!inherits(Y, c("Event", "Surv"))) {
+        stop("Expected a 'Surv' or 'Event'-object")
+    }
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
+        entry <- rep(0, nrow(Y))
+        status <- Y[, 2]
+    } else {
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
+    }
+    X <- des$x
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    id      <- des$cluster
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
   ### possible handling of id to code from 0:(antid-1)
 
-  call.id <- id 
-  conid <- construct_id(id,nrow(X))
-  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
-  orig.id <- id
+###  call.id <- id 
+###  conid <- construct_id(id,nrow(X))
+###  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+###  orig.id <- id
+###
+###  if (is.null(offset)) offset <- rep(0,length(exit)) 
+###  if (is.null(weights)) weights <- rep(1,length(exit)) 
 
-  if (is.null(offset)) offset <- rep(0,length(exit)) 
-  if (is.null(weights)) weights <- rep(1,length(exit)) 
-  data$id__ <- id 
+   call.id <- id
+   conid <- construct_id(id, nrow(X), namesX = rownames(X))
+   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+   orig.id <- id
+   data$id__ <- id 
+    if (is.null(des.offset)) {
+        if (is.null(offset))
+            offset <- rep(0, length(exit))
+    }
+    else offset <- des.offset
+    if (is.null(des.weights)) {
+        if (is.null(weights))
+            weights <- rep(1, length(exit))
+    }
+    else weights <- des.weights
+
+
   ## }}}
 
 ## use sorted id for all things  and here indentify last record of each subject
@@ -106,17 +156,35 @@ if (!is.null(augmentR)) {
    form1X <- update(form1, reformulate(c(".", varsR)))
 } else form1X <- form1
 
-
 ## ratio of means ## {{{
-dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time,
-		  model="lin")
-ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code,
-  cens.model=cens.formula,times=time,model="lin",marks=marks)
+print("wareg")
+print(formD)
+dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time, model="lin")
+print(formrec)
+ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code, cens.model=cens.formula,times=time,model="lin",marks=marks)
+
+treatdata <- data.frame(treatment=nlevs,id__=1)
+###prmst <- predict(dd,treatdata,se=0)
+###prec <- predict(ddN,treatdata,se=0)
+
+###prmst <- predict(dd,data,se=0)
+###prec <- predict(ddN,data,se=0)
+
+f <- function(p,logg=0) {
+ddN$coef <- p[1:2]
+dd$coef <- p[3:4]
+prmst <- predict(dd,treatdata,se=0)
+prec <- predict(ddN,treatdata,se=0)
+out <- prec/prmst
+if (logg==1) out <- log(out)
+return(out)
+}
+
 cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
-ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) (p[1:2]/p[3:4]))
-ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) log(p[1:2]/p[3:4]))
-
+ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=f)
+###			 f=function(p) (p[1:2]/p[3:4]))
+ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=f,logg=1)
 RAW <- list(iid=cciid,coef=cc,time=time,rmst=dd,meanN=ddN,ratio.means=ratio.means,ratio.means.log=ratio.means.log)
 ## }}}
 
@@ -147,7 +215,8 @@ if (is.null(type)) {
 }
 
 outae <- binregATE(form1X,rrR,cause=death.code,time=time,treat.model=treat.formula,
-      cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,type=type[1],...) 
+   cens.code=cens.code,Ydirect=Yr,outcome="rmst",model="lin",cens.model=cens.formula,
+   type=type[1],...) 
 ET <- list(riskDR=outae)
 
 ##  Yipcw as it comes in data frame 

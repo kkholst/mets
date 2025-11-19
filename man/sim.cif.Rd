@@ -3,6 +3,7 @@
 \name{sim.cif}
 \alias{sim.cif}
 \alias{sim.cifs}
+\alias{sim.cif.base}
 \alias{subdist}
 \alias{pre.cifs}
 \alias{sim.cifsRestrict}
@@ -10,8 +11,21 @@
 \alias{invsubdist}
 \title{Simulation of output from Cumulative incidence regression model}
 \usage{
-sim.cif(cif,n,data=NULL,Z=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
-                cumstart=c(0,0),U=NULL,pU=NULL,...)
+sim.cif(
+  cif,
+  n,
+  data = NULL,
+  Z = NULL,
+  strata = NULL,
+  drawZ = TRUE,
+  cens = NULL,
+  rrc = NULL,
+  cumstart = c(0, 0),
+  U = NULL,
+  pU = NULL,
+  type = NULL,
+  ...
+)
 }
 \arguments{
 \item{cif}{output form prop.odds.subdist or ccr (cmprsk), can also call invsubdist with 
@@ -23,6 +37,8 @@ with cumulative and linear predictor}
 covariates).}
 
 \item{Z}{to use these covariates for simulation rather than drawing new ones.}
+
+\item{strata}{possible strata}
 
 \item{drawZ}{to random sample from Z or not}
 
@@ -38,31 +54,56 @@ given then takes average rate of in simulated data from cox model.}
 
 \item{pU}{uniforms to use for drawing event type (F1,F2,1-F1-F2).}
 
+\item{type}{of model logistic,cloglog,rr}
+
 \item{...}{arguments for simsubdist (for example Uniform variable for realizations)}
 }
 \description{
 Simulates data that looks like fit from fitted cumulative incidence model
 }
 \examples{
+library(mets)
 data(bmt)
+nsim <- 100
 
-scif <-  cifreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,prop=NULL)
-summary(scif)  
-plot(scif)
+## logit cumulative incidence regression model 
+cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
+estimate(cif)  
+plot(cif)
+simbmt <- sim.cif(cif,nsim,data=bmt)
+dtable(simbmt,~status)
+scif <- cifreg(Event(time,status)~platelet+age,data=simbmt,cause=1)
+estimate(scif)
+plot(scif,add=TRUE,col=2)
+
+## Fine-Gray cloglog cumulative incidence regression model 
+cif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
+estimate(cif)  
+plot(cif)
+simbmt <- sim.cif(cif,nsim,data=bmt)
+scif <- cifregFG(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
+estimate(scif)
+plot(scif,add=TRUE,col=2)
+
 ################################################################
 #  simulating several causes with specific cumulatives 
 ################################################################
-
-cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1,prop=NULL)
-cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2,prop=NULL)
-# dd <- sim.cifsRestrict(list(cif1,cif2),200,data=bmt)
-dd <- sim.cifs(list(cif1,cif2),200,data=bmt)
-scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
-scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
+cif1 <-  cifreg(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
+cif2 <-  cifreg(Event(time,cause)~strata(platelet)+tcell+age,data=bmt,cause=2)
+cifss <-  list(cif1,cif2)
+simbmt <- sim.cifs(list(cif1,cif2),nsim,data=bmt,extend=0.005)
+dtable(simbmt,~status)
+scif1 <-  cifreg(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
+scif2 <-  cifreg(Event(time,status)~strata(platelet)+tcell+age,data=simbmt,cause=2)
+cbind(cif1$coef,scif1$coef)   
+cbind(cif2$coef,scif2$coef)   
    
 par(mfrow=c(1,2))   
-plot(cif1); plot(scif1,add=TRUE,col=2)
-plot(cif2); plot(scif2,add=TRUE,col=2)
+## Cause 1 follows the model    
+plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
+## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1    
+plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
+   
 }
 \author{
 Thomas Scheike

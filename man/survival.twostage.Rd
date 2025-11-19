@@ -175,6 +175,7 @@ The case.control option that can be used with the pair specification of the pair
 of the estimating equations. Here it is assumed that the second subject of each pair is the proband.
 }
 \examples{
+library(mets)
 data(diabetes)
 
 # Marginal Cox model  with treat as covariate

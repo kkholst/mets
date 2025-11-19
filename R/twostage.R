@@ -99,6 +99,7 @@
 ##' Eriksson and Scheike (2015),
 ##'
 ##' @examples
+##' library(mets)
 ##' data(diabetes)
 ##'
 ##' # Marginal Cox model  with treat as covariate
@@ -255,6 +256,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 
   if (!is.null(margsurv)) {
      rrr <-  readmargsurv(margsurv,data,clusters)
+
      psurvmarg <- rrr$psurvmarg; ptrunc <- rrr$ptrunc; start.time <- rrr$entry;
      time2 <- rrr$exit; status <- rrr$status; clusters <- rrr$clusters
   }

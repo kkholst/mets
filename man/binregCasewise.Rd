@@ -24,6 +24,7 @@ Estimates the casewise concordance based on Concordance and marginal estimate us
 Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
 }
 \examples{
+library(mets)
 data(prt)
 prt <- force.same.cens(prt,cause="status")
 
@@ -38,7 +39,6 @@ pconc <- predict(bcif1,newdata)
 ## marginal estimates 
 mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
 mc <- predict(mbcif1,newdata)
-mc
 
 cse <- binregCasewise(bcif1,mbcif1)
 cse
