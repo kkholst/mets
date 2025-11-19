@@ -9,6 +9,7 @@
 ^.gitignore$
 ^README\.org$
 ^README\.Rmd$
+^vignettes/^README\.Rmd$
 ^examples$
 ^TODO$
 ^doc$

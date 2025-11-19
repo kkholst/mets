@@ -79,10 +79,10 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 
  ## take offset and weight first from formula, but then from arguments
   if (is.null(des.offset)) {
-	  if (is.null(offset)) offset <- rep(0,length(exit)) 
+	  if (is.null(offset)) offset <- rep(0,nrow(X)) 
   } else offset <- des.offset
   if (is.null(des.weights)) {
-	  if (is.null(weights)) weights <- rep(1,length(exit)) 
+	  if (is.null(weights)) weights <- rep(1,nrow(X)) 
   } else weights <- des.weights
 
    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
