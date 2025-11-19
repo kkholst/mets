@@ -442,11 +442,17 @@ proc_design <- function(formula, data, ..., # nolint
   ) # is a call object
 
   specials.list <- c()
+  specials.var <- c()
   if (length(specials) > 0) {
     for (s in specials) {
-      w <- eval(substitute(model.extract2(mf, s), list(s = s)))
-      specials.list <- c(specials.list, list(w))
+        w <- eval(substitute(model.extract2(mf, s), list(s = s)))
+        specials.list <- c(specials.list, list(w))
+        specials.var <- c(
+            specials.var,
+            list(unlist(Specials(tt, spec = s)))
+        )
     }
+    names(specials.var) <- specials
     names(specials.list) <- specials
     if (length(sterm.list) > 0) {
       if (design.matrix) {
@@ -495,6 +501,7 @@ proc_design <- function(formula, data, ..., # nolint
       intercept = has_intercept,
       data = data[0, ], ## Empty data.frame to capture structure of data
       specials = specials,
+      specials.var = specials.var,
       specials.call = specials.call
     ),
     specials.list
