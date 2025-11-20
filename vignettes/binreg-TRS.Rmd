@@ -203,17 +203,17 @@ tm=At.f~factor(Count2)
 tm=At.f~factor(Count2)*A0.f
 
 head(calgt)
-#ll0 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A10)+cluster(id),calgt,treat.model=tm)
-#pll0 <- predict(ll0,expand.grid(A0=0:1,A10=0,id=1))
-#ll1 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A11)+cluster(id),calgt,treat.model=tm)
-#pll1 <- predict(ll1,expand.grid(A0=0:1,A11=1,id=1))
-#plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)",xlim=c(0,30))
-#plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1,xlim=c(0,30))
-#abline(h=0.25)
-#legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
-#
-#summary(pll1,times=12)
-#summary(pll0,times=12)
+ll0 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A10)+cluster(id),calgt,treat.model=tm)
+pll0 <- predict(ll0,expand.grid(A0=0:1,A10=0,id=1))
+ll1 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A11)+cluster(id),calgt,treat.model=tm)
+pll1 <- predict(ll1,expand.grid(A0=0:1,A11=1,id=1))
+plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)",xlim=c(0,30))
+plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1,xlim=c(0,30))
+abline(h=0.25)
+legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
+
+summary(pll1,times=12)
+summary(pll0,times=12)
 ```
 
 The propensity score mode can be extended to use covariates to get increased efficiency.
