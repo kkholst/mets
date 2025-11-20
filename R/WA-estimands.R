@@ -56,16 +56,6 @@ WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2
     id      <- des$cluster
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  ### possible handling of id to code from 0:(antid-1)
-
-###  call.id <- id 
-###  conid <- construct_id(id,nrow(X))
-###  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
-###  orig.id <- id
-###
-###  if (is.null(offset)) offset <- rep(0,length(exit)) 
-###  if (is.null(weights)) weights <- rep(1,length(exit)) 
-
    call.id <- id
    conid <- construct_id(id, nrow(X), namesX = rownames(X))
    name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
@@ -113,10 +103,7 @@ if (!is.null(augmentR)) {
 } else form1X <- form1
 
 ## ratio of means ## {{{
-print("wareg")
-print(formD)
 dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time, model="lin")
-print(formrec)
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code, cens.model=cens.formula,times=time,model="lin",marks=marks)
 
 treatdata <- data.frame(treatment=nlevs,id__=1)
