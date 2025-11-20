@@ -112,10 +112,6 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   Ydirect=NULL,...)
 {# {{{
 cl <- match.call()# {{{
-print("binreg")
-print(formula)
-
-###    m <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,

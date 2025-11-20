@@ -430,7 +430,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
  dr <- phreg(formD,data=data,no.opt=TRUE,no.var=1)
 
  ### augmenting partioned estimator computing \hat H_i(s,t) for fixed t
- data$Gctrr <- exp(-cpred(cr$cumhaz,exit)[,2])
+ data$Gctrr <- exp(-cpred(rbind(0,cr$cumhaz),exit)[,2])
 
  ### cook-lawless-ghosh-lin
  xr0 <- phreg(form1,data=data,no.opt=TRUE)
@@ -476,7 +476,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
   data$expNt <- exp(-data$Nt)
   data$NtexpNt <- data$Nt*exp(-data$Nt)
 
-  Gcdata <- exp(-cpred(cr$cumhaz,exit)[,2])
+  Gcdata <- exp(-cpred(rbind(0,cr$cumhaz),exit)[,2])
 
   form <- as.formula(paste("Surv(entry__,exit__,statusC__)~+1"))
   desform <- update.formula(augment.model,~Hst + . + cluster(id__))

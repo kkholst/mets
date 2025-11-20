@@ -1068,15 +1068,12 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
    ## method=c("incIPCW","IPCW","rate")
    estimator=c("incIPCW")
    cl <- match.call()
-   print("recregIPCW")
-   print(formula)
-
    ## {{{ reading design 
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
-        specials = c("offset", "weights", "cluster"),
+        specials = c("offset", "weights", "cluster","marks"),
         intercept = TRUE
     )
     Y <- des$y
@@ -1093,9 +1090,9 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
         status <- Y[, 3]
     }
     X <- des$x
-    print(head(X))
     des.weights <- des$weights
     des.offset  <- des$offset
+    des.marks <- des$marks
     id      <- des$cluster
 
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
@@ -1114,9 +1111,9 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   if (is.null(des.weights)) {
 	  if (is.null(weights)) weights <- rep(1,length(exit)) 
   } else weights <- des.weights
+  if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
+  if (is.null(marks)) marks <- rep(1,length(id))
 # }}}
-
-	if (is.null(marks)) marks <- rep(1,length(id))
 
 	### setting up with artificial names
 	data$status__ <-  status 

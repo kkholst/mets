@@ -379,7 +379,6 @@ proc_design <- function(formula, data, ..., # nolint
       if ((nrow(attr(tt, "factors")) - attr(tt, "response")) ==
           length(sterm.list)) {
         # only specials on the rhs, remove everything
-        print(formula)
           formula <- update(formula, ~1)
       } else {
           # predictors without the specials
