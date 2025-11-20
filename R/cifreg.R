@@ -368,7 +368,7 @@ strataC <- survival::strata
 ##' fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
 ##' summary(fgaugS2)
 ##'
-##' @aliases strataC  simul.cifs setup.cif drop.strata
+##' @aliases strataC drop.strata
 ##' @export
 FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,km=TRUE,case.weights=NULL,weights=NULL,offset=NULL,...)
 {# {{{
@@ -650,78 +650,4 @@ FG_AugmentCifstrata <- function(formula,data=data,E=NULL,cause=NULL,cens.code=0,
     return(fga)
 }# }}})
 
-##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL,U=NULL,pU=NULL) {# {{{
-    p=length(beta)/2
-    tt <- seq(0,6,by=0.1)
-    if (length(rate)==1) rate <- rep(rate,2)
-    Lam1 <- rho1*(1-exp(-tt/rate[1]))
-    Lam2 <- rho2*(1-exp(-tt/rate[2]))
 
-    if (length(bin)==1) bin <- rep(bin,2)
-    if (length(rcZ)==1) rcZ <- c(rcZ,0)
-
-    if (is.null(Z)) 
-    Z=cbind((bin[1]==1)*(2*rbinom(n,1,1/2)-1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n,1,1/2))+(bin[2]==0)*rnorm(n))
-    p <- ncol(Z)
-    colnames(Z) <- paste("Z",1:p,sep="")
-
-    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
-    cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
-
-    data <- sim.cifs(list(cif1,cif2),n,Z=Z,U=U,pU=pU,type=type[1])
-
-    if (!is.null(rc)) {
-    if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)
-    } else censor <- 6 
-
-    status=data$status*(data$time<=censor)
-    time=pmin(data$time,censor)
-    data <- data.frame(time=time,status=status)
-    data <- cbind(data,Z)
-    attr(data,"Lam1") <- cbind(tt,Lam1)
-    attr(data,"Lam2") <- cbind(tt,Lam2)
-    return(data)
-
-}# }}}
-
-simul.mod <- function(n,rho1,rho2,beta,rc=0.5,k=1,depcens=0) {# {{{
-    p=length(beta)/2
-    tt <- seq(0,6,by=0.1)
-    Lam1 <- rho1*(1-exp(-tt))
-    Lam2 <- rho2*(1-exp(-tt))
-
-    Z=cbind(2*rbinom(n,1,1/2)-1,rnorm(n))
-    colnames(Z) <- paste("Z",1:2,sep="")
-    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:2],Znames=colnames(Z),type="cloglog")
-    cif2 <- setup.cif(cbind(tt,Lam2),beta[3:4],Znames=colnames(Z),type="cloglog")
-    data <- sim.cifs(list(cif1,cif2),n,Z=Z)
-
-    censhaz  <-  cbind(tt,k*tt)
-    if (depcens==1) {
-        datc <- rchaz(censhaz,exp(Z[,1]*rc))
-    } else datc <- rchaz(censhaz,n=n)
-
-    data$time <- pmin(data$time,datc$time)
-    data$status <- ifelse(data$time<datc$time,data$status,0)
-    dsort(data) <- ~time
-
-    return(data)
-}# }}}
-
-#' @export
-setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
-{# {{{
-    cif <- list()
-    cif$cumhaz <- cumhazard
-    cif$se.cumhaz <- cumhazard
-    cif$coef <- coef
-    cif$model <- type
-    cif$strata <- rep(0,nrow(cumhazard))
-    cif$jumps <- 1:nrow(cumhazard)
-
-    cif$nstrata <- 1
-    class(cif) <- "defined"
-    attr(cif,"znames") <- Znames
-    return(cif)
-}# }}}

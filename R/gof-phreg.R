@@ -382,8 +382,6 @@ nstrata <- x$nstrata
 jumptimes <- x$jumptimes
 cumhaz <- x$cumhaz
 
-##ms <- match(x$strata.name,names(x$model.frame))
-##lstrata <- levels(x$model.frame[,ms])
 lstrata <- as.numeric(x$design$strata)-1
 stratn <-  substring(x$strata.name,8,nchar(x$strata.name)-1)
 stratnames <- paste(stratn,lstrata,sep=":")

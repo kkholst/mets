@@ -89,7 +89,7 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
    strata.name <- NULL
 
   res <- mlogit01(X,Y,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,
-		  fix.X=fix.X,Y.call=Y,X.call=X,formula.call=formula,model.frame.call=m,...) ###,
+		  fix.X=fix.X,formula.call=formula,...) 
   res$design <- des
   return(res)
 }# }}}
@@ -98,7 +98,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
        strata.name=NULL,cumhaz=FALSE,
        beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,
        propodds=NULL,AddGam=NULL,case.weights=NULL,fix.X=FALSE,formula.call=NULL,
-       model.frame.call=NULL,X.call=NULL,Y.call=NULL,...) {# {{{
+       X.call=NULL,Y.call=NULL,...) {# {{{
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(Y)))
@@ -154,12 +154,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   lweights<- weights[idrow]
 
   res <- phreg(Surv(time,status)~XX+strata(idrow)+cluster(id),datph,weights=lweights,offset=loffset,...)
-  res$model.frame <- model.frame.call
   res$formula <- formula.call
-  res$X  <-  X.call 
-  res$Y <- Y.call 
-###  res$name.id <- name.id
-
   res$px <- px
   res$nlev <- nlev
   class(res) <- rev(c("phreg","mlogit"))
@@ -189,31 +184,6 @@ predict.mlogit <- function (object, newdata , se = TRUE, response=TRUE , Y=NULL,
 		     Y <- as.numeric(factor(Y,levels=ylev))
      }
   }
-###  print(Y)
-
-###   ## when response not given, not used for predictions
-###   if (!missing(newdata)) 
-###   if (is.na(match(all.vars(object$formula)[1],names(newdata)))) response <- FALSE
-###
-###    if (missing(newdata)) {
-###        X <- object$X
-###        if (response)  Y <- as.numeric(object$Y) 
-###    } else {
-###	pclust <- grep("cluster",names(object$model.frame))
-###	if (length(pclust)>=1) {
-###	      object$model.frame <- object$model.frame[,-pclust]
-###	      formula <- drop.specials(object$formula,"cluster") } else { formula <- object$formula }
-###    
-###        xlev <- lapply(object$model.frame, levels)
-###        ylev <- xlev[[1]]
-###        ff <- unlist(lapply(object$model.frame, is.factor))
-###        upf <- update(formula,~.)
-###        tt <- terms(upf)
-###        allvar <- all.vars(tt)
-###	tt <- delete.response(tt)
-###        X <- as.matrix(model.matrix(formula, data = newdata, xlev = xlev))
-###        if (response & is.null(Y)) Y <- as.numeric(factor(newdata[,allvar[1]],levels=ylev)) 
-###    }
 
   refg <- 1  ### else refg <- match(ref,types)
   nrefs <- (1:(object$nlev-1))

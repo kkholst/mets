@@ -110,7 +110,6 @@ summary(outs)
 outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(outl)
 
-
 ##########################################
 ### risk-ratio of different causes #######
 ##########################################

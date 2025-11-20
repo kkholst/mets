@@ -4,6 +4,8 @@
 \alias{sim.cif}
 \alias{sim.cifs}
 \alias{sim.cif.base}
+\alias{simul.cifs}
+\alias{setup.cif}
 \alias{subdist}
 \alias{pre.cifs}
 \alias{sim.cifsRestrict}

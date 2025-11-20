@@ -215,11 +215,17 @@ return(ptt)
 }# }}}
 
 #' @export 
-rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,extend=TRUE,...)
+rcrisks <-function(cumhazs,rrs,n=NULL,cens=NULL,rrc=NULL,entry=NULL,causes=NULL,extend=NULL,...)
 {#'# {{{
-  if (extend)  {
-    cumhazs <- extendCums(cumhazs,NULL)
- }
+    if (!is.null(extend))  {
+      if (is.numeric(extend)) 
+      if (length(extend)!=length(cumhazs)) extend <- rep(extend[1],length(cumhaz))
+      cumhaz <- extendCums(cumhaz,NULL,haza=extend)
+   }
+
+###  if (extend)  {
+###    cumhazs <- extendCums(cumhazs,NULL)
+### }
 
   status <- NULL
   if (!is.null(n)) rrs <- matrix(1,n,length(cumhazs)) 
@@ -302,7 +308,7 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 #' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
-#' cc <-   phreg(Surv(time, status)~strata(chf)+vf+wmi,data=sim3)
+#' cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
@@ -364,8 +370,6 @@ if (drawZ==TRUE) xid <- sample(whereid,n,replace=TRUE) else xid <- id
 ## TMP vars <- all.vars(update(cox$formula,-1~.))
 vars <- all.vars(cox$formula)
 dataid <- data[xid,vars,drop=FALSE] 
-###    ms <- match(cox$strata.name,names(cox$model.frame))
-###    stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
 
 desX <- readPhreg(cox,dataid)
 Z <- desX$X
@@ -754,7 +758,7 @@ subdist <- function(F1,times)
 #' ## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1    
 #' plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
 #'    
-#' @aliases sim.cif sim.cifs sim.cif.base subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
+#' @aliases sim.cif sim.cifs sim.cif.base simul.cifs setup.cif subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
 #' @export sim.cif
 sim.cif <- function(cif,n,data=NULL,Z=NULL,strata=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,type=NULL,...)
 {# {{{
@@ -981,4 +985,57 @@ maxtimes <- rep(0,length(cifs))
 
   return(cifs)
 }# }}}
+
+##' @export
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL,U=NULL,pU=NULL) {# {{{
+    p=length(beta)/2
+    tt <- seq(0,6,by=0.1)
+    if (length(rate)==1) rate <- rep(rate,2)
+    Lam1 <- rho1*(1-exp(-tt/rate[1]))
+    Lam2 <- rho2*(1-exp(-tt/rate[2]))
+
+    if (length(bin)==1) bin <- rep(bin,2)
+    if (length(rcZ)==1) rcZ <- c(rcZ,0)
+
+    if (is.null(Z)) 
+    Z=cbind((bin[1]==1)*(2*rbinom(n,1,1/2)-1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n,1,1/2))+(bin[2]==0)*rnorm(n))
+    p <- ncol(Z)
+    colnames(Z) <- paste("Z",1:p,sep="")
+
+    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
+    cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
+
+    data <- sim.cifs(list(cif1,cif2),n,Z=Z,U=U,pU=pU,type=type[1])
+
+    if (!is.null(rc)) {
+    if (depcens==0) censor=pmin(rexp(n,1)*(1/rc),6) else censor=pmin(rexp(n,1)*(1/(rc*exp(Z %*% rcZ))),6)
+    } else censor <- 6 
+
+    status=data$status*(data$time<=censor)
+    time=pmin(data$time,censor)
+    data <- data.frame(time=time,status=status)
+    data <- cbind(data,Z)
+    attr(data,"Lam1") <- cbind(tt,Lam1)
+    attr(data,"Lam2") <- cbind(tt,Lam2)
+    return(data)
+
+}# }}}
+
+#' @export
+setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
+{# {{{
+    cif <- list()
+    cif$cumhaz <- cumhazard
+    cif$se.cumhaz <- cumhazard
+    cif$coef <- coef
+    cif$model <- type
+    cif$strata <- rep(0,nrow(cumhazard))
+    cif$jumps <- 1:nrow(cumhazard)
+
+    cif$nstrata <- 1
+    class(cif) <- "defined"
+    attr(cif,"znames") <- Znames
+    return(cif)
+}# }}}
+
 

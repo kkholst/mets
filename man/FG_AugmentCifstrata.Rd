@@ -3,8 +3,6 @@
 \name{FG_AugmentCifstrata}
 \alias{FG_AugmentCifstrata}
 \alias{strataC}
-\alias{simul.cifs}
-\alias{setup.cif}
 \alias{drop.strata}
 \title{Augmentation for Fine-Gray model based on stratified NPMLE Cif (Aalen-Johansen)}
 \usage{

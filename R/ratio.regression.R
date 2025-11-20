@@ -81,49 +81,6 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"
 	   outcome=c("cif","rmtl"),model=c("logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###
-
-###  if (is.null(offset)) offset <- rep(0,length(exit)) 
-###  if (is.null(weights)) weights <- rep(1,length(exit)) 
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula, data = data, specials = c("offset", "weights", "cluster"),
@@ -348,7 +305,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
  if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+    n=length(exit),nevent=nevent,ncluster=nid))
 
 
   val$call <- cl

@@ -478,7 +478,3 @@ predictdFG <- function(x,newdata=NULL,cause=1,se=FALSE,times=NULL,...)  {# {{{
 	return(pll)
 }# }}}
 
-
-
-
-

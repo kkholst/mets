@@ -68,7 +68,7 @@
 ##' ll2i <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2i)
-##' @aliases strataAugment scalecumhaz GLprediid recregIPCW IIDrecreg predicttime
+##' @aliases marks strataAugment scalecumhaz GLprediid recregIPCW IIDrecreg predicttime
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 { ## {{{
@@ -84,6 +84,9 @@ recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,w
 	return(outi)
 } ## }}}
 
+##' @export
+marks <- function(x) x
+
 recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0),cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,...)
 { ## {{{
 cl <- match.call()
@@ -91,7 +94,7 @@ cl <- match.call()
     des <- proc_design(
         formula,
         data = data,
-        specials = c("offset", "weights", "cluster","strata"),
+        specials = c("offset", "weights", "cluster","strata","marks"),
         intercept = FALSE
     )
     Y <- des$y
@@ -109,16 +112,20 @@ cl <- match.call()
     }
     X <- des$x
     strata <- des$strata
-    specials = c("offset", "weights", "cluster","strata")
-    Terms <- terms(formula, specials, data = data)
-    ts <- survival::untangle.specials(Terms, "strata")
-    if (!is.null(strata)) strata.name <- ts$vars else strata.name <- NULL
-    pos.strata <- NULL
+    if (!is.null(strata))  {
+      ns <- grep("strata",names(des$levels))
+      strata.name  <-  names(des$levels)[1]
+    } else strata.name <- NULL
+    ## no use of 
+    pos.cluster <- pos.strata <- NULL
+###    specials = c("offset", "weights", "cluster","strata")
+###    Terms <- terms(formula, specials, data = data)
+###    ts <- survival::untangle.specials(Terms, "strata")
+###    if (!is.null(strata)) strata.name <- ts$vars else strata.name <- NULL
     des.weights <- des$weights
     des.offset  <- des$offset
+    des.marks <- des$marks
     id      <- des$cluster
-    ## no use of 
-    pos.cluster <- NULL
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
  ## take offset and weight first from formula, but then from arguments
@@ -128,11 +135,12 @@ cl <- match.call()
   if (is.null(des.weights)) {
 	  if (is.null(weights)) weights <- rep(1,length(exit)) 
   } else weights <- des.weights
+  if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
 
- res <- c(recregN01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights, strata.name=strata.name, cens.model=cens.model,cause=cause,
+ res <- c(recregN01(data,X,entry,exit,status,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,cens.model=cens.model,cause=cause,
 		   death.code=death.code,cens.code=cens.code,Gc=Gc,wcomp=wcomp,
-			   case.weights=marks,...),
- list(call=cl,model.frame=m,formula=formula,strata.pos=pos.strata,
+		   case.weights=marks,...),
+ list(call=cl,formula=formula,strata.pos=pos.strata,
       cluster.pos=pos.cluster,n=length(status),nevent=sum(status %in% cause)))
 	colnames(res$iid) <- names(res$coef)
   res$design <- des
@@ -880,7 +888,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 			    coef=coef(x),cumhaz=x$cumhaz,cumhaz.strata=x$strata[x$jumps],
 			    cumhaz.time=cumhaz.time,strata.time=sus,
 			    nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
-			    model.frame=x$model.frame,formula=x$formula,Ut=U)
+			    formula=x$formula,Ut=U)
 	} else {
 		out <- list(time=time,base.iid=MGAiid,id=xx2$id,beta.iid=Uiid,beta.iid.naive=Uiid.naive, MGt=UU,MGc=MGc,Ut=U,EdLam0=EdLam0,cumhaz=cumhaz)
 	}
@@ -1108,53 +1116,6 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   } else weights <- des.weights
 # }}}
 
-###	m <- match.call(expand.dots = TRUE)[1:3]
-###	special <- c("strata", "cluster","offset")
-###	Terms <- terms(formula, special, data = data)
-###	m$formula <- Terms
-###	m[[1]] <- as.name("model.frame")
-###	m <- eval(m, parent.frame())
-###	Y <- model.extract(m, "response")
-###	if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###	if (ncol(Y)==2) {
-###		exit <- Y[,1]
-###		entry <- rep(0,nrow(Y))
-###		status <- Y[,2]
-###	} else {
-###		entry <- Y[,1]
-###		exit <- Y[,2]
-###		status <- Y[,3]
-###	}
-###	id <- strata <- NULL
-###	if (!is.null(attributes(Terms)$specials$cluster)) {
-###		ts <- survival::untangle.specials(Terms, "cluster")
-###		pos.cluster <- ts$terms
-###		Terms  <- Terms[-ts$terms]
-###		id <- m[[ts$vars]]
-###	} else pos.cluster <- NULL
-###	if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###		ts <- survival::untangle.specials(Terms, "strata")
-###		pos.strata <- ts$terms
-###		Terms  <- Terms[-ts$terms]
-###		strata <- m[[ts$vars]]
-###		strata.name <- ts$vars
-###	}  else { strata.name <- NULL; pos.strata <- NULL}
-###	if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###		ts <- survival::untangle.specials(Terms, "offset")
-###		Terms  <- Terms[-ts$terms]
-###		offset <- m[[ts$vars]]
-###	}
-###	X <- model.matrix(Terms, m)
-###	###    if (!is.null(intpos  <- attributes(Terms)$intercept))
-###	###        X <- X[,-intpos,drop=FALSE]
-###	if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###
-###	call.id <- id 
-###	conid <- construct_id(id,nrow(X))
-###	name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
-###	orig.id <- id
-###
-
 	if (is.null(marks)) marks <- rep(1,length(id))
 
 	### setting up with artificial names
@@ -1353,7 +1314,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	}
 	if (length(val$coef) == length(colnames(X))) names(val$coef) <- colnames(X)
 
-	val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent, model.frame=m, n=length(exit),X=X))
+	val <- c(val, list(times = times, Y=Y, ncluster=nid, nevent=nevent,n=length(exit),X=X))
 
 
 	if (se) {

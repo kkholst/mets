@@ -39,7 +39,7 @@ so ordering after $id will give iid in order of data-set.
 library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~vf+chf+strata(wmicat.4)+cluster(id),data=TRACE)
+out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)
 summary(out1)
 
 par(mfrow=c(1,2))

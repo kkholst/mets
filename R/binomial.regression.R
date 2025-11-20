@@ -59,7 +59,6 @@
 ##' outl <- logitIPCW(Event(time,cause)~tcell+platelet,bmt,time=50)
 ##' summary(outl)
 ##'
-##'
 ##' ##########################################
 ##' ### risk-ratio of different causes #######
 ##' ##########################################
@@ -141,47 +140,6 @@ print(formula)
     des.weights <- des$weights
     des.offset  <- des$offset
     id      <- des$cluster
-###} else {
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  des.offset <- des.weights <- NULL
-
   if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
 
@@ -386,7 +344,7 @@ if (length(dots)==0) {
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+    n=length(exit),nevent=nevent,ncluster=nid))
 
   val$call <- cl
   val$MGciid <- MGCiid
@@ -528,18 +486,6 @@ coef.binreg <- function(object,...) {# {{{
 ##' @export
 predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,level=0.95,...)
 {# {{{
-
-###  xlev <- lapply(object$model.frame,levels)
-###  ff <- unlist(lapply(object$model.frame,is.factor))
-###  upf <- update(object$formula,~.)
-###  tt <- terms(upf)
-###  tt <- delete.response(tt)
-###  Z <- model.matrix(tt,data=newdata,xlev=xlev)
-###  ## assuming that cluster comes after Z's 
-###  Z <- as.matrix(Z)[,1:length(object$coef),drop=FALSE]
-###  clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(object$model.frame),perl=TRUE)
-###  if (length(clusterTerm)>=1) 
-###	  if (ncol(object$model.frame)!=clusterTerm) stop("cluster term must be last\n")
   x <- update_design(object$design,data = newdata)
   Z <- x$x
 
@@ -595,46 +541,6 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
@@ -788,7 +694,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 	  else names(val$coef) <- c(paste("Intercept",time,sep=""),colnames(X)[-1])
 	  val <- c(val,list(time=time,formula=formula,formC=formC,
 	    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-	    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid))
+	    n=length(exit),nevent=nevent,ncluster=nid))
 	  
 
  if (se) {## {{{ censoring adjustment of variance 
@@ -862,53 +768,6 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###
-###  call.id <- id
-###  conid <- construct_id(id,nrow(X),namesX=rownames(X))
-###  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
-###  orig.id <- id
-###
-###  if (is.null(offset)) offset <- rep(0,length(exit)) 
-###  if (is.null(weights)) weights <- rep(1,length(exit)) 
-    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -1076,7 +935,7 @@ if (length(dots)==0) {
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
+    n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
   
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -1142,45 +1001,6 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
@@ -1349,7 +1169,7 @@ if (length(dots)==0) {
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
+    n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
   
  if (se) {## {{{ censoring adjustment of variance 
     ### order of sorted times
@@ -1472,45 +1292,6 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
 {# {{{
   cl <- match.call()# {{{
   m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -2303,45 +2084,6 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+
 	   Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-###  m <- match.call(expand.dots = TRUE)[1:3]
-###  special <- c("strata", "cluster","offset")
-###  Terms <- terms(formula, special, data = data)
-###  m$formula <- Terms
-###  m[[1]] <- as.name("model.frame")
-###  m <- eval(m, parent.frame())
-###  Y <- model.extract(m, "response")
-###  if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-###  if (ncol(Y)==2) {
-###    exit <- Y[,1]
-###    entry <- NULL ## rep(0,nrow(Y))
-###    status <- Y[,2]
-###  } else {
-###    stop("only right censored data, will not work for delayed entry\n"); 
-###    entry <- Y[,1]
-###    exit <- Y[,2]
-###    status <- Y[,3]
-###  }
-###  id <- strata <- NULL
-###  if (!is.null(attributes(Terms)$specials$cluster)) {
-###    ts <- survival::untangle.specials(Terms, "cluster")
-###    pos.cluster <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    id <- m[[ts$vars]]
-###  } else pos.cluster <- NULL
-###  if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    pos.strata <- ts$terms
-###    Terms  <- Terms[-ts$terms]
-###    strata <- m[[ts$vars]]
-###    strata.name <- ts$vars
-###  }  else { strata.name <- NULL; pos.strata <- NULL}
-###  if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-###    ts <- survival::untangle.specials(Terms, "offset")
-###    Terms  <- Terms[-ts$terms]
-###    offset <- m[[ts$vars]]
-###  }  
-###  X <- model.matrix(Terms, m)
-###  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
@@ -2503,8 +2245,7 @@ hessian <- matrix(D2log,length(pp),length(pp))
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
     exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
-    model.frame=m,n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
-
+    n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
   
 # {{{ computation of ate, att, atc and their influence functions
 if (length(all.vars(treat.model))==0) 

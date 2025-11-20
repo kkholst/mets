@@ -2,6 +2,7 @@
 % Please edit documentation in R/recreg.R
 \name{recreg}
 \alias{recreg}
+\alias{marks}
 \alias{strataAugment}
 \alias{scalecumhaz}
 \alias{GLprediid}
