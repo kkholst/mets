@@ -366,6 +366,7 @@ proc_design <- function(formula, data, ..., # nolint
   }
   # delete response to generate design matrix when making predictions
   if (!response) tt <- delete.response(tt)
+
   sterm.list <- c()
   if (length(specials) > 0) {
     des <- attr(tt, "factors")
@@ -437,7 +438,6 @@ proc_design <- function(formula, data, ..., # nolint
       }
   }
 
-  formula <- formula(delete.response(terms(formula)))
   has_intercept <- attr(tt, "intercept") == 1L
   specials <- union(
     specials,
@@ -460,7 +460,7 @@ proc_design <- function(formula, data, ..., # nolint
     if (length(sterm.list) > 0) {
       if (design.matrix) {
         xlev0[sterm.list] <- NULL
-        mf <- model.frame(formula,
+        mf <- model.frame(formula(delete.response(terms(formula))),
                           data = data, ...,
                           xlev = xlev0,
                           drop.unused.levels = FALSE
