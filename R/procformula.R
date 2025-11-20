@@ -359,7 +359,7 @@ proc_design <- function(formula, data, ..., # nolint
   term.labels <- attr(tt, "term.labels") # predictors
 
   if (response && inherits(
-      try(model.frame(update(tt, ~1), data=data), silent=TRUE),
+      try(model.frame(update(tt, ~1), data = data), silent = TRUE),
       "try-error"
   )) {
       response <- FALSE
@@ -378,19 +378,20 @@ proc_design <- function(formula, data, ..., # nolint
       if ((nrow(attr(tt, "factors")) - attr(tt, "response")) ==
           length(sterm.list)) {
         # only specials on the rhs, remove everything
-        formula <- update(formula, ~1)
+        print(formula)
+          formula <- update(formula, ~1)
       } else {
-        # predictors without the specials
-        term.labels <- setdiff(term.labels,
-                               unlist(sterm.list))
-        formula <- update(tt, reformulate(term.labels))
+          # predictors without the specials
+          term.labels <- setdiff(
+              term.labels,
+              unlist(sterm.list)
+          )
+          ## formula <- update(tt, reformulate(term.labels))
       }
       upd <- paste(" ~ . - ", paste(sterm.list, collapse = " - "))
       formula <- update(formula, upd)
     }
   }
-
-
 
   xlev <- levels
   xlev[["response_"]] <- NULL
