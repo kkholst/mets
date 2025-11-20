@@ -261,7 +261,7 @@ Specials <- function(f,spec,split1=",",split2=NULL,...) {# {{{
   if (!is.null(split1))
       res <- unlist(strsplit(res,split1))
   res <- as.list(res)
-  for (i in seq(length(res))) {
+  for (i in seq_along(res)) {
       if (length(grep("~",res[[i]]))>0) {
           res[[i]] <- as.formula(res[[i]])
       }
