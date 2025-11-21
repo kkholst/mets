@@ -165,8 +165,8 @@ if (is.null(modelmatrix)) stop(" must give matrix for cumulating residuals\n");
 cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
 
 ## put modelmatrix on data, and take y, strata from design
-datl <- as.data.frame(mm)
-namesmm <- paste("names",1:ncol(mm),sep="")
+datl <- as.data.frame(modelmatrix)
+namesmm <- paste("names",1:ncol(modelmatrix),sep="")
 names(datl) <- namesmm
 datl[,"y__"] <- cox1$design$y
 if (!is.null(cox1$design$strata)) {

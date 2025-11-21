@@ -53,7 +53,6 @@ library(mets)
 data(TRACE)
 set.seed(1)
 TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
-
 dcut(TRACEsam)  <- ~. 
 mm <- model.matrix(~-1+factor(wmicat.4),data=TRACEsam)
 m1 <- gofM.phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
