@@ -3661,7 +3661,7 @@ cif <- function(formula,data=data,cause=1,cens.code=0,death.code=NULL,...)
   if (is.null(death.code)) statusD <- 1*(!(status %in% cens.code)) else statusD <- 1*(status %in% death.code)
   data$statusE__ <- statusE
   data$statusD__ <- statusD
-  data$strata__  <- strata
+  data$strata__ <- strata
 
   ### setting up formulae for the two phreg (cause of interest and death)
   if (is.null(id.orig)) { 
@@ -3672,12 +3672,14 @@ cif <- function(formula,data=data,cause=1,cens.code=0,death.code=NULL,...)
   tt <- delete.response(tt)
   formid <- formula(tt)
 
+  data$exit__ <- exit
   if (ncol(Y)==3) {
-     formE <- as.formula(paste("Surv(entry,exit,statusE__)~+1"))
-     formD <- as.formula(paste("Surv(entry,exit,statusD__)~+1"))
+     data$entry__ <- entry
+     formE <- as.formula(paste("Surv(entry__,exit__,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(entry__,exit__,statusD__)~+1"))
   } else {
-     formE <- as.formula(paste("Surv(exit,statusE__)~+1"))
-     formD <- as.formula(paste("Surv(exit,statusD__)~+1"))
+     formE <- as.formula(paste("Surv(exit__,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(exit__,statusD__)~+1"))
   }
  formE <- update.formula(formE,formid)
  formD <- update.formula(formD,formid)

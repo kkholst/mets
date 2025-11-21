@@ -85,13 +85,12 @@ nlev <- nlevels(treatvar)
 nlevs <- levels(treatvar)
 ntreatvar <- as.numeric(treatvar)-1
 treat.formula <- treat.model <- as.formula(paste(treat.name,"~+1",sep=""))
-
 if (is.null(cens.formula)) cens.formula <- as.formula( paste("~strata(",treat.name,")",collapse=""))
-formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in% cens.code)~+cluster(id__)",collapse=""))
-formD <- as.formula( paste("Event(",vars[2],",",vars[3],"%in% death.code )~-1+",treat.name,"+cluster(id__)",collapse=""))
+formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in%", cens.code,")~+cluster(id__)",collapse=""))
+formD <- as.formula( paste("Event(",vars[2],",",vars[3],"%in%", death.code,")~-1+",treat.name,"+cluster(id__)",collapse=""))
 form1 <- as.formula( paste("Event(",vars[2],",",vars[3],")~-1+",treat.name,"+cluster(id__)",collapse=""))
 
-## drop id as cluster variable and use id__
+  ## drop id as cluster variable and use id__
 formula <- drop.specials(formula,"cluster")
 formula <- update(formula, .~.+cluster(id__))
 ## take out intercept, to get mean in treated/non-treated
