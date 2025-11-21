@@ -149,11 +149,24 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   }
   rownames(XX) <- NULL
 
-  datph=data.frame(time=time,status=status,XX=XX,id=id,idrow=idrow)
+  colnames(XX) <- gsub("\\)","", gsub("\\(","",colnames(XX)))
+  datph = cbind(
+      data.frame(
+          time = time, status = status, id = id, idrow = idrow
+      ),
+      XX
+  )
   loffset <- offset[idrow]
   lweights<- weights[idrow]
 
-  res <- phreg(Surv(time,status)~XX+strata(idrow)+cluster(id),datph,weights=lweights,offset=loffset,...)
+  form <- "Surv(time,status)~strata(idrow)+cluster(id)"
+  form <- paste(
+    form, "+",
+    paste(
+     colnames(XX),
+     collapse = "+")
+  )
+  res <- phreg(as.formula(form), datph, weights = lweights, offset = loffset, ...)
   res$formula <- formula.call
   res$px <- px
   res$nlev <- nlev
