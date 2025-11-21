@@ -137,7 +137,6 @@ return(out)
 ##' data(TRACE)
 ##' set.seed(1)
 ##' TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
-##' 
 ##' dcut(TRACEsam)  <- ~. 
 ##' mm <- model.matrix(~-1+factor(wmicat.4),data=TRACEsam)
 ##' m1 <- gofM.phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
@@ -164,11 +163,23 @@ gofM.phreg  <- function(formula,data,offset=NULL,weights=NULL,modelmatrix=NULL,
 if (is.null(modelmatrix)) stop(" must give matrix for cumulating residuals\n"); 
 
 cox1 <- phreg(formula,data,offset=NULL,weights=NULL,Z=modelmatrix,cumhaz=FALSE,...) 
+
+## put modelmatrix on data, and take y, strata from design
+datl <- as.data.frame(mm)
+namesmm <- paste("names",1:ncol(mm),sep="")
+names(datl) <- namesmm
+datl[,"y__"] <- cox1$design$y
+if (!is.null(cox1$design$strata)) {
+datl[,"strata__"] <- cox1$design$strata
+formM <- y__~strata(strata__)
+formM <- update(formM, paste(". ~ . +",paste(namesmm, collapse = " + ")))
+} else {
+formM <- as.formula(paste("y__~",paste(namesmm, collapse = " + ")))
+}
+
 offsets <- cox1$X %*% cox1$coef
 if (!is.null(offset)) offsets <- offsets*offset
-if (!is.null(cox1$strata.name)) 
-     coxM <- phreg(cox1$design$y~modelmatrix+strata(cox1$strata),data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
-else coxM <- phreg(cox1$design$y~modelmatrix,data,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
+coxM <- phreg(formM,datl,offset=offsets,weights=weights,no.opt=TRUE,cumhaz=FALSE,no.var=1,...)
 nnames <- colnames(modelmatrix)
 
 Ut <- apply(coxM$U,2,cumsum)
