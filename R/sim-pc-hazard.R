@@ -309,28 +309,44 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 #' set.seed(100)
 #' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
+#' head(sim3)
 #' cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
-#' Z <- sim3[,c("chf","vf","wmi")]
-#' set.seed(100)
-#' sim4 <- sim.phreg(coxs,nsim,data=sTRACE)
+#' Z <- sim3[,c("chf","wmi")]
+#' strata <- sim3[,c("vf")]
+#' rr <- exp(as.matrix(Z) %*% coef(coxs))
+#' sim4 <- sim.phreg(coxs,nsim,data=NULL,rr=rr,strata=strata)
 #' 
-#' @aliases draw.phreg sim.base simulate.cox sim.phregs setup.phreg
+#' @aliases draw.phreg sim.phregs setup.phreg
 #' @export sim.phreg 
-#' @usage sim.phreg(cox,n,data,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+#' @usage sim.phreg(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
+if  (!is.null(data)) {
    scox1 <- draw.phreg(cox,n,data=data,...)
    dat <- scox1$data
    dat$orig.id <- scox1$id
 
    if (is.null(strata))  strata <- scox1$strata 
    if (is.null(rr)) rr <- scox1$rr  
+} else {
+	if (is.null(Z) & is.null(rr)) stop("must give Z or rr ")
+	if (!is.null(Z)) {
+	  if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
+	} else znames <- NULL
+	if (is.null(rr)) rr <- exp(as.matrix(Z) %*% cif$coef)
+	id <- 1:nrow(Z)
+	dats <- NULL
+	n <- nrow(Z)
+}
+if (is.null(strata)) strata <- rep(0,n)
    
-   cumhaz <- cox$cum
-   cumhaz <- basecumhaz(cox,only=1)
+   if (inherits(cox,c("phreg","cifreg"))) cumhaz <- basecumhaz(cox,only=1)
+   else {
+        if (!is.list(cox)) stop("must be phreg or list of hazards\n") else cumhaz <- cox
+   }
    if (!is.null(extend))  {
       if (is.numeric(extend)) 
       if (length(extend)!=length(cumhaz)) extend <- rep(extend[1],length(cumhaz))
@@ -340,16 +356,16 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL
    lentry <- NULL
 
    ptt <- c()
-   for (i in seq(length(cumhaz))) {
-      whichi <- which(strata==i-1)
-      cumhazj <- rbind(0,cumhaz[[i]])
+   for (i in unique(strata)) {
+      whichi <- which(strata==i)
+      cumhazj <- rbind(0,cumhaz[[i+1]])
       if (!is.null(entry)) lentry <- entry[whichi]
       simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
       simj$id <- ids[whichi]
       ptt  <-  rbind(ptt,simj)
     }
     dsort(ptt) <- ~id
-    ptt <- cbind(ptt,dat)
+   if (!is.null(dat)) ptt <- cbind(ptt,dat)
 
  if (!is.null(cens)) {
       pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
@@ -357,18 +373,17 @@ sim.phreg <- function(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
  }
 
-
 return(ptt)
 }# }}}
 
 #' @export draw.phreg
 #' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
-draw.phreg <- function(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
 {# {{{
 ###if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
 
 ## give data so that design can be constructed based on model-formula
-if (is.null(Z)) {
+if (is.null(data)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
 if (drawZ==TRUE) xid <- sample(whereid,n,replace=TRUE) else xid <- id
@@ -379,79 +394,26 @@ dataid <- data[xid,vars,drop=FALSE]
 desX <- readPhreg(cox,dataid)
 Z <- desX$X
 strata <- desX$strata
-} else { xid <- 1:nrow(Z); n <- nrow(Z); dataid <- Z; strata <- rep(0,n)}
+} else {  ## Z and strata
+	xid <- 1:nrow(Z); 
+	n <- nrow(Z); 
+	dataid <- Z; 
+	if (is.null(strata)) strata <- rep(0,n)
+}
 
 nz <- ncol(Z)
 if (nz>0) rr <- exp(as.matrix(Z) %*% cox$coef) else rr <- rep(1,nrow(Z))
 cumhaz <- rbind(c(0,0),cox$cumhaz)
-   if (cox$nstrata>1) stratid <- strata else stratid <- NULL
    if (cox$nstrata>1) {
-       stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
+      stratname <-  substring(cox$strata.name,8,nchar(cox$strata.name)-1)
    } else stratname <- NULL
    model <-c(class(cox),is.null(cox$propodds))
 
-out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,strata=strata,data=dataid, stratname=stratname)
+out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,
+	    strata=strata,data=dataid,stratname=stratname)
 
 return(out)
 } ## }}}
-
-#' @export sim.base
-#' @usage sim.base(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,extend=TRUE,...)
-sim.base <- function(cumhaz,n,stratajump=NULL,cens=NULL,entry=NULL,strata=NULL,rr=NULL,rc=NULL,extend=TRUE,...)
-{# {{{
-
-## stratajump that indentifies baselines of each strata
-if (!is.null(stratajump)) {
-us <- unique(stratajump)
-nus <- length(us)
-}
-if (is.null(rr)) rr <- rep(1,n)
-if (is.null(rc)) rc <- rep(1,n)
-id <- 1:n
-lentry <- NULL
-
-if (is.null(stratajump))  {
-  if (cumhaz[1,2]>0) cumhaz <- rbind(c(0,0),cumhaz)
-  ptt <- rchaz(cumhaz,rr,entry=entry) 
-} else {
-ptt <- c()
-cumhazs <- list()
-us <- unique(stratajump)
-ss  <- seq_along(us)
-for (j in ss) {
-    i <- us[j]
-    jjs <- which(stratajump==i)
-    cumhazardj <- cumhaz[jjs,]
-    cumhazs[[j]] <- cumhazardj
-}
-if (extend) cumhazs <- extendCums(cumhazs,NULL)
-
-## strata among n simulations
-for (i in seq_along(unique(strata))) {
-	cumhazardj <- cumhazs[[i]]
-	j <- unique(strata)[i]
-	js <- which(strata==j)
-	idj <- id[js]
-	if (!is.null(entry)) lentry <- entry[js]
-	ns <- length(js)
-	rrj <- rr[js]
-	pttj <- cbind(rchaz(cumhazardj,rrj,entry=lentry),j)
-	colnames(pttj)[5] <- "strata"
-	pttj$id <- idj
-	ptt  <-  rbind(ptt,pttj)
-}
-dsort(ptt) <- ~id
-drm(ptt) <- ~id
-} 
-
-if (!is.null(cens))  {
-   if (is.matrix(cens))  pct <- rchaz(cens,rc,entry=entry)$time  else  pct<- rexp(n)/(rc*cens) 
-   ptt$time <- pmin(ptt$time,pct)
-   ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-} 
-
-return(ptt)
-}# }}}
 
 extendit <- function(cox,extend=NULL)
 {# {{{
@@ -463,6 +425,62 @@ extendit <- function(cox,extend=NULL)
     return(cumhaz)
 }# }}}
 
+#' @export
+setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
+{# {{{
+    cox <- list()
+    cox$cumhaz <- cumhazard
+    cox$coef <- coef
+    if (is.null(strata)) { strata <- rep(0,nrow(cumhazard)); nstrata <- 1} else nstrata <- max(strata)+1
+    cox$strata <- strata
+    cox$nstrata <- nstrata
+    cox$strata.name <- ""
+    cox$jumps <- 1:nrow(cumhazard)
+    class(cox) <- c("setup","phreg")
+    attr(cox,"znames") <- Znames
+    return(cox)
+}# }}}
+
+#' Simulation of cause specific from Cox models.
+#' 
+#' Simulates data that looks like fit from cause specific Cox models. 
+#' Censor data automatically. When censoring is given in the  list of causes this
+#' will give censoring that looks like the data.  Covariates are drawn from data-set
+#' with replacement. This gives covariates like the data.  Calls sim.phregs
+#' 
+#' 
+#' @param coxs list of cox models.
+#' @param n number of simulations.
+#' @param data to extract covariates for simulations (draws from observed covariates).
+#' @param cens specifies censoring model, if NULL then only censoring for 
+#'   	       each cause at end of last event of this type. 
+#' 	       if "is.matrix" then uses cumulative. 
+#'             hazard given, if "is.scalar" then uses rate for exponential, and if not
+#'             given then takes average rate of in simulated data from cox model.
+#'             But censoring can also be given as a cause.
+#' @param rrc possible vector of relative risk for cox-type censoring.
+#' @param ... arguments for rchaz, for example entry-time
+#' @author Thomas Scheike
+#' @keywords survival
+#' @examples
+#' library(mets)
+#t
+nsim <- 10000; data(bmt)
+#' 
+#' cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=bmt)
+#' cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
+#' coxs <- list(cox1,cox2)
+#' ## just calls sim.phregs !
+#' dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
+#' scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet+age,data=dd)
+#' scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+#'
+#' cbind(cox1$coef,scox1$coef)
+#' cbind(cox2$coef,scox2$coef)
+#' par(mfrow=c(1,2))
+#' plot(cox1); plot(scox1,add=TRUE); 
+#' plot(cox2); plot(scox2,add=TRUE); 
+#' 
 #' @export sim.phregs
 sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
@@ -503,11 +521,11 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NU
    }
 
    ## simulate first  time
-   simdata <- sim.phreg.base(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1])
+   simdata <- sim.phreg(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1])
    l <- length(coxs)
    if (l>=2) 
    for (i in 2:l) {
-      tall2 <- sim.phreg.base(cumhazl[[i]],n,rr=rr[,i],strata=strata[,i])
+      tall2 <- sim.phreg(cumhazl[[i]],n,rr=rr[,i],strata=strata[,i])
       simdata$status <- ifelse(simdata$time<tall2$time,simdata$status,i*tall2$status)
       simdata$time <- pmin(simdata$time,tall2$time)
    }
@@ -520,103 +538,6 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NU
  }
 
 return(ptt)
-}# }}}
-
-#' @export
-setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
-{# {{{
-    cox <- list()
-    cox$cumhaz <- cumhazard
-    cox$coef <- coef
-    if (is.null(strata)) { strata <- rep(0,nrow(cumhazard)); nstrata <- 1} else nstrata <- max(strata)+1
-    cox$strata <- strata
-    cox$nstrata <- nstrata
-    class(cox) <- c("setup","phreg")
-    attr(cox,"znames") <- Znames
-    return(cox)
-}# }}}
-
-sim.phreg.base <- function(cox.baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
-{# {{{
-   if (is.null(strata))  strata <- rep(0,n) 
-   if (is.null(rr)) rr <- rep(1,n)
-   
-   cumhaz <- cox.baseline
-   if (!is.null(extend))  {
-      if (is.numeric(extend)) 
-      if (length(extend)!=length(cumhaz)) extend <- rep(extend[1],length(cumhaz))
-      cumhaz <- extendCums(cumhaz,NULL,haza=extend)
-   }
-   ids <- 1:n
-   lentry <- NULL
-
-   ptt <- c()
-   for (i in seq(length(cumhaz))) {
-      whichi <- which(strata==i-1)
-      cumhazj <- rbind(0,cumhaz[[i]])
-      if (!is.null(entry)) lentry <- entry[whichi]
-      simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
-      simj$id <- ids[whichi]
-      ptt  <-  rbind(ptt,simj)
-    }
-    dsort(ptt) <- ~id
-
- if (!is.null(cens)) {
-      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
-      ptt$time <- pmin(ptt$time,pct)
-      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
- }
-
-
-return(ptt)
-}# }}}
-
-#' Simulation of cause specific from Cox models.
-#' 
-#' Simulates data that looks like fit from cause specific Cox models. 
-#' Censor data automatically. When censoring is given in the  list of causes this
-#' will give censoring that looks like the data.  Covariates are drawn from data-set
-#' with replacement. This gives covariates like the data.  Calls sim.phregs
-#' 
-#' 
-#' @param coxs list of cox models.
-#' @param n number of simulations.
-#' @param data to extract covariates for simulations (draws from observed covariates).
-#' @param cens specifies censoring model, if NULL then only censoring for 
-#'   	       each cause at end of last event of this type. 
-#' 	       if "is.matrix" then uses cumulative. 
-#'             hazard given, if "is.scalar" then uses rate for exponential, and if not
-#'             given then takes average rate of in simulated data from cox model.
-#'             But censoring can also be given as a cause.
-#' @param rrc possible vector of relative risk for cox-type censoring.
-#' @param ... arguments for rchaz, for example entry-time
-#' @author Thomas Scheike
-#' @keywords survival
-#' @examples
-#' library(mets)
-#' nsim <- 100; data(bmt)
-#' 
-#' cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=bmt)
-#' cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
-#' coxs <- list(cox1,cox2)
-#' ## just calls sim.phregs !
-#' dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
-#' scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet+age,data=dd)
-#' scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
-#'
-#' cbind(cox1$coef,scox1$coef)
-#' cbind(cox2$coef,scox2$coef)
-#' par(mfrow=c(1,2))
-#' plot(cox1); plot(scox1,add=TRUE); 
-#' plot(cox2); plot(scox2,add=TRUE); 
-#' 
-#' @export sim.cause.cox
-#' @usage sim.cause.cox(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
-sim.cause.cox <- function(coxs,n,data=NULL,cens=NULL,rrc=NULL,...)
-{# {{{
-if (!is.list(coxs)) stop("Cox models in list form\n"); 
-dt <- sim.phregs(coxs,n,data=data,rrc=rrc,cens=cens,)
-return(dt)
 }# }}}
 
 #' @export
@@ -723,7 +644,7 @@ subdist <- function(F1,times)
 #' @examples
 #' library(mets)
 #' data(bmt)
-#' nsim <- 10000
+#' nsim <- 100000
 #' 
 #' ## logit cumulative incidence regression model 
 #' cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
@@ -755,51 +676,70 @@ subdist <- function(F1,times)
 #' scif1 <-  cifreg(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
 #' scif2 <-  cifreg(Event(time,status)~strata(platelet)+tcell+age,data=simbmt,cause=2)
 #' cbind(cif1$coef,scif1$coef)   
+#' ## can be off due to restriction F1+F2<= 1    
 #' cbind(cif2$coef,scif2$coef)   
 #'     
 #' par(mfrow=c(1,2))   
 #' ## Cause 1 follows the model    
 #' plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
-#' ## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
+#' # Cause 2:second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 #' plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
 #'    
-#' @aliases sim.cif sim.cifs sim.cif.base simul.cifs setup.cif subdist pre.cifs sim.cifsRestrict simsubdist invsubdist
+#' @aliases sim.cif sim.cifs simul.cifs setup.cif subdist simsubdist invsubdist
 #' @export sim.cif
-sim.cif <- function(cif,n,data=NULL,Z=NULL,strata=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,cumstart=c(0,0),U=NULL,pU=NULL,type=NULL,...)
+sim.cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
+		    cumstart=c(0,0),U=NULL,pU=NULL,type=NULL,extend=NULL,...)
 {# {{{
-## also extracts coefficients and baseline from coxph, cox.aalen, phreg
-## and uses them assuming that the model is cloglog unless otherwise
-if (!inherits(cif,"defined"))  {
-des <- 	draw.phreg(cif,n,data=data,Z=Z,drawZ=drawZ,...)
-if (is.null(strata)) strata <- des$strata
-dats <- des$data[,-(1:2)]
-Z <- des$Z; cumhaz <- des$cum; rr <- des$rr; 
-id <- des$id
-cumhaz <- rbind(cumstart,cumhaz)
-znames <- names(dats); 
-###model <- des$model
+## also extracts coefficients and baseline from cifreg
+if (!is.null(data))  {
+   des <- 	draw.phreg(cif,n,data=data,Z=Z,drawZ=drawZ,...)
+   dats <- des$data
+   dats$orig.id <- des$id
+
+   if (is.null(strata))  strata <- des$strata 
+   if (is.null(rr)) rr <- des$rr  
+   znames <- names(dats); 
+    n <- nrow(dats)
 } else {
-cumhaz <- cif$cumhaz
-if (is.null(Z)) stop("must give Z")
-rr <- exp(as.matrix(Z) %*% cif$coef)
-if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
-###model <- cif$model
-id <- 1:nrow(Z)
+	if (is.null(Z) & is.null(rr)) stop("must give Z or rr ")
+	if (!is.null(Z)) {
+	  if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
+	} else znames <- NULL
+	if (is.null(rr)) rr <- exp(as.matrix(Z) %*% cif$coef)
+	n <- length(rr)
+	orig.id <- 1:n
+	dats <- NULL
+}
 if (is.null(strata)) strata <- rep(0,n)
+
+if (inherits(cif,c("phreg","cifreg"))) cumhaz <- basecumhaz(cif,only=1,extend=extend)
+else {
+if (!is.list(cif)) stop("must be cifreg or list of hazards\n") else cumhaz <- cif
+}
+if (!is.null(extend))  {
+     if (is.numeric(extend)) 
+     if (length(extend)!=length(cumhaz)) extend <- rep(extend[1],length(cumhaz))
+     cumhaz <- extendCums(cumhaz,NULL,haza=extend)
 }
 
-if (!is.null(type)) model <- type else {
-if (is.null(cif$propodds)) model <- "cloglog" else model <- "logistic" 
+if (is.null(type)) {
+if (is.null(cif$propodds)) type <- "cloglog" else type <- "logistic" 
 }
-if (!is.list(cif$cumhaz)) cumhazl <- basecumhaz(cif,only=1) else cumhazl <- cif$cumhaz
+ids <- 1:n
 
-if (!inherits(cif,"phreg")) {
-if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="logistic",U=U,...) else ptt <- simsubdist(cumhaz,rr,type="cloglog",U=U,...)
-    ptt <- cbind(ptt,Z)
-} else { ### phreg class# {{{
-	ptt <- sim.cif.base(cumhazl,n,rr=rr,strata=strata,U=U,type=model)
-        ptt <- cbind(ptt,dats)
- }# }}}
+## {{{ simulation of cif 
+    ptt <- c()
+    for (i in unique(strata)) {
+      whichi <- which(strata==i)
+      cumhazj <- rbind(0,cumhaz[[i+1]])
+      if (!is.null(U)) Ui <- U[whichi] else Ui <- NULL
+      simj <- simsubdist(cumhazj,rr[whichi],type=type,U=Ui)
+      simj$id <- ids[whichi]
+      ptt  <-  rbind(ptt,simj)
+    }
+    dsort(ptt) <- ~id
+### }# }}}
+ if (!is.null(dats)) ptt <- cbind(ptt,dats)
 
  ### adds censoring 
  if (!is.null(cens)) {
@@ -808,10 +748,9 @@ if (model=="logistic2" | model=="logistic") ptt <- simsubdist(cumhaz,rr,type="lo
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
  }
 
-   attr(ptt,"model") <- model
-   attr(ptt,"id") <-  id
+   attr(ptt,"type") <- type
    attr(ptt,"znames") <- znames
-   attr(ptt,"cumhaz") <-  cumhazl
+   attr(ptt,"cumhaz") <-  cumhaz
    return(ptt)
 }# }}}
 
@@ -866,14 +805,13 @@ if (!is.null(type)) {
         cumhazl <- restore(cumhazl,lengths)
    }
 
-  cifs <- pre.cifs(cifs,max.times=max.times)
   cifs[[1]]$cumhaz <- cumhazl[[1]]
   cifs[[2]]$cumhaz <- cumhazl[[2]]
 
   tau <- tail(cumhazl[[1]][[1]],1)[1]
   ## simulate first  time
-  sim1 <- sim.cif.base(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1],U=U,type=model1)
-  sim2 <- sim.cif.base(cumhazl[[2]],n,rr=rr[,2],strata=strata[,2],U=U,type=model2)
+  sim1 <- sim.cif(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1],U=U,type=model1)
+  sim2 <- sim.cif(cumhazl[[2]],n,rr=rr[,2],strata=strata[,2],U=U,type=model2)
 
   ## drawing which cause  that is seen if any 
   F1tau <- sim1$F1tau
@@ -902,93 +840,6 @@ if (!is.null(type)) {
  }
 
    return(ptt)
-}# }}}
-
-#' @export 
-sim.cif.base <- function(baseline,n,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,U=NULL,type=c("cloglog","logistic","rr")[1],...)
-{# {{{
-   if (is.null(strata))  strata <- rep(0,n) 
-   if (is.null(rr)) rr <- rep(1,n)
-   
-   cumhaz <- baseline
-   if (!is.null(extend))  {
-      if (is.numeric(extend)) 
-      if (length(extend)!=length(cumhaz)) extend <- rep(extend[1],length(cumhaz))
-      cumhaz <- extendCums(cumhaz,NULL,haza=extend)
-   }
-   ids <- 1:n
-   lentry <- NULL
-
-   ptt <- c()
-   for (i in seq(length(cumhaz))) {
-      whichi <- which(strata==i-1)
-      cumhazj <- rbind(0,cumhaz[[i]])
-      if (!is.null(entry)) lentry <- entry[whichi]
-      simj <- simsubdist(cumhazj,rr[whichi],type=type,U=U)
-      simj$id <- ids[whichi]
-      ptt  <-  rbind(ptt,simj)
-    }
-    dsort(ptt) <- ~id
-
- if (!is.null(cens)) {
-      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
-      ptt$time <- pmin(ptt$time,pct)
-      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
- }
-
-
-return(ptt)
-}# }}}
-
-#' @export pre.cifs
-pre.cifs <- function(cifs,n,data=NULL,pprint=FALSE,max.times=NULL,...)
-{# {{{
-
-if (!is.list(cifs)) stop("Cif models in list form\n"); 
-
-## iff needed put cumulative baseline in argument cifs$cum
-## extracts maximum time of all cumulatives
-maxtimes <- rep(0,length(cifs))
-  for (i in 1:length(cifs)) { 
-     if (inherits(cifs[[i]],"coxph")) {
-	     stop("Use phreg of mets instead\n"); 
-     } else  if (inherits(cifs[[i]],"crr")) {
-	cifs[[i]]$cum <- rbind(c(0,0),cbind(cifs[[i]]$uftime,cumsum(cifs[[i]]$bfitj)))
-        maxtimes[i] <- max(cifs[[i]]$uftime)
-     } else if (inherits(cifs[[i]],"phreg")) {
-	cifs[[i]]$cumhaz <- cifs[[i]]$cumhaz
-        maxtimes[i] <- max(cifs[[i]]$cumhaz[,1])
-     }  else if (inherits(cifs[[i]],"defined")) {
-	cifs[[i]]$cumhaz <- cifs[[i]]$cumhaz
-        maxtimes[i] <- max(cifs[[i]]$cumhaz[,1])
-     } else {
-        maxtimes[i] <- max(cifs[[i]]$cum[,1])
-     }
-  }
-
-  mmtimes <- min(maxtimes)
-  if (is.null(max.times)) mtimes <- mmtimes else mtimes <- max.times
-  if (mtimes > mmtimes)  {
-	  warning("max.time is further out than max for some cumulatives\n"); 
-	  cat(" Max times for cumulatives in cifs \n"); 
-	  print(maxtimes) 
-  }
-
-  for (i in 1:length(cifs)) { 
-	cums <- cifs[[i]]$cum
-        keep <- cums[,1]<mtimes
-        Fmm <- subdist(cums,mtimes)
-	cums <- cums[keep,,drop=FALSE]
-	cums <- rbind(cums,Fmm)
-	cifs[[i]]$cum <- cums
-	cifs[[i]]$cumhaz <- cums
-	if (pprint) {
-	print(head(cums))
-	print(tail(cums))
-	}
-  }
-
-  return(cifs)
 }# }}}
 
 ##' @export
@@ -1175,5 +1026,4 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     }
     return(cbind(data, Z))
 }# }}}
-
 

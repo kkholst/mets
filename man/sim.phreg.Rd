@@ -3,13 +3,11 @@
 \name{sim.phreg}
 \alias{sim.phreg}
 \alias{draw.phreg}
-\alias{sim.base}
-\alias{simulate.cox}
 \alias{sim.phregs}
 \alias{setup.phreg}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.phreg(cox,n,data,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phreg(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}
@@ -46,13 +44,15 @@ nsim <- 100
 coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 set.seed(100)
 sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
+head(sim3)
 cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 cbind(coxs$coef,cc$coef)
 plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 
-Z <- sim3[,c("chf","vf","wmi")]
-set.seed(100)
-sim4 <- sim.phreg(coxs,nsim,data=sTRACE)
+Z <- sim3[,c("chf","wmi")]
+strata <- sim3[,c("vf")]
+rr <- exp(as.matrix(Z) \%*\% coef(coxs))
+sim4 <- sim.phreg(coxs,nsim,data=NULL,rr=rr,strata=strata)
 
 }
 \author{

@@ -3,12 +3,9 @@
 \name{sim.cif}
 \alias{sim.cif}
 \alias{sim.cifs}
-\alias{sim.cif.base}
 \alias{simul.cifs}
 \alias{setup.cif}
 \alias{subdist}
-\alias{pre.cifs}
-\alias{sim.cifsRestrict}
 \alias{simsubdist}
 \alias{invsubdist}
 \title{Simulation of output from Cumulative incidence regression model}
@@ -18,6 +15,7 @@ sim.cif(
   n,
   data = NULL,
   Z = NULL,
+  rr = NULL,
   strata = NULL,
   drawZ = TRUE,
   cens = NULL,
@@ -26,6 +24,7 @@ sim.cif(
   U = NULL,
   pU = NULL,
   type = NULL,
+  extend = NULL,
   ...
 )
 }
@@ -66,7 +65,7 @@ Simulates data that looks like fit from fitted cumulative incidence model
 \examples{
 library(mets)
 data(bmt)
-nsim <- 10000
+nsim <- 100000
 
 ## logit cumulative incidence regression model 
 cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
@@ -98,12 +97,13 @@ dtable(simbmt,~status)
 scif1 <-  cifreg(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
 scif2 <-  cifreg(Event(time,status)~strata(platelet)+tcell+age,data=simbmt,cause=2)
 cbind(cif1$coef,scif1$coef)   
+## can be off due to restriction F1+F2<= 1    
 cbind(cif2$coef,scif2$coef)   
     
 par(mfrow=c(1,2))   
 ## Cause 1 follows the model    
 plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
-## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
+# Cause 2:second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
    
 }

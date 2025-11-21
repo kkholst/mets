@@ -189,14 +189,14 @@ the data,
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 ```
 
-Now fully nonparametric model with stratified baselines and specific call of sim.base function
+Now fully nonparametric model with stratified baselines 
 
 ```{r}
  data(sTRACE)
  dtable(sTRACE,~chf+diabetes)
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
  strata <- sample(0:3,nsim,replace=TRUE)
- simb <- sim.base(coxs$cumhaz,nsim,stratajump=coxs$strata.jumps,strata=strata)
+ simb <- sim.phreg(coxs,nsim,data=NULL,strata=strata)
 
  cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
