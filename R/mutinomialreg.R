@@ -98,7 +98,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
        strata.name=NULL,cumhaz=FALSE,
        beta,stderr=TRUE,method="NR",no.opt=FALSE,Z=NULL,
        propodds=NULL,AddGam=NULL,case.weights=NULL,fix.X=FALSE,formula.call=NULL,
-       X.call=NULL,Y.call=NULL,...) {# {{{
+  X.call=NULL,Y.call=NULL,...) {# {{{
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(Y)))
@@ -148,8 +148,13 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
      colnames(XX) <- nn; 
   }
   rownames(XX) <- NULL
+  namesXX <- paste("names",1:ncol(XX),sep="")
 
-  colnames(XX) <- gsub("\\)","", gsub("\\(","",colnames(XX)))
+  namesXXX <- gsub("\\)","", gsub("\\(","",nn))
+  namesXXX <- gsub("\\.","", gsub("\\.","",namesXXX))
+  namesXXX <- gsub("\\:","", gsub("\\:","",namesXXX))
+  colnames(XX) <- namesXXX
+
   datph = cbind(
       data.frame(
           time = time, status = status, id = id, idrow = idrow
@@ -166,6 +171,8 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
      colnames(XX),
      collapse = "+")
   )
+
+
   res <- phreg(as.formula(form), datph, weights = lweights, offset = loffset, ...)
   res$formula <- formula.call
   res$px <- px

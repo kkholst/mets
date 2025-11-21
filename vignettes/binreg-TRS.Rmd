@@ -130,18 +130,21 @@ datat$A1.23.f <- as.factor(datat$A1.23.f)
 dtable(datat,~A1.23.f+response|Count2==1)
 ###
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-		treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
-		augmentR0=~X01+X02, augmentR1=~X11+X12,
-		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
-		estpr=c(1,0),pi1=c(0.3,0.5))
+	treat.model0=A0.f~+1,treat.model1=A1.23.f~A0.f*response.f,
+	augmentR0=~X01+X02, augmentR1=~X11+X12,
+	augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
+        estpr=c(1,0),pi1=c(0.3,0.5))
 bb
+
 
 ## 2 and 3 levels for each response , estimated 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-		treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
-		augmentR0=~X01+X02, augmentR1=~X11+X12,
-		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+	treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
+	augmentR0=~X01+X02, augmentR1=~X11+X12,
+	augmentC=~X01+X02+A11t+A12t+X11+X12+TR,cens.model=~strata(A0.f),
+	estpr=c(1,1))
 bb
+
 
 ## 2 and 1 level for each response 
 datat$A1.21.f <- as.numeric(datat$A1.f)
@@ -151,16 +154,18 @@ dtable(datat,~A1.21.f+response|Count2==1)
 datat$A1.21.f <- as.factor(datat$A1.21.f)
 dtable(datat,~A1.21.f+response|Count2==1)
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-		treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
-		augmentR0=~X01+X02, augmentR1=~X11+X12,
-		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+	treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+	augmentR0=~X01+X02, augmentR1=~X11+X12,
+	augmentC=~X01+X02+A11t+A12t+X11+X12+TR,cens.model=~strata(A0.f),
+	estpr=c(1,1))
 bb
 
 ## known weights 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-		treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
-		augmentR0=~X01+X02, augmentR1=~X11+X12,
-		augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
+	treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+	augmentR0=~X01+X02, augmentR1=~X11+X12,
+	augmentC=~X01+X02+A11t+A12t+X11+X12+TR,
+	cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
 bb
 ```
 
