@@ -134,12 +134,14 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
   tt <- delete.response(tt)
   formid <- formula(tt)
 
+  data$exit__ <- exit
   if (ncol(Y)==3) {
-     formE <- as.formula(paste("Surv(entry,exit,statusE__)~+1"))
-     formD <- as.formula(paste("Surv(entry,exit,statusD__)~+1"))
+     data$entry__ <- entry
+     formE <- as.formula(paste("Surv(entry__,exit__,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(entry__,exit__,statusD__)~+1"))
   } else {
-     formE <- as.formula(paste("Surv(exit,statusE__)~+1"))
-     formD <- as.formula(paste("Surv(exit,statusD__)~+1"))
+     formE <- as.formula(paste("Surv(exit__,statusE__)~+1"))
+     formD <- as.formula(paste("Surv(exit__,statusD__)~+1"))
   }
  formE <- update.formula(formE,formid)
  formD <- update.formula(formD,formid)

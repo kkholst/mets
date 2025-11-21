@@ -378,7 +378,7 @@ proc_design <- function(formula, data, ..., # nolint
       # create formula without specials
       if ((nrow(attr(tt, "factors")) - attr(tt, "response")) ==
           length(sterm.list)) {
-        # only specials on the rhs, remove everything
+          # only specials on the rhs, remove everything
           formula <- update(formula, ~1)
       } else {
           # predictors without the specials
@@ -388,20 +388,27 @@ proc_design <- function(formula, data, ..., # nolint
           )
           ## formula <- update(tt, reformulate(term.labels))
       }
-      upd <- paste(" ~ . - ", paste(sterm.list, collapse = " - "))
-      formula <- update(formula, upd)
+      fst <- lava::trim(paste(deparse(formula), collapse = ""), all = TRUE)
+      for (s in sterm.list) {
+          fst <- gsub(trim(s, all = TRUE), "", fst, fixed = TRUE)
+      }
+      if (length(fst)>1) browser()
+      fst <- gsub("[\\+]*$", "", fst) # remove potential any trailing '+'
+      formula <- as.formula(fst)
     }
   }
 
+  formula0 <- formula
+  if (!response) formula0 <- formula(delete.response(terms(formula)))
   xlev <- levels
   xlev[["response_"]] <- NULL
   if (!design.matrix) { # only extract specials, response
     des <- attr(tt, "factors")
-    fs <- update(formula, ~1)
+    fs <- update(formula0, ~1)
     if (length(sterm.list) > 0) {
       # formula with only special-terms
       fs <- reformulate(paste(sterm.list, collapse = " + "))
-      fs <- update(formula, fs)
+      fs <- update(formula0, fs)
     }
     mf <- model.frame(fs, data=data, ...)
   } else { # also extract design matrix
@@ -459,7 +466,7 @@ proc_design <- function(formula, data, ..., # nolint
     if (length(sterm.list) > 0) {
       if (design.matrix) {
         xlev0[sterm.list] <- NULL
-        mf <- model.frame(formula(delete.response(terms(formula))),
+        mf <- model.frame(formula0,
                           data = data, ...,
                           xlev = xlev0,
                           drop.unused.levels = FALSE
