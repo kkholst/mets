@@ -67,13 +67,14 @@ Standard errors computed under assumption of correct \deqn{G_c} model.
 library(mets)
 set.seed(100)
 rho1 <- 0.2; rho2 <- 10
-n <- 400
+n <- 100
 beta=c(0.0,-0.1,-0.5,0.3)
 dats <- simul.cifs(n,rho1,rho2,beta,rc=0.2)
 dtable(dats,~status)
 dsort(dats) <- ~time
 fg <- cifreg(Event(time,status)~Z1+Z2,data=dats,cause=1,propodds=NULL)
 summary(fg)
+plot(fg);  lines(attr(dats,"Lam1"),col=2)
 
 fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
 summary(fgaugS)

@@ -66,12 +66,12 @@ Simulates data that looks like fit from fitted cumulative incidence model
 \examples{
 library(mets)
 data(bmt)
-nsim <- 100
+nsim <- 10000
 
 ## logit cumulative incidence regression model 
 cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
 estimate(cif)  
-plot(cif)
+plot(cif,col=1)
 simbmt <- sim.cif(cif,nsim,data=bmt)
 dtable(simbmt,~status)
 scif <- cifreg(Event(time,status)~platelet+age,data=simbmt,cause=1)
@@ -81,7 +81,7 @@ plot(scif,add=TRUE,col=2)
 ## Fine-Gray cloglog cumulative incidence regression model 
 cif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 estimate(cif)  
-plot(cif)
+plot(cif,col=1)
 simbmt <- sim.cif(cif,nsim,data=bmt)
 scif <- cifregFG(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
 estimate(scif)
@@ -99,11 +99,11 @@ scif1 <-  cifreg(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
 scif2 <-  cifreg(Event(time,status)~strata(platelet)+tcell+age,data=simbmt,cause=2)
 cbind(cif1$coef,scif1$coef)   
 cbind(cif2$coef,scif2$coef)   
-   
+    
 par(mfrow=c(1,2))   
 ## Cause 1 follows the model    
 plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
-## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1    
+## Cause 2 : second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
    
 }

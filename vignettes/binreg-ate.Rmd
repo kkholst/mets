@@ -173,7 +173,7 @@ library(mets)
 set.seed(100)
 ###
 n <- 400
-kumar <- kumarsim(n,depcens=1)
+kumar <- kumarsim(n,depcens=0)
 kumar$cause <- kumar$status
 kumar$ttt24 <- kumar[,6]
 dtable(kumar,~cause)
