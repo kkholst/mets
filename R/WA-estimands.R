@@ -19,6 +19,7 @@
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
 ##' @examples
+##' library(mets)
 ##' data(hfactioncpx12)
 ##' 
 ##' dtable(hfactioncpx12,~status)
@@ -84,8 +85,8 @@ if (!is.factor(treatvar)) stop(paste("treatment=",treat.name," must be coded as 
 nlev <- nlevels(treatvar)
 nlevs <- levels(treatvar)
 ntreatvar <- as.numeric(treatvar) - 1
-statusD <- data[, vars[3]] %in% death.code
-data[["statusD__"]] <- statusD
+statusD <- rrR[, vars[3]] %in% death.code
+rrR[["statusD__"]] <- statusD
 treat.formula <- treat.model <- as.formula(paste(treat.name,"~+1",sep=""))
 if (is.null(cens.formula)) cens.formula <- as.formula( paste("~strata(",treat.name,")",collapse=""))
 formC <- as.formula( paste("Event(",vars[1],",",vars[2],",",vars[3],"%in%", cens.code,")~+cluster(id__)",collapse=""))
@@ -108,11 +109,6 @@ dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,tim
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code, cens.model=cens.formula,times=time,model="lin",marks=marks)
 
 treatdata <- data.frame(treatment=nlevs,id__=1)
-###prmst <- predict(dd,treatdata,se=0)
-###prec <- predict(ddN,treatdata,se=0)
-
-###prmst <- predict(dd,data,se=0)
-###prec <- predict(ddN,data,se=0)
 
 f <- function(p,logg=0) {
 ddN$coef <- p[1:2]

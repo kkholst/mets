@@ -307,10 +307,15 @@ cause.pchazard.sim<-function(cumhaz1,cumhaz2,rr1,rr2,cens=NULL,rrc=NULL,...)
 #' data(sTRACE)
 #' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
+#' set.seed(100)
 #' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
 #' cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+#' 
+#' Z <- sim3[,c("chf","vf","wmi")]
+#' set.seed(100)
+#' sim4 <- sim.phreg(coxs,nsim,data=sTRACE)
 #' 
 #' @aliases draw.phreg sim.base simulate.cox sim.phregs setup.phreg
 #' @export sim.phreg 
