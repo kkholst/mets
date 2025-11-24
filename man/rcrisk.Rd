@@ -2,16 +2,14 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{rcrisk}
 \alias{rcrisk}
-\alias{cause.pchazard.sim}
-\alias{rcrisks}
 \alias{rchazl}
 \title{Simulation of Piecewise constant hazard models with two causes (Cox).}
 \usage{
 rcrisk(
-  cumhaz1,
-  cumhaz2,
-  rr1,
-  rr2,
+  cumA,
+  cumB,
+  rr1 = NULL,
+  rr2 = NULL,
   n = NULL,
   cens = NULL,
   rrc = NULL,
@@ -20,15 +18,15 @@ rcrisk(
 )
 }
 \arguments{
-\item{cumhaz1}{cumulative hazard of cause 1}
+\item{cumA}{cumulative hazard of cause 1, or list of multiple cumulative hazards}
 
-\item{cumhaz2}{cumulative hazard of cause 1}
+\item{cumB}{cumulative hazard of cause 2 or NULL when cumA is a list}
 
-\item{rr1}{number of simulations or vector of relative risk for simuations.}
+\item{rr1}{number of simulations or vector of relative risk for simuations, or matrix with columns equal to number of hazards in list}
 
 \item{rr2}{number of simulations or vector of relative risk for simuations.}
 
-\item{n}{number of simulation if rr not given}
+\item{n}{number of simulation if rr not given, must be given when rr is not given}
 
 \item{cens}{to censor further , rate or cumumlative hazard}
 
@@ -44,12 +42,13 @@ Cox type. Censor data at highest value of the break points for either of the
 cumulatives, see also sim.phregs
 }
 \examples{
+library(mets)
 data(bmt); 
+n <- 1000000
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 
 X1 <- bmt[,c("tcell","platelet")]
-n <- 100
 xid <- sample(1:nrow(X1),n,replace=TRUE)
 Z1 <- X1[xid,]
 Z2 <- X1[xid,]

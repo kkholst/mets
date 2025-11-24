@@ -820,14 +820,15 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
+##' library(mets)
 ##' data(CPH_HPN_CRBSI)
 ##' dr <- CPH_HPN_CRBSI$terminal
 ##' base1 <- CPH_HPN_CRBSI$crbsi 
 ##' base4 <- CPH_HPN_CRBSI$mechanical
 ##'
-##' ######################################################################
+##'######################################################################
 ##' ### simulating simple model that mimicks data 
-##' ######################################################################
+##'######################################################################
 ##' rr <- simRecurrent(5,base1)
 ##' dlist(rr,.~id,n=0)
 ##' rr <- simRecurrent(5,base1,death.cumhaz=dr)
@@ -892,9 +893,57 @@ rr <- simRecurrentList(n,list(cumhaz),death.cumhaz=death.cumhaz,rr=r1,rd=rd,rc=r
 return(rr)
 }# }}}
 
+extendCums <- function(cumA,cumB,extend=NULL)
+{# {{{
+## setup as list to run within loop
+if (!is.null(cumB)) {cumA <- list(cumA,cumB); } 
+
+###print(str(cumA))
+###print("____________________")
+###print(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x)))
+
+## to also work with strata version where each list contains a list of cumHaz for strata
+matrixlist <- any(unlist(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x))))
+nn <- length(cumA)
+nl <- lengths(cumA)
+if (!matrixlist) cumA <- unlist(cumA, recursive = FALSE)
+
+restore <- function(flat, lengths) {
+  ends <- cumsum(lengths)
+  starts <- c(1, head(ends + 1, -1))
+  mapply(function(s, e) flat[s:e], starts, ends, SIMPLIFY = FALSE)
+}
+
+ maxx <- unlist(lapply(cumA,function(x) tail(x,1)[1]))
+ mm <- which.max(maxx)
+ haza <- NULL
+ if (is.numeric(extend)) 
+ if (length(extend)!=length(cumA)) haza <- rep(extend,length(cumA)) 
+
+ ## extend all that are not at maxtime
+for (i in seq(nn)[-mm]) {
+  cumB <- as.matrix(cumA[[i]]); 
+  cumB <- rbind(c(0,0),cumB); 
+
+  ### linear extrapolation of mortality using given dHaz/dt or haza given rate
+  if (tail(cumB[,1],1)<maxx[mm]) {
+      tailB <- tail(cumB,1)
+      cumlast <- tailB[2]
+      timelast <- tailB[1]
+      if (is.null(haza)) hazb <- cumlast/timelast else hazb <- haza[i]
+      cumB <- rbind(cumB,c(maxx[mm],cumlast+hazb*(maxx[mm]-timelast))) 
+  }
+  cumA[[i]] <- cumB
+}
+ cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
+
+ if (!matrixlist) cumA <- restore(cumA,nl)
+ return( setNames(cumA,paste("cum",seq(nn),sep="")))
+}# }}}
+
 ##' @export
 simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,zzr=NULL,zzd=NULL,
-  gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=1,cor.mat=NULL,cens=NULL,...) 
+  gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=1,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
 {# {{{
   status <- fdeath <- dtime <- NULL # to avoid R-check 
 
@@ -924,15 +973,17 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
 
   ## extend cumulative for death to full range  of cause 1
   if (!is.null(death.cumhaz)) {
-     out <- extendCums(c(cumhaz,death.cumhaz),NULL)
+     out <- extendCums(c(cumhaz,death.cumhaz),NULL,extend=extend)
      l <- length(cumhaz)
      ld <- length(death.cumhaz)
      cumhaz <- out[1:l]
      cumhazd <- out[(l+1):(l+ld)]
   } else {
-     out <- extendCums(cumhaz,NULL)
-     l <- length(cumhaz)
-     cumhaz <- out[1:l]
+     if (length(cumhaz)>1) {
+	     out <- extendCums(cumhaz,NULL,extend=extend)
+	     l <- length(cumhaz)
+	     cumhaz <- out[1:l]
+      }
   }
   max.time <- tail(cumhaz[[1]][,1],1)
 
@@ -1264,248 +1315,6 @@ simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,r
 
   return(tall)
   }# }}}
-
-##' Simulation of illness-death model 
-##'
-##' Simulation of illness-death model 
-##'
-##' simMultistate with different death intensities from states 1 and 2 
-##'
-##' Must give cumulative hazards on some time-range 
-##'
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of going from state 1 to 2.
-##' @param cumhaz2  cumulative hazard of going from state 2 to 1. 
-##' @param death.cumhaz cumulative hazard of death from state 1. 
-##' @param death.cumhaz2 cumulative hazard of death from state 2.
-##' @param rr  relative risk adjustment for cumhaz
-##' @param rr2  relative risk adjustment for cumhaz2
-##' @param rd  relative risk adjustment for death.cumhaz
-##' @param rd2  relative risk adjustment for death.cumhaz2
-##' @param gap.time if true simulates gap-times with specified cumulative hazard
-##' @param max.recurrent limits number recurrent events to 100
-##' @param dependence 0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death  
-##' @param var.z variance of random effects 
-##' @param cor.mat correlation matrix for var.z variance of random effects 
-##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to lower level funtions
-##' @author Thomas Scheike
-##' @examples
-##' ########################################
-##' ## getting some rates to mimick 
-##' ########################################
-##' data(CPH_HPN_CRBSI)
-##' dr <- CPH_HPN_CRBSI$terminal
-##' base1 <- CPH_HPN_CRBSI$crbsi 
-##' base4 <- CPH_HPN_CRBSI$mechanical
-##' dr2 <- scalecumhaz(dr,1.5)
-##' cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
-##'
-##' iddata <- simMultistate(1000,base1,base1,dr,dr2,cens=cens)
-##' dlist(iddata,.~id|id<3,n=0)
-##'  
-##' ### estimating rates from simulated data  
-##' c0 <- phreg(Surv(start,stop,status==0)~+1,iddata)
-##' c3 <- phreg(Surv(start,stop,status==3)~+strata(from),iddata)
-##' c1 <- phreg(Surv(start,stop,status==1)~+1,subset(iddata,from==2))
-##' c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
-##' ###
-##' par(mfrow=c(2,3))
-##' bplot(c0)
-##' lines(cens,col=2) 
-##' bplot(c3,main="rates 1-> 3 , 2->3")
-##' lines(dr,col=1,lwd=2)
-##' lines(dr2,col=2,lwd=2)
-##' ###
-##' bplot(c1,main="rate 1->2")
-##' lines(base1,lwd=2)
-##' ###
-##' bplot(c2,main="rate 2->1")
-##' lines(base1,lwd=2)
-##'  
-##' @aliases extendCums 
-##' @export
-simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
-		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
-		    gap.time=FALSE,max.recurrent=100,
-		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
-{# {{{
-
-  fdeath <- dtime <- NULL # to avoid R-check 
-  status <- dhaz <- NULL; dhaz2 <- NULL
-
-  if (dependence==0) { z <- z1 <- z2 <- zd  <- zd2 <-  rep(1,n) # {{{
-     } else if (dependence==1) {
-	      z <- rgamma(n,1/var.z[1])*var.z[1]
-###	      z <- exp(rnorm(n,1)*var.z[1]^.5)
-	      z1 <- z; z2 <- z; zd <- z
-	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
-      } else if (dependence==2) {
-              stdevs <- var.z^.5
-              b <- stdevs %*% t(stdevs)  
-              covv  <- b * cor.mat  
-	      z <- matrix(rnorm(3*n),n,3)
-	      z <- exp(z%*% chol(covv))
-###	      print(summary(z))
-###	      print(cor(z))
-	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
-      } else if (dependence==3) {
-	      z <- matrix(rgamma(3*n,1),n,3)
-              z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3])
-              z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
-              zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
-	      z <- cbind(z1,z2,zd)
-###	      print(summary(z))
-###	      print(cor(z))
-      } else stop("dependence 0-3"); # }}}
-
-  ## covariate adjustment 
-  if (is.null(rr))  rr <- z1; 
-  if (is.null(rr2)) rr2 <- z2; 
-  if (is.null(rd))  rd  <- zd; 
-  if (is.null(rd2)) rd2 <- zd2; 
-
-  ll <- nrow(cumhaz)
-  ### extend of cumulatives
-  cumhaz <- rbind(c(0,0),cumhaz)
-  cumhaz2 <- rbind(c(0,0),cumhaz2)
-  death.cumhaz <- rbind(c(0,0),death.cumhaz)
-  death.cumhaz2 <- rbind(c(0,0),death.cumhaz2)
-
-  haz <- haz2 <- NULL
-  ## range max of cumhaz and cumhaz2 
-
-  if (!is.null(cens)) {
-	  if (is.matrix(cens))  {
-             out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,cens),NULL)
-   	     cens <- out$cum5
-	  }
-  } else {
-     out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2),NULL)
-  }
-  cumhaz <- out$cum1
-  cumhaz2 <- out$cum2
-  cumhazd <- out$cum3
-  cumhazd2 <- out$cum4
-  max.time <- tail(cumhaz[,1],1)
-
-  tall <- rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
-  tall$id <- 1:n
-  ### fixing the first time to event
-  tall$death <- 0
-  ### cause 2 is death state 3, cause 1 is state 2
-  tall <- dtransform(tall,status=3,status==2)
-  tall <- dtransform(tall,death=1,status==3)
-  tall <- dtransform(tall,status=2,status==1)
-  ### dead or censored
-  deadid <- (tall$status==3 | tall$status==0)
-  tall$from <- 1
-  tall$to <- tall$status
-  ## id's that are dead: tall[deadid,]
-  ## go furhter with those that are not yet dead  or censored
-  tt <- tall[!deadid,,drop=FALSE]
-  ## also check that we are before max.time
-  tt <- subset(tt,tt$time<max.time)
-
-  i <- 1; 
-  while ( (nrow(tt)>0) & (i < max.recurrent)) {# {{{
-	  i <- i+1
-	  nn <- nrow(tt)
-
-	  z1r <- rr[tt$id]
-	  zdr <- rd[tt$id]
-	  z2r <- rr2[tt$id]
-	  zd2r <- rd2[tt$id]
-
-	  if (i%%2==0) { ## in state 2
-	  ## out of 2 for those in 2
-          tt1 <- rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
-          tt1$death <- 0
-	  ### status 2 is death state 3, status 1 is state 1
-	  tt1 <- dtransform(tt1,status=3,status==2)
-	  tt1 <- dtransform(tt1,death=1,status==3)
-	  tt1$from <- 2
-	  tt1$to <- tt1$status
-	  ## take id from tt
-	  tt1$id <-  tt$id
-	  ### add to data 
-	  tall <- rbind(tall,tt1,row.names=NULL)
-
-          deadid <- (tt1$status==3 | tt1$status==0)
-	  ### those that are still under risk 
-	  tt <- tt1[!deadid,,drop=FALSE]
-	  ## also keep only those before max.time
-          tt <- subset(tt,tt$time<max.time)
-		  
-	  } else { ## in state 1
-	  ## out of 1 for those in 1
-          tt1 <- rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
-
-          tt1$death <- 0
-	  ### status 2 is death state 3, status 1 is state 2
-	  tt1 <- dtransform(tt1,status=3,status==2)
-	  tt1 <- dtransform(tt1,death=1,status==3)
-	  tt1 <- dtransform(tt1,status=2,status==1)
-	  tt1$from <- 1
-	  tt1$to <- tt1$status
-	  tt1$id <-  tt$id
-
-	  ### add to data 
-	  tall <- rbind(tall,tt1,row.names=NULL)
-
-	  ## take id from tt
-          deadid <- (tt1$status==3 | tt1$status==0)
-	  ### those that are still under risk 
-	  tt <- tt1[!deadid,,drop=FALSE]
-	  ### also only keep those before max.time
-          tt <- subset(tt,tt$time<max.time)
-	  }
-
-  }  # }}}
-
-  dsort(tall) <- ~id+entry+time
-  tall$start <- tall$entry
-  tall$stop  <- tall$time
-
-  attr(tall,"death.cumhaz") <- cumhazd
-  attr(tall,"death.cumhaz2") <- cumhazd2
-  attr(tall,"cumhaz") <- cumhaz
-  attr(tall,"cumhaz2") <- cumhaz2
-  attr(tall,"cens.cumhaz") <- cens
-  attr(tall,"z") <- z
-
-  return(tall)
-  }# }}}
-
-##' @export
-extendCums <- function(cumA,cumB,haza=NULL)
-{# {{{
- ## setup as list to run within loop
- if (!is.null(cumB)) {cumA <- list(cumA,cumB); } else cumA <- c(cumA,cumB)
-
- maxx <- unlist(lapply(cumA,function(x) tail(x,1)[1]))
- mm <- which.max(maxx)
- nn <- length(cumA)
- if (!is.null(haza)) if (length(haza)!=length(cumA)) haza <- rep(haza,length(cumA))
-
-for (i in seq(nn)[-mm]) {
-  cumB <- as.matrix(cumA[[i]]); 
-  cumB <- rbind(c(0,0),cumB); 
-
-  ### linear extrapolation of mortality using given dhaz or 
-  if (tail(cumB[,1],1)<maxx[mm]) {
-      tailB <- tail(cumB,1)
-      cumlast <- tailB[2]
-      timelast <- tailB[1]
-      if (is.null(haza)) hazb <- cumlast/timelast else hazb <- haza[i]
-      cumB <- rbind(cumB,c(maxx[mm],cumlast+hazb*(maxx[mm]-timelast))) 
-  }
-  cumA[[i]] <- cumB
-}
- cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
-
-  return( setNames(cumA,paste("cum",seq(nn),sep="")))
-}# }}}
 
 ##' Simulation of recurrent events data based on cumulative hazards: Two-stage model  
 ##'

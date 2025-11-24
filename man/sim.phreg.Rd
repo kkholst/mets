@@ -3,19 +3,19 @@
 \name{sim.phreg}
 \alias{sim.phreg}
 \alias{draw.phreg}
-\alias{sim.phregs}
 \alias{setup.phreg}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.phreg(cox,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phreg(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}
 
 \item{n}{number of simulations.}
 
-\item{data}{to extract covariates for simulations (draws from observed
-covariates).}
+\item{data}{to extract covariates for simulations (draws from observed covariates).}
+
+\item{Z}{give design matrix instead of data}
 
 \item{rr}{possible vector of relative risk for cox model.}
 
@@ -40,7 +40,7 @@ for highest value of the event times by using cumulative hazard.
 \examples{
 library(mets)
 data(sTRACE)
-nsim <- 100
+nsim <- 100000
 coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 set.seed(100)
 sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
@@ -49,10 +49,14 @@ cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 cbind(coxs$coef,cc$coef)
 plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 
-Z <- sim3[,c("chf","wmi")]
-strata <- sim3[,c("vf")]
-rr <- exp(as.matrix(Z) \%*\% coef(coxs))
+Z <- sim3[,c("vf","chf","wmi")]
+strata <- sim3[,c("chf")]
+rr <- exp(as.matrix(Z[,-2]) \%*\% coef(coxs))
 sim4 <- sim.phreg(coxs,nsim,data=NULL,rr=rr,strata=strata)
+sim4 <- cbind(sim4,Z)
+cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim4)
+cbind(coxs$coef,cc$coef)
+plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 
 }
 \author{

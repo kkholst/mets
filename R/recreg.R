@@ -98,8 +98,8 @@ cl <- match.call()
         intercept = FALSE
     )
     Y <- des$y
-    if (!inherits(Y, c("Event", "Surv"))) {
-        stop("Expected a 'Surv' or 'Event'-object")
+    if (!inherits(Y, c("Event"))) {
+        stop("Expected an 'Event'-object")
     }
     if (ncol(Y) == 2) {
         exit <- Y[, 1]
@@ -116,17 +116,13 @@ cl <- match.call()
       ns <- grep("strata",names(des$levels))
       strata.name  <-  names(des$levels)[1]
     } else strata.name <- NULL
-    ## no use of 
-    pos.cluster <- pos.strata <- NULL
-###    specials = c("offset", "weights", "cluster","strata")
-###    Terms <- terms(formula, specials, data = data)
-###    ts <- survival::untangle.specials(Terms, "strata")
-###    if (!is.null(strata)) strata.name <- ts$vars else strata.name <- NULL
     des.weights <- des$weights
     des.offset  <- des$offset
     des.marks <- des$marks
     id      <- des$cluster
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+    ## no use of 
+    pos.cluster <- pos.strata <- NULL
 
  ## take offset and weight first from formula, but then from arguments
   if (is.null(des.offset)) {
