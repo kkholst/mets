@@ -6,7 +6,19 @@
 \alias{setup.phreg}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.phreg(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phreg(
+  cox,
+  n,
+  data = NULL,
+  Z = NULL,
+  rr = NULL,
+  strata = NULL,
+  entry = NULL,
+  extend = NULL,
+  cens = NULL,
+  rrc = NULL,
+  ...
+)
 }
 \arguments{
 \item{cox}{output form coxph or cox.aalen model fitting cox model.}

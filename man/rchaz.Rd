@@ -20,7 +20,8 @@ rchaz(
 )
 }
 \arguments{
-\item{cumhazard}{cumulative hazard, or piece-constant rates for periods defined by first column of input.}
+\item{cumhazard}{cumulative hazard, or piece-constant rates for periods
+defined by first column of input.}
 
 \item{rr}{relative risk for simulations, alternatively when rr=1 specify n}
 
@@ -32,7 +33,9 @@ rchaz(
 
 \item{cause}{name of cause}
 
-\item{extend}{to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.}
+\item{extend}{to extend piecewise constant with constant rate. Default is
+average rate over time from cumulative (when TRUE), if numeric then uses
+given rate.}
 }
 \description{
 Simulates data from piecwise constant baseline hazard that can also be of

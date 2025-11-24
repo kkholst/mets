@@ -10,13 +10,16 @@
 #' This quantity has survival function 
 #' \deqn{P(T > t | T>x) = exp(-RR (\Lambda(t) - \Lambda(x)))}. 
 #' 
-#' @param cumhazard cumulative hazard, or piece-constant rates for periods defined by first column of input.
-#' @param rr relative risk for simulations, alternatively when rr=1 specify n 
-#' @param n number of simulation if rr not given 
+#' @param cumhazard cumulative hazard, or piece-constant rates for periods
+#'   defined by first column of input.
+#' @param rr relative risk for simulations, alternatively when rr=1 specify n
+#' @param n number of simulation if rr not given
 #' @param entry delayed entry time for simuations.
 #' @param cum.hazard specifies wheter input is cumulative hazard or rates.
-#' @param cause name of cause 
-#' @param extend  to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.
+#' @param cause name of cause
+#' @param extend to extend piecewise constant with constant rate. Default is
+#'   average rate over time from cumulative (when TRUE), if numeric then uses
+#'   given rate.
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
@@ -264,43 +267,44 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' 
 #' @export 
 #' @aliases  rchazl 
-rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
+rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
+                  cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
 {#'# {{{
- if (!is.null(cumB)) {
-	cumA <- list(cumA,cumB); 
+  if (!is.null(cumB)) {
+         cumA <- list(cumA,cumB);
         rr <- cbind(rr1,rr2);
  } else cumA <- c(cumA,cumB)
 
-if (!is.null(n)) { 
-   rr <- matrix(1,n,length(cumA)); 
-} else {
-n <- length(rr1); 
-rr <- cbind(rr1,rr2)
-}
+       if (!is.null(n)) {
+         rr <- matrix(1,n,length(cumA));
+       } else {
+         n <- length(rr1);
+       rr <- cbind(rr1,rr2)
+       }
 
-if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
+       if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
 
  l <- length(cumA)
  ## simulate first 
  ptt <- rchaz(cumA[[1]],rr[,1],...)
  if (l>=2) for (i in 2:l) {
- ptt2 <- rchaz(cumA[[i]],rr[,i],...)
+         ptt2 <- rchaz(cumA[[i]],rr[,i],...)
  ptt$status <- ifelse(ptt$time<ptt2$time,ptt$status,i*ptt2$status)
  ptt$time <- pmin(ptt$time,ptt2$time)
  }
  if (!is.null(causes)) {
-      where <- which(ptt$status!=0) 
+         where <- which(ptt$status!=0)
       ptt$status[where] <- causes[ptt$status[where]]
  }
 
  ## add censoring 
-if (!is.null(cens)) {
-      pct <- simCens(cens,rrc=rrc,n=n,...)
+       if (!is.null(cens)) {
+         pct <- simCens(cens,rrc=rrc,n=n,...)
       ptt$time <- pmin(ptt$time,pct)
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
-}
+       }
 
-return(ptt)
+       return(ptt)
 }# }}}
 
 #' Simulation of output from Cox model.
@@ -346,8 +350,8 @@ return(ptt)
 #' 
 #' @aliases draw.phreg setup.phreg
 #' @export sim.phreg 
-#' @usage sim.phreg(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
-sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
+                      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 
 if  (!is.null(data)) {
@@ -402,7 +406,8 @@ return(ptt)
 
 #' @export draw.phreg
 #' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
-draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,
+                       drawZ=TRUE,fixZ=FALSE,id=NULL)
 {# {{{
 ###if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
 
@@ -500,7 +505,8 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' plot(cox2); plot(scox2,add=TRUE); 
 #' 
 #' @export sim.phregs
-sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
+                       entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
    scox1 <- draw.phreg(coxs[[1]],n,data=data)
    datas <- scox1$data
@@ -548,7 +554,8 @@ return(ptt)
 }# }}}
 
 #' @export
-simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,type="cloglog",startcum=c(0,0),U=NULL,...)
+simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,
+                       type="cloglog",startcum=c(0,0),U=NULL,...)
 {# {{{
   ## Fine-Gray model cloglog F1= 1-exp(-cum(t)*rr)
   ## logistic                F1= cum(t)*rr/(1+cum(t)*rr)
@@ -696,7 +703,8 @@ subdist <- function(F1,times)
 #'    
 #' @aliases sim.cif sim.cifs simul.cifs setup.cif subdist simsubdist invsubdist
 #' @export sim.cif
-sim.cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,drawZ=TRUE,cens=NULL,rrc=NULL,
+sim.cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
+                    drawZ=TRUE,cens=NULL,rrc=NULL,
 		    cumstart=c(0,0),U=NULL,pU=NULL,type=NULL,extend=NULL,...)
 {# {{{
 ## also extracts coefficients and baseline from cifreg
@@ -760,7 +768,9 @@ ids <- 1:n
 }# }}}
 
 #' @export sim.cifs
-sim.cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),U=NULL,pU=NULL,extend=TRUE,type=NULL,restrict=TRUE,...)
+sim.cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,
+                     cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),
+                     U=NULL,pU=NULL,extend=TRUE,type=NULL,restrict=TRUE,...)
 {# {{{
 if (!is.list(cifs)) stop("Cif models in list form\n"); 
 if (length(cifs)!=2) stop("Only two models\n"); 
@@ -837,7 +847,9 @@ if (!is.null(type)) {
 }# }}}
 
 ##' @export
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,bin=1,type=c("cloglog","logistic"),rate=1,Z=NULL,U=NULL,pU=NULL) {# {{{
+simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
+                       bin=1,type=c("cloglog","logistic"),rate=1,
+                       Z=NULL,U=NULL,pU=NULL) {# {{{
     p=length(beta)/2
     tt <- seq(0,6,by=0.1)
     if (length(rate)==1) rate <- rep(rate,2)
@@ -1081,23 +1093,29 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##'
 ##' Must give cumulative hazards on some time-range 
 ##'
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of going from state 1 to 2.
-##' @param cumhaz2  cumulative hazard of going from state 2 to 1. 
-##' @param death.cumhaz cumulative hazard of death from state 1. 
+##' @param n number of id's
+##' @param cumhaz cumulative hazard of going from state 1 to 2.
+##' @param cumhaz2 cumulative hazard of going from state 2 to 1.
+##' @param death.cumhaz cumulative hazard of death from state 1.
 ##' @param death.cumhaz2 cumulative hazard of death from state 2.
-##' @param rr  relative risk adjustment for cumhaz
-##' @param rr2  relative risk adjustment for cumhaz2
-##' @param rd  relative risk adjustment for death.cumhaz
-##' @param rd2  relative risk adjustment for death.cumhaz2
-##' @param rrc  relative risk adjustment for censoring 
+##' @param rr relative risk adjustment for cumhaz
+##' @param rr2 relative risk adjustment for cumhaz2
+##' @param rd relative risk adjustment for death.cumhaz
+##' @param rd2 relative risk adjustment for death.cumhaz2
+##' @param rrc relative risk adjustment for censoring
 ##' @param gap.time if true simulates gap-times with specified cumulative hazard
 ##' @param max.recurrent limits number recurrent events to 100
-##' @param dependence 0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death  
-##' @param var.z variance of random effects 
-##' @param cor.mat correlation matrix for var.z variance of random effects 
+##' @param dependence 0:independence; 1:all share same random effect with
+##'   variance var.z; 2:random effect exp(normal) with correlation structure
+##'   from cor.mat; 3:additive gamma distributed random effects, z1= (z11+
+##'   z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3=
+##'   (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with
+##'   mean and variance 1 , first random effect is z1 and for N1 second random
+##'   effect is z2 and for N2 third random effect is for death
+##' @param var.z variance of random effects
+##' @param cor.mat correlation matrix for var.z variance of random effects
 ##' @param cens rate of censoring exponential distribution
-##' @param extend to extend hazards to max-time 
+##' @param extend to extend hazards to max-time
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
