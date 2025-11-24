@@ -238,7 +238,7 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' @examples
 #' library(mets)
 #' data(bmt); 
-#' n <- 1000
+#' n <- 100
 #' cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 #' cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 #'
@@ -330,7 +330,7 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 #' @examples
 #' library(mets)
 #' data(sTRACE)
-#' nsim <- 100000
+#' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 #' set.seed(100)
 #' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
@@ -660,7 +660,7 @@ subdist <- function(F1,times)
 #' @examples
 #' library(mets)
 #' data(bmt)
-#' nsim <- 100000
+#' nsim <- 100
 #' 
 #' ## logit cumulative incidence regression model 
 #' cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
@@ -1130,7 +1130,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' dr2 <- scalecumhaz(dr,1.5)
 ##' cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 ##'
-##' iddata <- simMultistate(1000,base1,base1,dr,dr2,cens=cens)
+##' iddata <- simMultistate(100,base1,base1,dr,dr2,cens=cens)
 ##' dlist(iddata,.~id|id<3,n=0)
 ##'  
 ##' ### estimating rates from simulated data  
