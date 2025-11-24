@@ -14,6 +14,7 @@ rcrisk(
   cens = NULL,
   rrc = NULL,
   extend = TRUE,
+  causes = NULL,
   ...
 )
 }
@@ -34,6 +35,8 @@ rcrisk(
 
 \item{extend}{to extend the cumulative hazards to largest end-point}
 
+\item{causes}{to assign status values for each of the causes, vector of integers}
+
 \item{...}{arguments for rchaz}
 }
 \description{
@@ -44,7 +47,7 @@ cumulatives, see also sim.phregs
 \examples{
 library(mets)
 data(bmt); 
-n <- 1000000
+n <- 1000
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 
@@ -55,8 +58,14 @@ Z2 <- X1[xid,]
 rr1 <- exp(as.matrix(Z1) \%*\% cox1$coef)
 rr2 <- exp(as.matrix(Z2) \%*\% cox2$coef)
 
-d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2)
+d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2,cens=2/70)
 dd <- cbind(d,Z1)
+
+d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2,cens=cbind(c(1,30,68),c(.01,1,3)))
+dd <- cbind(d,Z1)
+
+scox0 <- phreg(Surv(time,status==0)~tcell+platelet,data=dd)
+plot(scox0); lines(cbind(c(1,30,68),c(.01,1,3)))
 
 scox1 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
 scox2 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)

@@ -39,7 +39,9 @@ covariates).}
 
 \item{Z}{to use these covariates for simulation rather than drawing new ones.}
 
-\item{strata}{possible strata}
+\item{rr}{possible vector of relative risk for cox model.}
+
+\item{strata}{possible vector of strata}
 
 \item{drawZ}{to random sample from Z or not}
 
@@ -56,6 +58,8 @@ given then takes average rate of in simulated data from cox model.}
 \item{pU}{uniforms to use for drawing event type (F1,F2,1-F1-F2).}
 
 \item{type}{of model logistic,cloglog,rr}
+
+\item{extend}{to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.}
 
 \item{...}{arguments for simsubdist (for example Uniform variable for realizations)}
 }

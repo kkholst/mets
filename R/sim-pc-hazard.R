@@ -85,17 +85,20 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
 }# }}}
 
 #' @export 
-rchazl <- function (cumhaz, rr, ...)
+rchazl <- function (cumhaz, rr, causes=NULL,...)
 {# {{{
     l <- length(cumhaz)
     tall <- rchaz(cumhaz[[1]], rr[, 1], ...)
     if (l >= 2)
         for (i in 2:l) {
             tall2 <- rchaz(cumhaz[[i]], rr[, i], ...)
-            tall$status <- ifelse(tall$time < tall2$time, tall$status,
-                i * tall2$status)
+            tall$status <- ifelse(tall$time < tall2$time, tall$status, i * tall2$status)
             tall$time <- pmin(tall$time, tall2$time)
         }
+ if (!is.null(causes)) {
+      where <- which(tall$status!=0) 
+      tall$status[where] <- causes[tall$status[where]]
+ }
     return(tall)
 }# }}}
 
@@ -203,10 +206,11 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
    if (is.matrix(cens)) {
 	   pct <- rchaz(cens,rrc,entry=entry,...)
 	   pct <- pct$time
-   } else if (is.numeric(cens)) pct<- rexp(n)/(rrc*cens)  
-   else stop("cens must be cumulative hazard or constant rate\n"); 
+   } else if (is.numeric(cens)) {
+	   pct<- rexp(n)/(rrc*cens)  
+           if (!is.null(entry)) pct <- entry+pct
+   } else stop("cens must be cumulative hazard or constant rate\n"); 
 
-   if (!is.null(entry)) pct <- entry+pct
    return(pct)
 } ## }}}
 
@@ -224,13 +228,14 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' @param cens to censor further , rate or cumumlative hazard
 #' @param rrc retlativ risk for censoring.
 #' @param extend to extend the cumulative hazards to largest end-point 
+#' @param causes to assign status values for each of the causes, vector of integers 
 #' @param ... arguments for rchaz 
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
 #' library(mets)
 #' data(bmt); 
-#' n <- 1000000
+#' n <- 1000
 #' cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 #' cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 #'
@@ -241,8 +246,14 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' rr1 <- exp(as.matrix(Z1) %*% cox1$coef)
 #' rr2 <- exp(as.matrix(Z2) %*% cox2$coef)
 #'
-#' d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2)
+#' d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2,cens=2/70)
 #' dd <- cbind(d,Z1)
+#'
+#' d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2,cens=cbind(c(1,30,68),c(.01,1,3)))
+#' dd <- cbind(d,Z1)
+#'
+#' scox0 <- phreg(Surv(time,status==0)~tcell+platelet,data=dd)
+#' plot(scox0); lines(cbind(c(1,30,68),c(.01,1,3)))
 #'
 #' scox1 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
 #' scox2 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
@@ -253,7 +264,7 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' 
 #' @export 
 #' @aliases  rchazl 
-rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,cens=NULL,rrc=NULL,extend=TRUE,...)
+rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
 {#'# {{{
  if (!is.null(cumB)) {
 	cumA <- list(cumA,cumB); 
@@ -277,7 +288,12 @@ if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
  ptt$status <- ifelse(ptt$time<ptt2$time,ptt$status,i*ptt2$status)
  ptt$time <- pmin(ptt$time,ptt2$time)
  }
+ if (!is.null(causes)) {
+      where <- which(ptt$status!=0) 
+      ptt$status[where] <- causes[ptt$status[where]]
+ }
 
+ ## add censoring 
 if (!is.null(cens)) {
       pct <- simCens(cens,rrc=rrc,n=n,...)
       ptt$time <- pmin(ptt$time,pct)
@@ -286,7 +302,6 @@ if (!is.null(cens)) {
 
 return(ptt)
 }# }}}
-
 
 #' Simulation of output from Cox model.
 #' 
@@ -620,7 +635,8 @@ subdist <- function(F1,times)
 #' @param data to extract covariates for simulations (draws from observed
 #' covariates).
 #' @param Z to use these covariates for simulation rather than drawing new ones. 
-#' @param strata possible strata 
+#' @param rr possible vector of relative risk for cox model.
+#' @param strata possible vector of strata 
 #' @param drawZ to random sample from Z or not 
 #' @param cens specifies censoring model, if "is.matrix" then uses cumulative
 #' hazard given, if "is.scalar" then uses rate for exponential, and if not
@@ -630,6 +646,7 @@ subdist <- function(F1,times)
 #' @param U uniforms to use for drawing of timing for cumulative incidence. 
 #' @param pU uniforms to use for drawing event type (F1,F2,1-F1-F2). 
 #' @param type of model logistic,cloglog,rr 
+#' @param extend  to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.
 #' @param ... arguments for simsubdist (for example Uniform variable for realizations)
 #' @author Thomas Scheike
 #' @keywords survival
@@ -1073,18 +1090,21 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' @param rr2  relative risk adjustment for cumhaz2
 ##' @param rd  relative risk adjustment for death.cumhaz
 ##' @param rd2  relative risk adjustment for death.cumhaz2
+##' @param rrc  relative risk adjustment for censoring 
 ##' @param gap.time if true simulates gap-times with specified cumulative hazard
 ##' @param max.recurrent limits number recurrent events to 100
 ##' @param dependence 0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death  
 ##' @param var.z variance of random effects 
 ##' @param cor.mat correlation matrix for var.z variance of random effects 
 ##' @param cens rate of censoring exponential distribution
+##' @param extend to extend hazards to max-time 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
+##' library(mets)
 ##' data(CPH_HPN_CRBSI)
 ##' dr <- CPH_HPN_CRBSI$terminal
 ##' base1 <- CPH_HPN_CRBSI$crbsi 
@@ -1102,24 +1122,24 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
 ##' ###
 ##' par(mfrow=c(2,3))
-##' bplot(c0)
+##' plot(c0)
 ##' lines(cens,col=2) 
-##' bplot(c3,main="rates 1-> 3 , 2->3")
+##' plot(c3,main="rates 1-> 3 , 2->3")
 ##' lines(dr,col=1,lwd=2)
 ##' lines(dr2,col=2,lwd=2)
 ##' ###
-##' bplot(c1,main="rate 1->2")
+##' plot(c1,main="rate 1->2")
 ##' lines(base1,lwd=2)
 ##' ###
-##' bplot(c2,main="rate 2->1")
+##' plot(c2,main="rate 2->1")
 ##' lines(base1,lwd=2)
 ##'  
 ##' @aliases simMultistateII
 ##' @export
 simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
-		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,
+		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,rrc=NULL,
 		    gap.time=FALSE,max.recurrent=100,
-		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,...) 
+		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
 {# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
@@ -1167,12 +1187,12 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   ## range max of cumhaz and cumhaz2 
 
   if (!is.null(cens)) {
-	  if (is.matrix(cens))  {
-             out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,cens),NULL)
-   	     cens <- out$cum5
-	  }
+      if (is.matrix(cens))  {
+      out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,cens),NULL,extend=extend)
+      cens <- out$cum5
+      }
   } else {
-     out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2),NULL)
+     out <- extendCums(list(cumhaz,cumhaz2,death.cumhaz,death.cumhaz2),NULL,extend=extend)
   }
   cumhaz <- out$cum1
   cumhaz2 <- out$cum2
@@ -1180,7 +1200,8 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   cumhazd2 <- out$cum4
   max.time <- tail(cumhaz[,1],1)
 
-  tall <- rcrisk(cumhaz,cumhazd,rr,rd,cens=cens)
+  tall <- rcrisk(cumhaz,cumhazd,rr,rd,cens=cens,extend=NULL)
+
   tall$id <- 1:n
   ### fixing the first time to event
   tall$death <- 0
@@ -1210,7 +1231,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 
 	  if (i%%2==0) { ## in state 2
 	  ## out of 2 for those in 2
-          tt1 <- rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens)
+          tt1 <- rcrisk(cumhaz2,cumhazd2,z2r,zd2r,entry=tt$time,cens=cens,extend=NULL)
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 1
 	  tt1 <- dtransform(tt1,status=3,status==2)
@@ -1230,7 +1251,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		  
 	  } else { ## in state 1
 	  ## out of 1 for those in 1
-          tt1 <- rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens)
+          tt1 <- rcrisk(cumhaz,cumhazd,z1r,zdr,entry=tt$time,cens=cens,extend=NULL)
 
           tt1$death <- 0
 	  ### status 2 is death state 3, status 1 is state 2

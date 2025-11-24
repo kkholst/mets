@@ -15,12 +15,14 @@ simMultistate(
   rr2 = NULL,
   rd = NULL,
   rd2 = NULL,
+  rrc = NULL,
   gap.time = FALSE,
   max.recurrent = 100,
   dependence = 0,
   var.z = 0.22,
   cor.mat = NULL,
   cens = NULL,
+  extend = TRUE,
   ...
 )
 }
@@ -43,6 +45,8 @@ simMultistate(
 
 \item{rd2}{relative risk adjustment for death.cumhaz2}
 
+\item{rrc}{relative risk adjustment for censoring}
+
 \item{gap.time}{if true simulates gap-times with specified cumulative hazard}
 
 \item{max.recurrent}{limits number recurrent events to 100}
@@ -54,6 +58,8 @@ simMultistate(
 \item{cor.mat}{correlation matrix for var.z variance of random effects}
 
 \item{cens}{rate of censoring exponential distribution}
+
+\item{extend}{to extend hazards to max-time}
 
 \item{...}{Additional arguments to lower level funtions}
 }
@@ -69,6 +75,7 @@ Must give cumulative hazards on some time-range
 ########################################
 ## getting some rates to mimick 
 ########################################
+library(mets)
 data(CPH_HPN_CRBSI)
 dr <- CPH_HPN_CRBSI$terminal
 base1 <- CPH_HPN_CRBSI$crbsi 
@@ -86,16 +93,16 @@ c1 <- phreg(Surv(start,stop,status==1)~+1,subset(iddata,from==2))
 c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
 ###
 par(mfrow=c(2,3))
-bplot(c0)
+plot(c0)
 lines(cens,col=2) 
-bplot(c3,main="rates 1-> 3 , 2->3")
+plot(c3,main="rates 1-> 3 , 2->3")
 lines(dr,col=1,lwd=2)
 lines(dr2,col=2,lwd=2)
 ###
-bplot(c1,main="rate 1->2")
+plot(c1,main="rate 1->2")
 lines(base1,lwd=2)
 ###
-bplot(c2,main="rate 2->1")
+plot(c2,main="rate 2->1")
 lines(base1,lwd=2)
  
 }
