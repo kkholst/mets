@@ -47,7 +47,7 @@ cumulatives, see also sim.phregs
 \examples{
 library(mets)
 data(bmt); 
-n <- 1000
+n <- 100
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
 cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
 

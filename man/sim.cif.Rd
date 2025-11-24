@@ -69,7 +69,7 @@ Simulates data that looks like fit from fitted cumulative incidence model
 \examples{
 library(mets)
 data(bmt)
-nsim <- 100000
+nsim <- 100
 
 ## logit cumulative incidence regression model 
 cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)

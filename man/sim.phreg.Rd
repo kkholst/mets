@@ -52,7 +52,7 @@ for highest value of the event times by using cumulative hazard.
 \examples{
 library(mets)
 data(sTRACE)
-nsim <- 100000
+nsim <- 100
 coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 set.seed(100)
 sim3 <- sim.phreg(coxs,nsim,data=sTRACE)

@@ -89,7 +89,7 @@ base4 <- CPH_HPN_CRBSI$mechanical
 dr2 <- scalecumhaz(dr,1.5)
 cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
-iddata <- simMultistate(1000,base1,base1,dr,dr2,cens=cens)
+iddata <- simMultistate(100,base1,base1,dr,dr2,cens=cens)
 dlist(iddata,.~id|id<3,n=0)
  
 ### estimating rates from simulated data  
