@@ -2,7 +2,7 @@
 
 library("tinytest")
 
-test_Event <- function() {
+test_event <- function() {
 
   dat <- data.frame(
     s = mets::Event(runif(10), rbinom(10, 1, 0.5)),
@@ -15,7 +15,7 @@ test_Event <- function() {
   # c.Evente
   expect_true(length(c(dat$s, dat$s)) == 20)
   # as.matrix.Event
-  expect_identical(dim(as.matrix(dat$s)), c(10, 2))
+  expect_true(all(dim(as.matrix(dat$s)) == c(10, 2)))
 
 }
-test_Event()
+test_event()

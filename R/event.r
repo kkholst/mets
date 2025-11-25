@@ -132,7 +132,7 @@ length.Event <- function(x) nrow(x)
 c.Event <- function(...) {
     objects <- list(...)
     if (!all(unlist(lapply(objects, function(x) inherits(x, "Event")))) &&
-        all.equal(unlist(lapply(object, NCOL)))) {
+        all.equal(unlist(lapply(objects, NCOL)))) {
         stop("All elements should be `Event` of the same type")
     }
     Reduce(rbind, objects)
