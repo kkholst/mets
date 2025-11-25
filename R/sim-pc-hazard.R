@@ -140,15 +140,13 @@ extendCums <- function(cumA,cumB,extend=NULL)
 ## setup as list to run within loop
 if (!is.null(cumB)) {cumA <- list(cumA,cumB); } 
 
-###print(str(cumA))
-###print("____________________")
-###print(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x)))
-
 ## to also work with strata version where each list contains a list of cumHaz for strata
 matrixlist <- any(unlist(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x))))
+## any stratified components 
+basecumhaz <- any(unlist(lapply(cumA, function(x) inherits(x,"basecumhaz"))))
 nn <- length(cumA)
 nl <- lengths(cumA)
-if (!matrixlist) cumA <- unlist(cumA, recursive = FALSE)
+if (basecumhaz) cumA <- unlist(cumA, recursive = FALSE)
 
 restore <- function(flat, lengths) {
   ends <- cumsum(lengths)
@@ -179,7 +177,7 @@ for (i in seq(nn)[-mm]) {
 }
  cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
 
- if (!matrixlist) cumA <- restore(cumA,nl)
+ if (basecumhaz) cumA <- restore(cumA,nl)
  return( setNames(cumA,paste("cum",seq(nn),sep="")))
 }# }}}
 

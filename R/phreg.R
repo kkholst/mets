@@ -1174,6 +1174,7 @@ basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz
 	 } 
    }
 
+   class(out) <- "basecumhaz"
    attr(out,"stratobs") <- ustratobs
    return(out) 
 }# }}}
