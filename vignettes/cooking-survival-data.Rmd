@@ -119,7 +119,7 @@ The engine is to simulate data with a given linear cumulative hazard. First gene
 the cumulative hazard cumhaz:j
 
 ```{r}
- nsim <- 10000
+ nsim <- 1000
  chaz <-  c(0,1,1.5,2,2.1)
  breaks <- c(0,10,   20,  30,   40)
  cumhaz <- cbind(breaks,chaz)
@@ -206,8 +206,9 @@ Now fully nonparametric model with stratified baselines
  plot(cc1,add=TRUE,col=3)
 ```
 
-We now fit 3 cause-specific hazard models and generate competing risks data with hazards taken
-from the fitted Cox models. Here a complex situation with stratified baselines of some of the models.
+We now fit cause-specific hazard models with 3 causes (censoring as one of them)
+and generate competing risks data with hazards taken from the fitted Cox models. 
+Here a situation with stratified baselines for some of the models:
 
 ```{r}
  ## stratified with phreg 
@@ -246,12 +247,11 @@ from the fitted Cox models. Here a complex situation with stratified baselines o
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
- - sim.phreg only for phreg, but can deal with strata 
- - sim.cox for other cox models, see last part of vignette, can only deal with covariates that can be identified from
-     the names of its coefficients (so factors should be coded accordingly).
+ - sim.phreg for phreg, can deal with strata 
+ - sim.phregs cause specific hazards on phreg form 
 
 
-One more example 
+One more example  fully non-parametric 
 
 ```{r}
  library(mets)
@@ -402,12 +402,15 @@ We can also use the parameters based on fitted models
  ################################################################
  #  simulating several causes with specific cumulatives 
  ################################################################
+ ## two logistic link models 
  cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
  cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
 
  dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
 
+ ## still logistic link 
  scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
+ ## 2nd cause not on logistic form due to restriction
  scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
     
  cbind(cif1$coef,scif1$coef)
@@ -494,13 +497,6 @@ Simulations based on coxph
 
 
 ```{r}
-### cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
-### sim1 <- sim.cox(cox,nsim,data=sTRACE)
-### cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
-### cbind(cox$coef,cc$coef)
-### cor(sim1[,c("vf","chf","wmi")])
-### cor(sTRACE[,c("vf","chf","wmi")])
- 
  cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
  sim3 <- sim.phreg(cox,nsim,data=sTRACE)
  cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
