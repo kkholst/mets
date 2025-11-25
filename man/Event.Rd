@@ -39,7 +39,6 @@ Constructur for Event History objects
 	t2 <- t1+runif(10)
 	ca <- rbinom(10,2,0.4)
 	(x <- Event(t1,t2,ca))
-
 }
 \author{
 Klaus K. Holst and Thomas Scheike
