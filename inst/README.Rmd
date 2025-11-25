@@ -231,7 +231,7 @@ based on the integrated Aalen-Johansen estimators for the different strata
 
 ```{r yearslostcause}
  ## years.lost decomposed into causes
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
+ drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")
  summary(drm1)
 ```
