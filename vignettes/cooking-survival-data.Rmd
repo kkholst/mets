@@ -44,7 +44,7 @@ survival data based on the Cox model, and restricted attention to some
 of the many useful parametric survival models (weibull, exponential).
 We here use piecwise linear baseline functions that make it easy to simulate
 data that follows closely the baseline given by the data using semi or 
-nonparametric models. THis makes it easy to capture important aspects of the
+nonparametric models. This makes it easy to capture important aspects of the
 data. 
 
 Different survival models can be cooked, and we here give recipes for
@@ -447,6 +447,40 @@ Recurrent events
 
 See also recurrent events vignette
 
+ - sim.recurrent can simulate based on the Two-Stage model where the the 
+    - the rate of the terminal event among survivors in on Cox form (phreg)
+      - the rate of the recurrent events among survivors is on Cox form (phreg)
+      - the rate of the recurrent events is a  marginal Ghosh-Lin model (recreg)
+    - the simulations is based on approximations with piecewise linear models based on a grid.
+    - the events can be dependent via a frailty random effects (Gamma distributed)
+  - simRecurrentII, simRecurrent, simRecurrentList
+    - A frailty Gamma model where the rate of the  events and the terminal event are given based on 
+       cumulative baselines and relative risk covariate effects. Thus ends up on Cox form  given the frailty and covariates.
+    - simRecurrentList can take multiple recurrent events and multiple causes of death 
+
+
+Two-stage models 
+
+```{r}
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
+ hf$x <- as.numeric(hf$treatment) 
+ n <- 100
+
+ ##  to fit non-parametric models with just a baseline 
+ xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
+ dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
+
+ simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+
+ recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
+ simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
+```
+
+
+Frailty models 
+
 ```{r}
  data(CPH_HPN_CRBSI)
  dr <- CPH_HPN_CRBSI$terminal
@@ -470,45 +504,6 @@ See also recurrent events vignette
  showfitsimList(rr,cumhaz,drl) 
 ```
 
- - sim.recurrent can simulate based on cox hazard for events and death based on phreg
-    - similar to sim.phreg
-
-
-```{r}
- data(hfactioncpx12)
- hf <- hfactioncpx12
- hf$x <- as.numeric(hf$treatment) 
- n <- 100
-
- ##  to fit non-parametric models with just a baseline 
- xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
- dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
-
- simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
-
- recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
- simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
-
-```
-
-
-Simulations based on coxph 
-===========================
-
-
-```{r}
- cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
- sim3 <- sim.phreg(cox,nsim,data=sTRACE)
- cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
- cbind(cox$coef,cc$coef)
- plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
- 
- coxs <-  phreg(Surv(time,status==9)~strata(chf,vf)+wmi,data=sTRACE)
- sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
- cc <-   phreg(Surv(time, status)~strata(chf,vf)+wmi,data=sim3)
- cbind(coxs$coef,cc$coef)
- plot(coxs,col=1); plot(cc,add=TRUE,col=2)
-```
 
 
 SessionInfo

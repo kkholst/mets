@@ -893,54 +893,6 @@ rr <- simRecurrentList(n,list(cumhaz),death.cumhaz=death.cumhaz,rr=r1,rd=rd,rc=r
 return(rr)
 }# }}}
 
-extendCums <- function(cumA,cumB,extend=NULL)
-{# {{{
-## setup as list to run within loop
-if (!is.null(cumB)) {cumA <- list(cumA,cumB); } 
-
-###print(str(cumA))
-###print("____________________")
-###print(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x)))
-
-## to also work with strata version where each list contains a list of cumHaz for strata
-matrixlist <- any(unlist(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x))))
-nn <- length(cumA)
-nl <- lengths(cumA)
-if (!matrixlist) cumA <- unlist(cumA, recursive = FALSE)
-
-restore <- function(flat, lengths) {
-  ends <- cumsum(lengths)
-  starts <- c(1, head(ends + 1, -1))
-  mapply(function(s, e) flat[s:e], starts, ends, SIMPLIFY = FALSE)
-}
-
- maxx <- unlist(lapply(cumA,function(x) tail(x,1)[1]))
- mm <- which.max(maxx)
- haza <- NULL
- if (is.numeric(extend)) 
- if (length(extend)!=length(cumA)) haza <- rep(extend,length(cumA)) 
-
- ## extend all that are not at maxtime
-for (i in seq(nn)[-mm]) {
-  cumB <- as.matrix(cumA[[i]]); 
-  cumB <- rbind(c(0,0),cumB); 
-
-  ### linear extrapolation of mortality using given dHaz/dt or haza given rate
-  if (tail(cumB[,1],1)<maxx[mm]) {
-      tailB <- tail(cumB,1)
-      cumlast <- tailB[2]
-      timelast <- tailB[1]
-      if (is.null(haza)) hazb <- cumlast/timelast else hazb <- haza[i]
-      cumB <- rbind(cumB,c(maxx[mm],cumlast+hazb*(maxx[mm]-timelast))) 
-  }
-  cumA[[i]] <- cumB
-}
- cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
-
- if (!matrixlist) cumA <- restore(cumA,nl)
- return( setNames(cumA,paste("cum",seq(nn),sep="")))
-}# }}}
-
 ##' @export
 simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,zzr=NULL,zzd=NULL,
   gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=1,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
