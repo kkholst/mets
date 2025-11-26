@@ -69,6 +69,10 @@ as.character.Event <- function(x, ...) {
 # exported in zzz.R
 format.Event <- function(x, ...) format(as.character.Event(x), ...)
 
+# exported in zzz.R
+is.na.Event <- function(x) {
+    apply(x, 1, function(r) any(is.na(r)))
+}
 
 # exported in zzz.R
 print.Event <- function(x, ...) {

@@ -22,6 +22,9 @@
         registerS3method("as.data.frame", "Event", as.data.frame.Event,
             envir = asNamespace(pkgname)
         )
+        registerS3method("is.na", "Event", is.na.frame.Event,
+            envir = asNamespace(pkgname)
+        )
         registerS3method("length", "Event", length.Event,
             envir = asNamespace(pkgname)
         )
