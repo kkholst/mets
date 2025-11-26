@@ -280,21 +280,23 @@ coef.phreg.par <- function(object, ...) {
 }
 
 ##' @export
-sim.phreg.par <- function(x, n, data = x$data,
+simulate.phreg.par <- function(object,
+                               nsim = nrow(data),
+                               data = object$data,
                           cens.model = NULL, ...,
                           var.names = c("time", "status")) {
-  if (missing(n)) n <- nrow(data)
+  if (missing(nsim)) n <- nrow(data)
   # bootstrap covariates
-  newd <- mets::dsample(size = n, data)
+  newd <- mets::dsample(size = nsim, data)
   # linear-predictors
-  lp <- predict(x, newdata = newd, type = "lp")
+  lp <- predict(object, newdata = newd, type = "lp")
   ## simulate event times
   time <- rweibullcox(nrow(lp),
       rate = exp(lp[, 1]),
       shape = exp(lp[, 2])
       )
   if (is.null(cens.model)) {
-    y <- update_design(x$rate.design, data = data, response = TRUE)$y
+    y <- update_design(object$rate.design, data = data, response = TRUE)$y
     data$cens_ <- !y[, 2]
     data$time_ <- y[, 1]
     cens.model <- phreg_weibull(Surv(time_, cens_) ~ 1, data = data)
@@ -302,7 +304,7 @@ sim.phreg.par <- function(x, n, data = x$data,
   cens.par <- exp(predict(cens.model, type = "lp", newdata = newd))
   cens <- rweibullcox(n, cens.par[, 1], cens.par[, 2])
   newd[[var.names[1]]] <- pmin(time, cens)
-  newd[[var.names[2]]] <- time<=cens
+  newd[[var.names[2]]] <- (time <= cens)
   return(newd)
 }
 

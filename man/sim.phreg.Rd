@@ -6,7 +6,7 @@
 \alias{setup.phreg}
 \title{Simulation of output from Cox model.}
 \usage{
-sim.phreg(
+\method{sim}{phreg}(
   cox,
   n,
   data = NULL,

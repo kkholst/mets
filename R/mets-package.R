@@ -11,12 +11,12 @@
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @useDynLib mets, .registration=TRUE
 ##' @import stats splines Rcpp mvtnorm
-##' @importFrom lava iid estimate bootstrap compare score information twostage
-##'   %++% %ni% addvar<- blockdiag cancel Col confband constrain<- constraints
-##'   covariance covariance<- coxWeibull.lvm devcoords distribution<- endogenous
-##'   eventTime Expand getoutcome gof intercept<- Inverse kill<- latent latent<-
-##'   lava.options lvm Model multigroup parameter<- pars regression regression<-
-##'   revdiag trim IC expit logit
+##' @importFrom lava iid sim estimate bootstrap compare score information
+##'   twostage %++% %ni% addvar<- blockdiag cancel Col confband constrain<-
+##'   constraints covariance covariance<- coxWeibull.lvm devcoords
+##'   distribution<- endogenous eventTime Expand getoutcome gof intercept<-
+##'   Inverse kill<- latent latent<- lava.options lvm Model multigroup
+##'   parameter<- pars regression regression<- revdiag trim IC expit logit
 ##' @importFrom survival Surv is.Surv concordance strata cluster finegray
 ##' @importFrom timereg two.stage predict.two.stage
 ##' @importFrom utils head tail getS3method glob2rx capture.output
@@ -33,9 +33,6 @@ NULL
 
 ##' @export
 lava::IC
-
-##' @export
-lava::iid
 
 ##' @export
 lava::sim
