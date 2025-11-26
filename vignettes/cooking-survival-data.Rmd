@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
+    toc: true
     # fig_width: 7.15
     # fig_height: 5.5        
 vignette: >
@@ -499,40 +500,78 @@ Frailty models
 
 
 # Parametric models
+While the semi‑parametric Cox model provides substantial flexibility for
+simulating survival data, there are situations where a fully parametric
+simulation model is convenient or preferable. Here we consider a Weibull model
+ parametrized so that the cumulative hazard is given by $$\Lambda(t) = \lambda
+ \cdot t^s$$ where $s$ is the **shape parameter**, and $\lambda$ the **rate
+ parameter**. We allow regression on both parameters
+ \begin{align*} \lambda :=
+ \exp(\beta^\top X), \quad s := \exp(\gamma^\top Z) \end{align*}
+  where $X$ and
+ $Z$ are covariate vectors. Specifically, this opens up for exploring
+ non‑proportional hazards when $s$ depends on covariates.
 
-While the semi-parametric nature of the Cox-model yields a lot of flexibility to
-mimic real data in simulations, it is sometimes convenient to have a simulation
-model that is fully parametric.
+Revisiting the TRACE data example we can compare the predictions from the Cox
+and the Weibull-Cox model stratified by `chf` and with a proportional hazard
+effect of `age` 
+```{r weibull1}
+data(sTRACE, package = "mets")
+dat <- sTRACE
+cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
+coxw <- phreg_weibull(Surv(time, status > 0) ~ chf + age,
+    shape.formula = ~chf,
+    data = sTRACE,
+    # time-transformation, g, cumhaz:= rate * g(t)^shape:
+    time.fun = function(x) x
+    )
+coxw
 
-Here we will consider Weibull models parametrized such that the  cumulative hazard given by $\Lambda(t) = \lambda \cdot
- t^s$
-where $s$ is the **shape parameter**, and $\lambda$ the **rate parameter**. We
- will allow for a regression model on both parameters
-\begin{align*}
- \lambda := \exp(\beta^\top X)},  \quad s := \exp(\gamma^\top Z)
- \end{align*}
-given covariates $X, Z$. 
+tt <- seq(0, max(sTRACE$time), length.out = 100)
+newd <- data.frame(chf = c(1, 0), age=67)
+pr <- predict(coxw, newdata = newd, times = tt, type="chaz")
+plot(cox1, col = 1)
+lines(tt, pr[, 1, 1], lty=2, lwd=2)
+lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
+```
 
- ##' @description Simulate observations from the model with cumulative hazard
-##'   given by \deqn{\Lambda(t) = \lambda\cdot t^s} where \eqn{\lambda} is the
-##'   \emph{rate parameter} and \eqn{s} is the \emph{shape parameter}.
-##' @details [stats::rweibull()] uses a different parametrization with
-##'   cumulative hazard given by
-##' \deqn{H(t) = (t/b)^a,}
-##' i.e., the shape is the same \eqn{a:=s} but the scale paramter \eqn{b}
-##' is related to rate paramter \eqn{r} by
-##' \deqn{r := b^{-a}}
-##' @seealso [stats::rweibull()]
-##' @title Simulate observations from a Weibull distribution
-##' @param n (integer) number of observations
-##' @param rate (numeric) rate parameter (can be a vector of size n)
-##' @param shape (numeric) shape parameter (can be a vector of size n)
-rweibullcox <- function(n, rate, shape) {
-<!--   # F(t) = 1-exp(-H(t)) = 1-exp(-lambda t^s). Inversion=> -->
-<!--   (-log(1-runif(n))/rate)^(1/shape) -->
-<!-- } -->
+To simulate data we can use the `rweibullcox()` function. Note that the
+`stats::rweibull()` function gives a different parametrization where the
+cumulative hazard is given by $H(t) = (t/b)^s$, i.e., with the same scale
+parameter but where the scale parameter $b$ is related to the rate parameter we consider by $r := b^{-s}$.
 
-<!-- It can  -->
+
+```{r weibull_sim}
+n <- 5000
+newd <- mets::dsample(size=n, sTRACE[,c("chf","age")]) # bootstrap covariates
+lp <- predict(coxw, newdata=newd, type="lp") # linear-predictors
+head(lp)
+
+## simulate event times
+tt <- rweibullcox(nrow(lp), rate = exp(lp[,1]), shape= exp(lp[,2]))
+
+# censoring model
+censw <- phreg_weibull(Surv(time, status==0) ~ 1, data=sTRACE)
+censpar <- exp(coef(censw))
+censtime <- pmin(8, rweibullcox(nrow(lp), censpar[1], censpar[2]))
+
+# combined simulated data
+newd <- transform(newd, time=pmin(tt, censtime), status=(tt<=censtime))
+head(newd)
+
+# estimate weibull model on new data
+phreg_weibull(Surv(time,status) ~ chf + age, ~chf, data=newd)
+```
+
+All these steps are wrapped in the `sim` method:
+```{r}
+# sim(coxw, n = 5, cens.model = NULL, data=newd, var.names = c("time", "status"))
+sim(coxw, n = 5)
+```
+
+
+
+
 
 
 # SessionInfo

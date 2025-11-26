@@ -533,3 +533,9 @@ update_design <- function(object, data = NULL, response=FALSE,  ...) {
   )
 }
 
+clean_design <- function(object, ...) {
+  object$x <- object$x[0, , drop = FALSE]
+  object$y <- NULL
+  for (i in object$specials) object[[i]] <- NULL
+  return(object)
+}

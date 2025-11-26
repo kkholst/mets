@@ -4,7 +4,7 @@
 \alias{sim.phregs}
 \title{Simulation of cause specific from Cox models.}
 \usage{
-sim.phregs(
+\method{sim}{phregs}(
   coxs,
   n,
   data = NULL,

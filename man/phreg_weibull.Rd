@@ -4,7 +4,14 @@
 \alias{phreg_weibull}
 \title{Weibull-Cox regression}
 \usage{
-phreg_weibull(formula, shape.formula = ~1, data, control = list())
+phreg_weibull(
+  formula,
+  shape.formula = ~1,
+  data,
+  time.fun = NULL,
+  save.data = TRUE,
+  control = list()
+)
 }
 \arguments{
 \item{formula}{Formula for proportional hazards. The right-handside must be
@@ -14,6 +21,13 @@ entry).}
 \item{shape.formula}{Formula for shape parameter}
 
 \item{data}{data.frame}
+
+\item{time.fun}{optional smooth function specifying transformation of
+time-variable. Here the cumulative hazard is assumed to be
+\eqn{H(t)=\lambda g(t)^s}}
+
+\item{save.data}{if TRUE the data.frame is stored in the model object (for
+predictions and simulations)}
 
 \item{control}{control arguments to optimization routine [stats::nlmbin]}
 }

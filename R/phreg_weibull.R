@@ -1,33 +1,44 @@
 pred_weibull <- function(object, X, Z,
                          times,
                          individual.times = FALSE,
-                         surv = TRUE, ...) {
+                         time.fun = NULL,
+                         type = c("surv", "haz", "chaz", "lp"), ...) {
     p <- coef(object)
     V <- vcov(object)
     X <- rbind(X)
     Z <- rbind(Z)
     p1 <- X %*% p[seq_len(ncol(X))] # log-scale
     p2 <- Z %*% p[seq_len(ncol(Z)) + ncol(X)] # log-shape
+    if (type[1] == "lp") {
+      return(cbind(lograte = p1, logshape = p2))
+    }
     if (nrow(X) != nrow(Z)) stop("incompatible X and Z matrix")
     n <- nrow(X)
     np <- ncol(X) + ncol(Z)
     xz <- matrix(0, ncol = np, nrow = 2)
     var_arr <- array(dim = c(2, 2, n))
     for (i in seq_len(n)) {
-        xz[1, seq_len(ncol(X))] <- X[i, ]
-        xz[2, seq_len(ncol(Z)) + ncol(X)] <- Z[i, ]
-        var_arr[, , i] <- xz %*% V %*% t(xz)
+      xz[1, seq_len(ncol(X))] <- X[i, ]
+      xz[2, seq_len(ncol(Z)) + ncol(X)] <- Z[i, ]
+      var_arr[, , i] <- xz %*% V %*% t(xz)
     }
     par <- cbind(p1, p2)
     nt <- length(times)
     if (individual.times && nt != n) {
-      stop("For individual time predictions 'times', 'X' and 'Z' should agree")
+      stop("For individual time predictions 'times', 'X' and 'Z' should agree") # nolint
     }
-    survf <- function(par, ...) exp(-exp(par[1]) * (newtime**exp(par[2])))
+    if (!is.null(time.fun)) {
+      time.fun <- structure(identity, grad = identity)
+    }
+    chaz <- function(par, ...) exp(par[1]) * (time.fun(newtime)**exp(par[2]))
+    surv <- function(par, ...) exp(-chaz(par, ...))
     haz <- function(par) {
-        exp(par[1] + par[2] +
-            (exp(par[2]) - 1) * log(times))
-      }
+      res <- exp(par[1] + par[2] +
+          (exp(par[2]) - 1) * log(time.fun(newtime)) +
+          log(attr(time.fun, "grad")(newtime)))
+      res[newtime == 0] <- 0
+      return(res)
+    }
     if (individual.times) {
       est_arr <- array(dim = c(nt, 4))
     } else {
@@ -35,30 +46,21 @@ pred_weibull <- function(object, X, Z,
       newtime <- times
     }
     for (i in seq_len(n)) {
-        if (individual.times) {
-            newtime <- times[i]
-        }
-        if (surv) {
-            pr <- estimate(
-                coef = par[i, ],
-                vcov = var_arr[, , i], f = survf, ...
-            )
-            pr <- lava::parameter(pr)
-        } else {
-            pr <- estimate(
-                coef = par[i, ],
-                vcov = var_arr[, , i], f = haz, ...
-            )
-            pr <- lava::parameter(pr)
-        }
-        if (individual.times) {
-            est_arr[i, ] <- pr[1:4]
-        } else {
-            est_arr[, , i] <- pr[, 1:4]
-        }
+      if (individual.times) {
+        newtime <- times[i]
+      }
+      pr <- estimate(
+        coef = par[i, ],
+        vcov = var_arr[, , i], f = get(type[1]), ...
+        )$coefmat
+      if (individual.times) {
+        est_arr[i, ] <- pr[1:4]
+      } else {
+        est_arr[, , i] <- pr[, 1:4]
+      }
     }
     if (individual.times) {
-        dimnames(est_arr) <- list(seq_len(nt), colnames(pr)[1:4])
+      dimnames(est_arr) <- list(seq_len(nt), colnames(pr)[1:4])
     } else {
       dimnames(est_arr) <- list(
         paste0("t", seq_len(nt)),
@@ -68,23 +70,43 @@ pred_weibull <- function(object, X, Z,
   return(est_arr)
 }
 
-logl_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
+logl_weibull <- function(p, entry, exit, status,
+                         X = NULL, Z = NULL,
+                         time.fun = NULL) {
     if (is.null(X)) X <- cbind(rep(1, length(exit)))
     if (is.null(Z)) Z <- cbind(rep(1, length(exit)))
+    dt <- 1
+    if (!is.null(time.fun)) {
+      if (is.null(attr(time.fun, "grad"))) {
+          # complex-step derivative
+          dt <- numDeriv::grad(time.fun, exit, method = "complex")
+      } else {
+          # numerical derivative
+          dt <- attr(time.fun, "grad")(exit)
+      }
+      exit <- time.fun(exit)
+      entry <- time.fun(entry)
+    }
     if (length(p) != ncol(X) + ncol(Z)) stop("wrong parameter length")
     p1 <- X %*% p[seq_len(ncol(X))] # log-scale
     p2 <- Z %*% p[seq_len(ncol(Z)) + ncol(X)] # log-shape
     theta <- cbind(exp(p1), exp(p2))
     loghaz <- log(theta[, 1]) + log(theta[, 2]) +
-      (theta[, 2] - 1) * log(exit)
+      (theta[, 2] - 1) * log(exit) + log(dt)
     chaz <- function(t) theta[, 1] * t**theta[, 2]
     logl <- status * loghaz - chaz(exit) + chaz(entry)
     logl
 }
 
-score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
+score_weibull <- function(p, entry, exit, status,
+                          X = NULL, Z = NULL,
+                          time.fun = NULL) {
     if (is.null(X)) X <- cbind(rep(1, length(exit)))
     if (is.null(Z)) Z <- cbind(rep(1, length(exit)))
+    if (!is.null(time.fun)) {
+        entry = time.fun(entry)
+        exit = time.fun(exit)
+    }
     if (length(p) != ncol(X) + ncol(Z)) stop("wrong parameter length")
     p1 <- X %*% p[seq_len(ncol(X))]
     p2 <- Z %*% p[seq_len(ncol(Z)) + ncol(X)]
@@ -118,14 +140,18 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
 ##'   both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
 ##'   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
 ##'   respectively.
-##' @details
-##' The parametrization
+##' @details The parametrization
 ##' @title Weibull-Cox regression
 ##' @param formula Formula for proportional hazards. The right-handside must be
 ##'   an [Event] or [Surv] object (with right-censoring and possibly delayed
 ##'   entry).
 ##' @param shape.formula Formula for shape parameter
 ##' @param data data.frame
+##' @param time.fun optional smooth function specifying transformation of
+##'   time-variable. Here the cumulative hazard is assumed to be
+##'   \eqn{H(t)=\lambda g(t)^s}
+##' @param save.data if TRUE the data.frame is stored in the model object (for
+##'   predictions and simulations)
 ##' @param control control arguments to optimization routine [stats::nlmbin]
 ##' @seealso [mets::phreg()]
 ##' @author Klaus Kähler Holst, Thomas Scheike
@@ -147,6 +173,8 @@ score_weibull <- function(p, entry, exit, status, X = NULL, Z = NULL) {
 phreg_weibull <- function(formula,
                           shape.formula = ~1,
                           data,
+                          time.fun = NULL,
+                          save.data = TRUE,
                           control = list()) {
     cl <- match.call()
     des <- proc_design(
@@ -172,12 +200,18 @@ phreg_weibull <- function(formula,
     X <- des$x
     Z <- des2$x
     obj <- function(p) {
-        -sum(logl_weibull(p, entry, exit, status, X = X, Z = Z))
+        -sum(logl_weibull(p, entry, exit, status,
+            X = X, Z = Z, time.fun = time.fun
+        ))
     }
-    grad <- function(p, indiv=FALSE) {
-      U <- -score_weibull(p, entry, exit, status, X = X, Z = Z)
-      if (indiv) return(U)
-      return(colSums(U))
+    grad <- function(p, indiv = FALSE) {
+        U <- -score_weibull(p, entry, exit, status,
+            X = X, Z = Z, time.fun = time.fun
+        )
+        if (indiv) {
+            return(U)
+        }
+        return(colSums(U))
     }
     if (!is.null(control$start)) {
         p0 <- control$start
@@ -202,16 +236,20 @@ phreg_weibull <- function(formula,
     est <- lava::estimate(coef = p, IC = ic)
     est$model.index <- list(ncol(X), ncol(X) + ncol(Z))
     res <- list(
-      loglik = loglik,
-      response = list(entry=entry, exit=exit, status=status),
-      call = cl, opt = op, coef = p,
-      hessian = H, design = des, shape.design = des2,
-      estimate = est
+        loglik = loglik,
+        response = list(entry = entry, exit = exit, status = status),
+        call = cl, opt = op, coef = p,
+        hessian = H,
+        rate.design = clean_design(des),
+        shape.design = clean_design(des2),
+        data = NULL,
+        time.fun = time.fun,
+        estimate = est
     )
+    if (save.data) res$data <- data
     return(structure(res, class = "phreg.par"))
 }
 
-###{{{ Weibull
 ##' @export
 print.phreg.par <- function(x, ...) {
     cat("\n- Weibull-Cox model -\n\n")
@@ -242,6 +280,33 @@ coef.phreg.par <- function(object, ...) {
 }
 
 ##' @export
+sim.phreg.par <- function(x, n, data = x$data,
+                          cens.model = NULL, ...,
+                          var.names = c("time", "status")) {
+  if (missing(n)) n <- nrow(data)
+  # bootstrap covariates
+  newd <- mets::dsample(size = n, data)
+  # linear-predictors
+  lp <- predict(x, newdata = newd, type = "lp")
+  ## simulate event times
+  time <- rweibullcox(nrow(lp),
+      rate = exp(lp[, 1]),
+      shape = exp(lp[, 2])
+      )
+  if (is.null(cens.model)) {
+    y <- update_design(x$rate.design, data = data, response = TRUE)$y
+    data$cens_ <- !y[, 2]
+    data$time_ <- y[, 1]
+    cens.model <- phreg_weibull(Surv(time_, cens_) ~ 1, data = data)
+  }
+  cens.par <- exp(predict(cens.model, type = "lp", newdata = newd))
+  cens <- rweibullcox(n, cens.par[, 1], cens.par[, 2])
+  newd[[var.names[1]]] <- pmin(time, cens)
+  newd[[var.names[2]]] <- time<=cens
+  return(newd)
+}
+
+##' @export
 IC.phreg.par <- function(x, p=coef(x), ...) {
   IC(x$estimate)
 }
@@ -253,23 +318,29 @@ logLik.phreg.par <- function(object, ...) {
 
 ##' @export
 predict.phreg.par <- function(object,
-                              newdata,
+                              newdata = object$data,
                               times,
                               individual.times = FALSE,
-                              surv = TRUE,
+                              type = c("surv", "haz", "chaz", "lp"),
                               level = 0.05,
                               ...) {
-    x <- update_design(object$design, data = newdata)$x
-    z <- update_design(object$shape.design, data = newdata)$x
-    pr <- pred_weibull(object,
-        X = x, Z = z,
-        times = times,
-        individual.times = individual.times,
-        level = level,
-        surv = surv, ...
-    )
-    return(pr)
+  xy <- update_design(object$rate.design, data = newdata, response = TRUE)
+  x <- xy$x
+  z <- update_design(object$shape.design, data = newdata)$x
+  if (type[1] != "lp" && missing(times)) {
+    times <- xy$y[, 1]
+  }
+  pr <- pred_weibull(object,
+                     X = x, Z = z,
+                     times = times,
+                     individual.times = individual.times,
+                     level = level,
+                     time.fun = object$time.fun,
+                     type = type, ...
+                     )
+  return(pr)
 }
+
 
 ##' @export
 ##' @description Simulate observations from the model with cumulative hazard

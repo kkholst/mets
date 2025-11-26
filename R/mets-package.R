@@ -38,6 +38,9 @@ lava::IC
 lava::iid
 
 ##' @export
+lava::sim
+
+##' @export
 lava::twostage
 
 ##' @export
