@@ -44,14 +44,17 @@ Event <- function(time,time2=TRUE,cause=NULL,cens.code=0,...) {# {{{
 # }}}
 
 # exported in zzz.R
+#' @exportS3Method NULL
 as.matrix.Event <- function(x, ...) structure(x, class="matrix")
 
 # exported in zzz.R
+#' @exportS3Method NULL
 as.data.frame.Event <- function(x, ...) {
   as.data.frame.model.matrix(x, ...)
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 as.character.Event <- function(x, ...) {
   if (ncol(x) == 3) {
     res <- paste(
@@ -67,19 +70,23 @@ as.character.Event <- function(x, ...) {
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 format.Event <- function(x, ...) format(as.character.Event(x), ...)
 
 # exported in zzz.R
+#' @exportS3Method NULL
 is.na.Event <- function(x) {
     apply(x, 1, function(r) any(is.na(r)))
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 print.Event <- function(x, ...) {
     print(as.character(x), ..., quote=FALSE)
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 summary.Event <- function(object,...) {
   cat(paste("cens.code=",attr(object,"cens.code"),"\n"))
   cat("causes:\n")
@@ -95,6 +102,7 @@ summary.Event <- function(object,...) {
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 "[.Event" <- function (x, i, j, drop = FALSE) {
   if (missing(j)) {
     atr <- attributes(x)
@@ -112,6 +120,7 @@ summary.Event <- function(object,...) {
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 rbind.Event <- function(...) {
     dots <- list(...)
     cens.code <- attributes(dots[[1]])$cens.code
@@ -130,9 +139,11 @@ rbind.Event <- function(...) {
 }
 
 # exported in zzz.R
+#' @exportS3Method NULL
 length.Event <- function(x) nrow(x)
 
 # exported in zzz.R
+#' @exportS3Method NULL
 c.Event <- function(...) {
     objects <- list(...)
     if (!all(unlist(lapply(objects, function(x) inherits(x, "Event")))) &&
