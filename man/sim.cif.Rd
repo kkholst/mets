@@ -10,7 +10,7 @@
 \alias{invsubdist}
 \title{Simulation of output from Cumulative incidence regression model}
 \usage{
-\method{sim}{cif}(
+sim.cif(
   cif,
   n,
   data = NULL,
