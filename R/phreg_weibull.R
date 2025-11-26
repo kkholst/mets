@@ -284,7 +284,7 @@ simulate.phreg.par <- function(object,
                                nsim = nrow(data),
                                seed = NULL,
                                data = object$data,
-                               cens.model = NULL,
+                               cens.model,
                                var.names = c("time", "status"),
                                ...) {
   if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
@@ -306,14 +306,18 @@ simulate.phreg.par <- function(object,
                       rate = exp(lp[, 1]),
                       shape = exp(lp[, 2])
                       )
-  if (is.null(cens.model)) {
-    y <- update_design(object$rate.design, data = data, response = TRUE)$y
-    data$cens_ <- !y[, 2]
-    data$time_ <- y[, 1]
-    cens.model <- phreg_weibull(Surv(time_, cens_) ~ 1, data = data)
+  if (missing(cens.model)) {
+      y <- update_design(object$rate.design, data = data, response = TRUE)$y
+      data$cens_ <- !y[, 2]
+      data$time_ <- y[, 1]
+      cens.model <- phreg_weibull(Surv(time_, cens_) ~ 1, data = data)
   }
-  cens.par <- exp(predict(cens.model, type = "lp", newdata = newd))
-  cens <- rweibullcox(n, cens.par[, 1], cens.par[, 2])
+  if (is.null(cens.model)) {
+    cens <- rep(TRUE, nrow(newd))
+  } else {
+    cens.par <- exp(predict(cens.model, type = "lp", newdata = newd))
+    cens <- rweibullcox(nsim, cens.par[, 1], cens.par[, 2])
+  }
   newd[[var.names[1]]] <- pmin(time, cens)
   newd[[var.names[2]]] <- (time <= cens)
   return(newd)

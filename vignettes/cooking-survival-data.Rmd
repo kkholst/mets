@@ -566,7 +566,7 @@ phreg_weibull(Surv(time,status) ~ chf + age, ~chf, data=newd)
 All these steps are wrapped in the `simulate` method:
 ```{r}
 # simulate(coxw, n = 5, cens.model = NULL, data=newd, var.names = c("time", "status"))
-simulate(coxw, n = 5)
+simulate(coxw, nsim = 5)
 ```
 
 

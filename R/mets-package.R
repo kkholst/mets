@@ -32,6 +32,9 @@
 NULL
 
 ##' @export
+lava::iid
+
+##' @export
 lava::IC
 
 ##' @export
