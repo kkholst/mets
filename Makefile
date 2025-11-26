@@ -35,7 +35,7 @@ init: doc
 	@$(R) -q -e "Rcpp::compileAttributes()"
 
 v:
-	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
+	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
 
 roxy: doc
 

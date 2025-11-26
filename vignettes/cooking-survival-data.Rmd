@@ -25,8 +25,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Overview 
-========
+# Overview 
 
 Simulation of survival data is important for both
 theoretical and practical work. In a practical setting we might wish to
@@ -42,7 +41,7 @@ provide such tools.
 Bender et al. in a nice paper discussed how to generate
 survival data based on the Cox model, and restricted attention to some
 of the many useful parametric survival models (weibull, exponential).
-We here use piecwise linear baseline functions that make it easy to simulate
+We here use piecewise linear baseline functions that make it easy to simulate
 data that follows closely the baseline given by the data using semi or 
 nonparametric models. This makes it easy to capture important aspects of the
 data. 
@@ -62,8 +61,8 @@ given in vignette about recurrent events.
  set.seed(10) # to control output in simulations
 ```
 
-Hazard based, Cox models  
-=========================
+# Hazard based, Cox models  
+
 
 Given a survival time $T$ with cumulative hazard $\Lambda(t)=\int_0^t \lambda(s) ds$, it
 follows that \cite{}
@@ -72,14 +71,14 @@ same distribution as $T$.
 
 This provides the basis for simulations of survival times with a given hazard  and is 
 a consequence of this simple calculation
-\[
+$$
   P(\Lambda^{-1}(E) > t) = P(E > \Lambda(t)) = \exp( - \Lambda(t)) = P(T > t).
-\]
+$$
 
 Similarly if $T$ given $X$ have hazard on Cox form 
-\[
+$$
   \lambda_0(t) \exp( X^T \beta)
-\]
+$$
 where $\beta$ is a $p$-dimensional regression coefficient and $\lambda_0(t)$ a baseline 
 hazard funcion, 
 then it is useful to observe also that 
@@ -94,26 +93,25 @@ cumulative hazard and then simulate data according to this approximation. Recall
 the Cox model to data will give a piecewise constant cumulative hazard and the regression coefficients so 
 with these at hand we can first approximate the piecewise constant "Breslow"-estimator with a linear
 upper (or lower bound) by simply connecting the values by 
-straight lines.  
+straight lines. 
 
-Delayed entry 
-=============
+# Delayed entry 
 
 If $T$ given $X$ have hazard  on Cox form 
-\[
+$$
   \lambda_0(t) \exp( X^T \beta)
-\]
+$$
 and we wish to generate data according to this hazard for those that are alive at time $s$, that is 
 draw from the distribution of $T$ given $T>s$ (all given $X$ ), then we note that  
-\[
+$$
 \Lambda_0^{-1}( \Lambda_0(s) + E/HR)) 
-\]
+$$
 with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distributiion we are after. 
 
 This is again a consequence of a simple calculation
-\[
+$$
   P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) > t) = P_X(E > HR( \Lambda(t) - \Lambda(s)) ) = P_X(T>t | T>s)
-\]
+$$
 
 The engine is to simulate data with a given linear cumulative hazard. First generating survival data based on
 the cumulative hazard cumhaz:j
@@ -149,7 +147,7 @@ Now looking at a simple cox model
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
 
- ## changing the parametes 
+ ## changing the parameters 
  cox10 <- cox1
  cox10$coef <- c(0,0.4,0.3)
  dd <- sim.phreg(cox10,n,data=bmt)
@@ -210,8 +208,8 @@ We now fit cause-specific hazard models with 3 causes (censoring as one of them)
 and generate competing risks data with hazards taken from the fitted Cox models. 
 Here a situation with stratified baselines for some of the models:
 
-```{r}
- ## stratified with phreg 
+```{stratified}
+ ## r with phreg 
  cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
@@ -279,8 +277,7 @@ One more example  fully non-parametric
 
 
 
-Multistate models: The Illness Death model 
-==========================================
+# Multistate models: The Illness Death model 
 
 Using a hazard based simulation with delayed entry we can then simulate data 
 from for example the general illness-death model. Here the cumulative hazards 
@@ -323,8 +320,7 @@ and re-estimate the cumulative baselines
 
 
 
-Cumulative incidence 
-======================
+# Cumulative incidence 
 
 In this section we discuss how to simulate competing risks data that have a specfied cumulative 
 incidence function.  We consider for simplicity a competing risks model with two causes and denote the
@@ -349,8 +345,7 @@ We again note and use that if $\tilde F_j(s)$ and $F_j(s)$ are piecewise linear
 continuous functions then the inverse is easy to compute. 
 
 
-Cumulative incidence I
-================================
+## Cumulative incidence I
 
 We here simulate two causes of death with two binary covarites of logistic type
 \begin{align*}
@@ -421,29 +416,27 @@ We can also use the parameters based on fitted models
 ```
 
 
-CIF Delayed entry
-=================
+## CIF Delayed entry
 
 Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
 cumulative incidence functions that satistifes the needed constraints. We wish to generate data that follows these two
 piecewise linear cumulative indidence functions with delayed entry at time $s$.  We should thus
 generate data that follows the cumulative incidence functions
-\[
+$$
 \tilde F_1(t,s;X)=   \frac{F_1(t;X) - F_1(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
-\]
+$$
 and 
-\[
+$$
 \tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
-\]
+$$
 this can be done according to the recipe in the previous section.  
 To be specific (ignoring the $X$ in the formula)
-\[
+$$
   F_1^{-1}( F_1(s) + U \cdot (1 - F_1(s;X) - F_2(s;X)) )
-\]
+$$
 where $U$ is a uniform, will have distribution given by $\tilde F_1(t,s)$.
 
-Recurrent events
-=================
+# Recurrent events
 
 See also recurrent events vignette
 
@@ -505,9 +498,44 @@ Frailty models
 ```
 
 
+# Parametric models
 
-SessionInfo
-============
+While the semi-parametric nature of the Cox-model yields a lot of flexibility to
+mimic real data in simulations, it is sometimes convenient to have a simulation
+model that is fully parametric.
+
+Here we will consider Weibull models parametrized such that the  cumulative hazard given by $\Lambda(t) = \lambda \cdot
+ t^s$
+where $s$ is the **shape parameter**, and $\lambda$ the **rate parameter**. We
+ will allow for a regression model on both parameters
+\begin{align*}
+ \lambda := \exp(\beta^\top X)},  \quad s := \exp(\gamma^\top Z)
+ \end{align*}
+given covariates $X, Z$. 
+
+ ##' @description Simulate observations from the model with cumulative hazard
+##'   given by \deqn{\Lambda(t) = \lambda\cdot t^s} where \eqn{\lambda} is the
+##'   \emph{rate parameter} and \eqn{s} is the \emph{shape parameter}.
+##' @details [stats::rweibull()] uses a different parametrization with
+##'   cumulative hazard given by
+##' \deqn{H(t) = (t/b)^a,}
+##' i.e., the shape is the same \eqn{a:=s} but the scale paramter \eqn{b}
+##' is related to rate paramter \eqn{r} by
+##' \deqn{r := b^{-a}}
+##' @seealso [stats::rweibull()]
+##' @title Simulate observations from a Weibull distribution
+##' @param n (integer) number of observations
+##' @param rate (numeric) rate parameter (can be a vector of size n)
+##' @param shape (numeric) shape parameter (can be a vector of size n)
+rweibullcox <- function(n, rate, shape) {
+<!--   # F(t) = 1-exp(-H(t)) = 1-exp(-lambda t^s). Inversion=> -->
+<!--   (-log(1-runif(n))/rate)^(1/shape) -->
+<!-- } -->
+
+<!-- It can  -->
+
+
+# SessionInfo
 
 
 ```{r}
