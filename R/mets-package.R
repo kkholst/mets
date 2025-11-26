@@ -11,7 +11,7 @@
 ##' @author Klaus K. Holst and Thomas Scheike
 ##' @useDynLib mets, .registration=TRUE
 ##' @import stats splines Rcpp mvtnorm
-##' @importFrom lava iid sim estimate bootstrap compare score information
+##' @importFrom lava iid estimate bootstrap compare score information
 ##'   twostage %++% %ni% addvar<- blockdiag cancel Col confband constrain<-
 ##'   constraints covariance covariance<- coxWeibull.lvm devcoords
 ##'   distribution<- endogenous eventTime Expand getoutcome gof intercept<-
