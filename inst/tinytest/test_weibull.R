@@ -9,6 +9,10 @@ p <- phreg_weibull(Surv(time, status) ~ 1, data=d)
 est <- coef(p) |> exp()
 expect_true(mean((c(rate, shape) - est)^2) < 1e-2)
 
+p0 <- survival::survreg(Surv(time, status) ~ 1, data = d)
+expect_equivalent(logLik(p), logLik(p0))
+
+
 ## shape parameter regression
 set.seed(1)
 n <- 1e4
@@ -19,6 +23,12 @@ d <- data.frame(time=rweibullcox(n, rate, shape), status=TRUE)
 p <- phreg_weibull(Surv(time, status) ~ 1, ~ factor(a) - 1, data = d)
 est <- coef(p) |> exp()
 expect_true(mean((c(rate, 2, 3) - est)^2) < 1e-2)
+
+p <- phreg_weibull(Surv(time, status) ~ factor(a) - 1, ~ factor(a) - 1, data = d)
+p0 <- survival::survreg(Surv(time, status) ~ 1, data = subset(d, a == 0))
+p1 <- survival::survreg(Surv(time, status) ~ 1, data = subset(d, a == 1))
+expect_equivalent(logLik(p), logLik(p0)+logLik(p1))
+
 
 ## delayed entry, right-censoring
 set.seed(1)

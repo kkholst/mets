@@ -27,7 +27,7 @@ pred_weibull <- function(object, X, Z,
     if (individual.times && nt != n) {
       stop("For individual time predictions 'times', 'X' and 'Z' should agree") # nolint
     }
-    if (!is.null(time.fun)) {
+    if (is.null(time.fun)) {
       time.fun <- structure(identity, grad = identity)
     }
     chaz <- function(par, ...) exp(par[1]) * (time.fun(newtime)**exp(par[2]))
