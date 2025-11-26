@@ -35,9 +35,6 @@ NULL
 lava::IC
 
 ##' @export
-lava::sim
-
-##' @export
 lava::twostage
 
 ##' @export

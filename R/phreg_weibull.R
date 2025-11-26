@@ -282,19 +282,30 @@ coef.phreg.par <- function(object, ...) {
 ##' @export
 simulate.phreg.par <- function(object,
                                nsim = nrow(data),
+                               seed = NULL,
                                data = object$data,
-                          cens.model = NULL, ...,
-                          var.names = c("time", "status")) {
-  if (missing(nsim)) n <- nrow(data)
+                               cens.model = NULL,
+                               var.names = c("time", "status"),
+                               ...) {
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+    runif(1)
+  if (is.null(seed))
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+  else {
+    R.seed <- get(".Random.seed", envir = .GlobalEnv)
+    set.seed(seed)
+    RNGstate <- structure(seed, kind = as.list(RNGkind()))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+  }
   # bootstrap covariates
   newd <- mets::dsample(size = nsim, data)
   # linear-predictors
   lp <- predict(object, newdata = newd, type = "lp")
   ## simulate event times
   time <- rweibullcox(nrow(lp),
-      rate = exp(lp[, 1]),
-      shape = exp(lp[, 2])
-      )
+                      rate = exp(lp[, 1]),
+                      shape = exp(lp[, 2])
+                      )
   if (is.null(cens.model)) {
     y <- update_design(object$rate.design, data = data, response = TRUE)$y
     data$cens_ <- !y[, 2]
