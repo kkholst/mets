@@ -27,7 +27,7 @@
 ##' @param propodds to fit logit link model, and propodds=NULL to fit Fine-Gray model
 ##' @param cause of interest
 ##' @param cens.code code of censoring
-##' @param no.codes certain event codes to be ignored when finding competing causes
+##' @param no.codes certain event codes to be ignored when finding competing causes, can be used with administrative censoring.
 ##' @param death.code can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)
 ##' @param ... Additional arguments to recreg 
 ##' @author Thomas Scheike

@@ -32,7 +32,7 @@ cifreg(
 
 \item{cens.code}{code of censoring}
 
-\item{no.codes}{certain event codes to be ignored when finding competing causes}
+\item{no.codes}{certain event codes to be ignored when finding competing causes, can be used with administrative censoring.}
 
 \item{death.code}{can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)}
 

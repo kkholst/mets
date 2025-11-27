@@ -72,6 +72,8 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
     }
   }
 
+  if (!is.data.frame(data)) stop("data must be a data-frame \n"); 
+
   ## {{{
   cl <- match.call()
     m <- match.call(expand.dots = TRUE)[1:3]

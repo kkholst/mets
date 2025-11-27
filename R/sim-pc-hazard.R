@@ -881,6 +881,54 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
 
 }# }}}
 
+simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens = 0, rcZ = 0.5,pCA=0.5,pCR=0.5,
+    bin = 1, type = c("cloglog", "logistic"), rate = 1, Z = NULL,rc2=0.3,d2=0)
+{# {{{
+    p = length(beta)/2
+    tt <- seq(0, 6, by = 0.1)
+    if (length(rate) == 1)
+        rate <- rep(rate, 2)
+    Lam1 <- rho1 * (1 - exp(-tt/rate[1]))
+    Lam2 <- rho2 * (1 - exp(-tt/rate[2]))
+    if (length(bin) == 1)
+        bin <- rep(bin, 2)
+    if (length(rcZ) == 1)
+        rcZ <- c(rcZ, 0)
+    if (is.null(Z))
+        Z = cbind((bin[1] == 1) * (2 * rbinom(n, 1, 1/2) - 1) +
+            (bin[1] == 0) * rnorm(n), (bin[2] == 1) * (rbinom(n,
+            1, 1/2)) + (bin[2] == 0) * rnorm(n))
+    colnames(Z) <- paste("Z", 1:2, sep = "")
+    p <- ncol(Z)
+    cif1 <- setup.cif(cbind(tt, Lam1), beta[1:p], Znames = colnames(Z),
+        type = type[1])
+    cif2 <- setup.cif(cbind(tt, Lam2), beta[(p + 1):(2 * p)],
+        Znames = colnames(Z), type = type[1])
+    data <- sim.cifs(list(cif1, cif2), n, Z = Z,extend=NULL)
+
+    admcens <- rbinom(n,1,pCA)
+    censorA = admcens* runif(n)*6 + 6*(admcens==0)
+
+    statusA = data$status * (data$time <= censorA)
+    timeA = pmin(data$time, censorA)
+    statusA[statusA==0] <- 7
+
+    Rcens <- rbinom(n,1,pCR)
+    if (depcens == 0)  
+        censorR = Rcens*runif(n)*6+(Rcens==0)*6
+    else censorR = Rcens*pmin(rexp(n, 1) * (1/(rc * exp(Z %*% rcZ))),6) + (Rcens==0)*6
+    censor <- ifelse( censorR < censorA, censorR,censorA)
+
+    status = data$status * (data$time <= censor)
+    time = pmin(data$time, censor)
+    status[status==0 & (censorR > censorA)] <- 7
+    ## extra censoring
+    data <- data.frame(time=time,status=status,cens.time=censor,censorA=censorA,censorR=censorR,
+		       timeA=timeA,statusA=statusA)
+    return(cbind(data, Z))
+}# }}}
+
+
 #' @export
 setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
 {# {{{

@@ -27,7 +27,7 @@ computation of standard errors that is also linear in data. In addition for the 
 predictions can be provided standard errors for specific time-points based on influence functions 
 for the baseline and the regression coeficients.  The function can thus be used for large data. 
 
-In addition and to summarize
+To summarize
 
   - the baseline can be stratified 
   - the censoring weights can be strata dependent
@@ -38,11 +38,16 @@ In addition and to summarize
   - clusters can be given and then cluster corrected standard errors are computed
 
 
-
 Fine-Gray model
 ================
 
-\cite{fine:gray:1999} considered 
+\cite{fine:gray:1999} considered a  cumulative incidence on the form 
+\begin{align*}
+ F_1(t,X) & = P(T \leq t, \epsilon=1) = 1 - exp( - \Lambda_0(t) \exp(X^T \beta)).
+\end{align*}
+
+In the case of independent right-censoring with the censoring distribtion $G_c(t,X) = P(C > t | S(X))$ where
+$S(X)$  is a set of strata defined from $X$, then an ubiased estimating equation is given by 
 \begin{align*}
   U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where } 
 	E_n(t,\beta)=\frac{\tilde S_1(t,\beta) }{\tilde S_0(t,\beta)},
@@ -281,6 +286,13 @@ so that the influence function becomes
 \int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t,X)} dM_c(t,X).
 \end{align*}
 with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)$.
+
+
+Administrative Censoring
+===========================
+
+
+
 
 
 
