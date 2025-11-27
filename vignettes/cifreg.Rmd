@@ -368,7 +368,7 @@ Administrative Censoring
 
 In the case with administrative censoring  we can simply provide the risk-set for the Fine-Gray or logistic link cumulative incidence regression models. 
 
-```{r adm-cens}
+```{r,adm-cens}
 library(mets)
 rho1 <- 0.3; rho2 <- 5.9
 set.seed(100)
@@ -389,7 +389,7 @@ estimate(ccA)
 
 The Fine-Gray model can similarly be estimated using the modified risk-set and the phreg function
 
-```{r adm-cens-phreg}
+```{r,adm-cens-phreg}
 dats$entry <- 0
 dats$id <- 1:n
 datA <- dats
