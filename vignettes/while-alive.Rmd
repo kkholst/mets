@@ -41,7 +41,7 @@ thus consider
  E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
 \end{align*}
 
-```{r}
+```{r while-alive}
 data(hfactioncpx12)
 
 dtable(hfactioncpx12,~status)
@@ -73,7 +73,7 @@ vector on the data-frame. The marks for the event times (defined through the cau
 
 Here weighting death with weight 2 and otherwise couting the recurrent of events as before (with weight 1)
 
-```{r}
+```{r wa-composite}
 hfactioncpx12$marks <- runif(nrow(hfactioncpx12))
 
 ##ddmg <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
