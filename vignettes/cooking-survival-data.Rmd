@@ -461,9 +461,9 @@ Two-stage models
  hf$x <- as.numeric(hf$treatment) 
  n <- 1000
 
- ##  to fit non-parametric models with just a baseline 
- xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
- dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
+ ##  to fit Cox  models 
+ xr <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=hf)
+ dr <- phreg(Surv(entry,time,status==2)~treatment+cluster(id),data=hf)
  estimate(xr)
  estimate(dr)
 
@@ -486,7 +486,7 @@ Two-stage models
 and a now with Ghosh-Lin and Cox marginals 
 
 ```{r}
- recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
+ recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
  estimate(recGL)
  estimate(dr)
 

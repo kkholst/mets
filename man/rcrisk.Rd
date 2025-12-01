@@ -64,15 +64,19 @@ dd <- cbind(d,Z1)
 d <-  rcrisk(cox1$cum,cox2$cum,rr1,rr2,cens=cbind(c(1,30,68),c(.01,1,3)))
 dd <- cbind(d,Z1)
 
+par(mfrow=c(1,3))
 scox0 <- phreg(Surv(time,status==0)~tcell+platelet,data=dd)
-plot(scox0); lines(cbind(c(1,30,68),c(.01,1,3)))
-
+plot(scox0); lines(cbind(c(1,30,68),c(.01,1,3)),col=2)
+##
 scox1 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
 scox2 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
-par(mfrow=c(1,2))
-plot(cox1); plot(scox1,add=TRUE)
-plot(cox2); plot(scox2,add=TRUE)
+plot(cox1); plot(scox1,add=TRUE,col=2)
+plot(cox2); plot(scox2,add=TRUE,col=2)
 cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
+
+# 3 causes and censoring 
+d3 <-  rcrisk(list(cox1$cum,cox2$cum,cox1$cum),NULL,n=100,cens=cbind(c(1,30,68),c(.01,1,3)))
+dtable(d3,~status)
 
 }
 \author{
