@@ -459,16 +459,56 @@ Two-stage models
  data(hfactioncpx12)
  hf <- hfactioncpx12
  hf$x <- as.numeric(hf$treatment) 
- n <- 100
+ n <- 1000
 
  ##  to fit non-parametric models with just a baseline 
  xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
  dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
+ estimate(xr)
+ estimate(dr)
 
  simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
 
+ xrs <- phreg(Surv(start,stop,statusD==1)~treatment+cluster(id),data=simcoxcox)
+ drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simcoxcox)
+ estimate(xrs)
+ estimate(drs)
+
+ par(mfrow=c(1,2))
+ plot(xrs); 
+ plot(xr,add=TRUE)
+###
+ plot(drs)
+ plot(dr,add=TRUE)
+
+```
+
+and a now with Ghosh-Lin and Cox marginals 
+
+```{r}
  recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
+ estimate(recGL)
+ estimate(dr)
+
  simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
+ simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+ dtable(simcoxcox,~statusD)
+
+ recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
+ simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
+ GLs <- recreg(Event(start,stop,statusD)~treatment+cluster(id),data=simglcox,death.code=3)
+ drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simglcox)
+ estimate(GLs)
+ estimate(drs)
+
+ par(mfrow=c(1,2))
+ plot(GLs); 
+ plot(recGL,add=TRUE)
+###
+ plot(drs)
+ plot(dr,add=TRUE)
 
 ```
 
