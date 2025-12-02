@@ -1573,7 +1573,7 @@ return(data)
 ##' library(mets)
 ##' data(hfactioncpx12)
 ##' dtable(hfactioncpx12,~status)
-##' proc_design <- mets:::proc_design
+##' 
 ##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
 ##'         hfactioncpx12,cause=1,death.code=2)
 ##' plot(oo)
@@ -1675,6 +1675,7 @@ form <- as.formula(update.formula(rhs,pp))
 }
 
 cif.exceed <- NULL
+dataList <- NULL
 if (all.cifs) cif.exceed <- list() 
 if (return.data) dataList <- list() 
 se.probs <- probs <- matrix(0,length(times),length(exceed)+1)
