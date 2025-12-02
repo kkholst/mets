@@ -2501,7 +2501,6 @@ if (!is.null(call.id)) {
   return(val)
 }# }}}
 
-
 ##' @export
 logitATE <- function(formula,data,binreg=TRUE,...)
 {# {{{

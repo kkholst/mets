@@ -1561,6 +1561,7 @@ return(data)
 ##' @param marks may be give for jump-times and then exceed values needs to be specified
 ##' @param cifmets if true uses cif of mets package rather than prodlim 
 ##' @param all.cifs if true then returns list of all fitted objects in cif.exceed 
+##' @param return.data if true then returns list of data for fitting the different excess thresholds 
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @references 
@@ -1569,79 +1570,67 @@ return(data)
 ##'             with a terminal event,  JRSS-C
 ##'
 ##' @examples
+##' library(mets)
 ##' data(hfactioncpx12)
 ##' dtable(hfactioncpx12,~status)
-##' 
+##' proc_design <- mets:::proc_design
 ##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
-##'         hfactioncpx12,cause=1,death.code=2)
+##'         hfactioncpx12,cause=1,death.code=2,return.data=TRUE)
 ##' plot(oo)
 ##' 
 ##' @export
 ##' @aliases prob.exceedRecurrent prob.exceedBiRecurrent prob.exceedRecurrentStrata prob.exceedBiRecurrentStrata summaryRecurrentobject summaryTimeobject
 ##' @export
-prob.exceed.recurrent <- function(formula,data,
-                                   cause=1,
-                                   death.code=2,
-                                   cens.code=0,
-                                   exceed=NULL,marks=NULL,cifmets=TRUE,all.cifs=FALSE,...)
+prob.exceed.recurrent <- function(formula,data, cause=1, death.code=2, cens.code=0,
+                                   exceed=NULL,marks=NULL,cifmets=TRUE,all.cifs=FALSE,return.data=FALSE,...)
 {# {{{
     cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster","offset")
-    Terms <- terms(formula, special, data = data)
-    m$formula <- Terms
-    m[[1]] <- as.name("model.frame")
-    m <- eval(m, parent.frame())
-    Y <- model.extract(m, "response")
-    if (!inherits(Y,"Event")) stop("Expected a 'Event'-object")
-    if (ncol(Y)==2) {
-        exit <- Y[,1]
-        entry <- rep(0,nrow(Y))
-        status <- Y[,2]
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("marks","strata","offset", "weights", "cluster"),
+        intercept = TRUE
+    )
+    Y <- des$y
+    if (!inherits(Y, c("Event", "Surv"))) {
+        stop("Expected a 'Surv' or 'Event'-object")
+    }
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
+        entry <- rep(0, nrow(Y))
+        status <- Y[, 2]
     } else {
-        entry <- Y[,1]
-        exit <- Y[,2]
-        status <- Y[,3]
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
     }
-    id <- strata <- NULL
-    if (!is.null(attributes(Terms)$specials$cluster)) {
-        ts <- survival::untangle.specials(Terms, "cluster")
-        pos.cluster <- ts$terms
-        Terms  <- Terms[-ts$terms]
-        id <- m[[ts$vars]]
-    } else pos.cluster <- NULL
-    if (!is.null(stratapos <- attributes(Terms)$specials$strata)) {
-        ts <- survival::untangle.specials(Terms, "strata")
-        pos.strata <- ts$terms
-        Terms  <- Terms[-ts$terms]
-        strata <- m[[ts$vars]]
-        strata.name <- ts$vars
-    }  else { strata.name <- NULL; pos.strata <- NULL}
-    if (!is.null(offsetpos <- attributes(Terms)$specials$offset)) {
-        ts <- survival::untangle.specials(Terms, "offset")
-        Terms  <- Terms[-ts$terms]
-        offset <- m[[ts$vars]]
-    }
-    X <- model.matrix(Terms, m)
-###    if (!is.null(intpos  <- attributes(Terms)$intercept))
-###        X <- X[,-intpos,drop=FALSE]
+    X <- des$x
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    id      <- des$cluster
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-    ## }}}
+    strata <- des$strata
+    if (!is.null(strata))  {
+      ns <- grep("strata",names(des$levels))
+      strata.name  <-  names(des$levels)[1]
+    } else strata.name <- NULL
+    des.marks <- des$marks
+    id      <- des$cluster
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+    ## no use of 
+    pos.cluster <- pos.strata <- NULL
 
-   ## {{{
-###   if (!is.null(id)) {
-###        ids <- unique(id)
-###        nid <- length(ids)
-###        if (is.numeric(id))
-###            id <-  fast.approx(ids,id)-1
-###        else  {
-###            id <- as.integer(factor(id,labels=seq(nid)))-1
-###        }
-###    } else { ids  <- id <- as.integer(seq_along(entry))-1;  nid <- nrow(X); }
-###    ## orginal id coding into integers 1:...
-###    orig.id <- id.orig <- id+1;
-###    nid <- length(unique(id))
-    ## }}}
+ ## take offset and weight first from formula, but then from arguments
+  if (is.null(des.offset)) {
+	  if (is.null(offset)) offset <- rep(0,length(exit)) 
+  } else offset <- des.offset
+  if (is.null(des.weights)) {
+	  if (is.null(weights)) weights <- rep(1,length(exit)) 
+  } else weights <- des.weights
+  if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
+  ## }}}
+
  call.id <- id;
  conid <- construct_id(id,nrow(X),as.data=TRUE)
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
@@ -1687,6 +1676,7 @@ form <- as.formula(update.formula(rhs,pp))
 
 cif.exceed <- NULL
 if (all.cifs) cif.exceed <- list() 
+if (return.data) dataList <- list() 
 se.probs <- probs <- matrix(0,length(times),length(exceed)+1)
 lower <-  matrix(0,length(times),length(exceed)+1)
 upper <-  matrix(0,length(times),length(exceed)+1)
@@ -1704,6 +1694,7 @@ for (n1 in exceed) {# {{{
 	statN <- statN[keep]
 	dataN <- data[keep,]
 	dataN$statN <- statN
+	if (return.data) dataList[[i-1]] <- dataN
 
         if (!cifmets) pN1 <-  suppressWarnings(prodlim::prodlim(form,data=dataN)) else pN1 <-  suppressWarnings(cif(form,data=dataN))
 	if (all.cifs) cif.exceed[[i-1]] <- pN1
@@ -1738,7 +1729,7 @@ colnames(se.probs) <- c(paste("N<",exceed[1],sep=""),paste("exceed>=",exceed,sep
 
 out <- list(time=times,times=times,prob=probs,se.prob=se.probs,meanN=meanN,
 	    lower=lower,upper=upper,meanN2=meanN2,varN=varN,exceed=exceed[-1],formula=form,
-	    cif.exceed=cif.exceed)
+	    cif.exceed=cif.exceed,dataList=dataList)
 class(out) <- "exceed"
 return(out)
 }# }}}

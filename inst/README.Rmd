@@ -370,6 +370,16 @@ baseid <- iidBaseline(gl1,time=2)
 dd <- data.frame(treatment=levels(hfactioncpx12$treatment),id=1)
 GLprediid(baseid,dd)
 ```
+and G-computation 
+
+```{r}
+ hfactioncpx12$age <- (50+rnorm(741)*4)[hfactioncpx12$id]
+
+ GLout <- recreg(Event(entry,time,status)~treatment+age,data=hfactioncpx12,cause=1,death.code=2)
+ summary(GLout)
+ summary(survivalG(GLout,hfactioncpx12,time=4))
+```
+
 
 ## Examples: Fixed time modelling for recurrent events 
 
