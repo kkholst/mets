@@ -1575,7 +1575,7 @@ return(data)
 ##' dtable(hfactioncpx12,~status)
 ##' proc_design <- mets:::proc_design
 ##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
-##'         hfactioncpx12,cause=1,death.code=2,return.data=TRUE)
+##'         hfactioncpx12,cause=1,death.code=2)
 ##' plot(oo)
 ##' 
 ##' @export
