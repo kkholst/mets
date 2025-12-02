@@ -20,6 +20,7 @@ prob.exceed.recurrent(
   marks = NULL,
   cifmets = TRUE,
   all.cifs = FALSE,
+  return.data = FALSE,
   ...
 )
 }
@@ -42,6 +43,8 @@ prob.exceed.recurrent(
 
 \item{all.cifs}{if true then returns list of all fitted objects in cif.exceed}
 
+\item{return.data}{if true then returns list of data for fitting the different excess thresholds}
+
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
@@ -51,11 +54,12 @@ In contrast the probability of exceeding k events can also be computed as a
 counting process integral, and this is implemented in prob.exceedRecurrent
 }
 \examples{
+library(mets)
 data(hfactioncpx12)
 dtable(hfactioncpx12,~status)
-
+proc_design <- mets:::proc_design
 oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
-        hfactioncpx12,cause=1,death.code=2)
+        hfactioncpx12,cause=1,death.code=2,return.data=TRUE)
 plot(oo)
 
 }
