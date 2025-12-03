@@ -337,7 +337,7 @@ logLik.phreg.par <- function(object, ...) {
 predict.phreg.par <- function(object,
                               newdata = object$data,
                               times,
-                              individual.times = FALSE,
+                              individual.time = FALSE,
                               type = c("surv", "haz", "chaz", "lp"),
                               level = 0.05,
                               ...) {
@@ -350,7 +350,7 @@ predict.phreg.par <- function(object,
   pr <- pred_weibull(object,
                      X = x, Z = z,
                      times = times,
-                     individual.times = individual.times,
+                     individual.time = individual.time,
                      level = level,
                      time.fun = object$time.fun,
                      type = type, ...
