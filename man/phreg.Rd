@@ -10,7 +10,7 @@
 \alias{predictO.phreg}
 \alias{predictrecreg}
 \alias{summarybase.phreg}
-\alias{namesortme}
+\alias{nameme}
 \alias{construct_id}
 \title{Fast Cox PH regression}
 \usage{

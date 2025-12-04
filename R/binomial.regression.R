@@ -351,7 +351,7 @@ if (length(dots)==0) {
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
   if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  if (!is.null(call.id)) val$iid <- namesortme(val$iid,name.id)
+  if (!is.null(call.id)) val$iid <- nameme(val$iid,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
@@ -480,7 +480,7 @@ coef.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
-predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,level=0.95,...)
+predict.binreg <- function(object,newdata,se=TRUE,pred.iid=FALSE,level=0.95,design=FALSE,...)
 {# {{{
   x <- update_design(object$design,data = newdata)
   Z <- x$x
@@ -498,7 +498,7 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,level=0.95,...)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
   }
-  if (iid) {
+  if (pred.iid) {
       Piid <- object$iid  %*% t(Dpv)
       preds <- list(pred=preds,iid=Piid)
   }
@@ -522,12 +522,16 @@ predict.binreg <- function(object,newdata,se=TRUE,iid=FALSE,level=0.95,...)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
   }
-  if (iid) {
+  if (pred.iid) {
       Piid <- object$iid  %*% t(Dpv)
-      preds <- list(pred=preds,iid=Piid)
+      preds <- list(pred=preds,iid=Piid,id=x$cluster)
   }
 
   }
+
+  attr(preds,"id") <- x$cluster
+  if (design) attr(preds,"x") <- Z
+
 return(preds)
 } # }}}
 
@@ -976,7 +980,7 @@ if (length(dots)==0) {
     val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    if (!is.null(call.id)) val$iid <- namesortme(val$iid,name.id)
+    if (!is.null(call.id)) val$iid <- nameme(val$iid,name.id)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
@@ -1210,7 +1214,7 @@ if (length(dots)==0) {
     val$nid <- nid
     val$iid.naive <- val$iid 
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-    if (!is.null(call.id)) val$iid <- namesortme(val$iid,name.id)
+    if (!is.null(call.id)) val$iid <- nameme(val$iid,name.id)
     val$naive.var <- val$var
     robvar <- crossprod(val$iid)
     val$var <-  val$robvar <- robvar
@@ -1316,7 +1320,10 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
  conid <- construct_id(id,nrow(X),namesX=rownames(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
  idclust <- id; nclust <- nid
- if (nid!=length(id)) { nid <- length(id); id <- 0:(nid-1); }
+
+ ## take each data-record with its own iid or organize after idclust later 
+ nid <- length(id); 
+ id <- 0:(nid-1); 
 
   ## take offset and weight first from formula, but then from arguments
   if (is.null(des.offset)) {
@@ -1542,12 +1549,6 @@ augmentationATE <- 0
   }  else { MGCiid <- MGCiidas <- 0 }
 ## }}}
 
-val$call.id <- call.id
-val$name.id  <- name.id
-val$id <- id
-val$nid  <- nid
-val$se.coef <- diag(val$var)^.5
-
 ################################
 ### estimates risk, att, atc
 ################################
@@ -1579,10 +1580,12 @@ for (a in nlevs) {
 }
 # }}}
 
-# {{{ output variances and se for ate; cluster correction
+val$call.id <- call.id
+val$name.id  <- name.id
 val$id <- idclust
 val$nid  <- nclust
 
+# {{{ output variances and se for ate; cluster correction
 val$iid <- apply(val$iid,2,sumstrata,idclust,nclust)
 robvar <- crossprod(val$iid)
 val$var <-  val$robvar <- robvar
@@ -1621,17 +1624,18 @@ names(val$difriskG) <-  rownames(contrast)
 val$var.difriskG <- mm$vcov 
 val$se.difriskG <- diag(val$var.difriskG)^.5
 
-### DR-estimator ; G -estimator sort after namid; also outcome model
+###### DR-estimator, G add names to iid 
 if (!is.null(call.id)) {
-	iidrisk <- namesortme(iidrisk,name.id)
-	riskG.iid <-  namesortme(riskG.iid,name.id)
-	val$iid <-  namesortme(val$iid,name.id)
+    val$riskDR.iid < nameme(iidrisk,name.id)
+    val$riskG.iid <- nameme(riskG.iid,name.id)
+    val$iid <-       nameme(val$iid,name.id)
 }
 ## }}}
 
   class(val) <- "binreg"
   return(val)
 }# }}}
+
 
 binregATEold <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
    offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
@@ -1973,9 +1977,9 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
 
 ### DR-estimator ; G -estimator sort after namid; also outcome model
 if (!is.null(call.id)) {
-	iidrisk <- namesortme(iidrisk,name.id)
-	riskG.iid <-  namesortme(riskG.iid,name.id)
-	val$iid <-  namesortme(val$iid,name.id)
+	iidrisk <- nameme(iidrisk,name.id)
+	riskG.iid <-  nameme(riskG.iid,name.id)
+	val$iid <-  nameme(val$iid,name.id)
 }
 ## }}}
 
@@ -1993,56 +1997,60 @@ if (!is.null(call.id)) {
 ##'
 ##' @param x binreg object
 ##' @param data data frame for risk averaging
-##' @param Avalues values to compare for first covariate A
+##' @param Avalues values to compare for first covariate A, assumes that first variable is factor and take all levels
 ##' @param varname if given then averages for this variable, default is first variable
 ##' @author Thomas Scheike
 ##' @examples
 ##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
-##'
+##' 
 ##' b1 <- binreg(Event(time,cause)~age+tcell+platelet,bmt,cause=1,time=50)
 ##' sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 ##' summary(sb1)
-##'
 ##' @export
-binregG <- function(x,data,Avalues=c(0,1),varname=NULL)
+binregG <- function(x,data,Avalues=NULL,varname=NULL)
 {# {{{
 
+### dealing with first variable 
 if (is.null(varname))  {
-treat.name <- all.vars(update.formula(x$formula,1~.))[1]
+   treat.name <- all.vars(update.formula(x$formula,1~.))[1]
 } else treat.name <- varname
 treatvar <- data[,treat.name]
 
 if (is.factor(treatvar)) {
-   nlevs <- levels(treatvar)
+   ## treatvar, levels to look at 
+   if (is.null(Avalues)) nlevels <- levels(treatvar) else nlevels <- Avalues
 } else {
-   nlevs <- Avalues
+   nlevels <- Avalues
 }
+if (is.null(nlevels)) stop("must specify values")
 
-formulaX <- update.formula(x$formula,.~.)
-formulanc <- drop.specials(formulaX,"cluster")
-
-datA <- dkeep(data,x=all.vars(formulaX))
-xlev <- lapply(datA,levels)
+desx <- update_design(x$design,data=data)
+if (is.null(desx$cluster)) { ## data must be same as data used for x
+   id <- x$id
+} else {
+  id <- desx$cluster-1
+}
+datA <- data
 
 DariskG <- list()
 risks <- c()
 k <- 0
-for (a in nlevs) {# {{{
+for (a in nlevels) {# {{{
 k <- k+1
 datA[,treat.name] <- a
-Xa <- model.matrix(formulanc[-2],datA,xlev=xlev)
+pa <- predict.binreg(x,datA,se=0,design=TRUE)
+Xa <- attr(pa,"x")
 lpa <- Xa %*% x$coef
-## only for logit link so far 
 if (x$model[1]=="logit") {
-   pa <- expit(lpa)
+###   pa <- expit(lpa)
    Dma  <-  Xa*c(pa/(1+exp(lpa)))
 } else if (x$model[1]=="exp") {
-   pa <- exp(lpa)
+###   pa <- exp(lpa)
    Dma  <-  Xa*c(pa) 
 } else {
-   pa <- lpa
+###   pa <- lpa
    Dma  <-  Xa
 }
 risks <- cbind(risks,pa)
@@ -2053,18 +2061,17 @@ Grisk <- apply(risks,2,mean)
 Gest <- list(Gest=Grisk,iid=t(t(risks)-Grisk))
 
 nid <- max(x$id)+1
-n <- length(x$id)
+n <-  ndata <- length(unique(id))
 risk.iid <- apply(Gest$iid,2,sumstrata,x$id,nid)/n 
-if (!is.null(x$call.id)) risk.iid <- namesortme(risk.iid,x$name.id)
 DGiid <- risk.iid
 
-for (a in seq_along(nlevs)) {
+for (a in seq_along(nlevels)) {
 	DGiid[,1] <- c(x$iid  %*% DariskG[[a]])/n
 	risk.iid[,a] <- risk.iid[,a]+ c(x$iid  %*% DariskG[[a]])/n
 }
 vv <- crossprod(risk.iid)
 
-Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevs,sep=""))
+Gout <- estimate(coef=Gest$Gest,vcov=vv,labels=paste("risk",nlevels,sep=""))
 ed <-  estimate(coef=Gest$Gest,vcov=vv,f=function(p) p[-1]-p[1])
 rd <- estimate(coef=Gest$Gest,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
 out <- list(risk.iid=risk.iid,risk=Gout,difference=ed,ratio=rd,vcov=vv,model=x$model[1])
@@ -2110,7 +2117,9 @@ logitIPCWATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+
  conid <- construct_id(id,nrow(X),namesX=rownames(X))
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
  idclust <- id; nclust <- nid
- if (nid!=length(id)) { nid <- length(id); id <- 0:(nid-1); }
+
+  ## make all computations for each subject, later sum influence functions and sort after idclust 
+  nid <- length(id); id <- 0:(nid-1); 
 
 
   ## take offset and weight first from formula, but then from arguments
@@ -2488,9 +2497,9 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
 
 ### DR-estimator ; G -estimator sort after namid; also outcome model
 if (!is.null(call.id)) {
-	iidrisk <- namesortme(iidrisk,name.id)
-	riskG.iid <-  namesortme(riskG.iid,name.id)
-	val$iid <-  namesortme(val$iid,name.id)
+    val$riskDR.iid < nameme(iidrisk,name.id)
+    val$riskG.iid <- nameme(riskG.iid,name.id)
+    val$iid <-       nameme(val$iid,name.id)
 }
 ## }}}
 

@@ -100,14 +100,13 @@ and using the specialized function
 
 ```{r}
 br1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=40)
-Gbr1 <- binregG(br1,data=bmt)
+Gbr1 <- binregG(br1,bmt,Avalues=NULL)
 summary(Gbr1)
 
-## contrasting average age to +2-sd age, Avalues
-Gbr2 <- binregG(br1,data=bmt,varname="age",Avalues=c(0,2))
+## contrasting average age to 1+2-sd age, Avalues
+Gbr2 <- binregG(br1,bmt,varname="age",Avalues=c(0,1,2))
 summary(Gbr2)
 ```
-
 
 SessionInfo
 ============

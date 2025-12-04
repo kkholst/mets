@@ -9,17 +9,16 @@ survivalG(
   x,
   data,
   time = NULL,
-  Avalues = c(0, 1),
+  Avalues = NULL,
   varname = NULL,
   same.data = TRUE,
-  id = NULL,
-  subdata = NULL
+  First = FALSE
 )
 }
 \arguments{
 \item{x}{phreg or cifreg object}
 
-\item{data}{data frame for risk averaging}
+\item{data}{data frame for risk averaging, must be part of the data used for fitting unless same.data=FALSE. When a subset of the data such as the treated model should be fitted with cluster(id)}
 
 \item{time}{for estimate}
 
@@ -29,9 +28,7 @@ survivalG(
 
 \item{same.data}{assumes that same data is used for fitting of survival model and averaging.}
 
-\item{id}{might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,}
-
-\item{subdata}{rows or TRUE/FALSE to select which part of the data that is used for the G-computation. Might be treated}
+\item{First}{to only use first record for G-averaging, for example when start,stop structure is used with phreg}
 }
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
@@ -43,7 +40,7 @@ and if continuous then considered covariate values are given by Avalues.
 \examples{
 library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-bmt$event <- (bmt$cause!=0)*1
+bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
 dfactor(bmt) <- tcell.f~tcell
 
 fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
@@ -62,6 +59,9 @@ plot(sst)
 fg1t <- survivalGtime(fg1,bmt,n=50)
 plot(fg1t)
 
+#among treated: must specify id to link influence functions
+ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt) 
+summary(survivalG(ss,subset(bmt,tcell==1),50))
 }
 \author{
 Thomas Scheike

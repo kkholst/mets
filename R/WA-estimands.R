@@ -236,10 +236,10 @@ ET <- list(riskDRC=riskDRC,riskDR=outae)
 
 ###### sort iid after name.id and put as rownames
 if (!is.null(call.id)) {
-	ET$riskDRC$iid <- namesortme(ET$riskDRC$iid,name.id)
-	ET$riskDR$riskG.iid <- namesortme(outae$riskG.iid,name.id)
-	ET$riskDR$riskDR.iid <- namesortme(outae$riskG.iid,name.id)
-	ET$riskDR$iid <- namesortme(ET$riskDR$iid,name.id)
+	ET$riskDRC$iid <- nameme(ET$riskDRC$iid,name.id)
+	ET$riskDR$riskG.iid <- nameme(outae$riskG.iid,name.id)
+	ET$riskDR$riskDR.iid <- nameme(outae$riskG.iid,name.id)
+	ET$riskDR$iid <- nameme(ET$riskDR$iid,name.id)
 }
 
 out <- list(time=time,id=id,call.id=call.id,name.id=name.id,nid=nid,

@@ -73,7 +73,6 @@
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 { ## {{{
 	cl <- match.call()
-	if (!is.data.frame(data)) stop("data must be a data-frame\n"); 
 	outi  <- recregBN(formula,data,cause=cause,death.code=death.code,cens.code=cens.code,cens.model=cens.model,weights=weights,offset=offset,Gc=Gc,wcomp=wcomp,marks=marks,...)
 
 	if (!is.null(outi$lindyn.augment)) {
@@ -640,16 +639,15 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	colnames(se.cumhaz) <- c("time","se.cumhaz")
 
 	if (!is.null(call.id)) {
-		MGc <-  namesortme(MGc,name.id)
-		Uiid <- namesortme(Uiid,name.id)
-		UUiid <- namesortme(UUiid,name.id)
-		Uiid.augment <- namesortme(Uiid.augment,name.id)
-		Uiid.augment.times  <- namesortme(Uiid.augment.times,name.id)
+		MGc <-  nameme(MGc,name.id)
+		Uiid <- nameme(Uiid,name.id)
+		UUiid <- nameme(UUiid,name.id)
+		Uiid.augment <- nameme(Uiid.augment,name.id)
+		Uiid.augment.times  <- nameme(Uiid.augment.times,name.id)
 	}
 
 	out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
-   iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,
-   se1.coef=diag(var1)^.5,
+   iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 		    hessianttime=opt$hessianttime,
 		    ploglik=opt$ploglik,gradient=opt$gradient,
 		    cumhaz=cumhaz,se.cumhaz=se.cumhaz,MGciid=MGc,
@@ -909,8 +907,8 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	} else { sus <- MGAiids <- cumhaz.time <- NULL }
 
 	if (!is.null(x$call.id)) {
-		MGAiids <- namesortme(MGAiids,x$name.id)
-		Uiid    <- namesortme(Uiid,x$name.id)
+		MGAiids <- nameme(MGAiids,x$name.id)
+		Uiid    <- nameme(Uiid,x$name.id)
 	}
 
 	if (inherits(x,c("cifreg","recreg"))) {
@@ -926,220 +924,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	return(out)
 }  ## }}}
 
-
-###IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbeta=NULL,beta.iid=NULL,adm.cens=NULL,tminus=FALSE)
-###{ ## {{{
-###	if (is.null(fixbeta)) 
-###		if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
-###
-###	xx2 <- coxprep
-###	status <- xx2$Z[,1]
-###	cause.jumps <- xx2$jumps+1 
-###	exit <- xx2$time
-###	max.jump <- max(exit[cause.jumps])+1
-###	other <- (length(which(status %in% death.code)) > 0)
-###	whereC <- which( (status %in% cens.code) & xx2$sign==1)
-###        anyC <- (length(whereC)>0)
-###
-###	# construct censoring weights going along with all data, with added [D,\infty], start stop
-###	jumps <- xx2$jumps+1
-###	jumptimes <- xx2$time[jumps]
-###	strata1jumptimes <- xx2$strata[jumps]
-###	Xj <- xx2$X[jumps,,drop=FALSE]
-###	###
-###	typexx2 <- xx2$Z[,6]
-###	rr0 <- xx2$sign*(typexx2==1)
-###	jumpsC <- which((xx2$Z[,1] %in% cens.code) & xx2$sign==1 & typexx2==1)
-###
-###	if (anyC) {
-###		strataCxx2 <- xx2$Z[,2]
-###		S0iC2  <-  S0iC <- rep(0,length(xx2$status))
-###		nCstrata <- max(strataCxx2)+1
-###		S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
-###		if (length(jumpsC)>0) {
-###			S0iC[jumpsC] <- 1/S0rrr[jumpsC]
-###			S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
-###		}
-###		## Gc(t) computed  along all times of combined data-set: data + [D,\infty] 
-###		Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
-###		Gstart <- rep(1,nCstrata)
-###		Gjumps <- Gcxx2[jumps,]
-###	} else  Gcxx2 <- rep(1,length(xx2$stata))
-###	### all administrative censoring, or no censoring at all 
-###	if (!anyC) typexx2 <- 1
-###
-###	### iid version given G_c when covariates are there, iid robust 
-###	S0i <- rep(0,length(xx2$strata))
-###	S0i[jumps] <- 1/x$S0
-###	Z <- xx2$X
-###	p <- ncol(x$E)
-###	if ( (!is.null(beta.iid)) | fixbeta==0) {
-###		U <- E <- matrix(0,nrow(Z),p)
-###		E[jumps,] <- x$E
-###		U[jumps,] <- x$U
-###		EdLam0 <- apply(E*S0i,2,cumsumstrata,xx2$strata,xx2$nstrata)
-###	} else U <- NULL
-###	cumhazA <- cumsumstratasum(S0i,xx2$strata,xx2$nstrata,type="all")
-###	cumhaz <- c(cumhazA$sum)
-###
-###	## make indicator for times of interest for integrals up to time 
-###	if (!is.null(time))  btimexx <- (xx2$time<time) else btimexx <- rep(1,length(xx2$time))
-###
-###	if (fixbeta==0) {
-###		rr <- c(xx2$sign*exp(Z %*% x$coef + xx2$offset))
-###		Ht <- apply(E*S0i*btimexx,2,cumsumstrata,xx2$strata,xx2$nstrata); 
-###	} else { Ht <- NULL; rr <- c(xx2$sign*exp(xx2$offset)) }
-###	rrw <- rr*c(xx2$weights)
-###
-###	mid <- max(xx2$id)
-###	if ( (!is.null(beta.iid)) | fixbeta==0) {
-###		### Martingale  as a function of time and for all subjects to handle strata
-###		MGt <- U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rrw*(typexx2==1)
-###		UU <- apply(MGt,2,sumstrata,xx2$id,mid+1)
-###	} else UU <- 0
-###
-###	if (!is.null(time)) {
-###		## baseline
-###		MGAiid <- NULL
-###		S0i2 <- rep(0,length(xx2$strata))
-###		ww <- xx2$caseweights*xx2$weights
-###		S0i2[jumps] <- 1/(x$S0^2*ww[jumps])
-###		MGAiid <- matrix(0,length(S0i2),1)
-###		MGAiid2 <- matrix(0,length(S0i2),1)
-###		cumhazAA <- cumsumstrata(S0i2*btimexx,xx2$strata,xx2$nstrata)
-###		MGAiid <- S0i*btimexx-cumhazAA*rrw*(typexx2==1)
-###	} else MGAiid <- NULL
-###
-###	if (other & anyC) { ## martingale part for type-2 after T ## {{{
-###	## tail part with \int (Z_i-E) w_i(t) dM_i = \int_D_i^\tau (Z_i-E) Gc(t) dM_i/Gc(D_i) 
-###	rrw2 <- rrw*(typexx2==2)
-###	GdL <- c(cumsum2strata(Gcxx2,S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)$res)
-###	fff <- function(x) {
-###		cx  <- cumsum2strata(Gcxx2,x*S0i,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)$res
-###		return(cx)
-###	}
-###        if ((!is.null(beta.iid)) | fixbeta==0) EGdL  <- apply(E,2,fff)
-###
-###	if ( ((!is.null(beta.iid)) | fixbeta==0)  & is.null(adm.cens)) {
-###		MGt2  <- -(Z*GdL-EGdL)*rrw2
-###		UU2 <- apply(MGt2,2,sumstrata,xx2$id,mid+1)
-###		UU  <-  UU+UU2
-###	}
-###
-###	dstrata <- mystrata(data.frame(strataCxx2,xx2$strata))
-###	ndstrata <- attr(dstrata,"nlevel")
-###	lastt <- tailstrata(dstrata-1,ndstrata)
-###
-###	if (!is.null(time) ) {
-###	ll <-  cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
-###	HBtinf <- ll$res[lastt][dstrata]-ll$res
-###	if ( is.null(adm.cens)) {
-###		## baseline
-###		MGAiid2 <- -ll$res*c(rrw2)
-###		MGAiid <- MGAiid+MGAiid2
-######		MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
-###	}
-###	}
-###	if ( ((!is.null(beta.iid)) | fixbeta==0) ) {
-###		Htinf <- GdL[lastt][dstrata]-GdL
-###		ff <- function(x) x[lastt][dstrata]-x
-###		EHtinf  <- apply(EGdL,2,ff)
-###	}
-###	} # ## }}}
-###
-###	if (!is.null(time) )  MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
-###
-###	## censoring terms for influene functions 
-###	if (other & anyC) { ##  ## {{{
-###		### Censoring adjustment for jumps of other type but only for KM-case 
-###		### first time we see them with type2 event 
-###		rrw2j <- -c(rrw2*(xx2$sign==-1))
-###		Xos <- Z*rrw2j
-###		rrsx <- cumsumstrata(rrw2j,strataCxx2,nCstrata)
-###		Xos <- apply(Xos,2,cumsumstrata,strataCxx2,nCstrata)
-###
-###		if ( (!is.null(beta.iid)) | fixbeta==0) q2 <- (Xos*c(Htinf)-EHtinf*c(rrsx))
-###		if (!is.null(time))  qB2 <- rrsx*c(HBtinf) 
-###
-###		sss <- headstrata(dstrata-1,ndstrata)
-###		fff <- function(x) {
-###			gtstart <- x[sss]
-###			cx  <- cumsum2strata(x,S0iC2,dstrata-1,ndstrata,strataCxx2,nCstrata,gtstart)$res
-###			return(cx)
-###		}
-###
-###		### Martingale  as a function of time and for all subjects to handle strata
-###		if ( (!is.null(beta.iid)) | fixbeta==0) {
-###			EdLam0q2 <- apply(q2,2,fff)
-###			MGc <- q2*S0iC-EdLam0q2*c(xx2$sign)*(typexx2==1)
-###			MGc <- apply(MGc,2,sumstrata,xx2$id,mid+1)
-###		}
-###
-###		if (!is.null(time) ) {
-###			EBdLam0q2 <- apply(qB2,2,fff)
-###			MGBc <- qB2*S0iC-EBdLam0q2*c(xx2$sign)*(typexx2==1)
-###			MGBc <- apply(MGBc,2,sumstrata,xx2$id,mid+1)
-###		}
-###		#
-###	} else { MGc <- 0; MGBc <- 0}   ## }}}
-###
-###	if (!is.null(time) & anyC) { MGAiid <- MGAiid+MGBc }  
-###
-###	if ( (!is.null(beta.iid)) | fixbeta==0) {
-###		Uiid <-  (UU+MGc) %*% x$ihessian
-###		Uiid.naive <-  (UU) %*% x$ihessian
-###	} else {
-###		Uiid <- beta.iid
-###		Uiid.naive <- NULL
-###	} 
-###
-###	if ( (!is.null(beta.iid)) | fixbeta==0) { #
-###		Htlast <- tailstrata(xx2$strata,xx2$nstrata)
-###		HtS <- Ht[Htlast,,drop=FALSE]
-###	} #
-###
-###	## sum after id's within strata and order 
-###	if (!is.null(time))  {
-###		MGAiids <- c()
-###		cumhaz.time <- c()
-###		sus <- sort(unique(xx2$strata))
-###		fid <- headstrata(xx2$id,mid+1)
-###		wis <- xx2$strata[fid]
-###
-###		for (i in sus)  { 
-###			ws <- 1*(wis==i)
-###			##
-###			cumhazs <- rbind(0,x$cumhaz[x$strata[x$jumps]==i,])
-###			cumhaz.time <- c(cumhaz.time,cpred(cumhazs,time,tminus=tminus)[,2])
-###
-###			if (fixbeta==0) {
-###				UU <-  apply(HtS[i+1,]*t(Uiid),2,sum)
-###				MGAiidl <- ws*MGAiid - UU
-###			} else MGAiidl <- ws*MGAiid 
-###			MGAiids <- cbind(MGAiids,MGAiidl)
-###		}
-###		colnames(MGAiids) <- paste("strata",sus,sep="")
-###		names(cumhaz.time) <- paste("strata",sus,sep="")
-###	} else { sus <- MGAiids <- cumhaz.time <- NULL }
-###
-###	if (!is.null(x$call.id)) {
-###		MGAiids <- namesortme(MGAiids,x$name.id)
-###		Uiid    <- namesortme(Uiid,x$name.id)
-###	}
-###
-###	if (inherits(x,c("cifreg","recreg"))) {
-###		out <- list(time=time,base.iid=MGAiids,nstrata=xx2$nstrata, beta.iid=Uiid,
-###			    strata.call=x$strata.call,id=xx2$id,call.id=x$call.id,
-###			    coef=coef(x),cumhaz=x$cumhaz,cumhaz.strata=x$strata[x$jumps],
-###			    cumhaz.time=cumhaz.time,strata.time=sus,
-###			    nstrata=x$nstrata,strata.name=x$strata.name,strata.level=x$strata.level,
-###			    formula=x$formula,Ut=U)
-###	} else {
-###		out <- list(time=time,base.iid=MGAiid,id=xx2$id,beta.iid=Uiid,beta.iid.naive=Uiid.naive, MGt=UU,MGc=MGc,Ut=U,EdLam0=EdLam0,cumhaz=cumhaz)
-###	}
-###	return(out)
-###}  ## }}}
-###
 
 ##' @export
 iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)

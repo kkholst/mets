@@ -136,11 +136,9 @@ iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=ob
 IC.cifreg <- function(x,time=NULL,sort=TRUE,...) {# {{{
 if (!is.null(time)) {
     res <- iidBaseline.recreg(x,time=time,...)$base.iid
-###if (sort) res <- namesortme(res,x$name.id)
     return(res*NROW(res))
   }
   res <- with(x, iid * NROW(iid))
-###  if (sort) res <- namesortme(res,x$name.id)
   return(res)
 }
 # }}}

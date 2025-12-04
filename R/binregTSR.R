@@ -727,10 +727,10 @@ if (!is.null(augmentC) & MG.se) names(Augment.times) <- rnames
 riskG <- list(riskG=riskG,riskG0=riskG0,riskG1=riskG1,riskG01=riskG01)
 
 if (!is.null(call.id)) {
-	riskG.iid <-  namesortme(riskG.iid,name.id)
-	riskG0.iid <- namesortme(riskG0.iid,name.id)
-	riskG1.iid <- namesortme(riskG1.iid,name.id)
-	riskG01.iid <- namesortme(riskG01.iid,name.id)
+	riskG.iid <-  nameme(riskG.iid,name.id)
+	riskG0.iid <- nameme(riskG0.iid,name.id)
+	riskG1.iid <- nameme(riskG1.iid,name.id)
+	riskG01.iid <- nameme(riskG01.iid,name.id)
 }
 
 riskG.iid <- list(riskG.iid=riskG.iid,riskG0.iid=riskG0.iid,

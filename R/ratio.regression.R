@@ -320,8 +320,8 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian)
   if (se) val$iidI  <- iidI+(MGCiidI %*% ihessianI)
   if (!is.null(call.id)) {
-  val$iid <- namesortme(val$iid,name.id)
-  val$iidI <- namesortme(val$iidI,name.id)
+  val$iid <- nameme(val$iid,name.id)
+  val$iidI <- nameme(val$iidI,name.id)
   }
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
