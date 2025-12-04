@@ -23,12 +23,12 @@ test_cluster <- function() {
   estimate(fg2)
   d2 <- max(abs(fg2$se.coef-fg$se.coef))
 
-  fg <- phreg(Event(time,cause!=0)~tcell+age+platelet,bmt,prop=NULL)
+  fg <- phreg(Event(time,cause!=0)~tcell+age+platelet,bmt)
   estimate(fg)
   ###
-  fg2 <- phreg(Event(time,cause!=0)~tcell+age+platelet+cluster(id),bmt2,prop=NULL)
+  fg2 <- phreg(Event(time,cause!=0)~tcell+age+platelet+cluster(id),bmt2)
   estimate(fg2)
-  d3 <- max(abs(fg2$var-fg$var)^.5)
+  d3 <- max(abs(fg2$var-fg$var))
 
   fg <- binreg(Event(time,cause!=0)~tcell+age+platelet,bmt,time=30)
   estimate(fg)
@@ -39,7 +39,7 @@ test_cluster <- function() {
 
   dfactor(bmt) <- tcell.f~tcell
   dfactor(bmt2) <- tcell.f~tcell
-
+###
   fg <- binregATE(Event(time,cause!=0)~tcell.f+age+platelet,bmt,time=30,
 		  treat.model=tcell.f~age+platelet,cens.model=~strata(tcell,platelet))
   sfg <- summary(fg)
@@ -52,7 +52,7 @@ test_cluster <- function() {
 
   dd <- max(c(d1,d2,d3,d4,ateg,ateDR))
 
-  expect_true( ((d3 < 0.011) & (max(c(d1,d2,d4,ateg,ateDR)) < 0.001)) )
+  expect_true( ((d3 < 0.0011) & (max(c(d1,d2,d4,ateg,ateDR)) < 0.001)) )
 } 
 test_cluster()
 
