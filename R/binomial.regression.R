@@ -2102,6 +2102,7 @@ DdifriskG <- DriskG1-DriskG0
     X <-  X[ord,,drop=FALSE]
     Xtreat <- Xtreat[ord,,drop=FALSE]
     ytreat <- ytreat[ord]
+    pal <-   pal[ord]
     status <- status[ord]
     exit <- exit[ord]
     weights <- weights[ord]
@@ -2207,8 +2208,6 @@ iidrisk <- cbind(iidrisk1,iidrisk0)/n
 
 val$call.id <- call.id
 val$name.id  <- name.id
-val$id <- id
-val$nid  <- nid
 
 # {{{ output variances and se for ate; cluster correction
 val$id <- idclust
