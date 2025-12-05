@@ -45,14 +45,11 @@ prob.exceed.recurrent(
 \item{level}{of confidence intervals default is 0.95}
 
 \item{...}{Additional arguments to lower level funtions}
-
-\item{cifmets}{if true uses cif of mets package rather than prodlim}
 }
 \description{
 Estimation of probability of more that k events for recurrent events process
 where there is terminal event, based on this also estimate of variance of recurrent events. The estimator is based on cumulative incidence of exceeding "k" events.
-In contrast the probability of exceeding k events can also be computed as a 
-counting process integral, and this is implemented in prob.exceedRecurrent
+In contrast the probability of exceeding k events can also be computed as a counting process integral.
 }
 \examples{
 library(mets)

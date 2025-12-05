@@ -1547,8 +1547,7 @@ return(data)
 ##'
 ##' Estimation of probability of more that k events for recurrent events process
 ##' where there is terminal event, based on this also estimate of variance of recurrent events. The estimator is based on cumulative incidence of exceeding "k" events.
-##' In contrast the probability of exceeding k events can also be computed as a 
-##' counting process integral, and this is implemented in prob.exceedRecurrent
+##' In contrast the probability of exceeding k events can also be computed as a counting process integral. 
 ##'
 ##' @param formula formula
 ##' @param data  data-frame 
@@ -1557,7 +1556,6 @@ return(data)
 ##' @param cens.code censoring codes
 ##' @param exceed values (if not given then all observed values)
 ##' @param marks may be give for jump-times and then exceed values needs to be specified
-##' @param cifmets if true uses cif of mets package rather than prodlim 
 ##' @param all.cifs if true then returns list of all fitted objects in cif.exceed 
 ##' @param return.data if true then returns list of data for fitting the different excess thresholds 
 ##' @param conf.type  type of confidence interval c("log","plain")
@@ -1640,6 +1638,7 @@ prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
  call.id <- id;
  conid <- construct_id(id,nrow(X),as.data=TRUE)
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+ data$id__  <- id
 
  times <- NULL
  statusD <- (status %in% death.code)*1
@@ -1671,7 +1670,8 @@ if (!cifmets) {
   ###form <- as.formula(update.formula(rhs,pp))
   form <- as.formula(pp)
 } else {
-  pp <- as.formula(paste("Event(",allvars[1],",",allvars[2],",statN)~.",sep=""))
+###  pp <- as.formula(paste("Event(",allvars[1],",",allvars[2],",statN)~.",sep=""))
+  pp <- as.formula(paste("Event(",allvars[2],",statN)~.",sep=""))
   rhs <- update(formula,-1~.)
   form <- as.formula(update.formula(rhs,pp))
 }
@@ -1695,6 +1695,9 @@ for (n1 in exceed) {# {{{
 	statN <- statN[keep]
 	dataN <- data[keep,]
 	dataN$statN <- statN
+
+        idN <- revcumsumstrata(rep(1,nrow(dataN)),dataN$id__,nid)
+        dataN <- subset(dataN,idN==1)
 	if (return.data) dataList[[i-1]] <- dataN
 
    pN1 <-  suppressWarnings(cif(form,data=dataN))
@@ -1703,6 +1706,7 @@ for (n1 in exceed) {# {{{
 ###   lpN1 <- basecumhaz(pN1)
    where <- predictCumhaz(c(0,pN1$times),times)
 ###  where <- fast.approx(c(0,pN1$times),times,type="left")
+###   print(c(length(pN1$mu),length(pN1$strata),pN1$nstrata))
    if (length(pN1$mu)>=1) {
    cifs <- vecAllStrata(pN1$mu,pN1$strata,pN1$nstrata)
    se.cifs <- vecAllStrata(pN1$se.mu,pN1$strata,pN1$nstrata)
@@ -1765,7 +1769,7 @@ summary.exceed <- function(object,times=NULL,types=NULL,strata=NULL,...) { ## {{
 
 if (is.null(types)) types <- 1:ncol(object$prob)
 if (is.null(strata)) stratas <- seq(object$nstrata) else stratas <- strata
-if (length(stratas)>1) out <- list()
+out <- list()
 
 for (j in stratas) {
 prob <- cbind(object$time,object$prob[,types,j])
@@ -1782,9 +1786,9 @@ else {
    uppert <- cbind(times,upper[rows,])
    outl <- list(prob=probt,se=set,lower=lowert,upper=uppert)
 }
-if (object$nstrata>1) out[[j]] <- outl else out <- outl 
+if (length(stratas)>1) out[[j]] <- outl else out <- outl 
 }
-if (object$nstrata>1) names(out) <- object$strata.levels
+if (length(stratas)>1) names(out) <- object$strata.levels[stratas]
 return(out)
 } ## }}}
 
