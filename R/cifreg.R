@@ -47,6 +47,10 @@
 ##' por <- predict(or,nd)
 ##' plot(por)
 ##'
+##' ## approximate standard errors 
+##' por <-mets:::predict.phreg(or,nd)
+##' plot(por,se=1)
+##'
 ##' ## Fine-Gray model
 ##' fg=cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 ##' summary(fg)
