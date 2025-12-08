@@ -26,6 +26,7 @@ binreg(
   outcome = c("cif", "rmst", "rmtl"),
   model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
+  monotone = TRUE,
   ...
 )
 }
@@ -68,6 +69,8 @@ binreg(
 
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
 
+\item{monotone}{if true then uses del link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
+
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
@@ -85,8 +88,11 @@ censoring distribution. For (type="II") the default an additional
 censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
 
 logitIPCW instead considers 
-\deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
+\deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 } 
 a standard logistic regression with weights that adjust for IPCW.
+
+When monotone is FALSE the solved equation for binreg is equivalent to minmizing the least squares problem and thus becomes 
+\deqn{ D_\beta h(\beta)  ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - h( X^T beta)) = 0 }.
 
 The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 under known censoring model. 
