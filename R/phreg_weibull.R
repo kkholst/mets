@@ -33,6 +33,7 @@ pred_weibull <- function(object, X, Z,
     ##   time.fun <- structure(identity, grad = identity)
     ## }
     chaz <- function(par, ...) exp(par[1]) * (time.fun(newtime)**exp(par[2]))
+        chaz <- function(par, ...) exp(par[1]) * (newtime**exp(par[2]))
     surv <- function(par, ...) exp(-chaz(par, ...))
     haz <- function(par) {
       res <- exp(par[1] + par[2] +
