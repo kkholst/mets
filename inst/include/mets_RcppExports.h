@@ -256,6 +256,48 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
+    inline double _logl_weibull(const arma::vec& par, const arma::vec& entry, const arma::vec& exit, const arma::vec& status, const arma::mat& X, const arma::mat& Z) {
+        typedef SEXP(*Ptr__logl_weibull)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__logl_weibull p__logl_weibull = NULL;
+        if (p__logl_weibull == NULL) {
+            validateSignature("double(*_logl_weibull)(const arma::vec&,const arma::vec&,const arma::vec&,const arma::vec&,const arma::mat&,const arma::mat&)");
+            p__logl_weibull = (Ptr__logl_weibull)R_GetCCallable("mets", "_mets__logl_weibull");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__logl_weibull(Shield<SEXP>(Rcpp::wrap(par)), Shield<SEXP>(Rcpp::wrap(entry)), Shield<SEXP>(Rcpp::wrap(exit)), Shield<SEXP>(Rcpp::wrap(status)), Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Z)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline arma::mat _score_weibull(const arma::vec& par, const arma::vec& entry, const arma::vec& exit, const arma::vec& status, const arma::mat& X, const arma::mat& Z, bool indiv = true) {
+        typedef SEXP(*Ptr__score_weibull)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__score_weibull p__score_weibull = NULL;
+        if (p__score_weibull == NULL) {
+            validateSignature("arma::mat(*_score_weibull)(const arma::vec&,const arma::vec&,const arma::vec&,const arma::vec&,const arma::mat&,const arma::mat&,bool)");
+            p__score_weibull = (Ptr__score_weibull)R_GetCCallable("mets", "_mets__score_weibull");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__score_weibull(Shield<SEXP>(Rcpp::wrap(par)), Shield<SEXP>(Rcpp::wrap(entry)), Shield<SEXP>(Rcpp::wrap(exit)), Shield<SEXP>(Rcpp::wrap(status)), Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Z)), Shield<SEXP>(Rcpp::wrap(indiv)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<arma::mat >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_mets_RCPPEXPORTS_H_GEN_

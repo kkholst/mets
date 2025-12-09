@@ -2,13 +2,13 @@
 % Please edit documentation in R/phreg_weibull.R
 \name{phreg_weibull}
 \alias{phreg_weibull}
+\alias{phreg.par}
 \title{Weibull-Cox regression}
 \usage{
 phreg_weibull(
   formula,
   shape.formula = ~1,
   data,
-  time.fun = NULL,
   save.data = TRUE,
   control = list()
 )
@@ -22,10 +22,6 @@ entry).}
 
 \item{data}{data.frame}
 
-\item{time.fun}{optional smooth function specifying transformation of
-time-variable. Here the cumulative hazard is assumed to be
-\eqn{H(t)=\lambda g(t)^s}}
-
 \item{save.data}{if TRUE the data.frame is stored in the model object (for
 predictions and simulations)}
 
@@ -38,7 +34,7 @@ predictions and simulations)}
 Fits a Cox-Weibull with cumulative hazard given by \deqn{
   \Lambda(t) = \lambda \cdot t^s } where \eqn{s} is the shape parameter, and
   \eqn{\lambda} the rate parameter. We here allow a regression model for
-  both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
+  both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=e
   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
   respectively.
 }

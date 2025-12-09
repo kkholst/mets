@@ -520,6 +520,85 @@ RcppExport SEXP _mets_tildeLambda1R(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// logl_weibull
+double logl_weibull(const arma::vec& par, const arma::vec& entry, const arma::vec& exit, const arma::vec& status, const arma::mat& X, const arma::mat& Z);
+static SEXP _mets_logl_weibull_try(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP, SEXP statusSEXP, SEXP XSEXP, SEXP ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type par(parSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type entry(entrySEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type exit(exitSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type status(statusSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(logl_weibull(par, entry, exit, status, X, Z));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _mets_logl_weibull(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP, SEXP statusSEXP, SEXP XSEXP, SEXP ZSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_mets_logl_weibull_try(parSEXP, entrySEXP, exitSEXP, statusSEXP, XSEXP, ZSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// score_weibull
+arma::mat score_weibull(const arma::vec& par, const arma::vec& entry, const arma::vec& exit, const arma::vec& status, const arma::mat& X, const arma::mat& Z, bool indiv);
+static SEXP _mets_score_weibull_try(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP, SEXP statusSEXP, SEXP XSEXP, SEXP ZSEXP, SEXP indivSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type par(parSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type entry(entrySEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type exit(exitSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type status(statusSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< bool >::type indiv(indivSEXP);
+    rcpp_result_gen = Rcpp::wrap(score_weibull(par, entry, exit, status, X, Z, indiv));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _mets_score_weibull(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP, SEXP statusSEXP, SEXP XSEXP, SEXP ZSEXP, SEXP indivSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_mets_score_weibull_try(parSEXP, entrySEXP, exitSEXP, statusSEXP, XSEXP, ZSEXP, indivSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _mets_RcppExport_validate(const char* sig) { 
@@ -536,6 +615,8 @@ static int _mets_RcppExport_validate(const char* sig) {
         signatures.insert("arma::mat(*.simSurvZ)(const arma::mat&,const arma::colvec&,const arma::colvec&,const double,const int)");
         signatures.insert("arma::mat(*.tildeLambda1)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector)");
         signatures.insert("arma::mat(*.tildeLambda1R)(const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const arma::colvec&,const IntegerVector,const arma::colvec&)");
+        signatures.insert("double(*.logl_weibull)(const arma::vec&,const arma::vec&,const arma::vec&,const arma::vec&,const arma::mat&,const arma::mat&)");
+        signatures.insert("arma::mat(*.score_weibull)(const arma::vec&,const arma::vec&,const arma::vec&,const arma::vec&,const arma::mat&,const arma::mat&,bool)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -553,6 +634,8 @@ RcppExport SEXP _mets_RcppExport_registerCCallable() {
     R_RegisterCCallable("mets", "_mets_.simSurvZ", (DL_FUNC)_mets_simSurvZ_try);
     R_RegisterCCallable("mets", "_mets_.tildeLambda1", (DL_FUNC)_mets_tildeLambda1_try);
     R_RegisterCCallable("mets", "_mets_.tildeLambda1R", (DL_FUNC)_mets_tildeLambda1R_try);
+    R_RegisterCCallable("mets", "_mets_.logl_weibull", (DL_FUNC)_mets_logl_weibull_try);
+    R_RegisterCCallable("mets", "_mets_.score_weibull", (DL_FUNC)_mets_score_weibull_try);
     R_RegisterCCallable("mets", "_mets_RcppExport_validate", (DL_FUNC)_mets_RcppExport_validate);
     return R_NilValue;
 }
@@ -637,6 +720,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mets_simSurvZ", (DL_FUNC) &_mets_simSurvZ, 5},
     {"_mets_tildeLambda1", (DL_FUNC) &_mets_tildeLambda1, 6},
     {"_mets_tildeLambda1R", (DL_FUNC) &_mets_tildeLambda1R, 7},
+    {"_mets_logl_weibull", (DL_FUNC) &_mets_logl_weibull, 6},
+    {"_mets_score_weibull", (DL_FUNC) &_mets_score_weibull, 7},
     {"_mets_RcppExport_registerCCallable", (DL_FUNC) &_mets_RcppExport_registerCCallable, 0},
     {"Bhat",                     (DL_FUNC) &Bhat,                      6},
     {"biprobit0",                (DL_FUNC) &biprobit0,                 8},
