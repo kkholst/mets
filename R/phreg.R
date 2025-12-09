@@ -777,9 +777,13 @@ vcov.phreg  <- function(object,...) {     ## {{{
   res
 } ## }}}
 
+##' @export
+model.frame.phreg <- function(formula, data = NULL, ...) {
+  model.frame(formula$design, data = data, ...)
+}
 
 ##' @export
-summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("var.augment.times","var.augment"),...) { ## {{{
+summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("var.augment.times","var.augmenti"),...) { ## {{{
   expC <- cc <- ncluster <- V <- NULL
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {

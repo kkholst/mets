@@ -511,7 +511,8 @@ proc_design <- function(formula, data, ..., # nolint
       x = x, y = y,
       design.matrix = design.matrix,
       intercept = has_intercept,
-      data = data[0, ], ## Empty data.frame to capture structure of data
+      data = model.frame(formula, data),
+        ## data[0, ], ## Empty data.frame to capture structure of data
       specials = specials,
       specials.var = specials.var,
       specials.call = specials.call
@@ -541,4 +542,11 @@ clean_design <- function(object, ...) {
   object$y <- NULL
   for (i in object$specials) object[[i]] <- NULL
   return(object)
+}
+
+
+##' @export
+model.frame.mets.design <- function(formula, data = NULL, ...) {
+  if (is.null(data)) return(formula$data)
+  model.frame(formula$formula, data = data, ...)
 }
