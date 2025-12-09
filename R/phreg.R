@@ -778,11 +778,6 @@ vcov.phreg  <- function(object,...) {     ## {{{
 } ## }}}
 
 ##' @export
-model.frame.phreg <- function(formula, data = NULL, ...) {
-  model.frame(formula$design, data = data, ...)
-}
-
-##' @export
 summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("var.augment.times","var.augmenti"),...) { ## {{{
   expC <- cc <- ncluster <- V <- NULL
 

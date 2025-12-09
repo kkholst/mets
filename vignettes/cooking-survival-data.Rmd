@@ -561,9 +561,7 @@ dat <- sTRACE
 cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
 coxw <- phreg_weibull(Surv(time, status > 0) ~ chf + age,
     shape.formula = ~chf,
-    data = sTRACE,
-    # time-transformation, g, cumhaz:= rate * g(t)^shape:
-    time.fun = function(x) x
+    data = sTRACE
     )
 coxw
 

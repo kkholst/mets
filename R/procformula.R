@@ -511,7 +511,7 @@ proc_design <- function(formula, data, ..., # nolint
       x = x, y = y,
       design.matrix = design.matrix,
       intercept = has_intercept,
-      data = model.frame(formula, data),
+      data = mf,
         ## data[0, ], ## Empty data.frame to capture structure of data
       specials = specials,
       specials.var = specials.var,
