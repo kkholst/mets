@@ -370,14 +370,14 @@ if (length(dots)==0) {
 
    if (model[1]=="exp") {
 	 p <- exp(lp) 
-         Yglm <- weights*X*c((Y-p)*p)
+         Yglm <- weights*X*c(Y*p)
     } else if (model[1]=="lin") {
 	 p <- lp
-         Yglm <- weights*X*c((Y-p))
+         Yglm <- weights*X*c(Y)
     } else if (model[1]=="logit") {
 	 p <- expit(lp) 
          varp <- p/(1+exp(lp))
-         Yglm <- weights*X*c((Y-p)*varp)
+         Yglm <- weights*X*c(Y*varp)
     }
 
     xx <- resC$cox.prep
