@@ -367,6 +367,7 @@ if (length(dots)==0) {
     weights <- weights[ord]
     offset <- offset[ord]
     lp <- c(X %*% val$coef+offset)
+    Y <- Y[ord]
 
    if (model[1]=="exp") {
 	 p <- exp(lp) 
