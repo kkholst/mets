@@ -37,7 +37,7 @@ We here describe how to do regression modelling for cumulative cost
 {\cal U}(t) & = \int_0^t Z(s) dN(s)
 \end{align*}
 where $N(s)$ is a counting process that registers the times at which the cost is realized and accumulated, 
-and $Z(t)$ is the cost (or marks) at the times. The counting process can be 
+and $Z(t)$ is the cost (or marks) at the event times. The counting process can be 
 a mix of random and fixed times. The data would thus be represented in counting process format with
 the marks/costs going along with the event times. There are many  additional uses of
 such cumulative process, for example, when considering time-lost in a recurrent events setting, that we return to
