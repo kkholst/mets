@@ -37,6 +37,14 @@ S0FGN <- function(ia, itype2, istatus, istrata, instrata, istrata2, instrata2, i
     .Call(`_mets_rmvn`, n, mu, rho)
 }
 
+.logl_weibull <- function(par, entry, exit, status, X, Z) {
+    .Call(`_mets_logl_weibull`, par, entry, exit, status, X, Z)
+}
+
+.score_weibull <- function(par, entry, exit, status, X, Z, indiv = TRUE) {
+    .Call(`_mets_score_weibull`, par, entry, exit, status, X, Z, indiv)
+}
+
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
     .Call(`_mets_RcppExport_registerCCallable`)

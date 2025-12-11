@@ -1,7 +1,6 @@
 pred_weibull <- function(object, X, Z,
                          times,
                          individual.times = FALSE,
-                         time.fun = NULL,
                          type = c("surv", "haz", "chaz", "lp"), ...) {
     p <- coef(object)
     V <- vcov(object)
@@ -25,17 +24,22 @@ pred_weibull <- function(object, X, Z,
     par <- cbind(p1, p2)
     nt <- length(times)
     if (individual.times && nt != n) {
-      stop("For individual time predictions 'times', 'X' and 'Z' should agree") # nolint
+        stop("For individual time predictions 'times', 'X' and 'Z' should agree") # nolint
     }
-    if (is.null(time.fun)) {
-      time.fun <- structure(identity, grad = identity)
-    }
-    chaz <- function(par, ...) exp(par[1]) * (time.fun(newtime)**exp(par[2]))
+    ## time.fun optional smooth function specifying transformation of
+    ##   time-variable. Here the cumulative hazard is assumed to be
+    ##   \eqn{H(t)=\lambda g(t)^s}
+    ## if (is.null(time.fun)) {
+    ##   time.fun <- structure(identity, grad = identity)
+    ## }
+    ## chaz <- function(par, ...) exp(par[1]) * (time.fun(newtime)**exp(par[2]))
+    chaz <- function(par, ...) exp(par[1]) * (newtime**exp(par[2]))
     surv <- function(par, ...) exp(-chaz(par, ...))
     haz <- function(par) {
       res <- exp(par[1] + par[2] +
-          (exp(par[2]) - 1) * log(time.fun(newtime)) +
-          log(attr(time.fun, "grad")(newtime)))
+          (exp(par[2]) - 1) * log(newtime))
+                 ## (exp(par[2]) - 1) * log(time.fun(newtime))
+                 ## + log(attr(time.fun, "grad")(newtime)))
       res[newtime == 0] <- 0
       return(res)
     }
@@ -137,7 +141,7 @@ score_weibull <- function(p, entry, exit, status,
 ##' @description Fits a Cox-Weibull with cumulative hazard given by \deqn{
 ##'   \Lambda(t) = \lambda \cdot t^s } where \eqn{s} is the shape parameter, and
 ##'   \eqn{\lambda} the rate parameter. We here allow a regression model for
-##'   both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
+##'   both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=e
 ##'   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
 ##'   respectively.
 ##' @details The parametrization
@@ -147,13 +151,11 @@ score_weibull <- function(p, entry, exit, status,
 ##'   entry).
 ##' @param shape.formula Formula for shape parameter
 ##' @param data data.frame
-##' @param time.fun optional smooth function specifying transformation of
-##'   time-variable. Here the cumulative hazard is assumed to be
-##'   \eqn{H(t)=\lambda g(t)^s}
 ##' @param save.data if TRUE the data.frame is stored in the model object (for
 ##'   predictions and simulations)
 ##' @param control control arguments to optimization routine [stats::nlmbin]
 ##' @seealso [mets::phreg()]
+##' @aliases phreg_weibull phreg.par
 ##' @author Klaus Kähler Holst, Thomas Scheike
 ##' @examples
 ##' data(sTRACE, package="mets")
@@ -173,7 +175,6 @@ score_weibull <- function(p, entry, exit, status,
 phreg_weibull <- function(formula,
                           shape.formula = ~1,
                           data,
-                          time.fun = NULL,
                           save.data = TRUE,
                           control = list()) {
     cl <- match.call()
@@ -200,24 +201,18 @@ phreg_weibull <- function(formula,
     X <- des$x
     Z <- des2$x
     obj <- function(p) {
-        -sum(logl_weibull(p, entry, exit, status,
-            X = X, Z = Z, time.fun = time.fun
-        ))
+        -.logl_weibull(p, entry, exit, status,
+            X = X, Z = Z)
     }
     grad <- function(p, indiv = FALSE) {
-        U <- -score_weibull(p, entry, exit, status,
-            X = X, Z = Z, time.fun = time.fun
-        )
-        if (indiv) {
-            return(U)
-        }
-        return(colSums(U))
+      -.score_weibull(p, entry, exit, status,
+                      X = X, Z = Z, indiv = indiv)
     }
     if (!is.null(control$start)) {
         p0 <- control$start
         control$init <- NULL
     } else {
-        p0 <- rep(0, ncol(X)+ncol(Z))
+        p0 <- rep(0, ncol(X) + ncol(Z))
     }
     op <- stats::nlminb(p0, obj, grad, control = control)
     p <- op$par
@@ -243,11 +238,25 @@ phreg_weibull <- function(formula,
         rate.design = clean_design(des),
         shape.design = clean_design(des2),
         data = NULL,
-        time.fun = time.fun,
         estimate = est
     )
     if (save.data) res$data <- data
     return(structure(res, class = "phreg.par"))
+}
+
+##' @export
+phreg.par <- function(...) {
+  warning("`phreg.par` will be deprecated in the next release of mets and replaced by `phreg_weibull`") # nolint
+  res <- phreg_weibull(...)
+  if (deparse(res$shape.design$terms)!="~1") {
+    stop("this function only works with a single shape")
+  }
+  if (attr(res$rate.design$terms, "intercept") == 0L) {
+    stop("model needs intercept")
+  }
+  np <- length(coef(res))
+  tr <- function(p) c(p[1] / exp(p[np]), p[np], p[-c(1, np)])
+  estimate(res, tr)
 }
 
 ##' @export
@@ -352,7 +361,6 @@ predict.phreg.par <- function(object,
                      times = times,
                      individual.times = individual.times,
                      level = level,
-                     time.fun = object$time.fun,
                      type = type, ...
                      )
   return(pr)
