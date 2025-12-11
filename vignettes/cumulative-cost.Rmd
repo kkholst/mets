@@ -7,6 +7,8 @@ output:
     fig_caption: yes
     # fig_width: 7.15
     # fig_height: 5.5 
+header-includes: 
+  - \usepackage{tikz}
 vignette: >
   %\VignetteIndexEntry{Recurrent events}
   %\VignetteEngine{knitr::rmarkdown}
@@ -32,7 +34,7 @@ Overview
 
 We here described how to do regression modelling for cumulative cost
 \begin{align*}
-{\cal U)(t) & = \int_0^t Z(s) dN(s)
+{\cal U}(t) & = \int_0^t Z(s) dN(s)
 \end{align*}
 where $N(s)$ is a counting process that registers the times at which the cost is 
 accumulated, and $Z(t)$ is the cost (or marks) at the times. The counting process can be 
@@ -49,9 +51,8 @@ possibly for strata with standard errors based on the influence functions.
 
 We provide semi-parametric regression modelling using the  proportional model 
 \begin{align*}
-E ( {\cal U}(t) | X) & = \Lambda_0(t) \exp( X^T \beta) \mbox{for} \all t \in [0,\tau]
+E ( {\cal U}(t) | X) & = \Lambda_0(t) \exp( X^T \beta).
 \end{align*}
-where $\tau$ is some maximum follow-up time. 
 
 In addition for a fixed time-point $t \in [0,\tau]$ we can estimate the mean given covariates
 \begin{align*}
@@ -69,16 +70,21 @@ We also allow to estimate the probability of exceeding thresholds over time
 and in the situation with a terminal this is based on the related competing risks data that 
 keeps track of the competing terminal event. 
 
-\begin{tikzpicture}[sharp corners=2pt,inner sep=6pt,node distance=2.5cm, >=latex]
-\tikzstyle{my node}=[draw,minimum height=1cm,minimum width=2.5cm]
-\node[my node] (Alive) {Alive $0$};
-\node[my node,above right=of Alive] (sick) {$Exceed "k"$};
-\node[my node,below right=of Alive] (dead) {Terminal event};
-\draw[->] (Alive) -- node[sloped,midway,above] {$\alpha_1(t)$} (sick);
-\draw[->] (Alive) -- node[sloped,midway,below] {$F_1(t)$} (sick);
-\draw[->] (Alive) -- node[sloped,anchor=center,above] {$\alpha_2(t)$} (dead);
-\draw[->] (Alive) -- node[sloped,anchor=center,below] {$F_2(t)$} (dead);
+
+\begin{tikzpicture}[
+    node distance=3.5cm,
+    box/.style={draw, rectangle, minimum width=2.8cm, minimum height=1cm, align=center}
+]
+% Nodes
+\node[box] (start) {At Risk};
+\node[box, right of=start, yshift=2.4cm] (death) {Exceed-k};
+\node[box, right of=start, yshift=-2.4cm] (lt) {terminal};
+
+% Arrows with hazard labels
+\draw[->, thick] (start) -- node[above] {$F_{exceed-k}(t)$} (death);
+\draw[->, thick] (start) -- node[below] {$F_{terminal}(t)$} (lt);
 \end{tikzpicture}
+
 
 Regression modelling of this quantity 
 is also possible of this probability using competing risks regression models, for example, the 
