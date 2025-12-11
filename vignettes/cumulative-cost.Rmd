@@ -85,8 +85,7 @@ keeps track of the competing terminal event.
 \draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (death);
 \end{tikzpicture}
 
-Regression modelling of this quantity 
-is also possible of this probability using competing risks regression models, for example, the 
+Regression modelling of this quantity is also possible using competing risks regression models, using for example, the 
 cifreg function of mets. 
 
 
