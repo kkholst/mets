@@ -77,12 +77,12 @@ keeps track of the competing terminal event.
 ]
 % Nodes
 \node[box] (start) {At Risk};
-\node[box, right of=start, yshift=2.4cm] (death) {Exceed-k};
-\node[box, right of=start, yshift=-2.4cm] (lt) {D};
+\node[box, right of=start, yshift=2.4cm] (exceed) {Exceed-k};
+\node[box, right of=start, yshift=-2.4cm] (death) {D};
 
 % Arrows with hazard labels
-\draw[->, thick] (start) -- node[below] {\hspace{2 cm} $F_{exceed-k}(t)$} (death);
-\draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (lt);
+\draw[->, thick] (start) -- node[below] {\hspace{2 cm} $F_{exceed-k}(t)$} (exceed);
+\draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (death);
 \end{tikzpicture}
 
 Regression modelling of this quantity 
