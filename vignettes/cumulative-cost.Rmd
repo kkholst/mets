@@ -69,7 +69,6 @@ We also allow to estimate the probability of exceeding thresholds over time
 and in the situation with a terminal this is based on the related competing risks data that 
 keeps track of the competing terminal event. 
 
-#+BEGIN_EXPORT latex
 \begin{tikzpicture}[sharp corners=2pt,inner sep=6pt,node distance=2.5cm, >=latex]
 \tikzstyle{my node}=[draw,minimum height=1cm,minimum width=2.5cm]
 \node[my node] (Alive) {Alive $0$};
@@ -80,7 +79,6 @@ keeps track of the competing terminal event.
 \draw[->] (Alive) -- node[sloped,anchor=center,above] {$\alpha_2(t)$} (dead);
 \draw[->] (Alive) -- node[sloped,anchor=center,below] {$F_2(t)$} (dead);
 \end{tikzpicture}
-#+END_EXPORT
 
 Regression modelling of this quantity 
 is also possible of this probability using competing risks regression models, for example, the 
@@ -151,6 +149,25 @@ ooNZ <- prob.exceed.recurrent(Event(entry,time,status)~strata(treatment)+cluster
 plot(ooNZ,strata=1)
 plot(ooNZ,strata=2,add=TRUE)
 summary(ooNZ,times=3)
+```
+
+Cumulative time lost for recurrent events 
+=========================================
+
+The cumulative time lost for recurrent events has been defined as
+\begin{align*}
+  {\cal M}(t) = E[ \int_0^\tau (\tau-s) dN(s) ] = \int_0^\tau \mu(s) ds
+\end{align*}
+where $\mu(s) = E( N(\tau) )$ is the marginal mean. 
+
+
+```{r}
+     hf$lost5 <- 5-hf$time
+     
+     RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,cause=1,death.code=2,time=5,
+			 cens.model=~strata(treatment),model="lin")
+     summary(RecLost)
+     head(iid(RecLost))
 ```
 
 
