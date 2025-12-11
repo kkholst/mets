@@ -43,19 +43,19 @@ below.
 
 We can estimate the marginal mean of the cumulative process
 \begin{align*}
-\mu(t) & = E ( {\cal U)(t) )  
+\mu(t) & = E ( {\cal U}(t) )  
 \end{align*}
 possibly for strata with standard errors based on the influence functions. 
 
 We provide semi-parametric regression modelling using the  proportional model 
 \begin{align*}
-E ( {\cal U)(t) | X) & = \Lambda_0(t) \exp( X^T \beta) \mbox{for} \all t \in [0,\tau]
+E ( {\cal U}(t) | X) & = \Lambda_0(t) \exp( X^T \beta) \mbox{for} \all t \in [0,\tau]
 \end{align*}
 where $\tau$ is some maximum follow-up time. 
 
 In addition for a fixed time-point $t \in [0,\tau]$ we can estimate the mean given covariates
 \begin{align*}
-E ( {\cal U)(t) | X) & = \exp( X^T \beta) 
+E ( {\cal U}(t) | X) & = \exp( X^T \beta) 
 \end{align*}
 where $\tau$ is some maximum follow-up time. 
 
@@ -64,7 +64,7 @@ where $\tau$ is some maximum follow-up time.
 
 We also allow to estimate the probability of exceeding thresholds over time
 \begin{align*}
- P ( {\cal U)(t)  > k ) & = \mu_k(t) 
+ P ( {\cal U}(t)  > k ) & = \mu_k(t) 
 \end{align*}
 and in the situation with a terminal this is based on the related competing risks data that 
 keeps track of the competing terminal event. 
