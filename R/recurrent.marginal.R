@@ -78,7 +78,7 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
     des <- proc_design(
         formula,
         data = data,
-        specials = c("offset", "weights", "cluster","strata"),
+        specials = c("offset", "weights", "cluster","strata","marks"),
         intercept = FALSE
     )
     Y <- des$y
@@ -145,6 +145,8 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
   }
  formE <- update.formula(formE,formid)
  formD <- update.formula(formD,formid)
+ ## drop marks from terminal event formula
+ formD <- drop.specials(formD,"marks")
 
   if (sum(statusE)==0) warning("No events of type 1\n"); 
   coxE <- phreg(formE,data=data,...)
@@ -1606,6 +1608,7 @@ prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
     X <- des$x
     des.weights <- des$weights
     des.offset  <- des$offset
+    des.marks <- des$marks
     id      <- des$cluster
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     strata <- des$strata
@@ -1613,7 +1616,6 @@ prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
       ns <- grep("strata",names(des$levels))
       strata.name  <-  names(des$levels)[1]
     } else strata.name <- NULL
-    des.marks <- des$marks
     id      <- des$cluster
     if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     ## no use of 
@@ -1649,6 +1651,10 @@ prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
  if (is.null(times)) times <- sort(unique(exit[statusE==1]))
 
  countE <- cumsumstrata(statusE*marks,id,nid)
+ if (is.null(exceed)) exceed <- sort(unique(countE))
+ w0 <- which(exceed==0)
+ if (length(w0)>=1) exceed <- exceed[-w0]
+
  if (is.null(marks.call)) {
     mc <- max(countE)+1
     idcount <- id*mc+countE
@@ -1658,10 +1664,6 @@ prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
     exC <- apply(ex,2,cumsumstrata,id,nid)
     idcount <- exC
  }
-
- if (is.null(exceed)) exceed <- sort(unique(countE))
- w0 <- which(exceed==0)
- if (length(w0)>=1) exceed <- exceed[-w0]
 
 if (!cifmets) {
   ## can not handle start stop and id, so uses MG standard errors 

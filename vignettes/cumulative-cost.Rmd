@@ -1,0 +1,164 @@
+---
+title: "Cumulative Cost"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    # fig_width: 7.15
+    # fig_height: 5.5 
+vignette: >
+  %\VignetteIndexEntry{Recurrent events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  #dev="svg",
+  dpi=50,
+  fig.width=7, fig.height=5.5,
+  out.width="600px",
+  fig.retina=1,
+  comment = "#>"
+)
+fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
+library(mets)
+```
+
+Overview 
+========
+
+We here described how to do regression modelling for cumulative cost
+\begin{align*}
+{\cal U)(t) & = \int_0^t Z(s) dN(s)
+\end{align*}
+where $N(s)$ is a counting process that registers the times at which the cost is 
+accumulated, and $Z(t)$ is the cost (or marks) at the times. The counting process can be 
+a mix of random and fixed times. The data would thus be represented in counting process format with
+the marks/costs going along with the event times. There are many  additional uses of
+such cumulative process, for example, when considering time-lost in a recurrent events setting, that we return to
+below. 
+
+We can estimate the marginal mean of the cumulative process
+\begin{align*}
+\mu(t) & = E ( {\cal U)(t) )  
+\end{align*}
+possibly for strata with standard errors based on the influence functions. 
+
+We provide semi-parametric regression modelling using the  proportional model 
+\begin{align*}
+E ( {\cal U)(t) | X) & = \Lambda_0(t) \exp( X^T \beta) \mbox{for} \all t \in [0,\tau]
+\end{align*}
+where $\tau$ is some maximum follow-up time. 
+
+In addition for a fixed time-point $t \in [0,\tau]$ we can estimate the mean given covariates
+\begin{align*}
+E ( {\cal U)(t) | X) & = \exp( X^T \beta) 
+\end{align*}
+where $\tau$ is some maximum follow-up time. 
+
+ - These quantities are estimated in a setting with independent right-censoring given $X$, and based on IPCW adjusted estimating equations. 
+ - A terminal event can be specified. 
+
+We also allow to estimate the probability of exceeding thresholds over time
+\begin{align*}
+ P ( {\cal U)(t)  > k ) & = \mu_k(t) 
+\end{align*}
+and in the situation with a terminal this is based on the related competing risks data that 
+keeps track of the competing terminal event. 
+
+#+BEGIN_EXPORT latex
+\begin{tikzpicture}[sharp corners=2pt,inner sep=6pt,node distance=2.5cm, >=latex]
+\tikzstyle{my node}=[draw,minimum height=1cm,minimum width=2.5cm]
+\node[my node] (Alive) {Alive $0$};
+\node[my node,above right=of Alive] (sick) {$Exceed "k"$};
+\node[my node,below right=of Alive] (dead) {Terminal event};
+\draw[->] (Alive) -- node[sloped,midway,above] {$\alpha_1(t)$} (sick);
+\draw[->] (Alive) -- node[sloped,midway,below] {$F_1(t)$} (sick);
+\draw[->] (Alive) -- node[sloped,anchor=center,above] {$\alpha_2(t)$} (dead);
+\draw[->] (Alive) -- node[sloped,anchor=center,below] {$F_2(t)$} (dead);
+\end{tikzpicture}
+#+END_EXPORT
+
+Regression modelling of this quantity 
+is also possible of this probability using competing risks regression models, for example, the 
+cifreg function of mets. 
+
+
+HF-action data
+=============
+
+Considering the HF-action data we simulate a severity score for each event. 
+
+
+```{r}
+library(mets)
+     data(hfactioncpx12)
+     hf <- hfactioncpx12
+     hf$severity <- abs((5+rnorm(741)*2))[hf$id]
+     
+     proc_design <- mets:::proc_design
+     ## marginal mean using formula  
+     outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),hf,cause=1,death.code=2)
+     plot(outNZ,se=TRUE)
+     summary(outNZ,times=3) 
+     
+     outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hf,cause=1,death.code=2)
+     plot(outN,se=TRUE,add=TRUE)
+     summary(outN,times=3) 
+```
+
+For comparison we also compute the IPCW estimates with and without marks at time 3, using the linear model, 
+and note that they are identical. Standard errors are however based on different formula that are asymptotically 
+equivalent, and we note that they are very similar.
+
+```{r}
+     outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),hf,cause=1,death.code=2,time=3,
+			 cens.model=~strata(treatment),model="lin")
+     summary(outNZ3)
+     head(iid(outNZ3))
+
+     outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),hf,cause=1,death.code=2,time=3,
+			 cens.model=~strata(treatment),model="lin")
+     summary(outN3)
+     head(iid(outN3))
+```
+
+We also apply the semiparametric proportional cost model with IPCW adjustment: 
+
+```{r}
+propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),hf,cause=1,death.code=2)
+summary(propNZ) 
+plot(propNZ,main="Baselines")
+     
+GL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,cause=1,death.code=2)
+summary(GL)
+plot(GL,add=TRUE,col=2)
+```
+Those treated have 14 \% lower cumulative severity and 11\%  lower number of expected events. 
+
+
+Exceed threshold
+=================
+
+Finally, we also estimate the probability of exceeding a cumulative severity at 1,5,10
+
+```{r}
+ooNZ <- prob.exceed.recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),hf,cause=1,death.code=2,
+			    exceed=c(1,5,10,20))
+plot(ooNZ,strata=1)
+plot(ooNZ,strata=2,add=TRUE)
+summary(ooNZ,times=3)
+```
+
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```

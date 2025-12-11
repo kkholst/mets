@@ -72,8 +72,8 @@ construct_id <- function(id,nid,namesX=NULL,as.data=FALSE) { ## {{{
 
 ###{{{ phreg01
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
-             beta,stderr=TRUE,method="NR", no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
-	     case.weights=NULL,no.var=0,augmentation=0,...) {
+    beta,stderr=TRUE,method="NR", no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
+    marks=NULL,no.var=0,augmentation=0,...) {
   p <- ncol(X)
   if (missing(beta)) beta <- rep(0,p)
   if (p==0) X <- cbind(rep(0,length(exit)))
@@ -94,7 +94,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   if (!is.null(Z)) Zcall <- Z
 
   ## possible casewights to use for bootstrapping and other things
-  if (is.null(case.weights)) case.weights <- rep(1,length(exit)) 
+  if (is.null(marks)) marks <- rep(1,length(exit)) 
   trunc <- (any(entry>0))
 ###  if (!trunc) entry <- rep(0,length(exit))
 
@@ -102,7 +102,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   conid <- construct_id(id,nrow(X),namesX=rownames(X))
   id <- conid$id; nid <- conid$nid; name.id <- conid$name.id
 
-  dd <- .Call("FastCoxPrepStrata", entry,exit,status,X,id,trunc,strata,weights,offset,Zcall,case.weights,PACKAGE="mets")
+  dd <- .Call("FastCoxPrepStrata", entry,exit,status,X,id,trunc,strata,weights,offset,Zcall,marks,PACKAGE="mets")
 
   dd$nstrata <- nstrata 
    obj <- function(pp,U=FALSE,all=FALSE) {# {{{
@@ -126,7 +126,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 	      val$jumps <- dd$jumps+1
 	      val$jumptimes <- val$time[val$jumps]
 	      val$weightsJ <- dd$weights[val$jumps]
-	      val$case.weights <- dd$case.weights[val$jumps]
+	      val$marks <- dd$marks[val$jumps]
 	      val$nevent <- length(val$S0)
 	      val$nstrata <- dd$nstrata
 	      val$strata <- dd$strata
@@ -289,6 +289,7 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
     }
     X <- des$x
     strata <- des$strata
+    marks <- des$marks
     if (!is.null(strata))  {
 ###   strata.name  <-  paste(des$specials.var$strata,sep="*")
       ns <- grep("strata",names(des$levels))
@@ -310,7 +311,8 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   } else weights <- des.weights
  ## }}}
 
-  res <- c(phreg01(X,entry,exit,status,id,strata,offset,weights,strata.name,...),
+  res <- c(phreg01(X,entry,exit,status,id=id,strata=strata,offset=offset,
+		   weights=weights,strata.name=strata.name,marks=marks,...),
    list(call=cl,formula=formula,strata.pos=pos.strata,
 	cluster.pos=pos.cluster,n=length(exit)))
   res$design <- des
