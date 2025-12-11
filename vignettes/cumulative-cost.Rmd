@@ -32,7 +32,7 @@ library(mets)
 Overview 
 ========
 
-We here described how to do regression modelling for cumulative cost
+We here describe how to do regression modelling for cumulative cost
 \begin{align*}
 {\cal U}(t) & = \int_0^t Z(s) dN(s)
 \end{align*}
@@ -78,13 +78,12 @@ keeps track of the competing terminal event.
 % Nodes
 \node[box] (start) {At Risk};
 \node[box, right of=start, yshift=2.4cm] (death) {Exceed-k};
-\node[box, right of=start, yshift=-2.4cm] (lt) {terminal};
+\node[box, right of=start, yshift=-2.4cm] (lt) {D};
 
 % Arrows with hazard labels
-\draw[->, thick] (start) -- node[above] {$F_{exceed-k}(t)$} (death);
-\draw[->, thick] (start) -- node[below] {$F_{terminal}(t)$} (lt);
+\draw[->, thick] (start) -- node[below] {\hspace{2 cm} $F_{exceed-k}(t)$} (death);
+\draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (lt);
 \end{tikzpicture}
-
 
 Regression modelling of this quantity 
 is also possible of this probability using competing risks regression models, for example, the 
@@ -105,11 +104,13 @@ library(mets)
      
      proc_design <- mets:::proc_design
      ## marginal mean using formula  
-     outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),hf,cause=1,death.code=2)
+     outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+				 +marks(severity),hf,cause=1,death.code=2)
      plot(outNZ,se=TRUE)
      summary(outNZ,times=3) 
      
-     outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hf,cause=1,death.code=2)
+     outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
+			       cause=1,death.code=2)
      plot(outN,se=TRUE,add=TRUE)
      summary(outN,times=3) 
 ```
@@ -119,12 +120,12 @@ and note that they are identical. Standard errors are however based on different
 equivalent, and we note that they are very similar.
 
 ```{r}
-     outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),hf,cause=1,death.code=2,time=3,
-			 cens.model=~strata(treatment),model="lin")
+     outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
+			  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
      summary(outNZ3)
      head(iid(outNZ3))
 
-     outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),hf,cause=1,death.code=2,time=3,
+     outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
 			 cens.model=~strata(treatment),model="lin")
      summary(outN3)
      head(iid(outN3))
@@ -133,7 +134,7 @@ equivalent, and we note that they are very similar.
 We also apply the semiparametric proportional cost model with IPCW adjustment: 
 
 ```{r}
-propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),hf,cause=1,death.code=2)
+propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
 summary(propNZ) 
 plot(propNZ,main="Baselines")
      
@@ -150,8 +151,8 @@ Exceed threshold
 Finally, we also estimate the probability of exceeding a cumulative severity at 1,5,10
 
 ```{r}
-ooNZ <- prob.exceed.recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),hf,cause=1,death.code=2,
-			    exceed=c(1,5,10,20))
+ooNZ <- prob.exceed.recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
+			      cause=1,death.code=2,exceed=c(1,5,10,20))
 plot(ooNZ,strata=1)
 plot(ooNZ,strata=2,add=TRUE)
 summary(ooNZ,times=3)
@@ -170,12 +171,11 @@ where $\mu(s) = E( N(\tau) )$ is the marginal mean.
 ```{r}
      hf$lost5 <- 5-hf$time
      
-     RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,cause=1,death.code=2,time=5,
-			 cens.model=~strata(treatment),model="lin")
+     RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,
+			   cause=1,death.code=2,time=5,cens.model=~strata(treatment),model="lin")
      summary(RecLost)
      head(iid(RecLost))
 ```
-
 
 
 SessionInfo
