@@ -8,6 +8,9 @@ output:
     toc: true
     # fig_width: 7.15
     # fig_height: 5.5        
+header-includes: 
+  - \usepackage{tikz}
+  - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
   %\VignetteIndexEntry{Cooking survival data, 5 minutes recipes}
   %\VignetteEngine{knitr::rmarkdown}
@@ -284,8 +287,48 @@ Using a hazard based simulation with delayed entry we can then simulate data
 from for example the general illness-death model. Here the cumulative hazards 
 need to be specified.
 
-First we set up some cumulative hazards, then we simulate some data
-and re-estimate the cumulative baselines
+
+
+
+\begin{tikzpicture}[
+    >=Stealth,
+    node distance=4cm,
+    state/.style={
+        rectangle,
+        draw=black,
+        thick,
+        minimum width=3cm,
+        minimum height=1cm,
+        align=center
+    }
+]
+
+  % Top states
+  \node[state] (H) {Healthy \\ (1)};
+  \node[state] (I) [right=of H] {Ill \\ (2)};
+
+  % Dead centered below
+  \node[state] (D) at ($(H)!0.5!(I) + (0,-3)$) {Dead \\ (3)};
+
+  % Two straight arrows between Healthy and Ill
+  \draw[->, thick] 
+    ($(H.east)+(0,0.15)$) -- ($(I.west)+(0,0.15)$)
+    node[midway, above] {$\lambda_{12}$};
+
+  \draw[->, thick] 
+    ($(I.west)+(0,-0.15)$) -- ($(H.east)+(0,-0.15)$)
+    node[midway, below] {$\lambda_{21}$};
+
+  % Death transitions
+  \draw[->, thick] (H) -- node[left] {$\lambda_{13}$} (D);
+  \draw[->, thick] (I) -- node[right] {$\lambda_{23}$} (D);
+
+\end{tikzpicture}
+
+We simply give the cumulative hazards for the different transitions to the function simMultistate
+to simulate data from the model, subsequently we re-estimate the parameters based on the simulated
+data to validate the procedure. 
+
 
 ```{r}
  data(CPH_HPN_CRBSI)
