@@ -7,6 +7,9 @@ output:
     fig_caption: yes
     # fig_width: 7.15
     # fig_height: 5.5 
+header-includes: 
+  - \usepackage{tikz}
+  - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
   %\VignetteIndexEntry{Recurrent events}
   %\VignetteEngine{knitr::rmarkdown}
