@@ -829,20 +829,10 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 
                    if ( (!is.null(beta.iid)) | fixbeta==0) q2 <- qq
                    if (!is.null(time))  {
-		       HBlast <- HBt[lastid][xx2$id+1]
+		       HBlast <- HBt$res[lastid][xx2$id+1]
 	               HBadmRR2 <- revcumsumstrata(HBlast*rrw2,strataCxx2,nCstrata)
 		       qB2 <- (HBadmRR2-HBt*RR2)
                    }
-
-###		   cbind(qq,q2,S0iC)[jumpsC,]
-###		   EdLam0qq2 <- apply(qq,2,fff)
-###		   EdLam0q2 <- apply(q2,2,fff)
-###		   summary(cbind(EdLam0qq2-EdLam0q2))
-###		   qq[sss,]
-###		   q2[sss,]
-###	           MGc2 <- qq*S0iC-EdLam0qq2*c(xx2$sign)*(typexx2==1)
-###		   MGc2 <- apply(MGc2,2,sumstrata,xx2$id,mid+1)
-###	           summary(cbind(MGc-MGc2))
 
               }
 
