@@ -831,7 +831,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
                    if (!is.null(time))  {
 		       HBlast <- HBt$res[lastid][xx2$id+1]
 	               HBadmRR2 <- revcumsumstrata(HBlast*rrw2,strataCxx2,nCstrata)
-		       qB2 <- (HBadmRR2-HBt*RR2)
+		       qB2 <- (HBadmRR2-HBt$res*RR2)
                    }
 
               }
@@ -913,7 +913,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	}
 	return(out)
 }  ## }}}
-
 
 ##' @export
 iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)
