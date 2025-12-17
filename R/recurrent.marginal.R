@@ -816,7 +816,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' @param var.z variance of random effects 
 ##' @param cor.mat correlation matrix for var.z variance of random effects 
 ##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to lower level funtions
+##' @param ... Additional arguments to simRecurrentList
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################
@@ -865,7 +865,8 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @aliases simRecurrent showfitsim  covIntH1dM1IntH2dM2 squareintHdM  simRecurrentList showfitsimList
+##' @name simRecurrentII
+##' @aliases showfitsim covIntH1dM1IntH2dM2 squareintHdM simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
@@ -883,6 +884,11 @@ data <-     simRecurrentList(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
 return(data)
 }# }}}
 
+
+##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
+##' @inheritParams simRecurrentII 
+##' @inherit simRecurrentII examples author
+##' @param ... Additional arguments to simRecurrentList
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
 {# {{{
