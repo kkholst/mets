@@ -395,7 +395,6 @@ proc_design <- function(formula, data, ..., # nolint
       for (s in sterm.list) {
           fst <- gsub(trim(s, all = TRUE), "", fst, fixed = TRUE)
       }
-      if (length(fst)>1) browser()
       fst <- gsub("[\\+]*$", "", fst) # remove potential any trailing '+'
       formula <- as.formula(fst)
     }
