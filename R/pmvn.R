@@ -29,33 +29,53 @@ pbvn <- function(upper,rho,sigma) {
 ##' @param mu mean vector
 ##' @param sigma variance matrix or vector of correlation coefficients
 ##' @param cor if TRUE sigma is treated as standardized (correlation matrix)
-pmvn <- function(lower,upper,mu,sigma,cor=FALSE) {
+pmvn <- function(lower, upper, mu, sigma, cor = FALSE) {
     if (missing(sigma)) stop("Specify variance matrix 'sigma'")
     if (missing(lower)) {
         if (missing(upper)) stop("Lower or upper integration bounds needed")
-        lower <- upper; lower[] <- -Inf
+        lower <- upper
+        lower[] <- -Inf
     }
     p <- ncol(rbind(lower))
     if (missing(upper)) {
-        upper <- lower; upper[] <- Inf
+        upper <- lower
+        upper[] <- Inf
     }
-    if (missing(mu)) mu <- rep(0,p)
+    lower <- rbind(lower)
+    upper <- rbind(upper)
+    if (!identical(dim(lower), dim(upper))) {
+        stop("Incompatible lower and upper limits")
+    }
+    if (missing(mu)) mu <- rep(0, p)
     sigma <- rbind(sigma)
-    ncor <- p*(p-1)/2
-    if (ncol(sigma)!=p && ncol(sigma)!=ncor)
-        stop("Incompatible dimensions of mean and variance")    
-    if (ncol(rbind(lower))!=p || ncol(rbind(upper))!=p)
-        stop("Incompatible integration bounds")    
+    ncor <- p * (p - 1) / 2
+    if (ncol(sigma) != p && ncol(sigma) != ncor) {
+        stop("Incompatible dimensions of mean and variance")
+    }
+    if (ncol(lower) != p || ncol(upper) != p) {
+        stop("Incompatible integration bounds")
+    }
+    if (p == 1L) {
+      s <- as.vector(sigma)**.5
+      res <- pnorm(
+          q = as.vector(upper),
+          mean = as.vector(mu), sd = s
+      ) - pnorm(
+          q = as.vector(lower),
+          mean = as.vector(mu), sd = s
+          )
+      return(res)
+    }
     res <- .Call("pmvn0",
-                 lower = rbind(lower),
-                 upper = rbind(upper),
-                 mu = rbind(mu),
-                 sigma = rbind(sigma),
-                 cor = as.logical(cor[1]),
-                 PACKAGE = "mets")
+        lower = lower,
+        upper = upper,
+        mu = rbind(mu),
+        sigma = rbind(sigma),
+        cor = as.logical(cor[1]),
+        PACKAGE = "mets"
+    )
     return(as.vector(res))
 }
-
 
 introotpn <- function(p) {
     ## Find integer root of x^2-x-2*p=0
