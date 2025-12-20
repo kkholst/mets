@@ -168,7 +168,7 @@ recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE)
   xr <- recurrent
   dr <- death 
 
-  ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
+  ### sets fixbeta based on whether xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
   if ((xr$no.opt) | is.null(xr$coef)) fixbeta<- 1 else fixbeta <- 0
 
@@ -613,7 +613,7 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
 ###  strata "r" from object and "k" id from cluster 
   if (!inherits(phreg,"phreg")) stop("Must be phreg object\n"); 
 
-  ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
+  ### sets fixbeta based on whether xr has been optimized in beta (so cox case)
   if (is.null(fixbeta)) 
   if ((phreg$no.opt) | is.null(phreg$coef)) fixbeta<- 1 else fixbeta <- 0
 
@@ -791,16 +791,17 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
    return(data)
  } # }}}
 
-##' Simulation of recurrent events data based on cumulative hazards with two types of  recurrent events  
+##' Simulation of recurrent events data based on cumulative hazards with two
+##' types of recurrent events
 ##'
 ##' Simulation of recurrent events data based on cumulative hazards 
 ##'
-##' Must give hazard of death and two recurrent events.  Possible with two
-##' event types and their dependence can be specified but the two recurrent events need
-##' to share random effect. Based on drawing the from cumhaz and cumhaz2 and 
-##' taking the first event rather
-##' the cumulative and then distributing it out. Key advantage of this is that 
-##' there is  more flexibility wrt random effects 
+##' Must give hazard of death and two recurrent events. Possible with two event
+##' types and their dependence can be specified but the two recurrent events
+##' need to share random effect. Based on drawing from cumhaz and cumhaz2 and
+##' taking the first event rather than the cumulative and then distributing it
+##' out. Key advantage of this is that there is more flexibility wrt random
+##' effects
 ##'
 ##' @param n number of id's 
 ##' @param cumhaz  cumulative hazard of recurrent events 
