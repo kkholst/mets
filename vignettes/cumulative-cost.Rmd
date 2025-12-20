@@ -10,7 +10,7 @@ output:
 header-includes: 
   - \usepackage{tikz}
 vignette: >
-  %\VignetteIndexEntry{Recurrent events}
+  %\VignetteIndexEntry{IPCW Cumulative Cost}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
