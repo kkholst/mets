@@ -885,8 +885,9 @@ simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
 
 }# }}}
 
-simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens = 0, rcZ = 0.5,pCA=0.5,pCR=0.5,
-    bin = 1, type = c("cloglog", "logistic"), rate = 1, Z = NULL,rc2=0.3,d2=0)
+
+simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens.R = 0, rcZ = 0.5,pCA=0.5,pCR=0.5,
+    bin = 1, type = c("cloglog", "logistic"), rate = 1, Z = NULL,rc2=0.3,depcens.Adm=0)
 {# {{{
     p = length(beta)/2
     tt <- seq(0, 6, by = 0.1)
@@ -911,14 +912,15 @@ simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens = 0, rcZ = 0.5,
     data <- sim.cifs(list(cif1, cif2), n, Z = Z,extend=NULL)
 
     admcens <- rbinom(n,1,pCA)
-    censorA = admcens* runif(n)*6 + 6*(admcens==0)
+    if (depcens.Adm==1) rrA <- exp( Z %*% rcZ) else rrA <- 0
+    censorA = admcens*(rrA+runif(n)*(6-rrA))+ 6*(admcens==0)
 
     statusA = data$status * (data$time <= censorA)
     timeA = pmin(data$time, censorA)
     statusA[statusA==0] <- 7
 
     Rcens <- rbinom(n,1,pCR)
-    if (depcens == 0)  
+    if (depcens.R == 0)  
         censorR = Rcens*runif(n)*6+(Rcens==0)*6
     else censorR = Rcens*pmin(rexp(n, 1) * (1/(rc * exp(Z %*% rcZ))),6) + (Rcens==0)*6
     censor <- ifelse( censorR < censorA, censorR,censorA)

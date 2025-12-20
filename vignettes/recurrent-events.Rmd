@@ -7,6 +7,9 @@ output:
     fig_caption: yes
     # fig_width: 7.15
     # fig_height: 5.5 
+header-includes: 
+  - \usepackage{tikz}
+  - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
   %\VignetteIndexEntry{Recurrent events}
   %\VignetteEngine{knitr::rmarkdown}
@@ -56,6 +59,39 @@ bivariate recurrent events data, also with a possible terminating event:
  * the Ghosh-Lin model when the survival rate is on Cox form.
    * frailty extenstions
  * The general illness death model with  cox models for all hazards. 
+
+
+\begin{tikzpicture}[
+    sharp corners=2pt,
+    inner sep=4pt,
+    node distance=0.9cm,
+    >=latex,
+    mynode/.style={draw,minimum height=0.9cm,minimum width=2.6cm}
+]
+
+\node[mynode] (healthy) {healthy $(h)$};
+\node[mynode, right=of healthy] (e1) {1st event};
+\node[mynode, right=of e1] (e2) {2nd event};
+
+% Dots indicating continuation
+\node[right=0.6cm of e2] (dots) {$\cdots$};
+
+% Dead
+\node[mynode, below=of e1] (dead) {dead $(d)$};
+
+% Arrows along the event chain
+\draw[->] (healthy) -- (e1);
+\draw[->] (e1) -- (e2);
+\draw[->] (e2) -- (dots);
+
+% Arrows to 'dead'
+\draw[->] (healthy) -- (dead);
+\draw[->] (e1) -- (dead);
+\draw[->] (e2) -- (dead);
+
+\end{tikzpicture}
+
+
 
 
 Simulation of recurrents events

@@ -843,7 +843,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' ### simulating simple model 
 ##' ### random effect for all causes (Z shared for death and recurrent) 
 ##' ######################################################################
-##' rr <- simRecurrent(100,base1,death.cumhaz=dr,dependence=1,var.gamma=0.4)
+##' rr <- simRecurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
 ##' dtable(rr,~death+status)
 ##'
 ##' ######################################################################

@@ -378,7 +378,7 @@ n <- 100
 beta=c(0.3,-0.3,-0.5,0.3)
 rc <- 0.9
 ###
-dats <- mets:::simul.cifsRA(n,rho1,rho2,beta,depcens=0,bin=1,rc=rc,rate=c(3,7))
+dats <- mets:::simul.cifsRA(n,rho1,rho2,beta,bin=1,rc=rc,rate=c(3,7))
 dats$status07 <- dats$status
 dats$status07[dats$status %in% c(0,7)] <- 0
 tt <- seq(0,6,by=0.1)
