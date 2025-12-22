@@ -328,6 +328,7 @@ model.extract2 <- function(frame, component) {
 # #' @param design.matrix (logical) if FALSE then only response and specials are
 # #'   returned. Otherwise, the design.matrix `x` is als part of the returned
 # #'   object.
+# #' @param na.action method to handle missing data
 # #' @return An object of class 'mets.design'
 # #' @examples
 # #' n <- 1e3
@@ -351,7 +352,7 @@ proc_design <- function(formula, data, ..., # nolint
                         specials.call = NULL,
                         levels = NULL,
                         design.matrix = TRUE,
-                        na.action = na.pass
+                        na.action = na.omit
                         ) {
   if (inherits(data, c("data.table", "tbl_df"))) {
     data <- as.data.frame(data)
@@ -531,26 +532,34 @@ proc_design <- function(formula, data, ..., # nolint
 
 
 update_design <- function(object, data = NULL, response = FALSE, ...) {
-  if (is.null(data)) data <- object$data
-  for (s in object$specials.var) {
-    if (!is.null(s)) {
-      for (v in s) {
-        if (! v %in% colnames(data))
-          data[, v] <- NA
-      }
+    if (is.null(data)) data <- object$data
+    missing_spec <- c()
+    for (s in names(object$specials.var)) {
+        miss <- FALSE
+        if (!is.null(object$specials.var[[s]])) {
+            for (v in object$specials.var[[s]]) {
+                if (!v %in% colnames(data)) {
+                    data[, v] <- 0
+                    miss <- TRUE
+                }
+            }
+            if (miss) missing_spec <- c(missing_spec, s)
+        }
     }
-  }
-  proc_design(object$terms,
-              data = data,
-              design.matrix = object$design.matrix,
-              levels = object$levels,
-              response = response,
-              na.action = object$na.action,
-              intercept = object$intercept,
-              specials = object$specials,
-              specials.call = object$specials.call
-              )
+    res <- proc_design(object$terms,
+        data = data,
+        design.matrix = object$design.matrix,
+        levels = object$levels,
+        response = response,
+        na.action = object$na.action,
+        intercept = object$intercept,
+        specials = object$specials,
+        specials.call = object$specials.call
+        )
+    res[missing_spec] <- NULL
+    return(res)
 }
+
 
 clean_design <- function(object, ...) {
   object$x <- object$x[0, , drop = FALSE]
