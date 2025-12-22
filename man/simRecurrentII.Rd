@@ -63,12 +63,12 @@ simRecurrentII(
 Simulation of recurrent events data based on cumulative hazards
 }
 \details{
-Must give hazard of death and two recurrent events. Possible with two event
-types and their dependence can be specified but the two recurrent events
-need to share random effect. Based on drawing from cumhaz and cumhaz2 and
-taking the first event rather than the cumulative and then distributing it
-out. Key advantage of this is that there is more flexibility wrt random
-effects
+Must give cumulative hazard of death and possibley two recurrent events. 
+Their dependence can be specified via random 
+effects but the two recurrent events need to share random effect, and can also be
+specified via zzr. 
+The terminal event may share this random effect (dependence=1) or not 
+(dependence=4) and can be specified via zzr.
 }
 \examples{
 ########################################
