@@ -1,4 +1,5 @@
 #include <RcppArmadillo/Lighter>
+// [[Rcpp::depends(RcppArmadillo)]]
 #include <algorithm>
 #include <iostream>
 #include <vector>
