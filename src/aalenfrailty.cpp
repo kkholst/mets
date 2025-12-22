@@ -1,4 +1,4 @@
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 #include <Rmath.h>
 #include <cmath>
 #include "twostage.h"

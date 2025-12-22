@@ -13,7 +13,8 @@
 // [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::plugins(cpp11)]]
 
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
+
 
 arma::vec chazw(const arma::vec &time, const arma::vec &rate,
                 const arma::vec &shape) {
