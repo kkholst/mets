@@ -867,8 +867,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @name simRecurrentII simRecurrentList
-##' @aliases showfitsim covIntH1dM1IntH2dM2 squareintHdM simRecurrentList showfitsimList
+##' @aliases simRecurrentII showfitsim covIntH1dM1IntH2dM2 squareintHdM simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
@@ -887,7 +886,7 @@ return(data)
 }# }}}
 
 ##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
-##' @inheritParams simRecurrentII 
+##' @inheritParams simRecurrentII
 ##' @inherit simRecurrentII examples author
 ##' @param ... Additional arguments to simRecurrentList
 ##' @export

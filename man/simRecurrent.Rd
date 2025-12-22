@@ -15,8 +15,71 @@ simRecurrent(
 )
 }
 \arguments{
+\item{n}{number of id's}
+
+\item{cumhaz}{cumulative hazard of recurrent events}
+
+\item{death.cumhaz}{cumulative hazard of death}
+
+\item{r1}{potential relative risk adjustment of rate}
+
+\item{rd}{potential relative risk adjustment of rate}
+
+\item{rc}{potential relative risk adjustment of rate}
+
 \item{...}{Additional arguments to simRecurrentList}
 }
 \description{
 Simulation of recurrent events data based on cumulative hazards for event and death process
+}
+\examples{
+########################################
+## getting some rates to mimick 
+########################################
+library(mets)
+data(CPH_HPN_CRBSI)
+dr <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi 
+base4 <- CPH_HPN_CRBSI$mechanical
+
+######################################################################
+### simulating simple model that mimicks data 
+######################################################################
+rr <- simRecurrent(5,base1)
+dlist(rr,.~id,n=0)
+rr <- simRecurrent(5,base1,death.cumhaz=dr)
+dlist(rr,.~id,n=0)
+
+rr <- simRecurrent(100,base1,death.cumhaz=dr)
+par(mfrow=c(1,3))
+showfitsim(causes=1,rr,dr,base1,base1)
+######################################################################
+### simulating simple model 
+### random effect for all causes (Z shared for death and recurrent) 
+######################################################################
+rr <- simRecurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
+dtable(rr,~death+status)
+
+######################################################################
+### now with two event types and second type has same rate as death rate
+######################################################################
+set.seed(100)
+rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
+dtable(rr,~death+status)
+par(mfrow=c(2,2))
+showfitsim(causes=2,rr,dr,base1,base4)
+
+######################################################################
+### now with three event types and two causes of death 
+######################################################################
+set.seed(100)
+cumhaz <- list(base1,base1,base4)
+drl <- list(dr,base4)
+rr <- simRecurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
+dtable(rr,~death+status)
+showfitsimList(rr,cumhaz,drl) 
+
+}
+\author{
+Thomas Scheike
 }
