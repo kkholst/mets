@@ -713,7 +713,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 		## Gc(t) computed  along all times of combined data-set: data + [D,\infty] 
 		Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
 		Gstart <- rep(1,nCstrata)
-		Gjumps <- Gcxx2[jumps,]
+		Gjumps <- Gcxx2[jumps]
 	} else  Gcxx2 <- rep(1,length(xx2$stata))
 	### all administrative censoring, or no censoring at all 
 	if (!anyC) typexx2 <- 1
