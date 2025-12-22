@@ -325,10 +325,10 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
 		S0iC[jumpsC] <- 1/S0rrr[jumpsC]
 		S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
-		## Gc(t) computed  along all times of combined data-set: data + [D,\infty] 
-		Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
+  ## Gc(t) computed  along all times of combined data-set: data + [D,\infty]
+        Gcxx2 <- exp(cumsumstrata(log(1 - S0iC), strataCxx2, nCstrata))
 		Gstart <- rep(1,nCstrata)
-		Gjumps <- Gcxx2[jumps,]
+		Gjumps <- Gcxx2[jumps]
 
 		njumps <- length(jumps)
 		GtsS0ooN <-   .Call("_mets_GcjumpsR",Gcxx2,c(xx2$status),strataCxx2,nCstrata,Gstart,njumps)
