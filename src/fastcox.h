@@ -1,7 +1,7 @@
 #ifndef FASTCOX_H
 #define FASTCOX_H
 
-#include <RcppArmadillo.h>
+#include <RcppArmadillo/Lighter>
 #include <Rmath.h>
 
 using namespace Rcpp;

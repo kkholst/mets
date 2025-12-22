@@ -1,7 +1,7 @@
 // *[[Rcpp::depends(RcppArmadillo)]]
 // *[[Rcpp::interfaces(r, cpp)]]
 
-#include <RcppArmadillo.h>
+#include <RcppArmadillo/Lighter>
 #include <Rmath.h>
 #include <cmath>
 #include <vector>

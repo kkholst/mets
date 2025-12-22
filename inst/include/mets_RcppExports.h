@@ -4,8 +4,7 @@
 #ifndef RCPP_mets_RCPPEXPORTS_H_GEN_
 #define RCPP_mets_RCPPEXPORTS_H_GEN_
 
-#include <RcppArmadillo.h>
-#include <Rcpp.h>
+#include <RcppArmadillo/Lighter>
 
 namespace mets {
 
