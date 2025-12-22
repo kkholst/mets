@@ -344,28 +344,33 @@ model.extract2 <- function(frame, component) {
 # #' new$y
 # #' new$x
 proc_design <- function(formula, data, ..., # nolint
-                   intercept = FALSE,
-                   response = TRUE,
-                   rm_envir = FALSE,
-                   specials = NULL,
-                   specials.call = NULL,
-                   levels = NULL,
-                   design.matrix = TRUE) {
+                        intercept = FALSE,
+                        response = TRUE,
+                        rm_envir = FALSE,
+                        specials = NULL,
+                        specials.call = NULL,
+                        levels = NULL,
+                        design.matrix = TRUE,
+                        na.action = na.pass
+                        ) {
   if (inherits(data, c("data.table", "tbl_df"))) {
     data <- as.data.frame(data)
   }
   dots <- substitute(list(...))
   if ("subset" %in% names(dots)) stop(
-    "subset is not an allowed specials argument for `design`"
-  )
+                                   "subset is not an allowed specials argument for `design`"
+                                 )
   tt <- terms(formula, data = data, specials = specials)
   term.labels <- attr(tt, "term.labels") # predictors
 
   if (response && inherits(
-      try(model.frame(update(tt, ~1), data = data), silent = TRUE),
-      "try-error"
-  )) {
-      response <- FALSE
+                    try(model.frame(update(tt, ~1),
+                                    data = data,
+                                    na.action = na.action),
+                        silent = TRUE),
+                    "try-error"
+                  )) {
+    response <- FALSE
   }
   # delete response to generate design matrix when making predictions
   if (!response) tt <- delete.response(tt)
@@ -381,19 +386,19 @@ proc_design <- function(formula, data, ..., # nolint
       # create formula without specials
       if ((nrow(attr(tt, "factors")) - attr(tt, "response")) ==
           length(sterm.list)) {
-          # only specials on the rhs, remove everything
-          formula <- update(formula, ~1)
+        # only specials on the rhs, remove everything
+        formula <- update(formula, ~1)
       } else {
-          # predictors without the specials
-          term.labels <- setdiff(
-              term.labels,
-              unlist(sterm.list)
-          )
-          ## formula <- update(tt, reformulate(term.labels))
+        # predictors without the specials
+        term.labels <- setdiff(
+          term.labels,
+          unlist(sterm.list)
+        )
+        ## formula <- update(tt, reformulate(term.labels))
       }
       fst <- lava::trim(paste(deparse(formula), collapse = ""), all = TRUE)
       for (s in sterm.list) {
-          fst <- gsub(trim(s, all = TRUE), "", fst, fixed = TRUE)
+        fst <- gsub(trim(s, all = TRUE), "", fst, fixed = TRUE)
       }
       fst <- gsub("[\\+]*$", "", fst) # remove potential any trailing '+'
       formula <- as.formula(fst)
@@ -412,13 +417,14 @@ proc_design <- function(formula, data, ..., # nolint
       fs <- reformulate(paste(sterm.list, collapse = " + "))
       fs <- update(formula0, fs)
     }
-    mf <- model.frame(fs, data=data, ...)
+    mf <- model.frame(fs, data=data, na.action = na.action, ...)
   } else { # also extract design matrix
     mf <- model.frame(tt,
-        data = data, ...,
-        xlev = xlev,
-        drop.unused.levels = FALSE
-        )
+                      data = data, ...,
+                      xlev = xlev,
+                      na.action = na.action,
+                      drop.unused.levels = FALSE
+                      )
     if (is.null(xlev)) {
       xlev <- .getXlevels(tt, mf)
     }
@@ -429,21 +435,21 @@ proc_design <- function(formula, data, ..., # nolint
   if (response) {
     y <- tryCatch(
       model.response(mf, type = "any"),
-          error = function(...) NULL
-      )
-      if (is.factor(y) || is.character(y)) {
-          ylev <- levels[["response_"]]
-          if (!is.null(ylev)) {
-              factor(y, levels = ylev)
-          } else {
-              ylev <- if (is.factor(y)) {
+      error = function(...) NULL
+    )
+    if (is.factor(y) || is.character(y)) {
+      ylev <- levels[["response_"]]
+      if (!is.null(ylev)) {
+        factor(y, levels = ylev)
+      } else {
+        ylev <- if (is.factor(y)) {
                   levels(y)
-              } else if (is.character(y)) {
+                } else if (is.character(y)) {
                   levels(as.factor(y))
-              }
-              levels[["response_"]] <- ylev
-          }
+                }
+        levels[["response_"]] <- ylev
       }
+    }
   }
 
   has_intercept <- attr(tt, "intercept") == 1L
@@ -456,12 +462,12 @@ proc_design <- function(formula, data, ..., # nolint
   specials.var <- c()
   if (length(specials) > 0) {
     for (s in specials) {
-        w <- eval(substitute(model.extract2(mf, s), list(s = s)))
-        specials.list <- c(specials.list, list(w))
-        specials.var <- c(
-            specials.var,
-            list(unlist(Specials(tt, spec = s)))
-        )
+      w <- eval(substitute(model.extract2(mf, s), list(s = s)))
+      specials.list <- c(specials.list, list(w))
+      specials.var <- c(
+        specials.var,
+        list(unlist(Specials(tt, spec = s)))
+      )
     }
     names(specials.var) <- specials
     names(specials.list) <- specials
@@ -471,6 +477,7 @@ proc_design <- function(formula, data, ..., # nolint
         mf <- model.frame(formula0,
                           data = data, ...,
                           xlev = xlev0,
+                          na.action = na.action,
                           drop.unused.levels = FALSE
                           )
       }
@@ -511,8 +518,9 @@ proc_design <- function(formula, data, ..., # nolint
       design.matrix = design.matrix,
       intercept = has_intercept,
       data = mf,
-        ## data[0, ], ## Empty data.frame to capture structure of data
+      ## data[0, ], ## Empty data.frame to capture structure of data
       specials = specials,
+      na.action = na.action,
       specials.var = specials.var,
       specials.call = specials.call
     ),
@@ -521,19 +529,27 @@ proc_design <- function(formula, data, ..., # nolint
   return(structure(res, class="mets.design"))
 }
 
-update_design <- function(object, data = NULL, response=FALSE,  ...) {
+
+update_design <- function(object, data = NULL, response = FALSE, ...) {
   if (is.null(data)) data <- object$data
-  return(
-    proc_design(object$terms,
-      data = data,
-      design.matrix = object$design.matrix,
-      levels = object$levels,
-      response = response,
-      intercept = object$intercept,
-      specials = object$specials,
-      specials.call = object$specials.call
-    )
-  )
+  for (s in object$specials.var) {
+    if (!is.null(s)) {
+      for (v in s) {
+        if (! v %in% colnames(data))
+          data[, v] <- NA
+      }
+    }
+  }
+  proc_design(object$terms,
+              data = data,
+              design.matrix = object$design.matrix,
+              levels = object$levels,
+              response = response,
+              na.action = object$na.action,
+              intercept = object$intercept,
+              specials = object$specials,
+              specials.call = object$specials.call
+              )
 }
 
 clean_design <- function(object, ...) {
