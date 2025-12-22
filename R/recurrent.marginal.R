@@ -796,9 +796,9 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'
 ##' Simulation of recurrent events data based on cumulative hazards 
 ##'
-##' Must give cumulative hazard of death and possibley two recurrent events. 
+##' Must give cumulative hazard of death and possibly two recurrent events. 
 ##' Their dependence can be specified via random 
-##' effects but the two recurrent events need to share random effect, and can also be
+##' effects but the two recurrent events need to share the random effect, and can also be
 ##' specified via zzr. 
 ##' The terminal event may share this random effect (dependence=1) or not 
 ##' (dependence=4) and can be specified via zzr.
@@ -888,6 +888,12 @@ return(data)
 ##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
 ##' @inheritParams simRecurrentII
 ##' @inherit simRecurrentII examples author
+##' @param n number of id's 
+##' @param cumhaz  cumulative hazard of recurrent events 
+##' @param death.cumhaz cumulative hazard of death 
+##' @param r1 potential relative risk adjustment of rate 
+##' @param rd potential relative risk adjustment of rate
+##' @param rc potential relative risk adjustment of rate
 ##' @param ... Additional arguments to simRecurrentList
 ##' @export
 simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
