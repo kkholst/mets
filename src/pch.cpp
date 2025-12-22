@@ -1,6 +1,6 @@
 // [[Rcpp::interfaces(cpp)]]
 // [[Rcpp::plugins(cpp11)]]
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 #include <cmath>
 
 using namespace Rcpp;

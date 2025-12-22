@@ -49,7 +49,7 @@ data(bmt)
 bmt$age2 <- bmt$age
 newdata <- bmt[1:19,]
 ## if (interactive()) par(mfrow=c(5,3))
-
+proc_design <- mets:::proc_design
 ## same X1 and X2
 pr2 <- doubleFGR(Event(time,cause)~age+platelet,data=bmt,restrict=res)
 ##if (interactive()) {

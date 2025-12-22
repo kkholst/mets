@@ -208,6 +208,7 @@ doubleFG01R <- function(X,X2, entry,exit,status,id=NULL,strata=NULL,offset=NULL,
    dd$cause <- cause
    dd$nstrata <- nstrata
 
+
 	obj <- function(pp,U=FALSE,all=FALSE) {# {{{
 	  val <- with(dd, doubleFGstrataR(pp,X,XX,X2,XX2,sign,cause,jumps,strata,nstrata,weights,offset,ZX,caseweights,restrict))
 
@@ -307,7 +308,8 @@ doubleFGstrataR <- function(beta, X, XX, X2, XX2, Sign, cause, Jumps, strata, ns
 	Xb2 = c(X2 %*% beta2+offsets)
 	eXb1 = c(exp(Xb1)*weights);
 	eXb2 = c(exp(Xb2)*weights);
-	if (nrow((Sign))==length(eXb1)) { ## Truncation
+
+	if (length(Sign)==length(eXb1)) { ## Truncation
 		eXb1 = c(Sign)*eXb1;
 		eXb2 = c(Sign)*eXb2;
 	}

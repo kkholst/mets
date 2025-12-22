@@ -1,5 +1,4 @@
-#include <RcppArmadillo/Lighter>
-// [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
 #include <Rmath.h>
 #include <cmath>
 

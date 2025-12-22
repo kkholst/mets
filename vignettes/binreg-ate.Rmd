@@ -36,7 +36,6 @@ In addition and to summarize
   - clusters can be given and then cluster corrected standard errors are computed
 
 
-
 Average treatment effect 
 =========================
 
