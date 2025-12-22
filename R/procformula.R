@@ -531,7 +531,7 @@ proc_design <- function(formula, data, ..., # nolint
 }
 
 
-update_design <- function(object, data = NULL, response = FALSE, ...) {
+update_design <- function(object, data = NULL, response = TRUE, ...) {
     if (is.null(data)) data <- object$data
     missing_spec <- c()
     for (s in names(object$specials.var)) {
