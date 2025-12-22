@@ -93,8 +93,6 @@ bivariate recurrent events data, also with a possible terminating event:
 \end{tikzpicture}
 
 
-
-
 Simulation of recurrents events
 ==============================
 
@@ -174,19 +172,19 @@ We here mention two utility functions
 Marginal Mean 
 =============
 
- We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the timing of the terminal event. 
- The marginal mean is the average number of events seen before time $t$. 
+We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the timing of the terminal event. 
+The marginal mean is the average number of events seen before time $t$. 
 
- This is based on a  rate model  for 
+This is based on a  two rate models for 
 
  * the type 1 events  $\sim E(dN_1(t) | D > t)$
  * the terminal event $\sim E(dN_d(t) | D > t)$
 
-and is defined as $\mu_1(t)=E(N_1^*(t))$ 
+and is defined as $\mu_1(t)=E(N_1(t))$ 
 \begin{align}
    \int_0^t S(u) d R_1(u)	
 \end{align}
-where $S(t)=P(D \geq t)$ and $dR_1(t) = E(dN_1^*(t) | D > t)$ 
+where $S(t)=P(D \geq t)$ and $dR_1(t) = E(dN_1(t) | D > t)$ 
 
 and can therefore be estimated by a 
 
@@ -198,10 +196,9 @@ and can therefore be estimated by a
 \end{align}
 where $Y_{\bullet}(t)= \sum_i Y_i(t)$ such that the estimator is 
 \begin{align}
-  \hat \mu_1(t) & =    \int_0^t \hat S(u) d\hat R_1(u).
+  \hat \mu_1(t) & =    \int_0^t \hat S(u) d\hat R_1(u),
 \end{align}
-
-Cook & Lawless (1997), and developed further in Gosh & Lin (2000). 
+see Cook & Lawless (1997) and  Gosh & Lin (2000). 
 
 The variance can be estimated based on the asymptotic expansion 
 of $\hat \mu_1(t) - \mu_1(t)$
@@ -214,7 +211,7 @@ with mean-zero processes
  * $M_i^d(t) = N_i^D(t)- \int_0^t Y_i(s) d \Lambda^D(s)$, 
  * $M_{i1}(t) = N_{i1}(t) - \int_0^t Y_{i}(s) dR_1(s)$. 
 
-as in Gosh & Lin (2000)
+as described in Gosh & Lin (2000)
 
 
 Generating data
@@ -270,7 +267,7 @@ We can also extract the estimate in different time-points
 summary(out,times=c(1000,2000))
 ```
 
-The marginal mean can also be estimated in a stratified case:
+The marginal mean can also be estimated in the stratified case:
 
 ```{r}
 xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
@@ -310,10 +307,10 @@ plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 #### predictions witout se's 
 ###outX <- recmarg(xr,dr,Xr=1,Xd=1)
 ###plot(outX,add=TRUE,col=3)
-
 ```
 
-Here I simulate multiple types and two causes of death causes of death 
+We here simulate multiple recurrent events processes with two causes of death causes  and exponential censoring with
+rate $3/5000$, all processes are assumed independent (dependence=0)
 
 ```{r}
 rr <- simRecurrentList(100,list(base1,base1,base4),death.cumhaz=list(dr,base4),cens=3/5000,dependence=0)
@@ -324,8 +321,8 @@ mets:::showfitsimList(rr,list(base1,base1,base4),list(dr,base4))
 Improving efficiency 
 ======================
 
-We now simulate some data where there is strong heterogenity such that
-we can improve the efficiency for censored survival data. The augmentation is 
+To illustrate how the efficiency can be improved using heterogenity in the data, we
+now simulate some data with strong heterogenity. The dynmamic augmentation is 
 a regression on the history  for each subject consisting of the specified terms 
 terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt)) or by simply
 specifying these directly.  This was developed in Cortese and Scheike (2022).
@@ -406,8 +403,9 @@ E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
 
-First we generate data that from a Ghosh-Lin model with $\beta=(-0.3,0.3)$ and the baseline given by base1, 
-this is done under the assumption that the death rate given covariates are on Cox form with baseline dr: 
+First we generate data that from a Ghosh-Lin model with regression coefficients 
+$\beta=(-0.3,0.3)$ and the baseline given by base1, this is done under the assumption that the death 
+rate given covariates is on Cox form with baseline dr: 
 
 ```{r}
 n <- 100
@@ -421,17 +419,17 @@ fz <- NULL
 rr <- mets:::simGLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
 rr <- cbind(rr,X[rr$id+1,])
 
- out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
- outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
 		cens.model=~strata(X1,X2))
- summary(out)$coef
- summary(outs)$coef
+summary(out)$coef
+summary(outs)$coef
 
- ## checking baseline
- par(mfrow=c(1,1))
- plot(out)
- plot(outs,add=TRUE,col=2)
- lines(scalecumhaz(base1,1),col=3,lwd=2)
+## checking baseline
+par(mfrow=c(1,1))
+plot(out)
+plot(outs,add=TRUE,col=2)
+lines(scalecumhaz(base1,1),col=3,lwd=2)
 ```
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
@@ -439,49 +437,51 @@ We note that for the extended censoring model we gain a little efficiency and th
 Also possible to do IPCW regression at fixed time-point
 
 ```{r}
- outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
-			cens.code=0,times=2000)
- outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
-		    cens.code=0,times=2000,cens.model=~strata(X1,X2))
- summary(outipcw)$coef
- summary(outipcws)$coef
+outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+		cens.code=0,times=2000)
+outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+	    cens.code=0,times=2000,cens.model=~strata(X1,X2))
+summary(outipcw)$coef
+summary(outipcws)$coef
 ```
 
-We can also do the Mao-Lin type composite outcome where we both count the cause 1 and deaths for example 
+We can also do the Mao-Lin type composite outcome where we both count the recurrent events (cause 1) and deaths (cause 3)
+for example 
 \begin{align*}
 E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 
 ```{r}
- out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		death.code=3,cens.code=0)
- summary(out)$coef
+summary(out)$coef
 ```
 
-Also demonstrate that this can be done with competing risks death (change some of the cause 3 deaths to cause 4)
+This can also be done with competing risks death 
 \begin{align*}
 E(w_1 N_1(t) + w_2 I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
 and with weights  $w_1,w_2$ that follow the causes, here 1 and 3. 
+We modify the data by changing some of the cause 3 deaths to cause 4
 
 ```{r}
- rr$binf <- rbinom(nrow(rr),1,0.5) 
- rr$statusDC <- rr$statusD
- rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
- rr$weight <- 1
- rr <- dtransform(rr,weight=2,statusDC==3)
+rr$binf <- rbinom(nrow(rr),1,0.5) 
+rr$statusDC <- rr$statusD
+rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
+rr$weight <- 1
+rr <- dtransform(rr,weight=2,statusDC==3)
 
- outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		 death.code=c(3,4),cens.code=0)
- summary(outC)$coef
+summary(outC)$coef
 
- outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
 		  death.code=c(3,4),cens.code=0,wcomp=c(1,2))
- summary(outCW)$coef
+summary(outCW)$coef
 
- plot(out,ylab="Mean composite")
- plot(outC,col=2,add=TRUE)
- plot(outCW,col=3,add=TRUE)
+plot(out,ylab="Mean composite")
+plot(outC,col=2,add=TRUE)
+plot(outCW,col=3,add=TRUE)
 ```
 
 Predictions and standard errors can be computed via the iid decompositions of the baseline and the regression coefficients. We illustrate this
@@ -495,17 +495,16 @@ GLprediid(baseiid,rr[1:5,])
 ```
 
 The Ghosh-Lin model can be made more efficient by the regression augmentation method.
- First computing the augmentation and then in a second step the augmented estimator (Cortese and Scheike (2023)): 
+First computing the augmentation and then in a second step the augmented estimator (Cortese and Scheike (2023)): 
 
 ```{r}
- outA  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+outA  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
 		 cens.code=0,augment.model=~Nt+X1+X2)
- summary(outA)$coef
+summary(outA)$coef
 ```
 
 We note that the simple augmentation improves the standard errors as expected. The data was generated assuming independence with
 previous number of events so it would suffice to augment only with the covariates. 
-
 
 Two-stage modelling 
 ====================
