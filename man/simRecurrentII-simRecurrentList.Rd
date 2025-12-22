@@ -64,9 +64,9 @@ simRecurrentII(
 Simulation of recurrent events data based on cumulative hazards
 }
 \details{
-Must give cumulative hazard of death and possibley two recurrent events. 
+Must give cumulative hazard of death and possibly two recurrent events. 
 Their dependence can be specified via random 
-effects but the two recurrent events need to share random effect, and can also be
+effects but the two recurrent events need to share the random effect, and can also be
 specified via zzr. 
 The terminal event may share this random effect (dependence=1) or not 
 (dependence=4) and can be specified via zzr.

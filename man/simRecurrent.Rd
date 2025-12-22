@@ -15,6 +15,18 @@ simRecurrent(
 )
 }
 \arguments{
+\item{n}{number of id's}
+
+\item{cumhaz}{cumulative hazard of recurrent events}
+
+\item{death.cumhaz}{cumulative hazard of death}
+
+\item{r1}{potential relative risk adjustment of rate}
+
+\item{rd}{potential relative risk adjustment of rate}
+
+\item{rc}{potential relative risk adjustment of rate}
+
 \item{...}{Additional arguments to simRecurrentList}
 }
 \description{
