@@ -47,7 +47,7 @@ We can estimate the marginal mean of the cumulative process
 \begin{align*}
 \nu(t) & = E ( {\cal U}(t) )  
 \end{align*}
-possibly for strata with standard errors based on the influence functions. 
+possibly for strata with standard errors based on the derived influence function. 
 
 We provide semi-parametric regression modelling using the  proportional model 
 \begin{align*}
@@ -85,8 +85,8 @@ keeps track of the competing terminal event.
 \draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (death);
 \end{tikzpicture}
 
-Regression modelling of this quantity is also possible using competing risks regression models, using for example, the 
-cifreg function of mets. 
+Regression modelling of this quantity is also possible using competing risks 
+regression models, using for example, the cifreg function of mets. 
 
 
 HF-action data
@@ -97,21 +97,21 @@ Considering the HF-action data we simulate a severity score for each event.
 
 ```{r}
 library(mets)
-     data(hfactioncpx12)
-     hf <- hfactioncpx12
-     hf$severity <- abs((5+rnorm(741)*2))[hf$id]
-     
-     proc_design <- mets:::proc_design
-     ## marginal mean using formula  
-     outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
-				 +marks(severity),hf,cause=1,death.code=2)
-     plot(outNZ,se=TRUE)
-     summary(outNZ,times=3) 
-     
-     outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
-			       cause=1,death.code=2)
-     plot(outN,se=TRUE,add=TRUE)
-     summary(outN,times=3) 
+data(hfactioncpx12)
+hf <- hfactioncpx12
+hf$severity <- abs((5+rnorm(741)*2))[hf$id]
+
+proc_design <- mets:::proc_design
+## marginal mean using formula  
+outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+			 +marks(severity),hf,cause=1,death.code=2)
+plot(outNZ,se=TRUE)
+summary(outNZ,times=3) 
+
+outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
+		       cause=1,death.code=2)
+plot(outN,se=TRUE,add=TRUE)
+summary(outN,times=3) 
 ```
 
 For comparison we also compute the IPCW estimates with and without marks at time 3, using the linear model, 
@@ -119,15 +119,15 @@ and note that they are identical. Standard errors are however based on different
 equivalent, and we note that they are very similar.
 
 ```{r}
-     outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
-			  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
-     summary(outNZ3)
-     head(iid(outNZ3))
+outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
+		  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
+summary(outNZ3)
+head(iid(outNZ3))
 
-     outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
-			 cens.model=~strata(treatment),model="lin")
-     summary(outN3)
-     head(iid(outN3))
+outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
+		 cens.model=~strata(treatment),model="lin")
+summary(outN3)
+head(iid(outN3))
 ```
 
 We also apply the semiparametric proportional cost model with IPCW adjustment: 
