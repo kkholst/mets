@@ -866,7 +866,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @name simRecurrentII
+##' @name simRecurrentII simRecurrentList
 ##' @aliases showfitsim covIntH1dM1IntH2dM2 squareintHdM simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
@@ -1110,16 +1110,9 @@ if (3 %in% which) {
 #' type=c("default","cox-cox","gl-cox"),id="id",
 #' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
 sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,
-                          n=1,
-                          data=NULL,
-                          type=c("default","cox-cox","gl-cox"),
-                          id="id",
-                          varz=1,
-                          share=1,
-                          cens=0.001,
-                          scale1=1,
-                          scaled=1,
-                          dependence=NULL,
+                          n=1, data=NULL, type=c("default","cox-cox","gl-cox"),
+                          id="id", varz=1, share=1, cens=0.001, scale1=1,
+                          scaled=1, dependence=NULL,
                           ...) {# {{{
 ## exp censoring default
 death <- NULL

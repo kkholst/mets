@@ -39,27 +39,28 @@ We here demonstrate how one can compute:
 
  * the marginal mean 
    * efficient marginal mean estimation with fast computation of standard errors
-   * works for large data
  * the Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
    * efficient regression augmentation of the Ghosh-Lin model
-   * works for large data
    * clusters can be specfied
    * allows a stratified baseline 
  * the variance of a recurrent events process
  * the probability of exceeding k events
- * the two-stage recurrent events model
+ * the two-stage recurrent events random effects model
 
 We also show how to improve the efficiency of recurrents events marginal mean. 
 
 In addition several tools can be used for simulating recurrent events and
 bivariate recurrent events data, also with a possible terminating event: 
 
- * recurrent events up to two causes and death, given rates of survivors and death on Cox form.
-   * frailty extenstions
+ * recurrent events with multiple 
+   * event types 
+   * Cox type rates 
+ * with a terminal event with possibly multiple causes of death
+   * Cox type rates 
+ * frailty extenstions
  * the Ghosh-Lin model when the survival rate is on Cox form.
    * frailty extenstions
- * The general illness death model with  cox models for all hazards. 
-
+ * The general illness death model with  Cox models for all hazards. 
 
 \begin{tikzpicture}[
     sharp corners=2pt,
@@ -111,10 +112,15 @@ We start by simulating some recurrent events data with two type of events with c
 
 * Dependence=0: The intensities can be independent.
 
-* Dependence=1:  We can one gamma distributed random effects $Z$.  Then the intensities are 
+* Dependence=1:  One gamma distributed random effects $Z$.  Then the intensities are 
     + $Z \lambda_1(t)$
     + $Z \lambda_2(t)$
     + $Z \lambda_D(t)$
+
+* Dependence=4:  One gamma distributed random effects $Z$.  Then the intensities are 
+    + $Z \lambda_1(t)$
+    + $Z \lambda_2(t)$
+    + $\lambda_D(t)$
 
 * Dependence=2: We can draw normally distributed random effects $Z_1,Z_2,Z_d$ were the variance (var.z) 
   and correlation can be specified (cor.mat).  Then the intensities are 
@@ -129,7 +135,7 @@ We start by simulating some recurrent events data with two type of events with c
     + $\tilde Z_2 \lambda_2(t)$
     + $\tilde Z_3 \lambda_D(t)$
 
- We return to how to run the different set-ups later and start by simulating independent processes. 
+We return to how to run the different set-ups later and start by simulating independent processes. 
 
 The key functions are 
 
@@ -138,7 +144,7 @@ The key functions are
  * simRecurrentII 
    * extended version with possibly multiple types of recurrent events (but rates can be 0) 
    * Allows Cox types rates with subject specific rates 
- * simRecurrentIII 
+ * simRecurrentList
    * lists are allowed for multiple events and cause of death (competing risks)
    * Allows Cox types rates with subject specific rates 
  * sim.recurrent to simulate from Cox-Cox  (marginals) or Ghosh-Lin-Cox
