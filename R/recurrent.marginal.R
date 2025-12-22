@@ -886,7 +886,6 @@ return(data)
 }# }}}
 
 ##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
-##' @inheritParams simRecurrentII
 ##' @inherit simRecurrentII examples author
 ##' @param n number of id's 
 ##' @param cumhaz  cumulative hazard of recurrent events 
