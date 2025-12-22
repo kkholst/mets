@@ -848,7 +848,6 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' dtable(rr,~death+status)
 ##'
 ##' ######################################################################
-##' ### simulating simple model that mimicks data 
 ##' ### now with two event types and second type has same rate as death rate
 ##' ######################################################################
 ##' set.seed(100)
@@ -857,7 +856,9 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' par(mfrow=c(2,2))
 ##' showfitsim(causes=2,rr,dr,base1,base4)
 ##'
-##' ## general case, 3 recurrent events and 2 causes of death
+##' ######################################################################
+##' ### now with three event types and two causes of death 
+##' ######################################################################
 ##' set.seed(100)
 ##' cumhaz <- list(base1,base1,base4)
 ##' drl <- list(dr,base4)
@@ -884,7 +885,6 @@ data <-     simRecurrentList(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
 		     max.recurrent=max.recurrent,...)
 return(data)
 }# }}}
-
 
 ##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
 ##' @inheritParams simRecurrentII 
