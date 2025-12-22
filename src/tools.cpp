@@ -1,5 +1,4 @@
 // [[Rcpp::interfaces(r, cpp)]]
-// [[Rcpp::depends(RcppArmadillo)]]
 
 #include "tools.h"
 #include <vector>
