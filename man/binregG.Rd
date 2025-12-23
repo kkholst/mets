@@ -31,6 +31,10 @@ b1 <- binreg(Event(time,cause)~age+tcell+platelet,bmt,cause=1,time=50)
 sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 summary(sb1)
 }
+\references{
+Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+29, 441–482.
+}
 \author{
 Thomas Scheike
 }

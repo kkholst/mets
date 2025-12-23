@@ -161,6 +161,11 @@ predict(cifdob,newdata)
 p1[1,1]/p2[1,1]
 
 }
+\references{
+Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+29, 441–482. 
+Scheike TH, Zhang MJ, Gerds TA (2008). “Predicting cumulative incidence probability by direct binomial regression.” Biometrika, 95(1), 205–220.
+}
 \author{
 Thomas Scheike
 }

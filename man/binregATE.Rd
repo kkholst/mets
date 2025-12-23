@@ -111,6 +111,10 @@ head(brs$riskG.iid)
 
 
 }
+\references{
+Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+29, 441–482.
+}
 \author{
 Thomas Scheike
 }

@@ -45,6 +45,10 @@
 ##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model
 ##' @param monotone if true then uses del link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)
 ##' @param ... Additional arguments to lower level funtions
+##' @references
+##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+##' 29, 441–482. 
+##' Scheike TH, Zhang MJ, Gerds TA (2008). “Predicting cumulative incidence probability by direct binomial regression.” Biometrika, 95(1), 205–220.
 ##' @author Thomas Scheike
 ##' @examples
 ##' library(mets)
@@ -1353,6 +1357,9 @@ if (length(dots)==0) {
 ##' @param typeATE "II" to censor augment  the estimating equation
 ##' @param ... Additional arguments to lower level funtions (binreg that fits outcome model)
 ##' @author Thomas Scheike
+##' @references
+##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+##' 29, 441–482. 
 ##' @examples
 ##' library(mets); data(bmt)
 ##' dfactor(bmt)  <-  ~.
@@ -2087,6 +2094,9 @@ if (!is.null(call.id)) {
 ##' @param Avalues values to compare for first covariate A, assumes that first variable is factor and take all levels
 ##' @param varname if given then averages for this variable, default is first variable
 ##' @author Thomas Scheike
+##' @references
+##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+##' 29, 441–482. 
 ##' @examples
 ##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
