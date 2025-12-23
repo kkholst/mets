@@ -94,6 +94,9 @@ rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30
 summary(rmc1)
 
 }
+\references{
+Scheike, T. and  Holst, K. K. Restricted mean time lost for survival and competing risks data using mets in R, WIP
+}
 \author{
 Thomas Scheike
 }

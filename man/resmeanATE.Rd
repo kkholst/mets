@@ -40,6 +40,9 @@ summary(out1)
 
 ratioATE(out,out1,h=function(x) log(x))
 }
+\references{
+Scheike, T. and  Holst, K. K. Restricted mean time lost for survival and competing risks data using mets in R, WIP
+}
 \author{
 Thomas Scheike
 }
