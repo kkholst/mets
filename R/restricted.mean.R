@@ -79,6 +79,8 @@
 ##' rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
 ##' summary(rmc1)
 ##' 
+##' @references 
+##' Scheike, T. and  Holst, K. K. Restricted mean time lost for survival and competing risks data using mets in R, WIP
 ##' @export
 ##' @aliases rmstIPCW resmeanIPCWold 
 resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
@@ -182,6 +184,8 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' summary(out1)
 ##' 
 ##' ratioATE(out,out1,h=function(x) log(x))
+##' @references 
+##' Scheike, T. and  Holst, K. K. Restricted mean time lost for survival and competing risks data using mets in R, WIP
 ##' @export
 ##' @aliases rmstATE ratioATE
 resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
