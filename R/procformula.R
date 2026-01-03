@@ -358,9 +358,10 @@ proc_design <- function(formula, data, ..., # nolint
     data <- as.data.frame(data)
   }
   dots <- substitute(list(...))
-  if ("subset" %in% names(dots)) stop(
-                                   "subset is not an allowed specials argument for `design`"
-                                 )
+  if ("subset" %in% names(dots)) {
+    stop("subset is not an allowed specials argument for `proc_design`")
+  }
+  formulaenv <- environment(formula)
   tt <- terms(formula, data = data, specials = specials)
   term.labels <- attr(tt, "term.labels") # predictors
 
@@ -403,10 +404,12 @@ proc_design <- function(formula, data, ..., # nolint
       }
       fst <- gsub("[\\+]*$", "", fst) # remove potential any trailing '+'
       formula <- as.formula(fst)
+      environment(formula) <- formulaenv
     }
   }
 
   formula0 <- formula
+  environment(formula0) <- formulaenv
   if (!response) formula0 <- formula(delete.response(terms(formula)))
   xlev <- levels
   xlev[["response_"]] <- NULL
@@ -418,6 +421,7 @@ proc_design <- function(formula, data, ..., # nolint
       fs <- reformulate(paste(sterm.list, collapse = " + "))
       fs <- update(formula0, fs)
     }
+    environment(formula) <- formulaenv
     mf <- model.frame(fs, data=data, na.action = na.action, ...)
   } else { # also extract design matrix
     mf <- model.frame(tt,
@@ -495,7 +499,8 @@ proc_design <- function(formula, data, ..., # nolint
   }
 
   if (design.matrix) {
-    x <- model.matrix(mf, data = data, xlev = xlev0)
+    x <- model.matrix(mf, data = structure(data, terms=NULL),
+                      xlev = xlev0)
     if (!intercept && has_intercept) {
       has_intercept <- FALSE
       x <- x[, -1, drop = FALSE]

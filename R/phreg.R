@@ -312,9 +312,10 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
  ## }}}
 
   res <- c(phreg01(X,entry,exit,status,id=id,strata=strata,offset=offset,
-		   weights=weights,strata.name=strata.name,marks=marks,...),
+                   weights=weights,strata.name=strata.name,marks=marks,...),
    list(call=cl,formula=formula,strata.pos=pos.strata,
-	cluster.pos=pos.cluster,n=length(exit)))
+        cluster.pos=pos.cluster,n=length(exit)
+       ))
   res$design <- des
   class(res) <- "phreg"
   
@@ -1849,6 +1850,11 @@ return(out)
 ###}# }}}
 ###
 
+##' @export
+model.frame.phreg <- function(formula, data = NULL, ...) {
+  if (is.null(data)) return(formula$design$data)
+  model.frame(formula$design$formula, data = data, ...)
+}
 
 ##' @export
 summary.predictphreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],np=10,...) {# {{{
