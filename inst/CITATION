@@ -23,7 +23,30 @@ textver2 <- paste(author2, " (", year2, "). ",
                 volume2, " (", number2 ,"), pp. ",
                 pages2, ". doi: ", doi2, sep="")
 
-citHeader("To cite 'mets' in publications use:")
+
+author3 <- "Thomas H. Scheike and Klaus K. Holst"
+year3 <- 2022
+journal3 <- "Annual Review of Statistics and Its Application"
+title3 <- "A Practical Guide to Family Studies with Lifetime Data"
+doi3 <- "10.1146/annurev-statistics-040120-024253"
+volume3 <- 9
+pages3 <- "47-69"
+textver3 <- paste(author3, " (", year3, "). ",
+                title3, ". ", journal3, " ",
+                volume3, ", pp. ",
+                pages3, ". doi: ", doi3, sep="")
+
+citHeader("To cite 'mets' in publications use one of the following references:")
+
+bibentry(bibtype = "Article",
+         title = title3,
+         author = author3,
+         year = year2,
+         volume = volume3,
+         pages = pages3,
+         journal = journal3,
+         doi = doi3,
+         textVersion = textver3)
 
 bibentry(bibtype = "Article",
          title = title1,
@@ -46,4 +69,4 @@ bibentry(bibtype = "Article",
          doi = doi2,
          textVersion = textver2)
 
-
+## citFooter("")
