@@ -31,8 +31,8 @@ install.packages("mets")
 
 The development version may be installed directly from github (requires
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on windows and
-[development tools](https://cran.r-project.org/bin/macosx/tools/)
-(+Xcode) for Mac OS X):
+[development tools](https://mac.r-project.org/tools/) (+Xcode) for Mac
+OS X):
 
 ``` r
 remotes::install_github("kkholst/mets", dependencies="Suggests")
@@ -48,6 +48,11 @@ remotes::install_github("kkholst/mets",ref="develop")
 
 To cite the `mets` package please use one of the following references
 
+> Thomas H. Scheike and Klaus K. Holst (2022). A Practical Guide to
+> Family Studies with Lifetime Data. Annual Review of Statistics and Its
+> Application 9, pp. 47-69. doi:
+> 10.1146/annurev-statistics-040120-024253
+
 > Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013).
 > Estimating heritability for cause specific mortality based on twin
 > studies. Lifetime Data Analysis.
@@ -59,6 +64,16 @@ To cite the `mets` package please use one of the following references
 > <http://dx.doi.org/10.1016/j.csda.2015.01.014>
 
 BibTeX:
+
+    @Article{,
+      title = {A Practical Guide to Family Studies with Lifetime Data},
+      author = {Thomas H. Scheike and Klaus K. Holst},
+      year = {2014},
+      volume = {9},
+      pages = {47-69},
+      journal = {Annual Review of Statistics and Its Application},
+      doi = {10.1146/annurev-statistics-040120-024253},
+    }
 
     @Article{,
       title={Estimating heritability for cause specific mortality based on twin studies},
@@ -338,9 +353,17 @@ restricted mean survival and stanardized treatment effects
 #>  Estimate      2.5%     97.5% 
 #> 0.8626365 0.6959347 1.0692695 
 #> 
+#> Average Treatment effect:  survival-difference (G-estimator) :
+#>       Estimate    Std.Err        2.5%     97.5%   P-value
+#> ps0 0.08981829 0.06292811 -0.03351854 0.2131551 0.1534889
+#> 
 #> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
+#> log-ratio: 
 #>       Estimate   Std.Err        2.5%     97.5%   P-value
 #> [ps0] 0.230711 0.1504459 -0.06415759 0.5255796 0.1251491
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 1.2594952 0.9378572 1.6914390
 
  sst <- survivalGtime(ss,bmt,n=50)
  plot(sst,type=c("survival","risk","survival.ratio")[1])
@@ -356,14 +379,14 @@ years lost at the different time horizons
 ``` r
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  
- rm1 <- resmean.phreg(out1,times=c(50,60))
+ rm1 <- resmean.phreg(out1, times=c(50))
  summary(rm1)
 #>                     strata times    rmean se.rmean    lower    upper years.lost
 #> tcell=0, platelet=0      0    50 20.48245 1.411055 17.89542 23.44348   29.51755
 #> tcell=0, platelet=1      1    50 28.33071 2.196175 24.33733 32.97934   21.66929
 #> tcell=1, platelet=0      2    50 22.74596 4.053717 16.04005 32.25544   27.25404
 #> tcell=1, platelet=1      3    50 26.11565 4.230688 19.01112 35.87517   23.88435
- par(mfrow=c(1,2))
+ par(mfrow=c(1, 2))
  plot(rm1,se=1)
  plot(rm1,years.lost=TRUE,se=1)
 ```
@@ -385,21 +408,21 @@ different strata
 ``` r
  summary(drm1)
 #> $estimate
-#>                       strata times    intF_1     intF_2 se.intF_1 se.intF_2
-#> tcell.0..platelet.0.4      0    50 21.367838  8.1497111 1.4766473 1.0945200
-#> tcell.0..platelet.1.4      1    50 12.979243  8.6900468 2.0475160 1.7124412
-#> tcell.1..platelet.0.4      2    50 12.645426 14.6086098 4.0899812 3.7302594
-#> tcell.1..platelet.1.4      3    50 11.809344 12.0750076 3.6737009 3.8902066
-#>                       total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
-#> tcell.0..platelet.0.4        29.517549   18.6611064    24.467172    6.2636056
-#> tcell.0..platelet.1.4        21.669290    9.5272967    17.681906    5.9059020
-#> tcell.1..platelet.0.4        27.254036    6.7084870    23.836494    8.8564043
-#> tcell.1..platelet.1.4        23.884352    6.4184533    21.728071    6.4217842
-#>                       upper_intF_2
-#> tcell.0..platelet.0.4    10.603763
-#> tcell.0..platelet.1.4    12.786686
-#> tcell.1..platelet.0.4    24.096854
-#> tcell.1..platelet.1.4    22.704875
+#>                     strata times   intF_1    intF_2 se.intF_1 se.intF_2
+#> tcell=0, platelet=0      0    50 21.36784  8.149711  1.476647  1.094520
+#> tcell=0, platelet=1      1    50 12.97924  8.690047  2.047516  1.712441
+#> tcell=1, platelet=0      2    50 12.64543 14.608610  4.089981  3.730259
+#> tcell=1, platelet=1      3    50 11.80934 12.075008  3.673701  3.890207
+#>                     total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
+#> tcell=0, platelet=0         29.51755    18.661106     24.46717     6.263606
+#> tcell=0, platelet=1         21.66929     9.527297     17.68191     5.905902
+#> tcell=1, platelet=0         27.25404     6.708487     23.83649     8.856404
+#> tcell=1, platelet=1         23.88435     6.418453     21.72807     6.421784
+#>                     upper_intF_2
+#> tcell=0, platelet=0     10.60376
+#> tcell=0, platelet=1     12.78669
+#> tcell=1, platelet=0     24.09685
+#> tcell=1, platelet=1     22.70487
 ```
 
 Computations are again done for all time horizons at once as illustrated
@@ -428,19 +451,19 @@ summary(fit)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell.f1 -0.108518  0.199557  0.089653  0.5866
+#> tcell.f1 -0.108497  0.199556  0.089653  0.5867
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> tcell.f1  0.89716 0.60675 1.3266
+#> tcell.f1  0.89718 0.60676 1.3266
 head(IC(fit))
 #>    tcell.f1
-#> 1 -1.639213
-#> 2 -1.669024
-#> 3 -1.749736
-#> 4 -1.745936
-#> 5 -1.625389
-#> 6 -1.793350
+#> 1 -1.639241
+#> 2 -1.669074
+#> 3 -1.749761
+#> 4 -1.745988
+#> 5 -1.625416
+#> 6 -1.793372
 ```
 
 ## Examples: Competing risks regression, Binomial Regression
@@ -459,27 +482,27 @@ summary(out)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.180332  0.126755 -0.428766  0.068103  0.1548
-#> tcell       -0.418194  0.345422 -1.095208  0.258820  0.2260
-#> platelet    -0.437668  0.240973 -0.909965  0.034630  0.0693
+#> (Intercept) -0.180371  0.126757 -0.428811  0.068068  0.1547
+#> tcell       -0.418682  0.345438 -1.095729  0.258364  0.2255
+#> platelet    -0.436959  0.240977 -0.909266  0.035349  0.0698
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.83499 0.65131 1.0705
-#> tcell        0.65823 0.33447 1.2954
-#> platelet     0.64554 0.40254 1.0352
+#> (Intercept)  0.83496 0.65128 1.0704
+#> tcell        0.65791 0.33430 1.2948
+#> platelet     0.64600 0.40282 1.0360
 head(IC(out))
-#>           [,1]     [,2]     [,3]
-#> [1,] -2.834135 1.633735 2.520232
-#> [2,] -2.834135 1.633735 2.520232
-#> [3,] -2.834135 1.633735 2.520232
-#> [4,] -2.834135 1.633735 2.520232
-#> [5,] -2.834135 1.633735 2.520232
-#> [6,] -2.834135 1.633735 2.520232
+#>           [,1]     [,2]    [,3]
+#> [1,] -2.834084 1.633524 2.52025
+#> [2,] -2.834084 1.633524 2.52025
+#> [3,] -2.834084 1.633524 2.52025
+#> [4,] -2.834084 1.633524 2.52025
+#> [5,] -2.834084 1.633524 2.52025
+#> [6,] -2.834084 1.633524 2.52025
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 #>        pred         se     lower     upper
-#> 1 0.3502366 0.04847386 0.2552278 0.4452453
-#> 2 0.2618851 0.06969063 0.1252915 0.3984787
+#> 1 0.3503890 0.04848653 0.2553554 0.4454226
+#> 2 0.2619201 0.06969710 0.1253138 0.3985265
 ```
 
 ## Examples: Competing risks regression, Fine-Gray/Logistic link
@@ -501,13 +524,13 @@ summary(or)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> platelet -0.454568  0.235415  0.187996  0.0535
-#> age       0.390178  0.097675  0.083636  0.0001
+#> platelet -0.454572  0.235415  0.187997  0.0535
+#> age       0.390181  0.097675  0.083636  0.0001
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
 #> platelet  0.63472 0.40013 1.0069
-#> age       1.47724 1.21986 1.7889
+#> age       1.47725 1.21987 1.7889
 par(mfrow=c(1,2))
  ## to see baseline 
 plot(or)
@@ -533,13 +556,13 @@ Similarly, the Fine-Gray model can be estimated using IPCW adjustment
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> platelet -0.424744  0.180772  0.187819  0.0188
-#> age       0.341964  0.079862  0.086284  0.0000
+#> platelet -0.424749  0.180772  0.187820  0.0188
+#> age       0.341971  0.079862  0.086284  0.0000
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> platelet  0.65394 0.45884 0.9320
-#> age       1.40771 1.20374 1.6462
+#> platelet  0.65393 0.45884 0.9320
+#> age       1.40772 1.20375 1.6462
 ## baselines 
 plot(fg)
 ```
@@ -559,12 +582,12 @@ plot(pfg,se=1)
 ## influence functions of regression coefficients
 head(iid(fg))
 #>         platelet           age
-#> [1,] 0.004953454  0.0001245448
-#> [2,] 0.005348468 -0.0022341780
-#> [3,] 0.006069240 -0.0087211028
-#> [4,] 0.006043149 -0.0084185511
-#> [5,] 0.004732076  0.0011839004
-#> [6,] 0.006331427 -0.0121683704
+#> [1,] 0.004953478  0.0001245648
+#> [2,] 0.005348496 -0.0022341772
+#> [3,] 0.006069271 -0.0087212019
+#> [4,] 0.006043180 -0.0084186443
+#> [5,] 0.004732097  0.0011839243
+#> [6,] 0.006331457 -0.0121685409
 ```
 
 and we can get standard errors for predictions based on the influence
@@ -575,8 +598,8 @@ used in the predict function)
 baseid <- iidBaseline(fg,time=40)
 FGprediid(baseid,nd)
 #>           pred     se-log     lower     upper
-#> [1,] 0.2787513 0.23977174 0.1742299 0.4459754
-#> [2,] 0.4506249 0.07265688 0.3908135 0.5195900
+#> [1,] 0.2787465 0.23977109 0.1742272 0.4459672
+#> [2,] 0.4506249 0.07265694 0.3908134 0.5195901
 ```
 
 further G-estimation can be done
@@ -596,14 +619,11 @@ further G-estimation can be done
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
-#>         Estimate  Std.Err       2.5%       97.5%    P-value
-#> [ps0] -0.4630779 0.221165 -0.8965534 -0.02960241 0.03627677
+#>        Estimate   Std.Err       2.5%       97.5%    P-value
+#> [ps0] -0.463091 0.2211651 -0.8965667 -0.02961528 0.03627159
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
-#> 0.6293436 0.4079734 0.9708314 
-#> 
-#> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
-#> NULL
+#> 0.6293354 0.4079679 0.9708190
 ```
 
 ## Examples: Marginal mean for recurrent events
@@ -729,6 +749,46 @@ GLprediid(baseid,dd)
 #> [2,] 1.429231 0.06660096 1.254329 1.628521
 ```
 
+and G-computation
+
+``` r
+ hfactioncpx12$age <- (50+rnorm(741)*4)[hfactioncpx12$id]
+
+ GLout <- recreg(Event(entry,time,status)~treatment+age,data=hfactioncpx12,cause=1,death.code=2)
+ summary(GLout)
+#> 
+#>     n events
+#>  2132   1391
+#> 
+#>  2132 clusters
+#> coeffients:
+#>              Estimate       S.E.    dU^-1/2 P-value
+#> treatment1 -0.1131085  0.0640898  0.0538154  0.0776
+#> age         0.0086223  0.0079803  0.0066607  0.2799
+#> 
+#> exp(coeffients):
+#>            Estimate    2.5%  97.5%
+#> treatment1  0.89305 0.78763 1.0126
+#> age         1.00866 0.99301 1.0246
+ summary(survivalG(GLout,hfactioncpx12,time=4))
+#> G-estimator :
+#>       Estimate Std.Err  2.5% 97.5%    P-value
+#> risk0    2.640  0.1203 2.404 2.876 1.067e-106
+#> risk1    2.358  0.1165 2.130 2.586  3.838e-91
+#> 
+#> Average Treatment effect: difference (G-estimator) :
+#>    Estimate Std.Err    2.5%   97.5% P-value
+#> p1  -0.2824  0.1597 -0.5953 0.03059 0.07699
+#> 
+#> Average Treatment effect: ratio (G-estimator) :
+#> log-ratio: 
+#>        Estimate    Std.Err       2.5%      97.5%    P-value
+#> [p1] -0.1131085 0.06408982 -0.2387222 0.01250527 0.07759015
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 0.8930538 0.7876336 1.0125838
+```
+
 ## Examples: Fixed time modelling for recurrent events
 
 We can fit a log-link regression model at 2 years for the expected
@@ -775,61 +835,61 @@ get these estimates via IPCW adjustment and then we can do regression
                          cens.model=~strata(platelet,tcell),model="lin")
  estimate(out)
 #>                        Estimate Std.Err  2.5% 97.5%   P-value
-#> inttcell=0, platelet=0    13.61  0.8314 11.98 15.24 3.338e-60
-#> inttcell=0, platelet=1    18.90  1.2693 16.42 21.39 3.643e-50
-#> inttcell=1, platelet=0    16.19  2.4056 11.48 20.91 1.671e-11
-#> inttcell=1, platelet=1    17.77  2.4531 12.96 22.58 4.368e-13
+#> inttcell=0, platelet=0    13.61  0.8314 11.98 15.24 3.453e-60
+#> inttcell=0, platelet=1    18.90  1.2694 16.42 21.39 3.717e-50
+#> inttcell=1, platelet=0    16.19  2.4057 11.48 20.91 1.678e-11
+#> inttcell=1, platelet=1    17.77  2.4532 12.96 22.58 4.391e-13
  head(iid(out))
 #>             [,1] [,2] [,3] [,4]
-#> [1,] -0.05340931    0    0    0
-#> [2,] -0.05342287    0    0    0
-#> [3,] -0.05343167    0    0    0
-#> [4,] -0.05341367    0    0    0
-#> [5,] -0.05342290    0    0    0
-#> [6,] -0.05341057    0    0    0
+#> [1,] -0.05341125    0    0    0
+#> [2,] -0.05342611    0    0    0
+#> [3,] -0.05343207    0    0    0
+#> [4,] -0.05341706    0    0    0
+#> [5,] -0.05342052    0    0    0
+#> [6,] -0.05341259    0    0    0
  ## same as 
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  rm1 <- resmean.phreg(out1,times=30)
  summary(rm1)
 #>                     strata times    rmean  se.rmean    lower    upper
-#> tcell=0, platelet=0      0    30 13.60681 0.8313556 12.07116 15.33781
-#> tcell=0, platelet=1      1    30 18.90421 1.2689962 16.57370 21.56243
-#> tcell=1, platelet=0      2    30 16.19493 2.4001354 12.11235 21.65357
-#> tcell=1, platelet=1      3    30 17.76902 2.4416127 13.57380 23.26086
+#> tcell=0, platelet=0      0    30 13.60584 0.8314012 12.07012 15.33695
+#> tcell=0, platelet=1      1    30 18.90350 1.2690639 16.57288 21.56188
+#> tcell=1, platelet=0      2    30 16.19410 2.4002390 12.11140 21.65306
+#> tcell=1, platelet=1      3    30 17.76830 2.4417528 13.57289 23.26053
 #>                     years.lost
-#> tcell=0, platelet=0   16.39319
-#> tcell=0, platelet=1   11.09579
-#> tcell=1, platelet=0   13.80507
-#> tcell=1, platelet=1   12.23098
+#> tcell=0, platelet=0   16.39416
+#> tcell=0, platelet=1   11.09650
+#> tcell=1, platelet=0   13.80590
+#> tcell=1, platelet=1   12.23170
  
  ## competing risks years-lost for cause 1  
  out1 <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
                        cens.model=~strata(platelet,tcell),model="lin")
  estimate(out1)
 #>                        Estimate Std.Err   2.5%  97.5%   P-value
-#> inttcell=0, platelet=0   12.102  0.8506 10.435 13.770 6.171e-46
-#> inttcell=0, platelet=1    6.883  1.1738  4.582  9.183 4.534e-09
-#> inttcell=1, platelet=0    7.259  2.3528  2.648 11.871 2.033e-03
-#> inttcell=1, platelet=1    5.779  2.0920  1.679  9.879 5.737e-03
+#> inttcell=0, platelet=0   12.103  0.8507 10.436 13.770 6.168e-46
+#> inttcell=0, platelet=1    6.883  1.1739  4.582  9.184 4.533e-09
+#> inttcell=1, platelet=0    7.260  2.3529  2.648 11.871 2.033e-03
+#> inttcell=1, platelet=1    5.779  2.0921  1.679  9.880 5.737e-03
  ## same as 
  drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
  summary(drm1)
 #> $estimate
 #>                     strata times    intF_1   intF_2 se.intF_1 se.intF_2
-#> tcell=0, platelet=0      0    30 12.102401 4.290792 0.8506248 0.6159844
-#> tcell=0, platelet=1      1    30  6.882501 4.213287 1.1737998 0.9054513
-#> tcell=1, platelet=0      2    30  7.259290 6.545780 2.3528203 1.9697958
-#> tcell=1, platelet=1      3    30  5.778981 6.451995 2.0919811 2.0810363
+#> tcell=0, platelet=0      0    30 12.103113 4.291051 0.8506728 0.6160195
+#> tcell=0, platelet=1      1    30  6.882894 4.213603 1.1738590 0.9055124
+#> tcell=1, platelet=0      2    30  7.259595 6.546309 2.3529175 1.9699198
+#> tcell=1, platelet=1      3    30  5.779287 6.452411 2.0920912 2.0811678
 #>                     total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
-#> tcell=0, platelet=0         16.39319    10.544945    13.889889     3.238466
-#> tcell=0, platelet=1         11.09579     4.926916     9.614294     2.764996
-#> tcell=1, platelet=0         13.80507     3.846005    13.701826     3.629215
-#> tcell=1, platelet=1         12.23098     2.842613    11.748563     3.428832
+#> tcell=0, platelet=0         16.39416    10.545569    13.890702     3.238664
+#> tcell=0, platelet=1         11.09650     4.927208     9.614821     2.765212
+#> tcell=1, platelet=0         13.80590     3.846168    13.702396     3.629546
+#> tcell=1, platelet=1         12.23170     2.842764    11.749182     3.429056
 #>                     upper_intF_2
-#> tcell=0, platelet=0     5.685067
-#> tcell=0, platelet=1     6.420183
-#> tcell=1, platelet=0    11.806200
-#> tcell=1, platelet=1    12.140648
+#> tcell=0, platelet=0     5.685405
+#> tcell=0, platelet=1     6.420645
+#> tcell=1, platelet=0    11.807030
+#> tcell=1, platelet=1    12.141421
 ```
 
 ## Examples: Average treatment effects (ATE) for survival or competing risks
@@ -847,46 +907,46 @@ probabilty of dying
 #> 
 #>  408 clusters
 #> coeffients:
-#>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.199016  0.130985 -0.455742  0.057711  0.1287
-#> tcell1      -0.637823  0.356674 -1.336891  0.061244  0.0737
-#> platelet    -0.344106  0.246039 -0.826333  0.138121  0.1619
-#> age          0.437369  0.107273  0.227117  0.647621  0.0000
+#>             Estimate  Std.Err     2.5%    97.5% P-value
+#> (Intercept) -0.19901  0.13098 -0.45574  0.05771  0.1287
+#> tcell1      -0.63788  0.35668 -1.33696  0.06120  0.0737
+#> platelet    -0.34411  0.24604 -0.82634  0.13811  0.1619
+#> age          0.43737  0.10727  0.22712  0.64762  0.0000
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
 #> (Intercept)  0.81954 0.63398 1.0594
-#> tcell1       0.52844 0.26266 1.0632
+#> tcell1       0.52841 0.26264 1.0631
 #> platelet     0.70885 0.43765 1.1481
-#> age          1.54863 1.25498 1.9110
+#> age          1.54862 1.25497 1.9110
 #> 
 #> Average Treatment effects (G-formula) :
 #>             Estimate    Std.Err       2.5%      97.5% P-value
-#> treat0     0.4288008  0.0275150  0.3748723  0.4827293  0.0000
-#> treat1     0.2898584  0.0659036  0.1606897  0.4190270  0.0000
-#> treat:1-0 -0.1389424  0.0717742 -0.2796172  0.0017323  0.0529
+#> treat0     0.4288003  0.0275149  0.3748722  0.4827284  0.0000
+#> treat1     0.2898471  0.0659033  0.1606789  0.4190153  0.0000
+#> treat:1-0 -0.1389532  0.0717737 -0.2796272  0.0017208  0.0529
 #> 
 #> Average Treatment effects (double robust) :
 #>            Estimate   Std.Err      2.5%     97.5% P-value
-#> treat0     0.428212  0.027617  0.374084  0.482340  0.0000
-#> treat1     0.250349  0.064792  0.123360  0.377338  0.0001
-#> treat:1-0 -0.177863  0.070147 -0.315349 -0.040377  0.0112
+#> treat0     0.428211  0.027617  0.374084  0.482339  0.0000
+#> treat1     0.250336  0.064792  0.123346  0.377325  0.0001
+#> treat:1-0 -0.177876  0.070147 -0.315361 -0.040390  0.0112
  head(brs$riskDR.iid)
 #>          iidriska      iidriska
-#> [1,] -0.001159045 -3.527789e-05
-#> [2,] -0.001201110  7.610120e-05
-#> [3,] -0.001326536  3.362024e-04
-#> [4,] -0.001320395  3.249943e-04
-#> [5,] -0.001140793 -9.098499e-05
-#> [6,] -0.001398310  4.597376e-04
+#> [1,] -0.001159043 -3.524810e-05
+#> [2,] -0.001201108  7.613126e-05
+#> [3,] -0.001326534  3.362333e-04
+#> [4,] -0.001320393  3.250252e-04
+#> [5,] -0.001140791 -9.095525e-05
+#> [6,] -0.001398307  4.597688e-04
  head(brs$riskG.iid)
 #>        riskGa.iid    riskGa.iid
-#> [1,] -0.001190761 -0.0001528457
-#> [2,] -0.001242466  0.0001089006
-#> [3,] -0.001355318  0.0006916253
-#> [4,] -0.001350731  0.0006677088
-#> [5,] -0.001164524 -0.0002838631
-#> [6,] -0.001404172  0.0009472093
+#> [1,] -0.001190759 -0.0001528426
+#> [2,] -0.001242465  0.0001088968
+#> [3,] -0.001355317  0.0006916069
+#> [4,] -0.001350729  0.0006676909
+#> [5,] -0.001164523 -0.0002838563
+#> [6,] -0.001404170  0.0009471848
 ```
 
 or the the restricted mean survival or years-lost to cause 1
@@ -900,43 +960,43 @@ or the the restricted mean survival or years-lost to cause 1
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  2.852932  0.062466  2.730501  2.975363  0.0000
-#> tcell1       0.021536  0.122859 -0.219264  0.262335  0.8609
-#> platelet     0.303304  0.090722  0.125493  0.481115  0.0008
+#> (Intercept)  2.852872  0.062472  2.730429  2.975315  0.0000
+#> tcell1       0.021472  0.122886 -0.219381  0.262325  0.8613
+#> platelet     0.303325  0.090731  0.125495  0.481155  0.0008
 #> 
 #> exp(coeffients):
 #>             Estimate     2.5%   97.5%
-#> (Intercept) 17.33854 15.34057 19.5967
-#> tcell1       1.02177  0.80311  1.3000
-#> platelet     1.35433  1.13371  1.6179
+#> (Intercept) 17.33750 15.33947 19.5958
+#> tcell1       1.02170  0.80302  1.2999
+#> platelet     1.35435  1.13371  1.6179
 #> 
 #> Average Treatment effects (G-formula) :
 #>           Estimate  Std.Err     2.5%    97.5% P-value
-#> treat0    19.26592  0.95907 17.38617 21.14566  0.0000
-#> treat1    19.68532  2.22765 15.31920 24.05143  0.0000
-#> treat:1-0  0.41940  2.41046 -4.30502  5.14382  0.8619
+#> treat0    19.26491  0.95910 17.38511 21.14472  0.0000
+#> treat1    19.68305  2.22794 15.31637 24.04973  0.0000
+#> treat:1-0  0.41813  2.41074 -4.30684  5.14310  0.8623
 #> 
 #> Average Treatment effects (double robust) :
 #>           Estimate  Std.Err     2.5%    97.5% P-value
-#> treat0    19.28496  0.95789 17.40754 21.16238  0.0000
-#> treat1    20.34976  2.54072 15.37004 25.32949  0.0000
-#> treat:1-0  1.06480  2.70943 -4.24558  6.37519  0.6943
+#> treat0    19.28397  0.95792 17.40649 21.16146  0.0000
+#> treat1    20.34809  2.54086 15.36811 25.32808  0.0000
+#> treat:1-0  1.06412  2.70957 -4.24654  6.37478  0.6945
  head(out$riskDR.iid)
 #>         iidriska    iidriska
-#> [1,] -0.05142919 0.005889929
-#> [2,] -0.05143849 0.005889929
-#> [3,] -0.05144453 0.005889929
-#> [4,] -0.05143218 0.005889929
-#> [5,] -0.05143852 0.005889929
-#> [6,] -0.05143006 0.005889929
+#> [1,] -0.05143041 0.005890787
+#> [2,] -0.05144061 0.005890787
+#> [3,] -0.05144470 0.005890787
+#> [4,] -0.05143440 0.005890787
+#> [5,] -0.05143678 0.005890787
+#> [6,] -0.05143133 0.005890787
  head(out$riskG.iid)
 #>       riskGa.iid  riskGa.iid
-#> [1,] -0.05185661 -0.01866232
-#> [2,] -0.05186599 -0.01866507
-#> [3,] -0.05187208 -0.01866686
-#> [4,] -0.05185962 -0.01866320
-#> [5,] -0.05186601 -0.01866508
-#> [6,] -0.05185748 -0.01866257
+#> [1,] -0.05185784 -0.01866183
+#> [2,] -0.05186812 -0.01866485
+#> [3,] -0.05187225 -0.01866606
+#> [4,] -0.05186186 -0.01866301
+#> [5,] -0.05186425 -0.01866372
+#> [6,] -0.05185876 -0.01866211
 
  out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
                     treat.model=tcell~platelet)
@@ -947,27 +1007,27 @@ or the the restricted mean survival or years-lost to cause 1
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  2.806125  0.069617  2.669677  2.942572  0.0000
-#> tcell1      -0.374420  0.247750 -0.860000  0.111161  0.1307
-#> platelet    -0.491637  0.164933 -0.814900 -0.168375  0.0029
+#> (Intercept)  2.806167  0.069617  2.669721  2.942614  0.0000
+#> tcell1      -0.374457  0.247756 -0.860051  0.111137  0.1307
+#> platelet    -0.491638  0.164932 -0.814899 -0.168377  0.0029
 #> 
 #> exp(coeffients):
 #>             Estimate     2.5%   97.5%
-#> (Intercept) 16.54567 14.43531 18.9646
-#> tcell1       0.68769  0.42316  1.1176
+#> (Intercept) 16.54638 14.43594 18.9654
+#> tcell1       0.68766  0.42314  1.1175
 #> platelet     0.61162  0.44268  0.8450
 #> 
 #> Average Treatment effects (G-formula) :
 #>           Estimate  Std.Err     2.5%    97.5% P-value
-#> treat0    14.52969  0.95687 12.65426 16.40512   0.000
-#> treat1     9.99190  2.37781  5.33148 14.65232   0.000
-#> treat:1-0 -4.53779  2.57475 -9.58420  0.50862   0.078
+#> treat0    14.53031  0.95690 12.65481 16.40581   0.000
+#> treat1     9.99195  2.37789  5.33137 14.65253   0.000
+#> treat:1-0 -4.53836  2.57483 -9.58494  0.50822   0.078
 #> 
 #> Average Treatment effects (double robust) :
 #>             Estimate    Std.Err       2.5%      97.5% P-value
-#> treat0     14.511634   0.957828  12.634326  16.388943  0.0000
-#> treat1      9.361845   2.416703   4.625195  14.098495  0.0001
-#> treat:1-0  -5.149790   2.597556 -10.240906  -0.058673  0.0474
+#> treat0     14.512256   0.957862  12.634880  16.389632  0.0000
+#> treat1      9.362018   2.416771   4.625234  14.098802  0.0001
+#> treat:1-0  -5.150238   2.597631 -10.241501  -0.058975  0.0474
 ```
 
 Here event is 0/1 thus leading to restricted mean and cause taking the
@@ -1012,15 +1072,15 @@ summary(dd)
 #>   [treatment0] - [treatment1] = 0 
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
-#>            Estimate Std.Err   2.5%  97.5%   P-value
-#> treatment0   0.8457 0.05264 0.7425 0.9488 4.411e-58
-#> treatment1   0.7555 0.05433 0.6490 0.8619 5.963e-44
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> p1   0.8457 0.05264 0.7425 0.9488 4.411e-58
+#> p2   0.7555 0.05433 0.6490 0.8619 5.963e-44
 #>  
-#>                           Estimate Std.Err     2.5%  97.5% P-value
-#> [treatment0] - [treat....  0.09022 0.07565 -0.05805 0.2385   0.233
+#>             Estimate Std.Err     2.5%  97.5% P-value
+#> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233
 #> 
 #>  Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
+#>   [p1] - [p2] = 0 
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err   2.5%  97.5%   P-value
@@ -1060,15 +1120,15 @@ summary(dd,type="log")
 #>   [treatment0] - [treatment1] = 0 
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
-#>            Estimate Std.Err    2.5%    97.5%   P-value
-#> treatment0  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
-#> treatment1  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
+#>    Estimate Std.Err    2.5%    97.5%   P-value
+#> p1  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
+#> p2  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
 #>  
-#>                           Estimate Std.Err     2.5%  97.5% P-value
-#> [treatment0] - [treat....   0.1128 0.09511 -0.07361 0.2992  0.2356
+#>             Estimate Std.Err     2.5%  97.5% P-value
+#> [p1] - [p2]   0.1128 0.09511 -0.07361 0.2992  0.2356
 #> 
 #>  Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
+#>   [p1] - [p2] = 0 
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err    2.5%   97.5%   P-value

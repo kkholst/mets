@@ -28,14 +28,14 @@ knitr::opts_chunk$set(
 # Multivariate Event Times (`mets`) <img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="mets website">
 
  Implementation of various statistical models for multivariate
-    event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
-    cumulative incidence models <doi:10.1002/sim.6016>, and  bivariate random
-    effects probit models (Liability models) <doi:10.1016/j.csda.2015.01.014>.
-    Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
-    Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
-    Restricted mean survival time regression and years lost for competing risks. 
-    Average treatment effects and G-computation.  All functions can be used with
-    clusters and will work for large data. 
+ event history data <doi:10.1007/s10985-013-9244-x>. Including multivariate
+ cumulative incidence models <doi:10.1002/sim.6016>, and  bivariate random
+ effects probit models (Liability models) <doi:10.1016/j.csda.2015.01.014>.
+ Modern methods for survival analysis, including regression modelling (Cox, Fine-Gray, 
+ Ghosh-Lin, Binomial regression) with fast computation of influence functions. 
+ Restricted mean survival time regression and years lost for competing risks. 
+ Average treatment effects and G-computation.  All functions can be used with
+ clusters and will work for large data. 
 
 ## Installation
 ```{r load, echo=FALSE, results=FALSE}
@@ -48,7 +48,7 @@ install.packages("mets")
 ```
 
 The development version may be installed directly from github
-(requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on windows and [development tools](https://cran.r-project.org/bin/macosx/tools/) (+Xcode) for Mac OS
+(requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on windows and [development tools](https://mac.r-project.org/tools/) (+Xcode) for Mac OS
 X):
 
 
@@ -68,6 +68,10 @@ remotes::install_github("kkholst/mets",ref="develop")
 
 To cite the `mets` package please use one of the following references
 
+> Thomas H. Scheike and Klaus K. Holst (2022). A Practical Guide to
+> Family Studies with Lifetime Data. Annual Review of Statistics and
+> Its Application 9, pp. 47-69. doi: 10.1146/annurev-statistics-040120-024253
+
 > Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013).
 > Estimating heritability for cause specific mortality based on twin studies.
 > Lifetime Data Analysis. <http://dx.doi.org/10.1007/s10985-013-9244-x>
@@ -77,6 +81,16 @@ To cite the `mets` package please use one of the following references
 > Computational Statistics and Data Analysis. <http://dx.doi.org/10.1016/j.csda.2015.01.014>
 
 BibTeX:
+
+    @Article{,
+      title = {A Practical Guide to Family Studies with Lifetime Data},
+      author = {Thomas H. Scheike and Klaus K. Holst},
+      year = {2014},
+      volume = {9},
+      pages = {47-69},
+      journal = {Annual Review of Statistics and Its Application},
+      doi = {10.1146/annurev-statistics-040120-024253},
+    }
 
     @Article{,
       title={Estimating heritability for cause specific mortality based on twin studies},
@@ -219,9 +233,9 @@ time horizons
 ```{r}
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  
- rm1 <- resmean.phreg(out1,times=50)
+ rm1 <- resmean.phreg(out1, times=c(50))
  summary(rm1)
- par(mfrow=c(1,2))
+ par(mfrow=c(1, 2))
  plot(rm1,se=1)
  plot(rm1,years.lost=TRUE,se=1)
 ```

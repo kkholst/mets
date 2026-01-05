@@ -1,6 +1,6 @@
 R ?= /usr/bin/env R
 
-default: run
+default: install
 
 install:
 	@$(R) -q -e "devtools::install()"
@@ -26,6 +26,10 @@ test-loadall:
 slowtest:
 	@$(R) -q -e 'library("mets"); tinytest::run_test_dir("inst/slowtest")'
 
+readme:
+	@$(R) -q -e 'rmarkdown::render("inst/README.Rmd")'
+	cp inst/README.md README.md
+
 testall: test slowtest
 
 vignette:
@@ -35,7 +39,7 @@ init: doc
 	@$(R) -q -e "Rcpp::compileAttributes()"
 
 v:
-	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
+	@$(R') -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
 
 roxy: doc
 
