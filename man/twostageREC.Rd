@@ -67,5 +67,5 @@ Fittting of Two-stage recurrent events random effects model based on Cox/Cox or 
 effects model fore recurrent events with terminal  event. Marginal models fitted first and given to twostageREC function.
 }
 \references{
-Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
+Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear
 }

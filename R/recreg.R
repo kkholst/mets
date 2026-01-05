@@ -1815,7 +1815,7 @@ boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsi
 ##' @param derivmethod method for numerical derivative
 ##' @param ... arguments for 
 ##' @references 
-##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
+##' Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear
 ##' @export
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=NULL,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 
@@ -2015,7 +2015,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 
 
     ## default is simple identity 
-###    if (is.null(fnu)) { fw <- function(x) 1/(1+exp(x)); Dfw <- function(x) -exp(x)/(1+exp(x))^2;} else { 
+###    if (is.null(fnu)) { fw <- function(x) 1/(1+exp(-x)); Dfw <- function(x) -exp(-x)/(1+exp(-x))^2;} else { 
    if (is.null(fnu)) { fw <- function(x) x; Dfw <- function(x) 1;} else { fw <- fnu[[1]]; Dfw <- fnu[[2]]; } 
    nudes <- theta.des  
    p <- ncol(theta.des)
