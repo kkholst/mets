@@ -183,7 +183,8 @@ dby <- function(data,
         } else {
             expr <- fun_
         }
-        .ApplyBy2(INPUT,ID,F=expr,Env=env,Argument="x",Columnwise=COLUMN)$res
+        x <- .ApplyBy2(INPUT, ID, F = expr, Env = env, Argument = "x", Columnwise = COLUMN)
+        return(structure(x$res, clustersize = x$clustersize))
     })
     res <- Reduce(cbind,resl)
     } else {
