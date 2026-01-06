@@ -428,7 +428,7 @@ estimate.phreg <- function(x, ..., time = NULL, baseline.args = list()) {
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
   if (!is.null(time)) {
     iid <- iidBaseline(x, time = time, ...)
-    res <- iid$base.iid * NROW(iid$base.iid)
+    res <- with(iid, base.iid * NROW(base.iid))
     attr(res, "strata.level") <- iid$strata.level
     attr(res, "coef") <- iid$cumhaz.time
     attr(res, "time") <- time

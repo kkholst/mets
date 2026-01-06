@@ -538,7 +538,7 @@ Gcj <- NULL
 
 ## Fitting all models with augmentation terms 
 if (fit0$p>0) {
-coefMarg <- estimate(fit0,vcov=fit0$var,level=level)$coefmat
+coefMarg <- estimate(coef = coef(fit0), vcov = fit0$var, level = level)$coefmat
 var.names <- rownames(coefMarg)
 rownames(coefMarg) <- paste("Marginal",rownames(coefMarg),sep="-")
 coefs <- coefMarg
