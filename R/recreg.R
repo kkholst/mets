@@ -931,15 +931,16 @@ GLprediid <- function(...)
 }
 
 ##' @export
-IC.recreg <- function(x,time=NULL,...) {
-	if (!is.null(time)) {
-		res <- iidBaseline(x,time=time,...)$base.iid
-		return(res*NROW(res))
-	}
-	res <- with(x, iid * NROW(iid))
-	return(res)
+IC.recreg <- function(x, time = NULL, ..., wwww) {
+    if (!is.null(time)) {
+        iid <- IC.phreg(x, time = time, ...)
+        return(iid)
+    }
+    if (is.null(x$iid)) stop("supply 'time' argument")
+    res <- with(x, iid * NROW(iid))
+    attr(res, "coef") <- coef(x)
+    return(res)
 }
-
 
 ##' @export
 plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { #

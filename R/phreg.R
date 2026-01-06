@@ -417,11 +417,23 @@ return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=cl
 ###{{{ iid & Robust variances
 
 ##' @export
+estimate.phreg <- function(x, ..., time = NULL, baseline.args = list()) {
+  ic <- do.call(IC, c(list(x, time = time), baseline.args))
+  cc <- attr(ic, "coef")
+  if (is.null(cc)) cc <- coef(x)
+  lava::estimate(coef=cc, IC = ic, ...)
+}
+
+##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
-    if (!is.null(time)) {
-        res <- iidBaseline(x, time = time,...)$base.iid
-        return(res * NROW(res))
-    }
+  if (!is.null(time)) {
+    iid <- iidBaseline(x, time = time, ...)
+    res <- iid$base.iid * NROW(iid$base.iid)
+    attr(res, "strata.level") <- iid$strata.level
+    attr(res, "coef") <- iid$cumhaz.time
+    attr(res, "time") <- time
+    return(res)
+  }
     classes1 <- "mlogit"
     if ((length(class(x)) == 1) || inherits(x, classes1)) {
         invhess <- -solve(x$hessian)
