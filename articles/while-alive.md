@@ -50,15 +50,15 @@ summary(dd)
 #>   [treatment0] - [treatment1] = 0 
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
-#>            Estimate Std.Err   2.5%  97.5%   P-value
-#> treatment0   0.8457 0.05264 0.7425 0.9488 4.411e-58
-#> treatment1   0.7555 0.05433 0.6490 0.8619 5.963e-44
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> p1   0.8457 0.05264 0.7425 0.9488 4.411e-58
+#> p2   0.7555 0.05433 0.6490 0.8619 5.963e-44
 #>  
-#>                           Estimate Std.Err     2.5%  97.5% P-value
-#> [treatment0] - [treat....  0.09022 0.07565 -0.05805 0.2385   0.233
+#>             Estimate Std.Err     2.5%  97.5% P-value
+#> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233
 #> 
 #>  Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
+#>   [p1] - [p2] = 0 
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err   2.5%  97.5%   P-value
@@ -98,15 +98,15 @@ summary(dd,type="log")
 #>   [treatment0] - [treatment1] = 0 
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
-#>            Estimate Std.Err    2.5%    97.5%   P-value
-#> treatment0  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
-#> treatment1  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
+#>    Estimate Std.Err    2.5%    97.5%   P-value
+#> p1  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
+#> p2  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
 #>  
-#>                           Estimate Std.Err     2.5%  97.5% P-value
-#> [treatment0] - [treat....   0.1128 0.09511 -0.07361 0.2992  0.2356
+#>             Estimate Std.Err     2.5%  97.5% P-value
+#> [p1] - [p2]   0.1128 0.09511 -0.07361 0.2992  0.2356
 #> 
 #>  Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
+#>   [p1] - [p2] = 0 
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err    2.5%   97.5%   P-value
@@ -181,17 +181,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

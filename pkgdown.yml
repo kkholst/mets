@@ -10,6 +10,7 @@ articles:
   binreg: binreg.html
   cifreg: cifreg.html
   cooking-survival-data: cooking-survival-data.html
+  cumulative-cost: cumulative-cost.html
   glm-utility: glm-utility.html
   haplo-discrete-ttp: haplo-discrete-ttp.html
   interval-discrete-survival: interval-discrete-survival.html
@@ -23,7 +24,7 @@ articles:
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
   while-alive: while-alive.html
-last_built: 2025-11-17T09:48Z
+last_built: 2026-01-06T10:16Z
 urls:
   reference: http://kkholst.github.io/mets/reference
   article: http://kkholst.github.io/mets/articles

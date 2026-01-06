@@ -41,6 +41,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)
 data(bmt)
 bmt$cluster <- sample(1:100,408,replace=TRUE)
 out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)

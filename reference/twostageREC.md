@@ -109,5 +109,5 @@ twostageREC(
 
 ## References
 
-Scheike (2025), Two-stage recurrent events random effects models, LIDA,
+Scheike (2026), Two-stage recurrent events random effects models, LIDA,
 to appear

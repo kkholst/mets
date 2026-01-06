@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -185,6 +186,14 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate    2.5%  97.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> treatment1  0.89547 0.76754 1.0447</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">gl</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      treatment1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1.266428e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -6.112340e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2.885192e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1.308207e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  5.404664e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2.229380e-03</span>
 <span class="r-in"><span><span class="va">pgl</span> <span class="op">&lt;-</span> <span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">gl</span>,<span class="va">dd</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pgl</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="recreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -206,6 +215,16 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span> treatment1  0.89627 0.76815 1.0458</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">glss</span> <span class="op">&lt;-</span> <span class="fu">recreg</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">hf</span>,</span></span>
+<span class="r-in"><span>cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">glss</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     n events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2132   1391</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">glss</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="recreg-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## IPCW at 2 years </span></span></span>
 <span class="r-in"><span><span class="va">ll2</span> <span class="op">&lt;-</span> <span class="fu">recregIPCW</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">hf</span>,</span></span>
 <span class="r-in"><span>cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span>,time<span class="op">=</span><span class="fl">2</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -226,6 +245,24 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ll2i</span> <span class="op">&lt;-</span> <span class="fu">recregIPCW</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">hf</span>,</span></span>
+<span class="r-in"><span>cause<span class="op">=</span><span class="fl">1</span>,death.code<span class="op">=</span><span class="fl">2</span>,time<span class="op">=</span><span class="fl">2</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">treatment</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ll2i</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    n events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  741   1052</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  741 clusters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate  Std.Err     2.5%    97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment0 0.452257 0.060901 0.332893 0.571621       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment1 0.373909 0.070972 0.234806 0.513013       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate   2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment0   1.5719 1.3950 1.7711</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment1   1.4534 1.2647 1.6703</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

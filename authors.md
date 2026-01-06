@@ -11,6 +11,20 @@
 Source:
 [`inst/CITATION`](https://github.com/kkholst/mets/blob/main/inst/CITATION)
 
+Thomas H. Scheike and Klaus K. Holst (2022). A Practical Guide to Family
+Studies with Lifetime Data. Annual Review of Statistics and Its
+Application 9, pp. 47-69. doi: 10.1146/annurev-statistics-040120-024253
+
+    @Article{,
+      title = {A Practical Guide to Family Studies with Lifetime Data},
+      author = {Thomas H. Scheike and Klaus K. Holst},
+      year = {2014},
+      volume = {9},
+      pages = {47-69},
+      journal = {Annual Review of Statistics and Its Application},
+      doi = {10.1146/annurev-statistics-040120-024253},
+    }
+
 Klaus K. Holst and Thomas H. Scheike and Jacob B. Hjelmborg (2016). The
 Liability Threshold Model for Censored Twin Data. Computational
 Statistics and Data Analysis 93, pp. 324-335. doi:

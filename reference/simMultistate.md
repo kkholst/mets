@@ -15,12 +15,14 @@ simMultistate(
   rr2 = NULL,
   rd = NULL,
   rd2 = NULL,
+  rrc = NULL,
   gap.time = FALSE,
   max.recurrent = 100,
   dependence = 0,
   var.z = 0.22,
   cor.mat = NULL,
   cens = NULL,
+  extend = TRUE,
   ...
 )
 ```
@@ -63,6 +65,10 @@ simMultistate(
 
   relative risk adjustment for death.cumhaz2
 
+- rrc:
+
+  relative risk adjustment for censoring
+
 - gap.time:
 
   if true simulates gap-times with specified cumulative hazard
@@ -93,6 +99,10 @@ simMultistate(
 
   rate of censoring exponential distribution
 
+- extend:
+
+  to extend hazards to max-time
+
 - ...:
 
   Additional arguments to lower level funtions
@@ -113,6 +123,7 @@ Thomas Scheike
 ########################################
 ## getting some rates to mimick 
 ########################################
+library(mets)
 data(CPH_HPN_CRBSI)
 dr <- CPH_HPN_CRBSI$terminal
 base1 <- CPH_HPN_CRBSI$crbsi 
@@ -120,15 +131,17 @@ base4 <- CPH_HPN_CRBSI$mechanical
 dr2 <- scalecumhaz(dr,1.5)
 cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
-iddata <- simMultistate(1000,base1,base1,dr,dr2,cens=cens)
+iddata <- simMultistate(100,base1,base1,dr,dr2,cens=cens)
 dlist(iddata,.~id|id<3,n=0)
 #> id: 1
-#>      time status entry death from to start    stop
-#> 1 295.152      3     0     1    1  3     0 295.152
+#>   entry     time status rr death from to start     stop
+#> 1     0 170.1568      3  1     1    1  3     0 170.1568
 #> ------------------------------------------------------------ 
 #> id: 2
-#>       time status entry death from to start     stop
-#> 2 296.3073      3     0     1    1  3     0 296.3073
+#>         entry      time status rr death from to     start      stop
+#> 2      0.0000  124.5735      2  1     0    1  2    0.0000  124.5735
+#> 101  124.5735 1055.3495      1  1     0    2  1  124.5735 1055.3495
+#> 171 1055.3495 1143.6886      3  1     1    1  3 1055.3495 1143.6886
  
 ### estimating rates from simulated data  
 c0 <- phreg(Surv(start,stop,status==0)~+1,iddata)
@@ -137,25 +150,16 @@ c1 <- phreg(Surv(start,stop,status==1)~+1,subset(iddata,from==2))
 c2 <- phreg(Surv(start,stop,status==2)~+1,subset(iddata,from==1))
 ###
 par(mfrow=c(2,3))
-bplot(c0)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
+plot(c0)
 lines(cens,col=2) 
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
-bplot(c3,main="rates 1-> 3 , 2->3")
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
+plot(c3,main="rates 1-> 3 , 2->3")
 lines(dr,col=1,lwd=2)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
 lines(dr2,col=2,lwd=2)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
 ###
-bplot(c1,main="rate 1->2")
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
+plot(c1,main="rate 1->2")
 lines(base1,lwd=2)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
 ###
-bplot(c2,main="rate 2->1")
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
+plot(c2,main="rate 2->1")
 lines(base1,lwd=2)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
  
 ```

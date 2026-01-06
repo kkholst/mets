@@ -65,6 +65,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)
 chaz <-  c(0,1,1.5,2,2.1)
 breaks <- c(0,10,   20,  30,   40)
 cumhaz <- cbind(breaks,chaz)

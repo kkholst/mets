@@ -30,6 +30,7 @@ assumptiosn that the stratified Cox is correct"><meta property="og:image" conten
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -109,12 +110,8 @@ assumptiosn that the stratified Cox is correct</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">gofG.phreg</span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>number of rows of result is not a multiple of vector length (arg 2)</span>
 <span class="r-in"><span><span class="fu">gofG.phreg</span><span class="op">(</span><span class="va">m2</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>number of rows of result is not a multiple of vector length (arg 2)</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">m1</span>,log<span class="op">=</span><span class="st">"y"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">m2</span>,log<span class="op">=</span><span class="st">"y"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="gofG.phreg-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>

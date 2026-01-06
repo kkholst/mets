@@ -414,20 +414,20 @@ margbin
 #> 
 #> Coefficients:
 #> (Intercept)            x  
-#>      0.4975       0.3137  
+#>      0.5228       0.3024  
 #> 
 #> Degrees of Freedom: 39999 Total (i.e. Null);  39998 Residual
-#> Null Deviance:       51420 
-#> Residual Deviance: 51200     AIC: 51200
+#> Null Deviance:       51190 
+#> Residual Deviance: 50980     AIC: 50990
 
 head(data)
 #>   ybin x   type cluster
-#> 1    1 0 mother       1
-#> 2    1 0 father       1
-#> 3    1 0  child       1
+#> 1    1 1 mother       1
+#> 2    1 1 father       1
+#> 3    1 1  child       1
 #> 4    1 0  child       1
-#> 5    0 0 mother       2
-#> 6    0 1 father       2
+#> 5    1 1 mother       2
+#> 6    0 0 father       2
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
 
@@ -461,24 +461,24 @@ summary(bints)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects 
 #> $estimates
-#>                 theta         se
-#> dependence1 1.9932152 0.15963404
-#> dependence2 0.9396019 0.05438213
+#>                theta         se
+#> dependence1 1.755909 0.14712541
+#> dependence2 1.044354 0.05333728
 #> 
 #> $type
 #> [1] "clayton.oakes"
 #> 
 #> $h
 #>             Estimate Std.Err   2.5%  97.5%    P-value
-#> dependence1   0.6796 0.02536 0.6299 0.7293 3.146e-158
-#> dependence2   0.3204 0.02536 0.2707 0.3701  1.371e-36
+#> dependence1   0.6271 0.02648 0.5751 0.6790 5.886e-124
+#> dependence2   0.3729 0.02648 0.3210 0.4249  4.786e-45
 #> 
 #> $vare
 #> NULL
 #> 
 #> $vartot
-#>    Estimate Std.Err  2.5% 97.5%  P-value
-#> p1    2.933   0.146 2.647 3.219 1.02e-89
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1      2.8  0.1365 2.533 3.068 1.638e-93
 #> 
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
@@ -509,39 +509,39 @@ summary(bintwin)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects 
 #> $estimates
-#>                theta        se
-#> dependence1 1.919496 0.2396751
-#> dependence2 1.106425 0.1616351
+#>                 theta        se
+#> dependence1 2.2419359 0.2480324
+#> dependence2 0.8173951 0.1674785
 #> 
 #> $type
 #> [1] "clayton.oakes"
 #> 
 #> $h
 #>             Estimate Std.Err   2.5%  97.5%   P-value
-#> dependence1   0.6344 0.05969 0.5174 0.7513 2.207e-26
-#> dependence2   0.3656 0.05969 0.2487 0.4826 9.002e-10
+#> dependence1   0.7328  0.0592 0.6168 0.8489 3.439e-35
+#> dependence2   0.2672  0.0592 0.1511 0.3832 6.394e-06
 #> 
 #> $vare
 #> NULL
 #> 
 #> $vartot
 #>    Estimate Std.Err  2.5% 97.5%   P-value
-#> p1    3.026  0.1462 2.739 3.312 3.824e-95
+#> p1    3.059  0.1462 2.773 3.346 3.347e-97
 #> 
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
 concordanceTwinACE(bintwin)
 #> $MZ
 #>                      Estimate  Std.Err   2.5%  97.5% P-value
-#> concordance            0.5189 0.005613 0.5079 0.5299       0
-#> casewise concordance   0.8298 0.004871 0.8203 0.8394       0
-#> marginal               0.6253 0.005400 0.6148 0.6359       0
+#> concordance            0.5209 0.005515 0.5101 0.5317       0
+#> casewise concordance   0.8312 0.004793 0.8218 0.8406       0
+#> marginal               0.6267 0.005315 0.6163 0.6371       0
 #> 
 #> $DZ
 #>                      Estimate  Std.Err   2.5%  97.5% P-value
-#> concordance            0.4744 0.006412 0.4618 0.4870       0
-#> casewise concordance   0.7586 0.005937 0.7470 0.7702       0
-#> marginal               0.6253 0.005400 0.6148 0.6359       0
+#> concordance            0.4697 0.006438 0.4571 0.4823       0
+#> casewise concordance   0.7495 0.006024 0.7377 0.7613       0
+#> marginal               0.6267 0.005315 0.6163 0.6371       0
 #> 
 
 ```

@@ -15,9 +15,9 @@ practical problem. The aim is provide such tools.
 Bender et al. in a nice paper discussed how to generate survival data
 based on the Cox model, and restricted attention to some of the many
 useful parametric survival models (weibull, exponential). We here use
-piecwise linear baseline functions that make it easy to simulate data
+piecewise linear baseline functions that make it easy to simulate data
 that follows closely the baseline given by the data using semi or
-nonparametric models. THis makes it easy to capture important aspects of
+nonparametric models. This makes it easy to capture important aspects of
 the data.
 
 Different survival models can be cooked, and we here give recipes for
@@ -84,7 +84,7 @@ The engine is to simulate data with a given linear cumulative hazard.
 First generating survival data based on the cumulative hazard cumhaz:j
 
 ``` r
- nsim <- 200
+ nsim <- 1000
  chaz <-  c(0,1,1.5,2,2.1)
  breaks <- c(0,10,   20,  30,   40)
  cumhaz <- cbind(breaks,chaz)
@@ -100,7 +100,7 @@ Now looking at a simple cox model
 
 ``` r
  library(mets)
- n <- 100
+ n <- nsim
  data(bmt)
  bmt$bmi <- rnorm(408)
  dcut(bmt) <- gage~age
@@ -111,14 +111,14 @@ Now looking at a simple cox model
  dtable(dd,~status)
 #> 
 #> status
-#>  0  1 
-#> 54 46
+#>   0   1 
+#> 529 471
  scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox1),coef(scox1))
 #>                [,1]       [,2]
-#> tcell    -0.6517920 -0.8108950
-#> platelet -0.5207454 -0.5471871
-#> age       0.4083098  0.4390413
+#> tcell    -0.6517920 -0.4564152
+#> platelet -0.5207454 -0.5113844
+#> age       0.4083098  0.3860139
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
 ```
@@ -127,21 +127,21 @@ Now looking at a simple cox model
 
 ``` r
 
- ## changing the parametes 
+ ## changing the parameters 
  cox10 <- cox1
  cox10$coef <- c(0,0.4,0.3)
  dd <- sim.phreg(cox10,n,data=bmt)
  dtable(dd,~status)
 #> 
 #> status
-#>  0  1 
-#> 41 59
+#>   0   1 
+#> 427 573
  scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox10),coef(scox1))
-#>          [,1]      [,2]
-#> tcell     0.0 0.1752103
-#> platelet  0.4 0.4409485
-#> age       0.3 0.1086505
+#>          [,1]       [,2]
+#> tcell     0.0 0.05615982
+#> platelet  0.4 0.34930321
+#> age       0.3 0.42496872
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
 ```
@@ -180,12 +180,11 @@ sim.phregs function that draws covariates from the data,
 ``` r
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 #>                [,1]       [,2]       [,3]       [,4]
-#> tcell    -0.4232606 -0.6808494  0.3991068  0.2044248
-#> platelet -0.5654438 -0.3404486 -0.2461474 -0.1388716
+#> tcell    -0.4232606 -0.3727007  0.3991068  0.8167564
+#> platelet -0.5654438 -0.5834273 -0.2461474 -0.3190683
 ```
 
-Now fully nonparametric model with stratified baselines and specific
-call of sim.base function
+Now fully nonparametric model with stratified baselines
 
 ``` r
  data(sTRACE)
@@ -197,51 +196,42 @@ call of sim.base function
 #> 1            230  31
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
  strata <- sample(0:3,nsim,replace=TRUE)
- simb <- sim.base(coxs$cumhaz,nsim,stratajump=coxs$strata.jumps,strata=strata)
+ simb <- sim.phreg(coxs,nsim,data=NULL,strata=strata)
+
  cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
+
+ simb1 <- sim.phreg(coxs,nsim,data=sTRACE)
+ cc1 <-   phreg(Surv(time,status)~strata(diabetes,chf),data=simb1)
+ plot(cc1,add=TRUE,col=3)
 ```
 
 ![](cooking-survival-data_files/figure-html/unnamed-chunk-6-1.png)
 
-We now fit 3 cause-specific hazard models and generate competing risks
-data with hazards taken from the fitted Cox models. Here a complex
-situation with stratified baselines of some of the models.
+We now fit cause-specific hazard models with 3 causes (censoring as one
+of them) and generate competing risks data with hazards taken from the
+fitted Cox models. Here a situation with stratified baselines for some
+of the models:
 
-``` r
- ## stratified with phreg 
+``` stratified
+ ## r with phreg 
  cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
  coxs <- list(cox0,cox1,cox2)
-### dd <- sim.cause.cox(coxs,nsim,data=bmt)
  dd <- sim.phregs(coxs,n,data=bmt)
 
  ## checking that  cause specific hazards are as given, make n larger
-
  scox0 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
  scox1 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==3)~strata(tcell)+platelet,data=dd)
  cbind(cox0$coef,scox0$coef)
-#>               [,1]       [,2]
-#> tcell    0.1912407 0.04260751
-#> platelet 0.1563789 0.62751528
  cbind(cox1$coef,scox1$coef)
-#>                [,1]       [,2]
-#> tcell    -0.4232606 -0.5092389
-#> platelet -0.5654438 -0.4858872
  cbind(cox2$coef,scox2$coef)
-#>                [,1]      [,2]
-#> platelet -0.2271912 0.2167204
  par(mfrow=c(1,3))
  plot(cox0); plot(scox0,add=TRUE,col=2); 
  plot(cox1); plot(scox1,add=TRUE,col=2); 
  plot(cox2); plot(scox2,add=TRUE,col=2); 
-```
-
-![](cooking-survival-data_files/figure-html/unnamed-chunk-7-1.png)
-
-``` r
  
  ########################################
  ## second example 
@@ -250,33 +240,24 @@ situation with stratified baselines of some of the models.
  cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
  coxs <- list(cox1,cox2)
-### dd <- sim.cause.cox(coxs,nsim,data=bmt)
  dd <- sim.phregs(coxs,n,data=bmt)
  scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
  scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
  cbind(cox1$coef,scox1$coef)
-#>                [,1]       [,2]
-#> platelet -0.5658612 -0.6092701
  cbind(cox2$coef,scox2$coef)
-#>            [,1]      [,2]
-#> tcell 0.4153706 0.5130511
  par(mfrow=c(1,2))
  plot(cox1); plot(scox1,add=TRUE); 
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-7-2.png)
+- sim.phreg for phreg, can deal with strata
+- sim.phregs cause specific hazards on phreg form
 
-- sim.phreg only for phreg, but can deal with strata
-- sim.cox for other cox models, see last part of vignette, can only deal
-  with covariates that can be identified from the names of its
-  coefficients (so factors should be coded accordingly).
-
-One more example
+One more example fully non-parametric
 
 ``` r
  library(mets)
- n <- 100
+ n <- nsim
  data(bmt)
  bmt$bmi <- rnorm(408)
  dcut(bmt) <- gage~age
@@ -290,14 +271,14 @@ One more example
  dtable(dd,~status)
 #> 
 #> status
-#>  0  1  2  3 
-#>  9 46 17 28
+#>   0   1   2   3 
+#> 227 373 232 168
  scox1 <- phreg(Surv(time,status==1)~strata(tcell,platelet),data=dd)
  scox2 <- phreg(Surv(time,status==2)~strata(gage,tcell),data=dd)
  scox3 <- phreg(Surv(time,status==3)~strata(platelet)+bmi,data=dd)
  cbind(coef(cox1),coef(scox1), coef(cox2),coef(scox2), coef(cox3),coef(scox3))
-#>          [,1]      [,2]
-#> bmi 0.1281967 0.2921947
+#>           [,1]      [,2]
+#> bmi 0.07591238 0.1488615
  par(mfrow=c(1,3))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
@@ -312,8 +293,10 @@ Using a hazard based simulation with delayed entry we can then simulate
 data from for example the general illness-death model. Here the
 cumulative hazards need to be specified.
 
-First we set up some cumulative hazards, then we simulate some data and
-re-estimate the cumulative baselines
+We simply give the cumulative hazards for the different transitions to
+the function simMultistate to simulate data from the model, subsequently
+we re-estimate the parameters based on the simulated data to validate
+the procedure.
 
 ``` r
  data(CPH_HPN_CRBSI)
@@ -326,12 +309,14 @@ re-estimate the cumulative baselines
  iddata <- simMultistate(nsim,base1,base1,dr,dr2,cens=cens)
  dlist(iddata,.~id|id<3,n=0)
 #> id: 1
-#>       time status entry death from to start     stop
-#> 1 119.8711      3     0     1    1  3     0 119.8711
+#>   entry     time status rr death from to start     stop
+#> 1     0 140.6815      3  1     1    1  3     0 140.6815
 #> ------------------------------------------------------------ 
 #> id: 2
-#>       time status entry death from to start     stop
-#> 2 682.9688      3     0     1    1  3     0 682.9688
+#>         entry     time status rr death from to    start     stop
+#> 2      0.0000 335.4145      2  1     0    1  2   0.0000 335.4145
+#> 1001 335.4145 394.7477      1  1     0    2  1 335.4145 394.7477
+#> 1634 394.7477 395.6884      0  1     0    1  0 394.7477 395.6884
   
  ### estimating rates from simulated data  
  c0 <- phreg(Surv(start,stop,status==0)~+1,iddata)
@@ -391,7 +376,7 @@ We again note and use that if ${\widetilde{F}}_{j}(s)$ and $F_{j}(s)$
 are piecewise linear continuous functions then the inverse is easy to
 compute.
 
-## Cumulative incidence I
+### Cumulative incidence I
 
 We here simulate two causes of death with two binary covarites of
 logistic type $$\begin{aligned}
@@ -420,43 +405,49 @@ beta <- c(0.3,-0.3,-0.3,0.3)
 
 dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="logistic")
 
+par(mfrow=c(1,2))
 # Fitting regression model with CIF logistic-link 
 cif1 <- cifreg(Event(time,status)~Z1+Z2,dats)
 summary(cif1)
 #> 
 #>    n events
-#>  100     13
+#>  100     19
 #> 
 #>  100 clusters
 #> coeffients:
-#>    Estimate     S.E.  dU^-1/2 P-value
-#> Z1  0.19032  0.30822  0.27962  0.5369
-#> Z2 -0.82349  0.64255  0.60309  0.2000
+#>     Estimate      S.E.   dU^-1/2 P-value
+#> Z1 -0.097975  0.252782  0.232452  0.6983
+#> Z2  0.146136  0.502409  0.464850  0.7711
 #> 
 #> exp(coeffients):
 #>    Estimate    2.5%  97.5%
-#> Z1  1.20964 0.66114 2.2132
-#> Z2  0.43890 0.12457 1.5463
+#> Z1  0.90667 0.55244 1.4881
+#> Z2  1.15735 0.43233 3.0983
+plot(cif1)
+lines(attr(dats,"Lam1"))
 
-
-dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
+dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
 ciff <- cifregFG(Event(time,status)~Z1+Z2,dats)
 summary(ciff)
 #> 
 #>    n events
-#>  100     26
+#>  100     20
 #> 
 #>  100 clusters
 #> coeffients:
-#>    Estimate     S.E.  dU^-1/2 P-value
-#> Z1  0.33760  0.19992  0.20825  0.0913
-#> Z2 -0.62671  0.38164  0.40632  0.1006
+#>    Estimate    S.E. dU^-1/2 P-value
+#> Z1  0.24189 0.22915 0.23459  0.2912
+#> Z2  0.65704 0.46627 0.46940  0.1588
 #> 
 #> exp(coeffients):
 #>    Estimate    2.5%  97.5%
-#> Z1  1.40158 0.94722 2.0739
-#> Z2  0.53435 0.25291 1.1290
+#> Z1  1.27365 0.81283 1.9957
+#> Z2  1.92907 0.77349 4.8110
+plot(ciff)
+lines(attr(dats,"Lam1"))
 ```
+
+![](cooking-survival-data_files/figure-html/unnamed-chunk-10-1.png)
 
 We can also use the parameters based on fitted models
 
@@ -465,23 +456,25 @@ We can also use the parameters based on fitted models
  ################################################################
  #  simulating several causes with specific cumulatives 
  ################################################################
+ ## two logistic link models 
  cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
  cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
 
- ## dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
- dds <- sim.cifsRestrict(list(cif1,cif2),nsim,data=bmt)
+ dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
 
- scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=1)
- scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dds,cause=2)
+ ## still logistic link 
+ scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
+ ## 2nd cause not on logistic form due to restriction
+ scif2 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=2)
     
  cbind(cif1$coef,scif1$coef)
-#>             [,1]       [,2]
-#> tcell -0.7966937 -2.5383710
-#> age    0.4164386  0.5450321
+#>             [,1]      [,2]
+#> tcell -0.7966937 0.2319643
+#> age    0.4164386 0.7074909
  cbind(cif2$coef,scif2$coef)
-#>              [,1]      [,2]
-#> tcell  0.66688269 1.7602329
-#> age   -0.03248603 0.4363223
+#>              [,1]       [,2]
+#> tcell  0.66688269 -0.6246131
+#> age   -0.03248603 -0.5207753
  par(mfrow=c(1,2))   
  plot(cif1); plot(scif1,add=TRUE,col=2)
  plot(cif2); plot(scif2,add=TRUE,col=2)
@@ -489,7 +482,7 @@ We can also use the parameters based on fitted models
 
 ![](cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png)
 
-## CIF Delayed entry
+### CIF Delayed entry
 
 Now assume that given covariates
 $F_{1}(t;X) = P\left( T < t,\epsilon = 1|X \right)$ and
@@ -511,6 +504,108 @@ ${\widetilde{F}}_{1}(t,s)$.
 
 See also recurrent events vignette
 
+- sim.recurrent can simulate based on the Two-Stage model where the the
+  - the rate of the terminal event among survivors in on Cox form
+    (phreg)
+    - the rate of the recurrent events among survivors is on Cox form
+      (phreg)
+    - the rate of the recurrent events is a marginal Ghosh-Lin model
+      (recreg)
+  - the simulations is based on approximations with piecewise linear
+    models based on a grid.
+  - the events can be dependent via a frailty random effects (Gamma
+    distributed)
+- simRecurrentII, simRecurrent, simRecurrentList
+  - A frailty Gamma model where the rate of the events and the terminal
+    event are given based on cumulative baselines and relative risk
+    covariate effects. Thus ends up on Cox form given the frailty and
+    covariates.
+  - simRecurrentList can take multiple recurrent events and multiple
+    causes of death
+
+Two-stage models
+
+``` r
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
+ hf$x <- as.numeric(hf$treatment) 
+ n <- 1000
+
+ ##  to fit Cox  models 
+ xr <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=hf)
+ dr <- phreg(Surv(entry,time,status==2)~treatment+cluster(id),data=hf)
+ estimate(xr)
+#>            Estimate Std.Err   2.5%    97.5% P-value
+#> treatment1  -0.1534 0.08145 -0.313 0.006286 0.05973
+ estimate(dr)
+#>            Estimate Std.Err    2.5%    97.5% P-value
+#> treatment1  -0.4301  0.1831 -0.7889 -0.07132  0.0188
+
+ simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+
+ xrs <- phreg(Surv(start,stop,statusD==1)~treatment+cluster(id),data=simcoxcox)
+ drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simcoxcox)
+ estimate(xrs)
+#>            Estimate Std.Err    2.5%    97.5%  P-value
+#> treatment1  -0.2233 0.07217 -0.3648 -0.08185 0.001974
+ estimate(drs)
+#>            Estimate Std.Err    2.5%   97.5%  P-value
+#> treatment1  -0.3901  0.1375 -0.6596 -0.1206 0.004552
+
+ par(mfrow=c(1,2))
+ plot(xrs); 
+ plot(xr,add=TRUE)
+###
+ plot(drs)
+ plot(dr,add=TRUE)
+```
+
+![](cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png)
+
+and a now with Ghosh-Lin and Cox marginals
+
+``` r
+ recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
+ estimate(recGL)
+#>            Estimate Std.Err    2.5%   97.5% P-value
+#> treatment1  -0.1104 0.07866 -0.2646 0.04376  0.1604
+ estimate(dr)
+#>            Estimate Std.Err    2.5%    97.5% P-value
+#> treatment1  -0.4301  0.1831 -0.7889 -0.07132  0.0188
+
+ simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
+ simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+ dtable(simcoxcox,~statusD)
+#> 
+#> statusD
+#>    0    1    3 
+#>  755 2603  245
+
+ recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
+ simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+
+ GLs <- recreg(Event(start,stop,statusD)~treatment+cluster(id),data=simglcox,death.code=3)
+ drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simglcox)
+ estimate(GLs)
+#>            Estimate Std.Err   2.5%  97.5% P-value
+#> treatment1  -0.1317 0.07259 -0.274 0.0106 0.06968
+ estimate(drs)
+#>            Estimate Std.Err    2.5%   97.5%   P-value
+#> treatment1    -0.46  0.1336 -0.7219 -0.1982 0.0005744
+
+ par(mfrow=c(1,2))
+ plot(GLs); 
+ plot(recGL,add=TRUE)
+###
+ plot(drs)
+ plot(dr,add=TRUE)
+```
+
+![](cooking-survival-data_files/figure-html/unnamed-chunk-13-1.png)
+
+Frailty models
+
 ``` r
  data(CPH_HPN_CRBSI)
  dr <- CPH_HPN_CRBSI$terminal
@@ -528,8 +623,8 @@ See also recurrent events vignette
 #> 
 #>       status   0   1   2
 #> death                   
-#> 0             10 280  40
-#> 1             90   0   0
+#> 0             11 266  25
+#> 1             89   0   0
  showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 
  cumhaz <- list(base1,base1,base4)
@@ -539,101 +634,146 @@ See also recurrent events vignette
 #> 
 #>       status   0   1   2   3
 #> death                       
-#> 0              2 194 192  30
-#> 1             71   0   0   0
-#> 2             27   0   0   0
+#> 0              4 179 192  24
+#> 1             78   0   0   0
+#> 2             18   0   0   0
  showfitsimList(rr,cumhaz,drl) 
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png)![](cooking-survival-data_files/figure-html/unnamed-chunk-12-2.png)
+![](cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png)![](cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png)
 
-- sim.recurrent can simulate based on cox hazard for events and death
-  based on phreg
-  - similar to sim.phreg
+## Parametric models
+
+While the semi‑parametric Cox model provides substantial flexibility for
+simulating survival data, there are situations where a fully parametric
+simulation model is convenient or preferable. Here we consider a Weibull
+model parametrized so that the cumulative hazard is given by
+$$\Lambda(t) = \lambda \cdot t^{s}$$ where $s$ is the **shape
+parameter**, and $\lambda$ the **rate parameter**. We allow regression
+on both parameters $$\begin{array}{r}
+{\lambda:=\exp\left( \beta^{\top}X \right),\quad s:=\exp\left( \gamma^{\top}Z \right)}
+\end{array}$$ where $X$ and $Z$ are covariate vectors. Specifically,
+this opens up for exploring non‑proportional hazards when $s$ depends on
+covariates.
+
+Revisiting the TRACE data example we can compare the predictions from
+the Cox and the Weibull-Cox model stratified by `chf` and with a
+proportional hazard effect of `age`
 
 ``` r
- data(hfactioncpx12)
- hf <- hfactioncpx12
- hf$x <- as.numeric(hf$treatment) 
- n <- 100
+data(sTRACE, package = "mets")
+dat <- sTRACE
+cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
+coxw <- phreg_weibull(Surv(time, status > 0) ~ chf + age,
+    shape.formula = ~chf,
+    data = sTRACE
+    )
+coxw
+#> 
+#> - Weibull-Cox model -
+#> 
+#> Call:
+#> phreg_weibull(formula = Surv(time, status > 0) ~ chf + age, shape.formula = ~chf, 
+#>     data = sTRACE)
+#> 
+#> log-Likelihood: -684.750499 
+#> 
+#>    n events obs.time
+#>  500    264 2228.481
+#> 
+#>               Estimate  Std.Err     2.5%   97.5%   P-value
+#> (Intercept)   -5.59626 0.465886 -6.50938 -4.6831 3.070e-33
+#> chf            0.83250 0.197629  0.44516  1.2198 2.526e-05
+#> age            0.05331 0.006165  0.04123  0.0654 5.241e-18
+#> ─────────────                                             
+#> s:(Intercept) -0.44096 0.116740 -0.66977 -0.2122 1.585e-04
+#> s:chf         -0.11794 0.133078 -0.37877  0.1429 3.755e-01
 
- ##  to fit non-parametric models with just a baseline 
- xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
- dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
-
- simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
-
- recGL <- recreg(Event(entry,time,status)~+cluster(id),hf,death.code=2)
- simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+tt <- seq(0, max(sTRACE$time), length.out = 100)
+newd <- data.frame(chf = c(1, 0), age=67)
+pr <- predict(coxw, newdata = newd, times = tt, type="chaz")
+plot(cox1, col = 1)
+lines(tt, pr[, 1, 1], lty=2, lwd=2)
+lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
 ```
 
-## Simulations based on coxph
+![](cooking-survival-data_files/figure-html/weibull1-1.png)
+
+To simulate data we can use the
+[`rweibullcox()`](http://kkholst.github.io/mets/reference/rweibullcox.md)
+function. Note that the
+[`stats::rweibull()`](https://rdrr.io/r/stats/Weibull.html) function
+gives a different parametrization where the cumulative hazard is given
+by $H(t) = (t/b)^{s}$, i.e., with the same scale parameter but where the
+scale parameter $b$ is related to the rate parameter we consider by
+$r:=b^{- s}$.
 
 ``` r
- cox <-  survival::coxph(Surv(time,status==9)~vf+chf+wmi,data=sTRACE)
- sim1 <- sim.cox(cox,nsim,data=sTRACE)
- cc <- survival::coxph(Surv(time,status)~vf+chf+wmi,data=sim1)
- cbind(cox$coef,cc$coef)
-#>           [,1]       [,2]
-#> vf   0.2970218 -0.2184569
-#> chf  0.8018334  0.5825885
-#> wmi -0.8920005 -1.8603130
- cor(sim1[,c("vf","chf","wmi")])
-#>             vf        chf         wmi
-#> vf  1.00000000  0.1435916  0.06617519
-#> chf 0.14359163  1.0000000 -0.50148928
-#> wmi 0.06617519 -0.5014893  1.00000000
- cor(sTRACE[,c("vf","chf","wmi")])
-#>              vf        chf         wmi
-#> vf   1.00000000  0.1346711 -0.08966805
-#> chf  0.13467109  1.0000000 -0.37464791
-#> wmi -0.08966805 -0.3746479  1.00000000
- 
- cox <-  phreg(Surv(time, status==9)~vf+chf+wmi,data=sTRACE)
- sim3 <- sim.cox(cox,nsim,data=sTRACE)
- cc <-  phreg(Surv(time, status)~vf+chf+wmi,data=sim3)
- cbind(cox$coef,cc$coef)
-#>           [,1]       [,2]
-#> vf   0.2970218  0.1326161
-#> chf  0.8018334  1.0879842
-#> wmi -0.8920005 -0.5919069
- plot(cox,se=TRUE); plot(cc,add=TRUE,col=2)
+n <- 5000
+newd <- mets::dsample(size=n, sTRACE[,c("chf","age")]) # bootstrap covariates
+lp <- predict(coxw, newdata=newd, type="lp") # linear-predictors
+head(lp)
+#>             [,1]       [,2]
+#> X6549 -0.9896742 -0.5589006
+#> X6523 -0.5935585 -0.5589006
+#> X3742 -1.3657441 -0.5589006
+#> X6258 -0.9611517 -0.5589006
+#> X79   -2.8312847 -0.4409608
+#> X2952 -2.3217722 -0.4409608
+
+## simulate event times
+tt <- rweibullcox(nrow(lp), rate = exp(lp[,1]), shape= exp(lp[,2]))
+
+# censoring model
+censw <- phreg_weibull(Surv(time, status==0) ~ 1, data=sTRACE)
+censpar <- exp(coef(censw))
+censtime <- pmin(8, rweibullcox(nrow(lp), censpar[1], censpar[2]))
+
+# combined simulated data
+newd <- transform(newd, time=pmin(tt, censtime), status=(tt<=censtime))
+head(newd)
+#>       chf    age     time status
+#> X6549   1 70.791 0.374941   TRUE
+#> X6523   1 78.221 3.973340   TRUE
+#> X3742   1 63.737 4.330397   TRUE
+#> X6258   1 71.326 1.414283   TRUE
+#> X79     0 51.863 5.323526   TRUE
+#> X2952   0 61.420 6.433051  FALSE
+
+# estimate weibull model on new data
+phreg_weibull(Surv(time,status) ~ chf + age, ~chf, data=newd)
+#> 
+#> - Weibull-Cox model -
+#> 
+#> Call:
+#> phreg_weibull(formula = Surv(time, status) ~ chf + age, shape.formula = ~chf, 
+#>     data = newd)
+#> 
+#> log-Likelihood: -6682.897120 
+#> 
+#>     n events obs.time
+#>  5000   2622 21530.79
+#> 
+#>               Estimate  Std.Err     2.5%    97.5%    P-value
+#> (Intercept)   -5.57207 0.154019 -5.87394 -5.27020 1.356e-286
+#> chf            0.79395 0.057334  0.68158  0.90632  1.311e-43
+#> age            0.05367 0.002115  0.04952  0.05782 5.238e-142
+#> ─────────────                                               
+#> s:(Intercept) -0.46327 0.032007 -0.52600 -0.40054  1.767e-47
+#> s:chf         -0.11396 0.038514 -0.18944 -0.03847  3.088e-03
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png)
+All these steps are wrapped in the `simulate` method:
 
 ``` r
- 
- coxs <-  phreg(Surv(time,status==9)~strata(chf,vf)+wmi,data=sTRACE)
- sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
- cc <-   phreg(Surv(time, status)~strata(chf,vf)+wmi,data=sim3)
- cbind(coxs$coef,cc$coef)
-#>           [,1]       [,2]
-#> wmi -0.8683355 -0.9816674
- plot(coxs,col=1); plot(cc,add=TRUE,col=2)
-```
-
-![](cooking-survival-data_files/figure-html/unnamed-chunk-14-2.png)
-
-More Cox games with cause specific hazards
-
-``` r
- data(bmt)
- # coxph          
- cox1 <- survival::coxph(Surv(time,cause==1)~tcell+platelet,data=bmt)
- cox2 <- survival::coxph(Surv(time,cause==2)~tcell+platelet,data=bmt)
- coxs <- list(cox1,cox2)
- dd <- sim.cause.cox(coxs,nsim,data=bmt)
- scox1 <- survival::coxph(Surv(time,status==1)~tcell+platelet,data=dd)
- scox2 <- survival::coxph(Surv(time,status==2)~tcell+platelet,data=dd)
- cbind(cox1$coef,scox1$coef)
-#>                [,1]       [,2]
-#> tcell    -0.4231551 -0.9391252
-#> platelet -0.5646181 -0.1879697
- cbind(cox2$coef,scox2$coef)
-#>                [,1]       [,2]
-#> tcell     0.3991911  0.0480784
-#> platelet -0.2456203 -0.3839736
+# simulate(coxw, n = 5, cens.model = NULL, data=newd, var.names = c("time", "status"))
+simulate(coxw, nsim = 5)
+#>         no wmi status chf    age sex diabetes       time vf
+#> X707   707 1.8   TRUE   1 87.175   0        0 0.12940912  0
+#> X1157 1157 1.3  FALSE   1 64.074   1        0 7.13699999  0
+#> X6628 6628 1.1   TRUE   0 84.825   0        0 0.44463601  0
+#> X969   969 0.6   TRUE   1 65.461   1        0 0.05219977  0
+#> X4417 4417 1.2  FALSE   0 76.189   1        0 6.01461443  0
 ```
 
 ## SessionInfo
@@ -664,17 +804,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

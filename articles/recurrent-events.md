@@ -9,16 +9,14 @@ phenonmenon studied. We here demonstrate how one can compute:
 - the marginal mean
   - efficient marginal mean estimation with fast computation of standard
     errors
-  - works for large data
 - the Ghosh-Lin Cox type regression for the marginal mean, possibly with
   composite outcomes.
   - efficient regression augmentation of the Ghosh-Lin model
-  - works for large data
   - clusters can be specfied
   - allows a stratified baseline
 - the variance of a recurrent events process
 - the probability of exceeding k events
-- the two-stage recurrent events model
+- the two-stage recurrent events random effects model
 
 We also show how to improve the efficiency of recurrents events marginal
 mean.
@@ -27,12 +25,15 @@ In addition several tools can be used for simulating recurrent events
 and bivariate recurrent events data, also with a possible terminating
 event:
 
-- recurrent events up to two causes and death, given rates of survivors
-  and death on Cox form.
-  - frailty extenstions
+- recurrent events with multiple
+  - event types
+  - Cox type rates
+- with a terminal event with possibly multiple causes of death
+  - Cox type rates
+- frailty extenstions
 - the Ghosh-Lin model when the survival rate is on Cox form.
   - frailty extenstions
-- The general illness death model with cox models for all hazards.
+- The general illness death model with Cox models for all hazards.
 
 ## Simulation of recurrents events
 
@@ -52,12 +53,19 @@ generate dependence
 
 - Dependence=0: The intensities can be independent.
 
-- Dependence=1: We can one gamma distributed random effects $Z$. Then
-  the intensities are
+- Dependence=1: One gamma distributed random effects $Z$. Then the
+  intensities are
 
   - $Z\lambda_{1}(t)$
   - $Z\lambda_{2}(t)$
   - $Z\lambda_{D}(t)$
+
+- Dependence=4: One gamma distributed random effects $Z$. Then the
+  intensities are
+
+  - $Z\lambda_{1}(t)$
+  - $Z\lambda_{2}(t)$
+  - $\lambda_{D}(t)$
 
 - Dependence=2: We can draw normally distributed random effects
   $Z_{1},Z_{2},Z_{d}$ were the variance (var.z) and correlation can be
@@ -89,7 +97,7 @@ The key functions are
   - extended version with possibly multiple types of recurrent events
     (but rates can be 0)
   - Allows Cox types rates with subject specific rates
-- simRecurrentIII
+- simRecurrentList
   - lists are allowed for multiple events and cause of death (competing
     risks)
   - Allows Cox types rates with subject specific rates
@@ -123,16 +131,16 @@ $E\left( N_{1}(t \land D) \right)$ where $D$ is the timing of the
 terminal event. The marginal mean is the average number of events seen
 before time $t$.
 
-This is based on a rate model for
+This is based on a two rate models for
 
 - the type 1 events $\sim E\left( dN_{1}(t)|D > t \right)$
 - the terminal event $\sim E\left( dN_{d}(t)|D > t \right)$
 
 and is defined as
-$\mu_{1}(t) = E\left( N_{1}^{*}(t) \right)$$$\begin{array}{r}
+$\mu_{1}(t) = E\left( N_{1}(t) \right)$$$\begin{array}{r}
 {\int_{0}^{t}S(u)dR_{1}(u)}
 \end{array}$$ where $S(t) = P(D \geq t)$ and
-$dR_{1}(t) = E\left( dN_{1}^{*}(t)|D > t \right)$
+$dR_{1}(t) = E\left( dN_{1}(t)|D > t \right)$
 
 and can therefore be estimated by a
 
@@ -143,10 +151,8 @@ $$\begin{aligned}
 {{\widehat{R}}_{1}(t)} & {= \sum\limits_{i}\int_{0}^{t}\frac{1}{Y_{\bullet}(s)}dN_{1i}(s)}
 \end{aligned}$$ where $Y_{\bullet}(t) = \sum_{i}Y_{i}(t)$ such that the
 estimator is $$\begin{aligned}
-{{\widehat{\mu}}_{1}(t)} & {= \int_{0}^{t}\widehat{S}(u)d{\widehat{R}}_{1}(u).}
-\end{aligned}$$
-
-Cook & Lawless (1997), and developed further in Gosh & Lin (2000).
+{{\widehat{\mu}}_{1}(t)} & {= \int_{0}^{t}\widehat{S}(u)d{\widehat{R}}_{1}(u),}
+\end{aligned}$$ see Cook & Lawless (1997) and Gosh & Lin (2000).
 
 The variance can be estimated based on the asymptotic expansion of
 ${\widehat{\mu}}_{1}(t) - \mu_{1}(t)$$$\begin{aligned}
@@ -158,7 +164,7 @@ with mean-zero processes
 - $M_{i}^{d}(t) = N_{i}^{D}(t) - \int_{0}^{t}Y_{i}(s)d\Lambda^{D}(s)$,
 - $M_{i1}(t) = N_{i1}(t) - \int_{0}^{t}Y_{i}(s)dR_{1}(s)$.
 
-as in Gosh & Lin (2000)
+as described in Gosh & Lin (2000)
 
 ## Generating data
 
@@ -231,7 +237,7 @@ summary(out,times=c(1000,2000))
 #> 384     2000 4.070540 0.2243678 3.653708 4.534926      0
 ```
 
-The marginal mean can also be estimated in a stratified case:
+The marginal mean can also be estimated in the stratified case:
 
 ``` r
 xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
@@ -281,7 +287,9 @@ plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ###plot(outX,add=TRUE,col=3)
 ```
 
-Here I simulate multiple types and two causes of death causes of death
+We here simulate multiple recurrent events processes with two causes of
+death causes and exponential censoring with rate $3/5000$, all processes
+are assumed independent (dependence=0)
 
 ``` r
 rr <- simRecurrentList(100,list(base1,base1,base4),death.cumhaz=list(dr,base4),cens=3/5000,dependence=0)
@@ -299,12 +307,12 @@ mets:::showfitsimList(rr,list(base1,base1,base4),list(dr,base4))
 
 ## Improving efficiency
 
-We now simulate some data where there is strong heterogenity such that
-we can improve the efficiency for censored survival data. The
-augmentation is a regression on the history for each subject consisting
-of the specified terms terms: Nt, Nt2 (Nt squared), expNt (exp(-Nt)),
-NtexpNt (Nt\*exp(-Nt)) or by simply specifying these directly. This was
-developed in Cortese and Scheike (2022).
+To illustrate how the efficiency can be improved using heterogenity in
+the data, we now simulate some data with strong heterogenity. The
+dynmamic augmentation is a regression on the history for each subject
+consisting of the specified terms terms: Nt, Nt2 (Nt squared), expNt
+(exp(-Nt)), NtexpNt (Nt\*exp(-Nt)) or by simply specifying these
+directly. This was developed in Cortese and Scheike (2022).
 
 ``` r
 rr <- simRecurrentII(200,base1,base4,death.cumhaz=dr,cens=3/5000,dependence=4,var.z=1)
@@ -333,22 +341,18 @@ out <- recurrentMarginal(Event(start,stop,statusD)~cluster(id),data=rr,cause=1,d
 times <- 500*(1:10)
 recEFF1 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
                    death.code=3,cause=1,augment.model=~Nt)
-#> Warning in cbind(new.time, cumh[index, ]): number of rows of result is not a
-#> multiple of vector length (arg 2)
-#> Warning in cbind(new.time, cumh[index, ]): number of rows of result is not a
-#> multiple of vector length (arg 2)
 with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 #>       times       muP      semuP     muPAt    semuPAt          
-#>  [1,]   500 0.6613768 0.08161137 0.6608857 0.08146438 0.9981990
-#>  [2,]  1000 1.0744212 0.12757420 1.0656868 0.12598264 0.9875244
-#>  [3,]  1500 1.4043440 0.18482988 1.4104172 0.17775750 0.9617357
-#>  [4,]  2000 1.6558938 0.23411074 1.6507507 0.22529350 0.9623373
-#>  [5,]  2500 1.9655087 0.31221814 1.9690466 0.29506881 0.9450726
-#>  [6,]  3000 2.1616770 0.37981206 2.2020438 0.35291111 0.9291730
-#>  [7,]  3500 2.4425027 0.51943450 2.5131440 0.45781796 0.8813776
-#>  [8,]  4000 2.7545313 0.66543528 2.8476086 0.58085220 0.8728906
-#>  [9,]  4500 2.8247378 0.66133467 2.9107949 0.59608745 0.9013401
-#> [10,]  5000 2.8247378 0.66133467 2.9107949 0.59608745 0.9013401
+#>  [1,]   500 0.6613768 0.08161137 0.6613573 0.08140749 0.9975018
+#>  [2,]  1000 1.0744212 0.12757420 1.0663041 0.12611114 0.9885317
+#>  [3,]  1500 1.4043440 0.18482988 1.4063277 0.18029148 0.9754455
+#>  [4,]  2000 1.6558938 0.23411074 1.6459306 0.22412588 0.9573498
+#>  [5,]  2500 1.9655087 0.31221814 1.9646959 0.29588974 0.9477020
+#>  [6,]  3000 2.1616770 0.37981206 2.1950498 0.35547431 0.9359216
+#>  [7,]  3500 2.4425027 0.51943450 2.5067063 0.46175008 0.8889476
+#>  [8,]  4000 2.7545313 0.66543528 2.8446029 0.56805536 0.8536598
+#>  [9,]  4500 2.8247378 0.66133467 2.9122268 0.57249107 0.8656602
+#> [10,]  5000 2.8247378 0.66133467 2.9122268 0.57249107 0.8656602
 
 times <- 500*(1:10)
 ###recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
@@ -357,22 +361,18 @@ times <- 500*(1:10)
 
 recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
 death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
-#> Warning in cbind(new.time, cumh[index, ]): number of rows of result is not a
-#> multiple of vector length (arg 2)
-#> Warning in cbind(new.time, cumh[index, ]): number of rows of result is not a
-#> multiple of vector length (arg 2)
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 #>       times       muP      semuP     muPAt    semuPAt          
-#>  [1,]   500 0.6613768 0.08161137 0.6676484 0.08124058 0.9954567
-#>  [2,]  1000 1.0744212 0.12757420 1.0653090 0.12509253 0.9805473
-#>  [3,]  1500 1.4043440 0.18482988 1.3934935 0.17474081 0.9454143
-#>  [4,]  2000 1.6558938 0.23411074 1.6239230 0.22154319 0.9463179
-#>  [5,]  2500 1.9655087 0.31221814 1.8411214 0.28399817 0.9096146
-#>  [6,]  3000 2.1616770 0.37981206 2.0443928 0.33651762 0.8860109
-#>  [7,]  3500 2.4425027 0.51943450 2.1320243 0.41402320 0.7970653
-#>  [8,]  4000 2.7545313 0.66543528 2.3831874 0.52860637 0.7943768
-#>  [9,]  4500 2.8247378 0.66133467 2.3332050 0.53618531 0.8107624
-#> [10,]  5000 2.8247378 0.66133467 2.3332050 0.53618531 0.8107624
+#>  [1,]   500 0.6613768 0.08161137 0.6656565 0.08123893 0.9954365
+#>  [2,]  1000 1.0744212 0.12757420 1.0643130 0.12557776 0.9843508
+#>  [3,]  1500 1.4043440 0.18482988 1.3959278 0.17882547 0.9675138
+#>  [4,]  2000 1.6558938 0.23411074 1.6237759 0.21969809 0.9384366
+#>  [5,]  2500 1.9655087 0.31221814 1.8801575 0.28908695 0.9259134
+#>  [6,]  3000 2.1616770 0.37981206 2.0838062 0.34493993 0.9081858
+#>  [7,]  3500 2.4425027 0.51943450 2.1734464 0.42984065 0.8275166
+#>  [8,]  4000 2.7545313 0.66543528 2.3319579 0.51255611 0.7702569
+#>  [9,]  4500 2.8247378 0.66133467 2.3579323 0.51482135 0.7784581
+#> [10,]  5000 2.8247378 0.66133467 2.3579323 0.51482135 0.7784581
 
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
@@ -456,10 +456,10 @@ One can also do regression modelling , using the model $$\begin{aligned}
 \end{aligned}$$ then Ghost-Lin suggested IPCW score equations that are
 implemented in the recreg function of mets.
 
-First we generate data that from a Ghosh-Lin model with
-$\beta = ( - 0.3,0.3)$ and the baseline given by base1, this is done
-under the assumption that the death rate given covariates are on Cox
-form with baseline dr:
+First we generate data that from a Ghosh-Lin model with regression
+coefficients $\beta = ( - 0.3,0.3)$ and the baseline given by base1,
+this is done under the assumption that the death rate given covariates
+is on Cox form with baseline dr:
 
 ``` r
 n <- 100
@@ -473,23 +473,23 @@ fz <- NULL
 rr <- mets:::simGLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
 rr <- cbind(rr,X[rr$id+1,])
 
- out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
- outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
         cens.model=~strata(X1,X2))
- summary(out)$coef
+summary(out)$coef
 #>      Estimate      S.E.    dU^-1/2   P-value
 #> X1  0.5194368 0.3797930 0.07990766 0.1714110
 #> X2 -0.3358640 0.3803112 0.07976036 0.3771663
- summary(outs)$coef
+summary(outs)$coef
 #>      Estimate      S.E.    dU^-1/2   P-value
 #> X1  0.5762836 0.3571995 0.08035274 0.1066710
 #> X2 -0.2775462 0.3520266 0.08007337 0.4304488
 
- ## checking baseline
- par(mfrow=c(1,1))
- plot(out)
- plot(outs,add=TRUE,col=2)
- lines(scalecumhaz(base1,1),col=3,lwd=2)
+## checking baseline
+par(mfrow=c(1,1))
+plot(out)
+plot(outs,add=TRUE,col=2)
+lines(scalecumhaz(base1,1),col=3,lwd=2)
 ```
 
 ![](recurrent-events_files/figure-html/unnamed-chunk-11-1.png)
@@ -500,16 +500,16 @@ efficiency and that the estimates are close to the true values.
 Also possible to do IPCW regression at fixed time-point
 
 ``` r
- outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
-            cens.code=0,times=2000)
- outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
-            cens.code=0,times=2000,cens.model=~strata(X1,X2))
- summary(outipcw)$coef
+outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+        cens.code=0,times=2000)
+outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+        cens.code=0,times=2000,cens.model=~strata(X1,X2))
+summary(outipcw)$coef
 #>               Estimate   Std.Err       2.5%     97.5%      P-value
 #> (Intercept) 1.19494027 0.2038193  0.7954619 1.5944187 4.552780e-09
 #> X1          0.18509341 0.2825398 -0.3686743 0.7388612 5.123997e-01
 #> X2          0.09805584 0.2805028 -0.4517195 0.6478312 7.266601e-01
- summary(outipcws)$coef
+summary(outipcws)$coef
 #>               Estimate   Std.Err       2.5%     97.5%      P-value
 #> (Intercept) 1.18811953 0.2024682  0.7912891 1.5849499 4.406099e-09
 #> X1          0.20055180 0.2761747 -0.3407407 0.7418443 4.677301e-01
@@ -517,61 +517,60 @@ Also possible to do IPCW regression at fixed time-point
 ```
 
 We can also do the Mao-Lin type composite outcome where we both count
-the cause 1 and deaths for example $$\begin{aligned}
+the recurrent events (cause 1) and deaths (cause 3) for example
+$$\begin{aligned}
 {E\left( N_{1}(t) + I(D < t,\epsilon = 3)|X \right)} & {= \Lambda_{0}(t)\exp\left( X^{T}\beta \right)}
 \end{aligned}$$
 
 ``` r
- out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
         death.code=3,cens.code=0)
- summary(out)$coef
+summary(out)$coef
 #>      Estimate      S.E.    dU^-1/2   P-value
 #> X1  0.4896610 0.3460183 0.07609363 0.1570303
 #> X2 -0.3056174 0.3459166 0.07595286 0.3769660
 ```
 
-Also demonstrate that this can be done with competing risks death
-(change some of the cause 3 deaths to cause 4) $$\begin{aligned}
+This can also be done with competing risks death $$\begin{aligned}
 {E\left( w_{1}N_{1}(t) + w_{2}I(D < t,\epsilon = 3)|X \right)} & {= \Lambda_{0}(t)\exp\left( X^{T}\beta \right)}
 \end{aligned}$$ and with weights $w_{1},w_{2}$ that follow the causes,
-here 1 and 3.
+here 1 and 3. We modify the data by changing some of the cause 3 deaths
+to cause 4
 
 ``` r
- rr$binf <- rbinom(nrow(rr),1,0.5) 
- rr$statusDC <- rr$statusD
- rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
- rr$weight <- 1
- rr <- dtransform(rr,weight=2,statusDC==3)
+rr$binf <- rbinom(nrow(rr),1,0.5) 
+rr$statusDC <- rr$statusD
+rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
+rr$weight <- 1
+rr <- dtransform(rr,weight=2,statusDC==3)
 
- outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
          death.code=c(3,4),cens.code=0)
- summary(outC)$coef
+summary(outC)$coef
 #>      Estimate      S.E.    dU^-1/2   P-value
 #> X1  0.5069982 0.3651533 0.07814845 0.1649991
 #> X2 -0.3255327 0.3653288 0.07801576 0.3728929
 
- outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
           death.code=c(3,4),cens.code=0,wcomp=c(1,2))
- summary(outCW)$coef
+summary(outCW)$coef
 #>      Estimate      S.E.    dU^-1/2   P-value
 #> X1  0.4955643 0.3521275 0.07650295 0.1593256
 #> X2 -0.3160290 0.3519907 0.07638286 0.3692744
 
- plot(out,ylab="Mean composite")
- plot(outC,col=2,add=TRUE)
- plot(outCW,col=3,add=TRUE)
+plot(out,ylab="Mean composite")
+plot(outC,col=2,add=TRUE)
+plot(outCW,col=3,add=TRUE)
 ```
 
 ![](recurrent-events_files/figure-html/unnamed-chunk-14-1.png)
 
 Predictions and standard errors can be computed via the iid
 decompositions of the baseline and the regression coefficients. We
-illustrate this for the standard Ghosh-Lin model and it requires that
-the model is fitted with the option cox.prep=TRUE
+illustrate this for the standard Ghosh-Lin model
 
 ``` r
-out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
-           cox.prep=TRUE)
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
 summary(out)
 #> 
 #>    n events
@@ -602,9 +601,9 @@ augmentation method. First computing the augmentation and then in a
 second step the augmented estimator (Cortese and Scheike (2023)):
 
 ``` r
- outA  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+outA  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
          cens.code=0,augment.model=~Nt+X1+X2)
- summary(outA)$coef
+summary(outA)$coef
 #>      Estimate      S.E.    dU^-1/2    P-value
 #> X1  0.5716809 0.3461524 0.08022919 0.09863056
 #> X2 -0.3447143 0.3480247 0.07981423 0.32193577
@@ -1001,17 +1000,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

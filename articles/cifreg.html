@@ -41,6 +41,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -79,7 +80,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-11-17</h4>
+            <h4 data-toc-skip class="date">2026-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cifreg.Rmd" class="external-link"><code>vignettes/cifreg.Rmd</code></a></small>
       <div class="d-none name"><code>cifreg.Rmd</code></div>
@@ -93,9 +94,8 @@ risks, and is completely scalable, that is, linear in the data. This
 includes computation of standard errors that is also linear in data. In
 addition for the Fine-Gray model predictions can be provided standard
 errors for specific time-points based on influence functions for the
-baseline and the regression coeficients. The function can thus be used
-for large data.</p>
-<p>In addition and to summarize</p>
+baseline and the regression coeficients.</p>
+<p>To summarize</p>
 <ul>
 <li>the baseline can be stratified</li>
 <li>the censoring weights can be strata dependent</li>
@@ -115,7 +115,18 @@ computed</li>
 <div class="section level2">
 <h2 id="fine-gray-model">Fine-Gray model<a class="anchor" aria-label="anchor" href="#fine-gray-model"></a>
 </h2>
-<p> considered
+<p> considered a cumulative incidence on the form
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>Λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+ F_1(t,X) &amp; = P(T \leq t, \epsilon=1) = 1 - exp( - \Lambda_0(t) \exp(X^T \beta)).
+\end{align*}</annotation></semantics></math></p>
+<p>In the case of independent right-censoring with the censoring
+distribtion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G_c(t,X) = P(C &gt; t | S(X))</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S(X)</annotation></semantics></math>
+is a set of strata defined from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>,
+then an ubiased estimating equation is given by
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>U</mi><mi>n</mi><mrow><mi>F</mi><mi>G</mi></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover><msubsup><mo>∫</mo><mn>0</mn><mrow><mo>+</mo><mi>∞</mi></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>−</mo><msub><mi>E</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mrow><mn>1</mn><mo>,</mo><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> where </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>E</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msub><mover><mi>S</mi><mo accent="true">̃</mo></mover><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mover><mi>S</mi><mo accent="true">̃</mo></mover><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
   U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where } 
     E_n(t,\beta)=\frac{\tilde S_1(t,\beta) }{\tilde S_0(t,\beta)},
@@ -137,16 +148,12 @@ the
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>G</mi><mo accent="true">̂</mo></mover><mi>c</mi></msub><annotation encoding="application/x-tex">\hat G_c</annotation></semantics></math>
 is the Kaplan-Meier estimator of the censoring distribution.</p>
-<p>In this article we briefly introduce some functions for doing
-cumulative incidence regression, and how to augment the Fine-Gray
-estimator.</p>
 <p>First we simulate some competing risks data using some utility
 functions.</p>
 <p>We simulate data with two causes based on the Fine-Gray model:
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>Λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>2</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>Λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>∞</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 F_1(t,X) &amp;  = P(T\leq t, \epsilon=1|X)=( 1 - exp(-\Lambda_1(t) \exp(X^T \beta_1))) \\
-F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \beta_2))) 
-              \cdot (1 - F_1(\infty,X))  
+F_2(t,X) &amp; = P(T\leq t, \epsilon=2|X)= ( 1 - exp(-\Lambda_2(t) \exp(X^T \beta_2))) \cdot (1 - F_1(\infty,X))  
 \end{align}</annotation></semantics></math> where the baselines are
 given as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>ρ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>t</mi><mi>/</mi><msub><mi>ν</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Lambda_j(t) = \rho_j (1- exp(-t/\nu_j))</annotation></semantics></math>
@@ -159,19 +166,18 @@ FG-model with a logistic link
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Λ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><msub><mi>β</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mbox{expit}( \Lambda_j(t) + \exp(X^T \beta_j))</annotation></semantics></math>.</p>
 <p>The advantage of the model is that it is easy to fit and to get
 standard errors, and that it is quite flexible essentially being a
-Cox-model. On the downside is that the coefficients are quite hard to
-interpret since they are the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>l</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding="application/x-tex">cloglog</annotation></semantics></math>
-coefficients of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">1-F_1(t,X)</annotation></semantics></math>.
+Cox-model. On the downside is that the coefficients must be interpreted
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>l</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding="application/x-tex">cloglog</annotation></semantics></math>-scale.
 Specifically,
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \log(-\log( 1-F_1(t,X_1+1,X_2))) - \log(-\log( 1-F_1(t,X_1,X_2))) &amp; =  \beta_1,
-\end{align}</annotation></semantics></math> so the effect is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
-of
+\end{align}</annotation></semantics></math> so the effect of an increase
+in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>1</mn></msub><annotation encoding="application/x-tex">X_1</annotation></semantics></math>
-is on
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
+and leads to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>F</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">1-F_1(t,X)</annotation></semantics></math>
 on the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>l</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding="application/x-tex">cloglog</annotation></semantics></math>
@@ -185,7 +191,7 @@ scale.</p>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span> <span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>,<span class="op">-</span><span class="fl">0.1</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
 <span> <span class="co">## beta1=c(0.0,-0.1); beta2=c(-0.5,0.3)</span></span>
-<span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span>
+<span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cif.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dats</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
@@ -200,7 +206,7 @@ scale.</p>
 <span></span>
 <span> <span class="va">cifs2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cif.html">cif</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">Z1</span>,<span class="va">Z2</span><span class="op">)</span>,<span class="va">dats</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cifs2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cifreg_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="700"></p>
+<p><img src="cifreg_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <p>Now fitting the Fine-Gray model</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">fg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cifreg.html">cifregFG</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
@@ -223,7 +229,7 @@ scale.</p>
 <span> <span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Z1<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,Z2<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span></span>
 <span> <span class="va">pfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlogit.html">predict</a></span><span class="op">(</span><span class="va">fg</span>,<span class="va">dd</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cifreg_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="700"></p>
+<p><img src="cifreg_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
 <p>and GOF based on cumulative residuals (Li et al. 2015)</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cifreg.html">gofFG</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,data<span class="op">=</span><span class="va">dats</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
@@ -258,7 +264,7 @@ the predictions at time point 5</p>
 <span><span class="co">#&gt; [4,] 0.07149610 0.4611261 0.028958169 0.1765199</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">+</span><span class="va">i</span><span class="op">/</span><span class="fl">10</span>,<span class="va">pfgse</span><span class="op">[</span><span class="va">i</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,col<span class="op">=</span><span class="va">i</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cifreg_files/figure-html/pred-cif-1.png" class="r-plt" width="700"></p>
+<p><img src="cifreg_files/figure-html/pred-cif-1.png" class="r-plt" alt="" width="700"></p>
 <p>The iid decompostions are stored inside Biid, in addition we note
 that the iid decompostions for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>−</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\hat \beta - \beta_0</annotation></semantics></math>
@@ -514,7 +520,7 @@ based on this formula.</p>
 <code class="sourceCode R"><span> <span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span> <span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>,<span class="op">-</span><span class="fl">0.1</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
-<span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FG_AugmentCifstrata.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span>,type<span class="op">=</span><span class="st">"logistic"</span><span class="op">)</span></span>
+<span> <span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim.cif.html">simul.cifs</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,rc<span class="op">=</span><span class="fl">0.5</span>,rate<span class="op">=</span><span class="fl">7</span>,type<span class="op">=</span><span class="st">"logistic"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">dats</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; status</span></span>
@@ -552,9 +558,57 @@ different weights but this is much slower.</p>
 <span><span class="co">#&gt; Z2  1.24313 0.46287 3.3387</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="administrative-censoring">Administrative Censoring<a class="anchor" aria-label="anchor" href="#administrative-censoring"></a>
+</h2>
+<p>In the case with administrative censoring we can simply provide the
+risk-set given by the administrative censoring times for the Fine-Gray
+or logistic link cumulative incidence regression models.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span><span class="va">rho1</span> <span class="op">&lt;-</span> <span class="fl">0.3</span>; <span class="va">rho2</span> <span class="op">&lt;-</span> <span class="fl">5.9</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">beta</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.3</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">0.3</span><span class="op">)</span></span>
+<span><span class="va">rc</span> <span class="op">&lt;-</span> <span class="fl">0.9</span></span>
+<span><span class="co">###</span></span>
+<span><span class="va">dats</span> <span class="op">&lt;-</span> <span class="fu">mets</span><span class="fu">:::</span><span class="fu">simul.cifsRA</span><span class="op">(</span><span class="va">n</span>,<span class="va">rho1</span>,<span class="va">rho2</span>,<span class="va">beta</span>,bin<span class="op">=</span><span class="fl">1</span>,rc<span class="op">=</span><span class="va">rc</span>,rate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dats</span><span class="op">$</span><span class="va">status07</span> <span class="op">&lt;-</span> <span class="va">dats</span><span class="op">$</span><span class="va">status</span></span>
+<span><span class="va">dats</span><span class="op">$</span><span class="va">status07</span><span class="op">[</span><span class="va">dats</span><span class="op">$</span><span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">7</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">tt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">6</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">rho1</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">tt</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ccA</span>  <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/cifreg.html">cifregFG</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">timeA</span>,<span class="va">statusA</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span>,<span class="va">dats</span>,</span>
+<span>          adm.cens.time<span class="op">=</span><span class="va">dats</span><span class="op">$</span><span class="va">censorA</span>,no.codes<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ccA</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; Z1  0.08665  0.2116 -0.3280 0.5014  0.6821</span></span>
+<span><span class="co">#&gt; Z2  0.40535  0.4276 -0.4328 1.2435  0.3432</span></span></code></pre></div>
+<p>The Fine-Gray model can similarly be estimated using the modified
+risk-set and the phreg function</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dats</span><span class="op">$</span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">dats</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span><span class="va">datA</span> <span class="op">&lt;-</span> <span class="va">dats</span></span>
+<span><span class="va">datA2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">datA</span>,<span class="va">statusA</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">datA2</span><span class="op">$</span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="va">datA2</span><span class="op">$</span><span class="va">timeA</span></span>
+<span><span class="va">datA2</span><span class="op">$</span><span class="va">timeA</span> <span class="op">&lt;-</span> <span class="va">datA2</span><span class="op">$</span><span class="va">censorA</span></span>
+<span><span class="va">datA2</span><span class="op">$</span><span class="va">statusA</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">datA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">datA</span>,<span class="va">datA2</span><span class="op">)</span></span>
+<span><span class="va">ddA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">timeA</span>,<span class="va">statusA</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">~</span><span class="va">Z1</span><span class="op">+</span><span class="va">Z2</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">datA</span><span class="op">)</span></span>
+<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ddA</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5% P-value</span></span>
+<span><span class="co">#&gt; Z1  0.08665  0.2116 -0.3280 0.5014  0.6821</span></span>
+<span><span class="co">#&gt; Z2  0.40535  0.4276 -0.4328 1.2435  0.3432</span></span>
+<span></span>
+<span><span class="co">## also checking the cumulative baseline </span></span>
+<span><span class="co">###plotl(tt,base1) </span></span>
+<span><span class="co">###plot(ccA,add=TRUE,col=3)</span></span>
+<span><span class="co">###plot(ddA,col=2,add=TRUE)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -580,17 +634,17 @@ different weights but this is much slower.</p>
 <span><span class="co">#&gt; [1] mets_1.3.9</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        </span></span>
 <span><span class="co">#&gt; [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
 <span><span class="co">#&gt; [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  </span></span>
 <span><span class="co">#&gt; [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       </span></span>
 <span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     </span></span>
 <span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       </span></span>

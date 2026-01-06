@@ -75,7 +75,6 @@ library(mets)
 data(TRACE)
 set.seed(1)
 TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
-
 dcut(TRACEsam)  <- ~. 
 mm <- model.matrix(~-1+factor(wmicat.4),data=TRACEsam)
 m1 <- gofM.phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
@@ -99,14 +98,14 @@ m1 <- gofM.phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,modelmatr
 summary(m1)
 #> Cumulative residuals versus modelmatrix :
 #>                            Sup_t |U(t)|  pval
-#> factor(wmicat.4)[0.4,1.1]      6.049754 0.022
-#> factor(wmicat.4)(1.1,1.4]      2.211031 0.757
-#> factor(wmicat.4)(1.4,1.72]     5.040704 0.085
-#> factor(wmicat.4)(1.72,2]       1.482109 0.890
+#> factor(wmicat.4)[0.4,1.1]      5.679902 0.035
+#> factor(wmicat.4)(1.1,1.4]      2.557399 0.593
+#> factor(wmicat.4)(1.4,1.72]     5.411115 0.058
+#> factor(wmicat.4)(1.72,2]       1.384392 0.931
 #> 
 #> Cumulative score process versus covariates (discrete z via model.matrix):
 #>         Sup_z |U(tau,z)|  pval
-#> matrixZ         1.228032 0.934
+#> matrixZ         1.771578 0.812
 
 ## cumulative sums in covariates, via design matrix mm 
 mm <- cumContr(TRACEsam$wmi,breaks=10,equi=TRUE)
@@ -114,31 +113,31 @@ m1 <- gofM.phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,
       modelmatrix=mm,silent=0)
 #> Cumulative score process test for modelmatrix:
 #>        Sup_t |U(t)| pval
-#> <=0.56         0.84 0.35
-#> <=0.72         1.93 0.39
-#> <=0.88         5.06 0.04
-#> <=1.04         2.63 0.58
-#> <=1.2          4.27 0.17
-#> <=1.36         4.04 0.17
-#> <=1.52         3.20 0.29
-#> <=1.68         1.83 0.81
-#> <=1.84         1.25 0.82
+#> <=0.56         0.88 0.33
+#> <=0.72         2.25 0.28
+#> <=0.88         5.28 0.03
+#> <=1.04         2.68 0.55
+#> <=1.2          4.12 0.20
+#> <=1.36         4.09 0.16
+#> <=1.52         3.34 0.27
+#> <=1.68         1.78 0.84
+#> <=1.84         1.17 0.85
 #> <=2            0.00 1.00
 summary(m1)
 #> Cumulative residuals versus modelmatrix :
 #>        Sup_t |U(t)|  pval
-#> <=0.56    0.8423856 0.352
-#> <=0.72    1.9258405 0.394
-#> <=0.88    5.0552596 0.037
-#> <=1.04    2.6334412 0.579
-#> <=1.2     4.2747875 0.174
-#> <=1.36    4.0393945 0.169
-#> <=1.52    3.2004455 0.292
-#> <=1.68    1.8330704 0.810
-#> <=1.84    1.2509429 0.823
+#> <=0.56    0.8821214 0.330
+#> <=0.72    2.2521756 0.276
+#> <=0.88    5.2766972 0.029
+#> <=1.04    2.6807567 0.552
+#> <=1.2     4.1217296 0.201
+#> <=1.36    4.0926272 0.161
+#> <=1.52    3.3447151 0.271
+#> <=1.68    1.7766131 0.844
+#> <=1.84    1.1652990 0.853
 #> <=2       0.0000000 1.000
 #> 
 #> Cumulative score process versus covariates (discrete z via model.matrix):
 #>         Sup_z |U(tau,z)|  pval
-#> matrixZ          3.73439 0.283
+#> matrixZ         3.931466 0.225
 ```

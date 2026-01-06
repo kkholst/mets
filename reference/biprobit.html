@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -201,14 +202,14 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">a</span>, mean.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span>, cor.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate   Std.Err       Z p-value    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.0056117 0.0199701  0.2810  0.7787    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x             0.0545437 0.0332679  1.6395  0.1011    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) 0.0137029 0.0383044  0.3577  0.7205    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:x           1.0147379 0.0708594 14.3204  &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   -0.027944  0.019673 -1.4204  0.1555    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x             -0.029548  0.032538 -0.9081  0.3638    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) -0.014561  0.038417 -0.3790  0.7047    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:x            1.047861  0.072660 14.4215  &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2652.029  mean(score^2): 2.661e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2646.19  mean(score^2): 9.962e-06 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n pairs </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4000  2000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -217,13 +218,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Mean          [(Intercept)] + 0.5[x] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.30136  1.23958 1.36314</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.72995  2.88854 4.81645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.47853  0.39549 0.55381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.33294  1.26421 1.40166</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.62347  2.80740 4.67675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.46945  0.38582 0.54543</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.34263  0.31526 0.37110</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.66775  0.63482 0.69911</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.51312  0.48942 0.53676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.31091  0.28469 0.33840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.64376  0.60920 0.67689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.48296  0.45989 0.50611</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">a</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,by<span class="op">=</span><span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p00</span><span class="op">~</span><span class="va">x</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="biprobit-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

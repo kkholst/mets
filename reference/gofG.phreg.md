@@ -46,10 +46,6 @@ m2 <- phreg(Surv(time,status==9)~vf+strata(chf)+wmi,data=tTRACE)
 par(mfrow=c(2,2))
 
 gofG.phreg(m1)
-#> Warning: number of rows of result is not a multiple of vector length (arg 2)
 gofG.phreg(m2)
-#> Warning: number of rows of result is not a multiple of vector length (arg 2)
 
-bplot(m1,log="y")
-bplot(m2,log="y")
 ```

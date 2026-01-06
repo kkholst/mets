@@ -30,6 +30,7 @@ IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator."><met
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -142,10 +143,75 @@ IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator.</p>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
+Mao, L. (2023). Nonparametric inference of general while-alive estimands for recurrent events. Biometrics, 79(3):1749–1760.
+Schmidli, H., Roger, J. H., and Akacha, M. (2023). Estimands for recurrent event endpoints in the presence of a terminal event. Statistics in Biopharmaceutical Research, 15(2):238–248.</p>
+    </div>
+    <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Thomas Scheike</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hfactioncpx12</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dtable.html">dtable</a></span><span class="op">(</span><span class="va">hfactioncpx12</span>,<span class="op">~</span><span class="va">status</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0    1    2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  617 1391  124 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">WA_recurrent</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treatment</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">hfactioncpx12</span>,time<span class="op">=</span><span class="fl">2</span>,death.code<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> While-Alive summaries:  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RMST,  E(min(D,t)) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate Std.Err  2.5% 97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment0    1.859 0.02108 1.817 1.900       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment1    1.924 0.01502 1.894 1.953       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err    2.5%    97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [treatment0] - [treat.... -0.06517 0.02588 -0.1159 -0.01444  0.0118</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [treatment0] - [treatment1] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean events, E(N(min(D,t))): </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment0    1.572 0.09573 1.384 1.759 1.375e-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treatment1    1.453 0.10315 1.251 1.656 4.376e-45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err    2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [treatment0] - [treat....   0.1185  0.1407 -0.1574 0.3943     0.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [treatment0] - [treatment1] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _______________________________________________________ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ratio of means E(N(min(D,t)))/E(min(D,t)) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.8457 0.05264 0.7425 0.9488 4.411e-58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p2   0.7555 0.05433 0.6490 0.8619 5.963e-44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std.Err     2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [p1] - [p2] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _______________________________________________________ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat0   1.0725  0.1222 0.8331 1.3119 1.645e-18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat1   0.7552  0.0643 0.6291 0.8812 7.508e-32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err    2.5%  97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [treat0] - [treat1]   0.3173  0.1381 0.04675 0.5879 0.02153</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [treat0] - [treat1] = 0 </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -45,6 +45,11 @@ exp(X^ beta) and otherwise a linear model is used.
 Estimates the ATE using the the standard binary double robust estimating
 equations that are IPCW censoring adjusted.
 
+## References
+
+Scheike, T. and Holst, K. K. Restricted mean time lost for survival and
+competing risks data using mets in R, WIP
+
 ## Author
 
 Thomas Scheike

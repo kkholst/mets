@@ -34,6 +34,7 @@ Thefore the ratio $$\frac{P_i}{P_1} = \exp( X^\beta_i )$$"><meta property="og:im
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -140,23 +141,23 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1224 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate       S.E.    dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  0.0062305  0.1187375  0.1116297  0.9582</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3 -0.6092657  0.1414469  0.1332076  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate       S.E.    dU^-1/2 P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  0.0062305  0.1187375  0.1116297  0.9582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3 -0.6092657  0.1414469  0.1332076  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  1.00625 0.79733 1.2699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  0.54375 0.41210 0.7175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate    2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  1.00625 0.79733 1.2699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3  0.54375 0.41210 0.7175</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   XX(Intercept).2 XX(Intercept).3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -6.288820e-03   -1.005747e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1.692758e-17    1.149425e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    6.172360e-03   -6.250000e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    6.211180e-03    2.298851e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1.242236e-02   -2.801584e-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    3.246739e-17    2.298851e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Intercept2    Intercept3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -6.288820e-03 -1.005747e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1.692758e-17  1.149425e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  6.172360e-03 -6.250000e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  6.211180e-03  2.298851e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1.242236e-02 -2.801584e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  3.246739e-17  2.298851e-02</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 174   2</span>
 <span class="r-in"><span></span></span>
@@ -168,38 +169,31 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1224 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate     S.E.  dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  0.25002  0.13906  0.13858  0.0722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.2       -0.28389  0.36431  0.36285  0.4358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.2    -0.68611  0.24797  0.24956  0.0057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3 -0.56565  0.16921  0.17078  0.0008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        0.50505  0.36481  0.36226  0.1662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3    -0.35890  0.29130  0.28727  0.2179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate     S.E.  dU^-1/2 P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  0.25002  0.13906  0.13858  0.0722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell2     -0.28389  0.36431  0.36285  0.4358</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet2  -0.68611  0.24797  0.24956  0.0057</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3 -0.56565  0.16921  0.17078  0.0008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell3      0.50505  0.36481  0.36226  0.1662</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet3  -0.35890  0.29130  0.28727  0.2179</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  1.28406 0.97773 1.6864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.2        0.75285 0.36864 1.5375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.2     0.50353 0.30971 0.8187</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  0.56799 0.40767 0.7914</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        1.65707 0.81062 3.3874</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3     0.69844 0.39462 1.2362</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate    2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  1.28406 0.97773 1.6864</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell2      0.75285 0.36864 1.5375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet2   0.50353 0.30971 0.8187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3  0.56799 0.40767 0.7914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell3      1.65707 0.81062 3.3874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet3   0.69844 0.39462 1.2362</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   XX(Intercept).2    XXtcell.2 XXplatelet.2 XX(Intercept).3   XXtcell.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   -0.0001355312 0.0009504519 8.857909e-05       0.0185731 -0.01020386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   XXplatelet.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -0.01569271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -0.01569271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -0.01569271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -0.01569271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.01569271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Intercept2       tcell2    platelet2 Intercept3      tcell3   platelet3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -0.0001355312 0.0009504519 8.857909e-05  0.0185731 -0.01020386 -0.01569271</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/iid.html" class="external-link">iid</a></span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 408   6</span>
 <span class="r-in"><span></span></span>
@@ -211,48 +205,79 @@ Standard errors computed based on sandwhich form $$ DU^-1  \sum U_i^2 DU^-1$$.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1224 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate     S.E.  dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  0.56565  0.16921  0.17078  0.0008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.2       -0.50505  0.36481  0.36226  0.1662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.2     0.35890  0.29130  0.28727  0.2179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  0.81567  0.16346  0.16467  0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3       -0.78894  0.39244  0.38890  0.0444</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3    -0.32721  0.30423  0.30139  0.2821</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate     S.E.  dU^-1/2 P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  0.56565  0.16921  0.17078  0.0008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell2     -0.50505  0.36481  0.36226  0.1662</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet2   0.35890  0.29130  0.28727  0.2179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3  0.81567  0.16346  0.16467  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell3     -0.78894  0.39244  0.38890  0.0444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet3  -0.32721  0.30423  0.30139  0.2821</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2  1.76059 1.26364 2.4530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.2        0.60347 0.29521 1.2336</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.2     1.43175 0.80893 2.5341</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3  2.26070 1.64100 3.1144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        0.45433 0.21053 0.9804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3     0.72093 0.39713 1.3087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate    2.5%  97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2  1.76059 1.26364 2.4530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell2      0.60347 0.29521 1.2336</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet2   1.43175 0.80893 2.5341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3  2.26070 1.64100 3.1144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell3      0.45433 0.21053 0.9804</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet3   0.72093 0.39713 1.3087</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## inverse information standard errors </span></span></span>
 <span class="r-in"><span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">mreg3</span><span class="op">$</span><span class="va">coef</span>,vcov<span class="op">=</span><span class="va">mreg3</span><span class="op">$</span><span class="va">II</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate Std.Err    2.5%    97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).2   0.5657  0.1708  0.2309  0.90038 9.259e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.2        -0.5051  0.3623 -1.2151  0.20497 1.633e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.2      0.3589  0.2873 -0.2041  0.92194 2.115e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XX(Intercept).3   0.8157  0.1647  0.4929  1.13842 7.294e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXtcell.3        -0.7889  0.3889 -1.5512 -0.02672 4.249e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> XXplatelet.3     -0.3272  0.3014 -0.9179  0.26350 2.776e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate Std.Err    2.5%    97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept2   0.5657  0.1708  0.2309  0.90038 9.259e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell2      -0.5051  0.3623 -1.2151  0.20497 1.633e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet2    0.3589  0.2873 -0.2041  0.92194 2.115e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept3   0.8157  0.1647  0.4929  1.13842 7.294e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell3      -0.7889  0.3889 -1.5512 -0.02672 4.249e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet3   -0.3272  0.3014 -0.9179  0.26350 2.776e-01</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## predictions based on seen response or not </span></span></span>
-<span class="r-in"><span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tcell<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,platelet<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,cause1f<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2"</span>,<span class="st">"1"</span>,<span class="st">"0"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## all probabilities</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span>,response<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           0         1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3506254 0.4502227 0.1991519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.3506254 0.4502227 0.1991519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.3506254 0.4502227 0.1991519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.3506254 0.4502227 0.1991519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.3506254 0.4502227 0.1991519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0.3506254 0.4502227 0.1991519</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pred         se    lower      upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0.1991519 0.06681508 0.330107 0.06819674</span>
+<span class="r-in"><span><span class="co">## using newdata </span></span></span>
+<span class="r-in"><span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tcell<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,platelet<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,cause1f<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2"</span>,<span class="st">"2"</span>,<span class="st">"0"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## only probability of seen response </span></span></span>
+<span class="r-in"><span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pred         se     lower      upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3236700 0.13603308 0.5902900 0.05705011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.3065921 0.10966904 0.5215395 0.09164473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.4663875 0.07376361 0.6109615 0.32181348</span>
+<span class="r-in"><span><span class="co">## without response</span></span></span>
 <span class="r-in"><span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span>,<span class="va">newdata</span>,response<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           0         1         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3438904 0.3324396 0.3236700</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.4663875 0.2270204 0.3065921</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.4663875 0.2270204 0.3065921</span>
-<span class="r-in"><span><span class="co">## only probability of seen response </span></span></span>
+<span class="r-in"><span><span class="co">## given indexx of P(Y=j)</span></span></span>
+<span class="r-in"><span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span>,<span class="va">newdata</span>,Y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pred         se     lower       upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3438904 0.06916812 0.4794574  0.20832337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.2270204 0.12225406 0.4666340 -0.01259315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.3065921 0.10966904 0.5215395  0.09164473</span>
+<span class="r-in"><span><span class="co">##  reponse not given </span></span></span>
+<span class="r-in"><span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tcell<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,platelet<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">predict</span><span class="op">(</span><span class="va">mreg</span>,<span class="va">newdata</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        pred         se       lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3236700 0.13603308  0.05705011 0.5902900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.2270204 0.12225406 -0.01259315 0.4666340</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.4663875 0.07376361  0.32181348 0.6109615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           0         1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.3438904 0.3324396 0.3236700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.4663875 0.2270204 0.3065921</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.4663875 0.2270204 0.3065921</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

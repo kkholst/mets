@@ -41,6 +41,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -79,7 +80,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2025-11-17</h4>
+            <h4 data-toc-skip class="date">2026-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/phreg_rct.Rmd" class="external-link"><code>vignettes/phreg_rct.Rmd</code></a></small>
       <div class="d-none name"><code>phreg_rct.Rmd</code></div>
@@ -378,9 +379,9 @@ or
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">calgb8923</span><span class="op">)</span></span>
 <span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="va">calgb8923</span></span>
 <span></span>
-<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">+</span><span class="va">age</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">wbc</span></span>
-<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span></span>
-<span><span class="va">tm</span><span class="op">=</span><span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">*</span><span class="va">A0.f</span></span>
+<span><span class="co">## tm &lt;- At.f~factor(Count2)+age+sex+wbc</span></span>
+<span><span class="co">## tm &lt;- At.f~factor(Count2)</span></span>
+<span><span class="va">tm</span> <span class="op">&lt;-</span>  <span class="va">At.f</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Count2</span><span class="op">)</span><span class="op">*</span><span class="va">A0.f</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">calgt</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id V X Z   TR R     U delta  stop age   wbc sex race      time status start</span></span>
@@ -405,7 +406,7 @@ or
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pll1</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span>,se<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">1</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A1B1"</span>,<span class="st">"A2B1"</span>,<span class="st">"A1B2"</span>,<span class="st">"A2B2"</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phreg_rct_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="700"></p>
+<p><img src="phreg_rct_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pll1</span>,times<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
@@ -838,17 +839,17 @@ adaptive nature from fitting the propensity score models.</li>
 <span><span class="co">#&gt; [1] mets_1.3.9</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        </span></span>
 <span><span class="co">#&gt; [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1</span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    </span></span>
 <span><span class="co">#&gt; [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         </span></span>
 <span><span class="co">#&gt; [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  </span></span>
 <span><span class="co">#&gt; [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       </span></span>
 <span><span class="co">#&gt; [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     </span></span>
 <span><span class="co">#&gt; [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       </span></span>

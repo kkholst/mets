@@ -93,8 +93,8 @@ m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
 summary(m1) 
 #> Cumulative residuals versus modelmatrix :
 #>     Sup_z |U(tau,z)|  pval
-#> wmi         3.875974 0.397
-#> age         5.185779 0.269
+#> wmi         3.891570 0.331
+#> age         5.665722 0.093
 plot(m1,type="z")
 
 

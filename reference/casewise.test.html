@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -141,37 +142,37 @@
 <span class="r-in"><span><span class="fu">slope.process</span><span class="op">(</span><span class="va">cdz</span><span class="op">$</span><span class="va">casewise</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cdz</span><span class="op">$</span><span class="va">casewise</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,iid<span class="op">=</span><span class="va">cdz</span><span class="op">$</span><span class="va">casewise.iid</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $intercept</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    0.150832 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.1162653 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.04579094 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.03274472 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $se.slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)       ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06214564  0.04156796 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05514246  0.04437315 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $pval.slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.270639 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.460551 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">slope.process</span><span class="op">(</span><span class="va">cmz</span><span class="op">$</span><span class="va">casewise</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">cmz</span><span class="op">$</span><span class="va">casewise</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,iid<span class="op">=</span><span class="va">cmz</span><span class="op">$</span><span class="va">casewise.iid</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $intercept</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.5288341 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.4266816 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $slope</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.07806637 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ctime </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.04093122 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $se.slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)       ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.10235169  0.07677714 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.09322922  0.06828519 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $pval.slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     ctime </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.3092524 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5488956 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

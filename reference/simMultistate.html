@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -52,7 +53,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Simulation of illness-death model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/R/recurrent.marginal.R" class="external-link"><code>R/recurrent.marginal.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/R/sim-pc-hazard.R" class="external-link"><code>R/sim-pc-hazard.R</code></a></small>
       <div class="d-none name"><code>simMultistate.Rd</code></div>
     </div>
 
@@ -72,12 +73,14 @@
 <span>  rr2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rd <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rd2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rrc <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gap.time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  max.recurrent <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  dependence <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  var.z <span class="op">=</span> <span class="fl">0.22</span>,</span>
 <span>  cor.mat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cens <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  extend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -122,6 +125,10 @@
 <dd><p>relative risk adjustment for death.cumhaz2</p></dd>
 
 
+<dt id="arg-rrc">rrc<a class="anchor" aria-label="anchor" href="#arg-rrc"></a></dt>
+<dd><p>relative risk adjustment for censoring</p></dd>
+
+
 <dt id="arg-gap-time">gap.time<a class="anchor" aria-label="anchor" href="#arg-gap-time"></a></dt>
 <dd><p>if true simulates gap-times with specified cumulative hazard</p></dd>
 
@@ -131,7 +138,13 @@
 
 
 <dt id="arg-dependence">dependence<a class="anchor" aria-label="anchor" href="#arg-dependence"></a></dt>
-<dd><p>0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death</p></dd>
+<dd><p>0:independence; 1:all share same random effect with
+variance var.z; 2:random effect exp(normal) with correlation structure
+from cor.mat; 3:additive gamma distributed random effects, z1= (z11+
+z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3=
+(z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with
+mean and variance 1 , first random effect is z1 and for N1 second random
+effect is z2 and for N2 third random effect is for death</p></dd>
 
 
 <dt id="arg-var-z">var.z<a class="anchor" aria-label="anchor" href="#arg-var-z"></a></dt>
@@ -144,6 +157,10 @@
 
 <dt id="arg-cens">cens<a class="anchor" aria-label="anchor" href="#arg-cens"></a></dt>
 <dd><p>rate of censoring exponential distribution</p></dd>
+
+
+<dt id="arg-extend">extend<a class="anchor" aria-label="anchor" href="#arg-extend"></a></dt>
+<dd><p>to extend hazards to max-time</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -165,6 +182,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">########################################</span></span></span>
 <span class="r-in"><span><span class="co">## getting some rates to mimick </span></span></span>
 <span class="r-in"><span><span class="co">########################################</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CPH_HPN_CRBSI</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dr</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">terminal</span></span></span>
 <span class="r-in"><span><span class="va">base1</span> <span class="op">&lt;-</span> <span class="va">CPH_HPN_CRBSI</span><span class="op">$</span><span class="va">crbsi</span> </span></span>
@@ -172,15 +190,17 @@
 <span class="r-in"><span><span class="va">dr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="recreg.html">scalecumhaz</a></span><span class="op">(</span><span class="va">dr</span>,<span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5110</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">iddata</span> <span class="op">&lt;-</span> <span class="fu">simMultistate</span><span class="op">(</span><span class="fl">1000</span>,<span class="va">base1</span>,<span class="va">base1</span>,<span class="va">dr</span>,<span class="va">dr2</span>,cens<span class="op">=</span><span class="va">cens</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">iddata</span> <span class="op">&lt;-</span> <span class="fu">simMultistate</span><span class="op">(</span><span class="fl">100</span>,<span class="va">base1</span>,<span class="va">base1</span>,<span class="va">dr</span>,<span class="va">dr2</span>,cens<span class="op">=</span><span class="va">cens</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dprint.html">dlist</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">|</span><span class="va">id</span><span class="op">&lt;</span><span class="fl">3</span>,n<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      time status entry death from to start    stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 295.152      3     0     1    1  3     0 295.152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   entry     time status rr death from to start     stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0 170.1568      3  1     1    1  3     0 170.1568</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> id: 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       time status entry death from to start     stop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 296.3073      3     0     1    1  3     0 296.3073</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         entry      time status rr death from to     start      stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      0.0000  124.5735      2  1     0    1  2    0.0000  124.5735</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101  124.5735 1055.3495      1  1     0    2  1  124.5735 1055.3495</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171 1055.3495 1143.6886      3  1     1    1  3 1055.3495 1143.6886</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co">### estimating rates from simulated data  </span></span></span>
 <span class="r-in"><span><span class="va">c0</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="va">iddata</span><span class="op">)</span></span></span>
@@ -189,27 +209,19 @@
 <span class="r-in"><span><span class="va">c2</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">start</span>,<span class="va">stop</span>,<span class="va">status</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">iddata</span>,<span class="va">from</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">###</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">c0</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">cens</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span> </span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">c3</span>,main<span class="op">=</span><span class="st">"rates 1-&gt; 3 , 2-&gt;3"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c3</span>,main<span class="op">=</span><span class="st">"rates 1-&gt; 3 , 2-&gt;3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">dr</span>,col<span class="op">=</span><span class="fl">1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">dr2</span>,col<span class="op">=</span><span class="fl">2</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
 <span class="r-in"><span><span class="co">###</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">c1</span>,main<span class="op">=</span><span class="st">"rate 1-&gt;2"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c1</span>,main<span class="op">=</span><span class="st">"rate 1-&gt;2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">base1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
 <span class="r-in"><span><span class="co">###</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot.phreg.html">bplot</a></span><span class="op">(</span><span class="va">c2</span>,main<span class="op">=</span><span class="st">"rate 2-&gt;1"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">c2</span>,main<span class="op">=</span><span class="st">"rate 2-&gt;1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">base1</span>,lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.xy(xy.coords(x, y), type = type, ...):</span> plot.new has not been called yet</span>
 <span class="r-in"><span> </span></span>
+<span class="r-plt img"><img src="simMultistate-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

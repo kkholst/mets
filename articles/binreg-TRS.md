@@ -251,9 +251,9 @@ dtable(datat,~A1.23.f+response|Count2==1)
 #> 3                 9  0
 ###
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-        treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
-        augmentR0=~X01+X02, augmentR1=~X11+X12,
-        augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
+    treat.model0=A0.f~+1,treat.model1=A1.23.f~A0.f*response.f,
+    augmentR0=~X01+X02, augmentR1=~X11+X12,
+    augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),
         estpr=c(1,0),pi1=c(0.3,0.5))
 bb
 #> Simple estimator :
@@ -316,11 +316,13 @@ bb
 #> A0.f=2, response.f*A1.23.f=2,2 0.4667557 0.11617870
 #> A0.f=2, response.f*A1.23.f=3,2 0.4960792 0.11127903
 
+
 ## 2 and 3 levels for each response , estimated 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-        treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
-        augmentR0=~X01+X02, augmentR1=~X11+X12,
-        augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+    treat.model0=A0.f~+1, treat.model1=A1.23.f~A0.f*response.f,
+    augmentR0=~X01+X02, augmentR1=~X11+X12,
+    augmentC=~X01+X02+A11t+A12t+X11+X12+TR,cens.model=~strata(A0.f),
+    estpr=c(1,1))
 bb
 #> Simple estimator :
 #>                                     coef           
@@ -382,6 +384,7 @@ bb
 #> A0.f=2, response.f*A1.23.f=2,2 0.4605674 0.11777635
 #> A0.f=2, response.f*A1.23.f=3,2 0.4971161 0.12478451
 
+
 ## 2 and 1 level for each response 
 datat$A1.21.f <- as.numeric(datat$A1.f)
 dtable(datat,~A1.21.f+response|Count2==1)
@@ -405,9 +408,10 @@ dtable(datat,~A1.21.f+response|Count2==1)
 #> 1                21 48
 #> 2                19  0
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-        treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
-        augmentR0=~X01+X02, augmentR1=~X11+X12,
-        augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,1))
+    treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+    augmentR0=~X01+X02, augmentR1=~X11+X12,
+    augmentC=~X01+X02+A11t+A12t+X11+X12+TR,cens.model=~strata(A0.f),
+    estpr=c(1,1))
 bb
 #> Simple estimator :
 #>                                     coef           
@@ -439,9 +443,10 @@ bb
 
 ## known weights 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),datat,time=2,cause=c(1),response.code=2,
-        treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
-        augmentR0=~X01+X02, augmentR1=~X11+X12,
-        augmentC=~X01+X02+A11t+A12t+X11+X12+TR, cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
+    treat.model0=A0.f~+1, treat.model1=A1.21.f~A0.f*response.f,
+    augmentR0=~X01+X02, augmentR1=~X11+X12,
+    augmentC=~X01+X02+A11t+A12t+X11+X12+TR,
+    cens.model=~strata(A0.f),estpr=c(1,0),pi1=c(0.5,1))
 bb
 #> Simple estimator :
 #>                                     coef           
@@ -616,17 +621,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

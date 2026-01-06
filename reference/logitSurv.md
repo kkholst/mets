@@ -50,6 +50,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
 out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)

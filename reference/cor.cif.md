@@ -246,9 +246,9 @@ summary(out2)
 #> 
 #> Effect of cause1=1 on cause2=1 under symmetry=0
 #> 
-#>              log-Coef.    SE      z P-val Cross odds ratio    SE
-#> factor(zyg)0     1.440 36.30 0.0396 0.968             4.20 152.0
-#> factor(zyg)1     0.689  6.22 0.1110 0.912             1.99  12.4
+#>              log-Coef.    SE      z P-val Cross odds ratio   SE
+#> factor(zyg)0     0.882  8.96 0.0984 0.922             2.42 21.6
+#> factor(zyg)1     1.230 21.80 0.0562 0.955             3.41 74.4
 #> 
 
 ##out3 <- cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)

@@ -242,6 +242,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)
 data(diabetes)
 
 # Marginal Cox model  with treat as covariate

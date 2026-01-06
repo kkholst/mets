@@ -18,6 +18,8 @@
   Regression](http://kkholst.github.io/mets/articles/cifreg.md):
 - [WIP: Cooking survival data, 5 minute
   recipes](http://kkholst.github.io/mets/articles/cooking-survival-data.md):
+- [IPCW Cumulative
+  Cost](http://kkholst.github.io/mets/articles/cumulative-cost.md):
 - [GEE cluster standard errors and predictions for glm
   objects](http://kkholst.github.io/mets/articles/glm-utility.md):
 - [Haplotype Discrete Survival

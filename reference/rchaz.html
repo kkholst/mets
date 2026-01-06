@@ -28,6 +28,7 @@ Cox type. Censor data at highest value of the break points."><meta property="og:
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -81,7 +82,8 @@ Cox type. Censor data at highest value of the break points.</p>
 
 
 <dl><dt id="arg-cumhazard">cumhazard<a class="anchor" aria-label="anchor" href="#arg-cumhazard"></a></dt>
-<dd><p>cumulative hazard, or piece-constant rates for periods defined by first column of input.</p></dd>
+<dd><p>cumulative hazard, or piece-constant rates for periods
+defined by first column of input.</p></dd>
 
 
 <dt id="arg-rr">rr<a class="anchor" aria-label="anchor" href="#arg-rr"></a></dt>
@@ -105,7 +107,9 @@ Cox type. Censor data at highest value of the break points.</p>
 
 
 <dt id="arg-extend">extend<a class="anchor" aria-label="anchor" href="#arg-extend"></a></dt>
-<dd><p>to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.</p></dd>
+<dd><p>to extend piecewise constant with constant rate. Default is
+average rate over time from cumulative (when TRUE), if numeric then uses
+given rate.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -124,7 +128,7 @@ $$P(T &gt; t | T&gt;x) = exp(-RR (\Lambda(t) - \Lambda(x)))$$.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chaz</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1.5</span>,<span class="fl">2</span>,<span class="fl">2.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,   <span class="fl">20</span>,  <span class="fl">30</span>,   <span class="fl">40</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cumhaz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">breaks</span>,<span class="va">chaz</span><span class="op">)</span></span></span>

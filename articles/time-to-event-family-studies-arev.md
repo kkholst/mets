@@ -852,12 +852,12 @@ system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
 #>    user  system elapsed 
-#>   0.282   0.288   0.240
+#>   0.284   0.272   0.227
 system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.350   0.293   0.315
+#>   0.367   0.285   0.323
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,
@@ -1091,19 +1091,19 @@ sessionInfo()
 #> [1] prodlim_2025.04.28 mets_1.3.9        
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-4        future.apply_1.20.0 jsonlite_2.0.0     
+#>  [1] Matrix_1.7-4        future.apply_1.20.1 jsonlite_2.0.0     
 #>  [4] compiler_4.5.2      Rcpp_1.1.0          parallel_4.5.2     
 #>  [7] jquerylib_0.1.4     globals_0.18.0      splines_4.5.2      
-#> [10] systemfonts_1.3.1   textshaping_1.0.4   yaml_2.3.10        
+#> [10] systemfonts_1.3.1   textshaping_1.0.4   yaml_2.3.12        
 #> [13] fastmap_1.2.0       lattice_0.22-7      R6_2.6.1           
-#> [16] knitr_1.50          htmlwidgets_1.6.4   future_1.68.0      
+#> [16] knitr_1.51          htmlwidgets_1.6.4   future_1.68.0      
 #> [19] desc_1.4.3          bslib_0.9.0         rlang_1.1.6        
-#> [22] cachem_1.1.0        xfun_0.54           fs_1.6.6           
+#> [22] cachem_1.1.0        xfun_0.55           fs_1.6.6           
 #> [25] sass_0.4.10         cli_3.6.5           pkgdown_2.2.0      
-#> [28] digest_0.6.38       grid_4.5.2          mvtnorm_1.3-3      
+#> [28] digest_0.6.39       grid_4.5.2          mvtnorm_1.3-3      
 #> [31] lifecycle_1.0.4     lava_1.8.2          timereg_2.0.7      
-#> [34] evaluate_1.0.5      data.table_1.17.8   numDeriv_2016.8-1.1
+#> [34] evaluate_1.0.5      data.table_1.18.0   numDeriv_2016.8-1.1
 #> [37] listenv_0.10.0      codetools_0.2-20    ragg_1.5.0         
-#> [40] survival_3.8-3      parallelly_1.45.1   rmarkdown_2.30     
-#> [43] tools_4.5.2         htmltools_0.5.8.1
+#> [40] survival_3.8-3      parallelly_1.46.0   rmarkdown_2.30     
+#> [43] tools_4.5.2         htmltools_0.5.9
 ```

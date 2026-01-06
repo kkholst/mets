@@ -358,10 +358,6 @@
 - [`phreg()`](http://kkholst.github.io/mets/reference/phreg.md) : Fast
   Cox PH regression
 
-- [`phregR()`](http://kkholst.github.io/mets/reference/phregR.md) : Fast
-  Cox PH regression and calculations done in R to make play and
-  adjustments easy
-
 - [`phreg_IPTW()`](http://kkholst.github.io/mets/reference/phreg_IPTW.md)
   : IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression
 
@@ -439,14 +435,14 @@
 - [`rweibullcox()`](http://kkholst.github.io/mets/reference/rweibullcox.md)
   : Simulate observations from a Weibull distribution
 
-- [`sim.cause.cox()`](http://kkholst.github.io/mets/reference/sim.cause.cox.md)
-  : Simulation of cause specific from Cox models.
-
 - [`sim.cif()`](http://kkholst.github.io/mets/reference/sim.cif.md) :
   Simulation of output from Cumulative incidence regression model
 
-- [`sim.cox()`](http://kkholst.github.io/mets/reference/sim.cox.md) :
-  Simulation of output from Cox model.
+- [`sim.phreg()`](http://kkholst.github.io/mets/reference/sim.phreg.md)
+  : Simulation of output from Cox model.
+
+- [`sim.phregs()`](http://kkholst.github.io/mets/reference/sim.phregs.md)
+  : Simulation of cause specific from Cox models.
 
 - [`sim.recurrent()`](http://kkholst.github.io/mets/reference/sim.recurrent.md)
   : Simulation of two-stage recurrent events data based on Cox/Cox or
@@ -467,6 +463,10 @@
 
 - [`simMultistate()`](http://kkholst.github.io/mets/reference/simMultistate.md)
   : Simulation of illness-death model
+
+- [`simRecurrent()`](http://kkholst.github.io/mets/reference/simRecurrent.md)
+  : Simulation of recurrent events data based on cumulative hazards for
+  event and death process
 
 - [`simRecurrentII()`](http://kkholst.github.io/mets/reference/simRecurrentII.md)
   : Simulation of recurrent events data based on cumulative hazards with

@@ -3,14 +3,20 @@
 Fits a Cox-Weibull with cumulative hazard given by \$\$ \Lambda(t) =
 \lambda \cdot t^s \$\$ where \\s\\ is the shape parameter, and
 \\\lambda\\ the rate parameter. We here allow a regression model for
-both parameters \$\$\lambda := \exp(\beta^\top X)\$\$ \$\$s :=
+both parameters \$\$\lambda := \exp(\beta^\top X)\$\$ \$\$s :=e
 \exp(\gamma^\top Z)\$\$ as defined by \`formula\` and \`shape.formula\`
 respectively.
 
 ## Usage
 
 ``` r
-phreg_weibull(formula, shape.formula = ~1, data, control = list())
+phreg_weibull(
+  formula,
+  shape.formula = ~1,
+  data,
+  save.data = TRUE,
+  control = list()
+)
 ```
 
 ## Arguments
@@ -28,6 +34,11 @@ phreg_weibull(formula, shape.formula = ~1, data, control = list())
 - data:
 
   data.frame
+
+- save.data:
+
+  if TRUE the data.frame is stored in the model object (for predictions
+  and simulations)
 
 - control:
 

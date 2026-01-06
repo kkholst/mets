@@ -34,6 +34,7 @@ and if continuous then considered covariate values are given by Avalues."><meta 
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -78,11 +79,10 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  time <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Avalues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Avalues <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  varname <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  same.data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  subdata <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  First <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,7 +95,7 @@ and if continuous then considered covariate values are given by Avalues.</p>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>data frame for risk averaging</p></dd>
+<dd><p>data frame for risk averaging, must be part of the data used for fitting unless same.data=FALSE. When a subset of the data such as the treated model should be fitted with cluster(id)</p></dd>
 
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
@@ -114,12 +114,8 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <dd><p>assumes that same data is used for fitting of survival model and averaging.</p></dd>
 
 
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>might be given to link to data to iid decomposition of survival data, must be coded as 1,2,..,</p></dd>
-
-
-<dt id="arg-subdata">subdata<a class="anchor" aria-label="anchor" href="#arg-subdata"></a></dt>
-<dd><p>rows or TRUE/FALSE to select which part of the data that is used for the G-computation. Might be treated</p></dd>
+<dt id="arg-first">First<a class="anchor" aria-label="anchor" href="#arg-first"></a></dt>
+<dd><p>to only use first record for G-averaging, for example when start,stop structure is used with phreg</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -131,7 +127,7 @@ and if continuous then considered covariate values are given by Avalues.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span></span></span>
-<span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bmt</span><span class="op">$</span><span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">event</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bmt</span><span class="op">$</span><span class="va">cause</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span>; <span class="va">bmt</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">408</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">bmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tcell.f</span><span class="op">~</span><span class="va">tcell</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fg1</span> <span class="op">&lt;-</span> <span class="fu"><a href="cifreg.html">cifreg</a></span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,<span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
@@ -231,6 +227,38 @@ and if continuous then considered covariate values are given by Avalues.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fg1t</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="survivalG-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#among treated: must specify id to link influence functions</span></span></span>
+<span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">event</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,<span class="va">bmt</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">survivalG</span><span class="op">(</span><span class="va">ss</span>,<span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">bmt</span>,<span class="va">tcell</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G-estimator :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> risk0   0.6662 0.03407 0.5995 0.7330 3.661e-85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> risk1   0.5749 0.05749 0.4622 0.6876 1.518e-23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: difference (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate Std.Err    2.5%   97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ps0 -0.09134 0.06417 -0.2171 0.03442  0.1546</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: ratio (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Estimate   Std.Err       2.5%      97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] -0.1474634 0.1081918 -0.3595155 0.06458876 0.1728887</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.8628941 0.6980145 1.0667203 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect:  survival-difference (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate    Std.Err        2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ps0 0.09134406 0.06416628 -0.03441954 0.2171077 0.1545761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Estimate   Std.Err        2.5%     97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [ps0] 0.2419052 0.1620237 -0.07565548 0.5594659 0.1354311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Estimate      2.5%     97.5% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.2736735 0.9271356 1.7497378 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

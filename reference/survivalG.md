@@ -14,11 +14,10 @@ survivalG(
   x,
   data,
   time = NULL,
-  Avalues = c(0, 1),
+  Avalues = NULL,
   varname = NULL,
   same.data = TRUE,
-  id = NULL,
-  subdata = NULL
+  First = FALSE
 )
 ```
 
@@ -30,7 +29,9 @@ survivalG(
 
 - data:
 
-  data frame for risk averaging
+  data frame for risk averaging, must be part of the data used for
+  fitting unless same.data=FALSE. When a subset of the data such as the
+  treated model should be fitted with cluster(id)
 
 - time:
 
@@ -49,15 +50,10 @@ survivalG(
   assumes that same data is used for fitting of survival model and
   averaging.
 
-- id:
+- First:
 
-  might be given to link to data to iid decomposition of survival data,
-  must be coded as 1,2,..,
-
-- subdata:
-
-  rows or TRUE/FALSE to select which part of the data that is used for
-  the G-computation. Might be treated
+  to only use first record for G-averaging, for example when start,stop
+  structure is used with phreg
 
 ## Author
 
@@ -68,7 +64,7 @@ Thomas Scheike
 ``` r
 library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-bmt$event <- (bmt$cause!=0)*1
+bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
 dfactor(bmt) <- tcell.f~tcell
 
 fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
@@ -167,4 +163,37 @@ plot(sst)
 fg1t <- survivalGtime(fg1,bmt,n=50)
 plot(fg1t)
 
+
+#among treated: must specify id to link influence functions
+ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt) 
+summary(survivalG(ss,subset(bmt,tcell==1),50))
+#> G-estimator :
+#>       Estimate Std.Err   2.5%  97.5%   P-value
+#> risk0   0.6662 0.03407 0.5995 0.7330 3.661e-85
+#> risk1   0.5749 0.05749 0.4622 0.6876 1.518e-23
+#> 
+#> Average Treatment effect: difference (G-estimator) :
+#>     Estimate Std.Err    2.5%   97.5% P-value
+#> ps0 -0.09134 0.06417 -0.2171 0.03442  0.1546
+#> 
+#> Average Treatment effect: ratio (G-estimator) :
+#> log-ratio: 
+#>         Estimate   Std.Err       2.5%      97.5%   P-value
+#> [ps0] -0.1474634 0.1081918 -0.3595155 0.06458876 0.1728887
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 0.8628941 0.6980145 1.0667203 
+#> 
+#> Average Treatment effect:  survival-difference (G-estimator) :
+#>       Estimate    Std.Err        2.5%     97.5%   P-value
+#> ps0 0.09134406 0.06416628 -0.03441954 0.2171077 0.1545761
+#> 
+#> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
+#> log-ratio: 
+#>        Estimate   Std.Err        2.5%     97.5%   P-value
+#> [ps0] 0.2419052 0.1620237 -0.07565548 0.5594659 0.1354311
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 1.2736735 0.9271356 1.7497378 
+#> 
 ```

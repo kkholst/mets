@@ -40,6 +40,7 @@ $$"><meta property="og:image" content="http://kkholst.github.io/mets/logo.png"><
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -312,11 +313,11 @@ Estimating heritability for cause specific hazards based on twin data</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   Coef.        SE        z        P-val Cross odds ratio</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 2.7194473 0.3717233 7.315784 2.557954e-13         3.719447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.6265788 0.1631032 3.841610 1.222299e-04         1.626579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 2.2995032 0.3309552 6.948079 3.703038e-12         3.299503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.8440647 0.1826187 4.622005 3.800487e-06         1.844065</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.3717233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.1631032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)MZ 0.3309552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(zyg)DZ 0.1826187</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co">## this model can also be formulated as a random effects model </span></span></span>
 <span class="r-in"><span> <span class="co">## but with different parameters</span></span></span>
@@ -329,27 +330,27 @@ Estimating heritability for cause specific hazards based on twin data</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cause 1 and cause 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Coef.     SE    z    P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.368 0.0503 7.32 2.56e-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.600 0.4150 3.84 1.22e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Coef.     SE    z   P-val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.435 0.0626 6.95 3.7e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.180 0.2560 4.62 3.8e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Coef.     SE    z    P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.368 0.0503 7.32 2.56e-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.600 0.4150 3.84 1.22e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Coef.     SE    z   P-val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.435 0.0626 6.95 3.7e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.180 0.2560 4.62 3.8e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $h</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err    2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.2304 0.06774 0.09763 0.3632 0.0006709</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p2   1.0000 0.00000 1.00000 1.0000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.3671 0.09538 0.1801 0.554 0.0001189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p2   1.0000 0.00000 1.0000 1.000 0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span> <span class="fl">1</span><span class="op">/</span><span class="va">out2m</span><span class="op">$</span><span class="va">theta</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.7194473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.6265788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.2995032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.8440647</span>
 <span class="r-in"><span> <span class="va">out1m</span><span class="op">$</span><span class="va">theta</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.7194473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.6265788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.2995032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.8440647</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co">####################################################################</span></span></span>
 <span class="r-in"><span> <span class="co">################### ACE modelling of twin data #####################</span></span></span>
@@ -373,18 +374,18 @@ Estimating heritability for cause specific hazards based on twin data</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cause 1 and cause 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Coef.     SE     z    P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.499 0.0720  6.93 4.21e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.131 0.0542 -2.41 1.61e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Coef.     SE      z    P-val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.4660 0.0787  5.920 3.14e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.0313 0.0815 -0.384 7.01e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Coef.     SE     z    P-val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.499 0.0720  6.93 4.21e-12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.131 0.0542 -2.41 1.61e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Coef.     SE      z    P-val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.4660 0.0787  5.920 3.14e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.0313 0.0815 -0.384 7.01e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $h</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err    2.5%    97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   1.3546  0.1576  1.0458  1.66338 8.131e-18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p2  -0.3546  0.1576 -0.6634 -0.04579 2.441e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err    2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1  1.07202  0.1921  0.6956 1.4485 2.383e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p2 -0.07202  0.1921 -0.4485 0.3044 7.077e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

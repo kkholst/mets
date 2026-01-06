@@ -43,6 +43,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)
 data(prt)
 prt <- force.same.cens(prt,cause="status")
 
@@ -57,10 +58,6 @@ pconc <- predict(bcif1,newdata)
 ## marginal estimates 
 mbcif1 <- binreg(Event(time,status)~cluster(id), data=prt, time=80, cause=2)
 mc <- predict(mbcif1,newdata)
-mc
-#>         pred          se      lower      upper
-#> 1 0.04751637 0.002253132 0.04310023 0.05193251
-#> 2 0.04751637 0.002253132 0.04310023 0.05193251
 
 cse <- binregCasewise(bcif1,mbcif1)
 cse

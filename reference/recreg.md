@@ -124,6 +124,14 @@ summary(gl)
 #>            Estimate    2.5%  97.5%
 #> treatment1  0.89547 0.76754 1.0447
 #> 
+head(iid(gl))
+#>      treatment1
+#> 1 -1.266428e-04
+#> 2 -6.112340e-04
+#> 3  2.885192e-03
+#> 4  1.308207e-03
+#> 5  5.404664e-05
+#> 6  2.229380e-03
 pgl <- predict(gl,dd,se=1); plot(pgl,se=1)
 
 
@@ -145,6 +153,16 @@ summary(gls)
 #> treatment1  0.89627 0.76815 1.0458
 #> 
 
+glss <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
+cause=1,death.code=2,cens.model=~strata(treatment))
+summary(glss)
+#> 
+#>     n events
+#>  2132   1391
+#> 
+plot(glss)
+
+
 ## IPCW at 2 years 
 ll2 <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),data=hf,
 cause=1,death.code=2,time=2,cens.model=~strata(treatment))
@@ -162,6 +180,25 @@ summary(ll2)
 #>             Estimate    2.5%  97.5%
 #> (Intercept)  1.57186 1.39500 1.7711
 #> treatment1   0.92464 0.76979 1.1107
+#> 
+#> 
+
+ll2i <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,
+cause=1,death.code=2,time=2,cens.model=~strata(treatment))
+summary(ll2i)
+#>    n events
+#>  741   1052
+#> 
+#>  741 clusters
+#> coeffients:
+#>            Estimate  Std.Err     2.5%    97.5% P-value
+#> treatment0 0.452257 0.060901 0.332893 0.571621       0
+#> treatment1 0.373909 0.070972 0.234806 0.513013       0
+#> 
+#> exp(coeffients):
+#>            Estimate   2.5%  97.5%
+#> treatment0   1.5719 1.3950 1.7711
+#> treatment1   1.4534 1.2647 1.6703
 #> 
 #> 
 ```

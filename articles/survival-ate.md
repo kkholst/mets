@@ -201,7 +201,7 @@ and using the specialized function
 
 ``` r
 br1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=40)
-Gbr1 <- binregG(br1,data=bmt)
+Gbr1 <- binregG(br1,bmt,Avalues=NULL)
 summary(Gbr1)
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%   P-value
@@ -210,35 +210,39 @@ summary(Gbr1)
 #> 
 #> Average Treatment effect: difference (G-estimator) :
 #>    Estimate Std.Err    2.5%   97.5% P-value
-#> p1  -0.1506 0.06758 -0.2831 -0.0182  0.0258
+#> pa  -0.1506 0.06758 -0.2831 -0.0182  0.0258
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
 #>        Estimate   Std.Err       2.5%      97.5%    P-value
-#> [p1] -0.4472628 0.2406332 -0.9188953 0.02436964 0.06307095
+#> [pa] -0.4472628 0.2406332 -0.9188953 0.02436964 0.06307095
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
 #> 0.6393758 0.3989595 1.0246690
 
-## contrasting average age to +2-sd age, Avalues
-Gbr2 <- binregG(br1,data=bmt,varname="age",Avalues=c(0,2))
+## contrasting average age to 1+2-sd age, Avalues
+Gbr2 <- binregG(br1,bmt,varname="age",Avalues=c(0,1,2))
 summary(Gbr2)
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%   P-value
 #> risk0   0.3932 0.02537 0.3434 0.4429 3.738e-54
+#> risk1   0.4964 0.03655 0.4248 0.5681 5.044e-42
 #> risk2   0.5997 0.05531 0.4913 0.7081 2.136e-27
 #> 
 #> Average Treatment effect: difference (G-estimator) :
-#>    Estimate Std.Err   2.5%  97.5%   P-value
-#> p1   0.2066 0.04996 0.1086 0.3045 3.564e-05
+#>      Estimate Std.Err    2.5%  97.5%   P-value
+#> pa     0.1033 0.02605 0.05222 0.1543 7.345e-05
+#> pa.1   0.2066 0.04996 0.10863 0.3045 3.564e-05
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
 #>       Estimate    Std.Err      2.5%     97.5%      P-value
-#> [p1] 0.4222406 0.08691473 0.2518908 0.5925903 1.185167e-06
+#> [pa] 0.2332376 0.05402806 0.1273445 0.3391307 1.581845e-05
+#> [pa] 0.4222406 0.08691473 0.2518908 0.5925903 1.185167e-06
 #> ratio: 
-#> Estimate     2.5%    97.5% 
-#> 1.525375 1.286456 1.808667
+#>      Estimate     2.5%    97.5%
+#> [pa] 1.262681 1.135808 1.403727
+#> [pa] 1.525375 1.286456 1.808667
 ```
 
 ## SessionInfo
@@ -269,17 +273,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

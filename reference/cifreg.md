@@ -43,7 +43,8 @@ cifreg(
 
 - no.codes:
 
-  certain event codes to be ignored when finding competing causes
+  certain event codes to be ignored when finding competing causes, can
+  be used with administrative censoring.
 
 - death.code:
 
@@ -97,15 +98,15 @@ summary(or)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.709525  0.331991  0.274927  0.0326
-#> platelet -0.455274  0.236012  0.187919  0.0537
-#> age       0.391162  0.098039  0.083670  0.0001
+#> tcell    -0.709569  0.331982  0.274926  0.0326
+#> platelet -0.455401  0.236010  0.187919  0.0537
+#> age       0.391196  0.098040  0.083671  0.0001
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.49188 0.25661 0.9429
-#> platelet  0.63427 0.39938 1.0073
-#> age       1.47870 1.22019 1.7920
+#> tcell     0.49186 0.25660 0.9428
+#> platelet  0.63419 0.39933 1.0072
+#> age       1.47875 1.22023 1.7920
 #> 
 par(mfrow=c(1,2))
 plot(or)
@@ -113,6 +114,10 @@ nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 por <- predict(or,nd)
 plot(por)
 
+
+## approximate standard errors 
+por <-mets:::predict.phreg(or,nd)
+plot(por,se=1)
 
 ## Fine-Gray model
 fg=cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
@@ -124,23 +129,23 @@ summary(fg)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.596733  0.270480  0.275784  0.0274
-#> platelet -0.425608  0.180733  0.187722  0.0185
-#> age       0.343742  0.080269  0.086284  0.0000
+#> tcell    -0.596588  0.270514  0.275786  0.0274
+#> platelet -0.425558  0.180762  0.187724  0.0186
+#> age       0.343748  0.080265  0.086283  0.0000
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.55061 0.32405 0.9356
-#> platelet  0.65337 0.45848 0.9311
-#> age       1.41021 1.20493 1.6505
+#> tcell     0.55069 0.32407 0.9358
+#> platelet  0.65340 0.45848 0.9312
+#> age       1.41022 1.20494 1.6505
 #> 
 ##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)
 ##summary(fg)
 plot(fg)
+
 nd <- data.frame(tcell=c(1,0),platelet=0,age=0)
 pfg <- predict(fg,nd,se=1)
 plot(pfg,se=1)
-
 
 ## bt <- iidBaseline(fg,time=30)
 ## bt <- IIDrecreg(fg$cox.prep,fg,time=30)
@@ -157,15 +162,16 @@ summary(sfg)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> platelet -0.424327  0.180814  0.187824  0.0189
-#> age       0.341961  0.079861  0.086283  0.0000
+#> platelet -0.424172  0.180849  0.187824   0.019
+#> age       0.341941  0.079859  0.086283   0.000
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> platelet  0.65421 0.45900 0.9325
-#> age       1.40771 1.20374 1.6462
+#> platelet  0.65431 0.45903 0.9327
+#> age       1.40768 1.20372 1.6462
 #> 
 plot(sfg)
+
 
 ### predictions with CI based on iid decomposition of baseline and beta
 ### these are used in the predict function above
@@ -173,7 +179,7 @@ fg <- cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 Biid <- iidBaseline(fg,time=20)
 pfg1 <- FGprediid(Biid,nd)
 pfg1
-#>           pred     se-log     lower     upper
-#> [1,] 0.2693191 0.22758875 0.1724024 0.4207179
-#> [2,] 0.4344048 0.07477547 0.3751851 0.5029717
+#>           pred    se-log     lower     upper
+#> [1,] 0.2693322 0.2276224 0.1723994 0.4207661
+#> [2,] 0.4343766 0.0747748 0.3751613 0.5029385
 ```

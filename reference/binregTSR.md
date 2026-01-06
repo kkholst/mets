@@ -217,30 +217,30 @@ bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c
 summary(bb) 
 #> Simple estimator :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.5973346 0.06741269
-#> A0.f=1, response*A1.f=2 0.7989301 0.06842393
-#> A0.f=2, response*A1.f=1 0.3327747 0.07150476
-#> A0.f=2, response*A1.f=2 0.3240653 0.07402359
+#> A0.f=1, response*A1.f=1 0.6513604 0.05894890
+#> A0.f=1, response*A1.f=2 0.8454786 0.06940480
+#> A0.f=2, response*A1.f=1 0.3381049 0.07717948
+#> A0.f=2, response*A1.f=2 0.1536713 0.05861389
 #> 
 #> First Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.5870854 0.06725571
-#> A0.f=1, response*A1.f=2 0.8046055 0.06813286
-#> A0.f=2, response*A1.f=1 0.3294242 0.07116377
-#> A0.f=2, response*A1.f=2 0.3200976 0.07455184
+#> A0.f=1, response*A1.f=1 0.6509532 0.05841946
+#> A0.f=1, response*A1.f=2 0.8466905 0.06961735
+#> A0.f=2, response*A1.f=1 0.3372760 0.07745806
+#> A0.f=2, response*A1.f=2 0.1539456 0.05837829
 #> 
 #> Second Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.5961775 0.06499758
-#> A0.f=1, response*A1.f=2 0.8035470 0.06483341
-#> A0.f=2, response*A1.f=1 0.3372532 0.07258110
-#> A0.f=2, response*A1.f=2 0.3121596 0.07871542
+#> A0.f=1, response*A1.f=1 0.6575295 0.05738919
+#> A0.f=1, response*A1.f=2 0.8256192 0.06904964
+#> A0.f=2, response*A1.f=1 0.3298011 0.07878161
+#> A0.f=2, response*A1.f=2 0.1492153 0.05848652
 #> 
 #> 1st and 2nd Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.5936725 0.06223468
-#> A0.f=1, response*A1.f=2 0.8084049 0.06466502
-#> A0.f=2, response*A1.f=1 0.3401991 0.07134539
-#> A0.f=2, response*A1.f=2 0.3133418 0.07761599
+#> A0.f=1, response*A1.f=1 0.6614013 0.05563921
+#> A0.f=1, response*A1.f=2 0.8295814 0.06803427
+#> A0.f=2, response*A1.f=1 0.3304605 0.07864288
+#> A0.f=2, response*A1.f=2 0.1502968 0.05795214
 #> 
 ```

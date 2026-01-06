@@ -34,6 +34,7 @@ then considered covariate values are given by Avalues."><meta property="og:image
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -74,7 +75,7 @@ then considered covariate values are given by Avalues.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">binregG</span><span class="op">(</span><span class="va">x</span>, <span class="va">data</span>, Avalues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, varname <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">binregG</span><span class="op">(</span><span class="va">x</span>, <span class="va">data</span>, Avalues <span class="op">=</span> <span class="cn">NULL</span>, varname <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -90,13 +91,18 @@ then considered covariate values are given by Avalues.</p>
 
 
 <dt id="arg-avalues">Avalues<a class="anchor" aria-label="anchor" href="#arg-avalues"></a></dt>
-<dd><p>values to compare for first covariate A</p></dd>
+<dd><p>values to compare for first covariate A, assumes that first variable is factor and take all levels</p></dd>
 
 
 <dt id="arg-varname">varname<a class="anchor" aria-label="anchor" href="#arg-varname"></a></dt>
 <dd><p>if given then averages for this variable, default is first variable</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+29, 441–482.</p>
+    </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Thomas Scheike</p>
@@ -113,26 +119,25 @@ then considered covariate values are given by Avalues.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sb1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> G-estimator :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> risk0   0.4058 0.02588 0.3551 0.4566 1.981e-55</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> risk1   0.5120 0.03706 0.4393 0.5846 2.092e-43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> risk2   0.6169 0.05517 0.5087 0.7250 5.030e-29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> risk0   0.4058 0.02588 0.3551 0.4565 1.982e-55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> risk1   0.5119 0.03706 0.4393 0.5846 2.057e-43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> risk2   0.6168 0.05516 0.5087 0.7250 4.993e-29</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: difference (G-estimator) :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%   P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.1061 0.02623 0.0547 0.1575 5.227e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p2   0.2110 0.04960 0.1138 0.3082 2.098e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate Std.Err    2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pa     0.1061 0.02623 0.05471 0.1575 5.222e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pa.1   0.2110 0.04960 0.11381 0.3082 2.096e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Average Treatment effect: ratio (G-estimator) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log-ratio: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate    Std.Err      2.5%     97.5%      P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [p1] 0.2322843 0.05276981 0.1288573 0.3357112 1.073368e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [p2] 0.4186733 0.08402102 0.2539951 0.5833514 6.261926e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [pa] 0.2323087 0.05277448 0.1288726 0.3357448 1.073002e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [pa] 0.4187166 0.08402886 0.2540231 0.5834101 6.260295e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ratio: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Estimate     2.5%    97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [p1] 1.261478 1.137528 1.398935</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [p2] 1.519944 1.289165 1.792034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [pa] 1.261509 1.137545 1.398982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [pa] 1.520010 1.289202 1.792139</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

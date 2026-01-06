@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -191,6 +192,11 @@ Rather than binomial regression we also consider a IPCW weighted version of stan
 outcome for the treated.</p>
     </div>
     <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
+29, 441–482.</p>
+    </div>
+    <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Thomas Scheike</p>
     </div>
@@ -234,6 +240,22 @@ outcome for the treated.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.177745  0.070145 -0.315226 -0.040263  0.0113</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">brs</span><span class="op">$</span><span class="va">riskDR.iid</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          iidriska      iidriska</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.001158914 -3.544289e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001200978  7.591687e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.001326400  3.360021e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.001320260  3.247937e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.001140662 -9.113840e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.001398172  4.595460e-04</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">brs</span><span class="op">$</span><span class="va">riskG.iid</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        riskGa.iid    riskGa.iid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.001190622 -0.0001527653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001242318  0.0001090009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.001355147  0.0006917410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.001350560  0.0006678242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.001164390 -0.0002837983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.001403991  0.0009473264</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">brsi</span> <span class="op">&lt;-</span> <span class="fu">binregATE</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell.f</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">platelet</span><span class="op">+</span><span class="va">tcell.f</span><span class="op">*</span><span class="va">age</span>,<span class="va">bmt</span>,time<span class="op">=</span><span class="fl">50</span>,cause<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  treat.model<span class="op">=</span><span class="va">tcell.f</span><span class="op">~</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span><span class="op">)</span></span></span>
@@ -273,6 +295,22 @@ outcome for the treated.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> treat:1-0 -0.175040  0.072033 -0.316223 -0.033857  0.0151</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">brs</span><span class="op">$</span><span class="va">riskDR.iid</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          iidriska      iidriska</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.001158914 -3.544289e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001200978  7.591687e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.001326400  3.360021e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.001320260  3.247937e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.001140662 -9.113840e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.001398172  4.595460e-04</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">brs</span><span class="op">$</span><span class="va">riskG.iid</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        riskGa.iid    riskGa.iid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.001190622 -0.0001527653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001242318  0.0001090009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.001355147  0.0006917410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.001350560  0.0006678242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.001164390 -0.0002837983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.001403991  0.0009473264</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

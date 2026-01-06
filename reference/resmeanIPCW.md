@@ -67,6 +67,11 @@ solved directly (type="I") without any additional terms.
 
 Censoring model may depend on strata.
 
+## References
+
+Scheike, T. and Holst, K. K. Restricted mean time lost for survival and
+competing risks data using mets in R, WIP
+
 ## Author
 
 Thomas Scheike
@@ -86,17 +91,17 @@ summary(out)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  3.014403  0.065110  2.886790  3.142016  0.0000
-#> tcell        0.106717  0.138215 -0.164179  0.377613  0.4401
-#> platelet     0.246958  0.097329  0.056196  0.437720  0.0112
-#> age         -0.185997  0.043562 -0.271378 -0.100617  0.0000
+#> (Intercept)  3.014393  0.065110  2.886780  3.142007  0.0000
+#> tcell        0.106872  0.138216 -0.164027  0.377771  0.4394
+#> platelet     0.246943  0.097333  0.056173  0.437712  0.0112
+#> age         -0.185971  0.043566 -0.271359 -0.100583  0.0000
 #> 
 #> exp(coeffients):
 #>             Estimate     2.5%   97.5%
-#> (Intercept) 20.37692 17.93564 23.1505
-#> tcell        1.11262  0.84859  1.4588
-#> platelet     1.28013  1.05780  1.5492
-#> age          0.83028  0.76233  0.9043
+#> (Intercept) 20.37672 17.93546 23.1503
+#> tcell        1.11279  0.84872  1.4590
+#> platelet     1.28011  1.05778  1.5492
+#> age          0.83030  0.76234  0.9043
 #> 
 #> 
 
@@ -105,22 +110,22 @@ out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
             time=50,cens.model=~strata(platelet),model="exp",outcome="rmst")
 summary(out2)
 #>    n   events
-#>  408 7467.648
+#>  408 7467.653
 #> 
 #>  408 clusters
 #> coeffients:
-#>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  3.020196  0.067437  2.888023  3.152369  0.0000
-#> tcell        0.024937  0.186148 -0.339907  0.389781  0.8934
-#> platelet     0.253065  0.098422  0.060162  0.445967  0.0101
-#> age         -0.180325  0.052152 -0.282541 -0.078108  0.0005
+#>               Estimate    Std.Err       2.5%      97.5% P-value
+#> (Intercept)  3.0201981  0.0748709  2.8734539  3.1669423  0.0000
+#> tcell        0.0249363  0.1868557 -0.3412942  0.3911667  0.8938
+#> platelet     0.2530618  0.1262735  0.0055703  0.5005532  0.0451
+#> age         -0.1803245  0.0526438 -0.2835045 -0.0771445  0.0006
 #> 
 #> exp(coeffients):
 #>             Estimate     2.5%   97.5%
-#> (Intercept) 20.49531 17.95777 23.3914
-#> tcell        1.02525  0.71184  1.4767
-#> platelet     1.28797  1.06201  1.5620
-#> age          0.83500  0.75387  0.9249
+#> (Intercept) 20.49535 17.69804 23.7348
+#> tcell        1.02525  0.71085  1.4787
+#> platelet     1.28796  1.00559  1.6496
+#> age          0.83500  0.75314  0.9258
 #> 
 #> 
 
@@ -134,14 +139,14 @@ summary(outtl)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  3.361766  0.047705  3.268265  3.455266  0.0000
+#> (Intercept)  3.361764  0.047705  3.268264  3.455265  0.0000
 #> tcell       -0.085417  0.127458 -0.335230  0.164396  0.5028
-#> platelet    -0.239824  0.100765 -0.437319 -0.042330  0.0173
+#> platelet    -0.239822  0.100764 -0.437317 -0.042327  0.0173
 #> age          0.175688  0.044858  0.087769  0.263607  0.0001
 #> 
 #> exp(coeffients):
 #>             Estimate     2.5%   97.5%
-#> (Intercept) 28.84007 26.26574 31.6667
+#> (Intercept) 28.84003 26.26571 31.6667
 #> tcell        0.91813  0.71517  1.1787
 #> platelet     0.78677  0.64577  0.9586
 #> age          1.19207  1.09174  1.3016
@@ -154,23 +159,23 @@ out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
                              cens.model=~strata(platelet,tcell),model="lin")
 estimate(out)
 #>                        Estimate Std.Err  2.5% 97.5%   P-value
-#> inttcell=0, platelet=0    13.60  0.8316 11.97 15.23 3.830e-60
-#> inttcell=0, platelet=1    18.90  1.2696 16.41 21.39 4.001e-50
+#> inttcell=0, platelet=0    13.60  0.8316 11.97 15.23 3.824e-60
+#> inttcell=0, platelet=1    18.90  1.2696 16.41 21.39 4.002e-50
 #> inttcell=1, platelet=0    16.19  2.4061 11.48 20.91 1.705e-11
-#> inttcell=1, platelet=1    17.77  2.4536 12.96 22.58 4.462e-13
+#> inttcell=1, platelet=1    17.77  2.4536 12.96 22.58 4.464e-13
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 rm1 <- resmean.phreg(out1,times=30)
 summary(rm1)
 #>                     strata times    rmean  se.rmean    lower    upper
-#> tcell=0, platelet=0      0    30 13.60291 0.8315431 12.06697 15.33436
-#> tcell=0, platelet=1      1    30 18.90126 1.2693300 16.57019 21.56025
-#> tcell=1, platelet=0      2    30 16.19118 2.4006274 12.10801 21.65130
-#> tcell=1, platelet=1      3    30 17.76614 2.4421920 13.57013 23.25959
+#> tcell=0, platelet=0      0    30 13.60295 0.8315412 12.06701 15.33440
+#> tcell=0, platelet=1      1    30 18.90126 1.2693314 16.57019 21.56026
+#> tcell=1, platelet=0      2    30 16.19122 2.4006180 12.10806 21.65132
+#> tcell=1, platelet=1      3    30 17.76607 2.4422046 13.57005 23.25956
 #>                     years.lost
-#> tcell=0, platelet=0   16.39709
+#> tcell=0, platelet=0   16.39705
 #> tcell=0, platelet=1   11.09874
-#> tcell=1, platelet=0   13.80882
-#> tcell=1, platelet=1   12.23386
+#> tcell=1, platelet=0   13.80878
+#> tcell=1, platelet=1   12.23393
 
 ### years lost regression
 outl <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,outcome="years-lost",
@@ -196,19 +201,19 @@ rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30
 summary(rmc1)
 #> $estimate
 #>                     strata times    intF_1   intF_2 se.intF_1 se.intF_2
-#> tcell=0, platelet=0      0    30 12.105152 4.291936 0.8508119 0.6161445
-#> tcell=0, platelet=1      1    30  6.884185 4.214559 1.1741025 0.9057040
-#> tcell=1, platelet=0      2    30  7.260785 6.548039 2.3532953 1.9703393
-#> tcell=1, platelet=1      3    30  5.780325 6.453536 2.0924809 2.0815229
+#> tcell=0, platelet=0      0    30 12.105108 4.291939 0.8508088 0.6161454
+#> tcell=0, platelet=1      1    30  6.884191 4.214551 1.1741028 0.9057053
+#> tcell=1, platelet=0      2    30  7.260755 6.548026 2.3532855 1.9703338
+#> tcell=1, platelet=1      3    30  5.780372 6.453554 2.0924973 2.0815288
 #>                     total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
-#> tcell=0, platelet=0         16.39709    10.547353    13.893032     3.239335
-#> tcell=0, platelet=1         11.09874     4.928100     9.616688     2.765858
-#> tcell=1, platelet=0         13.80882     3.846807    13.704613     3.630616
-#> tcell=1, platelet=1         12.23386     2.843261    11.751348     3.429661
+#> tcell=0, platelet=0         16.39705    10.547314    13.892982     3.239337
+#> tcell=0, platelet=1         11.09874     4.928105     9.616694     2.765849
+#> tcell=1, platelet=0         13.80878     3.846791    13.704556     3.630610
+#> tcell=1, platelet=1         12.23393     2.843285    11.751441     3.429671
 #>                     upper_intF_2
-#> tcell=0, platelet=0     5.686572
-#> tcell=0, platelet=1     6.422060
-#> tcell=1, platelet=0    11.809793
-#> tcell=1, platelet=1    12.143509
+#> tcell=0, platelet=0     5.686578
+#> tcell=0, platelet=1     6.422058
+#> tcell=1, platelet=0    11.809764
+#> tcell=1, platelet=1    12.143543
 #> 
 ```

@@ -9,6 +9,7 @@
 <url><loc>http://kkholst.github.io/mets/articles/binreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/cifreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/cooking-survival-data.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/articles/cumulative-cost.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/glm-utility.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/haplo-discrete-ttp.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/index.html</loc></url>
@@ -122,7 +123,6 @@
 <url><loc>http://kkholst.github.io/mets/reference/multcif.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/np.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/phreg.html</loc></url>
-<url><loc>http://kkholst.github.io/mets/reference/phregR.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/phreg_IPTW.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/phreg_rct.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/phreg_weibull.html</loc></url>
@@ -148,15 +148,16 @@
 <url><loc>http://kkholst.github.io/mets/reference/resmeanIPCW.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/rpch.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/rweibullcox.html</loc></url>
-<url><loc>http://kkholst.github.io/mets/reference/sim.cause.cox.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/sim.cif.html</loc></url>
-<url><loc>http://kkholst.github.io/mets/reference/sim.cox.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/sim.phreg.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/sim.phregs.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/sim.recurrent.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simAalenFrailty.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simClaytonOakes.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simClaytonOakesWei.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simGLcox.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simMultistate.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/simRecurrent.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simRecurrentII.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/simRecurrentTS.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summary.cor.html</loc></url>

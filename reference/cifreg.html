@@ -28,6 +28,7 @@ FG model can also be called using the cifregFG function that has propodds=NULL."
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
     <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
@@ -102,7 +103,7 @@ FG model can also be called using the cifregFG function that has propodds=NULL.<
 
 
 <dt id="arg-no-codes">no.codes<a class="anchor" aria-label="anchor" href="#arg-no-codes"></a></dt>
-<dd><p>certain event codes to be ignored when finding competing causes</p></dd>
+<dd><p>certain event codes to be ignored when finding competing causes, can be used with administrative censoring.</p></dd>
 
 
 <dt id="arg-death-code">death.code<a class="anchor" aria-label="anchor" href="#arg-death-code"></a></dt>
@@ -155,15 +156,15 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709525  0.331991  0.274927  0.0326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455274  0.236012  0.187919  0.0537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391162  0.098039  0.083670  0.0001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.709569  0.331982  0.274926  0.0326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.455401  0.236010  0.187919  0.0537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.391196  0.098040  0.083671  0.0001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49188 0.25661 0.9429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63427 0.39938 1.0073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47870 1.22019 1.7920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.49186 0.25660 0.9428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.63419 0.39933 1.0072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.47875 1.22023 1.7920</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">or</span><span class="op">)</span></span></span>
@@ -171,6 +172,10 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-in"><span><span class="va">por</span> <span class="op">&lt;-</span> <span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">or</span>,<span class="va">nd</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">por</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cifreg-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## approximate standard errors </span></span></span>
+<span class="r-in"><span><span class="va">por</span> <span class="op">&lt;-</span><span class="fu">mets</span><span class="fu">:::</span><span class="fu"><a href="predict.phreg.html">predict.phreg</a></span><span class="op">(</span><span class="va">or</span>,<span class="va">nd</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">por</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Fine-Gray model</span></span></span>
 <span class="r-in"><span><span class="va">fg</span><span class="op">=</span><span class="fu">cifregFG</span><span class="op">(</span><span class="fu"><a href="Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">tcell</span><span class="op">+</span><span class="va">platelet</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">bmt</span>,cause<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -182,23 +187,23 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.596733  0.270480  0.275784  0.0274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425608  0.180733  0.187722  0.0185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343742  0.080269  0.086284  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell    -0.596588  0.270514  0.275786  0.0274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.425558  0.180762  0.187724  0.0186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.343748  0.080265  0.086283  0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55061 0.32405 0.9356</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65337 0.45848 0.9311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41021 1.20493 1.6505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell     0.55069 0.32407 0.9358</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65340 0.45848 0.9312</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.41022 1.20494 1.6505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co">##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)</span></span></span>
 <span class="r-in"><span><span class="co">##summary(fg)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fg</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cifreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tcell<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,platelet<span class="op">=</span><span class="fl">0</span>,age<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">fg</span>,<span class="va">nd</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pfg</span>,se<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="cifreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## bt &lt;- iidBaseline(fg,time=30)</span></span></span>
 <span class="r-in"><span><span class="co">## bt &lt;- IIDrecreg(fg$cox.prep,fg,time=30)</span></span></span>
@@ -215,15 +220,16 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-out co"><span class="r-pr">#&gt;</span>  408 clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coeffients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate      S.E.   dU^-1/2 P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424327  0.180814  0.187824  0.0189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341961  0.079861  0.086283  0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet -0.424172  0.180849  0.187824   0.019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       0.341941  0.079859  0.086283   0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> exp(coeffients):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate    2.5%  97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65421 0.45900 0.9325</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40771 1.20374 1.6462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> platelet  0.65431 0.45903 0.9327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age       1.40768 1.20372 1.6462</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sfg</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cifreg-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### predictions with CI based on iid decomposition of baseline and beta</span></span></span>
 <span class="r-in"><span><span class="co">### these are used in the predict function above</span></span></span>
@@ -231,10 +237,9 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 <span class="r-in"><span><span class="va">Biid</span> <span class="op">&lt;-</span> <span class="fu"><a href="iidBaseline.html">iidBaseline</a></span><span class="op">(</span><span class="va">fg</span>,time<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pfg1</span> <span class="op">&lt;-</span> <span class="fu">FGprediid</span><span class="op">(</span><span class="va">Biid</span>,<span class="va">nd</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pfg1</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           pred     se-log     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.2693191 0.22758875 0.1724024 0.4207179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4344048 0.07477547 0.3751851 0.5029717</span>
-<span class="r-plt img"><img src="cifreg-3.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           pred    se-log     lower     upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.2693322 0.2276224 0.1723994 0.4207661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4343766 0.0747748 0.3751613 0.5029385</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

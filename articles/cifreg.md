@@ -6,10 +6,9 @@ risks, and is completely scalable, that is, linear in the data. This
 includes computation of standard errors that is also linear in data. In
 addition for the Fine-Gray model predictions can be provided standard
 errors for specific time-points based on influence functions for the
-baseline and the regression coeficients. The function can thus be used
-for large data.
+baseline and the regression coeficients.
 
-In addition and to summarize
+To summarize
 
 - the baseline can be stratified
 - the censoring weights can be strata dependent
@@ -23,7 +22,14 @@ In addition and to summarize
 
 ## Fine-Gray model
 
-considered $$\begin{array}{r}
+considered a cumulative incidence on the form $$\begin{aligned}
+{F_{1}(t,X)} & {= P(T \leq t,\epsilon = 1) = 1 - exp\left( - \Lambda_{0}(t)\exp\left( X^{T}\beta \right) \right).}
+\end{aligned}$$
+
+In the case of independent right-censoring with the censoring
+distribtion $G_{c}(t,X) = P\left( C > t|S(X) \right)$ where $S(X)$ is a
+set of strata defined from $X$, then an ubiased estimating equation is
+given by $$\begin{array}{r}
 {U_{n}^{FG}(\beta) = \sum\limits_{i = 0}^{n}\int_{0}^{+ \infty}\left( X_{i} - E_{n}(t,\beta) \right)w_{i}\left( t,X_{i} \right)dN_{1,i}(t){\mspace{6mu}\text{where}\mspace{6mu}}E_{n}(t,\beta) = \frac{{\widetilde{S}}_{1}(t,\beta)}{{\widetilde{S}}_{0}(t,\beta)},}
 \end{array}$$ with
 $w_{i}\left( t,X_{i} \right) = \frac{G_{c}\left( t,X_{i} \right)}{G_{c}\left( T_{i} \land t,X_{i} \right)}I\left( C_{i} > T_{i} \land t \right)$
@@ -35,9 +41,6 @@ censoring distribution, and since it does not depend on $X$ the
 ${\widehat{w}}_{i}(t) = \frac{{\widehat{G}}_{c}\left( t,X_{i} \right)}{{\widehat{G}}_{c}\left( T_{i} \land t,X_{i} \right)}I\left( C_{i} > T_{i} \land t \right)$
 where ${\widehat{G}}_{c}$ is the Kaplan-Meier estimator of the censoring
 distribution.
-
-In this article we briefly introduce some functions for doing cumulative
-incidence regression, and how to augment the Fine-Gray estimator.
 
 First we simulate some competing risks data using some utility
 functions.
@@ -54,12 +57,11 @@ $\text{expit}\left( \Lambda_{j}(t) + \exp\left( X^{T}\beta_{j} \right) \right)$.
 
 The advantage of the model is that it is easy to fit and to get standard
 errors, and that it is quite flexible essentially being a Cox-model. On
-the downside is that the coefficients are quite hard to interpret since
-they are the $cloglog$ coefficients of $1 - F_{1}(t,X)$. Specifically,
-$$\begin{aligned}
+the downside is that the coefficients must be interpreted on
+$cloglog$-scale. Specifically, $$\begin{aligned}
 {\log\left( - \log\left( 1 - F_{1}\left( t,X_{1} + 1,X_{2} \right) \right) \right) - \log\left( - \log\left( 1 - F_{1}\left( t,X_{1},X_{2} \right) \right) \right)} & {= \beta_{1},}
-\end{aligned}$$ so the effect is $\beta_{1}$ of $X_{1}$ is on
-$1 - F_{1}(t,X)$ on the $cloglog$ scale.
+\end{aligned}$$ so the effect of an increase in $X_{1}$ is $\beta_{1}$
+and leads to $1 - F_{1}(t,X)$ on the $cloglog$ scale.
 
 ``` r
  library(mets)
@@ -456,6 +458,58 @@ Fitting the model and getting OR’s
 #> Z2  1.24313 0.46287 3.3387
 ```
 
+## Administrative Censoring
+
+In the case with administrative censoring we can simply provide the
+risk-set given by the administrative censoring times for the Fine-Gray
+or logistic link cumulative incidence regression models.
+
+``` r
+library(mets)
+rho1 <- 0.3; rho2 <- 5.9
+set.seed(100)
+n <- 100
+beta=c(0.3,-0.3,-0.5,0.3)
+rc <- 0.9
+###
+dats <- mets:::simul.cifsRA(n,rho1,rho2,beta,bin=1,rc=rc,rate=c(3,7))
+dats$status07 <- dats$status
+dats$status07[dats$status %in% c(0,7)] <- 0
+tt <- seq(0,6,by=0.1)
+base1 <- rho1*(1-exp(-tt/3))
+
+ccA  <-  cifregFG(Event(timeA,statusA)~Z1+Z2,dats,
+          adm.cens.time=dats$censorA,no.codes=7)
+estimate(ccA)
+#>    Estimate Std.Err    2.5%  97.5% P-value
+#> Z1  0.08665  0.2116 -0.3280 0.5014  0.6821
+#> Z2  0.40535  0.4276 -0.4328 1.2435  0.3432
+```
+
+The Fine-Gray model can similarly be estimated using the modified
+risk-set and the phreg function
+
+``` r
+dats$entry <- 0
+dats$id <- 1:n
+datA <- dats
+datA2 <- subset(datA,statusA==2)
+datA2$entry <- datA2$timeA
+datA2$timeA <- datA2$censorA
+datA2$statusA <- 0
+datA <- rbind(datA,datA2)
+ddA <- phreg(Event(entry,timeA,statusA==1)~Z1+Z2+cluster(id),datA)
+estimate(ddA)
+#>    Estimate Std.Err    2.5%  97.5% P-value
+#> Z1  0.08665  0.2116 -0.3280 0.5014  0.6821
+#> Z2  0.40535  0.4276 -0.4328 1.2435  0.3432
+
+## also checking the cumulative baseline 
+###plotl(tt,base1) 
+###plot(ccA,add=TRUE,col=3)
+###plot(ddA,col=2,add=TRUE)
+```
+
 ## SessionInfo
 
 ``` r
@@ -484,17 +538,17 @@ sessionInfo()
 #> [1] mets_1.3.9
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        
-#>  [4] xfun_0.54           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.0 lava_1.8.2         
-#> [10] htmltools_0.5.8.1   ragg_1.5.0          sass_0.4.10        
+#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
+#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
+#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
+#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
 #> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
 #> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.10         mvtnorm_1.3-3       lifecycle_1.0.4    
+#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
 #> [22] timereg_2.0.7       compiler_4.5.2      codetools_0.2-20   
 #> [25] fs_1.6.6            htmlwidgets_1.6.4   Rcpp_1.1.0         
 #> [28] future_1.68.0       lattice_0.22-7      systemfonts_1.3.1  
-#> [31] digest_0.6.38       R6_2.6.1            parallelly_1.45.1  
+#> [31] digest_0.6.39       R6_2.6.1            parallelly_1.46.0  
 #> [34] parallel_4.5.2      splines_4.5.2       Matrix_1.7-4       
 #> [37] bslib_0.9.0         tools_4.5.2         globals_0.18.0     
 #> [40] survival_3.8-3      pkgdown_2.2.0       cachem_1.1.0       

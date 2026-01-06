@@ -145,6 +145,12 @@ typeATE="II" will augment the estimating equation with \$\$ (A/\pi(X))
 \int E( O(t) \| T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) \$\$ when
 estimating the mean outcome for the treated.
 
+## References
+
+Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right
+censored data, with or without competing risks, and its use for
+estimating treatment effects.” Lifetime data analysis, 29, 441–482.
+
 ## Author
 
 Thomas Scheike
@@ -189,6 +195,22 @@ summary(brs)
 #> treat:1-0 -0.177745  0.070145 -0.315226 -0.040263  0.0113
 #> 
 #> 
+head(brs$riskDR.iid)
+#>          iidriska      iidriska
+#> [1,] -0.001158914 -3.544289e-05
+#> [2,] -0.001200978  7.591687e-05
+#> [3,] -0.001326400  3.360021e-04
+#> [4,] -0.001320260  3.247937e-04
+#> [5,] -0.001140662 -9.113840e-05
+#> [6,] -0.001398172  4.595460e-04
+head(brs$riskG.iid)
+#>        riskGa.iid    riskGa.iid
+#> [1,] -0.001190622 -0.0001527653
+#> [2,] -0.001242318  0.0001090009
+#> [3,] -0.001355147  0.0006917410
+#> [4,] -0.001350560  0.0006678242
+#> [5,] -0.001164390 -0.0002837983
+#> [6,] -0.001403991  0.0009473264
 
 brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,time=50,cause=1,
   treat.model=tcell.f~platelet+age)
@@ -228,5 +250,21 @@ summary(brsi)
 #> treat:1-0 -0.175040  0.072033 -0.316223 -0.033857  0.0151
 #> 
 #> 
+head(brs$riskDR.iid)
+#>          iidriska      iidriska
+#> [1,] -0.001158914 -3.544289e-05
+#> [2,] -0.001200978  7.591687e-05
+#> [3,] -0.001326400  3.360021e-04
+#> [4,] -0.001320260  3.247937e-04
+#> [5,] -0.001140662 -9.113840e-05
+#> [6,] -0.001398172  4.595460e-04
+head(brs$riskG.iid)
+#>        riskGa.iid    riskGa.iid
+#> [1,] -0.001190622 -0.0001527653
+#> [2,] -0.001242318  0.0001090009
+#> [3,] -0.001355147  0.0006917410
+#> [4,] -0.001350560  0.0006678242
+#> [5,] -0.001164390 -0.0002837983
+#> [6,] -0.001403991  0.0009473264
 
 ```
