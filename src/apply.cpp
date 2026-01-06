@@ -12,7 +12,7 @@ using namespace std;
 using namespace Rcpp;
 
 // [[Rcpp::export(name = ".ApplyBy2")]]
-NumericMatrix ApplyBy2(NumericMatrix idata,
+List ApplyBy2(NumericMatrix idata,
 		       NumericVector icluster,
 		       SEXP F,
 		       Environment Env,
@@ -110,8 +110,10 @@ BEGIN_RCPP
      prevcluster=curcluster;
    }
 
-   res.attr("clustersize") = clustersize;
-   return(res);
+   return (List::create(Named("res") = res,
+                        Named("clustersize") = clustersize));
+   // res.attr("clustersize") = clustersize;
+   // return(res);
 END_RCPP
 }  
 
