@@ -183,7 +183,7 @@ dby <- function(data,
         } else {
             expr <- fun_
         }
-        .ApplyBy2(INPUT,ID,F=expr,Env=env,Argument="x",Columnwise=COLUMN)
+        .ApplyBy2(INPUT,ID,F=expr,Env=env,Argument="x",Columnwise=COLUMN)$res
     })
     res <- Reduce(cbind,resl)
     } else {

@@ -105,9 +105,9 @@ BEGIN_RCPP
   IntegerVector Num = Rcpp::rep(Rcpp::seq_len(nclust),n);
   myList[K-2] = Id;
   myList[K-1] = Num;
-  myList.attr("names") = Rcpp::seq_len(K);
-  myList.attr("row.names") = Rcpp::seq_len(M);
-  myList.attr("class") = "data.frame";
+  // myList.attr("names") = Rcpp::seq_len(K);
+  // myList.attr("row.names") = Rcpp::seq_len(M);
+  // myList.attr("class") = "data.frame";
 
   return(Rcpp::wrap(myList));
 END_RCPP
