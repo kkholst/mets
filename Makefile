@@ -11,6 +11,9 @@ c:
 check:
 	@$(R) -q -e "devtools::check(run_dont_test=TRUE)"
 
+clean:
+	@rm -Rf src/*.o src/*.so
+
 doc:
 	@$(R) -q -e "devtools::document()"
 
