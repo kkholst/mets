@@ -28,3 +28,21 @@ test_estimatenormal <- function() {
   expect_true(mean(lava::score(e3)**2)<1e-2)
 }
 test_estimatenormal()
+
+
+## pmvn
+
+test_mvn <- function() {
+  S <- diag(2)+0.5
+  p2 <- mvtnorm::pmvnorm(lower = c(1, 1), upper = c(2, 2), sigma = S)
+  p1 <- mvtnorm::pmvnorm(lower = 1, upper = 2, sigma = S[1])
+  z2 <- pmvn(lower = c(1, 1), upper = c(2, 2), sigma = S)
+  z1 <- pmvn(lower = 1, upper = 2, sigma = S[1])
+  # check bivariate
+  expect_equivalent(p2, z2)
+  # check univariate
+  expect_equivalent(p1, z1)
+  # check vectorized versions
+  z <- pmvn(upper=cbind(c(-3:3)), sigma = 1)
+  expect_equivalent(z, pnorm(-3:3))
+}
