@@ -815,7 +815,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 		} else {
                    lastid <- tailstrata(xx2$id,mid+1)	
 	 	   GdLast <- GdL[lastid][xx2$id+1]
-		   EGdLast <- EGdL[lastid,,drop=FALSE][xx2$id+1,]
+		   EGdLast <- EGdL[lastid,,drop=FALSE][xx2$id+1,,drop=FALSE]
                         
 		   GadmXE2 <- apply(GdLast*Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
 		   XE2 <- apply(Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
