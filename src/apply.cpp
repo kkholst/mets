@@ -112,8 +112,6 @@ BEGIN_RCPP
 
    return (List::create(Named("res") = res,
                         Named("clustersize") = clustersize));
-   // res.attr("clustersize") = clustersize;
-   // return(res);
 END_RCPP
 }  
 
