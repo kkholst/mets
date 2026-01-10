@@ -33,7 +33,6 @@ Suggests:
     icenReg,
     KernSmooth,
     knitr,
-    mets,
     optimx,
     prodlim,
     riskRegression,
