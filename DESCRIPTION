@@ -20,6 +20,7 @@ Depends:
     R (>= 3.5)
 Imports:
     Rcpp,
+    RcppArmadillo,
     lava (>= 1.8.2),
     methods,
     mvtnorm,

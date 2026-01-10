@@ -23,6 +23,7 @@
 ##' @importFrom graphics matplot lines plot polygon par points abline title
 ##'   matlines legend mtext layout axis barplot mosaicplot
 ##' @importFrom methods hasArg
+##' @importFrom RcppArmadillo armadillo_set_number_of_omp_threads
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @aliases mets mets-package
 ##' @examples
