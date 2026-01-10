@@ -262,11 +262,11 @@ Specials <- function(f,spec,split1=",",split2=NULL,...) {# {{{
       res <- unlist(strsplit(res,split1))
   res <- as.list(res)
   for (i in seq_along(res)) {
-      if (length(grep("~",res[[i]]))>0) {
+      if (length(grep("~", res[[i]])) > 0) {
           res[[i]] <- as.formula(res[[i]])
       }
   }
-  return(res)
+  return(structure(res, "name.mf" = x))
 }# }}}
 
 decomp.specials <- function (x, pattern = "[()]", sep = ",", ...)
@@ -469,9 +469,12 @@ proc_design <- function(formula, data, ..., # nolint
     for (s in specials) {
       w <- eval(substitute(model.extract2(mf, s), list(s = s)))
       specials.list <- c(specials.list, list(w))
+      spec <- Specials(tt, spec = s)
+      if (!is.null(spec))
+        spec <- structure(unlist(spec), "name.mf" = attr(spec, "name.mf"))
       specials.var <- c(
-        specials.var,
-        list(unlist(Specials(tt, spec = s)))
+          specials.var,
+          list(spec)
       )
     }
     names(specials.var) <- specials

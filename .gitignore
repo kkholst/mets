@@ -1,3 +1,4 @@
+inst/dev
 .*cache
 .DS_Store
 *_cache

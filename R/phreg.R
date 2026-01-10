@@ -291,9 +291,7 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
     strata <- des$strata
     marks <- des$marks
     if (!is.null(strata))  {
-###   strata.name  <-  paste(des$specials.var$strata,sep="*")
-      ns <- grep("strata",names(des$levels))
-      strata.name  <-  names(des$levels)[1]
+      strata.name <- attr(des$specials.var$strata, "name.mf")
     } else strata.name <- NULL
     pos.strata <- NULL
     des.weights <- des$weights
@@ -311,11 +309,18 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   } else weights <- des.weights
  ## }}}
 
-  res <- c(phreg01(X,entry,exit,status,id=id,strata=strata,offset=offset,
-                   weights=weights,strata.name=strata.name,marks=marks,...),
-   list(call=cl,formula=formula,strata.pos=pos.strata,
-        cluster.pos=pos.cluster,n=length(exit)
-       ))
+ res <- c(
+     phreg01(X, entry, exit, status,
+         id = id, strata = strata, offset = offset,
+         weights = weights, strata.name = strata.name, marks = marks, ...
+     ),
+     list(
+         call = cl, formula = formula, strata.pos = pos.strata,
+         cluster.pos = pos.cluster, n = length(exit)
+     )
+ )
+  res$model.frame <- proc_design(des$terms, data)$data #, specials="cluster")$data
+  des$data <- data[0,]
   res$design <- des
   class(res) <- "phreg"
   
@@ -1726,27 +1731,27 @@ return(out)
 }# }}}
 
 
-###predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...) 
-###{# {{{ default is all time-points from the object
+### predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...)
+### {# {{{ default is all time-points from the object
 ###### take baseline and strata from object# {{{
-###ocumhaz <- object$cumhaz
-###jumptimes <- ocumhaz[,1]
-###chaz <- ocumhaz[,2]
-###if (is.null(object$nstrata)) {  ## try to make more robust
-###nstrata <- 1; 
-###strata <- rep(1,length(jumptimes))
-###} else {
-###nstrata <- object$nstrata
-###strata <- object$strata[object$jumps]
-###}
-###if (length(jumptimes)==0) se <- FALSE
-###if (se) {
-###if (!robust) { 
-###   se.chaz <- object$se.cumhaz[,2] 
-###   varbeta <- object$ihessian  
+### ocumhaz <- object$cumhaz
+### jumptimes <- ocumhaz[,1]
+### chaz <- ocumhaz[,2]
+### if (is.null(object$nstrata)) {  ## try to make more robust
+### nstrata <- 1;
+### strata <- rep(1,length(jumptimes))
+### } else {
+### nstrata <- object$nstrata
+### strata <- object$strata[object$jumps]
+### }
+### if (length(jumptimes)==0) se <- FALSE
+### if (se) {
+### if (!robust) {
+###   se.chaz <- object$se.cumhaz[,2]
+###   varbeta <- object$ihessian
 ###   if (!object$no.opt) Pt <- apply(object$E/c(object$S0),2,cumsumstrata,strata,nstrata)
 ###   else Pt <- 0
-###} else { ## only relevant for phreg objects 
+### } else { ## only relevant for phreg objects
 ###  if ((object$no.opt) | is.null(object$coef)) fixbeta<- 1 else fixbeta <- 0
 ###  IsdM <- squareintHdM(object,ft=NULL,fixbeta=fixbeta,...)
 ###  ###
@@ -1754,10 +1759,10 @@ return(out)
 ###  covv <- IsdM$covv[object$jumps,,drop=FALSE]
 ###  varbeta <- IsdM$vbeta
 ###  Pt <- IsdM$Ht[object$jumps,,drop=FALSE]
-###}
-###} # }}}
+### }
+### } # }}}
 ###
-###### setting up newdata with factors and strata 
+###### setting up newdata with factors and strata
 ### x <- update_design(object$design,data = newdata)
 ### X <- x$x
 ### print(head(X))
@@ -1766,23 +1771,23 @@ return(out)
 ### print(strataNew)
 ### if (is.null(strataNew)) strataNew <- rep(0,nrow(X))
 ###
-###### setting up newdata with factors and strata 
-###desX <- readPhreg(object,newdata) 
+###### setting up newdata with factors and strata
+### desX <- readPhreg(object,newdata)
 ### print(head(X))
-###X <- desX$X
-###strataNew <- desX$strata
-###print(strataNew)
+### X <- desX$X
+### strataNew <- desX$strata
+### print(strataNew)
 ###
 ###
-###if (is.null(times)) times <- sort(unique(c(object$exit)))
-###if (individual.time & is.null(times)) times <- c(object$exit)
-###if (individual.time & length(times)==1) times <- rep(times,length(object$exit)) 
+### if (is.null(times)) times <- sort(unique(c(object$exit)))
+### if (individual.time & is.null(times)) times <- c(object$exit)
+### if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
 ###
 ###    se.cumhaz <- NULL
 ###    if (!individual.time) {
 ###       pcumhaz <- surv <- matrix(0,nrow(X),length(times))
 ###       if (se) se.cumhaz <- matrix(0,nrow(X),length(times))
-###    } else { 
+###    } else {
 ###        pcumhaz <- surv <- matrix(0,nrow(X),1)
 ###        if (se) se.cumhaz <- matrix(0,nrow(X),1)
 ###    }
@@ -1790,52 +1795,52 @@ return(out)
 ###
 ###    for (j in unique(strataNew)) {
 ###        where <- predictCumhaz(c(0,jumptimes[strata==j]),times,type="left",tminus=tminus)
-###	plhazt <- hazt <- c(0,chaz[strata==j])
-###	if (km) { plhazt <- suppressWarnings(c(1,exp(cumsum(log(1-diff(hazt))))));  plhazt[is.na(hazt)] <- 0 }
-###	if (se) se.hazt <- c(0,se.chaz[strata==j])
-###	Xs <- X[strataNew==j,,drop=FALSE]
+### 	plhazt <- hazt <- c(0,chaz[strata==j])
+### 	if (km) { plhazt <- suppressWarnings(c(1,exp(cumsum(log(1-diff(hazt))))));  plhazt[is.na(hazt)] <- 0 }
+### 	if (se) se.hazt <- c(0,se.chaz[strata==j])
+### 	Xs <- X[strataNew==j,,drop=FALSE]
 ###        if (object$p==0) RR <- rep(1,nrow(Xs)) else RR <- c(exp( Xs %*% coef(object)))
-###	if (se)  { # {{{ based on Hazard's 
-###		if (object$p>0) {
-###			Ps <- Pt[strata==j,,drop=FALSE]
-###			Ps <- rbind(0,Ps)[where,,drop=FALSE]
-###			Xbeta <- Xs %*% varbeta
-###			seXbeta <- rowSums(Xbeta*Xs)^.5
-###			cov2 <- cov1 <- Xbeta %*% t(Ps*hazt[where])
-###		        if (robust)	{
-###			   covvs <- covv[strata==j,,drop=FALSE]
-###			   covvs <- rbind(0,covvs)[where,,drop=FALSE]
+### 	if (se)  { # {{{ based on Hazard's
+### 		if (object$p>0) {
+### 			Ps <- Pt[strata==j,,drop=FALSE]
+### 			Ps <- rbind(0,Ps)[where,,drop=FALSE]
+### 			Xbeta <- Xs %*% varbeta
+### 			seXbeta <- rowSums(Xbeta*Xs)^.5
+### 			cov2 <- cov1 <- Xbeta %*% t(Ps*hazt[where])
+### 		        if (robust)	{
+### 			   covvs <- covv[strata==j,,drop=FALSE]
+### 			   covvs <- rbind(0,covvs)[where,,drop=FALSE]
 ###                           covv1 <- Xs %*% t((covvs*hazt[where]))
-###			   cov1 <- cov1-covv1
-###			}
-###		} else cov1 <- 0 
-###	}# }}}
-###   haztw <- hazt[where] 
-###   if (se) se.haztw <- se.hazt[where] 
-###	if (is.null(object$propodds)) {
-###           plhaztw <- plhazt[where] 
+### 			   cov1 <- cov1-covv1
+### 			}
+### 		} else cov1 <- 0
+### 	}# }}}
+###   haztw <- hazt[where]
+###   if (se) se.haztw <- se.hazt[where]
+### 	if (is.null(object$propodds)) {
+###           plhaztw <- plhazt[where]
 ### 	   if (!individual.time) pcumhaz[strataNew==j,]  <- RR%o%haztw else pcumhaz[strataNew==j,] <- RR*haztw[strataNew==j]
 ###           if (!km) {
-###	     if (!individual.time) surv[strataNew==j,]  <- exp(- RR%o%haztw)
-###	     else surv[strataNew==j,]  <- exp(-RR*haztw[strataNew==j])
-###	   } else {
+### 	     if (!individual.time) surv[strataNew==j,]  <- exp(- RR%o%haztw)
+### 	     else surv[strataNew==j,]  <- exp(-RR*haztw[strataNew==j])
+### 	   } else {
 ###             if (!individual.time) surv[strataNew==j,]  <- exp( RR %o% log(plhaztw))
-###	     else surv[strataNew==j,]  <- plhaztw[strataNew==j]^RR
-###	   }
-###	} else {
-###	  if (!individual.time) surv[strataNew==j,]  <- 1/(1+RR%o%haztw)
+### 	     else surv[strataNew==j,]  <- plhaztw[strataNew==j]^RR
+### 	   }
+### 	} else {
+### 	  if (!individual.time) surv[strataNew==j,]  <- 1/(1+RR%o%haztw)
 ###          else surv[strataNew==j,]  <- 1/(1+RR*haztw[strataNew==j])
-###	}
-###	if (se) {# {{{
-###	    if (object$p>0)  {
-###	       if (!individual.time) se.cumhaz[strataNew==j,]  <- 
-###		     ((RR %o% se.haztw)^2+(c(RR*seXbeta) %o% haztw)^2-2*RR^2*cov1)^.5
-###	        else se.cumhaz[strataNew==j,]  <- RR* (se.haztw^2+(c(seXbeta)*haztw)^2-2*diag(cov1))^.5
-###	    } else {
-###	       if (!individual.time) se.cumhaz[strataNew==j,]  <- RR %o% (se.haztw)
-###	        else se.cumhaz[strataNew==j,]  <- RR* se.haztw[strataNew==j]  
-###	    }
-###	}# }}}
+### 	}
+### 	if (se) {# {{{
+### 	    if (object$p>0)  {
+### 	       if (!individual.time) se.cumhaz[strataNew==j,]  <-
+### 		     ((RR %o% se.haztw)^2+(c(RR*seXbeta) %o% haztw)^2-2*RR^2*cov1)^.5
+### 	        else se.cumhaz[strataNew==j,]  <- RR* (se.haztw^2+(c(seXbeta)*haztw)^2-2*diag(cov1))^.5
+### 	    } else {
+### 	       if (!individual.time) se.cumhaz[strataNew==j,]  <- RR %o% (se.haztw)
+### 	        else se.cumhaz[strataNew==j,]  <- RR* se.haztw[strataNew==j]
+### 	    }
+### 	}# }}}
 ###    }
 ###
 ###  if (se)  {
@@ -1849,7 +1854,7 @@ return(out)
 ### if (object$p>0) RR <-  exp(X %*% coef(object)) else RR <- rep(1,nrow(X))
 ###
 ###### non-cox setting
-###if (!is.null(object$propodds)) pcumhaz <- -log(surv)
+### if (!is.null(object$propodds)) pcumhaz <- -log(surv)
 ###
 ### out <- list(surv=surv,times=times,
 ###    surv.upper=cisurv$upper,surv.lower=cisurv$lower,cumhaz=pcumhaz,se.cumhaz=se.cumhaz,
@@ -1857,15 +1862,23 @@ return(out)
 ###    cif=1-surv,cif.lower=1-cisurv$upper,cif.upper=1-cisurv$lower,
 ###    cumhaz.upper=cibase$upper,cumhaz.lower=cibase$lower,strata=strataNew,X=X,RR=RR)
 ###
-###class(out) <- c("predictphreg",class(object)[1])
-###return(out)
-###}# }}}
+### class(out) <- c("predictphreg",class(object)[1])
+### return(out)
+### }# }}}
 ###
 
 ##' @export
 model.frame.phreg <- function(formula, data = NULL, ...) {
-  if (is.null(data)) return(formula$design$data)
-  model.frame(formula$design$formula, data = data, ...)
+    if (is.null(data)) {
+        return(formula$model.frame)
+    }
+    model.frame(formula$design$formula, data = data, ...)
+}
+
+##' @export
+model.matrix.phreg <- function(object, data=NULL, ...) {
+  if (is.null(data)) return(object$design$x)
+  update_design(object$design, data=data, ...)$x
 }
 
 ##' @export
