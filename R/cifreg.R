@@ -137,15 +137,28 @@ iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=ob
 }  ## }}}
 
 ##' @export
-IC.cifreg <- function(x,time=NULL,sort=TRUE,...) {# {{{
-if (!is.null(time)) {
-    res <- iidBaseline.recreg(x,time=time,...)$base.iid
-    return(res*NROW(res))
+IC.cifreg <- function(x, time=NULL, ...) {# {{{
+  if (!is.null(time)) {
+    iid <- iidBaseline.recreg(x, time=time,...)
+    res <- iid$base.iid
+    attr(res, "strata.level") <- iid$strata.level
+    attr(res, "coef") <- 1-iid$cumhaz.time
+    attr(res, "time") <- time
+    return(res * NROW(res))
   }
   res <- with(x, iid * NROW(iid))
   return(res)
 }
 # }}}
+
+##' @export
+estimate.cifreg <- function(x, ..., time = NULL, newdata = NULL, X = NULL, baseline.args = list()) {
+  ic <- do.call(IC, c(list(x, time = time), baseline.args))
+  cc <- attr(ic, "coef")
+  if (is.null(cc)) cc <- coef(x)
+  b <- lava::estimate(coef = cc, IC = ic, ...)
+  return(b)
+}
 
 ##' @export
 plot.cifreg <- function(x,se=FALSE,ylab=NULL,...) { ## {{{

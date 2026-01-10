@@ -417,17 +417,49 @@ readPhregO <- function (object, newdata, nr=TRUE, ...)
 return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
 }# }}}
 
-###}}} phreg
+### }}} phreg
 
-###{{{ iid & Robust variances
+### {{{ iid & Robust variances
 
 ##' @export
-estimate.phreg <- function(x, ..., time = NULL, baseline.args = list()) {
+estimate.phreg <- function(x, ..., time = NULL,
+                           newdata = NULL, X = NULL,
+                           prob = TRUE, baseline.args = list()) {
+  if (!is.null(newdata) || !is.null(X)) {
+    if (is.null(X)) {
+      X <- model.matrix(x, data=newdata)
+    }
+    if (NROW(X) > 1) {
+      X <- X[1, ]
+      warning("Only using first row of the data")
+    }
+    lp <- estimate(x, rbind(X), labels = "lp")
+    if (is.null(time)) {
+      return(estimate(lp, ...))
+    }
+    base <- estimate(x, time = time, prob = prob, baseline.args = baseline.args)
+    res <- transform(merge(lp, base,
+                           paired = TRUE
+                           ),
+      function(p) {
+        res <- numeric(length(p)-1)
+        for (i in seq(2, length(p))) {
+          res[i-1] <- p[i]**exp(p[1])
+        }
+        return(res)
+      })
+    return(estimate(res, ...))
+  }
   ic <- do.call(IC, c(list(x, time = time), baseline.args))
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
-  lava::estimate(coef=cc, IC = ic, ...)
+  b <- lava::estimate(coef = cc, IC = ic)
+  if (prob && !is.null(time)) {
+    b <- transform(b, function(x) exp(-x))
+  }
+  return(estimate(b, ...))
 }
+
 
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
