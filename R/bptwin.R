@@ -41,8 +41,10 @@
 ##' @examples
 ##' data(twinstut)
 ##' b0 <- bptwin(stutter~sex,
-##'              data=droplevels(subset(twinstut,zyg%in%c("mz","dz"))),
-##'              id="tvparnr",zyg="zyg",DZ="dz",type="ae")
+##'         data=droplevels(
+##'           subset(twinstut, zyg%in%c("mz","dz") & tvparnr<5e3)
+##'         ),
+##'         id="tvparnr",zyg="zyg",DZ="dz",type="ae")
 ##' summary(b0)
 bptwin <- function(x, data, id, zyg, DZ, group=NULL,
                    num=NULL,
@@ -638,9 +640,9 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
   
   npar[unlist(lapply(npar,length))==0] <- 0
 
-  environment(mytr) <- baseenv()
-  environment(myinvtr) <- baseenv()
-  environment(dmytr) <- baseenv()
+  ## environment(mytr) <- baseenv()
+  ## environment(myinvtr) <- baseenv()
+  ## environment(dmytr) <- baseenv()
 
   val <- list(coef=cc,vcov=V,bread=iI,I=I,score=UU,logLik=attributes(UU)$logLik,opt=op,
               id=Wide[,id], model.frame=Wide,

@@ -97,8 +97,10 @@ Liability-threshold model for twin data
 \examples{
 data(twinstut)
 b0 <- bptwin(stutter~sex,
-             data=droplevels(subset(twinstut,zyg\%in\%c("mz","dz"))),
-             id="tvparnr",zyg="zyg",DZ="dz",type="ae")
+        data=droplevels(
+          subset(twinstut, zyg\%in\%c("mz","dz") & tvparnr<5e3)
+        ),
+        id="tvparnr",zyg="zyg",DZ="dz",type="ae")
 summary(b0)
 }
 \seealso{

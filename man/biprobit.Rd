@@ -76,10 +76,10 @@ Bivariate Probit model
 \examples{
 data(prt)
 prt0 <- subset(prt,country=="Denmark")
-a <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id")
-b <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id",pairs.only=TRUE)
+a <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id")##'
 predict(b,newdata=lava::Expand(prt,zyg=c("MZ")))
-predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
+## b <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id",pairs.only=TRUE)
+## predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 
 \donttest{ ## Reduce Ex.Timings
 n <- 2e3
