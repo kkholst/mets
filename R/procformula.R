@@ -470,11 +470,12 @@ proc_design <- function(formula, data, ..., # nolint
       w <- eval(substitute(model.extract2(mf, s), list(s = s)))
       specials.list <- c(specials.list, list(w))
       spec <- Specials(tt, spec = s)
-      if (!is.null(spec))
+      if (!is.null(unlist(spec))) {
         spec <- structure(unlist(spec), "name.mf" = attr(spec, "name.mf"))
+      }
       specials.var <- c(
-          specials.var,
-          list(spec)
+        specials.var,
+        list(spec)
       )
     }
     names(specials.var) <- specials
