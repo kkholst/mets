@@ -421,10 +421,69 @@ return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=cl
 
 ### {{{ iid & Robust variances
 
+transformation_phreg <- function(type, lp = TRUE) {
+  # p[1]: linear predictor
+  # p[2..]: baseline cumulative hazard in different strata
+  if (type == "risk") {
+    f <- ifelse(lp,
+      function(p) {
+        res <- numeric(length(p) - 1)
+        for (i in seq(2, length(p))) {
+          res[i - 1] <- 1 - exp(-p[i])**exp(p[1])
+        }
+        if (length(res) == 1L) names(res) <- type
+        return(res)
+      },
+      function(p) {
+        res <- 1 - exp(-p)
+        if (length(res) == 1L) names(res) <- type
+        return(res)
+      }
+    )
+    return(f)
+  }
+  if (type == "surv") {
+    f <- ifelse(lp,
+      function(p) {
+        res <- numeric(length(p) - 1)
+        for (i in seq(2, length(p))) {
+          res[i - 1] <- exp(-p[i])**exp(p[1])
+        }
+        if (length(res) == 1L) names(res) <- type
+        return(res)
+      },
+      function(p) {
+        res <- exp(-p)
+        if (length(res) == 1L) names(res) <- type
+        return(res)
+      }
+    )
+    return(f)
+  }
+  ## type == "chaz"
+  f <- ifelse(lp,
+    function(p) {
+      res <- numeric(length(p) - 1)
+      for (i in seq(2, length(p))) {
+        res[i - 1] <- p[i]**exp(p[1])
+      }
+      if (length(res) == 1L) names(res) <- type
+      return(res)
+    },
+    function(p) {
+      if (length(p) == 1L) names(p) <- type
+      return(p)
+    }
+  )
+  return(f)
+}
+
 ##' @export
 estimate.phreg <- function(x, ..., time = NULL,
                            newdata = NULL, X = NULL,
-                           prob = TRUE, baseline.args = list()) {
+                           type = c("chaz", "surv", "risk"),
+                           baseline.args = list()) {
+  if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
   if (!is.null(newdata) || !is.null(X)) {
     if (is.null(X)) {
       X <- model.matrix(x, data=newdata)
@@ -437,29 +496,29 @@ estimate.phreg <- function(x, ..., time = NULL,
     if (is.null(time)) {
       return(estimate(lp, ...))
     }
-    base <- estimate(x, time = time, prob = prob, baseline.args = baseline.args)
+    base <- estimate(x,
+      time = time,
+      type = "chaz",
+      baseline.args = baseline.args
+    )
     res <- transform(merge(lp, base,
                            paired = TRUE
                            ),
-      function(p) {
-        res <- numeric(length(p)-1)
-        for (i in seq(2, length(p))) {
-          res[i-1] <- p[i]**exp(p[1])
-        }
-        return(res)
-      })
+                     transformation_phreg(tolower(type[1]))
+                     )
     return(estimate(res, ...))
   }
   ic <- do.call(IC, c(list(x, time = time), baseline.args))
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
-  b <- lava::estimate(coef = cc, IC = ic)
-  if (prob && !is.null(time)) {
-    b <- transform(b, function(x) exp(-x))
+  lab <- names(cc)
+  if (!is.null(time) && length(cc)>1) lab <- x$strata.level
+  b <- lava::estimate(coef = cc, IC = ic, labels = lab)
+  if (!is.null(time)) {
+   b <- transform(b, transformation_phreg(tolower(type[1]), FALSE))
   }
   return(estimate(b, ...))
 }
-
 
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{

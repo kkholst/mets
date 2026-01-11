@@ -142,7 +142,7 @@ IC.cifreg <- function(x, time=NULL, ...) {# {{{
     iid <- iidBaseline.recreg(x, time=time,...)
     res <- iid$base.iid
     attr(res, "strata.level") <- iid$strata.level
-    attr(res, "coef") <- 1-iid$cumhaz.time
+    attr(res, "coef") <- iid$cumhaz.time
     attr(res, "time") <- time
     return(res * NROW(res))
   }
@@ -152,12 +152,21 @@ IC.cifreg <- function(x, time=NULL, ...) {# {{{
 # }}}
 
 ##' @export
-estimate.cifreg <- function(x, ..., time = NULL, newdata = NULL, X = NULL, baseline.args = list()) {
+estimate.cifreg <- function(x, ..., time = NULL, baseline.args = list()) {
+  if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
   ic <- do.call(IC, c(list(x, time = time), baseline.args))
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
-  b <- lava::estimate(coef = cc, IC = ic, ...)
-  return(b)
+  lab <- names(cc)
+  if (!is.null(time)) {
+    lab <- x$strata.level
+    if (is.null(lab)) lab <- "cif"
+  }
+  b <- lava::estimate(
+      coef = cc, IC = ic, labels = lab,
+      function(x) 1 - exp(-x)
+  )
+  return(lava::estimate(b, ...))
 }
 
 ##' @export
