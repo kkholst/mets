@@ -213,46 +213,45 @@ genetic factors, unique environmental factors).</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">twinstut</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">b0</span> <span class="op">&lt;-</span> <span class="fu">bptwin</span><span class="op">(</span><span class="va">stutter</span><span class="op">~</span><span class="va">sex</span>,</span></span>
-<span class="r-in"><span>             data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/droplevels.html" class="external-link">droplevels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>,<span class="va">zyg</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mz"</span>,<span class="st">"dz"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>setting environment(&lt;primitive function&gt;) is not possible and trying it is deprecated</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>setting environment(&lt;primitive function&gt;) is not possible and trying it is deprecated</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>setting environment(&lt;primitive function&gt;) is not possible and trying it is deprecated</span>
+<span class="r-in"><span>        data<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/droplevels.html" class="external-link">droplevels</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>          <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>, <span class="va">zyg</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mz"</span>,<span class="st">"dz"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">tvparnr</span><span class="op">&lt;</span><span class="fl">5e3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">)</span>,</span></span>
+<span class="r-in"><span>        id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate  Std.Err        Z   p-value    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -3.70371  0.24449 -15.1485 &lt; 2.2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sexmale      0.83310  0.08255  10.0920 &lt; 2.2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log(var(A))  1.18278  0.17179   6.8851 5.774e-12 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate  Std.Err       Z   p-value    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -3.84320  0.67034 -5.7333 9.852e-09 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sexmale      0.80018  0.19370  4.1310 3.612e-05 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log(var(A))  1.12281  0.46483  2.4155   0.01571 *  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Total MZ/DZ Complete pairs MZ/DZ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8777/12511  3255/4058           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1483/2934   542/897             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A                  0.76545  0.70500 0.82590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> E                  0.23455  0.17410 0.29500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> MZ Tetrachoric Cor 0.76545  0.69793 0.81948</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DZ Tetrachoric Cor 0.38272  0.35210 0.41253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A                  0.75451  0.58576 0.92326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E                  0.24549  0.07674 0.41424</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MZ Tetrachoric Cor 0.75451  0.53102 0.87986</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DZ Tetrachoric Cor 0.37726  0.28992 0.45836</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MZ:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate 2.5%     97.5%   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance           0.01560  0.01273  0.01912</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance  0.42830  0.36248  0.49677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal              0.03643  0.03294  0.04027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk       11.75741  9.77237 13.74246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log(OR)               3.52382  3.13466  3.91298</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance           0.01126  0.00629  0.02008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance  0.39595  0.23173  0.58753</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal              0.02844  0.02205  0.03661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk       13.92073  7.23136 20.61010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log(OR)               3.59486  2.53322  4.65650</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DZ:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance          0.00558  0.00465 0.00670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance 0.15327  0.13749 0.17050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal             0.03643  0.03294 0.04027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk       4.20744  3.78588 4.62900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log(OR)              1.69996  1.57262 1.82730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance          0.00378  0.00230 0.00621</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance 0.13291  0.09607 0.18105</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal             0.02844  0.02205 0.03661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk       4.67300  3.32186 6.02414</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log(OR)              1.77247  1.40907 2.13587</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Broad-sense heritability 0.76545  0.70500 0.82590</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Broad-sense heritability 0.75451  0.58576 0.92326</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

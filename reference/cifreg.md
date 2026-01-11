@@ -98,15 +98,15 @@ summary(or)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.709569  0.331982  0.274926  0.0326
-#> platelet -0.455401  0.236010  0.187919  0.0537
-#> age       0.391196  0.098040  0.083671  0.0001
+#> tcell    -0.709588  0.331979  0.274927  0.0326
+#> platelet -0.455282  0.236017  0.187920  0.0537
+#> age       0.391176  0.098037  0.083670  0.0001
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.49186 0.25660 0.9428
-#> platelet  0.63419 0.39933 1.0072
-#> age       1.47875 1.22023 1.7920
+#> tcell     0.49185 0.25660 0.9428
+#> platelet  0.63427 0.39937 1.0073
+#> age       1.47872 1.22021 1.7920
 #> 
 par(mfrow=c(1,2))
 plot(or)
@@ -129,15 +129,15 @@ summary(fg)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.596588  0.270514  0.275786  0.0274
-#> platelet -0.425558  0.180762  0.187724  0.0186
-#> age       0.343748  0.080265  0.086283  0.0000
+#> tcell    -0.597103  0.270456  0.275787  0.0273
+#> platelet -0.425560  0.180746  0.187722  0.0185
+#> age       0.343971  0.080295  0.086293  0.0000
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.55069 0.32407 0.9358
-#> platelet  0.65340 0.45848 0.9312
-#> age       1.41022 1.20494 1.6505
+#> tcell     0.55040 0.32394 0.9352
+#> platelet  0.65340 0.45849 0.9312
+#> age       1.41054 1.20514 1.6509
 #> 
 ##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)
 ##summary(fg)
@@ -162,13 +162,13 @@ summary(sfg)
 #>  408 clusters
 #> coeffients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> platelet -0.424172  0.180849  0.187824   0.019
-#> age       0.341941  0.079859  0.086283   0.000
+#> platelet -0.424117  0.180836  0.187823   0.019
+#> age       0.342147  0.079890  0.086294   0.000
 #> 
 #> exp(coeffients):
 #>          Estimate    2.5%  97.5%
-#> platelet  0.65431 0.45903 0.9327
-#> age       1.40768 1.20372 1.6462
+#> platelet  0.65435 0.45907 0.9327
+#> age       1.40797 1.20390 1.6466
 #> 
 plot(sfg)
 
@@ -179,7 +179,7 @@ fg <- cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 Biid <- iidBaseline(fg,time=20)
 pfg1 <- FGprediid(Biid,nd)
 pfg1
-#>           pred    se-log     lower     upper
-#> [1,] 0.2693322 0.2276224 0.1723994 0.4207661
-#> [2,] 0.4343766 0.0747748 0.3751613 0.5029385
+#>           pred     se-log     lower     upper
+#> [1,] 0.2692345 0.22759056 0.1723476 0.4205874
+#> [2,] 0.4344053 0.07477379 0.3751868 0.5029707
 ```

@@ -687,18 +687,18 @@ sessionInfo()
 #> [1] timereg_2.0.7  survival_3.8-3 mets_1.3.9    
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5           knitr_1.51          rlang_1.1.6        
-#>  [4] xfun_0.55           textshaping_1.0.4   jsonlite_2.0.0     
-#>  [7] listenv_0.10.0      future.apply_1.20.1 lava_1.8.2         
-#> [10] htmltools_0.5.9     ragg_1.5.0          sass_0.4.10        
-#> [13] rmarkdown_2.30      grid_4.5.2          evaluate_1.0.5     
-#> [16] jquerylib_0.1.4     fastmap_1.2.0       numDeriv_2016.8-1.1
-#> [19] yaml_2.3.12         mvtnorm_1.3-3       lifecycle_1.0.4    
-#> [22] compiler_4.5.2      codetools_0.2-20    fs_1.6.6           
-#> [25] htmlwidgets_1.6.4   Rcpp_1.1.0          future_1.68.0      
-#> [28] lattice_0.22-7      systemfonts_1.3.1   digest_0.6.39      
-#> [31] R6_2.6.1            parallelly_1.46.0   parallel_4.5.2     
-#> [34] splines_4.5.2       Matrix_1.7-4        bslib_0.9.0        
-#> [37] tools_4.5.2         globals_0.18.0      pkgdown_2.2.0      
-#> [40] cachem_1.1.0        desc_1.4.3
+#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
+#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
+#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
+#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
+#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
+#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
+#> [22] compiler_4.5.2         codetools_0.2-20       fs_1.6.6              
+#> [25] htmlwidgets_1.6.4      Rcpp_1.1.1             future_1.68.0         
+#> [28] lattice_0.22-7         systemfonts_1.3.1      digest_0.6.39         
+#> [31] R6_2.6.1               parallelly_1.46.1      parallel_4.5.2        
+#> [34] splines_4.5.2          Matrix_1.7-4           bslib_0.9.0           
+#> [37] tools_4.5.2            RcppArmadillo_15.2.3-1 globals_0.18.0        
+#> [40] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3
 ```

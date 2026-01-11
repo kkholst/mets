@@ -86,37 +86,37 @@ plot(cdz,ylim=c(0,0.7),xlim=c(60,100))
 slope.process(cdz$casewise[,1],cdz$casewise[,2],iid=cdz$casewise.iid)
 #> $intercept
 #> (Intercept) 
-#>   0.1162653 
+#>   0.1520835 
 #> 
 #> $slope
 #>      ctime 
-#> 0.03274472 
+#> 0.01849925 
 #> 
 #> $se.slope
 #> (Intercept)       ctime 
-#>  0.05514246  0.04437315 
+#>  0.06273584  0.04470886 
 #> 
 #> $pval.slope
-#>    ctime 
-#> 0.460551 
+#>     ctime 
+#> 0.6790415 
 #> 
 
 slope.process(cmz$casewise[,1],cmz$casewise[,2],iid=cmz$casewise.iid)
 #> $intercept
 #> (Intercept) 
-#>   0.4266816 
+#>   0.4456058 
 #> 
 #> $slope
-#>      ctime 
-#> 0.04093122 
+#>        ctime 
+#> 0.0004679675 
 #> 
 #> $se.slope
 #> (Intercept)       ctime 
-#>  0.09322922  0.06828519 
+#>  0.08924422  0.07231706 
 #> 
 #> $pval.slope
 #>     ctime 
-#> 0.5488956 
+#> 0.9948369 
 #> 
 
 ```

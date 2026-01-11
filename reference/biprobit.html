@@ -177,19 +177,13 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">prt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">prt0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">prt</span>,<span class="va">country</span><span class="op">==</span><span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">biprobit</span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">zyg</span>, <span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">zyg</span>, data<span class="op">=</span><span class="va">prt0</span>, id<span class="op">=</span><span class="st">"id"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">biprobit</span><span class="op">(</span><span class="va">cancer</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">zyg</span>, <span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">zyg</span>, data<span class="op">=</span><span class="va">prt0</span>, id<span class="op">=</span><span class="st">"id"</span>,pairs.only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">b</span>,newdata<span class="op">=</span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">prt</span>,zyg<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">a</span>, newdata<span class="op">=</span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">prt</span>, zyg<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MZ"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           p11        p10        p01       p00         p1         p2       mu1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.005649701 0.01034772 0.01034772 0.9736549 0.01599742 0.01599742 -2.144475</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         mu2       rho parameter zyg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -2.135152 0.7568562         1  MZ</span>
-<span class="r-in"><span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">b</span>,newdata<span class="op">=</span><span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/Expand.html" class="external-link">Expand</a></span><span class="op">(</span><span class="va">prt</span>,zyg<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MZ"</span>,<span class="st">"DZ"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           p11        p10        p01       p00         p1         p2       mu1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.000655527 0.01425761 0.01425761 0.9708293 0.01491313 0.01491313 -2.172390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         mu2       rho parameter zyg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -2.135152 0.7568562         1  MZ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -2.172390 0.1960491         2  DZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -2.144475 0.7547259         1  MZ</span>
+<span class="r-in"><span><span class="co">## b &lt;- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id",pairs.only=TRUE)</span></span></span>
+<span class="r-in"><span><span class="co">## predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">2e3</span></span></span>
@@ -201,15 +195,15 @@
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">biprobit</span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>,rho<span class="op">=</span><span class="op">~</span><span class="fl">1</span><span class="op">+</span><span class="va">x</span>,data<span class="op">=</span><span class="va">dd</span>,id<span class="op">=</span><span class="st">"id"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">a</span>, mean.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span>, cor.contrast<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate   Std.Err       Z p-value    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   -0.027944  0.019673 -1.4204  0.1555    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x             -0.029548  0.032538 -0.9081  0.3638    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) -0.014561  0.038417 -0.3790  0.7047    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r:x            1.047861  0.072660 14.4215  &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate    Std.Err       Z p-value    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   -0.0092239  0.0197080 -0.4680  0.6398    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x              0.0101193  0.0313670  0.3226  0.7470    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:(Intercept) -0.0229627  0.0383073 -0.5994  0.5489    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r:x            0.9894711  0.0692001 14.2987  &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2646.19  mean(score^2): 9.962e-06 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> logLik: -2651.885  mean(score^2): 1.394e-05 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n pairs </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4000  2000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -218,13 +212,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Mean          [(Intercept)] + 0.5[x] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate 2.5%    97.5%  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.33294  1.26421 1.40166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.62347  2.80740 4.67675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.46945  0.38582 0.54543</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rel.Recur.Risk          1.29171  1.22694 1.35649</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OR                      3.29799  2.55557 4.25610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tetrachoric correlation 0.43963  0.35367 0.51823</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.31091  0.28469 0.33840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.64376  0.60920 0.67689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.48296  0.45989 0.50611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Concordance             0.32079  0.29429 0.34849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Casewise Concordance    0.64371  0.60960 0.67642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Marginal                0.49834  0.47536 0.52132</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="mlogit.html">predict</a></span><span class="op">(</span><span class="va">a</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,by<span class="op">=</span><span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p00</span><span class="op">~</span><span class="va">x</span>,type<span class="op">=</span><span class="st">"l"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="biprobit-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

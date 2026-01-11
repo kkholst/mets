@@ -157,45 +157,44 @@ Klaus K. Holst
 ``` r
 data(twinstut)
 b0 <- bptwin(stutter~sex,
-             data=droplevels(subset(twinstut,zyg%in%c("mz","dz"))),
-             id="tvparnr",zyg="zyg",DZ="dz",type="ae")
-#> Warning: setting environment(<primitive function>) is not possible and trying it is deprecated
-#> Warning: setting environment(<primitive function>) is not possible and trying it is deprecated
-#> Warning: setting environment(<primitive function>) is not possible and trying it is deprecated
+        data=droplevels(
+          subset(twinstut, zyg%in%c("mz","dz") & tvparnr<5e3)
+        ),
+        id="tvparnr",zyg="zyg",DZ="dz",type="ae")
 summary(b0)
 #> 
-#>             Estimate  Std.Err        Z   p-value    
-#> (Intercept) -3.70371  0.24449 -15.1485 < 2.2e-16 ***
-#> sexmale      0.83310  0.08255  10.0920 < 2.2e-16 ***
-#> log(var(A))  1.18278  0.17179   6.8851 5.774e-12 ***
+#>             Estimate  Std.Err       Z   p-value    
+#> (Intercept) -3.84320  0.67034 -5.7333 9.852e-09 ***
+#> sexmale      0.80018  0.19370  4.1310 3.612e-05 ***
+#> log(var(A))  1.12281  0.46483  2.4155   0.01571 *  
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
 #>  Total MZ/DZ Complete pairs MZ/DZ
-#>  8777/12511  3255/4058           
+#>  1483/2934   542/897             
 #> 
 #>                    Estimate 2.5%    97.5%  
-#> A                  0.76545  0.70500 0.82590
-#> E                  0.23455  0.17410 0.29500
-#> MZ Tetrachoric Cor 0.76545  0.69793 0.81948
-#> DZ Tetrachoric Cor 0.38272  0.35210 0.41253
+#> A                  0.75451  0.58576 0.92326
+#> E                  0.24549  0.07674 0.41424
+#> MZ Tetrachoric Cor 0.75451  0.53102 0.87986
+#> DZ Tetrachoric Cor 0.37726  0.28992 0.45836
 #> 
 #> MZ:
 #>                      Estimate 2.5%     97.5%   
-#> Concordance           0.01560  0.01273  0.01912
-#> Casewise Concordance  0.42830  0.36248  0.49677
-#> Marginal              0.03643  0.03294  0.04027
-#> Rel.Recur.Risk       11.75741  9.77237 13.74246
-#> log(OR)               3.52382  3.13466  3.91298
+#> Concordance           0.01126  0.00629  0.02008
+#> Casewise Concordance  0.39595  0.23173  0.58753
+#> Marginal              0.02844  0.02205  0.03661
+#> Rel.Recur.Risk       13.92073  7.23136 20.61010
+#> log(OR)               3.59486  2.53322  4.65650
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
-#> Concordance          0.00558  0.00465 0.00670
-#> Casewise Concordance 0.15327  0.13749 0.17050
-#> Marginal             0.03643  0.03294 0.04027
-#> Rel.Recur.Risk       4.20744  3.78588 4.62900
-#> log(OR)              1.69996  1.57262 1.82730
+#> Concordance          0.00378  0.00230 0.00621
+#> Casewise Concordance 0.13291  0.09607 0.18105
+#> Marginal             0.02844  0.02205 0.03661
+#> Rel.Recur.Risk       4.67300  3.32186 6.02414
+#> log(OR)              1.77247  1.40907 2.13587
 #> 
 #>                          Estimate 2.5%    97.5%  
-#> Broad-sense heritability 0.76545  0.70500 0.82590
+#> Broad-sense heritability 0.75451  0.58576 0.92326
 #> 
 ```

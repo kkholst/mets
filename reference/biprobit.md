@@ -122,19 +122,13 @@ biprobit(
 data(prt)
 prt0 <- subset(prt,country=="Denmark")
 a <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id")
-b <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id",pairs.only=TRUE)
-predict(b,newdata=lava::Expand(prt,zyg=c("MZ")))
+predict(a, newdata=lava::Expand(prt, zyg=c("MZ")))
 #>           p11        p10        p01       p00         p1         p2       mu1
-#> 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152
+#> 1 0.005649701 0.01034772 0.01034772 0.9736549 0.01599742 0.01599742 -2.144475
 #>         mu2       rho parameter zyg
-#> 1 -2.135152 0.7568562         1  MZ
-predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
-#>           p11        p10        p01       p00         p1         p2       mu1
-#> 1 0.005847975 0.01052632 0.01052632 0.9730994 0.01637429 0.01637429 -2.135152
-#> 2 0.000655527 0.01425761 0.01425761 0.9708293 0.01491313 0.01491313 -2.172390
-#>         mu2       rho parameter zyg
-#> 1 -2.135152 0.7568562         1  MZ
-#> 2 -2.172390 0.1960491         2  DZ
+#> 1 -2.144475 0.7547259         1  MZ
+## b <- biprobit(cancer~1+zyg, ~1+zyg, data=prt0, id="id",pairs.only=TRUE)
+## predict(b,newdata=lava::Expand(prt,zyg=c("MZ","DZ")))
 
  ## Reduce Ex.Timings
 n <- 2e3
@@ -146,15 +140,15 @@ dd <- fast.reshape(d)
 a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")
 summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #> 
-#>                Estimate   Std.Err       Z p-value    
-#> (Intercept)   -0.027944  0.019673 -1.4204  0.1555    
-#> x             -0.029548  0.032538 -0.9081  0.3638    
-#> r:(Intercept) -0.014561  0.038417 -0.3790  0.7047    
-#> r:x            1.047861  0.072660 14.4215  <2e-16 ***
+#>                 Estimate    Std.Err       Z p-value    
+#> (Intercept)   -0.0092239  0.0197080 -0.4680  0.6398    
+#> x              0.0101193  0.0313670  0.3226  0.7470    
+#> r:(Intercept) -0.0229627  0.0383073 -0.5994  0.5489    
+#> r:x            0.9894711  0.0692001 14.2987  <2e-16 ***
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
-#> logLik: -2646.19  mean(score^2): 9.962e-06 
+#> logLik: -2651.885  mean(score^2): 1.394e-05 
 #>     n pairs 
 #>  4000  2000 
 #> 
@@ -163,13 +157,13 @@ summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #>  Mean          [(Intercept)] + 0.5[x] 
 #> 
 #>                         Estimate 2.5%    97.5%  
-#> Rel.Recur.Risk          1.33294  1.26421 1.40166
-#> OR                      3.62347  2.80740 4.67675
-#> Tetrachoric correlation 0.46945  0.38582 0.54543
+#> Rel.Recur.Risk          1.29171  1.22694 1.35649
+#> OR                      3.29799  2.55557 4.25610
+#> Tetrachoric correlation 0.43963  0.35367 0.51823
 #>                                                 
-#> Concordance             0.31091  0.28469 0.33840
-#> Casewise Concordance    0.64376  0.60920 0.67689
-#> Marginal                0.48296  0.45989 0.50611
+#> Concordance             0.32079  0.29429 0.34849
+#> Casewise Concordance    0.64371  0.60960 0.67642
+#> Marginal                0.49834  0.47536 0.52132
 with(predict(a,data.frame(x=seq(-1,1,by=.1))), plot(p00~x,type="l"))
 
 
