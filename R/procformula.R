@@ -541,32 +541,44 @@ proc_design <- function(formula, data, ..., # nolint
 
 
 update_design <- function(object, data = NULL, response = TRUE, ...) {
-    if (is.null(data)) data <- object$data
-    missing_spec <- c()
-    for (s in names(object$specials.var)) {
-        miss <- FALSE
-        if (!is.null(object$specials.var[[s]])) {
-            for (v in object$specials.var[[s]]) {
-                if (!v %in% colnames(data)) {
-                    data[, v] <- 0
-                    miss <- TRUE
-                }
-            }
-            if (miss) missing_spec <- c(missing_spec, s)
+  if (is.null(data)) data <- object$data
+  missing_spec_var <- missing_spec <- c()
+  levels <- object$levels
+  for (s in names(object$specials.var)) {
+    miss <- FALSE
+    specials.var <- object$specials.var[[s]]
+    if (!is.null(specials.var)) { ## special used in original design object
+      for (v in specials.var) {
+        # looping through variables used in special-term checking if missing
+        if (!v %in% colnames(data)) {
+          if (is.null(object$levels[[v]])) {
+            data[[v]] <- 0
+          } else { # if factor replace with first level
+            data[[v]] <- object$levels[[v]][1]
+          }
+          miss <- TRUE
         }
+      }
+      if (miss) {
+        missing_spec <- c(missing_spec, s)
+        missing_spec_var <- c(missing_spec_var, attr(specials.var, "name.mf"))
+      }
     }
-    res <- proc_design(object$terms,
-        data = data,
-        design.matrix = object$design.matrix,
-        levels = object$levels,
-        response = response,
-        na.action = object$na.action,
-        intercept = object$intercept,
-        specials = object$specials,
-        specials.call = object$specials.call
-        )
-    res[missing_spec] <- NULL
-    return(res)
+  }
+  if (length(missing_spec) > 0) object$levels[missing_spec_var] <- NULL
+  res <- proc_design(object$terms,
+    data = data,
+    design.matrix = object$design.matrix,
+    levels = object$levels,
+    response = response,
+    na.action = object$na.action,
+    intercept = object$intercept,
+    specials = object$specials,
+    specials.call = object$specials.call
+    )
+  object$levels <- levels
+  res[missing_spec] <- NULL
+  return(res)
 }
 
 
