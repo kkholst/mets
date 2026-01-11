@@ -431,12 +431,20 @@ transformation_phreg <- function(type, lp = TRUE) {
         for (i in seq(2, length(p))) {
           res[i - 1] <- 1 - exp(-p[i])**exp(p[1])
         }
-        if (length(res) == 1L) names(res) <- type
+        if (length(res) == 1L) {
+          names(res) <- type
+        } else {
+          names(res) <- names(p)[-1]
+        }
         return(res)
       },
       function(p) {
         res <- 1 - exp(-p)
-        if (length(res) == 1L) names(res) <- type
+        if (length(res) == 1L) {
+          names(res) <- type
+        } else {
+          names(res) <- names(p)
+        }
         return(res)
       }
     )
@@ -449,12 +457,20 @@ transformation_phreg <- function(type, lp = TRUE) {
         for (i in seq(2, length(p))) {
           res[i - 1] <- exp(-p[i])**exp(p[1])
         }
-        if (length(res) == 1L) names(res) <- type
+        if (length(res) == 1L) {
+          names(res) <- type
+        } else {
+          names(res) <- names(p)[-1]
+        }
         return(res)
       },
       function(p) {
         res <- exp(-p)
-        if (length(res) == 1L) names(res) <- type
+        if (length(res) == 1L) {
+          names(res) <- type
+        } else {
+          names(res) <- names(p)
+        }
         return(res)
       }
     )
@@ -465,13 +481,19 @@ transformation_phreg <- function(type, lp = TRUE) {
     function(p) {
       res <- numeric(length(p) - 1)
       for (i in seq(2, length(p))) {
-        res[i - 1] <- p[i]**exp(p[1])
+        res[i - 1] <- p[i]*exp(p[1])
       }
-      if (length(res) == 1L) names(res) <- type
+      if (length(res) == 1L) {
+        names(res) <- type
+      } else {
+        names(res) <- names(p)[-1]
+      }
       return(res)
     },
     function(p) {
-      if (length(p) == 1L) names(p) <- type
+      if (length(p) == 1L) {
+        names(p) <- type
+      }
       return(p)
     }
   )
@@ -486,12 +508,15 @@ estimate.phreg <- function(x, ..., time = NULL,
   if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
   if (!is.null(newdata) || !is.null(X)) {
     if (is.null(X)) {
-      X <- model.matrix(x, data=newdata)
+      X <- model.matrix(x, data = newdata)
     }
     if (NROW(X) > 1) {
       X <- X[1, ]
       warning("Only using first row of the data")
     }
+    if (all(X == 0L)) X <- NULL
+  }
+  if (!is.null(X)) {
     lp <- estimate(x, rbind(X), labels = "lp")
     if (is.null(time)) {
       return(estimate(lp, ...))
@@ -512,10 +537,10 @@ estimate.phreg <- function(x, ..., time = NULL,
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
   lab <- names(cc)
-  if (!is.null(time) && length(cc)>1) lab <- x$strata.level
+  if (!is.null(time) && length(cc) > 1 || is.null(lab)) lab <- x$strata.level
   b <- lava::estimate(coef = cc, IC = ic, labels = lab)
   if (!is.null(time)) {
-   b <- transform(b, transformation_phreg(tolower(type[1]), FALSE))
+    b <- transform(b, transformation_phreg(tolower(type[1]), FALSE))
   }
   return(estimate(b, ...))
 }
