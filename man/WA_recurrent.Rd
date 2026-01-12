@@ -57,7 +57,7 @@ library(mets)
 data(hfactioncpx12)
 
 dtable(hfactioncpx12,~status)
-dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,time=2,death.code=2)
 summary(dd)
 }
 \references{
