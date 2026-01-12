@@ -23,7 +23,7 @@
 ##' data(hfactioncpx12)
 ##' 
 ##' dtable(hfactioncpx12,~status)
-##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,time=2,death.code=2)
 ##' summary(dd)
 ##' @references 
 ##' Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
@@ -112,7 +112,9 @@ if (!is.null(augmentR)) {
 dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time, model="lin")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code, cens.model=cens.formula,times=time,model="lin",marks=marks)
 
-treatdata <- data.frame(treatment=nlevs,id__=1)
+treatdata <- list()
+treatdata[[treat.name]] <- nlevs
+treatdata <- as.data.frame(treatdata)
 
 f <- function(p,logg=0) {
 ddN$coef <- p[1:2]
