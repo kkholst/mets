@@ -1,8 +1,8 @@
 ---
 output:
   github_document:
-  toc: true
-  toc_depth: 2
+    toc: true
+    toc_depth: 2
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -70,7 +70,7 @@ To cite the `mets` package please use one of the following references
 
 > Thomas H. Scheike and Klaus K. Holst (2022). A Practical Guide to
 > Family Studies with Lifetime Data. Annual Review of Statistics and
-> Its Application 9, pp. 47-69. doi: 10.1146/annurev-statistics-040120-024253
+> Its Application 9, pp. 47-69. doi: <http://dx.doi.org/10.1146/annurev-statistics-040120-024253>
 
 > Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013).
 > Estimating heritability for cause specific mortality based on twin studies.
@@ -105,7 +105,7 @@ BibTeX:
     	    Left truncation; Heritability; Survival analysis},
       pages={1-24},
       language={English}
-   }
+    }
 
     @Article{,
       title={The Liability Threshold Model for Censored Twin Data},

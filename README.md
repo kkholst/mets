@@ -1,4 +1,34 @@
 
+- [Multivariate Event Times (`mets`)
+  <img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="mets website">](#multivariate-event-times-mets-)
+  - [Installation](#installation)
+  - [Citation](#citation)
+  - [Examples: Twins Polygenic
+    modelling](#examples-twins-polygenic-modelling)
+  - [Examples: Twins Polygenic modelling time-to-events
+    Data](#examples-twins-polygenic-modelling-time-to-events-data)
+  - [Examples: Twins Concordance for time-to-events
+    Data](#examples-twins-concordance-for-time-to-events-data)
+  - [Examples: Cox model, RMST](#examples-cox-model-rmst)
+  - [Examples: Cox model IPTW](#examples-cox-model-iptw)
+  - [Examples: Competing risks regression, Binomial
+    Regression](#examples-competing-risks-regression-binomial-regression)
+  - [Examples: Competing risks regression, Fine-Gray/Logistic
+    link](#examples-competing-risks-regression-fine-graylogistic-link)
+  - [Examples: Marginal mean for recurrent
+    events](#examples-marginal-mean-for-recurrent-events)
+  - [Examples: Ghosh-Lin for recurrent
+    events](#examples-ghosh-lin-for-recurrent-events)
+  - [Examples: Fixed time modelling for recurrent
+    events](#examples-fixed-time-modelling-for-recurrent-events)
+  - [Examples: Regression for RMST/Restricted mean survival for survival
+    and competing risks using
+    IPCW](#examples-regression-for-rmstrestricted-mean-survival-for-survival-and-competing-risks-using-ipcw)
+  - [Examples: Average treatment effects (ATE) for survival or competing
+    risks](#examples-average-treatment-effects-ate-for-survival-or-competing-risks)
+  - [Examples: While Alive estimands for recurrent
+    events](#examples-while-alive-estimands-for-recurrent-events)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start-->
@@ -51,7 +81,7 @@ To cite the `mets` package please use one of the following references
 > Thomas H. Scheike and Klaus K. Holst (2022). A Practical Guide to
 > Family Studies with Lifetime Data. Annual Review of Statistics and Its
 > Application 9, pp. 47-69. doi:
-> 10.1146/annurev-statistics-040120-024253
+> <http://dx.doi.org/10.1146/annurev-statistics-040120-024253>
 
 > Thomas H. Scheike and Klaus K. Holst and Jacob B. Hjelmborg (2013).
 > Estimating heritability for cause specific mortality based on twin
@@ -88,8 +118,7 @@ BibTeX:
             Left truncation; Heritability; Survival analysis},
       pages={1-24},
       language={English}
-
-}
+    }
 
     @Article{,
       title={The Liability Threshold Model for Censored Twin Data},
