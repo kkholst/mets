@@ -108,7 +108,7 @@ dtable(hfactioncpx12,~status)
 #>    0    1    2 
 #>  617 1391  124 
 #> 
-dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,time=2,death.code=2)
 summary(dd)
 #> While-Alive summaries:  
 #> 

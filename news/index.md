@@ -2,6 +2,8 @@
 
 ## mets 1.3.9
 
+CRAN release: 2026-01-11
+
 - Vignette updates
 - `phreg_weibull`: allows for regression design on both rate and shape
   parameter. Replaces `phreg.par`
