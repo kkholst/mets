@@ -325,8 +325,8 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		S0rrr <- revcumsumstrata(rr0,strataCxx2,nCstrata)
 		S0iC[jumpsC] <- 1/S0rrr[jumpsC]
 		S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
-  ## Gc(t) computed  along all times of combined data-set: data + [D,\infty]
-        Gcxx2 <- exp(cumsumstrata(log(1 - S0iC), strataCxx2, nCstrata))
+                ## Gc(t) computed  along all times of combined data-set: data + [D,\infty]
+                Gcxx2 <- exp(cumsumstratasum(log(1 - S0iC), strataCxx2, nCstrata)$lagsum)
 		Gstart <- rep(1,nCstrata)
 		Gjumps <- Gcxx2[jumps]
 
@@ -817,21 +817,32 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	 	   GdLast <- GdL[lastid][xx2$id+1]
 		   EGdLast <- EGdL[lastid,,drop=FALSE][xx2$id+1,,drop=FALSE]
                         
-		   GadmXE2 <- apply(GdLast*Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-		   XE2 <- apply(Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-		   EGadmRR2 <- apply(EGdLast*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-		   RR2 <- revcumsumstrata(rrw2,strataCxx2,nCstrata)
+###		   GadmXE2 <- apply(GdLast*Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
+###		   XE2 <- apply(Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
+###		   EGadmRR2 <- apply(EGdLast*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
+###		   RR2 <- revcumsumstrata(rrw2,strataCxx2,nCstrata)
+###
+###		   q11 <- GadmXE2-XE2*GdL
+###		   q21 <- EGadmRR2-c(RR2)*EGdL
+###                   ###
+###		   qq <- q11-q21
 
-		   q11 <- GadmXE2-XE2*GdL
-		   q21 <- EGadmRR2-c(RR2)*EGdL
-                   ###
-		   qq <- q11-q21
+                   rrw2j <- -c(rrw2*(xx2$sign==-1))
+		   Xos <- Z*rrw2j
+                   rrsx <- cumsumstrata(rrw2j,strataCxx2,nCstrata)
+		   Xos <- apply(Xos,2,cumsumstrata,strataCxx2,nCstrata)
+
+		   GadmXE2 <-  apply(GdLast*Z*rrw2j,2,cumsumstrata,strataCxx2,nCstrata)
+		   EGadmRR2 <- apply(EGdLast*rrw2j,2,cumsumstrata,strataCxx2,nCstrata)
+		   qq <- (GadmXE2-EGadmRR2)-(c(GdL)*Xos-EGdL*c(rrsx))
 
                    if ( (!is.null(beta.iid)) | fixbeta==0) q2 <- qq
                    if (!is.null(time))  {
 		       HBlast <- HBt$res[lastid][xx2$id+1]
-	               HBadmRR2 <- revcumsumstrata(HBlast*rrw2,strataCxx2,nCstrata)
-		       qB2 <- (HBadmRR2-HBt$res*RR2)
+
+###	               HBadmRR2 <- revcumsumstrata(HBlast*rrw2,strataCxx2,nCstrata)
+	               HBadmRR2 <- cumsumstrata(HBlast*rrw2j,strataCxx2,nCstrata)
+		       qB2 <- (HBadmRR2-HBt$res*c(rrsx))
                    }
 
               }
@@ -913,6 +924,8 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	}
 	return(out)
 }  ## }}}
+
+
 
 ##' @export
 iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)
