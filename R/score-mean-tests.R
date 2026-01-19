@@ -39,7 +39,7 @@
 ##' pmt$score.test
 ##'  
 ##' @export
-test_marginalMean <- function(formula,data,cause=1,cens.code=0,...,death.code=2,death.code.prop=NULL,time=NULL,weighted=TRUE) { ## {{{ 
+test_marginalMean <- function(formula,data,cause=1,cens.code=0,...,death.code=2,death.code.prop=NULL,time=NULL) { ## {{{ 
 cl <- match.call()
 m <- match.call(expand.dots = TRUE)[1:3]
 des <- proc_design(formula, data = data, specials = c("offset","weights","cluster","strata","marks"), intercept = FALSE)
