@@ -157,21 +157,11 @@ pmOut <- recregIPCW(formR,data,cause=cause,death.code=death.code,
 ## }}}
 
 ## Ratio of AUC
-data$pmmark__ <- time-exit
+data$pmmarkAUC__ <- time-exit
 RAUC<- recregIPCW(formR,data,cause=cause,death.code=death.code,
-    time=time,cens.model=~strata(strata__))
+		  time=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__)
 
-###pm.weight=cbind(kms$time,wt)
-###lr.weight=cbind(phc$jumptimes,wtLRj)
-
-out <- list(
-###	    pm.weight=pm.weight, lr.weight=lr.weight, weighted=weighted,
-	    pepe.mori=pmOut,
-###	    pepe.mori2=pmOut2,
-	    RatioAUC=RAUC,
-	    score.test=score.test,
-	    prop.test=proptest,
-	    time=time)
+out <- list(pepe.mori=pmOut,RatioAUC=RAUC, score.test=score.test, prop.test=proptest, time=time)
 return(out)
 } ## }}} 
 
