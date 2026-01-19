@@ -2,7 +2,7 @@
 % Please edit documentation in R/score-mean-tests.R
 \name{test_marginalMean}
 \alias{test_marginalMean}
-\title{Pepe-Mori test, log-rank type test, proportionality test}
+\title{Pepe-Mori test, score-test type test, proportionality test}
 \usage{
 test_marginalMean(
   formula,
@@ -33,7 +33,7 @@ test_marginalMean(
 \item{time}{upper limit in pepe-mori and AUC integrals  otherwise max event time}
 }
 \description{
-for competing risks data and recurrent events
+for competing risks data and recurrent events the pepe-mori test uses the weights suggested in Ghosh and Lin (2000)
 }
 \examples{
 library(mets)
@@ -48,18 +48,18 @@ pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,ca
 			 death.code=1:2,death.code.prop=2,cens.code=0)
 pmt$pepe.mori
 pmt$RatioAUC
-pmt$log.rank
 pmt$prop.test
+pmt$score.test
  
- 
+## recurrent events   
 data(hfactioncpx12)
 hf <- hfactioncpx12
 pmt <- test_marginalMean(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
 			 cause=1,death.code=2,cens.code=0)
 pmt$pepe.mori
 pmt$RatioAUC
-pmt$log.rank
 pmt$prop.test
+pmt$score.test
  
 }
 \author{

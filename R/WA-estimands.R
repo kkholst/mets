@@ -23,7 +23,8 @@
 ##' data(hfactioncpx12)
 ##' 
 ##' dtable(hfactioncpx12,~status)
-##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,time=2,death.code=2)
+##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,
+##'                    time=2,death.code=2)
 ##' summary(dd)
 ##' @references 
 ##' Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
