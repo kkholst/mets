@@ -2,6 +2,9 @@
 
     Development version
 
+  - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with
+     administrative censoring and additional random censoring.
+
 # mets 1.3.9
   
   - Vignette updates
