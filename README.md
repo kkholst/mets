@@ -21,6 +21,7 @@
     events](#examples-ghosh-lin-for-recurrent-events)
   - [Examples: Fixed time modelling for recurrent
     events](#examples-fixed-time-modelling-for-recurrent-events)
+  - [Examples: Cumulative Medical Cost](#examples-cum-medical-cost)
   - [Examples: Regression for RMST/Restricted mean survival for survival
     and competing risks using
     IPCW](#examples-regression-for-rmstrestricted-mean-survival-for-survival-and-competing-risks-using-ipcw)
@@ -849,6 +850,43 @@ head(iid(e2))
 #> 4 -9.653029e-04  9.653029e-04
 #> 5 -1.203962e-04  6.744236e-05
 #> 6 -2.861359e-03  2.871831e-03
+```
+
+## Examples: Cumulative Medical Cost 
+
+Estimate mean cumulative cost (see also vignette)
+
+``` r
+library(mets)
+data(hfactioncpx12)
+hf <- hfactioncpx12
+hf$severity <- abs((5+rnorm(741)*2))[hf$id]
+
+## marginal mean using formula  
+outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+			 +marks(severity),hf,cause=1,death.code=2)
+plot(outNZ,se=TRUE)
+summary(outNZ,times=3) 
+```
+
+For comparison we also compute the IPCW estimates at time 3, using 
+the linear model, and note that they are identical. Standard errors are however based on different formula that are asymptotically 
+equivalent, and we note that they are very similar.
+
+```{r}
+outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
+		  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
+summary(outNZ3)
+head(iid(outNZ3))
+```
+
+We also apply the semiparametric proportional cost model with 
+IPCW adjustment: 
+
+```{r}
+propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
+summary(propNZ) 
+plot(propNZ,main="Baselines")
 ```
 
 ## Examples: Regression for RMST/Restricted mean survival for survival and competing risks using IPCW
