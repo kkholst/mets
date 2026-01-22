@@ -142,7 +142,7 @@ if (nlev==2) {
 	data$pmmark__ <- Wfinal-Wtmark
 
 	pepe.mori <- recregIPCW(formR,data,cause=cause,death.code=death.code,
-	    time=time,marks=data$pmmark__,cens.model=~strata(strata__),model="lin")
+	    times=time,marks=data$pmmark__,cens.model=~strata(strata__),model="lin")
         pepe.mori <- estimate(pepe.mori,null=0)
 } else {
 
@@ -169,7 +169,7 @@ if (nlev==2) {
 	   data$pmmark__ <- Wfinal-Wtmark
 
 	   pmOut <- recregIPCW(formRC,data,cause=cause,death.code=death.code,
-	       time=time,marks=data$pmmark__,cens.model=~strata(cstrata__),model="lin")
+	       times=time,marks=data$pmmark__,cens.model=~strata(cstrata__),model="lin")
 
         contr <- c(contr,coef(pmOut)[2])
 	contr.iid <- cbind(contr.iid,pmOut$iid[,2])
@@ -203,7 +203,7 @@ if (nlev==2) {
 ## Ratio of AUC
 data$pmmarkAUC__ <- time-exit
 RAUC<- recregIPCW(formR,data,cause=cause,death.code=death.code,
-		  time=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__)
+		  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__)
 RAUC <- estimate(RAUC,null=0)
 
 proptest <- estimate(proptest,null=0)
