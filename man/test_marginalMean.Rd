@@ -44,7 +44,6 @@ data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)
 dcut(bmt) <- age.f~age
-str(bmt)      
      
 fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
  
