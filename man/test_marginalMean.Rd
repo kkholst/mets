@@ -49,8 +49,8 @@ fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
  
 ## computing tests for difference  for CIF
 pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
-			 death.code=1:2,death.code.prop=2,cens.code=0)
-summary.marginalTest(pmt) 
+			 death.code=1:2,death.code.prop=2,cens.code=0,time=40)
+summary(pmt) 
  
 pmt$pepe.mori
 pmt$RatioAUC

@@ -24,8 +24,8 @@
 ##'  
 ##' ## computing tests for difference  for CIF
 ##' pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
-##' 			 death.code=1:2,death.code.prop=2,cens.code=0)
-##' summary.marginalTest(pmt) 
+##' 			 death.code=1:2,death.code.prop=2,cens.code=0,time=40)
+##' summary(pmt) 
 ##'  
 ##' pmt$pepe.mori
 ##' pmt$RatioAUC
@@ -84,7 +84,6 @@ pos.cluster <- NULL
 
 if (is.null(death.code.prop)) death.code.prop <- death.code
 
-if (is.null(time)) time <- max(exit[status %in% cause])
 data$strata__ <- strata
 data$entry__ <- entry
 data$exit__ <- exit
@@ -103,19 +102,21 @@ if (is.null(beta)) beta <- rep(0,nlev-1)
 ## score test  for prop-factor 
 proptest0 <- recreg(formR,data,cause=cause,death.code=death.code.prop,
 		   cens.model=~strata(strata__),beta=beta,no.opt=TRUE)
- gradient <- matrix(proptest0$gradient,length(proptest0$gradient),1)
- iidbeta <-  IC(proptest0)
- n <- nrow(iidbeta)
- iidU0 <- iidbeta %*% proptest0$hessian/n
+gradient <- matrix(proptest0$gradient,length(proptest0$gradient),1)
+iidbeta <-  IC(proptest0)
+n <- nrow(iidbeta)
+iidU0 <- iidbeta %*% proptest0$hessian
+score.test <- estimate(coef=gradient,IC=iidU0,null=0)
+
 ### varU0 <- crossprod(iidU0)
 ### logrank.robust <- t(gradient) %*% solve(varU0) %*% gradient
 ### p.logrank.robust <- 1-pchisq(logrank.robust,nrow(gradient))
-
 ### score.test <- list(logrank.robust=logrank.robust,p.logrank.robust=p.logrank.robust,
 ###		    test.statistic=gradient,iid=iidU0)
- score.test <- estimate(coef=gradient,IC=iidU0,null=0)
 
- ## {{{ pepe-mori test 
+if (is.null(time)) time <- max(exit[status %in% cause])
+
+## {{{ pepe-mori test 
 
 ddataid <- data.frame(id=id)
 cid <- countID(ddataid)
@@ -128,7 +129,20 @@ formD <- as.formula(paste("Event(entry__,exit__,statusD__)~+1"))
 if (nlev==2) {
 	formC <- as.formula(paste("Event(entry__,exit__,statusC__)~strata(strata__)"))
 	kms <- km(formC,data)
-	kmss <- cbind(kms$time,t(kms$surv))
+	kms0 <- phreg(formC,data,no.opt=TRUE)
+	kms0$jumptimes
+	kms0$strata.jumps
+        Yr <- vecAllStrata(kms0$S0,kms0$strata.jumps,kms0$nstrata)
+	minRisk <- apply(Yr,1,min)
+
+        if (is.null(time)) {
+               kms0 <- phreg(formC,data,no.opt=TRUE)
+	       kms0$jumptimes
+	       kms0$strata.jumps
+               Yr <- vecAllStrata(kms0$S0,kms0$strata.jumps,kms0$nstrata)
+	       minRisk <- apply(Yr,1,min)
+               time <- max(kms0$jumptimes[minRisk>=5])
+        }
 
         ns <- c(table(strata[cid$reverse==1]))
 	n1 <- ns[1]
@@ -137,7 +151,7 @@ if (nlev==2) {
 	kmss <- cbind(kms$time,t(kms$surv))
 	wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
 	Wt <- cumsum(diff(c(0,kms$time))*wt)
-	Wtmark <- lin.approx(exit,rbind(0,cbind(kms$time,Wt)))
+	Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 	Wfinal <- tail(Wt,1)
 	###
 	data$pmmark__ <- Wfinal-Wtmark
@@ -145,6 +159,7 @@ if (nlev==2) {
 	pepe.mori <- recregIPCW(formR,data,cause=cause,death.code=death.code,
 	    times=time,marks=data$pmmark__,cens.model=~strata(strata__),model="lin")
         pepe.mori <- estimate(pepe.mori,null=0)
+	pepe.mori <- estimate(pepe.mori,lava::contr(2))
 } else {
 
   formRC <- as.formula(paste("Event(entry__,exit__,status__)~factor(cstrata__)+cluster(id__)"))
@@ -164,7 +179,7 @@ if (nlev==2) {
 	   kmss <- cbind(kms$time,t(kms$surv))
 	   wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
 	   Wt <- cumsum(diff(c(0,kms$time))*wt)
-	   Wtmark <- lin.approx(exit,rbind(0,cbind(kms$time,Wt)))
+	   Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 	   Wfinal <- tail(Wt,1)
 	   ###
 	   data$pmmark__ <- Wfinal-Wtmark
@@ -178,6 +193,8 @@ if (nlev==2) {
    var.contr <- crossprod(contr.iid)
    ###  pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
    pepe.mori <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
+   p <- length(contr)
+   pepe.mori <- estimate(pepe.mori,lava::contr(1:p))
 }
 
 ##### computing S0 for the two strata 
@@ -206,6 +223,8 @@ data$pmmarkAUC__ <- time-exit
 RAUC<- recregIPCW(formR,data,cause=cause,death.code=death.code,
 		  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__)
 RAUC <- estimate(RAUC,null=0)
+p <- length(coef(RAUC))
+RAUC <- estimate(RAUC,lava::contr(2:p))
 
 proptest <- estimate(proptest,null=0)
 
