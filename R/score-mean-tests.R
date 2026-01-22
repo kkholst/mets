@@ -25,20 +25,18 @@
 ##' ## computing tests for difference  for CIF
 ##' pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
 ##' 			 death.code=1:2,death.code.prop=2,cens.code=0)
+##' summary(pmt) 
+##'  
 ##' pmt$pepe.mori
 ##' pmt$RatioAUC
 ##' pmt$prop.test
 ##' ## score test equialent to Gray's test but variance estimated differently 
-##' pmt$score.test
+##' pmt$score.test$p.logrank.robust
 ##'  
 ##' ### age-groups  
 ##' pmt <- test_marginalMean(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1,
 ##' 			 death.code=1:2,death.code.prop=2,cens.code=0)
-##' pmt$pepe.mori
-##' pmt$RatioAUC
-##' pmt$prop.test
-##' ## score test equialent to Gray's test but variance estimated differently 
-##' pmt$score.test
+##' summary(pmt) 
 ##'  
 ##' ## having a look at the cumulative incidences 
 ##' cifs <- cif(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1)
@@ -49,10 +47,7 @@
 ##' hf <- hfactioncpx12
 ##' pmt <- test_marginalMean(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
 ##' 			 cause=1,death.code=2,cens.code=0)
-##' pmt$pepe.mori
-##' pmt$RatioAUC
-##' pmt$prop.test
-##' pmt$score.test
+##' summary(pmt) 
 ##'  
 ##' @export
 test_marginalMean <- function(formula,data,cause=1,cens.code=0,...,death.code=2,death.code.prop=NULL,time=NULL,beta=NULL) { ## {{{ 
@@ -111,13 +106,13 @@ proptest0 <- recreg(formR,data,cause=cause,death.code=death.code.prop,
  gradient <- matrix(proptest0$gradient,length(proptest0$gradient),1)
  iidbeta <-  IC(proptest0)
  n <- nrow(iidbeta)
- iidU0 <- iidbeta %*% proptest0$hessian 
- varU0 <- crossprod(iidU0)/n^2
+ iidU0 <- iidbeta %*% proptest0$hessian/n
+ varU0 <- crossprod(iidU0)
  logrank.robust <- t(gradient) %*% solve(varU0) %*% gradient
  p.logrank.robust <- 1-pchisq(logrank.robust,nrow(gradient))
 
  score.test <- list(logrank.robust=logrank.robust,p.logrank.robust=p.logrank.robust,
-		    test.statistic=gradient)
+		    test.statistic=gradient,iid=iidU0)
 
  ## {{{ pepe-mori test 
 
@@ -212,8 +207,39 @@ RAUC <- estimate(RAUC,null=0)
 
 proptest <- estimate(proptest,null=0)
 
-out <- list(pepe.mori=pepe.mori,RatioAUC=RAUC,score.test=score.test,prop.test=proptest,time=time)
+out <- list(pepe.mori=pepe.mori,RatioAUC=RAUC,score.test=score.test,score.iid=iidU0,prop.test=proptest,time=time)
+class(out) <- "marginalTest"
 return(out)
 } ## }}} 
+
+##' @export
+print.marginalTest  <- function(x,...) {# {{{
+  print(summary(x),...)
+}# }}}
+
+##' @export
+summary.marginalTest <- function(object,...) {# {{{
+
+p.values <- c(object$time,
+        object$pepe.mori$compare$p.value,
+        object$RatioAUC$compare$p.value,
+        object$prop.test$compare$p.value,
+        object$score.test$p.logrank.robust)
+p.values <- matrix(p.values,ncol=1)
+rownames(p.values) <- c("time","Pepe-Mori","Ratio-AUC","Proportionality","Proportionality-score-test")
+
+res <- p.values
+class(res) <- "summary.maginalTest"
+return(res)
+}# }}}
+
+##' @export
+print.summary.marginalTest <- function(x,...) { ## {{{
+  cat("coeffients:\n")
+  printCoefmat(x$coef,...)
+  cat("\n")
+} ## }}}
+
+
 
 ## proc_design <- mets:::proc_design
