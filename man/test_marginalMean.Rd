@@ -50,13 +50,13 @@ fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
 ## computing tests for difference  for CIF
 pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
 			 death.code=1:2,death.code.prop=2,cens.code=0)
-summary(pmt) 
+summary.marginalTest(pmt) 
  
 pmt$pepe.mori
 pmt$RatioAUC
 pmt$prop.test
 ## score test equialent to Gray's test but variance estimated differently 
-pmt$score.test$p.logrank.robust
+pmt$score.test
  
 ### age-groups  
 pmt <- test_marginalMean(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1,

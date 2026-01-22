@@ -25,13 +25,13 @@
 ##' ## computing tests for difference  for CIF
 ##' pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
 ##' 			 death.code=1:2,death.code.prop=2,cens.code=0)
-##' summary(pmt) 
+##' summary.marginalTest(pmt) 
 ##'  
 ##' pmt$pepe.mori
 ##' pmt$RatioAUC
 ##' pmt$prop.test
 ##' ## score test equialent to Gray's test but variance estimated differently 
-##' pmt$score.test$p.logrank.robust
+##' pmt$score.test
 ##'  
 ##' ### age-groups  
 ##' pmt <- test_marginalMean(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1,
@@ -107,12 +107,13 @@ proptest0 <- recreg(formR,data,cause=cause,death.code=death.code.prop,
  iidbeta <-  IC(proptest0)
  n <- nrow(iidbeta)
  iidU0 <- iidbeta %*% proptest0$hessian/n
- varU0 <- crossprod(iidU0)
- logrank.robust <- t(gradient) %*% solve(varU0) %*% gradient
- p.logrank.robust <- 1-pchisq(logrank.robust,nrow(gradient))
+### varU0 <- crossprod(iidU0)
+### logrank.robust <- t(gradient) %*% solve(varU0) %*% gradient
+### p.logrank.robust <- 1-pchisq(logrank.robust,nrow(gradient))
 
- score.test <- list(logrank.robust=logrank.robust,p.logrank.robust=p.logrank.robust,
-		    test.statistic=gradient,iid=iidU0)
+### score.test <- list(logrank.robust=logrank.robust,p.logrank.robust=p.logrank.robust,
+###		    test.statistic=gradient,iid=iidU0)
+ score.test <- estimate(coef=gradient,IC=iidU0,null=0)
 
  ## {{{ pepe-mori test 
 
@@ -225,7 +226,7 @@ p.values <- c(object$time,
         object$pepe.mori$compare$p.value,
         object$RatioAUC$compare$p.value,
         object$prop.test$compare$p.value,
-        object$score.test$p.logrank.robust)
+        object$score.test$compare$p.value)
 p.values <- matrix(p.values,ncol=1)
 rownames(p.values) <- c("time","Pepe-Mori","Ratio-AUC","Proportionality","Proportionality-score-test")
 
