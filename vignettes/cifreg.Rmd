@@ -363,26 +363,45 @@ In the case with administrative censoring we can simply provide the
 risk-set given by the administrative censoring times for the Fine-Gray 
 or logistic link cumulative incidence regression models. 
 
+ - when a administrative censoring time is given the risk-set will be increased for all those 
+   experiencing the alternative event. 
+ - if there are also additional random censorings these can be adjusted for via IPCW weights and are then found using the cens.code 
+ - the alternative causes are found by considering cause, cens.code and total number of values for the status variable, so it can be useful to specify the other death.code (s) also
+
+
 ```{r}
 library(mets)
 rho1 <- 0.3; rho2 <- 5.9
 set.seed(100)
 n <- 100
 beta=c(0.3,-0.3,-0.5,0.3)
-rc <- 0.9
+rc <- 0.5
 ###
 dats <- mets:::simul.cifsRA(n,rho1,rho2,beta,bin=1,rc=rc,rate=c(3,7))
 dats$status07 <- dats$status
 dats$status07[dats$status %in% c(0,7)] <- 0
 tt <- seq(0,6,by=0.1)
 base1 <- rho1*(1-exp(-tt/3))
+dtable(dats,~status+statusA,level=1)
 
+## only admin censoring 
 ccA  <-  cifregFG(Event(timeA,statusA)~Z1+Z2,dats,
-		  adm.cens.time=dats$censorA,no.codes=7)
+		  adm.cens.time=dats$censorA,death.code=2)
 estimate(ccA)
+
+## admin and random censoring  via IPCW for C=min(C_A,C_R) 
+ccAR_ipcw1  <-  cifregFG(Event(time,status)~Z1+Z2,dats,cens.code=c(0,7))
+estimate(ccAR_ipcw1)
+
+## admin and random censoring  via IPCW for C_R 
+ccAR_ipcw2  <-  cifregFG(Event(time,status)~Z1+Z2,dats,cens.code=0,
+		  adm.cens.time=dats$censorA,no.codes=7)
+estimate(ccAR_ipcw2)
 ```
 
-The Fine-Gray model can similarly be estimated using the modified risk-set and the phreg function
+When there is only administrative censoring the Fine-Gray model 
+can similarly be estimated using the modified risk-set and the 
+phreg/coxph function (thus equvalent to ccA)
 
 ```{r}
 dats$entry <- 0
@@ -401,7 +420,6 @@ estimate(ddA)
 ###plot(ccA,add=TRUE,col=3)
 ###plot(ddA,col=2,add=TRUE)
 ```
-
 
 
 SessionInfo
