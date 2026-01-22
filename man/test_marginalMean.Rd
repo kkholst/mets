@@ -12,7 +12,8 @@ test_marginalMean(
   ...,
   death.code = 2,
   death.code.prop = NULL,
-  time = NULL
+  time = NULL,
+  beta = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ test_marginalMean(
 \item{death.code.prop}{code for other causes of death for Fine-Gray regression model}
 
 \item{time}{upper limit in pepe-mori and AUC integrals  otherwise max event time}
+
+\item{beta}{for score test}
 }
 \description{
 for competing risks data and recurrent events the pepe-mori test uses the weights suggested in Ghosh and Lin (2000)
@@ -40,26 +43,37 @@ library(mets)
 data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)
+dcut(bmt) <- age.f~age
+str(bmt)      
      
 fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
  
 ## computing tests for difference  for CIF
 pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
 			 death.code=1:2,death.code.prop=2,cens.code=0)
+summary(pmt) 
+ 
 pmt$pepe.mori
 pmt$RatioAUC
 pmt$prop.test
-pmt$score.test
+## score test equialent to Gray's test but variance estimated differently 
+pmt$score.test$p.logrank.robust
+ 
+### age-groups  
+pmt <- test_marginalMean(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1,
+			 death.code=1:2,death.code.prop=2,cens.code=0)
+summary(pmt) 
+ 
+## having a look at the cumulative incidences 
+cifs <- cif(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1)
+plot(cifs) 
  
 ## recurrent events   
 data(hfactioncpx12)
 hf <- hfactioncpx12
 pmt <- test_marginalMean(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
 			 cause=1,death.code=2,cens.code=0)
-pmt$pepe.mori
-pmt$RatioAUC
-pmt$prop.test
-pmt$score.test
+summary(pmt) 
  
 }
 \author{

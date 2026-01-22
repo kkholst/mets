@@ -10,6 +10,7 @@
 ##' @param death.code.prop code for other causes of death for Fine-Gray regression model 
 ##' @param death.code codes for death (terminating event, 2 default)
 ##' @param time upper limit in pepe-mori and AUC integrals  otherwise max event time
+##' @param beta for score test 
 ##' @author Thomas Scheike
 ##' 
 ##' @examples
@@ -18,7 +19,6 @@
 ##' bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 ##' bmt$id <- 1:nrow(bmt)
 ##' dcut(bmt) <- age.f~age
-##' str(bmt)      
 ##'      
 ##' fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
 ##'  
@@ -175,7 +175,8 @@ if (nlev==2) {
 	contr.iid <- cbind(contr.iid,pmOut$iid[,2])
    }
    var.contr <- crossprod(contr.iid)
-   pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
+   ###  pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
+   pepe.mori <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
 }
 
 ##### computing S0 for the two strata 
@@ -239,7 +240,6 @@ print.summary.marginalTest <- function(x,...) { ## {{{
   printCoefmat(x$coef,...)
   cat("\n")
 } ## }}}
-
 
 
 ## proc_design <- mets:::proc_design
