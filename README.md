@@ -21,7 +21,7 @@
     events](#examples-ghosh-lin-for-recurrent-events)
   - [Examples: Fixed time modelling for recurrent
     events](#examples-fixed-time-modelling-for-recurrent-events)
-  - [Examples: Cumulative Medical Cost](#examples-cum-medical-cost)
+  - [Examples: Cumulative Medical Cost](#examples-cumulative-medical-cost)
   - [Examples: Regression for RMST/Restricted mean survival for survival
     and competing risks using
     IPCW](#examples-regression-for-rmstrestricted-mean-survival-for-survival-and-competing-risks-using-ipcw)
