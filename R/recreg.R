@@ -226,7 +226,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 			}
 			if (cens.model$p>0) kmt <- FALSE
 			###        Pcens.model <- predict(cens.model,data,times=exit,tminus=TRUE,individual.time=TRUE,se=FALSE,km=kmt)
-			Pcens.model <- predict(cens.model,data,times=exit,individual.time=TRUE,se=FALSE,km=kmt)
+			Pcens.model <- predict(cens.model,data,times=exit,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)
 			Stime <- Pcens.model$surv <- c(Pcens.model$surv)
 			## strata from original data
 			nCstrata <- cens.model$nstrata

@@ -734,17 +734,18 @@ RcppExport SEXP S0_FGRN(SEXP ia,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instr
 	mat Gcjumps = Rcpp::as<mat>(iGcjumps);
 	unsigned njumps = Gcjumps.n_rows;
 
-        vec S0jumps(njumps); 
+	arma::vec S0jumps = arma::zeros<arma::vec>(njumps);
+//        vec S0jumps(njumps); 
         // strata2 is censoring strata   
 	// first compute S0(nstrata,nstrataC+1) for all time points 
-	// type is 1 when type is other dead, and type  is 0 when normal risk
+	// type2=1 when other dead, and type2=0 for when normal risk
 	mat tmpsum(nstrata,nstrata2+1); tmpsum.zeros();
 //        mat S0s(n,nstrata2+1); S0s.zeros();
 //	colvec S0sc = a;
 	unsigned jumps=njumps-1; 
 	for (unsigned i=0; i<n; i++) {
 		int ss=strata(n-i-1); 
-		// censureringstrata put to 0 for non type2
+		// censureringstrata put to 0 for non type2, and this is normal at-risk
 		int ss2=type2(n-i-1)*(strata2(n-i-1)+1);
 		tmpsum(ss,ss2) += a(n-i-1);
 //		S0sc(n-i-1)=tmpsum(ss,ss2);
