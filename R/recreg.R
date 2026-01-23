@@ -326,7 +326,8 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		S0iC[jumpsC] <- 1/S0rrr[jumpsC]
 		S0iC2[jumpsC] <- 1/S0rrr[jumpsC]^2
                 ## Gc(t) computed  along all times of combined data-set: data + [D,\infty]
-                Gcxx2 <- exp(cumsumstratasum(log(1 - S0iC), strataCxx2, nCstrata)$lagsum)
+		## not lag because it is lagged later in GcjumpsR 
+                Gcxx2 <- exp(cumsumstratasum(log(1 - S0iC), strataCxx2, nCstrata)$sum)
 		Gstart <- rep(1,nCstrata)
 		Gjumps <- Gcxx2[jumps]
 

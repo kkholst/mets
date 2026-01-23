@@ -700,10 +700,10 @@ RcppExport SEXP GcjumpsR(SEXP iGc,SEXP istatus,SEXP istrata2,SEXP instrata2,SEXP
 	unsigned njumps = Rcpp::as<int>(injumps);
 	unsigned n = Gc.n_rows;
 
-       vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
-       mat Gcjumps(njumps,nstrata2); 
-       // whenever jump compute S_ss(t) = \sum_c G_c(t) S_ss,c(t) 
-       unsigned jumps=0; 
+      vec Gct(nstrata2); for (unsigned  i=0; i<nstrata2; i++) Gct(i)=Gcstart(i);
+      mat Gcjumps(njumps,nstrata2); 
+     // at jumps return censoring weights for all strata, going forward in time so t-
+     unsigned jumps=0; 
        
 	for (unsigned i=0; i<n; i++) {
 		int ss2=strata2(i);
@@ -735,7 +735,7 @@ RcppExport SEXP S0_FGRN(SEXP ia,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instr
 	unsigned njumps = Gcjumps.n_rows;
 
         vec S0jumps(njumps); 
-        // strata 2 er C-strata,  
+        // strata2 is censoring strata   
 	// first compute S0(nstrata,nstrataC+1) for all time points 
 	// type is 1 when type is other dead, and type  is 0 when normal risk
 	mat tmpsum(nstrata,nstrata2+1); tmpsum.zeros();
