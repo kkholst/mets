@@ -4,12 +4,14 @@
 \alias{km}
 \title{Kaplan-Meier with robust standard errors}
 \usage{
-km(formula, data = data, ...)
+km(formula, data = data, km = TRUE, ...)
 }
 \arguments{
 \item{formula}{formula with 'Surv' 'Event' outcome}
 
 \item{data}{data frame}
+
+\item{km}{TRUE to get Kaplan-Meier otherwise Nelson-Aalen based}
 
 \item{...}{Additional arguments to phreg}
 }

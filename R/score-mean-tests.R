@@ -150,7 +150,9 @@ if (nlev==2) {
 	## using number at risk for weighting 
 	kmss <- cbind(kms$time,t(kms$surv))
 	wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
+	wt[is.na(wt)] <- 0
 	Wt <- cumsum(diff(c(0,kms$time))*wt)
+
 	Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 	Wfinal <- tail(Wt,1)
 	###
@@ -178,6 +180,7 @@ if (nlev==2) {
 	   ## using number at risk for weighting 
 	   kmss <- cbind(kms$time,t(kms$surv))
 	   wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
+	   wt[is.na(wt)] <- 0
 	   Wt <- cumsum(diff(c(0,kms$time))*wt)
 	   Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 	   Wfinal <- tail(Wt,1)
@@ -247,6 +250,7 @@ p.values <- c(object$time,
         object$prop.test$compare$p.value,
         object$score.test$compare$p.value)
 p.values <- matrix(p.values,ncol=1)
+colnames(p.values) <- "p-value"
 rownames(p.values) <- c("time","Pepe-Mori","Ratio-AUC","Proportionality","Proportionality-score-test")
 
 res <- p.values

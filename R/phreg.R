@@ -3465,6 +3465,7 @@ return(x)
 ##' Robust variance is default variance and obtained from the predict call 
 ##' @param formula formula with 'Surv' 'Event' outcome 
 ##' @param data data frame
+##' @param km TRUE to get Kaplan-Meier otherwise Nelson-Aalen based
 ##' @param ... Additional arguments to phreg 
 ##' @author Thomas Scheike
 ##' @examples
@@ -3481,7 +3482,7 @@ return(x)
 ##' plot(out1,se=TRUE)
 ##' plot(out2,se=TRUE)
 ##' @export
-km <- function(formula,data=data,...)
+km <- function(formula,data=data,km=TRUE,...)
 {# {{{
 res <- phreg(formula,data=data,...)
 
@@ -3491,7 +3492,7 @@ varss <- all.vars(formula)
 first <- c(headstrata(res$strata.call,res$nstrata))
 
 ddf <- data[first,varss]
-pres <- predict(res,ddf,robust=TRUE,...)
+pres <- predict(res,ddf,robust=TRUE,km=km,...)
 pres$formula <- formula
 pres$call <- match.call()
 
