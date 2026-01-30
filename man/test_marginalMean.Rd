@@ -36,7 +36,7 @@ test_marginalMean(
 \item{beta}{for score test}
 }
 \description{
-for competing risks data and recurrent events the pepe-mori test uses the weights suggested in Ghosh and Lin (2000)
+For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only.
 }
 \examples{
 library(mets)

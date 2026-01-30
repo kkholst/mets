@@ -6,9 +6,10 @@
 \alias{recmarg}
 \alias{recurrentMarginalAIPCW}
 \alias{recurrentMarginalPhreg}
+\alias{iidRecurrent}
 \title{Fast recurrent marginal mean when death is possible}
 \usage{
-recurrentMarginal(formula, data, cause = 1, ..., death.code = 2)
+recurrentMarginal(formula, data, cause = 1, ..., death.code = 2, test = FALSE)
 }
 \arguments{
 \item{formula}{with Event object}
@@ -20,17 +21,16 @@ recurrentMarginal(formula, data, cause = 1, ..., death.code = 2)
 \item{...}{Additional arguments to lower level funtions}
 
 \item{death.code}{codes for death (terminating event, 2 default)}
+
+\item{test}{to compute logrank type test, only for two groups}
 }
 \description{
-Fast Marginal means of recurrent events using the Lin and Ghosh (2000) 
-standard errors.  
-Fitting two models for death and recurent events these are
-combined to prducte the estimator 
-\deqn{ \int_0^t  S(u|x=0) dR(u|x=0) } the mean number of recurrent events, here
-\deqn{ S(u|x=0) }  is the probability of survival for the baseline group, and 
-\deqn{ dR(u|x=0) }  is the hazard rate of an event among survivors for the baseline. 
-Here \deqn{ S(u|x=0) }  is estimated by \deqn{ exp(-\Lambda_d(u|x=0) }  with 
- \deqn{\Lambda_d(u|x=0) } being the cumulative baseline for death.
+Fast Marginal means of recurrent events using the Ghosh and Lin (2000) 
+robust standard errors. Fitting two models for death and recurent events, respectively, these are
+combined to give the estimator 
+\deqn{ \int_0^t  S(u-) dR(u)} the mean number of recurrent events (or the cumulative incidence), here
+\deqn{ S(u) } is the probability of survival for the baseline group, and 
+\deqn{ dR(u)} is the hazard rate of an event among survivors for the baseline.
 }
 \details{
 Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
@@ -65,14 +65,22 @@ summary(outN,times=1:5)
 ###   with strata     ##################################################
 ########################################################################
 out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-                         data=hf,cause=1,death.code=2)
+                         data=hf,cause=1,death.code=2,test=TRUE)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 
+attr(out,"logrank")
+
 summary(out,times=1:5) 
+########################################################################
+### iid decomposition based on influence functions from Ghosh Lin (2000)
+########################################################################
+head(iid(outN,stop=3)d)
 
 }
 \references{
 Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
+Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+
 Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 }
 \author{

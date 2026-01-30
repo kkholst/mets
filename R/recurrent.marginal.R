@@ -1,14 +1,11 @@
 ##' Fast recurrent marginal mean when death is possible
 ##'
-##' Fast Marginal means of recurrent events using the Lin and Ghosh (2000) 
-##' standard errors.  
-##' Fitting two models for death and recurent events these are
-##' combined to prducte the estimator 
-##' \deqn{ \int_0^t  S(u|x=0) dR(u|x=0) } the mean number of recurrent events, here
-##' \deqn{ S(u|x=0) }  is the probability of survival for the baseline group, and 
-##' \deqn{ dR(u|x=0) }  is the hazard rate of an event among survivors for the baseline. 
-##' Here \deqn{ S(u|x=0) }  is estimated by \deqn{ exp(-\Lambda_d(u|x=0) }  with 
-##'  \deqn{\Lambda_d(u|x=0) } being the cumulative baseline for death.
+##' Fast Marginal means of recurrent events using the Ghosh and Lin (2000) 
+##' robust standard errors. Fitting two models for death and recurent events, respectively, these are
+##' combined to give the estimator 
+##' \deqn{ \int_0^t  S(u-) dR(u)} the mean number of recurrent events (or the cumulative incidence), here
+##' \deqn{ S(u) } is the probability of survival for the baseline group, and 
+##' \deqn{ dR(u)} is the hazard rate of an event among survivors for the baseline. 
 ##' 
 ##' Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 ##'
@@ -17,6 +14,7 @@
 ##' @param cause of interest (1 default)
 ##' @param ... Additional arguments to lower level funtions
 ##' @param death.code codes for death (terminating event, 2 default)
+##' @param test to compute logrank type test, only for two groups
 ##' @author Thomas Scheike
 ##' 
 ##' @references 
@@ -52,14 +50,22 @@
 ##' ###   with strata     ##################################################
 ##' ########################################################################
 ##' out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-##'                          data=hf,cause=1,death.code=2)
+##'                          data=hf,cause=1,death.code=2,test=TRUE)
 ##' plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ##' 
+##' attr(out,"logrank")
+##' 
 ##' summary(out,times=1:5) 
+##' ########################################################################
+##' ### iid decomposition based on influence functions from Ghosh Lin (2000)
+##' ########################################################################
+##' head(iid(outN,stop=3)d)
 ##'
-##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg
+##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg iidRecurrent
+##' @references 
+##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @export
-recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
+recurrentMarginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
 {# {{{
   if (missing(formula)) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
     return(recurrentMarginalPhreg(...))
@@ -157,6 +163,11 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2)
   ## to work with predict function
   meano$no.opt <- TRUE
 
+  if (test) {
+	  logrank <- logrankRecurrentBase(coxE,coxS)
+  } else logrank <- NULL
+
+  attr(meano,"logrank") <- logrank
   attr(meano,"cause") <- cause
   attr(meano,"death.code") <- death.code
   return(meano)
@@ -238,14 +249,19 @@ recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE)
      strata=varrs$strata,nstrata=xr$nstrata,jumps=1:nrow(varrs),
      strata.name=xr$strata.name,strata.level=recurrent$strata.level,call=xr$call,
      formula=xr$formula,no.opt=TRUE,exit=varrs$time,p=0)
+ attr(out,"recurrent") <-  recurrent
+ attr(out,"death") <- death
  class(out) <- rep("recurrent",2)
  return(out)
 }# }}}
 
 ##' @export
-plot.recurrent <- function(x,ylab=NULL,...) {# {{{
+plot.recurrent <- function(x,ylab=NULL,test=TRUE,...) {# {{{
  if (inherits(x,"recurrent") & is.null(ylab)) ylab <- "Mean events"
  baseplot(x,ylab=ylab,...)
+ logrank <- attr(x,"logrank")
+ if (!is.null(logrank) & test)
+ legend("bottomright",paste("Logrank test, p=",round(logrank$compare$p.value,3)))
 }# }}}
 
 ##' @export
@@ -291,45 +307,212 @@ class(out) <- "summary.recurrent"
 return(out)
 }# }}}
 
-###summary.recurrent <- function(object,times=NULL,strata=NULL,estimates=FALSE,
-###			      name="mean",robust=FALSE,
-###	      conf.type=c("log","log-log","plain"),...) {# {{{
-###base <- basecumhaz(object,joint=1,robust=robust)
-###nstrata <- object$nstrata
-###stratobs <- attr(base,"stratobs")
-###
-###baseci <- rep(list(NULL),nstrata)
-###if (length(stratobs)>0) 
-### for (i in stratobs) {
-###   cumhaz <- base[[i+1]]$cumhaz
-###   if (nrow(cumhaz)>=1) {
-###     mu <- base[[i+1]]$cumhaz[,2]
-###     se.mu <- base[[i+1]]$cumhaz[,3]
-###	   if (length(mu)>=1) {
-###	   conf <- conftype(mu,se.mu,conf.type=conf.type[1],...)
-###	   out <- data.frame(times=cumhaz[,1],mu=mu,se.mu=se.mu,lower=conf$lower,upper=conf$upper,strata=i)
-###	   names(out) <- c("times",name,"se","CI-2.5%","CI-97.5%","strata")
-###	   baseci[[i+1]] <- out
-###	   } 
-###   } 
-###   }
-###
-###pbaseci <- NULL
-###if (!is.null(times)) {
-### if (length(stratobs)>0) 
-### for (i in stratobs) 
-###if (!is.null(baseci[[i+1]])) pbaseci[[i+1]] <- predictCumhaz(rbind(0,baseci[[i+1]]),times) 
-###}
-###out <- list(baseci=baseci,pbaseci=pbaseci,times=times)
-###
-###class(out) <- "summary.recurrent"
-###return(out)
-###}# }}}
-
 ##' @export
 print.summary.recurrent  <- function(x,...) {# {{{
 if (is.null(x$times)) print(x$baseci) else print(x$pbaseci)
 } # }}}
+
+##' @export
+iidRecurrent <- function(recurrent,death,wt=NULL,km=TRUE,start=0,stop=NULL) { ## {{{ 
+xr <- recurrent
+dr <- death 
+if (is.null(stop)) stop <- max(xr$jumptimes)
+### marginal expected events  int_0^t w(s) S(s) \lambda_r(s) ds 
+### weight is considered known 
+## {{{
+###
+x <- dr
+xx <- x$cox.prep
+xstrata <- xx$strata
+nstrata <- xx$nstrata
+
+S0i2 <- S0i <- rep(0,length(xstrata))
+S0i[xx$jumps+1] <-  1/x$S0
+S0i2[xx$jumps+1] <- 1/x$S0^2
+## survival at t- to also work in competing risks situation
+if (!km) { 
+cumhazD <- c(cumsumstratasum(S0i,xstrata,nstrata)$lagsum)
+St      <- exp(-cumhazD)
+} else St <- c(exp(cumsumstratasum(log(1-S0i),xstrata,nstrata)$lagsum))
+x <- xr
+xx <- x$cox.prep
+S0i2 <- S0i <- rep(0,length(xstrata))
+S0i[xx$jumps+1] <-  1/x$S0
+S0i2[xx$jumps+1] <- 1/x$S0^2
+
+btime <- (xx$time<=stop & xx$time>start)*1
+wt.call <- wt
+if (is.null(wt)) wt <- rep(1,length(xx$time))
+
+cumhazR <-  cbind(xx$time,cumsumstrata(S0i*btime,xstrata,nstrata))
+meanN <- cumhazDR <- cbind(xx$time,cumsumstrata(wt*St*S0i*btime,xstrata,nstrata))
+mu <- cumhazDR[,2]
+meanN <- meanN[xx$jumps+1,]
+
+cumhazSR <- cumsumstrata(wt*St*S0i2*btime, xstrata, nstrata)
+rr <- c(xx$sign * exp( xx$offset))
+MSGt <- wt*St*S0i*btime - cumhazSR*rr*c(xx$weights)
+id <- xx$id
+MSGtiid <- apply(MSGt,2,sumstrata,id,max(id)+1)
+
+x <- dr
+xx <- x$cox.prep
+rr <- c(xx$sign * exp( xx$offset))
+S0i2 <- S0i <- rep(0,length(xx$strata))
+S0i[xx$jumps+1] <-  1/x$S0
+S0i2[xx$jumps+1] <- 1/x$S0^2
+
+cumhazD <-  cumsumstrata(S0i2*btime,xstrata,nstrata)
+cumhazmuD <-  cumsumstrata(mu*S0i2*btime,xstrata,nstrata)
+tails <- tailstrata(xstrata,nstrata)
+mut <- mu[tails][xstrata+1]
+
+mutMDt <- mut*S0i*btime-mut*cumhazD*rr*c(xx$weights)
+mutMDtiid <- apply(mutMDt,2,sumstrata,id,max(id)+1)
+
+MmuDt <- mu*S0i*btime-cumhazmuD*rr*c(xx$weights)
+MmuDtiid <- apply(MmuDt,2,sumstrata,id,max(id)+1)
+
+MGAiid <- MSGtiid-mutMDtiid+MmuDtiid
+mid <- max(id)+1
+
+strataid <- xstrata[headstrata(xx$id,mid)]
+id <- 1:nrow(MGAiid)
+
+MGAiids <- matrix(0,nrow(MGAiid),nstrata)
+cumhaz.time <- c()
+sus <- sort(unique(strataid))
+for (i in sus)  { 
+ wi <- which(strataid==i)
+ MGAiids[wi,i+1] <- MGAiid[wi,]
+}
+MGAiid <- MGAiids
+if (is.matrix(MGAiid)) {
+colnames(MGAiid) <- paste("strata",sus,sep="")
+if (!is.null(x$call.id)) MGAiid <- nameme(MGAiid,x$name.id) 
+}
+
+var.iid <- crossprod(MGAiid)
+se <- diag(var.iid)^.5
+## }}} 
+
+out <- list(iid=MGAiid,wt=wt.call,stop=stop,start=start,meanN=meanN,var=var.iid,se=diag(var.iid)^.5,mut=mu[tails])
+return(out)
+} ## }}}
+
+##' @export
+iid.recurrent <- function(x,...) { ## {{{ 
+iid <- iidRecurrent(attr(x,"recurrent"),attr(x,"death"),...)$iid
+return(iid)
+} ## }}}
+
+##' @export
+IC.recurrent <- function(x,...) { ## {{{ 
+iid <- iid(x,...)
+ic <- iid*nrow(iid)
+return(ic)
+} ## }}}
+
+##' logrank type test for recurrent marginal mean or cumulative incidence 
+##'
+##' The logrank type test-statistic 
+##' \deqn{ \int_0^t  w(t) [ d \hat m_1(s) - d \hat m_2(s) ] } is computed and returned
+##' with a robust variance estimate based on the influence functions. Works for the
+##' recurrent events and cumulative incidence and also with delayed entry.
+##' The weights are either default  "I" \deqn{ w(t)= R_1 R_2 / (R_1+R_2)} 
+##' or  "II" \deqn{ w(t)= Y_1 Y_2 / (Y_1+Y_2) }  with 
+##' \deqn{ Y_j(t)}  the number of subjects under risk in each group and 
+##' \deqn{ R_j(t)=Y_j(t)/\hat S_j(t-)}  where the denominator is the Kaplan-Meier of death. 
+##'
+##' @param recurrent phreg object
+##' @param death phreg object 
+##' @param weight "I" or "II"
+##' @param km to use Kaplan-Meier rather than exp(-cumhaz) 
+##' @param start integral start
+##' @param stop integral stop, default max jumptime
+##' @param at.risk only uses time-points where at most at.risk under risk
+##' @author Thomas Scheike
+##' @references 
+##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+##' @examples
+##' library(mets)
+##' data(hfactioncpx12)
+##' hf <- hfactioncpx12
+##'
+##' xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
+##' dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
+##'
+##' logrankRecurrent(xr,dr,stop=5)
+##'
+##' @aliases logrankRecurrentBase
+##' @export
+logrankRecurrent <- function(recurrent,death,
+              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5) { ## {{{ 
+  if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
+    if (inherits(death, "phreg")) {
+        return(logrankRecurrentBase(recurrent,death,
+		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk))
+     } 
+  } else if (inherits(recurrent,"recurrent")) { # Fall-back to recurrentMarginalPhreg
+        return(logrankRecurrentBase(attr(recurrent,"recurrent"),attr(recurrent,"death"),
+		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk))
+ } else stop("input either output from recurrentMarginal or two phreg's\n")
+
+} ## }}}
+
+##' @export
+logrankRecurrentBase <- function(recurrent,death,weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5) { ## {{{ 
+  xr <- recurrent
+  dr <- death 
+  if (is.null(stop)) stop <- max(xr$jumptimes)
+
+  nlev <- xr$nstrata
+  if (nlev>2) stop("only for two-groups \n")
+  ###
+  x <- dr
+  xx <- x$cox.prep
+  S0i2 <- S0i <- rep(0,length(xx$strata))
+  n <- dr$n
+
+  Yrr <- revcumsumstrata(xx$sign,xx$strata,xx$nstrata)
+  S0i2 <- S0i <- rep(0,length(xx$strata))
+  S0i[xx$jumps+1] <-  1/Yrr[xx$jumps+1]
+
+  Stc <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
+  kmss <-   .Call("_mets_GcjumpsR",Stc,rep(1,length(xx$status)),xx$strata,xx$nstrata,
+		  rep(1,xx$nstrata),length(xx$status))$Gcjumps
+  Yss <-   .Call("_mets_GcjumpsR",Yrr,rep(1,length(xx$status)),xx$strata,xx$nstrata,
+		 rep(0,xx$nstrata),length(xx$status))$Gcjumps
+  if (weight[1]=="I") {
+	  Rss <-  Yss/kmss
+	  ###
+	  Rss[Yss==0] <- 0 
+	  Rp <- apply(Rss,1,sum,na.rm=TRUE)
+	  wt <- apply(Rss,1,prod,na.rm=TRUE)/Rp
+	  wt[is.na(wt)] <- 0
+  }
+  if (weight[1]=="II") {
+     Yp <- apply(Yss,1,sum,na.rm=TRUE)
+     wt <- Yss[,1]*Yss[,2]/Yp
+     wt[is.na(wt)] <- 0
+  }
+
+  contr <- contr.iid <- c()
+  for (i in 1:(nlev-1)) {
+      if (at.risk>0) {
+        minrisk <- pmin(Yss[,1],Yss[,2])
+        wt[minrisk<at.risk] <- 0
+      }
+      lrt <- iidRecurrent(xr,dr,wt=wt)
+      lrt$mut
+      contr <- c(contr,diff(lrt$mut))
+      contr.iid <- cbind(contr.iid,lrt$iid[,1]-lrt$iid[,2])
+   }
+   logrank <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
+   p <- length(contr)
+
+   return(logrank)
+} ## }}} 
 
 ##' @export
 recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,

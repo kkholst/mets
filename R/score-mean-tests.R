@@ -1,6 +1,6 @@
 ##' Pepe-Mori test, score-test type test, proportionality test 
 ##'
-##' for competing risks data and recurrent events the pepe-mori test uses the weights suggested in Ghosh and Lin (2000)
+##' For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only. 
 ##' @param formula with Event object
 ##' @param data data frame for computation
 ##' @param cause of interest (1 default)
