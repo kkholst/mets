@@ -74,7 +74,7 @@ summary(out,times=1:5)
 ########################################################################
 ### iid decomposition based on influence functions from Ghosh Lin (2000)
 ########################################################################
-head(iid(outN,stop=3)d)
+head(iid(outN,stop=3))
 
 }
 \references{
