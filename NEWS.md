@@ -2,8 +2,10 @@
 
     Development version
 
-  - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with
-     administrative censoring and additional random censoring.
+  - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with administrative censoring and additional random censoring.
+  - iid and IC methods for `recurrentMarginal`
+  - pepe-mori, score test, proportionality test based on IPCW equivalence in `test_marginalMean` 
+  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors.
 
 # mets 1.3.9
   
