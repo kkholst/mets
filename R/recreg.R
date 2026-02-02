@@ -446,7 +446,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	opt <-  val ## obj(beta.s,all=TRUE)
 
 	if (p>0) {
-		iH <- - tryCatch(solve(opt$hessian),error=function(e) matrix(0,nrow(opt$hessian),ncol(opt$hessian)) )
+		iH <- - tryCatch(pinv(opt$hessian),error=function(e) matrix(0,nrow(opt$hessian),ncol(opt$hessian)) )
 		opt$ihessian <- iH
 		opt$no.opt <- FALSE
 		dd <- IIDrecreg(xx2,opt,cause=cause,cens.code=cens.code,death.code=death.code,adm.cens=adm.cens.time) 
@@ -1301,7 +1301,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
 		if (all) {
 			ploglik <- sum(weights * (Y - p)^2)
-			ihess <- solve(hessian)
+			ihess <- pinv(hessian)
 			beta.iid <- Dlogl %*% ihess
 			beta.iid <- apply(beta.iid, 2, sumstrata, idR, max(id) + 1)
 			robvar <- crossprod(beta.iid)
@@ -2167,7 +2167,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 	    val$hessian <- -hessian
     }
 
-    hessianI <- solve(val$hessian)
+    hessianI <- pinv(val$hessian)
     val$theta.iid.naive <- val$score.iid %*% hessianI
 
     if (!is.null(se.cluster))
@@ -2204,7 +2204,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
 
 ##' @export
 summary.twostageREC <- function(object,vcov=NULL,delta=0,...) { ## {{{
-    I <- -solve(object$hessian)
+    I <- -pinv(object$hessian)
     if (!is.null(vcov)) V <- vcov else V <- object$var
     ncluster <- object$n
     cc <- estimate(coef=object$coef,vcov=V)$coefmat

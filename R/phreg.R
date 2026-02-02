@@ -159,7 +159,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   se.cumhaz <- lcumhaz <- lse.cumhaz <- NULL
   II <- NULL
   if (no.opt==FALSE & p!=0) {
-         II <- - tryCatch(solve(val$hessian),error=function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
+         II <- - tryCatch(pinv(val$hessian),error=function(e) matrix(0,nrow(val$hessian),ncol(val$hessian)) )
   } else II <- matrix(0,p,p)
 
   ## Brewslow estimator, to handle also possible weights, caseweights that are 0
@@ -557,7 +557,7 @@ IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# 
   }
     classes1 <- "mlogit"
     if ((length(class(x)) == 1) || inherits(x, classes1)) {
-        invhess <- -solve(x$hessian)
+        invhess <- -lava.:Inverse(x$hessian)
         orig.order <- FALSE
         if (is.null(x$propodds)) {
             if (type == "robust") {
@@ -719,7 +719,7 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
   MGtiid <- NULL
   if (fixbeta==0) {# {{{
      if (!is.null(beta.iid)) MGtiid <- beta.iid else {
-     invhess <- -solve(x$hessian)
+     invhess <- -pinv(x$hessian)
      MGt <- ft*U[,drop=FALSE]-(Z*cumhaz-EdLam0)*rr*c(xx$weights)
      MGt <- MGt %*% invhess
      MGtiid <- apply(MGt,2,sumstrata,id,mid)
@@ -918,7 +918,7 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
   expC <- cc <- ncluster <- V <- NULL
 
    if (length(object$p)>0 & object$p>0 & (!object$no.opt)) {
-    I <- -solve(object$hessian)
+    I <- -pinv(object$hessian)
     if ( (length(class(object))==2) && ( inherits(object,c("cifreg","recreg")))) {
 	    V <- object$var
 	    ncluster <- object$ncluster ## nrow(object$Uiid)
@@ -3327,7 +3327,7 @@ intZHZt <- apply((S2-S0*E2)*dts,2,cumsum)
 p <- ncol(E)
 intZHZ <-  matrix(.Call("XXMatFULL",tail(intZHZt,1),p,PACKAGE="mets")$XXf,p,p)
 
-IintZHZ  <-  solve(intZHZ)
+IintZHZ  <-  pinv(intZHZ)
 intZHdN <- matrix(x$gradient,ncol(E),1)
 XJ <- X[xx$jumps+1,]
 if (no.baseline) intZHdN <- matrix(apply(XJ,2,sum),ncol(E),1)
@@ -3423,7 +3423,7 @@ intZHZ[lower.tri(intZHZ,diag=TRUE)] <- tail(intZHZt,1)
 intZHZ<- intZHZ+t(intZHZ)
 diag(intZHZ) <- diag(intZHZ)/2
 ###intZHZ <- matrix(tail(intZHZt,1),ncol(E), ncol(E))
-IintZHZ  <-  solve(intZHZ)
+IintZHZ  <-  pinv(intZHZ)
 intZHdN <- matrix(x$gradient,ncol(E),1)
 gamma <- IintZHZ %*% intZHdN
 rownames(gamma)  <-  colnames(x$X)

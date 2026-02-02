@@ -273,7 +273,7 @@ gradient <- Dlogl
 hessian <- D2log
 
   if (all) {
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogliid %*% ihess ## %*% t(Dlogl) 
       beta.iid <- apply(beta.iid,2,sumstrata,id,nid)
       robvar <- crossprod(beta.iid)

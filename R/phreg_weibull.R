@@ -223,7 +223,7 @@ phreg_weibull <- function(formula,
         df = length(p), nobs = n, nall = n,
         class = "logLik"
         )
-    ic <- t(solve(H) %*% t(U)) * n
+    ic <- t(pinv(H) %*% t(U)) * n
     names(p) <- c(
       colnames(X),
       paste0("s:", colnames(Z))

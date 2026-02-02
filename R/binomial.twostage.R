@@ -421,7 +421,7 @@ if (pair.structure==1) {
         }
 
   hess <- val$hessian
-  if (!is.na(sum(hess))) hessi <- lava::Inverse(val$hessian) else hessi <- diag(nrow(val$hessian))
+  if (!is.na(sum(hess))) hessi <- pinv(val$hessian) else hessi <- diag(nrow(val$hessian))
 
 
     ## {{{ handling output

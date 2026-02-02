@@ -187,7 +187,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 
   if (all) {
       ploglik <- sum(weights*(Y[,1]*p-Y[,2])^2)
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)

@@ -41,7 +41,7 @@ gof.phreg  <- function(object,n.sim=1000,silent=1,robust=NULL,...)
 ### test for proportionality 
 p <- length(object$coef)
 nnames <- names(object$coef)
-ii <- solve(object$hessian)
+ii <- pinv(object$hessian)
 jumptimes <- object$jumptimes
 Pt <- object$hessianttime
 U <-  object$U
@@ -186,7 +186,7 @@ Ut <- apply(coxM$U,2,cumsum)
 jumptimes <- coxM$jumptimes
 U <- coxM$U
 Ubeta <- cox1$U
-ii <- -solve(cox1$hessian)
+ii <- -pinv(cox1$hessian)
 EE <- .Call("vecMatMat",coxM$E,cox1$E,PACKAGE="mets")$vXZ; 
 Pt <- cox1$ZX - EE
 Pt <- apply(Pt,2,cumsum)

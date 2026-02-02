@@ -74,3 +74,8 @@ grouptable <- function(data,id,group,var,lower=TRUE,
 }
 
 ###}}} grouptable
+
+## Pseudo-inverse
+pinv <- function(x, ...) {
+  lava::Inverse(x, ...)
+}

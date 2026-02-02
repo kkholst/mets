@@ -451,7 +451,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
 		     U <- E <- matrix(0,nrow(xx$X),margsurv$p)
 		     E[xx$jumps+1,] <- margsurv$E
 		     U[xx$jumps+1,] <- margsurv$U
-		     invhess <- -solve(margsurv$hessian)
+		     invhess <- -pinv(margsurv$hessian)
 		     S0i <- rep(0,length(xx$strata))
 		     S0i[xx$jumps+1] <- 1/margsurv$S0
 		     cumhaz <- c(cumsumstrata(S0i,xx$strata,xx$nstrata))
@@ -487,7 +487,7 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
    }
 
   hess <- val$hessian
-  if (!is.na(sum(hess))) hessi <- lava::Inverse(val$hessian) else hessi <- diag(nrow(val$hessian))
+  if (!is.na(sum(hess))) hessi <- pinv(val$hessian) else hessi <- diag(nrow(val$hessian))
 
 # handling output
   loglikeiid <- NULL; robvar.theta <- NULL; likepairs <- NULL; marginal.surv <- psurvmarg; 
@@ -921,7 +921,7 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
   if (!is.null(colnames(theta.des))) thetanames <- colnames(theta.des) else thetanames <- paste("dependence",1:length(c(theta)),sep="")
   if (length(thetanames)==length(c(theta))) { rownames(theta) <- thetanames; rownames(var.theta) <- colnames(var.theta) <- thetanames; }
 
-  hessianI <- solve(val$hessian)
+  hessianI <- pinv(val$hessian)
   val$theta.iid.naive  <-  val$score.iid %*% hessianI
 
   ### iid due to Marginal model
@@ -956,7 +956,7 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
 	  U <- E <- matrix(0,nrow(xx$X),margsurv$p)
 	  E[xx$jumps+1,] <- margsurv$E
 	  U[xx$jumps+1,] <- margsurv$U
-          invhess <- -solve(margsurv$hessian)
+          invhess <- -pinv(margsurv$hessian)
 	  S0i <- rep(0,length(xx$strata))
 	  S0i[xx$jumps+1] <- 1/margsurv$S0
 	  cumhaz <- c(cumsumstrata(S0i,xx$strata,xx$nstrata))

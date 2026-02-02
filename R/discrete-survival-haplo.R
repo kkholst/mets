@@ -244,7 +244,7 @@ if (!design.only) {
 	hessian <- D2log
 
 	  if (all) {
-	      ihess <- solve(hessian)
+	      ihess <- pinv(hessian)
 	      beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
 	      robvar <- crossprod(beta.iid)
 	      val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,

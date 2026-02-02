@@ -317,7 +317,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 
   if (all) {
       ploglik <- sum(weights*(Y-p)^2)
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
@@ -983,7 +983,7 @@ hessian[(ppt+1):pd,(ppt+1):pd] <- c(apply(D2loglo,2,sum))
 gradient <- apply(Dlogl,2,sum)+augmentation
 
   if (all) {
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
@@ -1220,7 +1220,7 @@ np <- length(pp)
 hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,np,np)
 
   if (all) {
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)
@@ -2311,7 +2311,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
   if (all) {
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)

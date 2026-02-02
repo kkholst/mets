@@ -152,7 +152,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
 hessian <- matrix(D2log,length(pp),length(pp))
 
   if (all) {
-      ihess <- solve(hessian)
+      ihess <- pinv(hessian)
       beta.iid <- Dlogl %*% ihess ## %*% t(Dlogl) 
       beta.iid <-  apply(beta.iid,2,sumstrata,id,max(id)+1)
       robvar <- crossprod(beta.iid)

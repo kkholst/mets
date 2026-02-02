@@ -833,7 +833,7 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
   vbeta <- betaiidR <- NULL
   if (fixbeta==0) {# {{{
     if (!is.null(beta.iid))  betaiidR <- beta.iid else {
-	     invhess <- -solve(x$hessian)
+	     invhess <- -pinv(x$hessian)
 	     MGt <- U[,drop=FALSE]-(Z*cumhaz[,2]-EdLam0)*rr*c(xx$weights)
 	     UU <- apply(MGt,2,sumstrata,id,mid)
 	     betaiidR <- UU %*% invhess

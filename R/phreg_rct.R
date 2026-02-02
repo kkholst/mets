@@ -330,7 +330,7 @@ if (!is.null(augmentR1)) {# {{{
 if (!is.null(augmentR0) & !is.null(augmentR1)) {# {{{
    XRbpi <- cbind(XRpi,XR1pi)
    XRb <- cbind(XR,XR1)
-   xxi <- solve(crossprod(XRbpi)) 
+   xxi <- pinv(crossprod(XRbpi))
 
    augR01fit <- lm(ea~-1+XRbpi)
    XRgamma <- XRb %*%  coef(augR01fit)
@@ -483,7 +483,7 @@ vardynC.improve  <- matrix(apply(gain.times,2,sum),p,p)
   ## Lu-Tsiatis augmentation 
   out1 <- iidBaseline(Cfit0,ft=1/St,time=0,fixbeta=0)
   Hiid <- (out1$beta.iid %*% Cfit0$hessian)
-  xxi <- solve(crossprod(Hiid))
+  xxi <- pinv(crossprod(Hiid))
   ###
   for (i in 1:ncol(ea)) {
      gamma <- xxi %*% crossprod(Hiid, eaM[,i])
@@ -587,7 +587,7 @@ if (typeR!=typeC) {
    if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) { ## {{{
       xxx <- fitts$cox.prep
       xx <- crossprod(XR0pi)
-      xxi <- solve(xx)
+      xxi <- pinv(xx)
       XRpit <- XR0pi[xxx$id+1,]
       if (fit0$p>0) rr <- c(exp(xxx$X %*% coef(fitts)+ xxx$offset)*xxx$weights)
       else rr <- c(exp(xxx$offset)*xxx$weights)

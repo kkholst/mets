@@ -253,7 +253,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
         oout <- 2
         out <- obj(p)
 	hess <- out$Dscore
-	if (!is.na(sum(hess))) hessi <- lava::Inverse(out$Dscore) else hessi <- hess 
+	if (!is.na(sum(hess))) hessi <- pinv(out$Dscore) else hessi <- hess
         if (detail==1) {## {{{
           print(paste("Fisher-Scoring ===================: it=",i)); 
           cat("theta:");print(c(p))
@@ -281,7 +281,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
           cat("score:");print(c(out$score)); 
 	  cat("hess:"); print(hess); 
     }## }}}
-    if (!is.na(sum(hess))) hessi <- lava::Inverse(out$Dscore) else hessi <- diag(nrow(hess))
+    if (!is.na(sum(hess))) hessi <- pinv(out$Dscore) else hessi <- diag(nrow(hess))
     score1 <- score; 
     ## }}}
   } else if (score.method=="nlminb") { ## {{{ nlminb optimizer
@@ -291,7 +291,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
     iid <- 1; 
     hess <- numDeriv::hessian(obj,opt$par)
     score <- numDeriv::jacobian(obj,opt$par)
-    hessi <- lava::Inverse(hess); 
+    hessi <- pinv(hess);
     theta <- opt$par
     if (detail==1) cat("iid decomposition\n"); 
     oout <- 2; 
@@ -305,7 +305,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
     hess <- opt$hessian
     score <- opt$gradient
     if (detail==1) print(opt); 
-    hessi <- lava::Inverse(hess); 
+    hessi <- pinv(hess);
     theta <- opt$estimate
     if (detail==1) cat("iid decomposition\n"); 
     oout <- 2; 
