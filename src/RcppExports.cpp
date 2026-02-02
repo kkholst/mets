@@ -132,7 +132,7 @@ RcppExport SEXP _mets_scoreMVN(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -174,7 +174,7 @@ RcppExport SEXP _mets_loglikMVN(SEXP YlSEXP, SEXP YuSEXP, SEXP StatusSEXP, SEXP 
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -210,7 +210,7 @@ RcppExport SEXP _mets_dmvn(SEXP uSEXP, SEXP muSEXP, SEXP rhoSEXP) {
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -246,7 +246,7 @@ RcppExport SEXP _mets_rmvn(SEXP nSEXP, SEXP muSEXP, SEXP rhoSEXP) {
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -282,7 +282,7 @@ RcppExport SEXP _mets_rpch(SEXP nSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -318,7 +318,7 @@ RcppExport SEXP _mets_cpch(SEXP xSEXP, SEXP lambdaSEXP, SEXP timeSEXP) {
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -354,7 +354,7 @@ RcppExport SEXP _mets_rchazC(SEXP cumSEXP, SEXP rrSEXP, SEXP entrySEXP) {
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -398,7 +398,7 @@ RcppExport SEXP _mets_simGL(SEXP dcumSEXP, SEXP StSEXP, SEXP rrSEXP, SEXP rdSEXP
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -436,7 +436,7 @@ RcppExport SEXP _mets_simSurvZ(SEXP StSEXP, SEXP rdSEXP, SEXP zSEXP, SEXP thetaS
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -475,7 +475,7 @@ RcppExport SEXP _mets_tildeLambda1(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1S
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -515,7 +515,7 @@ RcppExport SEXP _mets_tildeLambda1R(SEXP dLambda1SEXP, SEXP LambdaDSEXP, SEXP r1
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -554,7 +554,7 @@ RcppExport SEXP _mets_logl_weibull(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP, 
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;
@@ -594,7 +594,7 @@ RcppExport SEXP _mets_score_weibull(SEXP parSEXP, SEXP entrySEXP, SEXP exitSEXP,
     if (rcpp_isError_gen) {
         SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
         UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
     }
     UNPROTECT(1);
     return rcpp_result_gen;

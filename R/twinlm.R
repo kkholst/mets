@@ -270,7 +270,7 @@ twinlm <- function(formula, data, id, zyg, DZ, group=NULL,
         suppressWarnings(e <- estimate(mm,dd,weights=weights,estimator=estimator,fix=FALSE,control=optim,...))
     }
   }
-  e$vcov <- Inverse(information(e,type="hessian"))
+  e$vcov <- pinv(information(e,type="hessian"))
   
   counts <- function(dd) {
     dd0 <- apply(dd,2,function(x) !is.na(x))

@@ -134,7 +134,7 @@ dmvn <- function(x,mu,sigma,rho,log=FALSE,nan.zero=TRUE,...) {
 
     } else {
         k <- ncol(sigma)
-        isigma <- Inverse(sigma)
+        isigma <- pinv(sigma)
     }
     if (!missing(mu)) {
         if (NROW(mu)==NROW(x) && NCOL(mu)==NCOL(x)) {

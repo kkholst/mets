@@ -197,7 +197,7 @@ biprobit.vector <- function(x,id,X=NULL,Z=NULL,
         suppressWarnings(op <- nlminb(p0,f0,gradient=g0,control=control))
     }
     
-    iI <- Inverse(numDeriv::jacobian(g0,op$par))
+    iI <- pinv(numDeriv::jacobian(g0,op$par))
     V <- iI
     UU <- U(op$par,w0)
     logLik <- sum(attributes(UU)$logLik)
@@ -607,13 +607,12 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
     idvar <- with(MyData, c(id0,idmarg0))[idx] 
        
   J <- crossprod(UU)
-  ##  iJ <- Inverse(J)
-  iI <- Inverse(-numDeriv::jacobian(U,op$par))
+  iI <- pinv(-numDeriv::jacobian(U,op$par))
   V <- switch(vcov,
               robust=,
               sandwich=iI%*%J%*%iI,##iJ%*%I%*%iJ,
               score=,
-              outer=Inverse(J),
+              outer=pinv(J),
               hessian=iI              
               )
 

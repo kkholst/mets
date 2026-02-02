@@ -587,7 +587,7 @@ bptwin <- function(x, data, id, zyg, DZ, group=NULL,
     UU <- U(op$par,indiv=TRUE)    
     I <- -numDeriv::jacobian(U,op$par)
     tol <- 1e-15
-    iI <- Inverse(I,tol)
+    iI <- pinv(I,tol)
     V <- iI
     sqrteig <- attributes(V)$sqrteig
     J <- NULL

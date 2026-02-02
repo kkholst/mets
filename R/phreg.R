@@ -557,7 +557,7 @@ IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# 
   }
     classes1 <- "mlogit"
     if ((length(class(x)) == 1) || inherits(x, classes1)) {
-        invhess <- -lava.:Inverse(x$hessian)
+        invhess <- -pinv(x$hessian)
         orig.order <- FALSE
         if (is.null(x$propodds)) {
             if (type == "robust") {
