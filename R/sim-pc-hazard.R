@@ -517,7 +517,7 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
 
    cumhazl <- list()
    cumhazl[[1]] <- basecumhaz(coxs[[1]],only=1)
-i=2
+
    if (length(coxs)>1) 
    for (i in 2:length(coxs)) {
       coxn <- draw.phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id)

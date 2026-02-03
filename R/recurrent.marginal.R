@@ -1293,37 +1293,74 @@ if (3 %in% which) {
 ##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
 ##'
 #' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,coxc=NULL,n=1,data=NULL,
+#' @usage sim.recurrent(cox1,coxd=NULL,n=1,data=NULL,
 #' type=c("default","cox-cox","gl-cox"),id="id",
-#' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,...)
-sim.recurrent <- function(cox1,coxd=NULL,coxc=NULL,
-                          n=1, data=NULL, type=c("default","cox-cox","gl-cox"),
-                          id="id", varz=1, share=1, cens=0.001, scale1=1,
-                          scaled=1, dependence=NULL,
+#' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
+#' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,...)
+sim.recurrent <- function(cox1,coxd=NULL,
+                          n=1, data=NULL,type=c("default","cox-cox","gl-cox"),
+                          id="id",varz=1,share=1,cens=0.001,
+			  scale1=1,scaled=1,dependence=NULL,
+			  r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,
                           ...) {# {{{
 ## exp censoring default
 death <- NULL
 
 if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox" 
 if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
-
-scox1 <- draw.phreg(cox1,n,data=data)
-if (!is.null(coxd)) scoxd <- draw.phreg(coxd,n,data=data,drawZ=FALSE,id=scox1$id)
-if (!is.null(coxc)) scoxc <- draw.phreg(coxc,n,data=data,drawZ=FALSE,id=scox1$id)
 if (type[1]=="cox-cox") type <- 3 else type <- 2
-data <- scox1$data
-ind <-  match(names(scox1$data), names(scoxd$data))
-ind <- ind[!is.na(ind)]
-if (length(ind)<ncol(scoxd$data))  data <- cbind(data,scoxd$data[,-ind])
 
-Lam1 <- scalecumhaz(scox1$cumhaz,scale1); r1 <- scox1$rr
-if (!is.null(coxc)) rc <-  scoxc$rr else rc <- rep(1,n)
-if (!is.null(coxd))  {
-LamD <- scalecumhaz(scoxd$cumhaz,scaled); rd <- scoxd$rr 
-} else { LamD <- NULL; rd <- NULL; }
-Lam2 <- scalecumhaz(scox1$cumhaz,0)
+if (!is.null(data)) {
+   coxs <- list(cox1,coxd)
+   rrdata <- draw.phregs(coxs,n,data=data)
+   rr1 <- rrdata$rr[,1]
+   rstrata1 <- rrdata$strata[,1]
+
+   if (!is.null(coxd)) {
+      rrd <- rrdata$rr[,2]
+      rstratad <- rrdata$strata[,2]
+   }
+} else { 
+	data <- c()
+	rr1 <- rep(1,n)
+	rrd <- rep(1,n)
+	rstrata1 <- rep(0,n)
+	rstratad <- rep(0,n)
+}
+
+if (is.null(rc)) rc <- rep(1,n)
+
+if (!is.null(coxd))    {
+    coxd$cumhaz <- scalecumhaz(coxd$cumhaz,scaled); 
+    LamD <- basecumhaz(coxd,only=1)
+} else LamD <- NULL
+cox1$cumhaz <-   scalecumhaz(cox1$cumhaz,scale1); 
+Lam1 <- basecumhaz(cox1,only=1)
+
+### when data not given then use r1,rd, strata1,stratad
+if (is.null(r1)) r1 <- rr1
+if (is.null(rd)) rd <- rrd
+if (is.null(strata1)) strata1 <- rstrata1
+if (is.null(stratad)) stratad <- rstratad
+
+
 if (is.null(dependence) & (!is.null(LamD))) {
-rrs <- simGLcox(n,Lam1,LamD,var.z=varz,r1=r1,rd=rd,rc=rc,model="twostage",cens=cens,type=type,share=share,...)
+ ## go through combined strata for the two models 
+strat1d <- mystrata(data.frame(strata1,stratad))
+rrs <- c()
+for (j in 1:attr(strat1d,"nlevel")) {
+     r1i <- which(strat1d==j)
+     strata1ss <- strata1[r1i[1]]+1
+     stratadss <- stratad[r1i[1]]+1
+     Lam1s <- Lam1[[strata1ss]]
+     LamDs <- LamD[[stratadss]]
+     ns <- length(r1i)
+     rrss <- simGLcox(ns,Lam1s,LamDs,var.z=varz,r1=rr1[r1i],rd=rrd[r1i],rc=rc[r1i],
+		model="twostage",cens=cens,type=type,share=share,...)
+    rrss$ids <- rrss$id
+    rrss$id <- r1i[rrss$id+1]
+    rrs <- rbind(rrs,rrss)
+}			  
 } else { 
 if (is.null(dependence)) dependence <- 0
 if (!is.null(LamD)) 
@@ -1338,12 +1375,38 @@ rrs <- dtransform(rrs,statusD=3,death==1)
 rrs$id <- rrs$id-1
 }
 
-## add covariates 
-rrs <- cbind(rrs,data[rrs$id+1,])
+## add covariates, 
+if (!is.null(data)) rrs <- cbind(rrs,rrdata$data[rrs$id,])
 
 return(rrs)
 }
 # }}}
+
+
+draw.phregs <- function(coxs,n,data,onlycov=1) { ## {{{ 
+   scox1 <- draw.phreg(coxs[[1]],n,data=data)
+   datas <- cbind(scox1$Z,scox1$data[,scox1$stratname])
+   colnames(datas) <- c(colnames(scox1$Z),scox1$stratname)
+   stratam <-  scox1$strata
+   rrm <- scox1$rr
+
+   if (length(coxs)>1) 
+   for (i in 2:length(coxs)) {
+      coxn <- draw.phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id)
+      coxndata <- cbind(coxn$Z,coxn$data[,coxn$stratname])
+      colnames(coxndata) <- c(colnames(coxn$Z),coxn$stratname)
+      ind <-  match(colnames(datas),c(colnames(coxn$Z),coxn$stratname),nomatch=0)
+      ind <- ind[ind!=0]
+      if (length(ind)>0)  datas <- cbind(datas,coxndata[,-ind,drop=FALSE]) else datas <- cbind(datas,coxndata)
+      rrm <- cbind(rrm,coxn$rr)
+      stratam <- cbind(stratam,coxn$strata)
+   }
+   datas <- data.frame(datas)
+   datas$orig.id <- scox1$id
+   out <- list(data=datas,rr=rrm,strata=stratam)
+
+   return(out)
+} ## }}} 
 
 simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
 	    max.recurrent=100,dependence=0,var.z=0.22,cor.mat=NULL,
