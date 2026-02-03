@@ -270,43 +270,43 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' @export 
 #' @aliases  rchazl 
 rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
-                  cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
+		  cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
 {#'# {{{
-  if (!is.null(cumB)) {
-         cumA <- list(cumA,cumB);
-        rr <- cbind(rr1,rr2);
- } else cumA <- c(cumA,cumB)
+	if (!is.null(cumB)) {
+		cumA <- list(cumA,cumB);
+		rr <- cbind(rr1,rr2);
+	} else cumA <- c(cumA,cumB)
 
- if (!is.null(n)) {
-   rr <- matrix(1,n,length(cumA));
-  } else {
-     n <- length(rr1);
-     rr <- cbind(rr1,rr2)
-  }
+	if (!is.null(n)) {
+		rr <- matrix(1,n,length(cumA));
+	} else {
+		n <- length(rr1);
+		rr <- cbind(rr1,rr2)
+	}
 
-  if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
+	if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
 
- l <- length(cumA)
- ## simulate first 
- ptt <- rchaz(cumA[[1]],rr[,1],...)
- if (l>=2) for (i in 2:l) {
-         ptt2 <- rchaz(cumA[[i]],rr[,i],...)
- ptt$status <- ifelse(ptt$time<ptt2$time,ptt$status,i*ptt2$status)
- ptt$time <- pmin(ptt$time,ptt2$time)
- }
- if (!is.null(causes)) {
-         where <- which(ptt$status!=0)
-      ptt$status[where] <- causes[ptt$status[where]]
- }
+	l <- length(cumA)
+	## simulate first 
+	ptt <- rchaz(cumA[[1]],rr[,1],...)
+	if (l>=2) for (i in 2:l) {
+		ptt2 <- rchaz(cumA[[i]],rr[,i],...)
+		ptt$status <- ifelse(ptt$time<ptt2$time,ptt$status,i*ptt2$status)
+		ptt$time <- pmin(ptt$time,ptt2$time)
+	}
+	if (!is.null(causes)) {
+		where <- which(ptt$status!=0)
+		ptt$status[where] <- causes[ptt$status[where]]
+	}
 
- ## add censoring 
- if (!is.null(cens)) {
-   pct <- simCens(cens,rrc=rrc,n=n,...)
-   ptt$time <- pmin(ptt$time,pct)
-   ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
- }
+	## add censoring 
+	if (!is.null(cens)) {
+		pct <- simCens(cens,rrc=rrc,n=n,...)
+		ptt$time <- pmin(ptt$time,pct)
+		ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+	}
 
-return(ptt)
+	return(ptt)
 }# }}}
 
 #' Simulation of output from Cox model.
@@ -353,63 +353,63 @@ return(ptt)
 #' @aliases draw.phreg draw.phregs setup.phreg
 #' @export sim.phreg 
 sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
-                      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 
-if  (!is.null(data)) {
-   scox1 <- draw.phreg(cox,n,data=data,...)
-   dat <- scox1$data
-   dat$orig.id <- scox1$id
+	if  (!is.null(data)) {
+		scox1 <- draw.phreg(cox,n,data=data,onlyX=TRUE,...)
+		dat <- scox1$data
+		dat$orig.id <- scox1$id
 
-   if (is.null(strata))  strata <- scox1$strata 
-   if (is.null(rr)) rr <- scox1$rr  
-   n <- length(rr)
-   id <- 1:length(rr)
-} else {
-	if (!is.null(Z)) {
-	  if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
-	} else znames <- NULL
-	if (is.null(rr) & (!is.null(Z))) rr <- exp(as.matrix(Z) %*% cif$coef)
-	if (is.null(rr) & is.null(Z)) rr <- rep(1,n)
-	id <- 1:length(rr)
-	n <- length(rr)
-	dat <- NULL
-}
-if (is.null(strata)) strata <- rep(0,n)
-   
-   if (inherits(cox,c("phreg","cifreg"))) cumhaz <- basecumhaz(cox,only=1)
-   else {
-        if (!is.list(cox)) stop("must be phreg or list of hazards\n") else cumhaz <- cox
-   }
-   if (!is.null(extend))  cumhaz <- extendCums(cumhaz,NULL,extend=extend)
-   ids <- 1:n
-   lentry <- NULL
+		if (is.null(strata))  strata <- scox1$strata 
+		if (is.null(rr)) rr <- scox1$rr  
+		n <- length(rr)
+		id <- 1:length(rr)
+	} else {
+		if (!is.null(Z)) {
+			if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
+		} else znames <- NULL
+		if (is.null(rr) & (!is.null(Z))) rr <- exp(as.matrix(Z) %*% cif$coef)
+		if (is.null(rr) & is.null(Z)) rr <- rep(1,n)
+		id <- 1:length(rr)
+		n <- length(rr)
+		dat <- NULL
+	}
+	if (is.null(strata)) strata <- rep(0,n)
 
-   ptt <- c()
-   for (i in unique(strata)) {
-      whichi <- which(strata==i)
-      cumhazj <- rbind(0,cumhaz[[i+1]])
-      if (!is.null(entry)) lentry <- entry[whichi]
-      simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
-      simj$id <- ids[whichi]
-      ptt  <-  rbind(ptt,simj)
-    }
-    dsort(ptt) <- ~id
-    if (!is.null(dat)) ptt <- cbind(ptt,dat)
+	if (inherits(cox,c("phreg","cifreg"))) cumhaz <- basecumhaz(cox,only=1)
+	else {
+		if (!is.list(cox)) stop("must be phreg or list of hazards\n") else cumhaz <- cox
+	}
+	if (!is.null(extend))  cumhaz <- extendCums(cumhaz,NULL,extend=extend)
+	ids <- 1:n
+	lentry <- NULL
 
- if (!is.null(cens)) {
-      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
-      ptt$time <- pmin(ptt$time,pct)
-      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+	ptt <- c()
+	for (i in unique(strata)) {
+		whichi <- which(strata==i)
+		cumhazj <- rbind(0,cumhaz[[i+1]])
+		if (!is.null(entry)) lentry <- entry[whichi]
+		simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
+		simj$id <- ids[whichi]
+		ptt  <-  rbind(ptt,simj)
+	}
+	dsort(ptt) <- ~id
+	if (!is.null(dat)) ptt <- cbind(ptt,dat)
+
+	if (!is.null(cens)) {
+		pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+		ptt$time <- pmin(ptt$time,pct)
+		ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
  }
 
-return(ptt)
+ return(ptt)
 }# }}}
 
 #' @export draw.phreg 
 #' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=FALSE)
 draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,
-                       drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=FALSE)
+                       drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=TRUE)
 {# {{{
 ###if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
 
