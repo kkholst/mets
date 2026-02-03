@@ -3,6 +3,7 @@
 \name{sim.phreg}
 \alias{sim.phreg}
 \alias{draw.phreg}
+\alias{draw.phregs}
 \alias{setup.phreg}
 \title{Simulation of output from Cox model.}
 \usage{
