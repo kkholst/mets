@@ -1359,7 +1359,7 @@ for (j in 1:attr(strat1d,"nlevel")) {
      Lam1s <- Lam1[[strata1ss]]
      LamDs <- LamD[[stratadss]]
      ns <- length(r1i)
-     rrss <- simGLcox(ns,Lam1s,LamDs,var.z=varz,r1=rr1[r1i],rd=rrd[r1i],rc=rc[r1i],
+     rrss <- simGLcox(ns,Lam1s,LamDs,var.z=varz,r1=r1[r1i],rd=rd[r1i],rc=rc[r1i],
 		model="twostage",cens=cens,type=type,share=share,...)
     rrss$ids <- rrss$id
     rrss$id <- r1i[rrss$id+1]
