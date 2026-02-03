@@ -1266,7 +1266,6 @@ if (3 %in% which) {
 ##'
 ##' @param cox1 cox/ghosh-lin for recurrent events 
 ##' @param coxd cox for terminal event (phreg)
-##' @param coxc possible cox for censoring (phreg)
 ##' @param n number of id's 
 ##' @param data on which the models are fitted (to draw covariates) 
 ##' @param type to specify type of simulation, if not default
@@ -1277,6 +1276,11 @@ if (3 %in% which) {
 ##' @param scale1 to scale baseline of recurrent events model
 ##' @param scaled to scale baseline of terminal event
 ##' @param dependence if dependence different from NULL, then uses simRecurrentList based on models given 
+##' @param r1 relative risk for cox1 baseline, then data is not needed
+##' @param rd relative risk for coxd baseline, then data is not needed
+##' @param rc relative risk for exponential censoring 
+##' @param strata1 strata variable for cox1 baseline, then data is not needed
+##' @param stratad strata variable for coxd baseline, then data is not needed
 ##' @param ... Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid 
 ##' @author Thomas Scheike
 ##' @references 

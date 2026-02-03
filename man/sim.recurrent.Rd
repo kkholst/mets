@@ -34,9 +34,17 @@ r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,...)
 
 \item{dependence}{if dependence different from NULL, then uses simRecurrentList based on models given}
 
-\item{...}{Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid}
+\item{r1}{relative risk for cox1 baseline, then data is not needed}
 
-\item{coxc}{possible cox for censoring (phreg)}
+\item{rd}{relative risk for coxd baseline, then data is not needed}
+
+\item{rc}{relative risk for exponential censoring}
+
+\item{strata1}{strata variable for cox1 baseline, then data is not needed}
+
+\item{stratad}{strata variable for coxd baseline, then data is not needed}
+
+\item{...}{Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid}
 }
 \description{
 Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure
