@@ -499,10 +499,11 @@ See also recurrent events vignette
 Two-stage models 
 
 ```{r}
+library(mets)
  data(hfactioncpx12)
  hf <- hfactioncpx12
  hf$x <- as.numeric(hf$treatment) 
- n <- 1000
+ n <- 100
 
  ##  to fit Cox  models 
  xr <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=hf)
@@ -529,7 +530,7 @@ Two-stage models
 and a now with Ghosh-Lin and Cox marginals 
 
 ```{r}
- recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
+ recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
  estimate(recGL)
  estimate(dr)
 
@@ -538,11 +539,11 @@ and a now with Ghosh-Lin and Cox marginals
  simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
  dtable(simcoxcox,~statusD)
 
- recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
+ recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
  simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
 
- GLs <- recreg(Event(start,stop,statusD)~treatment+cluster(id),data=simglcox,death.code=3)
- drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simglcox)
+ GLs <- recreg(Event(start,stop,statusD)~x+cluster(id),data=simglcox,death.code=3)
+ drs <- phreg(Surv(start,stop,statusD==3)~x+cluster(id),data=simglcox)
  estimate(GLs)
  estimate(drs)
 

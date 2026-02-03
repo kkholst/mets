@@ -350,7 +350,7 @@ return(ptt)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
-#' @aliases draw.phreg setup.phreg
+#' @aliases draw.phreg draw.phregs setup.phreg
 #' @export sim.phreg 
 sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
                       entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
@@ -406,10 +406,10 @@ if (is.null(strata)) strata <- rep(0,n)
 return(ptt)
 }# }}}
 
-#' @export draw.phreg
-#' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL)
+#' @export draw.phreg 
+#' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=FALSE)
 draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,
-                       drawZ=TRUE,fixZ=FALSE,id=NULL)
+                       drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=FALSE)
 {# {{{
 ###if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
 
@@ -418,11 +418,11 @@ if (!is.null(data)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
 if (drawZ==TRUE) xid <- sample(whereid,n,replace=TRUE) else xid <- id
-## TMP vars <- all.vars(update(cox$formula,-1~.))
+if (onlyX) vars <- all.vars(update(drop.specials(cox$formula,"cluster"),-1~.)) else 
 vars <- all.vars(cox$formula)
 dataid <- data[xid,vars,drop=FALSE] 
 
-desX <- readPhreg(cox,dataid)
+desX <- readPhreg(cox,dataid,data=FALSE)
 Z <- desX$X
 strata <- desX$strata
 } else {  ## Z and strata
@@ -445,6 +445,30 @@ out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,
 
 return(out)
 } ## }}}
+
+#' @export draw.phregs
+draw.phregs <- function(coxs,n,data,onlyX=TRUE,...) { ## {{{ 
+   scox1 <- draw.phreg(coxs[[1]],n,data=data,onlyX=onlyX,...)
+   datas <- scox1$data
+   stratam <-  scox1$strata
+   rrm <- scox1$rr
+
+   if (length(coxs)>1) 
+   for (i in 2:length(coxs)) {
+      coxn <- draw.phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id,onlyX=onlyX,...)
+      coxndata <- coxn$data
+      ind <-  match(colnames(datas),colnames(coxndata),nomatch=0)
+      ind <- ind[ind!=0]
+      if (length(ind)>0)  datas <- cbind(datas,coxndata[,-ind,drop=FALSE]) else datas <- cbind(datas,coxndata)
+      rrm <- cbind(rrm,coxn$rr)
+      stratam <- cbind(stratam,coxn$strata)
+   }
+   datas <- data.frame(datas)
+   datas$orig.id <- scox1$id
+   out <- list(data=datas,rr=rrm,strata=stratam)
+
+   return(out)
+} ## }}} 
 
 #' @export
 setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)

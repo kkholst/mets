@@ -328,7 +328,42 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
 }# }}}
 
 ##' @export
-readPhreg <- function (object, newdata, nr=TRUE, ...)
+readPhreg <- function (object, newdata, nr=TRUE,data=TRUE, ...)
+{# {{{
+   respindata <- length((grep(all.vars(object$formula)[1],names(newdata))))
+   if (respindata>0) des <- update_design(object$design,data = newdata,response=TRUE)
+   else des <- update_design(object$design,data = newdata)
+
+   clusters <- des$cluster
+   X <- des$x 
+   if (data) {
+       xxr <- drop.specials(object$formula,"cluster")
+       vars <- all.vars( update.formula(xxr,1~.))
+       data <- newdata[,vars,drop=FALSE]
+   } else data <- NULL
+
+   if (!is.null(des$strata)) strataNew <- as.numeric(des$strata)-1 else strataNew <- rep(0,nrow(X))
+
+    if (!is.null(des$y)) {
+	    Y <- des$y
+	    if (!inherits(Y, c("Event", "Surv"))) {
+		stop("Expected a 'Surv' or 'Event'-object")
+	    }
+	    if (ncol(Y) == 2) {
+		exit <- Y[, 1]
+		entry <- rep(0, nrow(Y))
+		status <- Y[, 2]
+	    } else {
+		entry <- Y[, 1]
+		exit <- Y[, 2]
+		status <- Y[, 3]
+	    }
+    } else {status <- exit <- entry <- NULL; }
+
+return(list(data=data,X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
+}# }}}
+
+readPhregO <- function (object, newdata, nr=TRUE, ...)
 {# {{{
    respindata <- length((grep(all.vars(object$formula)[1],names(newdata))))
    if (respindata>0) des <- update_design(object$design,data = newdata,response=TRUE)
@@ -354,66 +389,6 @@ readPhreg <- function (object, newdata, nr=TRUE, ...)
 	    }
     } else {status <- exit <- entry <- NULL; }
 
-return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
-}# }}}
-
-readPhregO <- function (object, newdata, nr=TRUE, ...)
-{# {{{
-     exit <- entry <- status  <- clusters <- NULL
-     if (missing(newdata)) { # {{{
-         X <- object$X
-         strataNew <- object$strata
-	 if (!nr) { 
-	 exit <- object$exit; entry <- object$entry; status <- object$status; 
-	 clusters <- object$id
-	 }
-     } else { ## make design for newdata
-       xlev <- lapply(object$model.frame,levels)
-       ff <- unlist(lapply(object$model.frame,is.factor))
-       upf <- update(object$formula,~.)
-       tt <- terms(upf)
-       if (nr) tt <- delete.response(tt)
-       X <- model.matrix(tt,data=newdata,xlev=xlev)[,-1,drop=FALSE]
-       if (!nr) {
-         allvar <- all.vars(tt)
-	 pr <- length(allvar)-ncol(object$model.frame)+1
-	 if (pr==2) { 
-	    exit <- newdata[,allvar[1]]
-	    status <- newdata[,allvar[2]]
-	 } else {
-	    entry <- newdata[,allvar[1]]
-	    exit <- newdata[,allvar[2]]
-	    status <- newdata[,allvar[3]]
-	 }
-       }
-       clusterTerm<- grep("^cluster[(][A-z0-9._:]*",colnames(X),perl=TRUE)
-       ## remove clusterTerm from design
-       if (length(clusterTerm)==1) { 
-	       clusters <- X[,clusterTerm]
-	       X <- X[,-clusterTerm,drop=FALSE]
-	       id <- clusters
-               id.orig <- id; 
-               if (!is.null(id)) {
-	          ids <- unique(id)
-	          nid <- length(ids)
-                  if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-                        id <- as.integer(factor(id,labels=seq(nid)))-1
-                  }
-		  clusters <- id
-           } else clusters <- (1:nrow(newdata))-1
-       } 
-       strataTerm<- grep("^strata[(][A-z0-9._:]*",colnames(X),perl=TRUE)
-       ## remove strataTerm from design, and construct numeric version of strata
-       if (length(strataTerm)>=1) { 
-	       strataNew <- X[,strataTerm,drop=FALSE]
-               whichstrata  <-  paste(object$strata.name,object$strata.level,sep="")
-	       if (length(strataTerm)>=1) { ## construct strata levels numeric
-               mm <- match(colnames(X)[strataTerm], whichstrata)-1
-               strataNew <- c(strataNew %*% mm )
-               }
-	       X <- X[,-strataTerm,drop=FALSE]
-       } else strataNew <- rep(0,nrow(X))
-     }# }}}
 return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
 }# }}}
 

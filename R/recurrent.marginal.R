@@ -1387,31 +1387,6 @@ return(rrs)
 # }}}
 
 
-draw.phregs <- function(coxs,n,data,onlycov=1) { ## {{{ 
-   scox1 <- draw.phreg(coxs[[1]],n,data=data)
-   datas <- cbind(scox1$Z,scox1$data[,scox1$stratname])
-   colnames(datas) <- c(colnames(scox1$Z),scox1$stratname)
-   stratam <-  scox1$strata
-   rrm <- scox1$rr
-
-   if (length(coxs)>1) 
-   for (i in 2:length(coxs)) {
-      coxn <- draw.phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id)
-      coxndata <- cbind(coxn$Z,coxn$data[,coxn$stratname])
-      colnames(coxndata) <- c(colnames(coxn$Z),coxn$stratname)
-      ind <-  match(colnames(datas),c(colnames(coxn$Z),coxn$stratname),nomatch=0)
-      ind <- ind[ind!=0]
-      if (length(ind)>0)  datas <- cbind(datas,coxndata[,-ind,drop=FALSE]) else datas <- cbind(datas,coxndata)
-      rrm <- cbind(rrm,coxn$rr)
-      stratam <- cbind(stratam,coxn$strata)
-   }
-   datas <- data.frame(datas)
-   datas$orig.id <- scox1$id
-   out <- list(data=datas,rr=rrm,strata=stratam)
-
-   return(out)
-} ## }}} 
-
 simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
 	    max.recurrent=100,dependence=0,var.z=0.22,cor.mat=NULL,
 	    HistN1=~I(Nt^.5),HistD=~I(Nt^.5),HistN1.beta=c(1.0),HistD.beta=c(1.0),...) 
