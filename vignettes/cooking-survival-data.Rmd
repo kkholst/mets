@@ -555,8 +555,45 @@ and a now with Ghosh-Lin and Cox marginals
 
 ```
 
+We can also consider stratified models 
 
-Frailty models 
+```{r}
+data(hfactioncpx12)
+hf <- hfactioncpx12
+hf$x <- as.numeric(hf$treatment)
+hf$age <- rnorm(741)[hf$id]
+hf$Z1 <- rbinom(741,1,0.5)[hf$id]
+
+xr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=hf)
+dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
+n <- 100 
+rr <- sim.recurrent(xr,dr,n=n,data=hf)
+rxr <- phreg(Surv(start,stop,statusD==1)~strata(x)+age+cluster(id),data=rr)
+rdr <- phreg(Surv(start,stop,statusD==3)~x+strata(Z1)+age+cluster(id),data=rr)
+estimate(xr)
+estimate(rxr)
+estimate(dr)
+estimate(rdr)
+plot(xr); plot(rxr,add=TRUE)
+plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
+###
+
+glr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=hf,death.code=2)
+dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
+n <- 100
+rr <- sim.recurrent(glr,dr,n=n,data=hf)
+rxr <- recreg(Event(start,stop,statusD)~strata(x)+age+cluster(id),data=rr,death.code=3)
+rdr <- phreg(Surv(start,stop,statusD==3)~x+strata(Z1)+age+cluster(id),data=rr)
+estimate(xr)
+estimate(rxr)
+estimate(dr)
+estimate(rdr)
+plot(glr); plot(rxr,add=TRUE)
+plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
+```
+
+
+Frailty models (simulations based on the rates/intensities) 
 
 ```{r}
  data(CPH_HPN_CRBSI)
