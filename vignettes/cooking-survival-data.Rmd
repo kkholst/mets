@@ -513,8 +513,8 @@ library(mets)
 
  simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
 
- xrs <- phreg(Surv(start,stop,statusD==1)~treatment+cluster(id),data=simcoxcox)
- drs <- phreg(Surv(start,stop,statusD==3)~treatment+cluster(id),data=simcoxcox)
+ xrs <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=simcoxcox)
+ drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simcoxcox)
  estimate(xrs)
  estimate(drs)
 
@@ -530,27 +530,20 @@ library(mets)
 and a now with Ghosh-Lin and Cox marginals 
 
 ```{r}
- recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
+ recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
  estimate(recGL)
  estimate(dr)
 
  simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
 
- simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
- dtable(simcoxcox,~statusD)
-
- recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
- simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
-
- GLs <- recreg(Event(start,stop,statusD)~x+cluster(id),data=simglcox,death.code=3)
- drs <- phreg(Surv(start,stop,statusD==3)~x+cluster(id),data=simglcox)
+ GLs <- recreg(Event(entry,time,status)~treatment+cluster(id),data=simglcox,death.code=3)
+ drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simglcox)
  estimate(GLs)
  estimate(drs)
 
  par(mfrow=c(1,2))
  plot(GLs); 
  plot(recGL,add=TRUE)
-###
  plot(drs)
  plot(dr,add=TRUE)
 
@@ -569,8 +562,8 @@ xr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=hf)
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 100 
 rr <- sim.recurrent(xr,dr,n=n,data=hf)
-rxr <- phreg(Surv(start,stop,statusD==1)~strata(x)+age+cluster(id),data=rr)
-rdr <- phreg(Surv(start,stop,statusD==3)~x+strata(Z1)+age+cluster(id),data=rr)
+rxr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=rr)
+rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
 estimate(rxr)
 estimate(dr)
@@ -583,8 +576,8 @@ glr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=hf,death.c
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 100
 rr <- sim.recurrent(glr,dr,n=n,data=hf)
-rxr <- recreg(Event(start,stop,statusD)~strata(x)+age+cluster(id),data=rr,death.code=3)
-rdr <- phreg(Surv(start,stop,statusD==3)~x+strata(Z1)+age+cluster(id),data=rr)
+rxr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=rr,death.code=3)
+rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
 estimate(rxr)
 estimate(dr)

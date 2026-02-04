@@ -355,7 +355,6 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
-
 	if  (!is.null(data)) {
 		scox1 <- draw.phreg(cox,n,data=data,onlyX=TRUE,...)
 		dat <- scox1$data
@@ -402,6 +401,15 @@ sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 		ptt$time <- pmin(ptt$time,pct)
 		ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
  }
+
+##### add correct names to entry,time,status
+###varsY <- all.vars(update(drop.specials(cox$formula,"cluster"),.~1)) 
+###if (length(varsY)==2) 
+###ptt[,varsY] <- cbind(ptt$time,ptt$status)
+###if (length(varsY)==3) 
+###ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+###
+###ptt <- dkeep(ptt,c(all.vars(cox$formula),"orig.id"))
 
  return(ptt)
 }# }}}
@@ -575,6 +583,15 @@ sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
       ptt$time <- pmin(ptt$time,pct)
       ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
  }
+
+##### add correct names to entry,time,status
+###varsY <- all.vars(update(drop.specials(coxs[[1]]$formula,"cluster"),.~1)) 
+###print(varsY)
+###if (length(varsY)==2) 
+###ptt[,varsY] <- cbind(ptt$time,ptt$status)
+###if (length(varsY)==3) 
+###ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+###ptt <- dkeep(ptt,c(varsY,names(datas),"orig.id"))
 
 return(ptt)
 }# }}}

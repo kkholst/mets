@@ -1281,6 +1281,7 @@ if (3 %in% which) {
 ##' @param rc relative risk for exponential censoring 
 ##' @param strata1 strata variable for cox1 baseline, then data is not needed
 ##' @param stratad strata variable for coxd baseline, then data is not needed
+##' @param death.code code for death (default is 3) in status variable, events are coded as 1
 ##' @param ... Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid 
 ##' @author Thomas Scheike
 ##' @references 
@@ -1292,20 +1293,21 @@ if (3 %in% which) {
 ##' n <- 100
 ##' xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
 ##' dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-##' simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+##' simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf,death.code=2)
 ##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
-##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf,death.code=2)
 ##'
 #' @export sim.recurrent
 #' @usage sim.recurrent(cox1,coxd=NULL,n=1,data=NULL,
 #' type=c("default","cox-cox","gl-cox"),id="id",
 #' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
-#' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,...)
+#' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3death.code=3,,...)
 sim.recurrent <- function(cox1,coxd=NULL,
                           n=1, data=NULL,type=c("default","cox-cox","gl-cox"),
                           id="id",varz=1,share=1,cens=0.001,
 			  scale1=1,scaled=1,dependence=NULL,
 			  r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,
+			  death.code=3,
                           ...) {# {{{
 ## exp censoring default
 death <- NULL
@@ -1365,27 +1367,32 @@ for (j in 1:attr(strat1d,"nlevel")) {
     rrss$id <- r1i[rrss$id+1]
     rrs <- rbind(rrs,rrss)
 }			  
+rrs <- dtransform(rrs,statusD=death.code,statusD==3)
 } else { 
 if (is.null(dependence)) dependence <- 0
 if (!is.null(LamD)) 
-rrs <- simRecurrentList(n,list(Lam1),death.cumhaz=list(LamD),rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+rrs <- simRecurrentList(n,Lam1,death.cumhaz=LamD,rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
 else rrs <- simRecurrentList(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
-rrs$Z <- attr(rrs,"z")[rrs$id]
+rrs$Z <- attr(rrs,"z")[rrs$id+1]
 
 rrs$statusD <- rrs$status
 if (!is.null(LamD))  {
-rrs <- dtransform(rrs,statusD=3,death==1)
+rrs <- dtransform(rrs,statusD=death.code,death==1)
 }
-rrs$id <- rrs$id-1
 }
 
 ## add covariates, 
 if (!is.null(data)) rrs <- cbind(rrs,rrdata$data[rrs$id,])
 
+## add correct names to entry,time,status
+varsY <- all.vars(update(drop.specials(xr$formula,"cluster"),.~1)) 
+rrs[,varsY] <- cbind(rrs$start,rrs$stop,rrs$statusD)
+
+rrs <- dkeep(rrs,c(all.vars(xr$formula),all.vars(dr$formula),"orig.id"))
+
 return(rrs)
 }
 # }}}
-
 
 simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
 	    max.recurrent=100,dependence=0,var.z=0.22,cor.mat=NULL,

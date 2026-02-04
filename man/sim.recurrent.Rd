@@ -7,7 +7,7 @@
 sim.recurrent(cox1,coxd=NULL,n=1,data=NULL,
 type=c("default","cox-cox","gl-cox"),id="id",
 varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
-r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,...)
+r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3death.code=3,,...)
 }
 \arguments{
 \item{cox1}{cox/ghosh-lin for recurrent events}
@@ -44,6 +44,8 @@ r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,...)
 
 \item{stratad}{strata variable for coxd baseline, then data is not needed}
 
+\item{death.code}{code for death (default is 3) in status variable, events are coded as 1}
+
 \item{...}{Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid}
 }
 \description{
@@ -59,9 +61,9 @@ hf$x <- as.numeric(hf$treatment)
 n <- 100
 xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
 dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf,death.code=2)
 recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
-simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+simglcox <- sim.recurrent(recGL,dr,n=n,data=hf,death.code=2)
 
 }
 \references{
