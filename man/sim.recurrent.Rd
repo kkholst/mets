@@ -55,6 +55,7 @@ Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin 
 Must specify two phreg objects, or a phreg and a recreg object, then simulates data from two-stage model
 }
 \examples{
+library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment)

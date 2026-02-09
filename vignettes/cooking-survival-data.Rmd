@@ -145,8 +145,8 @@ Now looking at a simple cox model
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 
  dd <- sim.phreg(cox1,n,data=bmt)
- dtable(dd,~status)
- scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
+ dtable(dd,~cause)
+ scox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox1),coef(scox1))
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
@@ -155,8 +155,8 @@ Now looking at a simple cox model
  cox10 <- cox1
  cox10$coef <- c(0,0.4,0.3)
  dd <- sim.phreg(cox10,n,data=bmt)
- dtable(dd,~status)
- scox1 <- phreg(Surv(time,status==1)~tcell+platelet+age,data=dd)
+ dtable(dd,~cause)
+ scox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox10),coef(scox1))
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
@@ -212,7 +212,7 @@ We now fit cause-specific hazard models with 3 causes (censoring as one of them)
 and generate competing risks data with hazards taken from the fitted Cox models. 
 Here a situation with stratified baselines for some of the models:
 
-```{stratified}
+```{r,stratified}
  ## r with phreg 
  cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
@@ -221,9 +221,9 @@ Here a situation with stratified baselines for some of the models:
  dd <- sim.phregs(coxs,n,data=bmt)
 
  ## checking that  cause specific hazards are as given, make n larger
- scox0 <- phreg(Surv(time,status==1)~tcell+platelet,data=dd)
- scox1 <- phreg(Surv(time,status==2)~tcell+platelet,data=dd)
- scox2 <- phreg(Surv(time,status==3)~strata(tcell)+platelet,data=dd)
+ scox0 <- phreg(Surv(time,cause==1)~tcell+platelet,data=dd)
+ scox1 <- phreg(Surv(time,cause==2)~tcell+platelet,data=dd)
+ scox2 <- phreg(Surv(time,cause==3)~strata(tcell)+platelet,data=dd)
  cbind(cox0$coef,scox0$coef)
  cbind(cox1$coef,scox1$coef)
  cbind(cox2$coef,scox2$coef)
@@ -240,8 +240,8 @@ Here a situation with stratified baselines for some of the models:
  cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
  coxs <- list(cox1,cox2)
  dd <- sim.phregs(coxs,n,data=bmt)
- scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet,data=dd)
- scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+ scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=dd)
+ scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
  cbind(cox1$coef,scox1$coef)
  cbind(cox2$coef,scox2$coef)
  par(mfrow=c(1,2))
@@ -268,10 +268,10 @@ One more example  fully non-parametric
  coxs <- list(cox1,cox2,cox3)
 
  dd <- sim.phregs(coxs,n,data=bmt,extend=0.002)
- dtable(dd,~status)
- scox1 <- phreg(Surv(time,status==1)~strata(tcell,platelet),data=dd)
- scox2 <- phreg(Surv(time,status==2)~strata(gage,tcell),data=dd)
- scox3 <- phreg(Surv(time,status==3)~strata(platelet)+bmi,data=dd)
+ dtable(dd,~cause)
+ scox1 <- phreg(Surv(time,cause==1)~strata(tcell,platelet),data=dd)
+ scox2 <- phreg(Surv(time,cause==2)~strata(gage,tcell),data=dd)
+ scox3 <- phreg(Surv(time,cause==3)~strata(platelet)+bmi,data=dd)
  cbind(coef(cox1),coef(scox1), coef(cox2),coef(scox2), coef(cox3),coef(scox3))
  par(mfrow=c(1,3))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
@@ -279,16 +279,11 @@ One more example  fully non-parametric
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
 ```
 
-
-
 # Multistate models: The Illness Death model 
 
 Using a hazard based simulation with delayed entry we can then simulate data 
 from for example the general illness-death model. Here the cumulative hazards 
 need to be specified.
-
-
-
 
 \begin{tikzpicture}[
     >=Stealth,

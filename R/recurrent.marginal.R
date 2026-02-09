@@ -1287,6 +1287,7 @@ if (3 %in% which) {
 ##' @references 
 ##' Scheike (2024), Twostage recurrent events models, under review.
 ##' @examples
+##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment)
@@ -1309,7 +1310,7 @@ sim.recurrent <- function(cox1,coxd=NULL,
 			  r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,
                           ...) {# {{{
 ## exp censoring default
-death <- NULL
+statusD <- death <- NULL
 
 if (type[1]=="default" & inherits(cox1,"recreg")) type <- "gl-cox" 
 if (type[1]=="default" & inherits(cox1,"phreg")) type <- "cox-cox" 
@@ -1373,21 +1374,21 @@ if (!is.null(LamD))
 rrs <- simRecurrentList(n,Lam1,death.cumhaz=LamD,rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
 else rrs <- simRecurrentList(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
 rrs$Z <- attr(rrs,"z")[rrs$id+1]
-
 rrs$statusD <- rrs$status
 if (!is.null(LamD))  {
-rrs <- dtransform(rrs,statusD=death.code,death==1)
+   rrs <- dtransform(rrs,statusD=death.code,death==1)
 }
+}
+
+## add correct names to entry,time,status if possible
+if (inherits(cox1,"phreg")) {
+   varsY <- all.vars(update(drop.specials(cox1$formula,"cluster"),.~1)) 
+   rrs[,varsY] <- cbind(rrs$start,rrs$stop,rrs$statusD)
+   rrs <- dkeep(rrs,c(varsY,"id"))
 }
 
 ## add covariates, 
 if (!is.null(data)) rrs <- cbind(rrs,rrdata$data[rrs$id,])
-
-## add correct names to entry,time,status
-varsY <- all.vars(update(drop.specials(xr$formula,"cluster"),.~1)) 
-rrs[,varsY] <- cbind(rrs$start,rrs$stop,rrs$statusD)
-
-rrs <- dkeep(rrs,c(all.vars(xr$formula),all.vars(dr$formula),"orig.id"))
 
 return(rrs)
 }

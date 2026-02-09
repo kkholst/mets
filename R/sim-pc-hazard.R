@@ -138,15 +138,16 @@ addCums <- function(cumB,cumA,max=NULL)
 extendCums <- function(cumA,cumB,extend=NULL)
 {# {{{
 ## setup as list to run within loop
-if (!is.null(cumB)) {cumA <- list(cumA,cumB); } 
+if (!is.null(cumB)) { cumA <- list(cumA,cumB); } 
 
 ## to also work with strata version where each list contains a list of cumHaz for strata
-matrixlist <- any(unlist(lapply(cumA, function(x) is.data.frame(x) | is.matrix(x))))
+###matrixlist <- any(unlist(lapply(cumA, function(x) is.data.frame(x[[1]]) | is.matrix(x[[1]]))))
 ## any stratified components 
 basecumhaz <- any(unlist(lapply(cumA, function(x) inherits(x,"basecumhaz"))))
 nn <- length(cumA)
 nl <- lengths(cumA)
-if (basecumhaz) cumA <- unlist(cumA, recursive = FALSE)
+if (basecumhaz) 
+	cumA <- unlist(cumA, recursive = FALSE)
 
 restore <- function(flat, lengths) {
   ends <- cumsum(lengths)
@@ -161,9 +162,9 @@ restore <- function(flat, lengths) {
  if (length(extend)!=length(cumA)) haza <- rep(extend,length(cumA)) 
 
  ## extend all that are not at maxtime
-for (i in seq(nn)[-mm]) {
-  cumB <- as.matrix(cumA[[i]]); 
-  cumB <- rbind(c(0,0),cumB); 
+for (i in seq(length(cumA))[-mm]) {
+  cumB <- cumA[[i]]; 
+  if (cumB[1,1]!=0 & cumB[1,2]!=0) cumB <- rbind(0,cumB); 
 
   ### linear extrapolation of mortality using given dHaz/dt or haza given rate
   if (tail(cumB[,1],1)<maxx[mm]) {
@@ -175,7 +176,6 @@ for (i in seq(nn)[-mm]) {
   }
   cumA[[i]] <- cumB
 }
- cumA[[mm]] <- rbind(c(0,0),cumA[[mm]])
 
  if (basecumhaz) cumA <- restore(cumA,nl)
  return( setNames(cumA,paste("cum",seq(nn),sep="")))
@@ -366,6 +366,70 @@ sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 		id <- 1:length(rr)
 	} else {
 		if (!is.null(Z)) {
+		   if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
+		} else znames <- NULL
+		if (is.null(rr) & (!is.null(Z))) rr <- exp(as.matrix(Z) %*% cox$coef)
+		if (is.null(rr) & is.null(Z)) rr <- rep(1,n)
+		id <- 1:length(rr)
+		n <- length(rr)
+		dat <- NULL
+	}
+	if (is.null(strata)) strata <- rep(0,n)
+
+	if (inherits(cox,c("phreg","cifreg"))) cumhaz <- basecumhaz(cox,only=1)
+	else {
+		if (!is.list(cox)) stop("must be phreg or list of hazards\n") else cumhaz <- cox
+	}
+	if (!is.null(extend))  cumhaz <- extendCums(cumhaz,NULL,extend=extend)
+	ids <- 1:n
+	lentry <- NULL
+
+	ptt <- c()
+	for (i in unique(strata)) {
+		whichi <- which(strata==i)
+		cumhazj <- rbind(0,cumhaz[[i+1]])
+		if (!is.null(entry)) lentry <- entry[whichi]
+		simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
+		simj$id <- ids[whichi]
+		ptt  <-  rbind(ptt,simj)
+	}
+	dsort(ptt) <- ~id
+
+	if (!is.null(cens)) {
+		pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+		ptt$time <- pmin(ptt$time,pct)
+		ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
+##### add correct names to entry,time,status
+if (inherits(cox,"phreg"))  {
+varsY <- all.vars(update(drop.specials(cox$formula,"cluster"),.~1)) 
+if (length(varsY)==2) 
+ptt[,varsY] <- cbind(ptt$time,ptt$status)
+if (length(varsY)==3) 
+ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+ptt <- dkeep(ptt,varsY)
+}
+
+if (!is.null(dat)) ptt <- cbind(ptt,dat)
+
+return(ptt)
+}# }}}
+
+sim.phregO <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
+		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+{# {{{
+	if  (!is.null(data)) {
+		scox1 <- draw.phreg(cox,n,data=data,onlyX=TRUE,...)
+		dat <- scox1$data
+		dat$orig.id <- scox1$id
+
+		if (is.null(strata))  strata <- scox1$strata 
+		if (is.null(rr)) rr <- scox1$rr  
+		n <- length(rr)
+		id <- 1:length(rr)
+	} else {
+		if (!is.null(Z)) {
 			if (is.data.frame(Z)) znames <- names(Z) else znames <- colnames(Z)
 		} else znames <- NULL
 		if (is.null(rr) & (!is.null(Z))) rr <- exp(as.matrix(Z) %*% cif$coef)
@@ -529,8 +593,8 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' coxs <- list(cox1,cox2)
 #' ## just calls sim.phregs !
 #' dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
-#' scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet+age,data=dd)
-#' scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+#' scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=dd)
+#' scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
 #'
 #' cbind(cox1$coef,scox1$coef)
 #' cbind(cox2$coef,scox2$coef)
@@ -540,6 +604,51 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' 
 #' @export sim.phregs
 sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
+                       entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+{# {{{
+   out <- draw.phregs(coxs,n,data)
+   if (is.null(rr)) rr <- out$rr
+   if (is.null(strata)) strata <- out$strata
+   lentry <- NULL
+
+   cumhazl <- list()
+   cumhazl[[1]] <- basecumhaz(coxs[[1]],only=1)
+   if (length(coxs)>1) 
+   for (i in 2:length(coxs)) 
+      cumhazl[[i]] <- basecumhaz(coxs[[i]],only=1)
+   if (!is.null(extend)) cumhazl <- extendCums(cumhazl,NULL,extend=extend)
+
+   ## simulate first  time
+   simdata <- sim.phreg(cumhazl[[1]],n,data=NULL,rr=rr[,1],strata=strata[,1],entry=entry)
+   l <- length(coxs)
+   if (l>=2) 
+   for (i in 2:l) {
+      tall2 <- sim.phreg(cumhazl[[i]],n,rr=rr[,i],strata=strata[,i],entry=entry)
+      simdata$status <- ifelse(simdata$time<tall2$time,simdata$status,i*tall2$status)
+      simdata$time <- pmin(simdata$time,tall2$time)
+   }
+   ptt <- simdata
+
+ if (!is.null(cens)) {
+      pct <- simCens(cens,rrc=rrc,n=n,entry=entry,...)
+      ptt$time <- pmin(ptt$time,pct)
+      ptt$status <- ifelse(ptt$time<pct,ptt$status,0)
+ }
+
+##### add correct names to entry,time,status
+if (inherits(coxs[[1]],"phreg"))  {
+varsY <- all.vars(update(drop.specials(coxs[[1]]$formula,"cluster"),.~1)) 
+if (length(varsY)==2) ptt[,varsY] <- cbind(ptt$time,ptt$status)
+if (length(varsY)==3) ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+ptt <- dkeep(ptt,varsY)
+}
+
+if (!is.null(data)) ptt <- cbind(ptt,out$data)
+
+return(ptt)
+}# }}}
+
+sim.phregsO <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
                        entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
    scox1 <- draw.phreg(coxs[[1]],n,data=data)

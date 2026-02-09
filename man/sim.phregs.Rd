@@ -59,8 +59,8 @@ cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
 coxs <- list(cox1,cox2)
 ## just calls sim.phregs !
 dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
-scox1 <- phreg(Surv(time,status==1)~strata(tcell)+platelet+age,data=dd)
-scox2 <- phreg(Surv(time,status==2)~tcell+strata(platelet),data=dd)
+scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=dd)
+scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
 
 cbind(cox1$coef,scox1$coef)
 cbind(cox2$coef,scox2$coef)
