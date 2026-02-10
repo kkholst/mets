@@ -1777,6 +1777,153 @@ GLprediid <- function(...)
 } ## }}}
 
 
+simGLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
+	    depcens.Adm=0,depcens.R=1,Z=NULL,bin=1) { ## {{{
+if (length(bin)==1) bin <- rep(bin,2)
+if (is.null(Z))
+Z = cbind((bin[1] == 1) * (2 * rbinom(n, 1, 1/2) - 1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n, 1, 1/2)) + (bin[2] == 0) * rnorm(n))
+colnames(Z) <- paste("Z", 1:ncol(Z), sep = "")
+p <- ncol(Z)
+r1 <- exp( Z %*% beta[1:p])
+rd <- exp( Z %*% beta[(p+1):(2*p)])
+rrc <-  exp( Z %*% rcZ)
+
+## generate with Adm censurering 
+out <- mets:::simGLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
+    model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000,
+    depcens.Adm=depcens.Adm)
+
+out$Z1 <- Z[,1][out$id+1]
+out$Z2 <- Z[,2][out$id+1]
+outID <- countID(out)
+out$last <- out$stop[outID$reverseCountid==1][out$id+1]
+maxtime <- tail(base1,1)[1]
+
+Rcens <- rbinom(n,1,pCR)
+if (depcens.R==1) rrC <- exp(Z %*% rcZ) else rrC <- 1
+censorR = censorR = Rcens*pmin(rexp(n, 1)*(1/(censR*rrC)),maxtime)+maxtime*(Rcens==0)
+censorA <- out$censorA[out$Countid==1]
+censor <- pmin(censorR,censorA)
+
+###lasttime <- out$stop[out$reverseCountid==1]
+###laststatusD <- out$statusD[out$reverseCountid==1]
+outRA <- out
+outRA$censorR <- censorR[outRA$id+1]
+outRA <- event.split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
+outRA <- count.history(outRA,status="statusD",types=0)
+outRA <- subset(outRA,Count0==0)
+###print(table(out$statusD))
+###print(table(outRA$statusD))
+
+data <- list(out=out,outRA=outRA)
+return(data)
+} ## }}} 
+
+simGLcoxRA <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rrc=NULL,rcA=0.5,fz=NULL,fdz=NULL,
+     pCA=0.5,depcens.Adm=1,
+     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
+{ ## {{{
+## setting up baselines for simulations 
+maxt <- tail(base1[,1],1)
+base1 <- as.matrix(base1); drcumhaz <- as.matrix(drcumhaz)
+nmin <- max(nrow(base1),nrow(drcumhaz),nmin)
+nmin <- min(nmax,nmin)
+seqt <- seq(from=0,to=maxt,length.out=nmin)
+if (base1[1,1]!=0) base1 <- rbind(0,base1) 
+if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
+base1 <- cbind(seqt, lin.approx(seqt,base1))
+cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
+###
+St <- exp(-cumD[,2])
+Stm <- cbind(base1[,1],St)
+###
+dbase1 <- diff(c(0,base1[,2]))
+dcum <- cbind(base1[,1],dbase1)
+maxtime <- tail(base1[,1],1)
+
+if (is.null(r1)) r1 <- rep(1,n)
+if (is.null(rd)) rd <- rep(1,n)
+
+fz.orig <- fz
+if (is.null(fz)) fz <- function(x) x
+
+if (var.z[1]>0) {
+	z1 <- z <- rgamma(n,share/var.z[1])*var.z[1] 
+	if (share<1) { 
+		z2 <- rgamma(n,(1-share)/var.z[1])*var.z[1] 
+		z <- z+z2
+	} 
+	fzz <- fz(z1)
+	if (share<1) fzz <- fzz/share; 
+	mza <- mean(fzz)
+	if (n<10000 & (!is.null(fz.orig))) {
+		zl <- rgamma(100000,share/var.z[1])*var.z[1] 
+		fzl <- fz(z)
+		mza <- mean(fzl)
+	} 
+}  else fzz <- z <- z1 <- rep(1,n)
+
+if (var.z[1]==0) model <- "frailty"
+if (is.null(type)) 
+	if (model[1]=="twostage") type <- 2 else type <- 1
+## for frailty setting we also consider any function of z 
+if (!is.null(fdz)) { fdzz <- fdz(z); rd <- rd*fdzz; z <- rep(1,n);}
+
+## survival censoring given X, Z, either twostage or frailty-model 
+if (type>=2) stype <- 2 else stype <- 1
+if (var.z[1]==0) stype <- 1
+### dd <- .Call("_mets_simSurvZ",as.matrix(rbind(c(0,1),Stm)),rd,z,var.z[1],stype)
+dd <- .Call("_mets_simSurvZ",as.matrix(rbind(Stm)),rd,z,var.z[1],stype)
+dd <- data.frame(time=dd[,1],status=(dd[,1]<maxtime))
+
+admcens <- rbinom(n,1,pCA)
+if (depcens.Adm==1) rrA <- rrc else rrA <- 1
+censorA = admcens*pmin(rexp(n, 1)*(1/(rcA*rrA)),maxtime)+ maxtime*(admcens==0)
+dd$censorA <- censorA
+cens <- censorA
+dd$status <- ifelse(dd$time<cens,dd$status,7)
+dd$time <- pmin(dd$time,cens)
+
+## to avoid R check error
+reverseCountid  <-  death  <- NULL
+
+if (model[1]=="multiplicative") {
+	## other random effect 
+	z2 <- rgamma(n,share/var.z[2])*var.z[2] 
+	fzz <- z1*z2
+	type <- 3
+}
+## type=2 draw recurrent process given X,Z with rate:
+##  Z exp(X^t beta_1) d \Lambda_1(t)/S(t|X,Z) 
+## such that GL model holds with exp(X^t beta_1) \Lambda_1(t)
+## type=3, observed hazards on Cox form among survivors
+## twostage shared<1: W_1 ~ N1, W_1+W_2 ~ D observed hazards on Cox form among survivors
+## twostage share=1: or W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
+## multiplicatve:       W_2 * W_1 ~ N1, W_1~ D   observed hazards on Cox form among survivors
+dcum <- cbind(base1[,1],dbase1)
+### ll <- .Call("_mets_simGL",as.matrix(rbind(0,dcum)),c(1,St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
+ll <- .Call("_mets_simGL",as.matrix(dcum),c(St),r1,rd,z1,fzz,dd$time,type,var.z[1],nmax,1)
+colnames(ll) <- c("id","start","stop","death")
+ll <- data.frame(ll)
+ll$death <- dd$status[ll$id+1]
+ll$censorA <- dd$censorA[ll$id+1]
+## add frailty to data for possible validation
+ll$z <- z1[ll$id+1]
+ll$fz <- fzz[ll$id+1]
+## add counts of id
+ids <- countID(ll)
+ll <- cbind(ll,ids[,c(2,4,5)]); 
+ll$status <- 1; 
+ll <- dtransform(ll,status=7,reverseCountid==1)
+ll$statusD <- ll$status
+ll <- dtransform(ll,statusD=3,reverseCountid==1 & death==1)
+
+attr(ll,"base1events") <- base1
+attr(ll,"deathcumbase") <- cumD
+return(ll)
+} ## }}}
+
+
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsize=0.5,...) 
 { ## {{{
 	n <- max(margsurv$id)
