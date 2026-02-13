@@ -176,39 +176,6 @@ spl
 ```
 
 
-Augmenting the Binomial Regression 
-===================================
-
-Rather than using a larger censoring model we can also compute an  augmentation term and
-then fit the binomial regression model based on this augmentation term. 
-Here we compute the augmentation based on stratified non-parametric estimates of $F_1(t,S(X))$, 
-where $S(X)$ gives strata based on $X$ as a working model. 
-
-Computes  the augmentation term for each individual as well as the sum
-\begin{align*}
- A & = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
-\end{align*}
- with 
-\begin{align*}
- H(u,X) & = F_1^*(t,S(X)) - F_1^*(u,S(X))
-\end{align*}
-using a KM for $G_c(t)$ and a working model for cumulative baseline
-related to $F_1^*(t,s)$ and $s$ is strata, $S^*(t,s) = 1 - F_1^*(t,s) - F_2^*(t,s)$. 
-
-Standard errors computed under assumption of correct but estimated $G_c(s)$ model.
-
-```{r}
- data(bmt)
- dcut(bmt,breaks=2) <- ~age 
- out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
-			  strata(platelet,agecat.2),data=bmt,cause=1,time=40)
- summary(out1)
-
- out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
-     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
- summary(out2)
-```
-
 
 SessionInfo
 ============

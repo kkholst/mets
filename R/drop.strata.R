@@ -1,7 +1,7 @@
-##' @export
-drop.strata <- function(x) {
-    drop.specials(x, c('strata', 'strataC'))
-}
+#####' @export
+###drop.strata <- function(x) {
+###    drop.specials(x, c('strata', 'strataC'))
+###}
 
 ##' @export
 drop.specials <- function(x, components, ...) {
