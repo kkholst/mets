@@ -22,10 +22,9 @@ library(mets)
 ```
 
 The cifreg function can fit the Fine-Gray model and the logit-link cumulative incidence function for the 
-cause of interest for competing risks, and is completely scalable, that is, linear in the data. This includes
-computation of standard errors that is also linear in data. In addition for the Fine-Gray model 
-predictions can be provided standard errors for specific time-points based on influence functions 
-for the baseline and the regression coeficients.  
+cause of interest for competing risks, and is completely scalable, that is, linear in the data. 
+In addition, for the Fine-Gray model predictions can be provided standard errors for specific time-points based on 
+influence functions for the baseline and the regression coeficients.  
 
 To summarize
 
@@ -36,8 +35,6 @@ To summarize
      - including standard errors
   - only Fine-Gray: influence functions of baseline and regression coefficients computed and given by IC, iid and iidBaseline functions
   - clusters can be given and then cluster corrected standard errors are computed
-
-
 
 
 Fine-Gray model
@@ -74,8 +71,8 @@ $X$ being two independent binomials.
 Alternatively, one can also replace the FG-model with a logistic link 
 $\mbox{expit}( \Lambda_j(t) + \exp(X^T \beta_j))$.
 
-The advantage of the model is that it is easy to fit and to get standard errors, and that it is
-quite flexible essentially being a Cox-model. On the downside 
+The advantage of the Fine-Gray model is that it is easy to fit and it is easy to get standard errors, 
+and that it is quite flexible. On the downside 
 is that the coefficients must be interpreted on $cloglog$-scale. 
 Specifically, 
 \begin{align}
@@ -172,7 +169,6 @@ cbind(cr$coef,diag(cr$var)^.5,fg$coef,fg$se.coef,cr$coef-fg$coef,diag(cr$var)^.5
 }
 ```
 
-
 When comparing with the results from the coxph based on setting up the data using
 the finegray function, we get the same estimates but note that the standard errors
 of the coxph is missing a term and therefore slightly different. When comparing to 
@@ -264,8 +260,8 @@ due to the variability from the Kaplan-Meier estimator.
 Where $M_{ic}(t) = N_{ic}(t) - \int_0^t Y_i(s) d\Lambda_c (s)$
 with $M_{ic}$ the standard censoring martingale. 
 
-The function $q(t)$ that reflects that the censoring only 
-affects the terms related to cause "2" jumps, can be written as (see Appendix B2)
+The function $q(t)$ that reflects that the censoring only affects the terms related 
+to cause "2" jumps, can be written as 
 \begin{align*} 
 	q(t) & =   E( H(t,X) I(T  \leq t, \epsilon=2) I(C > T)/G_c(T)) = E( H(t,X) F_2(t,X) ), 
 \end{align*}
@@ -282,49 +278,6 @@ so that the influence function becomes
 \end{align*}
 with $H(t,X) =  \int_t^{\infty} (X- e(s))  G(s,X) d \Lambda_1(s,X)$.
 
-
-Augmenting the FG-estimator 
-===========================
-
-Rather than using a larger censoring model we can also compute the augmentation term directly and
-then fit the FG-model based on this augmentation term and do a couple of iterations 
-
-```{r}
-  fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
-  summary(fgaugS)
-
-  fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
-  summary(fgaugS2)
-
-  fgaugS3 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS2$E)
-  summary(fgaugS3)
-```
-Again we note slightly smaller standard errors when augmenting the estimator. 
-
-The function \verb+FG_AugmentCifstrata+ 
-compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
-\begin{align*}
- U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
-	H(t,X_i,E,G_c,\Lambda_1)  dM_{ci}(t)
-\end{align*}
-using working models based on stratification to get $F_1^s$ and $F_2^s$ where the strata are given by
-$strata()$ in the call.  Then fits the FG model so solve the 
-\begin{align*}
- U_n^{A}(\beta_p)  + U^{FG}_{n}(\beta) = 0. 
-\end{align*}
-
-Then we may iterate to get a solution to the augmented score equation
-\begin{align*}
- U_n^{A}(\beta_\infty)  + U^{FG}_{n}(\beta_\infty) = 0.
-\end{align*}
-
-The censoring model here is one overall Kaplan-Meier. 
-
-The influence funtion for the augmented estimator is 
-\begin{align*}
-\int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t)} dM_c.
-\end{align*}
-and standard errors are based on this formula. 
 
 Logistic-link 
 ================
@@ -359,12 +312,10 @@ Fitting the model and getting OR's
 Administrative Censoring
 ===========================
 
-In the case with administrative censoring we can simply provide the 
-risk-set given by the administrative censoring times for the Fine-Gray 
-or logistic link cumulative incidence regression models. 
+In the case with administrative censoring we can give the risk-set defined by the administrative censoring 
+times for the Fine-Gray or logistic link cumulative incidence regression models. 
 
- - when a administrative censoring time is given the risk-set will be increased for all those 
-   experiencing the alternative event. 
+ - when a administrative censoring time is given the risk-set will be increased for all those experiencing the alternative event. 
  - if there are also additional random censorings these can be adjusted for via IPCW weights and are then found using the cens.code 
  - the alternative causes are found by considering cause, cens.code and total number of values for the status variable, so it can be useful to specify the other death.code (s) also
 
@@ -420,6 +371,51 @@ estimate(ddA)
 ###plot(ccA,add=TRUE,col=3)
 ###plot(ddA,col=2,add=TRUE)
 ```
+
+
+Augmenting the FG-estimator 
+===========================
+
+Rather than using a larger censoring model we can also compute the augmentation term directly and
+then fit the FG-model based on this augmentation term and do a couple of iterations 
+
+```{r}
+  fgaugS <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fg$E)
+  summary(fgaugS)
+
+  fgaugS2 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS$E)
+  summary(fgaugS2)
+
+  fgaugS3 <- FG_AugmentCifstrata(Event(time,status)~Z1+Z2+strata(Z1,Z2),data=dats,cause=1,E=fgaugS2$E)
+  summary(fgaugS3)
+```
+Again we note slightly smaller standard errors when augmenting the estimator. 
+
+The function \verb+FG_AugmentCifstrata+ 
+compute the augmentation term for fixed $E(t)$ based on the current $\hat \beta$
+\begin{align*}
+ U_n^{A} = \sum_{i=1}^n \int_{0}^{+\infty}  \frac{F_2(t,X_i)}{S(t,X_i)G_c(t,X_i)}  
+	H(t,X_i,E,G_c,\Lambda_1)  dM_{ci}(t)
+\end{align*}
+using working models based on stratification to get $F_1^s$ and $F_2^s$ where the strata are given by
+$strata()$ in the call.  Then fits the FG model so solve the 
+\begin{align*}
+ U_n^{A}(\beta_p)  + U^{FG}_{n}(\beta) = 0. 
+\end{align*}
+
+Then we may iterate to get a solution to the augmented score equation
+\begin{align*}
+ U_n^{A}(\beta_\infty)  + U^{FG}_{n}(\beta_\infty) = 0.
+\end{align*}
+
+The censoring model here is one overall Kaplan-Meier. 
+
+The influence funtion for the augmented estimator is 
+\begin{align*}
+\int (X-e(t)) w(t) dM_1(t,X) +  \int H(t,X) \frac{F_2(t,X)}{S(t,X)} \frac{1}{G_c(t)} dM_c.
+\end{align*}
+and standard errors are based on this formula. 
+
 
 
 SessionInfo
