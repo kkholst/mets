@@ -494,7 +494,7 @@ and for the logit-link as
  cif1 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=1)
  cif2 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=2)
 
- nsim <- 1000
+ nsim <- 100
  entry <- rbinom(nsim,1,0.5)*runif(nsim)*60
  dd <- sim.cif(cif1,nsim,data=bmt,entry=entry)
 
@@ -530,7 +530,7 @@ beta=c(0.3,-0.3,-0.3,0.3)
 dep=0
 rc <- 0.9
 
-n <- 10000
+n <- 100
 entry <- rbinom(n,1,0.5)*runif(n)*6
 data <- simul.cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7),entry=entry) 
 ###
