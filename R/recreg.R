@@ -1779,6 +1779,7 @@ GLprediid <- function(...)
 
 simGLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
 	    depcens.Adm=0,depcens.R=1,Z=NULL,bin=1) { ## {{{
+Count0 <- NULL ## to fix R check, variable name returned below 
 if (length(bin)==1) bin <- rep(bin,2)
 if (is.null(Z))
 Z = cbind((bin[1] == 1) * (2 * rbinom(n, 1, 1/2) - 1)+(bin[1]==0)*rnorm(n),(bin[2]==1)*(rbinom(n, 1, 1/2)) + (bin[2] == 0) * rnorm(n))
@@ -1789,7 +1790,7 @@ rd <- exp( Z %*% beta[(p+1):(2*p)])
 rrc <-  exp( Z %*% rcZ)
 
 ## generate with Adm censurering 
-out <- mets:::simGLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
+out <- simGLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000,
     depcens.Adm=depcens.Adm)
 

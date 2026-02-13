@@ -162,10 +162,9 @@ Now looking at a simple cox model
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
 ```
 
-
 Multiple Cox models for cause specific hazards can be combined, and we start by drawing the 
 covariates manually, below we just call the sim.phregs function that draws covariates from
-the data, 
+the data 
 
 ```{r}
  data(bmt); 
@@ -459,8 +458,8 @@ We can also use the parameters based on fitted models
 
 Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
 cumulative incidence functions that satistifes the needed constraints. We wish to generate data that follows these two
-piecewise linear cumulative indidence functions with delayed entry at time $s$.  We should thus
-generate data that follows the cumulative incidence functions
+piecewise linear cumulative incidence functions with delayed entry at time $s$.  Given delayed entry at time $s$ we 
+should thus generate data that follows the cumulative incidence functions
 $$
 \tilde F_1(t,s;X)=   \frac{F_1(t;X) - F_1(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
 $$
@@ -469,11 +468,88 @@ $$
 \tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
 $$
 this can be done according to the recipe in the previous section.  
-To be specific (ignoring the $X$ in the formula)
-$$
-  F_1^{-1}( F_1(s) + U \cdot (1 - F_1(s;X) - F_2(s;X)) )
-$$
-where $U$ is a uniform, will have distribution given by $\tilde F_1(t,s)$.
+
+ - First draw event type with conditional probabilities $\tilde F_j(t,sX)$ for $j=1,2$ and the remaining survivors
+ - Second draw event time (timing) of chosen type with distribution  (still conditional on being a survivor at entry)
+   \begin{align*}
+  \frac{\tilde F_j(t,sX)}{\tilde F_j(\tau,X)} & = \frac{F_j(t,X)- F_j(s,X)}{F_j(\tau,X)-F_j(s,X)} \mbox{for} j=1,2.
+   \end{align*}
+
+If only $F_1$ is specified then assumes that that we are in survival setting with $F_2 \equiv 0$. Note also that 
+given event type the timing is unaffected by the truncation probability.
+
+For the cloglog link the Fine-Gray model the timing can be drawn as 
+\begin{align*}
+ \Lambda_0^{-1}[ -\log(1-U ( F_j(\tau,X)-F_j(s,X)) - F_j(s,X) ] \exp(- X^T \beta)
+\end{align*}
+and for the logit-link as 
+\begin{align*}
+ \Lambda_0^{-1}[ \exp(logit( U ( F_j(\tau,X)-F_j(s,X)) + F_j(s,X)))] \exp(- X^T \beta)
+\end{align*}
+
+
+```{r}
+ data(bmt)
+ ## two cloglog 
+ cif1 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=1)
+ cif2 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=2)
+
+ nsim <- 1000
+ entry <- rbinom(nsim,1,0.5)*runif(nsim)*60
+ dd <- sim.cif(cif1,nsim,data=bmt,entry=entry)
+
+ scif1 <-  cif(Event(entry,time,cause)~strata(tcell,platelet),data=dd,cause=1)
+ plot(scif1); 
+ ###
+ pcif1 <- predict(cif1,expand.grid(tcell=0:1,platelet=0:1))
+ plot(pcif1,add=TRUE)
+```
+
+Combining two causes drawn with restriction $F_1+\tilde F_2 \leq 1$, thus modifying $\tilde F_2= F_2 (1-F_1(\tau))$ where 
+$F_1$ and $F_2$ are the two input cumulative incidence models 
+
+```{r}
+ dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt,entry=entry)
+
+ ## still logistic link ; non-parametric Aalen-Johansen with delatyed entry
+ scif1 <-  cif(Event(entry,time,cause)~strata(tcell,platelet),data=dd,cause=1)
+ plot(scif1); 
+ ###
+ pcif1 <- predict(cif1,expand.grid(tcell=0:1,platelet=0:1))
+ plot(pcif1,add=TRUE)
+```
+
+Still combining two causes but now using parametric baselines with the simul.cifs, where the baselines for the
+base $F_1$ and $F_2$ are returned as attributes (remember that due to the restriction the $F_2$ model is modified)
+
+
+```{r}
+rho1 <- 0.3; rho2 <- 4
+set.seed(100)
+beta=c(0.3,-0.3,-0.3,0.3)
+dep=0
+rc <- 0.9
+
+n <- 10000
+entry <- rbinom(n,1,0.5)*runif(n)*6
+data <- simul.cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7),entry=entry) 
+###
+scif1 <- cif(Event(entry,time,status)~strata(Z1,Z2),data)
+plot(scif1,ylim=c(0,0.4))
+###
+
+## and without delayed entry for comparison
+data <- simul.cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7)) 
+scif1 <- cif(Event(entry,time,status)~strata(Z1,Z2),data)
+plot(scif1,add=TRUE)
+
+## true baseline cif, cloglog link 
+baset <- attr(data,"Lam1")[,2]
+timet <- attr(data,"Lam1")[,1]
+F1base <- 1-exp(-baset)
+lines(timet,F1base,lwd=3)
+```
+
 
 # Recurrent events
 

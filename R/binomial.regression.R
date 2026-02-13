@@ -8,9 +8,11 @@
 ##' where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
 ##' IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
 ##'
-##' (type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
-##' censoring distribution. For (type="II") the default an additional 
-##' censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
+##' (type="I") sovlves this estimating equation using, but 
+##' for (type="II") an additional censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
+##'
+##' If Ydirect is given, this outcome is used instead of Y((t) as constructed via the choice of outcome considered, in the 
+##' cumlative incidence case \deqn{Y(t)=I(T \leq t, \epsilon=1 )}.
 ##'
 ##' logitIPCW instead considers 
 ##' \deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 } 

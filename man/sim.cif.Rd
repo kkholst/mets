@@ -20,6 +20,8 @@ sim.cif(
   drawZ = TRUE,
   cens = NULL,
   rrc = NULL,
+  entry = NULL,
+  Sentry = NULL,
   cumstart = c(0, 0),
   U = NULL,
   pU = NULL,
@@ -51,6 +53,10 @@ given then takes average rate of in simulated data from cox model.}
 
 \item{rrc}{possible vector of relative risk for cox-type censoring.}
 
+\item{entry}{delayed entry time}
+
+\item{Sentry}{survival related to delayed entry, if not specfied assumes that there is just one cause and uses 1-F1(entry,X)}
+
 \item{cumstart}{to start cumulatives at time 0 in 0.}
 
 \item{U}{uniforms to use for drawing of timing for cumulative incidence.}
@@ -76,8 +82,8 @@ cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
 estimate(cif)  
 plot(cif,col=1)
 simbmt <- sim.cif(cif,nsim,data=bmt)
-dtable(simbmt,~status)
-scif <- cifreg(Event(time,status)~platelet+age,data=simbmt,cause=1)
+dtable(simbmt,~cause)
+scif <- cifreg(Event(time,cause)~platelet+age,data=simbmt,cause=1)
 estimate(scif)
 plot(scif,add=TRUE,col=2)
 
@@ -86,7 +92,7 @@ cif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 estimate(cif)  
 plot(cif,col=1)
 simbmt <- sim.cif(cif,nsim,data=bmt)
-scif <- cifregFG(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
+scif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=simbmt,cause=1)
 estimate(scif)
 plot(scif,add=TRUE,col=2)
 
@@ -97,9 +103,8 @@ cif1 <-  cifreg(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 cif2 <-  cifreg(Event(time,cause)~strata(platelet)+tcell+age,data=bmt,cause=2)
 cifss <-  list(cif1,cif2)
 simbmt <- sim.cifs(list(cif1,cif2),nsim,data=bmt,extend=0.005)
-dtable(simbmt,~status)
-scif1 <-  cifreg(Event(time,status)~strata(tcell)+age,data=simbmt,cause=1)
-scif2 <-  cifreg(Event(time,status)~strata(platelet)+tcell+age,data=simbmt,cause=2)
+scif1 <-  cifreg(Event(time,cause)~strata(tcell)+age,data=simbmt,cause=1)
+scif2 <-  cifreg(Event(time,cause)~strata(platelet)+tcell+age,data=simbmt,cause=2)
 cbind(cif1$coef,scif1$coef)   
 ## can be off due to restriction F1+F2<= 1    
 cbind(cif2$coef,scif2$coef)   
