@@ -24,11 +24,11 @@ library(mets)
 Binomial Regression for censored data 
 =====================================
 
-The binreg function can fit a logistic link model with IPCW adjustment for a specific time-point, 
-and can thus be used for describing survival or competing risks data.
+The binreg function fits a logistic link model with IPCW adjustment for a specific time-point, 
+and can thus be used for describing both survival or competing risks data. 
 The function can be used for large data and is completely scalable, that is, linear in the data. 
 A nice feature is that influcence functions are computed and are available, and can thus be
-used for all other settings based on these parameters. 
+used for other computations based on these parameters. 
 
 In addition and to summarize
 
@@ -46,12 +46,13 @@ The binreg function does direct binomial regression for one time-point, $t$, fit
 \begin{align*}
 P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta)  = F_1(t,X,\beta)
 \end{align*}
-to an IPCW adjusted estmating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
+based on an IPCW adjusted estmating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
 \begin{align*}
  U(\beta,\hat G_c) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
 \end{align*}
-with $G_c(t)=P(C>t)$, the  censoring survival distribution, and  with $\Delta(t) = I( C_i > T_i \wedge t)$
+with $G_c(t)=P(C>t)$, the  censoring survival distribution, and with $\Delta(t) = I( C_i > T_i \wedge t)$
 the indicator of being uncensored at time $t$ (type="I"). 
+
 The default type="II" is to augment with a censoring term, that is solve 
 \begin{align*}
   &  U(\beta,\hat G_c) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
@@ -86,10 +87,10 @@ Which estimator performs the best depends on the censoring distribution and it s
 overall quite nicely (see Blanche et al (2023) and Overgaard (2024)).  For the full estimated censoring model all estimators have the
 same influence function (see Blanche et al (2023)).
 
-Additional functions logitATE, and binregATE computes the average treatment effect. 
+Additional functions logitATE, and binregATE computes the average treatment effect based on propensity and outcome modelling. 
 We demonstrate this in another vignette. 
 
-The functions logitATE/binregATE can be used there is no censoring and we thus have simple binary outcome. 
+The functions logitATE/binregATE can be used when there is no censoring and we thus have simple binary outcome. 
 
 The variance is based on sandwich formula with IPCW adjustment (using the influence functions), 
 and naive.var is the variance under known censoring model. The influence functions are stored in the output. 
@@ -127,8 +128,7 @@ Further the censoring model can depend on strata
 Absolute risk differences and ratio
 ===================================
 
-Now for illustrations I wish to consider the absolute risk difference
-depending on tcell 
+Now for illustrations we consider the absolute risk difference depending on tcell 
 
 ```{r}
  outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
@@ -184,7 +184,7 @@ then fit the binomial regression model based on this augmentation term.
 Here we compute the augmentation based on stratified non-parametric estimates of $F_1(t,S(X))$, 
 where $S(X)$ gives strata based on $X$ as a working model. 
 
- Computes  the augmentation term for each individual as well as the sum
+Computes  the augmentation term for each individual as well as the sum
 \begin{align*}
  A & = \int_0^t H(u,X) \frac{1}{S^*(u,s)} \frac{1}{G_c(u)} dM_c(u)
 \end{align*}
