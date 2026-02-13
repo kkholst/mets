@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-
-The binregATE function can fit a logistic link model with IPCW adjustment for a specific time-point, 
+The binregATE function can estimate the average treatment treatment effect of binary outcomes with 
+IPCW adjustment for a specific time-point, 
 and can thus be used for describing survival or competing risks data.
 The function can be used for large data and is completely scalable, that is, linear in the data. 
 A nice feature is that influcence functions are computed and are available.
@@ -60,6 +60,14 @@ We here generate similar data by assuming that the two cumlative incidence curve
 have censoring that depends on the covariates via a Cox model. All this is wrapped in the kumarsim function. 
 The simulation does not deal with possible violations of the bound that $F_1+F_2 < 1$. But as we increase the 
 sample size we still see that we recover the parameters of cause 2. 
+
+We start by computing the average treatement effects for the transplant periods (gp) to get started, and then consider 
+the possible interaction between gp and donor type (dnr) and estimate all contrasts between the risk estimates for all combinations
+of gp and dnr. We later return to  a more detailed explanantion of the setting with the key components being
+ 
+  - an outcome model (fitted by IPCW), (Event() ~ .....)
+  - a propensity score model (using logistic regression (treat.model=...))
+  - an IPCW weight estimated using a  stratified Kaplan-Meier  model (cens.model=~strata(..))
 
 
 ```{r}
@@ -101,7 +109,8 @@ or as the first argument on the rhs of the response model.
 
 The binregATE default uses binreg with its default to fit the working model and is 
 recommended, but the logitIPCW and logitIPCWATE can also be used and are GLM-type 
-IPCW weighted models (see binreg help page/vignette). 
+IPCW weighted models (see binreg help page/vignette).  We can compare the logitIPCWATE/logitIPCW
+with that of wglm and its ate function in the riskRegression package, and they agree. 
 
 ```{r}
 ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
@@ -136,7 +145,6 @@ The cluster argument should not be used for the logitIPCWATE, but works for binr
 Average treatment for Competing risks data 
 ==========================================
 
-
 The binreg function does direct binomial regression for one time-point, $t$, 
 fitting the model 
 \begin{align*}
@@ -155,9 +163,6 @@ The function logitIPCW instead considers  the EE the EE
  U(\beta) = &  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
 \end{align*}
 The two score equations are quite similar, and exactly the same when the censoring model is fully-nonparametric given $X$.
-
- - It seems that the binreg estimating equations most often is preferable to use, 
-    and the estimating equation used is also augmented in the default implementation (see the binreg vignette).
 
 Additional functions logitATE, and binregATE computes the average treatment effect. We demonstrate their use below. 
 
