@@ -6,6 +6,7 @@ test.R
 inst/README.html
 inst/README_files
 inst/README.md
+inst/README.tex
 inst/man
 docs
 *.gcno
@@ -34,7 +35,10 @@ vignettes/*.Rout
 vignettes/*.org
 vignettes/auto
 vignettes/runRmd
+vignettes/makeR
 vignettes/makePDF
+vignettes/man
+vignettes/README.Rmd
 *.o
 *.txt
 *.so
