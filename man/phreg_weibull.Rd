@@ -34,7 +34,7 @@ predictions and simulations)}
 Fits a Cox-Weibull with cumulative hazard given by \deqn{
   \Lambda(t) = \lambda \cdot t^s } where \eqn{s} is the shape parameter, and
   \eqn{\lambda} the rate parameter. We here allow a regression model for
-  both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=e
+  both parameters \deqn{\lambda := \exp(\beta^\top X)} \deqn{s :=
   \exp(\gamma^\top Z)} as defined by `formula` and `shape.formula`
   respectively.
 }
