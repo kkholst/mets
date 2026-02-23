@@ -28,20 +28,25 @@ then it uses the mlogit for propensity score modelling.  We consider the outcome
 the number of causes. The default model is the exp(X^ beta) and otherwise a linear model is used. 
 
 Estimates the ATE using the the standard binary double robust estimating equations that are IPCW censoring adjusted.
+
+In the example given here, out gives the ATE for the total RMTL, and out1 is ATE the RMTL for cause 1. These are then combined into the percentage of the 
+total RMTL due to cause 1 for the treated and un-treated (that are given on log-scale), these ratio's are then compared with another ratio (still on log-scale). 
+Standard errors are based on the derived influence functions.
 }
 \examples{
 library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
-out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
+out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet,outcome="rmtl")
 summary(out)
 
 out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
-                   treat.model=tcell~platelet)
+                   treat.model=tcell~platelet,outcome="rmtl")
 summary(out1)
 
 ratioATE(out,out1,h=function(x) log(x))
 }
 \references{
-Scheike, T. and  Holst, K. K. Restricted mean time lost for survival and competing risks data using mets in R, WIP
+Scheike, T. and  Holst, K. K., Restricted mean time lost for survival and competing risks data using mets in R, WIP
+Scheike, T. and  Tanaka, S.,   Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
 }
 \author{
 Thomas Scheike
