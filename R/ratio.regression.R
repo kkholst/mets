@@ -78,7 +78,7 @@
 binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
-	   outcome=c("cif","rmtl"),model=c("logit","exp","lin"),Ydirect=NULL,...)
+	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
