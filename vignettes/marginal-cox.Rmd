@@ -57,7 +57,7 @@ in each cluster and a variance parameter at $2$
 ```{r}
  library(mets)
  options(warn=-1)
- set.seed(1000) # to control output in simulatins for p-values below.
+ set.seed(1000) # to control output in simulations for p-values below.
  n <- 1000
  k <- 5
  theta <- 2
@@ -173,7 +173,7 @@ gout <- gof(out)
 gout
 ```
 
-The p-value reflects wheter the observed score process is consistent with
+The p-value reflects whether the observed score process is consistent with
 the model. 
 
 ```{r}

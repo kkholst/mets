@@ -28,7 +28,7 @@ Simple data manipulation for data-frames
 
    *  Renaming variables, Deleting variables
    *  Looking at the data
-   *  Making new variales for the analysis
+   *  Making new variables for the analysis
    *  Making factors (groupings)
    *  Working with factors
    *  Making a factor from existing numeric variable and vice versa
@@ -166,7 +166,7 @@ melanoma=dkeep(melanoma,~thick+sex+status+days)
 names(melanoma)
 ```
 
-This can also be done with direct asignment 
+This can also be done with direct assignment 
 
 ```{r}
 data(melanoma)
@@ -214,7 +214,7 @@ Getting summaries
 dsummary(melanoma)
 ```
 
-or for specfic variables
+or for specific variables
 
 ```{r}
 dsummary(melanoma,~thick+status+sex)
@@ -297,7 +297,7 @@ head(melanoma)
 ```
 
 
-Making new variales for the analysis
+Making new variables for the analysis
 =====================================
 
 To define a bunch of new covariates within a data-frame
@@ -328,7 +328,7 @@ melanoma=dcut(melanoma,~thick,breaks=c(0,200,500,800,2000))
 ```
 
 
-New variable is named thickcat.0 by default.
+New variable is named `thickcat.0` by default.
 
 To see levels of factors in data-frame
 

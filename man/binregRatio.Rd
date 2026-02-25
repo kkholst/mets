@@ -22,7 +22,7 @@ binregRatio(
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmtl"),
+  outcome = c("rmtl", "cif"),
   model = c("logit", "exp", "lin"),
   Ydirect = NULL,
   ...

@@ -24,7 +24,7 @@ library(mets)
 The cifreg function can fit the Fine-Gray model and the logit-link cumulative incidence function for the 
 cause of interest for competing risks, and is completely scalable, that is, linear in the data. 
 In addition, for the Fine-Gray model predictions can be provided standard errors for specific time-points based on 
-influence functions for the baseline and the regression coeficients.  
+influence functions for the baseline and the regression coefficients.  
 
 To summarize
 
@@ -46,7 +46,7 @@ Fine-Gray model
 \end{align*}
 
 In the case of independent right-censoring with the censoring distribtion $G_c(t,X) = P(C > t | S(X))$ where
-$S(X)$  is a set of strata defined from $X$, then an ubiased estimating equation is given by 
+$S(X)$  is a set of strata defined from $X$, then an unbiased estimating equation is given by 
 \begin{align*}
   U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where } 
 	E_n(t,\beta)=\frac{\tilde S_1(t,\beta) }{\tilde S_0(t,\beta)},
@@ -84,7 +84,7 @@ so the effect of an increase in $X_1$ is $\beta_1$ and leads to $1-F_1(t,X)$ on 
 ```{r}
  library(mets)
  options(warn=-1)
- set.seed(1000) # to control output in simulatins for p-values below.
+ set.seed(1000) # to control output in simulations for p-values below.
 
  rho1 <- 0.2; rho2 <- 10
  n <- 400
@@ -130,7 +130,7 @@ SE's for the baseline and predictions of FG
 ===========================================
 
 The standard errors reported for the FG-estimator are based on the i.i.d 
-decompostion (influence functions) of the estimator that we give later. A similar decompostion
+decompostion (influence functions) of the estimator that we give later. A similar decomposition
 exist for the baseline and is needed when standard errors of predictions are computed. These
 are a bit harder to compute for all time-points simultaneously, but they can be
 obtained for specific timepoints jointly with the iid decomposition of the regression coefficients and
@@ -149,8 +149,8 @@ plot(pfg,ylim=c(0,0.2))
 for (i in 1:4) lines(c(5,5)+i/10,pfgse[i,3:4],col=i,lwd=2)
 ```
 
-The iid decompostions are stored inside Biid, in addition we note that the 
-iid decompostions for $\hat \beta - \beta_0$ are obtained by the command iid()
+The iid decompositions are stored inside Biid, in addition we note that the 
+iid decompositions for $\hat \beta - \beta_0$ are obtained by the command iid()
 
 # Comparison 
 
@@ -352,7 +352,7 @@ estimate(ccAR_ipcw2)
 
 When there is only administrative censoring the Fine-Gray model 
 can similarly be estimated using the modified risk-set and the 
-phreg/coxph function (thus equvalent to ccA)
+phreg/coxph function (thus equivalent to ccA)
 
 ```{r}
 dats$entry <- 0

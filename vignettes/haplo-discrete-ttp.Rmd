@@ -83,7 +83,7 @@ head(ghaplos)
 ```
 
 The first id=1 has the haplotype fully observed, but id=2 has two possible haplotypes consistent with the
-observed genotype for this id, the probabiblities are 7\% and 93\%, respectively. 
+observed genotype for this id, the probabilities are 7\% and 93\%, respectively. 
 
 With the baseline given above we can specify a regression design that gives an effect if a "type" 
 is present (sm=0), or an additive effect of haplotypes (sm=1): 

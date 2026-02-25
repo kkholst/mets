@@ -1,5 +1,5 @@
 ---
-title: "Two-Stage Randomization for for Competing risks and Survival outcomes"
+title: "Two-Stage Randomization for Competing risks and Survival outcomes"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
     fig_width: 7.15
     fig_height: 5.5        
 vignette: >
-  %\VignetteIndexEntry{Two-Stage Randomization for for Competing risks and Survival outcomes}
+  %\VignetteIndexEntry{Two-Stage Randomization for Competing risks and Survival outcomes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-Two-Stage Randomization for for Competing risks and Survival outcomes
+Two-Stage Randomization for Competing risks and Survival outcomes
 =====================================================================
 
  Under two-stage randomization we can estimate the average treatment effect $E(Y(i,\bar k))$ of treatment regime $(i,\bar k)$. 
@@ -31,13 +31,13 @@ and
      -  for all responses, randomization A1 = (k_1), so treatment k_1 
      -  response*A1 = (k_1, k_2), so treatment k_1 if response 1, and treatment k_2 if response 2.
 
- The estimator can be agumented in different ways: using the two randomizations and the dynamic censoring augmentatation.
+ The estimator can be augmented in different ways: using the two randomizations and the dynamic censoring augmentation.
 
 Estimating  $\mu_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) <= t)$, restricted mean
 $E( \min(Y(i,\bar k),\tau))$  or years lost $E( I(\epsilon=v) \cdot (\tau  -  \min(Y(i,\bar k),\tau)))$ 
 using IPCW weighted estimating equations : \\
 
- The solved estimating eqution is 
+ The solved estimating equation is 
  \begin{align*}
  \sum_i  \frac{I(min(T_i,t) < G_i)}{G_c(min(T_i ,t))} I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 
  \end{align*}
@@ -189,7 +189,7 @@ with the proportion doing this. This is equivalent to
 the IPTW (inverse probability of treatment weighted estimator). We estimate 
 the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those that are consistent with ending on $B1$. 
 $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$, but stays $1$ if the subject is treated with $B1$. 
-We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similary, for those that end being consistent with $B2$.
+We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similarly, for those that end being consistent with $B2$.
 Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
 
   - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
@@ -221,7 +221,7 @@ summary(pll1,times=12)
 summary(pll0,times=12)
 ```
 
-The propensity score mode can be extended to use covariates to get increased efficiency.
+The propensity score model can be extended to use covariates to get increased efficiency.
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
 
 

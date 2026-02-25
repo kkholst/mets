@@ -35,13 +35,13 @@ different approaches are available in the mets package
    *  Binary models and adjust for censoring with inverse probabilty of  censoring weighting
       - biprobit  model
 
-   *  Bivariate surival models of Clayton-Oakes type
+   *  Bivariate survival models of Clayton-Oakes type
       + With regression structure on dependence parameter 
       + With additive gamma distributed random effects
       + Special functionality for polygenic random effects modelling 
         such as ACE, ADE ,AE and so forth.
 
-   *  Plackett OR model model 
+   *  Plackett OR model
       + With regression structure on OR dependence parameter 
 
    * Cluster stratified Cox 
@@ -63,7 +63,7 @@ $$
 where $s(k,i)$ is a strata variable. 
 
 
-The constructed likelihood is a composite likehood based on 
+The constructed likelihood is a composite likelihood based on 
 
   * all pairs within each cluster (when the pairs argument is not used) 
 
@@ -85,7 +85,7 @@ Gamma distributed frailties
 ==========================
 
 The focus of this vignette is describe how to work on bivariate survival data using the
-addtive gamma-random effects models. We present two different ways of specifying 
+additive gamma-random effects models. We present two different ways of specifying 
 different dependence structures. 
 
 * Univariate models with a single random effect for each cluster and with 
@@ -153,7 +153,7 @@ is constant within clusters.  The consequence of this is that
 the total random effect for each subject within a cluster, 
 $V_j^T (Z_1,...,Z_d)$, is gamma distributed with variance $1/\nu$. 
 
-The DEFAULT parametrization (var.par=1) uses the variances of the random effecs 
+The DEFAULT parametrization (var.par=1) uses the variances of the random effects 
 \begin{align*}
  \theta_j  = \lambda_j/\nu^2
 \end{align*}
@@ -173,7 +173,7 @@ The DEFAULT parametrization (var.par=1) uses the variances of the random effecs
 Assume that the marginal survival distribution for subject $i$ within cluster $k$ is given
 by $S_{X_{k,i}}(t)$ given covariates $X_{k,i}$. 
 
-Now given the random effects of the cluster $Z_k$ and the covariates$X_{k,i}$ $i=1,\dots,n_k$ 
+Now given the random effects of the cluster $Z_k$ and the covariates $X_{k,i}$ $i=1,\dots,n_k$ 
 we assume that subjects within the cluster are independent with survival distributions 
 \begin{align*}
   \exp(-  ( V_{k,i} Z_k)  \Psi^{-1} (\nu,S_{X_{k,i}}(t)) ).
@@ -196,15 +196,15 @@ Further, we can express the multivariate survival distribution as
 In the case of considering just pairs, we write this function as $C(S_{k,i}(t),S_{k,j}(t))$.
 
 In addition to survival times from this model, we assume that we independent right censoring present 
-$U_{k,i}$ such that the given $V_k$ and the covariates$X_{k,i}$ $i=1,\dots,n_k$ $(U_{k,1},\dots,U_{k,n_k})$
+$U_{k,i}$ such that the given $V_k$ and the covariates $X_{k,i}$ $i=1,\dots,n_k$ $(U_{k,1},\dots,U_{k,n_k})$
 of $(T_{k,1},\dots,T_{k,n_k})$, and the conditional censoring distribution do not depend on $V_k$.
 
-One consequence of the model strucure is that the Kendall's can be computed for 
+One consequence of the model structure is that the Kendall's can be computed for 
 two-subjects $(i,j)$ across two clusters ``1'' and ``2'' as
 \begin{align}
 E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2i}Z_2 ) ( V_{1j}Z_1 + V_{2j}Z_2 )} ) 
 \end{align}
-under the assumption that that we compare pairs with equivalent marginals, 
+under the assumption that we compare pairs with equivalent marginals, 
 $S_{X_{1,i}}(t)= S_{X_{2,i}}(t)$ and $S_{X_{1,j}}(t)= S_{X_{2,j}}(t)$, 
 and that $S_{X_{1,i}}(\infty)= S_{X_{1,j}}(\infty)=0$. 
 Here we also use that $\eta$ is the same across clusters.
@@ -216,11 +216,11 @@ Univariate gamma (clayton-oakes) model twostage models
 =======================================================
 
 We start by fitting simple Clayton-Oakes models for the data, that is
-with an overall random effect that is Gamma distrubuted with variance
+with an overall random effect that is Gamma distributed with variance
 $\theta$. We can fit the model by a pseudo-MLE (twostageMLE)
 and a pairwise composite likelihood approach (twostage). 
 
-The pseudo-liklihood and the composite pairwise likelhood should give 
+The pseudo-likelihood and the composite pairwise likelihood should give 
 the same for this model since we have paired data. 
 In addition the log-parametrization is illustrated with the 
 var.link=1 option. 
@@ -289,8 +289,8 @@ linked directly to the dependence parameter $\theta$ and is $1/(1+2/\theta)$.
 A very useful extension of the model the constant 
 cross-hazard ratio (CHR) model is the 
 piecewise constant cross-hazard ratio (CHR) for bivariate survival
-data \cite{nan2006piecewise}, and this model was extended to competing
-risks in \cite{shih2010modeling}. 
+data (Nan et al., 2006), and this model was extended to competing
+risks in Shih and Lu (2010). 
 
 In the survival setting we let the CHR 
 \begin{align}
@@ -352,7 +352,7 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
 ```
 
  The last part of the model structure is to decide how the random effects
- are shared for the different pairs (MZ and DZ), this is specfied by
+ are shared for the different pairs (MZ and DZ), this is specified by
  the random effects design ($V_1$ and $V_2$) for each pair. 
  This is here specified by an overall designmatrix for each subject 
  (since they enter all pairs with the same random effects design).
@@ -385,7 +385,7 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
  summary(ts)
 ```
 
- - A nice feature of the procdure is that it scales linearly in the number of observations
+ - A nice feature of the procedure is that it scales linearly in the number of observations
     - 1 mill pairs had a running time of around 100 seconds. 
 
 ```{r}
@@ -464,13 +464,13 @@ summary(ts)
 ```
 
 The model can also be fitted by specifying the pairs that 
-one wants for the pairwise likelhood. This is done by
+one wants for the pairwise likelihood. This is done by
 specifying the pairs argument.  We start by considering all pairs as we also did before. 
 
 All pairs can be written up by calling the familycluster.index
 function. 
 
-There are xx pairs to consider, and the first 6 pairs for the first family 
+There are <!-- TODO: insert pair count --> pairs to consider, and the first 6 pairs for the first family 
 is written out here. 
 
 ```{r}
@@ -569,13 +569,13 @@ mf <- 1*(pair.types[,1]=="mother" & pair.types[,2]=="father")
 pairs.new <- cbind(pair.new,(mf==1)*1+(mf==0)*3,(mf==1)*2+(mf==0)*4,(mf==1)*1+(mf==0)*2,(mf==1)*3+(mf==0)*4)
 ```
 
-pairs.new is matix with 
+pairs.new is a matrix with 
 
- * columns 1:2 giving the indeces of the  data points
+ * columns 1:2 giving the indices of the  data points
 
- * columns 3:4 giving the indeces of the random.design for the different pairs
+ * columns 3:4 giving the indices of the random.design for the different pairs
 
- * columns 5 giving the indeces of the theta.des written as rows 
+ * columns 5 giving the indices of the theta.des written as rows 
 
  * columns 6 giving the number of random variables for this pair
 
@@ -590,7 +590,7 @@ head(dataid)
 ```
 
 The random effects for these are specified from random effects with design read from the random.design, using
-the rows (1,2), (3,4) and (3,4), respecively, and with random effects that have variances given by 
+the rows (1,2), (3,4) and (3,4), respectively, and with random effects that have variances given by 
 theta.des rows, 1,2, and 2 respectively in the three cases. 
 For the first pair (1,2), the random vectors and their variances are given by, 
 (mother, father) pair, 
@@ -672,10 +672,9 @@ summary(tsdid4)
 Pairwise dependence modelling 
 ------------------------------
 
-We now illustate how to estimate all pairwise associations between different
+We now illustrate how to estimate all pairwise associations between different
 family-members using the twostage function. They key is specify the pairs for
 the composite likelihood directly  and then the associated design-matrix
-directly.  This needs to be done looking at both subjects in the pairs, and the
 design therefore follows the pairs and is a matrix where its row is given as
 the third column in the pairs argument. 
 
@@ -724,7 +723,7 @@ half the genetic effect and the environmental effect that was also shared.
 Univariate plackett model twostage models 
 ============================================
 
-The copula known as the Plackett distribution, see \cite{plackett1965,anderson1992time,ghosh2006sjs}, is on the form
+The copula known as the Plackett distribution (Plackett, 1965; Anderson et al., 1992; Ghosh et al., 2006), is on the form
 \begin{align}
   C(u,v; \theta) =
   \begin{cases}

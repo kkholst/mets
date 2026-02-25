@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-Discrete Inteval Censored survival times 
+Discrete Interval Censored survival times 
 ========================================
 
 We consider the cumulative odds model for the probability of dying before time t: 
@@ -34,7 +34,7 @@ We consider the cumulative odds model for the probability of dying before time t
 Input are intervals given by $]t_l,t_r]$ where t_r can be infinity
 for right-censored intervals. When the data is discrete,
 in contrast to grouping of continuous data, $]0,1]$ then
-the intervals $]j,j+1]$ will be equvilant to an observation at j+1 (see below example).
+the intervals $]j,j+1]$ will be equivalent to an observation at j+1 (see below example).
 
 Likelihood is maximized:
 \begin{align*}
@@ -80,7 +80,7 @@ We note that the probability of dying is increased considerably for all covariat
 Now using this discrete survival model we simulate some data from this model 
 
 ```{r}
-set.seed(1000) # to control output in simulatins for p-values below.
+set.seed(1000) # to control output in simulations for p-values below.
 n <- 200
 Z <- matrix(rbinom(n*4,1,0.5),n,4)
 outsim <- simlogitSurvd(out$coef,Z)
@@ -96,7 +96,7 @@ plotSurvd(pred,se=TRUE)
 Finally, we look at some data and compare with the icenReg package that can also fit 
 the proportional odds model for continous or discrete data. 
 We make the data fully interval censored/discrete by
-letting also exact obsevations be only observed to be in an interval.
+letting also exact observations be only observed to be in an interval.
 
 We consider the interval censored survival times for time from onset 
 of diabetes to to diabetic nephronpathy, then modify it to 
@@ -174,7 +174,7 @@ summary(fit)
 ```
 
 Also agrees with the cumulative link regression of the ordinal package,
-although the baseline is parametrized differently. In additon the clm is
+although the baseline is parametrized differently. In addition the clm is
 describing the probability of surviving rather than the probabibility of 
 dying. 
 

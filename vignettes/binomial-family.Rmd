@@ -47,13 +47,13 @@ These last three models are all fitted in the mets package using composite
 likelihoods based on pairs within clusters. The models can be fitted specifically based 
 on specifying which pairs one wants to use for the composite score. 
 
-The models are described in futher details in the binomial-twin vignette. 
+The models are described in further details in the binomial-twin vignette. 
 
 
 Simulated family data
 ====================
 
-We start by simulating family data with and additive gamma structure
+We start by simulating family data with an additive gamma structure
 on ACE form.  Here 10000 families consisting of two parents and
 two children. The response is ybin and there is one covariate x. 
 
@@ -214,11 +214,11 @@ pairs.new <- cbind(pair.new,(mf==1)*1+(mf==0)*3,(mf==1)*2+(mf==0)*4,(mf==1)*1+(m
 
 pairs.new is matrix with 
 
- * columns 1:2 giving the indeces of the  data points
+ * columns 1:2 giving the indices of the  data points
 
- * columns 3:4 giving the indeces of the random.design for the different pairs
+ * columns 3:4 giving the indices of the random.design for the different pairs
 
- * columns 5 giving the indeces of the theta.des written as rows 
+ * columns 5 giving the indices of the theta.des written as rows 
 
  * columns 6 giving the number of random variables for this pair
 
@@ -231,7 +231,7 @@ not relevant due to fewer random effects, as is the case here for pairs
 that do not share genetic effects.
 
 
-For pair 1 that is a mother/farther pair, we see that they share 
+For pair 1 that is a mother/father pair, we see that they share 
 1 environmental random effect of size 1. There are also two genetic
 effects that are unshared between the two. 
 So a total of 3 random effects are needed here. The theta.des relates the 3 
@@ -264,7 +264,7 @@ summary(tsdid2)
 ```
 
 The same model can be specifed even simpler via the kinship
-coefficient.  For this speicification there are 4 random effects for
+coefficient.  For this specification there are 4 random effects for
 each pair, but some have variance 0. The mother-father pair, here
 shares a random effect with variance 0, and have two non-shared genetic 
 effects with full variance, in addition to a fully shared environmental 
@@ -361,7 +361,7 @@ effects. All other combinations should have the same dependence as also seem
 to be the case. 
 
 To fit the OR model it is generally recommended to use the var.link to
-use the parmetrization with log-odd-ratio regression.
+use the parametrization with log-odd-ratio regression.
 
 
 ```{r}

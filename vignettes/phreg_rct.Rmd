@@ -48,7 +48,7 @@ Starting point is that Cox's partial likelihood score can be used for estimating
 
   - the solution will converge to $\beta^*$ the Struthers-Kalbfleisch solution of the score and will have robust standard errors Lin-Wei. 
 
- The estimator can be agumented in different ways using additional covariates at the time of randomization and a censoring augmentation. 
+ The estimator can be augmented in different ways using additional covariates at the time of randomization and a censoring augmentation. 
  The solved estimating eqution is 
  \begin{align*}
  \sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0 
@@ -58,7 +58,7 @@ Starting point is that Cox's partial likelihood score can be used for estimating
  AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
  \end{align*}
  where possibly $P(A_0=1|X_0)=\pi_0(X_0)$ but does not depend on covariates under randomization, 
- and furhter using the covariates from augmentR1, to augment with R indiciating that the
+ and further using the covariates from augmentR1, to augment with R indiciating that the
  randomization takes place or not,
  \begin{align*}
  AUG_1 = R ( A_1 - \pi_1(X_1))  X_1 \gamma_1
@@ -141,7 +141,7 @@ summary(out)
 ###out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X,cens.model=~+1)
 ```
 
-Results consitent with speff of  library(speff2trial) 
+Results consistent with speff of  library(speff2trial) 
 
 ```{r}
 ###library(speff2trial) 
@@ -199,7 +199,7 @@ with the proportion doing this. This is equivalent to
 the IPTW (inverse probability of treatment weighted estimator). We estimate 
 the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those that are consistent with ending on $B1$. 
 $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$, but stays $1$ if the subject is treated with $B1$. 
-We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similary, for those that end being consistent with $B2$.
+We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similarly, for those that end being consistent with $B2$.
 Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
 
   - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
@@ -231,7 +231,7 @@ summary(pll1,times=1:10)
 summary(pll0,times=1:10)
 ```
 
-The propensity score mode can be extended to use covariates to get increased efficiency.
+The propensity score model can be extended to use covariates to get increased efficiency.
 Note also that the propensity scores for $A0$ will cancel out in the different strata. 
 
 We now illustrate how to fit a  Cox model of the form

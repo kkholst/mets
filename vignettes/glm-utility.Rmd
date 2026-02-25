@@ -24,7 +24,7 @@ library(mets)
 Utility functions for GLM objects
 =================================
 
-Getting the OR with confidence intervals  using the GEE (sandwhich) 
+Getting the OR with confidence intervals  using the GEE (sandwich) 
 standard errors
 
 ```{r}

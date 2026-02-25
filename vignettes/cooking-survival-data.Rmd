@@ -1,6 +1,6 @@
 ---
-title: "WIP: Cooking survival data, 5 minute recipes"
-aouthor: Klaus Holst & Thomas Scheike
+title: "Cooking Survival Data: 5-Minute Recipes"
+author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -84,7 +84,7 @@ $$
   \lambda_0(t) \exp( X^T \beta)
 $$
 where $\beta$ is a $p$-dimensional regression coefficient and $\lambda_0(t)$ a baseline 
-hazard funcion, 
+hazard function, 
 then it is useful to observe also that 
 $\Lambda^{-1}(E/HR)$ with $HR=\exp(X^T \beta)$ has the same distribution as $T$ given $X$. 
 
@@ -110,7 +110,7 @@ draw from the distribution of $T$ given $T>s$ (all given $X$ ), then we note tha
 $$
 \Lambda_0^{-1}( \Lambda_0(s) + E/HR)) 
 $$
-with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distributiion we are after. 
+with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distribution we are after. 
 
 This is again a consequence of a simple calculation
 $$
@@ -118,7 +118,7 @@ $$
 $$
 
 The engine is to simulate data with a given linear cumulative hazard. First generating survival data based on
-the cumulative hazard cumhaz:j
+the cumulative hazard `cumhaz`:
 
 ```{r}
  nsim <- 1000
@@ -360,7 +360,7 @@ data to validate the procedure.
 
 # Cumulative incidence 
 
-In this section we discuss how to simulate competing risks data that have a specfied cumulative 
+In this section we discuss how to simulate competing risks data that have a specified cumulative 
 incidence function.  We consider for simplicity a competing risks model with two causes and denote the
 cumulative incidence curves as $F_1(t,X) = P(T < t, \epsilon=1|X)$ and  $F_2(t,X) = P(T < t, \epsilon=2|X)$.
 Here given some covariate $X$.
@@ -372,7 +372,7 @@ conditional distribution.
 For simplicity we consider survival times in a fixed interval $[0,\tau]$, and first flip a coin with 
 and probabilities $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or dies. 
 Then if subject dies we then flip a coin with probabilities $F_1(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ and 
-$F_2(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ to decide if it is a cause $!$,  $\epsilon=1$, or a cause 2, $\epsilon=2$. 
+$F_2(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ to decide if it is a cause 1, $\epsilon=1$,  $\epsilon=1$, or a cause 2, $\epsilon=2$. 
 Finally we draw the survival time using the cumulative incidence distribution.
 The timing of a cause $j$ event is  thus 
 $T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
@@ -399,9 +399,9 @@ F_2(t,X)  & =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta)}{1+\Lambda_2(t,\rho_2)
 \end{align*}
 
 The baselines are given as $\Lambda_j(t) = \rho_1 (1- exp(-t/r_j))$ where $\rho_j$ 
-and $r_j$ are postive constants, and here $\tau=6$. 
+and $r_j$ are positive constants, and here $\tau=6$. 
 
-To simulate the survival time we use a piecwise linear approximation of the cumulative
+To simulate the survival time we use a piecewise linear approximation of the cumulative
 incidence functions and will thus depends on some grid for linear approximation. Our linear 
 approximation can be made arbitrarily close to any specific smooth cumulative incidence function.
 
@@ -457,15 +457,15 @@ We can also use the parameters based on fitted models
 ## CIF Delayed entry
 
 Now assume that given covariates $F_1(t;X) = P(T < t, \epsilon=1|X)$ and  $F_2(t;X) = P(T < t, \epsilon=2|X)$ are two 
-cumulative incidence functions that satistifes the needed constraints. We wish to generate data that follows these two
+cumulative incidence functions that satisfies the needed constraints. We wish to generate data that follows these two
 piecewise linear cumulative incidence functions with delayed entry at time $s$.  Given delayed entry at time $s$ we 
 should thus generate data that follows the cumulative incidence functions
 $$
-\tilde F_1(t,s;X)=   \frac{F_1(t;X) - F_1(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
+\tilde F_1(t,s;X)=   \frac{F_1(t;X) - F_1(s;X)}{ 1 - F_1(s;X) - F_2(s;X)}
 $$
 and 
 $$
-\tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;;X)}{ 1 - F_1(s;X) - F_2(s;X)}
+\tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;X)}{ 1 - F_1(s;X) - F_2(s;X)}
 $$
 this can be done according to the recipe in the previous section.  
 

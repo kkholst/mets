@@ -83,13 +83,13 @@ $V_{12}$ we have independent logistic regression models
 \[
 probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
 \]
-where  Z$  is a bivariate normal distribution with some covariance 
+where $Z$ is a bivariate normal distribution with some covariance 
 $\Sigma$. The general covariance structure 
 $\Sigma$ makes the model very flexible. 
 
 We note that 
 
- - Paramters $\beta$  are subject specific
+ - Parameters $\beta$  are subject specific
  - The $\Sigma$ will reflect dependence
 
 
@@ -127,8 +127,8 @@ This odds-ratio is given covariates as well as marginal covariates.
 The odds-ratio and marginals specify the joint bivariate distribution via
 the so-called Placckett-distribution. 
 
-One way of fitting this model is the ALR algoritm, the alternating 
-logistic regression ahd this has been described in several papers
+One way of fitting this model is the ALR algorithm, the alternating 
+logistic regression, and this has been described in several papers
 \cite{kuk2004permutation,kuk2007hybrid,qaqish2012orthogonalized}.
 We here simply estimate the parameters in a two stage-procedure
 
@@ -140,7 +140,7 @@ orthogonality, but some efficiency may be gained for the marginal parameters
 by using the full likelihood or iterative fitting such as for the ALR. 
 
 
-The pairwise odds-ratio model is very useful, but one do not have a random 
+The pairwise odds-ratio model is very useful, but one does not have a random 
 effects model. 
 
 
@@ -197,7 +197,7 @@ restrictions on parameters.
 This parametrization is obtained with the var.par=0 option that thus estimates
 $\theta$.
 
-The DEFAULT parametrization instead estimates the variances of the random effecs (var.par=1)
+The DEFAULT parametrization instead estimates the variances of the random effects (var.par=1)
 via the parameters $\nu$ 
 \[
  M \nu = ( \lambda_1/\lambda_{\bullet}^2, ...,\lambda_d/\lambda_{\bullet}^2)^T
@@ -215,9 +215,9 @@ We fit this model by
  - Estimating the marginal parameters via GEE
  - Using marginal estimates, estimate dependence parameters
 
-Even though the model not formaly in this formulation allows negative 
-correlation in practice the paramters can be negative and this reflects
-negative correlation. An advanatage is that no numerical integration is 
+Even though the model not formally in this formulation allows negative 
+correlation in practice the parameters can be negative and this reflects
+negative correlation. An advantage is that no numerical integration is 
 needed. 
 
 
@@ -284,7 +284,7 @@ summary(bin)
 
 
 We now consider further regression modelling of the OR structure by
-considering possible interactions between sex and zygozsity.
+considering possible interactions between sex and zygosity.
 We see that MZ has a much higher dependence and that males have
 a much lower dependence. We tested for interaction in this model and 
 these were not significant. 
@@ -300,8 +300,8 @@ summary(bina)
 Alternative syntax 
 ---------------------
 
-We now demonstrate how the models can fitted jointly and with anohter
-syntax, that ofcourse just fits the marginal model and subsequently fits
+We now demonstrate how the models can fitted jointly and with another
+syntax, that of course just fits the marginal model and subsequently fits
 the pairwise OR model. 
 
 First noticing as before that MZ twins have a much higher dependence. 

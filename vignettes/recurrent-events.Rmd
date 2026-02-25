@@ -34,14 +34,14 @@ Overview
 ========
 
 For recurrent events data it is often of interest to compute basic descriptive
-quantities to get some basic understanding of the phenonmenon studied. 
+quantities to get some basic understanding of the phenomenon studied. 
 We here demonstrate how one can compute: 
 
  * the marginal mean 
    * efficient marginal mean estimation with fast computation of standard errors
  * the Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
    * efficient regression augmentation of the Ghosh-Lin model
-   * clusters can be specfied
+   * clusters can be specified
    * allows a stratified baseline 
  * the variance of a recurrent events process
  * the probability of exceeding k events
@@ -57,9 +57,9 @@ bivariate recurrent events data, also with a possible terminating event:
    * Cox type rates 
  * with a terminal event with possibly multiple causes of death
    * Cox type rates 
- * frailty extenstions
+ * frailty extensions
  * the Ghosh-Lin model when the survival rate is on Cox form.
-   * frailty extenstions
+   * frailty extensions
  * The general illness death model with  Cox models for all hazards. 
 
 \begin{tikzpicture}[
@@ -126,7 +126,7 @@ We start by simulating some recurrent events data with two type of events with c
     + $\exp(Z_2) \lambda_2(t)$
     + $\exp(Z_3) \lambda_D(t)$
 
-* Dependence=3: We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be speicifed via a matrix
+* Dependence=3: We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be specified via a matrix
    cor.mat. We compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$.  
    Then the intensities are
     + $\tilde Z_1 \lambda_1(t)$
@@ -221,7 +221,7 @@ We start by generating some data to illustrate the computation of the marginal m
 
 ```{r}
 library(mets)
-set.seed(1000) # to control output in simulatins for p-values below.
+set.seed(1000) # to control output in simulations for p-values below.
 ```
 
 ```{r}
@@ -236,10 +236,10 @@ rr$strata <- floor((rr$id-0.01)/100)
 dlist(rr,.~id| id %in% c(1,7,9))
 ```
 
-The status variable keeps track of the recurrent evnts and their type, and death the timing of 
+The status variable keeps track of the recurrent events and their type, and death the timing of 
 death.
 
-To compute the marginal mean we simly estimate the two rates functions of the 
+To compute the marginal mean we simply estimate the two rates functions of the 
 number of events of interest and death by using the phreg function 
 (to start without covariates). Then the estimates are combined with standard 
 error computation in the recurrentMarginal function
@@ -322,7 +322,7 @@ Improving efficiency
 ======================
 
 To illustrate how the efficiency can be improved using heterogenity in the data, we
-now simulate some data with strong heterogenity. The dynmamic augmentation is 
+now simulate some data with strong heterogenity. The dynamic augmentation is 
 a regression on the history  for each subject consisting of the specified terms 
 terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt)) or by simply
 specifying these directly.  This was developed in Cortese and Scheike (2022).
@@ -662,7 +662,7 @@ That is very similar to the "product-limit" estimator for $E( (N_1^*(t))^2 )$
   \hat \mu_{1,2}(t) & =    \sum_{k=0}^K k^2 ( \hat F_{k}(t) - \hat F_{k+1}(t) ).
 \end{align}
 
-We use the esimator of the probabilty  of exceeding "k" events based on the fact that 
+We use the estimator of the probabilty  of exceeding "k" events based on the fact that 
 $I(N_1^*(t) \geq k)$ is  equivalent to 
 \begin{align*}
 	\int_0^t I(D > s) I(N_1^*(s-)=k-1) dN_1^*(s),

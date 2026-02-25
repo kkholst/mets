@@ -25,7 +25,7 @@ The binregATE function can estimate the average treatment treatment effect of bi
 IPCW adjustment for a specific time-point, 
 and can thus be used for describing survival or competing risks data.
 The function can be used for large data and is completely scalable, that is, linear in the data. 
-A nice feature is that influcence functions are computed and are available.
+A nice feature is that influence functions are computed and are available.
 
 In addition and to summarize
 
@@ -56,14 +56,14 @@ allogeneic transplant alone (N=465)) and time to transplant (ttt24: 1 for more t
 equal to 24 months (N=575))). 
 
 
-We here generate similar data by assuming that the two cumlative incidence curves are logistic and we
+We here generate similar data by assuming that the two cumulative incidence curves are logistic and we
 have censoring that depends on the covariates via a Cox model. All this is wrapped in the kumarsim function. 
 The simulation does not deal with possible violations of the bound that $F_1+F_2 < 1$. But as we increase the 
 sample size we still see that we recover the parameters of cause 2. 
 
-We start by computing the average treatement effects for the transplant periods (gp) to get started, and then consider 
+We start by computing the average treatment effects for the transplant periods (gp) to get started, and then consider 
 the possible interaction between gp and donor type (dnr) and estimate all contrasts between the risk estimates for all combinations
-of gp and dnr. We later return to  a more detailed explanantion of the setting with the key components being
+of gp and dnr. We later return to  a more detailed explanation of the setting with the key components being
  
   - an outcome model (fitted by IPCW), (Event() ~ .....)
   - a propensity score model (using logistic regression (treat.model=...))
@@ -158,7 +158,7 @@ is based on IPCW adjusted estimating equation (EE)
 where $G_c(t)=P(C > t)$, the censoring survival distribution, and with $\Delta(t) = I( C > T \wedge t)$ the indicator
 of being uncensored at time $t$. 
 
-The function logitIPCW instead considers  the EE the EE
+The function logitIPCW instead considers the EE
 \begin{align*}
  U(\beta) = &  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
 \end{align*}
@@ -175,7 +175,7 @@ output. Further, the standard errors can be
 cluster corrected by specifying the relevant cluster for the working outcome model.
 
  - We estimate the average treatment effect of our binary response $I(T \leq t, \epsilon=1)$
-   - Using a working logistic model for the resonse (possibly with a cluster specification)
+   - Using a working logistic model for the response (possibly with a cluster specification)
    - Using a working logistic model for treatment given covariates
      - The binregATE can also handle a factor with more than two levels and then uses
         the mlogit multinomial regression function (of mets). 
@@ -197,7 +197,7 @@ to estimate the risk $E(Y(a))$.
 
 The DR-estimator instead uses the estimating equations that are double robust wrt 
 
-   - A working logistic model for the resonse
+   - A working logistic model for the response
    - A working logistic model for treatment given covariates
 
 This is estimated using the estimator 
@@ -219,7 +219,7 @@ where
  censoring probability. 
 
  We need that the censoring model is correct, so it can be important to use a sufficiently 
- large censorng model as we also illustrate below. 
+ large censoring model as we also illustrate below. 
 
    - The censoring model can be specified by strata (used for phreg
 
@@ -227,7 +227,7 @@ We also compute standard marginalization for average treatment effect  (called d
 \begin{align*}
 \sum \left[  m_1(X_i) - m_0(X_i) \right]
 \end{align*}
-and again standard errors are based on the related influcence functions and are also returned. 
+and again standard errors are based on the related influence functions and are also returned. 
 
 For large data where there are more than 2 treatment groups the 
 computations can be memory extensive when

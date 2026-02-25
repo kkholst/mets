@@ -46,7 +46,7 @@ The binreg function does direct binomial regression for one time-point, $t$, fit
 \begin{align*}
 P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta)  = F_1(t,X,\beta)
 \end{align*}
-based on an IPCW adjusted estmating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
+based on an IPCW adjusted estimating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
 \begin{align*}
  U(\beta,\hat G_c) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
 \end{align*}
@@ -57,7 +57,7 @@ The default type="II" is to augment with a censoring term, that is solve
 \begin{align*}
   &  U(\beta,\hat G_c) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
 \end{align*}
-where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivlent to the 
+where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivalent to the 
 pseudo-value approach (see Overgaard (2025)).
 
 The influence function for the type="II" estimator is 
@@ -84,7 +84,7 @@ The logitIPCW has influence function
 \end{align*}
 
 Which estimator performs the best depends on the censoring distribution and it seems that the binreg with type="II" performs 
-overall quite nicely (see Blanche et al (2023) and Overgaard (2024)).  For the full estimated censoring model all estimators have the
+overall quite nicely (see Blanche et al (2023) and Overgaard (2025)).  For the full estimated censoring model all estimators have the
 same influence function (see Blanche et al (2023)).
 
 Additional functions logitATE, and binregATE computes the average treatment effect based on propensity and outcome modelling. 
@@ -108,7 +108,7 @@ Examples
  bmt$time <- bmt$time+runif(nrow(bmt))*0.01
  bmt$id <- 1:408
 
- # logistic regresion with IPCW binomial regression 
+ # logistic regression with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
 ```
@@ -145,7 +145,7 @@ sum( c(1,-1) * ps[,1])
 
 Getting the standard errors are easy enough since the two-groups are
 independent. In the case where we in addition had adjusted for other covariates, however, we would need 
-the to apply the delta-theorem thus using the relevant covariances along the lines of 
+to apply the delta-theorem thus using the relevant covariances along the lines of 
 
 ```{r}
 dd <- data.frame(tcell=c(0,1))

@@ -43,7 +43,7 @@ in this case the the Natural Direct Effect (NDE) for fixed covariates $Z$ is
 \begin{align*}
  \mbox{OR}_{1,0|Z}^{\mbox{NDE}} = \frac{\mbox{odds}(Y(1,M(x))|Z)}{\mbox{odds}(Y(0,M(x))|Z)}  = \exp(\beta_1),
 \end{align*}
-and the Natural Inderect Effect (NIE) for fixed covariates $Z$ is 
+and the Natural Indirect Effect (NIE) for fixed covariates $Z$ is 
 \begin{align*}
  \mbox{OR}_{1,0|Z}^{\mbox{NIE}} = \frac{\mbox{odds}(Y(x,M(1))|Z)}{\mbox{odds}(Y(x,M(0))|Z)} = \exp(\beta_2).
 \end{align*}
@@ -78,7 +78,7 @@ transplantation from the Center for International Blood and Marrow Transplant Re
 analysis".  The data used in this paper consist of patients transplanted from 1995 to
 2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
 versus 1995-2000 (N=375). The two competing events were
-relapse (cause 2) and treatment-related mortality (TRM, cause 1)) 
+relapse (cause 2) and treatment-related mortality (TRM, cause 1) 
 defined as death without relapse.
 \cite{kumar-2012} considered the following risk covariates: 
 transplant time period (gp (main interest of the study): 1 for transplanted in
@@ -90,13 +90,13 @@ equal to 24 months (N=575))).
 
 The interest is then on the effect of the period (gp) and the possible mediation
 via the amount of unrealted or related donors (dnr). A somewhat artificial example ! 
-All adjusted for other important counfounders. 
+All adjusted for other important confounders. 
 
 ```{r}
  library(mets)
  runb <- 0
  options(warn=-1)
- set.seed(1000) # to control output in simulatins for p-values below.
+ set.seed(1000) # to control output in simulations for p-values below.
 
 n <- 200; k.boot <- 10; 
 
