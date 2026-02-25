@@ -139,7 +139,7 @@ models)
 # simulated data with pairs of observations in twins on long #data format
 set.seed(1)
 d <- twinsim(1000, b1=c(1,-1), b2=c(), acde=c(1,1,0,1))
-# Polygenic model with Additive genetic effects, and shared and invidual environmental effects (ACE)
+# Polygenic model with Additive genetic effects, and shared and individual environmental effects (ACE)
 ace <- twinlm(y ~ 1, data=d, DZ="DZ", zyg="zyg", id="id")
 ace
 #>        Estimate Std. Error Z value  Pr(>|z|)
@@ -209,7 +209,7 @@ summary(ace2)
 
 ## Examples: Twins Polygenic modelling time-to-events Data
 
-In the context of time-to-events data we consider the “Liabilty
+In the context of time-to-events data we consider the “Liability
 Threshold model” with IPCW adjustment for censoring.
 
 First we fit the bivariate probit model (same marginals in MZ and DZ
@@ -355,7 +355,7 @@ abline(h=summary(bpmz)$prob["Concordance",],lwd=c(2,1,1),col="lightgray",lty=2)
 ## Examples: Cox model, RMST
 
 We can fit the Cox model and compute many useful summaries, such as
-restricted mean survival and stanardized treatment effects
+restricted mean survival and standardized treatment effects
 (G-estimation). First estimating the standardized survival
 
 ``` r
@@ -460,9 +460,9 @@ in the plot.
 
 ## Examples: Cox model IPTW
 
-We can fit the Cox model with inverse probabilty of treatment weights
+We can fit the Cox model with inverse probability of treatment weights
 based on logistic regression. The treatment weights can be
-time-dependent and then mutiplicative weights are applied (see details
+time-dependent and then multiplicative weights are applied (see details
 and vignette).
 
 ``` r
@@ -503,7 +503,7 @@ IPCW adjustment
 
 ``` r
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-# logistic regresion with IPCW binomial regression 
+# logistic regression with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
 #>    n events
@@ -621,7 +621,7 @@ head(iid(fg))
 ```
 
 and we can get standard errors for predictions based on the influence
-functions of the baseline and the regression coefiicients (these are
+functions of the baseline and the regression coefficients (these are
 used in the predict function)
 
 ``` r
@@ -731,7 +731,7 @@ head(iid(gl1))
 ```
 
 and we can get standard errors for predictions based on the influence
-functions of the baseline and the regression coefiicients
+functions of the baseline and the regression coefficients
 
 ``` r
  nd=data.frame(treatment=levels(hfactioncpx12$treatment),id=1)
@@ -962,7 +962,7 @@ get these estimates via IPCW adjustment and then we can do regression
 ## Examples: Average treatment effects (ATE) for survival or competing risks
 
 We can compute ATE for survival or competing risks data for the
-probabilty of dying
+probability of dying
 
 ``` r
  bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
