@@ -1155,7 +1155,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 	 censor$time <- pmin(censoroc$time,censorgp$time)
 	 censor$status <- pmax(censoroc$status,censorgp$status)
 	} else {
-        rrc <- exp(as.matrix(Z) %*% c0$coef)
+        rrc <- exp(as.matrix(Z) %*% c(censpar*c0$coef))
         censor  <- rchaz(c0$cumhaz,rrc)
 	}
     status = data$status * (data$time <= censor$time)
