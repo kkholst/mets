@@ -3013,12 +3013,14 @@ if (is.null(varname))  {
 } else treat.name <- varname
 treatvar <- data[,treat.name]
 
+Alevels <- NULL
 if (is.factor(treatvar)) {
    ## treatvar, levels to look at 
    if (is.null(Avalues)) Alevels <- levels(treatvar) else Alevels <- Avalues
 } else {
    Alevels <- Avalues
 }
+if (is.null(Alevels)) stop("must either have a factor as first variable or give Avalues for risk average")
 
 ## for recreg take first record only of each subject
 cid <- countID(data.frame(id=x$id))
@@ -3034,6 +3036,7 @@ if (is.null(desx$cluster)) { ## data must be same as data used for x
   id <- desx$cluster-1
 }
 datA <- data
+
 
 k <- 1; risks <- c(); DariskG <- list()
 for (a in Alevels) { ## {{{
@@ -3103,6 +3106,7 @@ class(out) <- "survivalG"
 attr(out,"levels") <- nlevels
 return(out)
 } ## }}}
+
 
 ###{{{ summary  survivalG
 

@@ -47,18 +47,21 @@ standardized cumulative incidence for cause 1.
 library(mets)
 set.seed(100)
 
-data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+data(bmt); 
+bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 dfactor(bmt) <- tcell~tcell
 bmt$event <- (bmt$cause!=0)*1
 
 fg1 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=1)
-summary(survivalG(fg1,bmt,time=50))
+Gfg1 <- survivalG(fg1,bmt,time=50)
+summary(Gfg1)
 
 fg2 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=2)
 summary(survivalG(fg2,bmt,time=50))
 
 cif1time <- survivalGtime(fg1,bmt)
 plot(cif1time,type="risk"); 
+
 ```
 
 Now looking at the survival probability 
