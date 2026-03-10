@@ -535,12 +535,12 @@ dtable(datsRA,~statusD)
 
 ```
 
-We get two data-sets, one with only administrative censuring datsA 
-and one with additional random censuring datsRA. 
+We get two data-sets, one with only administrative censoring datsA 
+and one with additional random censoring datsRA. 
  
-  - datsA: statusD has events (1) death (3) and administrative censurings at the  time censorA
-  - datsRA: statusD has events (1) death (3),  administrative censurings (7) and random censurings (0). The time 
-     of the administriative censuring is given by censorA
+  - datsA: statusD has events (1) death (3) and administrative censorings at the  time censorA
+  - datsRA: statusD has events (1) death (3),  administrative censorings (7) and random censorings (0). The time 
+     of the administriative censoring is given by censorA
 
 First we deal only  with the administriative censoring. 
 
@@ -560,7 +560,7 @@ The additional random censoring can be handled by combining the two censoring ti
 administrative censoring (via risk-set adjustment) and random censoring (via IPCW) separately
 
 ```{r}
-    ## std Right censoring  on combined censuring time 
+    ## std Right censoring  on combined censoring time 
     outR  <- recreg(Event(start,stop,statusD)~Z1 + Z2+cluster(id) , datsRA, cause = 1, 
 		       cens.code = c(0,7),death.code=3)
     estimate(outR)
