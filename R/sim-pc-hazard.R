@@ -1244,10 +1244,10 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' @param cumhaz2 cumulative hazard of going from state 2 to 1.
 ##' @param death.cumhaz cumulative hazard of death from state 1.
 ##' @param death.cumhaz2 cumulative hazard of death from state 2.
-##' @param rr relative risk adjustment for cumhaz
-##' @param rr2 relative risk adjustment for cumhaz2
-##' @param rd relative risk adjustment for death.cumhaz
-##' @param rd2 relative risk adjustment for death.cumhaz2
+##' @param rr12 relative risk adjustment for cumhaz12 from 1->2
+##' @param rr21 relative risk adjustment for cumhaz21 from 2->1
+##' @param rd13 relative risk adjustment for death.cumhaz from 1->3
+##' @param rd23 relative risk adjustment for death.cumhaz2 from 2->3
 ##' @param rrc relative risk adjustment for censoring
 ##' @param gap.time if true simulates gap-times with specified cumulative hazard
 ##' @param max.recurrent limits number recurrent events to 100
@@ -1258,7 +1258,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##'   (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with
 ##'   mean and variance 1 , first random effect is z1 and for N1 second random
 ##'   effect is z2 and for N2 third random effect is for death
-##' @param var.z variance of random effects
+##' @param var.z variance of random effects, for dependence=1  for example
 ##' @param cor.mat correlation matrix for var.z variance of random effects
 ##' @param cens rate of censoring exponential distribution
 ##' @param extend to extend hazards to max-time
@@ -1301,9 +1301,9 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' @aliases simMultistateII
 ##' @export
 simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
-		    rr=NULL,rr2=NULL,rd=NULL,rd2=NULL,rrc=NULL,
+		    rr12=NULL,rr21=NULL,rd13=NULL,rd23=NULL,rrc=NULL,
 		    gap.time=FALSE,max.recurrent=100,
-		    dependence=0,var.z=0.22,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
+		    dependence=0,var.z=0.5,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
 {# {{{
 
   fdeath <- dtime <- NULL # to avoid R-check 
@@ -1335,10 +1335,10 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
       } else stop("dependence 0-3"); # }}}
 
   ## covariate adjustment 
-  if (is.null(rr))  rr <- z1; 
-  if (is.null(rr2)) rr2 <- z2; 
-  if (is.null(rd))  rd  <- zd; 
-  if (is.null(rd2)) rd2 <- zd2; 
+  if (is.null(rr12))  rr12 <- z1  else rr12 <- rr12*z1
+  if (is.null(rr21)) rr21 <- z2 else rr21 <- rr21*z2
+  if (is.null(rd13))  rd13  <- zd else rd13 <- rd13*zd
+  if (is.null(rd23)) rd23 <- zd2 else rd23 <- rd23*zd2
 
   ll <- nrow(cumhaz)
   ### extend of cumulatives
@@ -1364,7 +1364,7 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
   cumhazd2 <- out$cum4
   max.time <- tail(cumhaz[,1],1)
 
-  tall <- rcrisk(cumhaz,cumhazd,rr,rd,cens=cens,extend=NULL)
+  tall <- rcrisk(cumhaz,cumhazd,rr12,rd13,cens=cens,extend=NULL)
 
   tall$id <- 1:n
   ### fixing the first time to event
@@ -1388,10 +1388,10 @@ simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 	  i <- i+1
 	  nn <- nrow(tt)
 
-	  z1r <- rr[tt$id]
-	  zdr <- rd[tt$id]
-	  z2r <- rr2[tt$id]
-	  zd2r <- rd2[tt$id]
+	  z1r <- rr12[tt$id]
+	  zdr <- rd13[tt$id]
+	  z2r <- rr21[tt$id]
+	  zd2r <- rd23[tt$id]
 
 	  if (i%%2==0) { ## in state 2
 	  ## out of 2 for those in 2

@@ -11,15 +11,15 @@ simMultistate(
   cumhaz2,
   death.cumhaz,
   death.cumhaz2,
-  rr = NULL,
-  rr2 = NULL,
-  rd = NULL,
-  rd2 = NULL,
+  rr12 = NULL,
+  rr21 = NULL,
+  rd13 = NULL,
+  rd23 = NULL,
   rrc = NULL,
   gap.time = FALSE,
   max.recurrent = 100,
   dependence = 0,
-  var.z = 0.22,
+  var.z = 0.5,
   cor.mat = NULL,
   cens = NULL,
   extend = TRUE,
@@ -37,13 +37,13 @@ simMultistate(
 
 \item{death.cumhaz2}{cumulative hazard of death from state 2.}
 
-\item{rr}{relative risk adjustment for cumhaz}
+\item{rr12}{relative risk adjustment for cumhaz12 from 1->2}
 
-\item{rr2}{relative risk adjustment for cumhaz2}
+\item{rr21}{relative risk adjustment for cumhaz21 from 2->1}
 
-\item{rd}{relative risk adjustment for death.cumhaz}
+\item{rd13}{relative risk adjustment for death.cumhaz from 1->3}
 
-\item{rd2}{relative risk adjustment for death.cumhaz2}
+\item{rd23}{relative risk adjustment for death.cumhaz2 from 2->3}
 
 \item{rrc}{relative risk adjustment for censoring}
 
@@ -59,7 +59,7 @@ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3=
 mean and variance 1 , first random effect is z1 and for N1 second random
 effect is z2 and for N2 third random effect is for death}
 
-\item{var.z}{variance of random effects}
+\item{var.z}{variance of random effects, for dependence=1  for example}
 
 \item{cor.mat}{correlation matrix for var.z variance of random effects}
 
