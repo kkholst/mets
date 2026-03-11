@@ -2,16 +2,17 @@
 ##'
 ##' Estimates the percentage of the years lost that is due to a cause and how covariates affects this percentage by doing ICPW regression.
 ##'
-##' Let the years lost be  \deqn{Y1= t- min(T ,) } and the years lost due to cause 1 \deqn{Y2= I(epsilon==1) ( t- min(T ,t) } , then
-##' we model the ratio \deqn{logit( E(Y2 | X)/E(Y1 | X))  = X^T \beta }. Estimation is based on 
+##' Let the years lost be  \deqn{Y= t- min(T ,) } and the years lost due to cause 1 \deqn{Y1= I(epsilon==1) ( t- min(T ,t) } , then
+##' we model the ratio \deqn{logit( E(Y1 | X)/E(Y | X))  = X^T \beta }. Estimation is based on 
 ##' on binomial regresion IPCW response estimating equation: 
-##' \deqn{ X ( \Delta^{ipcw}(t) Y2 expit(X^T \beta) -  Y1 ) = 0 }
+##' \deqn{ X ( \Delta^{ipcw}(t) ( Y expit(X^T \beta) -  Y1)  ) = 0 }
 ##' where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
-##' IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
+##' IPCW adjustment of the response \deqn{Z(t)= Y expit(X^T \beta) -  Y1   }.  
 ##'
 ##' (type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
 ##' censoring distribution. For (type="II") the default an additional 
-##' censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
+##' censoring augmentation term \deqn{X \int E(Z(t)| T>s)/G_c(s) d \hat M_c} is added, and where this term is estimated using an 
+##' initial estimate of \deqn{\beta} based on type="I".
 ##'
 ##' The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 ##' under known censoring model. 
