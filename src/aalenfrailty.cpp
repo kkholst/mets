@@ -85,7 +85,7 @@ RcppExport SEXP Bhat(SEXP ds,
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}
@@ -128,7 +128,7 @@ RcppExport SEXP Uhat(SEXP ds, SEXP H, SEXP theta, SEXP id, SEXP idsize) {
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}} 
@@ -158,7 +158,7 @@ try {
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}
@@ -293,7 +293,7 @@ RcppExport SEXP BhatAddGam(SEXP irecursive, SEXP idBaalen,SEXP icause,
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}
@@ -483,7 +483,7 @@ RcppExport SEXP BhatAddGamCC(SEXP itwostage,SEXP idBaalen,SEXP icause,
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}
@@ -521,7 +521,7 @@ try {
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}

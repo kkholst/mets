@@ -82,7 +82,7 @@ RcppExport SEXP pBhat(SEXP ds,
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 }
@@ -126,7 +126,7 @@ RcppExport SEXP UhatPropOdd(SEXP ds, SEXP H, SEXP theta, SEXP id, SEXP idsize) {
   } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 }

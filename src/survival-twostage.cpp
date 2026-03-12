@@ -1130,7 +1130,7 @@ return(ressl);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 } // }}}
@@ -1207,7 +1207,7 @@ return(ressl);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -1285,7 +1285,7 @@ return(ressl);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -1813,7 +1813,7 @@ RcppExport SEXP claytonoakesbinRV(SEXP itheta,SEXP istatus1,SEXP istatus2,SEXP i
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -2033,7 +2033,7 @@ return(res);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -2327,7 +2327,7 @@ return(res);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -2670,7 +2670,7 @@ return(res);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
@@ -2925,7 +2925,7 @@ return(res);
 } catch( std::exception &ex ) {
     forward_exception_to_r( ex );
   } catch(...) {  
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+    (Rf_error)( "c++ exception (unknown reason)" ); 
   }
   return R_NilValue; // -Wall
 
