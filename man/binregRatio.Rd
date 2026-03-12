@@ -11,7 +11,7 @@ binregRatio(
   cause = 1,
   time = NULL,
   beta = NULL,
-  type = c("II", "I"),
+  type = c("III", "II", "I"),
   offset = NULL,
   weights = NULL,
   cens.weights = NULL,
@@ -39,7 +39,7 @@ binregRatio(
 
 \item{beta}{starting values}
 
-\item{type}{"II" adds augmentation term, and "I" classical outcome IPCW regression}
+\item{type}{"II" and "III" adds augmentation term, and "I" classical outcome IPCW regression}
 
 \item{offset}{offsets for partial likelihood}
 
@@ -73,16 +73,18 @@ binregRatio(
 Estimates the percentage of the years lost that is due to a cause and how covariates affects this percentage by doing ICPW regression.
 }
 \details{
-Let the years lost be  \deqn{Y1= t- min(T ,) } and the years lost due to cause 1 \deqn{Y2= I(epsilon==1) ( t- min(T ,t) } , then
-we model the ratio \deqn{logit( E(Y2 | X)/E(Y1 | X))  = X^T \beta }. Estimation is based on 
+Let the years lost be  \deqn{Y= t- min(T ,) } and the years lost due to cause 1 \deqn{Y1= I(epsilon==1) ( t- min(T ,t) } , then
+we model the ratio \deqn{logit( E(Y1 | X)/E(Y | X))  = X^T \beta }. Estimation is based on 
 on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta^{ipcw}(t) Y2 expit(X^T \beta) -  Y1 ) = 0 }
+\deqn{ X ( \Delta^{ipcw}(t) ( Y expit(X^T \beta) -  Y1)  ) = 0 }
 where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
-IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
+IPCW adjustment of the response \deqn{Z(t)= Y expit(X^T \beta) -  Y1   }.  
 
 (type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
 censoring distribution. For (type="II") the default an additional 
-censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
+censoring augmentation term \deqn{X \int E(Z(t)| T>s)/G_c(s) d \hat M_c} is added, and where this term is estimated using an 
+initial estimate of \deqn{\beta} based on type="I". Similarly, type="III" adds the augmentation term
+\deqn{X [ expit(X^T \beta) \int E(Y | T>s)  - \int E(Y1 | T>s)] /G_c(s) d \hat M_c}. 
 
 The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 under known censoring model. 
@@ -110,14 +112,10 @@ pp
 
 newdata <- data.frame(platelet=1,tcell=1,age=1)
 ## percentage of total cumulative incidence due to cause 1
-cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1,model="cif")
 summary(cifratio)
 pp <- predict(cifratio,newdata)
 pp
-
-rmtlratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
-                               time=30,cause=1,outcome="rmtl")
-summary(rmtlratioI)
 
 pp <- predict(rmtlratioI,newdata)
 pp

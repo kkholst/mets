@@ -12,7 +12,8 @@
 ##' (type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
 ##' censoring distribution. For (type="II") the default an additional 
 ##' censoring augmentation term \deqn{X \int E(Z(t)| T>s)/G_c(s) d \hat M_c} is added, and where this term is estimated using an 
-##' initial estimate of \deqn{\beta} based on type="I".
+##' initial estimate of \deqn{\beta} based on type="I". Similarly, type="III" adds the augmentation term
+##' \deqn{X [ expit(X^T \beta) \int E(Y | T>s)  - \int E(Y1 | T>s)] /G_c(s) d \hat M_c}. 
 ##'
 ##' The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
 ##' under known censoring model. 
@@ -24,7 +25,7 @@
 ##' @param cause cause of interest (numeric variable)
 ##' @param time  time of interest 
 ##' @param beta starting values 
-##' @param type "II" adds augmentation term, and "I" classical outcome IPCW regression 
+##' @param type "II" and "III" adds augmentation term, and "I" classical outcome IPCW regression 
 ##' @param offset offsets for partial likelihood 
 ##' @param weights for score equations 
 ##' @param cens.weights censoring weights 
@@ -72,7 +73,7 @@
 ##' pp
 ##' @aliases rmtlRatio
 ##' @export
-binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
+binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
@@ -196,7 +197,6 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 }# }}}
 
  if (model[1]=="exp") control <- list(stepsize=0.5)  else control <- NULL
-
   
 
   ## first run without pseudo-value augmentation
@@ -233,7 +233,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
     cens.weights <- cens.weights[ord]
     Y <- Y[ord,]
     lp <- c(X %*% val$coef+offset)
-    p <- expit(lp)
+    if (model[1]=="logit")  p <- expit(lp) else if (model[1]=="exp") p <- exp(lp)  else p <- lp
     Yo <- Y[,1]*p-Y[,2]
     id <- id[ord]
 
@@ -275,15 +275,39 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
     ### Censoring Variance Adjustment 
     MGCiid <- MGCiid+(MGtiid-MGCiid2)
    }
+   if (type[1]=="III") { ##  pseudo-value type augmentation
+    hYt  <-  apply(Y,2,revcumsumstrata,xx$strata,xx$nstrata)
+    IhdLam0 <- apply(hYt*c(S0i2)*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    U <- rep(0,length(xx$strata))
+    U[xx$jumps+1] <- (resC$jumptimes<time)*(hYt[xx$jumps+1,1]*p[xx$jumps+1]-hYt[xx$jumps+1,2])/c(resC$S0)
+    MGt <- X*c(U-IhdLam0[,1]*p+IhdLam0[,2])*c(xx$weights)
+
+    MGtiid <- apply(MGt,2,sumstrata,xx$id,mid+1)
+    augmentation  <-  apply(MGtiid,2,sum) + augmentation
+    ###
+    EXt  <-  apply(X,2,revcumsumstrata,xx$strata,xx$nstrata)
+    EXFt  <-  apply(X*p,2,revcumsumstrata,xx$strata,xx$nstrata)
+
+    IEXhY1tdLam0 <- apply(EXt*hYt[,2]*S0i*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+    IEXhYtdLam0 <- apply(EXFt*hYt[,1]*S0i*S0i2*btime,2,cumsumstrata,xx$strata,xx$nstrata)
+
+    U <- matrix(0,nrow(xx$X),ncol(X))
+    U[xx$jumps+1,] <- (resC$jumptimes<time)*(hYt[xx$jumps+1,1]*EXFt[xx$jumps+1,]-hYt[xx$jumps+1,2]*EXt[xx$jumps+1,]) /c(resC$S0)^2
+    MGt2 <- (U[,drop=FALSE]-IEXhYtdLam0+IEXhY1tdLam0)*c(xx$weights)
+    ###
+    MGCiid2 <- apply(MGt2,2,sumstrata,xx$id,mid+1)
+    ### Censoring Variance Adjustment 
+    MGCiid <- MGCiid+(MGtiid-MGCiid2)
+   }
    ## use data ordered by time (keeping track of id also)
    ## since X; Y and so forth are ordered in time
-###   id <- xx$id
+   ###   id <- xx$id
    }  else {
 	 MGCiidI <-  MGCiid <- 0
   }## }}}
 
   ## first run without pseudo-value augmentation, then run with augmentation, if type="II"
- if (type[1]=="II") {
+ if (type[1]!="I") {
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
 	  tim <- system.time(opt <- lava::NR(coefI,obj,...))
