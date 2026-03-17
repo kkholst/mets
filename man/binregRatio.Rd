@@ -11,7 +11,7 @@ binregRatio(
   cause = 1,
   time = NULL,
   beta = NULL,
-  type = c("III", "II", "I"),
+  type = c("II", "III", "I"),
   offset = NULL,
   weights = NULL,
   cens.weights = NULL,
@@ -103,22 +103,20 @@ estimate(rmst30)
 estimate(rmst301)
 estimate(rmst302)
 
-## percentage of total cumulative incidence due to cause 1
+## percentage of total RMTL due to cause 1
 rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
 summary(rmtlratioI)
 
-pp <- predict(rmtlratioI,bmt[1:5,])
+newdata <- data.frame(platelet=1,tcell=1,age=1)
+pp <- predict(rmtlratioI,newdata)
 pp
 
-newdata <- data.frame(platelet=1,tcell=1,age=1)
 ## percentage of total cumulative incidence due to cause 1
 cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1,model="cif")
 summary(cifratio)
 pp <- predict(cifratio,newdata)
 pp
 
-pp <- predict(rmtlratioI,newdata)
-pp
 }
 \references{
 Scheike & Tanaka (2025), Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
