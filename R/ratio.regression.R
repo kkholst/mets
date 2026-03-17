@@ -55,25 +55,23 @@
 ##' estimate(rmst301)
 ##' estimate(rmst302)
 ##' 
-##' ## percentage of total cumulative incidence due to cause 1
+##' ## percentage of total RMTL due to cause 1
 ##' rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
 ##' summary(rmtlratioI)
 ##' 
-##' pp <- predict(rmtlratioI,bmt[1:5,])
+##' newdata <- data.frame(platelet=1,tcell=1,age=1)
+##' pp <- predict(rmtlratioI,newdata)
 ##' pp
 ##' 
-##' newdata <- data.frame(platelet=1,tcell=1,age=1)
 ##' ## percentage of total cumulative incidence due to cause 1
 ##' cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1,model="cif")
 ##' summary(cifratio)
 ##' pp <- predict(cifratio,newdata)
 ##' pp
 ##' 
-##' pp <- predict(rmtlratioI,newdata)
-##' pp
 ##' @aliases rmtlRatio
 ##' @export
-binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","II","I"),
+binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","III","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
