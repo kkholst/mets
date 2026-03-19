@@ -458,7 +458,7 @@ conditional distribution.
 
 For simplicity we consider survival times in a fixed interval $[0,\tau]$, and given $X$
 
-  - first, flip a three sided coin with and probabilities $F_1(\tau,X)$, $F_2(\tau,X)$ $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or 
+  - first, flip a three sided coin with probabilities $F_1(\tau,X)$, $F_2(\tau,X)$ $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or 
      experience one of the causes.
   - second, draw the survival time using the cumulative incidence distribution. The timing of a cause $j$ event is  thus 
        $T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
