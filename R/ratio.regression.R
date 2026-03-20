@@ -158,6 +158,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","II
      }
   }
   Yipcw <- Y
+  cens.weights.origsort <- obs/cens.weights 
 
 obj <- function(pp,all=FALSE)
 { # {{{
@@ -352,6 +353,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$model <- model[1]
   val$outcome <- outcome[1]
   val$Yipcw <- Yipcw
+  val$cenw.weights <- cens.weights.origsort 
   val$Causes <- Causes
   val$nevent <- nevent
 
