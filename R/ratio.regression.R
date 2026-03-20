@@ -71,7 +71,7 @@
 ##' 
 ##' @aliases rmtlRatio
 ##' @export
-binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","III","I"),
+binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
