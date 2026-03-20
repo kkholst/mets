@@ -11,7 +11,7 @@ binregRatio(
   cause = 1,
   time = NULL,
   beta = NULL,
-  type = c("II", "III", "I"),
+  type = c("III", "II", "I"),
   offset = NULL,
   weights = NULL,
   cens.weights = NULL,
