@@ -439,11 +439,14 @@ return(ic)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##'
-##' xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-##' dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
+##' ##xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
+##' ##dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
+##' ##logrankRecurrent(xr,dr,stop=5)
 ##'
-##' logrankRecurrent(xr,dr,stop=5)
-##'
+##' ## same as 
+##' outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+##'                          data=hf,cause=1,death.code=2)
+##' logrankRecurrent(outN)
 ##' @aliases logrankRecurrentBase
 ##' @export
 logrankRecurrent <- function(recurrent,death,
