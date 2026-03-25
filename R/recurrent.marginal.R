@@ -431,6 +431,7 @@ return(ic)
 ##' @param start integral start
 ##' @param stop integral stop, default max jumptime
 ##' @param at.risk only uses time-points where at most at.risk under risk
+##' @param cluster.id additional cluster to combine iid representation that is ordered after id given (so safest to order data after id, that then can be GEE clustered additionally)
 ##' @author Thomas Scheike
 ##' @references 
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
@@ -450,27 +451,28 @@ return(ic)
 ##' @aliases logrankRecurrentBase
 ##' @export
 logrankRecurrent <- function(recurrent,death,
-              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5) { ## {{{ 
+              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL) { ## {{{ 
   if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
     if (inherits(death, "phreg")) {
         return(logrankRecurrentBase(recurrent,death,
-		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk))
+		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,
+		cluster.id=cluster.id))
      } 
   } else if (inherits(recurrent,"recurrent")) { # Fall-back to recurrentMarginalPhreg
         return(logrankRecurrentBase(attr(recurrent,"recurrent"),attr(recurrent,"death"),
-		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk))
+		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,cluster.id=cluster.id))
  } else stop("input either output from recurrentMarginal or two phreg's\n")
 
 } ## }}}
 
 ##' @export
-logrankRecurrentBase <- function(recurrent,death,weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5) { ## {{{ 
+logrankRecurrentBase <- function(recurrent,death,weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,
+				 cluster.id=NULL) { ## {{{ 
   xr <- recurrent
   dr <- death 
   if (is.null(stop)) stop <- max(xr$jumptimes)
 
   nlev <- xr$nstrata
-  if (nlev>2) stop("only for two-groups \n")
   ###
   x <- dr
   xx <- x$cox.prep
@@ -488,34 +490,42 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II"),km=TRUE,star
 		 rep(0,xx$nstrata),length(xx$status))$Gcjumps
   if (weight[1]=="I") {
 	  Rss <-  Yss/kmss
-	  ###
 	  Rss[Yss==0] <- 0 
-	  Rp <- apply(Rss,1,sum,na.rm=TRUE)
-	  wt <- apply(Rss,1,prod,na.rm=TRUE)/Rp
-	  wt[is.na(wt)] <- 0
   }
   if (weight[1]=="II") {
-     Yp <- apply(Yss,1,sum,na.rm=TRUE)
-     wt <- Yss[,1]*Yss[,2]/Yp
-     wt[is.na(wt)] <- 0
+     Rss <- Yss 
   }
+  Rp <- apply(Rss,1,sum,na.rm=TRUE)
+  Rssstrat <- mdi(Rss,1:length(xx$strata),xx$strata+1)
 
   contr <- contr.iid <- c()
+  i <- 1
   for (i in 1:(nlev-1)) {
+     wt <- rep(0,length(xx$strata))
+     strati  <- which(xx$strata==(i-1))
+     wt <- Rss[,i]*Rssstrat/Rp
+     wt[strati] <- Rss[strati,i]*(Rp[strati]-Rss[strati,i])/Rp[strati]
+     wt[is.na(wt)] <- 0
       if (at.risk>0) {
-        minrisk <- pmin(Yss[,1],Yss[,2])
+        minrisk <- apply(Yss,1,min)
         wt[minrisk<at.risk] <- 0
       }
       lrt <- iidRecurrent(xr,dr,wt=wt)
-      lrt$mut
-      contr <- c(contr,diff(lrt$mut))
-      contr.iid <- cbind(contr.iid,lrt$iid[,1]-lrt$iid[,2])
+      if (!is.null(cluster.id)) {
+	      nid <- length(unique(cluster.id))
+	      conid <- construct_id(cluster.id,nid)
+	      lrt$iid <- apply(lrt$iid,2,sumstrata,conid$id,conid$nid)
+      }
+      diffi <- lrt$mut[i]-sum(lrt$mut[-i])
+      contr <- c(contr,diffi)
+      contr.iid <- cbind(contr.iid,lrt$iid[,i]-apply(lrt$iid[,-i,drop=FALSE],1,sum))
    }
    logrank <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
    p <- length(contr)
 
    return(logrank)
 } ## }}} 
+
 
 ##' @export
 recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
