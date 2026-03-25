@@ -12,7 +12,8 @@ logrankRecurrent(
   km = TRUE,
   start = 0,
   stop = NULL,
-  at.risk = 5
+  at.risk = 5,
+  cluster.id = NULL
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ logrankRecurrent(
 \item{stop}{integral stop, default max jumptime}
 
 \item{at.risk}{only uses time-points where at most at.risk under risk}
+
+\item{cluster.id}{additional cluster to combine iid representation that is ordered after id given (so safest to order data after id, that then can be GEE clustered additionally)}
 }
 \description{
 The logrank type test-statistic 
@@ -45,11 +48,14 @@ library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 
-xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
+##xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
+##dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
+##logrankRecurrent(xr,dr,stop=5)
 
-logrankRecurrent(xr,dr,stop=5)
-
+## same as 
+outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+                         data=hf,cause=1,death.code=2)
+logrankRecurrent(outN)
 }
 \references{
 Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
