@@ -98,6 +98,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// riskstrataR
+RcppExport SEXP riskstrataR(SEXP ia, SEXP istrata, SEXP instrata);
+RcppExport SEXP _mets_riskstrataR(SEXP iaSEXP, SEXP istrataSEXP, SEXP instrataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ia(iaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type istrata(istrataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type instrata(instrataSEXP);
+    rcpp_result_gen = Rcpp::wrap(riskstrataR(ia, istrata, instrata));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scoreMVN
 arma::mat scoreMVN(arma::mat& Y, arma::mat& Mu, arma::mat& dMu, arma::mat& S, arma::mat& dS, double itol);
 static SEXP _mets_scoreMVN_try(SEXP YSEXP, SEXP MuSEXP, SEXP dMuSEXP, SEXP SSEXP, SEXP dSSEXP, SEXP itolSEXP) {
@@ -709,6 +722,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mets_S0_FG_GcR", (DL_FUNC) &_mets_S0_FG_GcR, 9},
     {"_mets_GcjumpsR", (DL_FUNC) &_mets_GcjumpsR, 6},
     {"_mets_S0_FGRN", (DL_FUNC) &_mets_S0_FGRN, 8},
+    {"_mets_riskstrataR", (DL_FUNC) &_mets_riskstrataR, 3},
     {"_mets_scoreMVN", (DL_FUNC) &_mets_scoreMVN, 6},
     {"_mets_loglikMVN", (DL_FUNC) &_mets_loglikMVN, 9},
     {"_mets_dmvn", (DL_FUNC) &_mets_dmvn, 3},

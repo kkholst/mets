@@ -486,8 +486,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II"),km=TRUE,star
   Stc <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
   kmss <-   .Call("_mets_GcjumpsR",Stc,rep(1,length(xx$status)),xx$strata,xx$nstrata,
 		  rep(1,xx$nstrata),length(xx$status))$Gcjumps
-  Yss <-   .Call("_mets_GcjumpsR",Yrr,rep(1,length(xx$status)),xx$strata,xx$nstrata,
-		 rep(0,xx$nstrata),length(xx$status))$Gcjumps
+  Yss <- .Call("_mets_riskstrataR",xx$sign,xx$strata,xx$nstrata)$risk
   if (weight[1]=="I") {
 	  Rss <-  Yss/kmss
 	  Rss[Yss==0] <- 0 
