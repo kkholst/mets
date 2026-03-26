@@ -130,6 +130,7 @@ recurrentMarginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
 
   ### setting up formulae for the two phreg (cause of interest and death)
   if (is.null(call.id)) { 
+     stop("must give id\n"); 
      formid <- update.formula(formula,~.+cluster(id)) 
      data$id <- id
      tt <- terms(formid)
