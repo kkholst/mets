@@ -2,7 +2,7 @@
 % Please edit documentation in R/score-mean-tests.R
 \name{test_marginalMean}
 \alias{test_marginalMean}
-\title{Pepe-Mori test, score-test type test, proportionality test}
+\title{Pepe-Mori test, score-test type test, proportionality test for marginal mean}
 \usage{
 test_marginalMean(
   formula,
@@ -36,7 +36,7 @@ test_marginalMean(
 \item{beta}{for score test}
 }
 \description{
-For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only.
+For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only based on IPCW formulation.
 }
 \examples{
 library(mets)

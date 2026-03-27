@@ -6,13 +6,12 @@
   - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with administrative censoring and additional random censoring.
   - iid and IC methods for `recurrentMarginal`
   - pepe-mori, score test, proportionality test based on IPCW formulation for right-censored data in `test_marginalMean` 
-  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors.
+  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors `logrankRecurrent` 
 
 # mets 1.3.9
   
   - Vignette updates
-  - `phreg_weibull`: allows for regression design on both rate and shape
-    parameter. Replaces `phreg.par`
+  - `phreg_weibull`: allows for regression design on both rate and shape parameter. Replaces `phreg.par`
   - `Event` methods updated
 
 # mets 1.3.8

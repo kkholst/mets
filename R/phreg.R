@@ -3785,7 +3785,6 @@ return(res)
 }# }}}
 
 
-
 ##' @export
 revcumsum <- function(x)
 {# {{{

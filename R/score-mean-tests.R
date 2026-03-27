@@ -1,6 +1,6 @@
-##' Pepe-Mori test, score-test type test, proportionality test 
+##' Pepe-Mori test, score-test type test, proportionality test for marginal mean 
 ##'
-##' For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only. 
+##' For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only based on IPCW formulation. 
 ##' @param formula with Event object
 ##' @param data data frame for computation
 ##' @param cause of interest (1 default)

@@ -39,16 +39,14 @@ Therefore it is useful to have simple tools for generating survival data
 that looks as much as possible like particular data. In a theoretical
 setting we often are interested in evaluating the finite sample
 properties of a new procedure in different settings that often are
-motivated by a specific practical problem. The aim is 
-provide such tools.
+motivated by a specific practical problem. The aim is provide such tools.
 
-Bender et al. in a nice paper discussed how to generate
-survival data based on the Cox model, and restricted attention to some
-of the many useful parametric survival models (weibull, exponential).
-We here use piecewise linear baseline functions that make it easy to simulate
+Bender et al. in discussed how to generate survival data based on the Cox model, 
+and restricted attention to some of the many useful parametric survival models (weibull, exponential).
+We here to start out restrict attentation to piecewise linear baseline functions that make it easy to simulate
 data that follows closely the baseline given by the data using semi or 
 nonparametric models. This makes it easy to capture important aspects of the
-data. 
+data. We later return to extended Weibull baseline hazards models.
 
 Different survival models can be cooked, and we here give recipes for
 hazard and cumulative incidence based simulations. More recipes are
@@ -56,6 +54,8 @@ given in vignette about recurrent events.
 
   - hazard based. 
     - Cox Regression  models.
+       - piecewise constant baselines 
+       - parametric Weibull models
   - cumulative incidence. 
     - Regression models with cloglog or logistic link. 
   - recurrent events (see recurrent events vignette).
@@ -281,27 +281,95 @@ One more example  fully non-parametric
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
 ```
 
+# Parametric hazard models
+While the semi‑parametric Cox model provides substantial flexibility for
+simulating survival data, there are situations where a fully parametric
+simulation model is convenient or preferable. Here we consider a Weibull model
+ parametrized so that the cumulative hazard is given by $$\Lambda(t) = \lambda
+ \cdot t^s$$ where $s$ is the **shape parameter**, and $\lambda$ the **rate
+ parameter**. We allow regression on both parameters
+ \begin{align*} \lambda :=
+ \exp(\beta^\top X), \quad s := \exp(\gamma^\top Z) \end{align*}
+  where $X$ and
+ $Z$ are covariate vectors. Specifically, this opens up for exploring
+ non‑proportional hazards when $s$ depends on covariates.
+
+Revisiting the TRACE data example we can compare the predictions from the Cox
+and the Weibull-Cox model stratified by `chf` and with a proportional hazard
+effect of `age` 
+```{r weibull1}
+data(sTRACE, package = "mets")
+dat <- sTRACE
+cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
+coxw <- phreg_weibull(Surv(time, status > 0) ~ chf + age,
+    shape.formula = ~chf,
+    data = sTRACE
+    )
+coxw
+
+tt <- seq(0, max(sTRACE$time), length.out = 100)
+newd <- data.frame(chf = c(1, 0), age=67)
+pr <- predict(coxw, newdata = newd, times = tt, type="chaz")
+plot(cox1, col = 1)
+lines(tt, pr[, 1, 1], lty=2, lwd=2)
+lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
+```
+
+To simulate data we can use the `rweibullcox()` function. Note that the
+`stats::rweibull()` function gives a different parametrization where the
+cumulative hazard is given by $H(t) = (t/b)^s$, i.e., with the same scale
+parameter but where the scale parameter $b$ is related to the rate parameter we consider by $r := b^{-s}$.
+
+
+```{r weibull_sim}
+n <- 5000
+newd <- mets::dsample(size=n, sTRACE[,c("chf","age")]) # bootstrap covariates
+lp <- predict(coxw, newdata=newd, type="lp") # linear-predictors
+head(lp)
+
+## simulate event times
+tt <- rweibullcox(nrow(lp), rate = exp(lp[,1]), shape= exp(lp[,2]))
+
+# censoring model
+censw <- phreg_weibull(Surv(time, status==0) ~ 1, data=sTRACE)
+censpar <- exp(coef(censw))
+censtime <- pmin(8, rweibullcox(nrow(lp), censpar[1], censpar[2]))
+
+# combined simulated data
+newd <- transform(newd, time=pmin(tt, censtime), status=(tt<=censtime))
+head(newd)
+
+# estimate weibull model on new data
+phreg_weibull(Surv(time,status) ~ chf + age, ~chf, data=newd)
+```
+
+All these steps are wrapped in the `simulate` method:
+```{r}
+# simulate(coxw, n = 5, cens.model = NULL, data=newd, var.names = c("time", "status"))
+simulate(coxw, nsim = 5)
+```
+
+
 # Multistate models: The Illness Death model 
 
 Using a hazard based simulation with delayed entry we can then simulate data 
 from for example the general illness-death model. Here the cumulative hazards 
-need to be specified.
+must be specified.
 
-We thus must give 
+We thus give 
 
- - $\Lambda_{12}(t)$
- - $\Lambda_{21}(t)$
- - $\Lambda_{13}(t)$
- - $\Lambda_{23}(t)$
+ - $\Lambda_{12}(t)$ the cumulative hazard for $1 \rightarrow 2$ transitions
+ - $\Lambda_{21}(t)$ the cumulative hazard for $2 \rightarrow 1$ transitions
+ - $\Lambda_{13}(t)$ the cumulative hazard for $1 \rightarrow 3$ transitions
+ - $\Lambda_{23}(t)$ the cumulative hazard for $2 \rightarrow 3$ transitions
  
 then transitions will be generated using these hazards. It is possible to give also 
-covariate effects via proportional hazards models by giving HR terms for all components as
-well as the exponential censoring. Certain dependencies can be generated by specifying the type of 
+covariate effects via proportional hazards models by giving hazard ratios related to the covariates, RR,  for all 
+components as well as the exponential censoring. Certain dependencies can be generated by specifying the type of 
 dependence structure 
 
  - dependence=0, independence
  - dependence=1, all hazards have the gamma-distributed frailty multiplied (with variance var.z)
-
 
 
 \begin{tikzpicture}[
@@ -388,18 +456,24 @@ To generate data with the required cumulative incidence functions a simple appro
 if the subject dies and then from what cause, then finally draw the survival time according to the
 conditional distribution.
 
-For simplicity we consider survival times in a fixed interval $[0,\tau]$, and first flip a coin with 
-and probabilities $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or dies. 
-Then if subject dies we then flip a coin with probabilities $F_1(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ and 
-$F_2(\tau,X)/(F_1(\tau,X)+F_2(\tau,X))$ to decide if it is a cause 1, $\epsilon=1$,  $\epsilon=1$, or a cause 2, $\epsilon=2$. 
-Finally we draw the survival time using the cumulative incidence distribution.
-The timing of a cause $j$ event is  thus 
-$T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
+For simplicity we consider survival times in a fixed interval $[0,\tau]$, and given $X$
+
+  - first, flip a three sided coin with probabilities $F_1(\tau,X)$, $F_2(\tau,X)$ $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or 
+     experience one of the causes.
+  - second, draw the survival time using the cumulative incidence distribution. The timing of a cause $j$ event is  thus 
+       $T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
 
 Then indeed $P(T \leq t, \epsilon=j|X) = F_j(t,X)$ for $j=1,2$.
 
 We again note and use that if $\tilde F_j(s)$ and $F_j(s)$ are piecewise linear
 continuous functions then the inverse is easy to compute. 
+
+A couple of details is that 
+
+ - the conflip to decide cause is based on a underlying uniform, $pU$, that can be given and shared among subjects
+     to generate  dependence is the risk.
+ - the uniform using for generating the timing, $U$, can also be given and shared among subjects to 
+    generate dependence is the timing.
 
 
 ## Cumulative incidence I
@@ -432,7 +506,7 @@ The function simul.cifs
  - the regression coefficients are given as one vector and should contain first $\beta_1$ and then $\beta_2$.
  - the default is 2 binary covariates, but a covariate matrix $Z$ can be specified (and then the dimensions of the covariate effects must match).
  - the censoring is exponential with rate rc=0.5 and can be made covariate dependent (dependence=1) with covariate effects given by
-   rcZ, thus with rate $rc \cdot  \exp(Z^T rcZ)$, and dimensions must match. Then censoring can be omitted by $rc=NULL$.
+   rcZ, thus with rate $rc \cdot  \exp(Z^T rcZ)$, and dimensions must match. The censoring can be avoided by setting $rc=NULL$.
 
 
 The function sim.cifs takes the output from cifregFG or cifreg and makes simulations with
@@ -716,74 +790,6 @@ Frailty models (simulations based on the rates/intensities)
  showfitsimList(rr,cumhaz,drl) 
 ```
 
-
-# Parametric models
-While the semi‑parametric Cox model provides substantial flexibility for
-simulating survival data, there are situations where a fully parametric
-simulation model is convenient or preferable. Here we consider a Weibull model
- parametrized so that the cumulative hazard is given by $$\Lambda(t) = \lambda
- \cdot t^s$$ where $s$ is the **shape parameter**, and $\lambda$ the **rate
- parameter**. We allow regression on both parameters
- \begin{align*} \lambda :=
- \exp(\beta^\top X), \quad s := \exp(\gamma^\top Z) \end{align*}
-  where $X$ and
- $Z$ are covariate vectors. Specifically, this opens up for exploring
- non‑proportional hazards when $s$ depends on covariates.
-
-Revisiting the TRACE data example we can compare the predictions from the Cox
-and the Weibull-Cox model stratified by `chf` and with a proportional hazard
-effect of `age` 
-```{r weibull1}
-data(sTRACE, package = "mets")
-dat <- sTRACE
-cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
-coxw <- phreg_weibull(Surv(time, status > 0) ~ chf + age,
-    shape.formula = ~chf,
-    data = sTRACE
-    )
-coxw
-
-tt <- seq(0, max(sTRACE$time), length.out = 100)
-newd <- data.frame(chf = c(1, 0), age=67)
-pr <- predict(coxw, newdata = newd, times = tt, type="chaz")
-plot(cox1, col = 1)
-lines(tt, pr[, 1, 1], lty=2, lwd=2)
-lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
-```
-
-To simulate data we can use the `rweibullcox()` function. Note that the
-`stats::rweibull()` function gives a different parametrization where the
-cumulative hazard is given by $H(t) = (t/b)^s$, i.e., with the same scale
-parameter but where the scale parameter $b$ is related to the rate parameter we consider by $r := b^{-s}$.
-
-
-```{r weibull_sim}
-n <- 5000
-newd <- mets::dsample(size=n, sTRACE[,c("chf","age")]) # bootstrap covariates
-lp <- predict(coxw, newdata=newd, type="lp") # linear-predictors
-head(lp)
-
-## simulate event times
-tt <- rweibullcox(nrow(lp), rate = exp(lp[,1]), shape= exp(lp[,2]))
-
-# censoring model
-censw <- phreg_weibull(Surv(time, status==0) ~ 1, data=sTRACE)
-censpar <- exp(coef(censw))
-censtime <- pmin(8, rweibullcox(nrow(lp), censpar[1], censpar[2]))
-
-# combined simulated data
-newd <- transform(newd, time=pmin(tt, censtime), status=(tt<=censtime))
-head(newd)
-
-# estimate weibull model on new data
-phreg_weibull(Surv(time,status) ~ chf + age, ~chf, data=newd)
-```
-
-All these steps are wrapped in the `simulate` method:
-```{r}
-# simulate(coxw, n = 5, cens.model = NULL, data=newd, var.names = c("time", "status"))
-simulate(coxw, nsim = 5)
-```
 
 
 # SessionInfo

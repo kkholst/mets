@@ -763,7 +763,6 @@ RcppExport SEXP S0_FGRN(SEXP ia,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instr
 	return(rres);
 }/*}}}*/
 
-
 //
 //RcppExport SEXP S0_N_GcR(SEXP ia,SEXP iGc,SEXP itype2,SEXP istatus,SEXP istrata,SEXP instrata,SEXP istrata2,SEXP instrata2,SEXP iGcstart) {/*{{{*/
 //	colvec a = Rcpp::as<colvec>(ia);
@@ -990,6 +989,7 @@ RcppExport SEXP maxminidR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	return(rres);
 }/*}}}*/
 
+// [[Rcpp::export(name="riskstrataR")]] 
 RcppExport SEXP riskstrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector intstrata(istrata);
@@ -997,12 +997,16 @@ RcppExport SEXP riskstrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	unsigned n = a.n_rows;
 
 	colvec tmpsum(nstrata); tmpsum.zeros();
-	//  colvec res = a;
+	colvec ress = a;
+
+        vec riskt(nstrata); riskt.zeros(); 
 	mat res(n,nstrata); res.zeros();
 	for (unsigned i=0; i<n; i++) {
 		int ss=intstrata(n-i-1);
 		tmpsum(ss) += a(n-i-1);
-		res(n-i-1,ss) = a(n-i-1);
+		ress(n-i-1) = tmpsum(ss);
+		riskt(ss)=tmpsum(ss); 
+	        for (unsigned k=0; k<nstrata; k++) res(n-i-1,k) = riskt(k);
 	}
 
 	List rres;

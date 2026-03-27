@@ -9,6 +9,7 @@ output:
     # fig_height: 5.5 
 header-includes: 
   - \usepackage{tikz}
+  - \usepackage{adjustbox}
   - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
   %\VignetteIndexEntry{Recurrent events}
@@ -450,6 +451,10 @@ for example
 \begin{align*}
 E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
+
+
+
+
 
 ```{r}
 out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
