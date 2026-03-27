@@ -6,7 +6,7 @@
   - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with administrative censoring and additional random censoring.
   - iid and IC methods for `recurrentMarginal`
   - pepe-mori, score test, proportionality test based on IPCW formulation for right-censored data in `test_marginalMean` 
-  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors `logrankRecurrent` 
+  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors `logrankRecurrent` works for cumulative incidence and recurrent events (also Gray's test option for cumulative incidence)
 
 # mets 1.3.9
   
