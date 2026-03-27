@@ -1055,11 +1055,13 @@ mat  revcumsumstrataMatCols(const mat  &a,const  colvec &v1,const  colvec &v2, I
 	return(res);
 }/*}}}*/
 
-RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
+// [[Rcpp::export(name="cumsumstratasumR")]] 
+RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata,SEXP iallstrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	//  mat b = Rcpp::as<mat>(ib);
 	IntegerVector intstrata(istrata);
 	int nstrata = Rcpp::as<int>(instrata);
+	int allstrata = Rcpp::as<int>(iallstrata);
 	unsigned n = a.n_rows;
 
 	colvec tmpsum(nstrata); tmpsum.zeros();
@@ -1067,6 +1069,8 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec lagressum = a;
 	colvec ressqu = a;
 	// double cumsum=0;
+	mat allcum(n,nstrata); allcum.zeros(); 
+	mat allcumlag(n,nstrata); allcumlag.zeros(); 
 	int first=0,ss;
 	for (unsigned i=0; i<n; i++) {
 		ss=intstrata(i);
@@ -1075,7 +1079,15 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 			ressqu(i) = ressqu(i - 1) + pow(a(i), 2) + 2 * a(i) * tmpsum(ss);
 		}
 		lagressum(i)=tmpsum(ss);
+		if (allstrata==1) 
+	        for (unsigned k=0; k<nstrata; k++)  {
+		    allcumlag(i,k)=tmpsum(k); 
+		}
 		tmpsum(ss) += a(i);
+		if (allstrata==1) 
+                for (unsigned k=0; k<nstrata; k++)  {
+		    allcum(i,k)=tmpsum(k); 
+		}
 		// cumsum+=a(i);
 		if (first<0.1) ressqu(i) = pow(a(i),2);
 		first=1;
@@ -1086,10 +1098,15 @@ RcppExport SEXP cumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	rres["sumsquare"]=ressqu;
 	rres["sum"]=ressum;
 	rres["lagsum"]=lagressum;
+	if (allstrata==1) {
+	   rres["alllagsum"]=allcumlag;
+	   rres["allsum"]=allcum;
+	}
+
 	return(rres);
 }/*}}}*/
 
-RcppExport SEXP revcumsumstratasumR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
+RcppExport SEXP revcumsumstratasumR(SEXP ia,SEXP istrata,SEXP instrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector intstrata(istrata);
 	int nstrata = Rcpp::as<int>(instrata);
