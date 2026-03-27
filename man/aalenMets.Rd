@@ -16,7 +16,7 @@ aalenMets(formula, data = data, no.baseline = FALSE, ...)
 \item{...}{Additional arguments to phreg}
 }
 \description{
-Fast Lin-Ying additive hazards model with a possibly stratified baseline. 
+Fast Lin-Ying additive hazards model with a possibly stratified baseline.
 Robust variance is default variance with the summary.
 }
 \details{

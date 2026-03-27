@@ -33,8 +33,8 @@ survivalG(
 \description{
 Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
 for the Cox model based on phreg og the Fine-Gray model based on the
-cifreg function. Gives influence functions of these risk estimates and SE's are 
-based on  these.  If first covariate is a factor then all contrast are computed, 
+cifreg function. Gives influence functions of these risk estimates and SE's are
+based on  these.  If first covariate is a factor then all contrast are computed,
 and if continuous then considered covariate values are given by Avalues.
 }
 \examples{
@@ -47,10 +47,10 @@ fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
               cox.prep=TRUE,propodds=NULL)
 summary(survivalG(fg1,bmt,50))
 
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
+ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt)
 summary(survivalG(ss,bmt,50))
 
-ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt) 
+ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt)
 summary(survivalG(ss,bmt,50))
 
 sst <- survivalGtime(ss,bmt,n=50)
@@ -60,7 +60,7 @@ fg1t <- survivalGtime(fg1,bmt,n=50)
 plot(fg1t)
 
 #among treated: must specify id to link influence functions
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt) 
+ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt)
 summary(survivalG(ss,subset(bmt,tcell==1),50))
 }
 \author{

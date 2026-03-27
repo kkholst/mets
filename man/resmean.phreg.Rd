@@ -18,15 +18,15 @@ resmean.phreg(x, times = NULL, covs = NULL, ...)
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale 
-standard error. Standard error is computed using linear interpolation between 
-standard errors at jump-times. Plots gives restricted mean at all times. 
+Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale
+standard error. Standard error is computed using linear interpolation between
+standard errors at jump-times. Plots gives restricted mean at all times.
 Years lost can be computed based on this and decomposed into years lost for
-different causes using the cif.yearslost function that is based on  
-integrating the cumulative incidence functions.  
-One particular feature of these functions are that the restricted mean and years-lost are 
+different causes using the cif.yearslost function that is based on
+integrating the cumulative incidence functions.
+One particular feature of these functions are that the restricted mean and years-lost are
 computed for all event times as functions and can be plotted/viewed.  When times are given and beyond
-the last event time withn a strata the curves are extrapolated using the estimates of 
+the last event time withn a strata the curves are extrapolated using the estimates of
 cumulative incidence.
 }
 \examples{
@@ -54,7 +54,7 @@ summary(drm1)
 ## comparing populations, can also be done using rmstIPCW via influence functions
 drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
 summary(drm1)
-## first cause 
+## first cause
 e1 <- estimate(drm1)
 estimate(e1,rbind(c(1,-1,0,0)))
 }

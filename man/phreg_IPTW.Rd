@@ -38,8 +38,8 @@ phreg_IPTW(
 \description{
 Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
  \deqn{\pi(a|X)=P(A=a|X)}. Computes
-standard errors via influence functions that are returned as the IID argument. 
-Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are 
+standard errors via influence functions that are returned as the IID argument.
+Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are
 than treatment categories. The treatment needs to be a factor and is identified on the rhs
 of the "treat.model". Recurrent events can be considered with start,stop structure and then cluster(id) must be
 specified. Robust standard errors are computed in all cases.

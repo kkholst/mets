@@ -993,7 +993,7 @@ RcppExport SEXP maxminidR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 RcppExport SEXP riskstrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector intstrata(istrata);
-	int nstrata = Rcpp::as<int>(instrata);
+	unsigned nstrata = Rcpp::as<unsigned>(instrata);
 	unsigned n = a.n_rows;
 
 	colvec tmpsum(nstrata); tmpsum.zeros();

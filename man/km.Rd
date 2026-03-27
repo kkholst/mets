@@ -16,7 +16,7 @@ km(formula, data = data, km = TRUE, ...)
 \item{...}{Additional arguments to phreg}
 }
 \description{
-Kaplan-Meier with robust standard errors 
+Kaplan-Meier with robust standard errors
 Robust variance is default variance and obtained from the predict call
 }
 \examples{

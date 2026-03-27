@@ -15,6 +15,7 @@ basehazplot.phreg(
   col = NULL,
   lwd = NULL,
   legend = TRUE,
+  legend.args = list(),
   ylab = NULL,
   xlab = NULL,
   polygon = TRUE,
@@ -45,6 +46,8 @@ basehazplot.phreg(
 \item{lwd}{to specify lwd of components}
 
 \item{legend}{to specify col of components}
+
+\item{legend.args}{arguments to legend method}
 
 \item{ylab}{to specify ylab}
 

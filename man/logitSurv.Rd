@@ -18,14 +18,14 @@ logitSurv(formula, data, offset = NULL, weights = NULL, ...)
 \item{...}{Additional arguments to lower level funtions}
 }
 \description{
-Semiparametric Proportional odds model, that has the advantage that 
+Semiparametric Proportional odds model, that has the advantage that
 \deqn{
 logit(S(t|x)) = \log(\Lambda(t)) + x \beta
 }
 so covariate effects give OR of survival.
 }
 \details{
-This is equivalent to using a hazards model 
+This is equivalent to using a hazards model
 \deqn{
   Z \lambda(t) \exp(x \beta)
 }
