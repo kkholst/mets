@@ -43,8 +43,11 @@ The weights are either default  "I" \deqn{ w(t)= R_1 R_2 / (R_1+R_2)}
 or  "II" \deqn{ w(t)= Y_1 Y_2 / (Y_1+Y_2) }  with 
 \deqn{ Y_j(t)}  the number of subjects under risk in each group and 
 \deqn{ R_j(t)=Y_j(t)/\hat S_j(t-)}  where the denominator is the 
-Kaplan-Meier of death. Will not give Grays test that is based on subdistribution
-hazards.  In general 
+Kaplan-Meier of death. To get Grays test we need the weights of type="III" 
+\deqn{ R_j(t)=(1-F_j(s-)) Y_j(t)/\hat S_j(t-)}  where 
+\deqn{ F_j(s)} is the cumulative incidence for strata j and a slight modification
+to give the subdistribution hazards rather than the cumulative incidences.
+In general 
 \deqn{ z_k = \int_0^t  R_k(s) [ d \hat m_1(s) -  \sum_j \frac{R_j(t)}{R_\bullet (s)} d \hat m_j(s) ] } 
 is computed and  the test is based on \deqn{ T= (z_1,...,z_{K-1})} with 
 a robust variance estimate derived from the influence functions of 

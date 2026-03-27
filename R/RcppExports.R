@@ -25,6 +25,10 @@ riskstrataR <- function(ia, istrata, instrata) {
     .Call(`_mets_riskstrataR`, ia, istrata, instrata)
 }
 
+cumsumstratasumR <- function(ia, istrata, instrata, iallstrata) {
+    .Call(`_mets_cumsumstratasumR`, ia, istrata, instrata, iallstrata)
+}
+
 .scoreMVN <- function(Y, Mu, dMu, S, dS, itol = 0.0) {
     .Call(`_mets_scoreMVN`, Y, Mu, dMu, S, dS, itol)
 }

@@ -3807,10 +3807,10 @@ return(res)
 cumsumstratasum <- function(x,strata,nstrata,type="all")
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
-if (length(x)!=length(strata)) stop("length of x and strata must be same\n");
-if (type=="sum")    res <- .Call("cumsumstratasumR",x,strata,nstrata)$sum
-if (type=="lagsum") res <- .Call("cumsumstratasumR",x,strata,nstrata)$lagsum
-if (type=="all")    res <- .Call("cumsumstratasumR",x,strata,nstrata)
+if (length(x)!=length(strata)) stop("length of x and strata must be same\n"); 
+if (type=="sum")    res <- .Call("_mets_cumsumstratasumR",x,strata,nstrata,0)$sum
+if (type=="lagsum") res <- .Call("_mets_cumsumstratasumR",x,strata,nstrata,0)$lagsum
+if (type=="all")    res <- .Call("_mets_cumsumstratasumR",x,strata,nstrata,1)
 return(res)
 }# }}}
 
