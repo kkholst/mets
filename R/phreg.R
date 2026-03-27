@@ -2257,7 +2257,7 @@ return(out)
 vcov.resmean_phreg <- function(object,cause=1,...)
 {# {{{
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-  return(diag(object$intkmtimes[,name,drop=FALSE]^2, 
+  return(diag(object$intkmtimes[,name,drop=TRUE]^2,
               nrow=NROW(object$intkmtimes)))
 }# }}}
 
