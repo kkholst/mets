@@ -430,7 +430,7 @@ return(ic)
 ##' \deqn{ F_j(s)} is the cumulative incidence for strata j and a slight modification
 ##' to give the subdistribution hazards rather than the cumulative incidences.
 ##' In general 
-##' \deqn{ z_k = \int_0^t  R_k(s) [ d \hat m_1(s) -  \sum_j \frac{R_j(t)}{R_\bullet (s)} d \hat m_j(s) ] } 
+##' \deqn{ z_k = \int_0^t  R_k(s) [ d \hat m_k(s) -  \sum_j \frac{R_j(t)}{R_\bullet (s)} d \hat m_j(s) ] } 
 ##' is computed and  the test is based on \deqn{ T= (z_1,...,z_{K-1})} with 
 ##' a robust variance estimate derived from the influence functions of 
 ##' \deqn{ \hat m_j(s)}. The influence functions of \deqn{T} can be found 
