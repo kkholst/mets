@@ -200,38 +200,26 @@ if (nlev==2) {
    pepe.mori <- estimate(pepe.mori,lava::contr(1:p))
 }
 
-##### computing S0 for the two strata 
-###pt0S <- recreg(formula,data,cause=cause,death.code=death.code.prop,
-###		   cens.model=~strata(strata__),beta=0,no.opt=TRUE)
-###Yr <- vecAllStrata(pt0S$S0,pt0S$strata.jumps,pt0S$nstrata)
-###nss <- pt0S$S0[headstrata(pt0S$strata.jumps,pt0S$nstrata)[,1]]
-###risk02 <- Yr[,2]==0
-###risk01 <- Yr[,1]==0
-###Yr[risk01,1] <- ns[1]
-###Yr[risk02,2] <- ns[2]
-###head(Yr)
-###wt <- (sum(ns)/(n1*n2))*Yr[,1]*Yr[,2]/(Yr[,1]+Yr[,2])
-###Wt2 <- cumsum(diff(c(0,pt0S$cumhaz[,1]))*wt)
-###Wt2 <- lin.approx(exit,rbind(0,cbind(pt0S$cumhaz[,1],Wt2)))
-###Wfinal2 <- tail(Wt2,1)
-###data$pmmark2__ <- Wfinal2-Wt2
-###
-###pmOut2 <- recregIPCW(formR,data,cause=cause,death.code=death.code,
-###    time=time,marks=data$pmmark2__,cens.model=~strata(strata__),model="lin")
-
 ## }}}
 
 ## Ratio of AUC
 data$pmmarkAUC__ <- time-exit
-RAUC<- recregIPCW(formR,data,cause=cause,death.code=death.code,
-		  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__)
-RAUC <- estimate(RAUC,null=0)
-p <- length(coef(RAUC))
-RAUC <- estimate(RAUC,lava::contr(2:p))
+## linear model for stability when fitting
+RAUCl<- recregIPCW(formR,data,cause=cause,death.code=death.code,
+	  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__,
+	  model="lin")
+RAUCe <- recregIPCW(formR,data,cause=cause,death.code=death.code,
+	  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__,
+	  model="exp",beta=c(log(coef(RAUCl)[1]),0,0,0))
+p <- length(coef(RAUCe))
+RAUCet <- estimate(RAUCe,as.list(2:p))
+RAUClt <- estimate(RAUCl,as.list(2:p))
 
 proptest <- estimate(proptest,null=0)
 
-out <- list(pepe.mori=pepe.mori,RatioAUC=RAUC,score.test=score.test,score.iid=iidU0,prop.test=proptest,time=time)
+out <- list(pepe.mori=pepe.mori,RatioAUC=RAUCet,difAUC=RAUClt,
+	    RAUCl=RAUCl,RAUCe=RAUCe,
+	    score.test=score.test,score.iid=iidU0,prop.test=proptest,time=time)
 class(out) <- "marginalTest"
 return(out)
 } ## }}} 
