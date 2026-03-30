@@ -2501,12 +2501,15 @@ summary.resmean_phreg <- function(object,level=0.95,contrast=NULL,...)
 if (is.null(object$intkmtimes)) {
 	p <- ncol(object$cumhaz)
 	outl <- basecumhaz(object,columns=1:p) 
+	outl$strata.name  <- object$strata.name
+	outl$strata.level <- object$strata.level
+	outl$causes       <- object$causes
 } else  {
 
 out <- object$intkmtimes
 if (ncol(out)==5) {
    mu <- out[,3]; se <- out[,4];
-   xx <- conftype(mu,se,conf.int=level)
+   xx <- conftype(mu,se,conf.int=level,...)
    lower <- xx$lower
    upper <- xx$upper
    years.lost <- out[,5]
@@ -2517,30 +2520,41 @@ if (ncol(out)==5) {
    }
    outl <- out
 } else {
+	p <- ncol(out)
+        nn <- names(out)[1:2]
+        nl <- names(out)[p]
         outl <- list()
+        oute <- list()
 	k <- 1
 	for (i in object$causes) {
                    name <- paste("intF_",i,sep="")
                    sename <- paste("se.intF_",i,sep="")
-		    mu <- out[,name];
+		   mu <- out[,name];
 		   se <- out[,sename];
-                   xx <- conftype(mu,se,conf.int=level)
+                   xx <- conftype(mu,se,conf.int=level,...)
 		   loweri <- paste0("lower_",name)
 		   upperi <- paste0("upper_",name)
 		   out[,loweri] <- xx$lower
 		   out[,upperi] <- xx$upper
+		   xo <- out[,c(nn,name,sename)]
+		   xo[,loweri] <- xx$lower
+		   xo[,upperi] <- xx$upper
+		   oute[[name]] <- xo
 		   if (!is.null(contrast)) {
                    test <- estimate(coef=mu,vcov=diag(se^2),contrast=contrast)
 		   testname <- paste0("test",name)
 		   outl[[testname]] <- test
 		   }
 	}
-        outl$estimate <- out
+###        outl$estimate <- out
+	outl$estimate <- oute
+	outl$total.years.lost <- out[,nl]
 }
 }
 
 return(outl)
 }# }}}
+
 
 ##' @export
 print.resmean_phreg <- function(x,...)
