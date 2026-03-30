@@ -1025,11 +1025,13 @@ zval <- qnorm(1 - (1 - conf.int)/2, 0, 1)
 }# }}}
 
 ##' @export
-basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,...) {# {{{
+basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,columns=NULL,...) {# {{{
    ## all strata
    stratobs <- x$strata[x$jumps]
    ustratobs <- sort(unique(stratobs))
    stratas <- 0:(x$nstrata-1)
+   ## default 
+   if (is.null(columns)) columns <- 1:2
 
    se.cum <- cum <- c()
    se.cum <- cum <- x[[cumhaz]]
@@ -1044,10 +1046,10 @@ basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz
    if (length(ustratobs)>0)
    for (i in ustratobs) {
 	   if (!is.null(x[[cumhaz]])) {
-	   cumhazard <- x[[cumhaz]][stratobs==i,,drop=FALSE]
+	   cumhazard <- x[[cumhaz]][stratobs==i,columns,drop=FALSE]
            nr <- nrow(cumhazard)
 	   if (nr>=1) {
-		   if (!nose) se.cum <- secum[stratobs==i,,drop=FALSE] else se.cum <- NULL
+		   if (!nose) se.cum <- secum[stratobs==i,columns,drop=FALSE] else se.cum <- NULL
 		   if (only==0) {
 			  if (joint==0) out[[i+1]] <- list(cumhaz=cumhazard,se.cumhaz=se.cum,strata=i) else
 		                        out[[i+1]] <- list(cumhaz=cbind(cumhazard,se.cum[,2],i))
@@ -2495,7 +2497,11 @@ return(out)
 ##' @export
 summary.resmean_phreg <- function(object,level=0.95,contrast=NULL,...)
 {# {{{
-if (is.null(object$intkmtimes)) out <- cbind(object$cumhaz,object$se.cumhaz[,-1]) else  {
+
+if (is.null(object$intkmtimes)) {
+	p <- ncol(object$cumhaz)
+	outl <- basecumhaz(object,columns=1:p) 
+} else  {
 
 out <- object$intkmtimes
 if (ncol(out)==5) {

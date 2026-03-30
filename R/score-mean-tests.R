@@ -202,16 +202,16 @@ if (nlev==2) {
 
 ## }}}
 
+
 ## Ratio of AUC
 data$pmmarkAUC__ <- time-exit
 ## linear model for stability when fitting
 RAUCl<- recregIPCW(formR,data,cause=cause,death.code=death.code,
 	  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__,
 	  model="lin")
-RAUCe <- recregIPCW(formR,data,cause=cause,death.code=death.code,
-	  times=time,cens.model=~strata(strata__),marks=data$pmmarkAUC__,
-	  model="exp",beta=c(log(coef(RAUCl)[1]),0,0,0))
-p <- length(coef(RAUCe))
+f <- function(p) p[-1]/p[1]
+RAUCe <- estimate(RAUCl,function(p) c(log(p[1]),p[-1]/p[1]))
+p <- length(coef(RAUCl))
 RAUCet <- estimate(RAUCe,as.list(2:p))
 RAUClt <- estimate(RAUCl,as.list(2:p))
 
