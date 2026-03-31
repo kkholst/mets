@@ -2139,15 +2139,16 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' e1 <- estimate(rm1)
 ##' e1
 ##' estimate(e1,rbind(c(1,-1,0,0)))
+##' estimate(e1,list(1:4))
 ##'
 ##' ## years.lost decomposed into causes
-##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=10*(1:6))
+##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
 ##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 ##' summary(drm1)
 ##'
 ##' ## comparing populations, can also be done using rmstIPCW via influence functions
 ##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
-##' summary(drm1)
+##' summary(drm1,contrast=list(1:4))
 ##' ## first cause
 ##' e1 <- estimate(drm1)
 ##' estimate(e1,rbind(c(1,-1,0,0)))
