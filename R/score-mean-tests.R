@@ -164,44 +164,46 @@ if (nlev==2) {
 	pepe.mori <- estimate(pepe.mori,lava::contr(2))
 } else {
 
-  formRC <- as.formula(paste("Event(entry__,exit__,status__)~factor(cstrata__)+cluster(id__)"))
-	contr <- contr.iid <- c()
-        for (i in 1:(nlev-1)) {
-
-   	   data$cstrata__  <-  1*(nstrata==i)
-           formC <- as.formula(paste("Event(entry__,exit__,statusC__)~strata(cstrata__)"))
-
-           kms <- km(formC,data)
-           kmss <- cbind(kms$time,t(kms$surv))
-
-           ns <- c(table(data$cstrata__[cid$reverse==1]))
-	   n1 <- ns[1]
-	   n2 <- ns[2]
-	   ## using number at risk for weighting 
-	   kmss <- cbind(kms$time,t(kms$surv))
-	   wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
-	   wt[is.na(wt)] <- 0
-	   Wt <- cumsum(diff(c(0,kms$time))*wt)
-	   Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
-	   Wfinal <- tail(Wt,1)
-	   ###
-	   data$pmmark__ <- Wfinal-Wtmark
-
-	   pmOut <- recregIPCW(formRC,data,cause=cause,death.code=death.code,
-	       times=time,marks=data$pmmark__,cens.model=~strata(cstrata__),model="lin")
-
-        contr <- c(contr,coef(pmOut)[2])
-	contr.iid <- cbind(contr.iid,pmOut$iid[,2])
-   }
-   var.contr <- crossprod(contr.iid)
-   ###  pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
-   pepe.mori <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
-   p <- length(contr)
-   pepe.mori <- estimate(pepe.mori,lava::contr(1:p))
+###  formRC <- as.formula(paste("Event(entry__,exit__,status__)~factor(cstrata__)+cluster(id__)"))
+###	contr <- contr.iid <- c()
+###        for (i in 1:(nlev-1)) {
+###
+###   	   data$cstrata__  <-  1*(nstrata==i)
+###           formC <- as.formula(paste("Event(entry__,exit__,statusC__)~strata(cstrata__)"))
+###
+###           kms <- km(formC,data)
+###           kmss <- cbind(kms$time,t(kms$surv))
+###
+###           ns <- c(table(data$cstrata__[cid$reverse==1]))
+###	   n1 <- ns[1]
+###	   n2 <- ns[2]
+###	   ## using number at risk for weighting 
+###	   kmss <- cbind(kms$time,t(kms$surv))
+###	   wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
+###	   wt[is.na(wt)] <- 0
+###	   Wt <- cumsum(diff(c(0,kms$time))*wt)
+###	   Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
+###	   Wfinal <- tail(Wt,1)
+###	   ###
+###	   data$pmmark__ <- Wfinal-Wtmark
+###
+###	   pmOut <- recregIPCW(formRC,data,cause=cause,death.code=death.code,
+###	       times=time,marks=data$pmmark__,cens.model=~strata(cstrata__),model="lin")
+###
+###        contr <- c(contr,coef(pmOut)[2])
+###	contr.iid <- cbind(contr.iid,pmOut$iid[,2])
+###   }
+###   var.contr <- crossprod(contr.iid)
+###   ###  pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
+###   pepe.mori <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
+###   p <- length(contr)
+###   pepe.mori <- estimate(pepe.mori,lava::contr(1:p))
+	pepe.mori <- list()
+	pepe.mori$error <- "only for two levels"
+        pepe.mori$compare$p.value  <-  NA
 }
 
 ## }}}
-
 
 ## Ratio of AUC
 data$pmmarkAUC__ <- time-exit
@@ -211,7 +213,7 @@ RAUCl<- recregIPCW(formR,data,cause=cause,death.code=death.code,
 	  model="lin")
 f <- function(p) p[-1]/p[1]
 ## reparametrize as baseline on log-scale, and log-ratio contrasts 
-RAUCe <- estimate(RAUCl,function(p) c(log(p[1]),log(p[-1]/p[1])))
+RAUCe <- estimate(RAUCl,function(p) c(log(p[1]),log((p[1]+p[-1])/p[1])))
 p <- length(coef(RAUCl))
 RAUCet <- estimate(RAUCe,as.list(2:p))
 RAUClt <- estimate(RAUCl,as.list(2:p))
