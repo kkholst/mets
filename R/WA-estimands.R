@@ -265,17 +265,17 @@ print.WA  <- function(x,type="log",...) {# {{{
 summary.WA <- function(object,type="p",augtype=NULL,...) {# {{{
 
 rmst <- estimate(object$RAW$rmst)
-rmst.test <- estimate(rmst,contrast=rbind(c(1,-1)))
+rmst.test <- estimate(rmst,f=rbind(c(1,-1)))
 rmst.log <- estimate(rmst,function(p) log(p))
-rmst.test.log <- estimate(rmst.log,contrast=rbind(c(1,-1)))
+rmst.test.log <- estimate(rmst.log,f=rbind(c(1,-1)))
 
 meanNtD <- estimate(object$RAW$meanN)
-meanNtD.test <- estimate(meanNtD,contrast=rbind(c(1,-1)))
+meanNtD.test <- estimate(meanNtD,f=rbind(c(1,-1)))
 meanNtD.log <- estimate(meanNtD,function(p) log(p))
-meanNtD.test.log <- estimate(meanNtD.log,contrast=rbind(c(1,-1)))
+meanNtD.test.log <- estimate(meanNtD.log,f=rbind(c(1,-1)))
 
 eer <- estimate(object$RAW$ratio.means)
-eedr <- estimate(eer,contrast=rbind(c(1,-1)))
+eedr <- estimate(eer,f=rbind(c(1,-1)))
 
 if (is.null(augtype)) {
    augtype <- "riskDR"
@@ -285,11 +285,11 @@ if (augtype=="riskDR")
 ee <- estimate(coef=object$ET$riskDR$riskDR,vcov=object$ET$riskDR$var.riskDR)
 if (augtype=="riskDRC")
 ee <- estimate(coef=object$ET$riskDRC$coef,vcov=object$ET$riskDRC$var)
-eed <- estimate(ee,contrast=rbind(c(1,-1)))
+eed <- estimate(ee,f=rbind(c(1,-1)))
 eer.log <- object$RAW$ratio.means.log
-eedr.log <- estimate(eer.log,contrast=rbind(c(1,-1)))
+eedr.log <- estimate(eer.log,f=rbind(c(1,-1)))
 eelog <-  estimate(ee,function(p) log(p))
-eedlog <- estimate(eelog,contrast=rbind(c(1,-1)))
+eedlog <- estimate(eelog,f=rbind(c(1,-1)))
 
 res <- list(rmst=rmst,rmst.test=rmst.test,meanNtD=meanNtD,meanNtD.test=meanNtD.test,
             ratio=eer,test.ratio=eedr,meanpt=ee,test.meanpt=eed)

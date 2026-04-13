@@ -2516,7 +2516,7 @@ if (ncol(out)==5) {
    years.lost <- out[,5]
    out <- cbind(out[,-5],lower,upper,years.lost)
    if (!is.null(contrast)) {
-	   test <- estimate(object,contrast=contrast)
+	   test <- estimate(object,f=contrast)
 	   out <- list(estimates=out,test=test)
    }
    outl <- out
@@ -2542,7 +2542,7 @@ if (ncol(out)==5) {
 		   xo[,upperi] <- xx$upper
 		   oute[[name]] <- xo
 		   if (!is.null(contrast)) {
-                   test <- estimate(coef=mu,vcov=diag(se^2),contrast=contrast)
+             test <- estimate(coef=mu,vcov=diag(se^2),f=contrast)
 		   testname <- paste0("test",name)
 		   outl[[testname]] <- test
 		   }

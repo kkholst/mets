@@ -18,7 +18,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{lava}{\code{\link[lava:estimate.default]{estimate}}, \code{\link[lava]{gof}}, \code{\link[lava]{IC}}, \code{\link[lava]{iid}}, \code{\link[lava]{twostage}}}
+  \item{lava}{\code{\link[lava:estimate.default]{estimate}}, \code{\link[lava]{gof}}, \code{\link[lava:IC.default]{IC}}, \code{\link[lava]{iid}}, \code{\link[lava]{twostage}}}
 
   \item{survival}{\code{\link[survival]{cluster}}, \code{\link[survival]{strata}}, \code{\link[survival]{Surv}}}
 }}

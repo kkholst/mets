@@ -23,6 +23,7 @@ and bivariate random effects probit models (Liability models)
 Useful links:
 \itemize{
   \item \url{https://kkholst.github.io/mets/}
+  \item \url{https://github.com/kkholst/mets}
   \item Report bugs at \url{https://github.com/kkholst/mets/issues}
 }
 

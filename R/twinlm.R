@@ -239,11 +239,13 @@ twinlm <- function(formula, data, id, zyg, DZ, group=NULL,
   }
   
   newkeep <- unlist(sapply(keep, function(x) paste(x, 1:2, sep = ".")))
-    if (!is.null(estimator) && (inherits(estimator,c("numeric","logical")) && !estimator)) return(multigroup(mm, dd, missing=TRUE,fix=FALSE,keep=newkeep,type=2))
+    if (!is.null(estimator) && (inherits(estimator,c("numeric","logical"))
+      && !estimator)) {
+      return(multigroup(mm, dd, missing=TRUE,fix=FALSE,keep=newkeep,type=2))
+    }
   optim <- list()
   if (is.null(control$start)) {
     optim <- list(start=rep(0.1,length(coef(mm[[1]]))*length(mm)))
-##    optim <- list(method="nlminb2",refit=FALSE,gamma=1,start=rep(0.1,length(coef(mm[[1]]))*length(mm)))
 
     optim$start <- twinlmStart(formula,na.omit(mf),type,hasIntercept,
                               surv=inherits(data[,yvar],"Surv"),ordinal=ordinal,
@@ -254,7 +256,6 @@ twinlm <- function(formula, data, id, zyg, DZ, group=NULL,
   }
     
   if (inherits(data[,yvar],"Surv")) {
-      ##if (!requireNamespace("lava.tobit",quietly=TRUE)) stop("lava.tobit required")
       if (!is.null(estimator) && estimator%in%c("gaussian","tobit")) optim$method <- "nlminb1"
       suppressWarnings(e <- estimate(mm,dd,control=optim,estimator=estimator,...))
   } else {
@@ -304,7 +305,9 @@ twinlm <- function(formula, data, id, zyg, DZ, group=NULL,
 
 ##outcomes <- c("y1","y2"); groups <- c("M","F"); covars <- NULL; type <- "ace"
 ##twinsem1(c("y1","y2"),c("M","F"))
-twinsem1 <- function(outcomes,groups=NULL,levels=NULL,covars=NULL,type="ace",data,constrain=TRUE,equal.marg=FALSE,intercept=TRUE,ordinal=0,...) {
+twinsem1 <- function(outcomes,groups=NULL,levels=NULL,
+                     covars=NULL,type="ace",data,constrain=TRUE,
+                     equal.marg=FALSE,intercept=TRUE,ordinal=0,...) {
     isA <- length(grep("a",type))>0 & type!="sat"
     isC <- length(grep("c",type))>0
     isD <- length(grep("d",type))>0
@@ -514,7 +517,8 @@ twinsem1 <- function(outcomes,groups=NULL,levels=NULL,covars=NULL,type="ace",dat
         }   
         trash <- setdiff(myvars,mykeep)
         if (length(mykeep)==1) {
-            regression(model1, to=outcomes[2], from=mykeep) <- lava::regfix(model1)$label[trash,outcomes[2]]
+            regression(model1, to=outcomes[2], from=mykeep) <-
+              regression(model1)$label[trash,outcomes[2]]
             kill(model1) <- trash
         }
         dif <- data[[2]][,myvars[1]]-data[[2]][,myvars[2]]   
@@ -524,18 +528,24 @@ twinsem1 <- function(outcomes,groups=NULL,levels=NULL,covars=NULL,type="ace",dat
         }  
         trash <- setdiff(myvars,mykeep)
         if (length(mykeep)==1) {
-            regression(model2, to=outcomes[2], from=mykeep) <- lava::regfix(model2)$label[trash,outcomes[2]]
+            regression(model2, to=outcomes[2], from=mykeep) <-
+              regression(model2)$label[trash,outcomes[2]]
             kill(model2) <- trash
         }
     }
-    twinsem1(list(MZ=model1,DZ=model2),groups=groups,type=type,levels=levels,constrain=constrain,equal.marg=equal.marg,ordinal=ordinal)
+    twinsem1(list(MZ=model1, DZ=model2),
+             groups=groups, type=type, levels=levels,
+             constrain=constrain, equal.marg=equal.marg, ordinal=ordinal)
 }
 
 ###}}} twinsem1
 
 ###{{{ twinlmStart (starting values)
 
-twinlmStart <- function(formula,mf,type,hasIntercept,surv=FALSE,ordinal=0,model,group=NULL,group.equal,...)  {
+twinlmStart <- function(formula,mf,
+                        type,hasIntercept,
+                        surv=FALSE,ordinal=0,model,
+                        group=NULL,group.equal,...)  {
     if (surv) {
         l <- survival::survreg(formula,data=mf,dist="gaussian")
         beta <- coef(l)

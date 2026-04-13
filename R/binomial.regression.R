@@ -1702,7 +1702,7 @@ nncont <- c()
 for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
 rownames(contrast) <- nncont
 
-mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=contrast)
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,f=contrast)
 val$difriskDR <- mm$coef 
 names(val$difriskDR) <-  rownames(contrast) 
 val$var.difriskDR <- mm$vcov 
@@ -1714,7 +1714,7 @@ val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 ###
-mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,f=contrast)
 val$difriskG <- mm$coef 
 names(val$difriskG) <-  rownames(contrast) 
 val$var.difriskG <- mm$vcov 
@@ -2053,7 +2053,7 @@ nncont <- c()
 for (k in seq_along(nlevs[-length(nlevs)])) nncont <-c(nncont, paste("treat:",nlevs[-seq(k)],"-",nlevs[k],sep="")) 
 rownames(contrast) <- nncont
 
-mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=contrast)
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,f=contrast)
 val$difriskDR <- mm$coef 
 names(val$difriskDR) <-  rownames(contrast) 
 val$var.difriskDR <- mm$vcov 
@@ -2065,7 +2065,7 @@ val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(val$riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 ###
-mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,f=contrast)
 val$difriskG <- mm$coef 
 names(val$difriskG) <-  rownames(contrast) 
 val$var.difriskG <- mm$vcov 
@@ -2573,7 +2573,7 @@ val$riskDR.iid <- iidrisk
 ###rownames(contrast) <- nncont
 contrast <- rbind(c(1,-1))
 
-mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,contrast=rbind(c(1,-1)))
+mm <- estimate(coef=val$riskDR,vcov=val$var.riskDR,f=rbind(c(1,-1)))
 val$difriskDR <- mm$coef 
 names(val$difriskDR) <-  rownames(contrast) 
 val$var.difriskDR <- mm$vcov 
@@ -2585,7 +2585,7 @@ val$riskG.iid <- riskG.iid
 val$var.riskG <- crossprod(riskG.iid)
 val$se.riskG <- diag(val$var.riskG)^.5
 ###
-mm <- estimate(coef=val$riskG,vcov=val$var.riskG,contrast=contrast)
+mm <- estimate(coef=val$riskG,vcov=val$var.riskG,f=contrast)
 val$difriskG <- mm$coef 
 names(val$difriskG) <-  rownames(contrast) 
 val$var.difriskG <- mm$vcov 
