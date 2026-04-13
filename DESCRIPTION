@@ -14,14 +14,14 @@ Description: Implementation of various statistical models for multivariate
     Ghosh-Lin, Binomial regression) with fast computation of influence functions.
 License: Apache License (== 2.0)
 LazyLoad: yes
-URL: https://kkholst.github.io/mets/
+URL: https://kkholst.github.io/mets/, https://github.com/kkholst/mets
 BugReports: https://github.com/kkholst/mets/issues
 Depends:
     R (>= 3.5)
 Imports:
     Rcpp,
     RcppArmadillo,
-    lava (>= 1.8.2),
+    lava (>= 1.9.0),
     methods,
     mvtnorm,
     numDeriv,

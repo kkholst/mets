@@ -1,4 +1,5 @@
 url: http://kkholst.github.io/mets/
 template:
+  math-rendering: katex
   bootstrap: 5
 
