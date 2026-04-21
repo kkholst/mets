@@ -365,7 +365,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$ihessianI <- ihessianI
   val$design <- des
 
-  class(val) <- "binreg"
+  class(val) <- c("binreg","ratio")
   return(val)
 }# }}}
 

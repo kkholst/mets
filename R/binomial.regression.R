@@ -1728,10 +1728,28 @@ if (!is.null(call.id)) {
 }
 ## }}}
 
-  class(val) <- "binreg"
+  class(val) <- c("binreg","ATE")
   return(val)
 }# }}}
 
+##' @export
+estimate.ATE  <- function(x,type=c("all","DR","G"),...)
+{
+if (type[1]=="all") {
+iidGDR <- cbind(x$riskG.iid,x$riskDR.iid)
+coefs <- c(x$riskG,x$riskDR)
+names(coefs)  <- c(paste("G",names(x$riskG),sep="-"), paste("DR",names(x$riskG),sep="-"))
+} else if (type[1]=="DR") {
+iidGDR <- x$riskDR.iid
+coefs <- x$riskDR
+names(coefs)  <- paste("DR",names(x$riskG),sep="-")
+} else {
+iidGDR <- x$riskG.iid
+coefs <- x$riskG
+names(coefs)  <- paste("G",names(x$riskG),sep="-")
+}
+out <-estimate(coef=coefs,IC=iidGDR*nrow(iidGDR),...)
+}
 
 binregATEold <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
    offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),
@@ -2602,7 +2620,7 @@ if (!is.null(call.id)) {
   val$model <- model[1]
   val$outcome <- outcome[1]
   val$call.id <- call.id
-  class(val) <- "binreg"
+  class(val) <- c("binreg","ATE")
   return(val)
 }# }}}
 

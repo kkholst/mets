@@ -477,9 +477,9 @@ transformation_phreg <- function(type, lp = TRUE) {
 
 ##' @export
 estimate.phreg <- function(x, ..., time = NULL,
-                           newdata = NULL, X = NULL,
+			   newdata = NULL, X = NULL,all=FALSE,
                            type = c("chaz", "surv", "risk"),
-                           baseline.args = list()) {
+                           baseline.args = list()) { ## {{{ 
   if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
   if (!is.null(newdata) || !is.null(X)) {
     if (is.null(X)) {
@@ -508,25 +508,34 @@ estimate.phreg <- function(x, ..., time = NULL,
                      )
     return(estimate(res, ...))
   }
-  ic <- do.call(IC, c(list(x, time = time), baseline.args))
+  ic <- do.call(IC, c(list(x, time = time,all=all), baseline.args))
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
   lab <- names(cc)
-  if (!is.null(time) && length(cc) > 1 || is.null(lab)) lab <- x$strata.level
-  b <- lava::estimate(coef = cc, IC = ic, labels = lab)
+###  if (!is.null(time) && length(cc) > 1 || is.null(lab)) lab <- x$strata.level
+###  b <- lava::estimate(coef = cc, IC = ic, labels = lab)
+  b <- lava::estimate(coef = cc, IC = ic)
   if (!is.null(time)) {
     b <- transform(b, transformation_phreg(tolower(type[1]), FALSE))
   }
   return(estimate(b, ...))
-}
+} ## }}} 
 
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
   if (!is.null(time)) {
     iid <- iidBaseline(x, time = time, ...)
+    if (all) 
+    res <- with(iid, cbind(beta.iid,base.iid) * NROW(base.iid))
+    else 
     res <- with(iid, base.iid * NROW(base.iid))
     attr(res, "strata.level") <- iid$strata.level
-    attr(res, "coef") <- iid$cumhaz.time
+    if (all)  {
+	    coefs <- c(iid$coef,iid$cumhaz.time) 
+            attr(res, "coef") <- coefs
+    } else { 
+	    attr(res, "coef") <- c(iid$cumhaz.time)
+    }
     attr(res, "time") <- time
     return(res)
   }
@@ -726,6 +735,7 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
          }
          MGAiids <- cbind(MGAiids,MGAiidl)
  }
+ names(cumhaz.time) <- paste("strata",sus,sep="")
  MGAiid <- MGAiids
  if (is.matrix(MGAiid)) {
     colnames(MGAiid) <- paste("strata",sus,sep="")
@@ -3150,6 +3160,11 @@ attr(out,"levels") <- nlevels
 return(out)
 } ## }}}
 
+##' @export
+estimate.survivalG  <- function(x,...)
+{
+out <-estimate(coef=x$risk$coefmat[,1],IC=x$risk.iid*nrow(x$risk.iid),...)
+}
 
 ###{{{ summary  survivalG
 
