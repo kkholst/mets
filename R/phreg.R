@@ -525,17 +525,16 @@ estimate.phreg <- function(x, ..., time = NULL,
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
   if (!is.null(time)) {
     iid <- iidBaseline(x, time = time, ...)
-    if (all) 
-    res <- with(iid, cbind(beta.iid,base.iid) * NROW(base.iid))
-    else 
-    res <- with(iid, base.iid * NROW(base.iid))
-    attr(res, "strata.level") <- iid$strata.level
     if (all)  {
+            res <- with(iid, cbind(beta.iid,base.iid) * NROW(base.iid))
 	    coefs <- c(iid$coef,iid$cumhaz.time) 
+	    colnames(res) <- names(coefs)
             attr(res, "coef") <- coefs
     } else { 
+            res <- with(iid, base.iid * NROW(base.iid))
 	    attr(res, "coef") <- c(iid$cumhaz.time)
     }
+    attr(res, "strata.level") <- iid$strata.level
     attr(res, "time") <- time
     return(res)
   }

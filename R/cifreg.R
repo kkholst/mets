@@ -137,14 +137,22 @@ iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=ob
 }  ## }}}
 
 ##' @export
-IC.cifreg <- function(x, time=NULL, ...) {# {{{
+IC.cifreg <- function(x, time=NULL,all=FALSE,...) {# {{{
   if (!is.null(time)) {
     iid <- iidBaseline.recreg(x, time=time,...)
-    res <- iid$base.iid
+    if (all)  {
+       res <- with(iid, cbind(beta.iid,base.iid) * NROW(base.iid))
+       coefs <- c(iid$coef,iid$cumhaz.time) 
+       colnames(res) <- names(coefs)
+       attr(res, "coef") <- coefs
+    } else { 
+        res <- with(iid, base.iid * NROW(base.iid))
+        attr(res, "coef") <- c(iid$cumhaz.time)
+    }
+
     attr(res, "strata.level") <- iid$strata.level
-    attr(res, "coef") <- iid$cumhaz.time
     attr(res, "time") <- time
-    return(res * NROW(res))
+    return(res)
   }
   res <- with(x, iid * NROW(iid))
   return(res)
@@ -152,20 +160,17 @@ IC.cifreg <- function(x, time=NULL, ...) {# {{{
 # }}}
 
 ##' @export
-estimate.cifreg <- function(x, ..., time = NULL, baseline.args = list()) {
+estimate.cifreg <- function(x, ..., time = NULL, all=FALSE, baseline.args = list()) {
   if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
-  ic <- do.call(IC, c(list(x, time = time), baseline.args))
+  ic <- do.call(IC, c(list(x, time = time,all=all), baseline.args))
   cc <- attr(ic, "coef")
   if (is.null(cc)) cc <- coef(x)
-  lab <- names(cc)
+###  lab <- names(cc)
   if (!is.null(time)) {
     lab <- x$strata.level
     if (is.null(lab)) lab <- "cif"
   }
-  b <- lava::estimate(
-      coef = cc, IC = ic, labels = lab,
-      function(x) 1 - exp(-x)
-  )
+  b <- lava::estimate( coef = cc, IC = ic)
   return(lava::estimate(b, ...))
 }
 
