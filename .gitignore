@@ -9,6 +9,7 @@ inst/README_files
 inst/README.md
 inst/README.tex
 inst/man
+huskCompile
 docs
 *.gcno
 TAGS
