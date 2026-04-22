@@ -59,7 +59,7 @@
 ##' ########################################################################
 ##' ### iid decomposition based on influence functions from Ghosh Lin (2000)
 ##' ########################################################################
-##' head(iid(outN,stop=3))
+##' head(iid(outN,time=3))
 ##'
 ##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg iidRecurrent
 ##' @references 
