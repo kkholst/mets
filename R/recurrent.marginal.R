@@ -314,10 +314,10 @@ if (is.null(x$times)) print(x$baseci) else print(x$pbaseci)
 } # }}}
 
 ##' @export
-iidRecurrent <- function(recurrent,death,wt=NULL,km=TRUE,start=0,stop=NULL) { ## {{{ 
+iidRecurrent <- function(recurrent,death,wt=NULL,km=TRUE,start=0,time=NULL) { ## {{{ 
 xr <- recurrent
 dr <- death 
-if (is.null(stop)) stop <- max(xr$jumptimes)
+if (is.null(time)) time <- max(xr$jumptimes)
 ### marginal expected events  int_0^t w(s) S(s) \lambda_r(s) ds 
 ### weight is considered known 
 ## {{{
@@ -341,7 +341,7 @@ S0i2 <- S0i <- rep(0,length(xstrata))
 S0i[xx$jumps+1] <-  1/x$S0
 S0i2[xx$jumps+1] <- 1/x$S0^2
 
-btime <- (xx$time<=stop & xx$time>start)*1
+btime <- (xx$time<=time  & xx$time>start)*1
 wt.call <- wt
 if (is.null(wt)) wt <- rep(1,length(xx$time))
 
@@ -397,14 +397,26 @@ var.iid <- crossprod(MGAiid)
 se <- diag(var.iid)^.5
 ## }}} 
 
-out <- list(iid=MGAiid,wt=wt.call,stop=stop,start=start,meanN=meanN,var=var.iid,se=diag(var.iid)^.5,mut=mu[tails])
+out <- list(iid=MGAiid,wt=wt.call,time=time,start=start,meanN=meanN,var=var.iid,se=diag(var.iid)^.5,mut=mu[tails])
 return(out)
 } ## }}}
 
 ##' @export
+estimate.recurrent <- function(x,time=NULL,...) { ## {{{ 
+   if (is.null(time)) stop("must give time for iid decomposition \n")
+   ic <- IC(x,time=time)
+   out <- estimate(coef=attr(ic,"coefs"),IC=ic,...)
+return(out)
+} ## }}}
+
+
+##' @export
 iid.recurrent <- function(x,...) { ## {{{ 
-iid <- iidRecurrent(attr(x,"recurrent"),attr(x,"death"),...)$iid
-return(iid)
+iid <- iidRecurrent(attr(x,"recurrent"),attr(x,"death"),...)
+out <- iid$iid
+attr(out,"coefs") <- iid$mut 
+attr(out,"time") <-  iid$time
+return(out)
 } ## }}}
 
 ##' @export
