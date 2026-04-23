@@ -95,13 +95,13 @@ Censoring model may depend on strata (cens.model=~strata(gX)).
 library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 
-rmst30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age,bmt,time=30,cause=1)
-rmst301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
-rmst302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=2)
+rmtl30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age,bmt,time=30,cause=1,outcome="rmtl")
+rmtl301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+rmtl302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=2)
 
-estimate(rmst30)
-estimate(rmst301)
-estimate(rmst302)
+estimate(rmtl30)
+estimate(rmtl301)
+estimate(rmtl302)
 
 ## percentage of total RMTL due to cause 1
 rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
