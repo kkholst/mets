@@ -268,6 +268,7 @@ return(out)
 ##' @param cens.code of censorings 
 ##' @param cause of events 
 ##' @param death.code of terminal events 
+##' @param marks possible marks for for recurrent events
 ##' @param trans possible power for mean of events per time-unit, default is 1
 ##' @param ...  arguments for binreg
 ##' @author Thomas Scheike
