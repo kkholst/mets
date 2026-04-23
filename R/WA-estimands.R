@@ -256,6 +256,115 @@ class(out) <- "WA"
 return(out)
 } ## }}}
 
+
+##' While-Alive regression for recurrent events 
+##'
+##' Does regression for the mean of the events per time unit \deqn{ Z(t)= N(min(D,t))/min(D,t))} based on
+##' IPCW etimation calling the binreg after constructing the outcome \deqn{Z(t)}
+##'
+##' @param formula Event formula with regression design
+##' @param data data frame 
+##' @param time for estimation 
+##' @param cens.code of censorings 
+##' @param cause of events 
+##' @param death.code of terminal events 
+##' @param trans possible power for mean of events per time-unit, default is 1
+##' @param ...  arguments for binreg
+##' @author Thomas Scheike
+##' @examples
+##' library(mets)
+##' data(hfactioncpx12)
+##' hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id] 
+##' 
+##' dtable(hfactioncpx12,~status)
+##' ## exp-link regression 
+##' dd <- WA_reg(Event(entry,time,status)~treatment+age+cluster(id),data=hfactioncpx12,
+##'                     time=2,death.code=2)
+##' summary(dd)
+##' @references 
+##' Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
+##' @export
+WA_reg <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,marks=NULL,...,trans=1)
+{ ## {{{
+  cl <- match.call() ## {{{
+    m <- match.call(expand.dots = TRUE)[1:3]
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("offset", "weights", "cluster","marks"),
+        intercept = TRUE
+    )
+    Y <- des$y
+    if (!inherits(Y, c("Event", "Surv"))) {
+        stop("Expected a 'Surv' or 'Event'-object")
+    }
+    if (ncol(Y) == 2) {
+        exit <- Y[, 1]
+        entry <- rep(0, nrow(Y))
+        status <- Y[, 2]
+    } else {
+        entry <- Y[, 1]
+        exit <- Y[, 2]
+        status <- Y[, 3]
+    }
+    X <- des$x
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    des.marks <- des$marks
+    id      <- des$cluster
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+   call.id <- id
+   conid <- construct_id(id, nrow(X), namesX = rownames(X))
+   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+   orig.id <- id
+   data$id__ <- id 
+    if (is.null(des.offset)) {
+        if (is.null(offset))
+            offset <- rep(0, length(exit))
+    } else offset <- des.offset
+    if (is.null(des.weights)) {
+        if (is.null(weights))
+            weights <- rep(1, length(exit))
+    } else weights <- des.weights
+    if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
+  ## }}}
+
+    data$status__ <- status
+
+## use sorted id for all things  and here indentify last record of each subject
+cid <- countID(data,"id__",sorted=TRUE)
+rrR <- subset(data,cid$reverseCountid==1)
+
+data <- count.history(data,id="id__",lag=TRUE,types=cause,status="status__",marks=marks,multitype=TRUE)
+nameCount <- paste("Count",cause[1],sep="")
+
+formulaCount <- update.formula(formula,.~+1)
+cform <- as.formula(paste("~",nameCount,"+cluster(id__)",sep=""))
+formulaCount <- update.formula(formulaCount,cform)
+
+## While-Alive mean of events per time-unit 
+## with possible marks for death.codes 
+if (any(cause %in% death.code)) {
+	wd <- match(cause,death.code,nomatch=0)
+	mark.codes <- death.code[wd]
+} else mark.codes <- NULL
+
+dataDmin <- evalTerminal(formulaCount,data=data,time=time,death.code=death.code, mark.codes=mark.codes,marks=marks)
+
+### setting new response , Ratio of composite outcome
+rrR[,"ratio__"] <- dataDmin[cid$reverseCountid==1,"ratio"]
+if (!is.null(trans)) {
+     rrR[,"ratio__"] <- rrR[,"ratio__"]^trans
+}
+Yr <- rrR[,"ratio__"]
+
+outae <- binreg(formula,rrR,cause=death.code,time=time,cens.code=cens.code,Ydirect=Yr,outcome="rmst",...)
+
+return(outae)
+} ## }}}
+
+
 ##' @export
 print.WA  <- function(x,type="log",...) {# {{{
   print(summary(x),type=type,...)
