@@ -1440,7 +1440,9 @@ if (!robust) {
 } # }}}
 
 ### setting up newdata with factors and strata
+if (!is.null(newdata)) 
 x <- update_design(object$design,data = newdata,response=FALSE)
+else x <- object$design
 X <- x$x
 if (!is.null(x$strata)) strataNew <- as.numeric(x$strata)-1 else strataNew <- rep(0,nrow(X))
 
