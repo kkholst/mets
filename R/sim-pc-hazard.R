@@ -424,13 +424,15 @@ if (!is.null(data)) {
 cid <- countID(data.frame(id=cox$id))
 whereid <- which(cid$Countid==1)
 if (drawZ==TRUE) xid <- sample(whereid,n,replace=TRUE) else xid <- id
-if (onlyX) vars <- all.vars(update(drop.specials(cox$formula,"cluster"),-1~.)) else 
-vars <- all.vars(cox$formula)
+if (onlyX) vars <- all.vars(update(drop.specials(cox$formula,"cluster"),-1~.)) else vars <- all.vars(cox$formula)
 dataid <- data[xid,vars,drop=FALSE] 
 
 desX <- readPhreg(cox,dataid,data=FALSE)
 Z <- desX$X
 strata <- desX$strata
+###   xx <- update_design(cox,data = dataid,response=FALSE) 
+###   Z <- xx$x
+###   if (!is.null(xx$strata)) strata <- as.numeric(xx$strata)-1 else strata <- rep(0,nrow(Z))
 } else {  ## Z and strata
    xid <- 1:nrow(Z); 
    n <- nrow(Z); 
@@ -446,8 +448,7 @@ cumhaz <- rbind(c(0,0),cox$cumhaz)
    } else stratname <- NULL
    model <-c(class(cox),is.null(cox$propodds))
 
-out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,
-	    strata=strata,data=dataid,stratname=stratname)
+out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,strata=strata,data=dataid,stratname=stratname)
 
 return(out)
 } ## }}}
