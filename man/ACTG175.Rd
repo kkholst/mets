@@ -3,7 +3,7 @@
 \docType{data}
 \name{ACTG175}
 \alias{ACTG175}
-\title{ACTG175, block randmized study from speff2trial package}
+\title{ACTG175, block randomized study from speff2trial package}
 \format{
 Randomized study
 }

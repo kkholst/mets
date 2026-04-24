@@ -3,7 +3,7 @@
 \docType{data}
 \name{hfactioncpx12}
 \alias{hfactioncpx12}
-\title{hfaction, subset of block randmized study HF-ACtion from WA package}
+\title{hfaction, subset of block randomized study HF-ACtion from WA package}
 \format{
 Randomized study 
 status : 1-event, 2-death, 0-censoring
