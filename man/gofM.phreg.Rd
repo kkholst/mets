@@ -62,7 +62,7 @@ par(mfrow=c(2,2))
 plot(m1)
 }
 
-m1 <- gofM.phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,modelmatrix=mm) 
+m1 <- gofM.phreg(Surv(time,status==9)~strata(vf,chf),data=TRACEsam,modelmatrix=mm) 
 summary(m1)
 
 ## cumulative sums in covariates, via design matrix mm 
