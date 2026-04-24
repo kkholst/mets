@@ -270,8 +270,17 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")
 {# {{{
-  des <- readPhreg(iidBase,newdata)
-  strata <- des$strata
+	if (!is.null(newdata)) xx <- update_design(iidBase$design,data = newdata,response=FALSE) else xx <- iidBase$design
+	X <- xx$x
+	des <- list()
+	des$X <- X
+	if (!is.null(xx$strata)) strataNew <- as.numeric(xx$strata)-1 else strataNew <- rep(0,nrow(X))
+###	des$strata <- strataNew
+
+###  des <- readPhreg(iidBase,newdata)
+  strata <- strataNew
+
+
   if (!is.null(iidBase$beta.iid))  { 
 	  fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X; p <- ncol(beta.iid); 
   } else { fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); p <- 1 }
