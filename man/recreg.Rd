@@ -90,7 +90,8 @@ dd <- data.frame(treatment=levels(hf$treatment),id=1)
 gl <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,cause=1,death.code=2)
 summary(gl)
 head(iid(gl))
-pgl <- predict(gl,dd,se=1); plot(pgl,se=1)
+pgl <- predict(gl,dd,se=1); 
+plot(pgl,se=1)
 
 ## censoring stratified after treatment 
 gls <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,

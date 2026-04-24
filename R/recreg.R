@@ -48,7 +48,8 @@
 ##' gl <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,cause=1,death.code=2)
 ##' summary(gl)
 ##' head(iid(gl))
-##' pgl <- predict(gl,dd,se=1); plot(pgl,se=1)
+##' pgl <- predict(gl,dd,se=1); 
+##' plot(pgl,se=1)
 ##' 
 ##' ## censoring stratified after treatment 
 ##' gls <- recreg(Event(entry,time,status)~treatment+cluster(id),data=hf,
@@ -983,8 +984,6 @@ summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cu
 		nl <- length(object$times)+1 
 		indexcol  <- seq(1,nl,length=np)
 		times <- c(0,object$times)[indexcol]
-		print("summary.predictrecreg")
-		print(times)
 	}
 
 	out <- object[[type[1]]]
@@ -1015,6 +1014,11 @@ summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cu
 	return(ret)
 } ## }}}
 
+##' @export
+print.predictrecreg <- function(x,...) { ## }}}
+	summary(x,...)
+} ## }}}
+
 
 ##' @export
 plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)
@@ -1033,7 +1037,14 @@ predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALS
 		if (is.null(np)) times <- x$cumhaz[,1] else 
 			times <- quantile(x$cumhaz[,1],probs=seq(0,1,length=np))
 	} 
-	des <- readPhreg(x,newdata)
+	if (!is.null(newdata)) xx <- update_design(x$design,data = newdata,response=FALSE) else xx <- x$design
+	X <- xx$x
+	des <- list()
+	des$X <- X
+	if (!is.null(xx$strata)) strataNew <- as.numeric(xx$strata)-1 else strataNew <- rep(0,nrow(X))
+	des$strata <- strataNew
+
+###	des <- readPhreg(x,newdata)
 
 	if (x$p>0)  {
 		RRj <- RR <- c(exp(des$X %*% x$coef))
