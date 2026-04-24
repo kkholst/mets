@@ -127,7 +127,7 @@ NULL
 ##' data(calgb8923)
 NULL
 
-##' ACTG175, block randmized study from speff2trial package
+##' ACTG175, block randomized study from speff2trial package
 ##'
 ##' Data from speff2trial
 ##' @name ACTG175
@@ -139,7 +139,7 @@ NULL
 ##' data(ACTG175)
 NULL
 
-##' hfaction, subset of block randmized study HF-ACtion from WA package  
+##' hfaction, subset of block randomized study HF-ACtion from WA package  
 ##'
 ##' Data from HF-action trial slightly modified from WA package,
 ##' consisting of 741 nonischemic patients with baseline
