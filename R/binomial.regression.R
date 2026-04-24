@@ -544,6 +544,7 @@ coef.binreg <- function(object,...) {# {{{
 ##' @export
 predict.binreg <- function(object,newdata,se=TRUE,pred.iid=FALSE,level=0.95,design=FALSE,...)
 {# {{{
+   if (is.missing(newdata)) newdata <- NULL
    if (!is.null(newdata)) 
    x <- update_design(object$design,data = newdata,response=FALSE)
   else x <- object$design
