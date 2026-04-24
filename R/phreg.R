@@ -39,37 +39,6 @@ construct_id <- function(id,nid,namesX=NULL,as.data=FALSE) { ## {{{
   return(list(call.id=call.id,id=id,nid=nid,unique.id=ids,name.id=name.id))
 } ## }}}
 
-###
-###construct_id <- function(id,nid,namesX=NULL,as.data=FALSE) { ## {{{
-###  call.id <- id
-###
-###  if (!is.null(id)) {
-###	  ids <- unique(id)
-###	  nid <- length(ids)
-###      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-###      id <- as.integer(factor(id,labels=seq(nid)))-1
-###     }
-###     order.ids <- order(ids)
-###     id.name <- ids[order.ids]
-###   } else {
-###	   id <- 1:nid-1;
-###	   ids <- id+1
-###	   order.ids <- ids
-######	   if (!is.null(namesX)) id.name <- namesX else id.name <- ids
-###           id.name <- ids
-###   }
-###   ## orginal id coding into integers
-###   ## id from 0,1,...,nid-1
-###
-###    if (as.data) {
-###        id  <- (0:(nid - 1))[order(ids)][id +1]
-###        id.name <- ids
-###    }
-###
-###  return(list(call.id=call.id,id=id,nid=nid,unique.id=ids,name.id=id.name))
-###} ## }}}
-###
-
 ###{{{ phreg01
 phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights=NULL,strata.name=NULL,cumhaz=TRUE,
     beta,stderr=TRUE,method="NR", no.opt=FALSE,Z=NULL,propodds=NULL,AddGam=NULL,
