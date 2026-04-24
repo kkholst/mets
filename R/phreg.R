@@ -523,6 +523,7 @@ estimate.phreg <- function(x, ..., time = NULL,
 
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
+  if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
   if (!is.null(time)) {
     iid <- iidBaseline(x, time = time, ...)
     if (all)  {

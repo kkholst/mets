@@ -147,8 +147,6 @@ return(out)
 ##' plot(m1)
 ##' }
 ##' 
-##' m1 <- gofM.phreg(Surv(time,status==9)~strata(vf,chf),data=TRACEsam,modelmatrix=mm) 
-##' summary(m1)
 ##' 
 ##' ## cumulative sums in covariates, via design matrix mm 
 ##' mm <- cumContr(TRACEsam$wmi,breaks=10,equi=TRUE)
