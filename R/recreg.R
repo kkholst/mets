@@ -623,7 +623,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		time.gammat <- gamma <- gammat <- NULL
 		ftime.gamma <- NULL
 		Gcj <- NULL
-		varmc <- var1 <- 0; MGc <- iH <- UUiid <- Uiid <- NULL
+		varmc <- var1 <- NULL; MGc <- iH <- UUiid <- Uiid <- NULL
 	}
 	strata <- xx2$strata[jumps]
 	cumhaz <- cbind(opt$time,cumsumstrata(1/opt$S0,strata,nstrata))
@@ -966,7 +966,7 @@ plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { #
 } #
 
 ##' @export
-predict.recreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { #
+predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { #
 	if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 	else {
 		out <- predictrecreg(object,newdata,times=times,np=np,...)
@@ -976,14 +976,26 @@ predict.recreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { #
 } #
 
 ##' @export
-summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cumhaz","surv")[2],np=10,...) { ## {{{
-	if (!is.null(times)) {
-		indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,...) { ## {{{
+
+	if (is.null(times)) {
+		indexcol <- seq(ncol(object$surv)) 
+		times <- object$times
 	} else {
-		## all predictions
-		nl <- length(object$times)+1 
-		indexcol  <- seq(1,nl,length=np)
-		times <- c(0,object$times)[indexcol]
+            if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
+            indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	}
+
+	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
+            if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
+	    if (length(np)>1) ids <- np else 	{
+            if (is.numeric(np) & length(np)>1) ids <- np else 	
+            if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
+	     else 
+		{
+			ids <- sample(1:nrow(object$surv),np) 
+		}
+	    }
 	}
 
 	out <- object[[type[1]]]
@@ -1006,12 +1018,9 @@ summary.predictrecreg <- function(object,times=NULL,strata=NULL,type=c("cif","cu
 	}
 	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
 
-	if (!is.null(lower)) ret <- list(pred=out[,indexcol],se.pred=se.out[,indexcol],lower=lower[,indexcol],upper=upper[,indexcol],times=times)
-	else  ret <- list(pred=out[,indexcol],times=times)
-	rownames(ret) <- NULL
-	###ret$strata <- object$strata; ret$X <- object$X; ret$RR <- object$RR
-	class(ret) <- "summarypredictrecreg"
-	return(ret)
+	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],se.pred=se.out[ids,indexcol],lower=lower[ids,indexcol],upper=upper[ids,indexcol],times=times,rows=ids)
+	else  out <- list(pred=out[ids,indexcol],times=times)
+	return(out)
 } ## }}}
 
 ##' @export

@@ -178,7 +178,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
   colnames(phvar) <- rownames(phvar) <- names(res$coef)
   res$var <- phvar
   res$beta.iid <- beta.iid
-  } else res$var <- 0
+  } else res$var <- NULL
 
   return(res)
 }
@@ -836,13 +836,13 @@ coef.phreg  <- function(object,...) { ## {{{
 ##' @export
 vcov.phreg  <- function(object,...) {     ## {{{
  if ((length(class(object))==1) & inherits(object,"phreg")) {
-  res <- as.matrix(object$var)  ### objectcrossprod(ii <- iid(object,...))
+  res <- object$var  ### objectcrossprod(ii <- iid(object,...))
 ###  attributes(res)$ncluster <- attributes(ii)$ncluster
 ###  attributes(res)$invhess <- attributes(ii)$invhess
-  colnames(res) <- rownames(res) <- names(coef(object))
+  if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
 } else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
   res <- as.matrix(object$var)
-  colnames(res) <- rownames(res) <- names(coef(object))
+  if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
 }
   res
 } ## }}}
@@ -1534,8 +1534,15 @@ model.matrix.phreg <- function(object, data=NULL, ...) {
 }
 
 ##' @export
-summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],np=10,...) {# {{{
-	times <- object$times
+summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=NULL,np=10,...) {# {{{
+	if (is.null(times)) {
+		indexcol <- seq(ncol(object$surv)) 
+		times <- object$times
+	} else {
+            if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
+            indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	}
+
 	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
             if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
 	    if (length(np)>1) ids <- np else 	{
@@ -1547,12 +1554,33 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],np=10,.
 		}
 	    }
 	}
-        se.type <- paste("se.",type,sep="")
-	lower.type <- paste(type,".lower",sep="")
-	upper.type <- paste(type,".upper",sep="")
-	out <- list(pred=object[[type]][ids,],se.pred=object[[se.type]][ids,], 
-		    lower.pred=object[[lower.type]][ids,],
-		    upper.pred=object[[upper.type]][ids,],times=object$times,rows=ids)
+
+        out <- object[[type[1]]]
+	nlower <- paste(type[1],".lower",sep="")
+	nupper <- paste(type[1],".upper",sep="")
+	lower <- object[[nlower]]
+	upper <- object[[nupper]]
+	nse <-  paste("se.",type[1],sep="")
+	se.out  <- object[[paste("se.",type[1],sep="")]]
+	if (type[1]=="surv") {
+		out <- cbind(1,out) 
+		if (!is.null(se.out)) se.out <- cbind(0,se.out)
+		if (!is.null(lower)) lower <- cbind(1,lower) 
+		if (!is.null(upper)) upper <- cbind(1,upper) 
+	} else { 
+		out <- cbind(0,out)
+		if (!is.null(se.out)) se.out <- cbind(0,se.out)
+		if (!is.null(lower)) lower <- cbind(0,lower) 
+		if (!is.null(upper)) upper <- cbind(0,upper) 
+	}
+	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
+
+	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],
+					 se.pred=se.out[ids,indexcol],
+					 lower=lower[ids,indexcol],
+					 upper=upper[ids,indexcol],
+					 times=times,rows=ids)
+	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
 return(out)
 }# }}}
 

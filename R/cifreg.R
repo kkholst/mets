@@ -178,7 +178,7 @@ else {
 } ## }}}
 
 ##' @export
-predict.cifreg <- function(object,newdata,se=FALSE,times=NULL,np=50,...) { ## {{{
+predict.cifreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { ## {{{
 if (!is.null(object$propodds) & se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
 if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
@@ -193,6 +193,13 @@ summary.predictcifreg <- function(object,times=NULL,type=c("cif","cumhaz","surv"
 ret <- summary.predictrecreg(object,type=type[1],times=times,...)
 return(ret)
 }# }}}
+
+##' @export
+print.predictcifreg <- function(x,...) {# {{{
+ret <- summary.predictrecreg(x,...)
+return(ret)
+}# }}}
+
 
 ##' @export
 plot.predictcifreg <- function(x,se=FALSE,ylab=NULL,type="cif",...)
