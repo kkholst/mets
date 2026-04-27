@@ -2,7 +2,6 @@
 % Please edit documentation in R/phreg.R
 \name{plot.phreg}
 \alias{plot.phreg}
-\alias{basehazplotO.phreg}
 \alias{baseplot}
 \alias{bplot}
 \alias{basecumhaz}

@@ -5,9 +5,7 @@
 \alias{robust.phreg}
 \alias{readPhreg}
 \alias{conftype}
-\alias{plotO.predictphreg}
 \alias{plotpredictphreg}
-\alias{predictO.phreg}
 \alias{predictrecreg}
 \alias{summarybase.phreg}
 \alias{nameme}

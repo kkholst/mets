@@ -73,7 +73,7 @@ base4 <- CPH_HPN_CRBSI$mechanical
 
 rr <- simRecurrentTS(1000,base1,base4,death.cumhaz=dr)
 dtable(rr,~death+status)
-showfitsim(causes=2,rr,dr,base1,base4)
+mets:::showfitsim(causes=2,rr,dr,base1,base4)
 
 }
 \author{

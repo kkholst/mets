@@ -12,7 +12,7 @@
 \usage{
 survival.twostage(
   margsurv,
-  data = parent.frame(),
+  data = NULL,
   method = "nr",
   detail = 0,
   clusters = NULL,
@@ -41,7 +41,7 @@ survival.twostage(
 \arguments{
 \item{margsurv}{Marginal model}
 
-\item{data}{data frame}
+\item{data}{data.frame must be given}
 
 \item{method}{Scoring method "nr", for lava NR optimizer}
 

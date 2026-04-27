@@ -128,13 +128,6 @@ iidBaseline.cifreg <- function(object,time=NULL,...)
   return(out)
 } # }}}
 
-iidBaseline.recreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=object$iid,tminus=FALSE,...)
-{ ## {{{
-	if (is.null(object$cox.prep)) stop("must call cifreg/recreg with cox.prep=TRUE\n")
-	out <- IIDrecreg(object$cox.prep,object,time=time,fixbeta=fixbeta,beta.iid=beta.iid,adm.cens=object$adm.cens,tminus=tminus,...)
-	out$design <- object$design
-	return(out)
-}  ## }}}
 
 ##' @export
 IC.cifreg <- function(x, time=NULL,all=FALSE,...) {# {{{
@@ -243,7 +236,7 @@ ggmg <- gof(fgcph)
 return(ggmg)
 }# }}}
 
-##' @export
+#####' @export
 indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 {
 ###    if (any(stratao < 0 | stratao >= nstrata))
@@ -270,6 +263,7 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
 ##' @export
 FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model="FG")
 {# {{{
+  if (!inherits(iidBase,"iidBaseline")) stop("must be a iidBaseline object with iid decomposition \n"); 
 	if (!is.null(newdata)) xx <- update_design(iidBase$design,data = newdata,response=FALSE) else xx <- iidBase$design
 	X <- xx$x
 	des <- list()

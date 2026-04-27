@@ -86,7 +86,7 @@ out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
                              cens.model=~strata(platelet,tcell),model="lin")
 estimate(out)
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-rm1 <- resmean.phreg(out1,times=30)
+rm1 <- resmean_phreg(out1,times=30)
 summary(rm1)
 
 ### years lost regression
@@ -99,7 +99,7 @@ out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
                             cens.model=~strata(platelet,tcell),model="lin")
 estimate(out)
 ## same as integrated cumulative incidence 
-rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
 summary(rmc1)
 
 }

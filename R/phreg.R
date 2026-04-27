@@ -1,4 +1,3 @@
-##' @export
 nameme <- function(iid,name.id,sort=TRUE) { ## {{{
 if (is.matrix(iid))
 	if (nrow(iid)==length(name.id)) {
@@ -11,7 +10,6 @@ if (is.matrix(iid))
 return(iid)
 } ## }}}
 
-##' @export
 construct_id <- function(id,nid,namesX=NULL,as.data=FALSE) { ## {{{
   call.id <- id
 
@@ -203,7 +201,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @param weights weights for Cox score equations
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg robust.phreg readPhreg conftype plotO.predictphreg plotpredictphreg predictO.phreg predictrecreg summarybase.phreg nameme construct_id
+##' @aliases phreg robust.phreg readPhreg conftype plotpredictphreg predictrecreg summarybase.phreg nameme construct_id
 ##' @examples
 ##' library(mets)
 ##' data(TRACE)
@@ -296,7 +294,6 @@ phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
   res
 }# }}}
 
-##' @export
 readPhreg <- function (object, newdata, nr=TRUE,data=TRUE, ...)
 {# {{{
    respindata <- length((grep(all.vars(object$formula)[1],names(newdata))))
@@ -332,34 +329,6 @@ readPhreg <- function (object, newdata, nr=TRUE,data=TRUE, ...)
 return(list(data=data,X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
 }# }}}
 
-readPhregO <- function (object, newdata, nr=TRUE, ...)
-{# {{{
-   respindata <- length((grep(all.vars(object$formula)[1],names(newdata))))
-   if (respindata>0) des <- update_design(object$design,data = newdata,response=TRUE)
-   else des <- update_design(object$design,data = newdata)
-
-    clusters <- des$cluster
-    X <- des$x
-    if (!is.null(des$strata)) strataNew <- as.numeric(des$strata)-1 else strataNew <- rep(0,nrow(X))
-
-    if (!is.null(des$y)) {
-	    Y <- des$y
-	    if (!inherits(Y, c("Event", "Surv"))) {
-		stop("Expected a 'Surv' or 'Event'-object")
-	    }
-	    if (ncol(Y) == 2) {
-		exit <- Y[, 1]
-		entry <- rep(0, nrow(Y))
-		status <- Y[, 2]
-	    } else {
-		entry <- Y[, 1]
-		exit <- Y[, 2]
-		status <- Y[, 3]
-	    }
-    } else {status <- exit <- entry <- NULL; }
-
-return(list(X=X,strata=strataNew,entry=entry,exit=exit,status=status,clusters=clusters))
-}# }}}
 
 ### }}} phreg
 
@@ -712,16 +681,27 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
     ###    if (length(x$name.id)==nrow(MGAiid)) rownames(MGAiid) <- x$name.id
  }
 
-
  cumhaz <- x$cumhaz
-### iss <- indexstratarightR(x$cumhaz[,1],x$strata.jumps,rep(time,x$nstrata),seq(x$nstrata)-1,x$nstrata,type="left")
-### cumhaz.time <- cumhaz[iss,2]
-
- return(list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,coef=x$coef,
+ out <- list(time=time,base.iid=MGAiid,strata=xx$strata,nstrata=xx$nstrata,coef=x$coef,
 	     cumhaz=cumhaz,cumhaz.time=cumhaz.time,
 	     id=id,beta.iid=MGtiid,formula=x$formula,
-	     design=object$design))
+	     design=object$design)
+ class(out) <- c("iidBaseline","phreg")
+ return(out)
 } # }}}
+
+
+
+##' @export
+summary.iidBaseline  <- function(object,...) { ## {{{
+cat("iid decomposition of object phreg/cifregFG/recreg \n")
+} # }}}
+
+##' @export
+print.iidBaseline <- function(x,...) { ## {{{
+	x$base.iid
+} # }}}
+
 
 ##' @export
 residuals.phreg  <- function(object,cumsum=FALSE,...) {# {{{
@@ -916,7 +896,7 @@ print.phreg  <- function(x,...) { ## {{{
 ##' @param x phreg object
 ##' @param ... Additional arguments to baseplot funtion
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases basehazplotO.phreg  baseplot bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata kmplot plotConfregion
+##' @aliases baseplot bplot  basecumhaz plotConfRegion  plotConfRegionSE plotstrata kmplot plotConfregion
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
@@ -1003,7 +983,6 @@ zval <- qnorm(1 - (1 - conf.int)/2, 0, 1)
  return(cix)
 }# }}}
 
-##' @export
 basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,columns=NULL,...) {# {{{
    ## all strata
    stratobs <- x$strata[x$jumps]
@@ -1042,12 +1021,13 @@ basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz
    return(out)
 }# }}}
 
-##' @export
 baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
 	 lty=NULL,col=NULL,lwd=NULL,legend=TRUE,legend.args=list(),
      ylab="Cumulative hazard",xlab="time",
 	 polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,cumhaz="cumhaz",se.cumhaz="se.cumhaz",
      conf.type=c("log","plain"),restrict = c("positive","prob", "none"),...) {# {{{
+
+###   if (!inherits(x,"phreg")) stop("must be phreg/recreg/ \n")
 
    base <- basecumhaz(x,joint=1,robust=robust,cumhaz=cumhaz,se.cumhaz=se.cumhaz)
    nstrata <- x$nstrata
@@ -1151,7 +1131,7 @@ baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
    }
 }# }}}
 
-###{{{ phreg: basehazplot.phreg predictO.phreg plotO.predictphreg (old)
+###{{{ phreg: basehazplot.phreg predictphreg 
 
 ##' Plotting the baselines of stratified Cox
 ##'
@@ -1308,7 +1288,6 @@ basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NUL
 
 ###}}} plot
 
-##' @export
 plotpredictphreg <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,
        type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
        polygon=TRUE,whichx=NULL,robust=FALSE,...) {# {{{
@@ -1406,7 +1385,7 @@ plotpredictphreg <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,c
 ##' @param conf.int significance level
 ##' @param km to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.
 ##' @param ... Additional arguments to plot functions
-##' @aliases headstrata tailstrata revcumsumstrata revcumsumstratasum cumsumstrata sumstrata covfr covfridstrata covfridstrataCov cumsumidstratasum cumsumidstratasumCov cumsumstratasum revcumsum revcumsumidstratasum revcumsumidstratasumCov robust.basehaz.phreg matdoubleindex mdi cumsum2strata revcumsum2strata revcumsum2stratafdN
+##' @aliases revcumsumstrata cumsumstrata sumstrata revcumsum robust.basehaz.phreg matdoubleindex mdi 
 ##' @export
 predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...)
 {# {{{ default is all time-points from the object
@@ -1540,7 +1519,6 @@ class(out) <- c("predictphreg",class(object)[1])
 return(out)
 }# }}}
 
-
 ##' @export
 model.frame.phreg <- function(formula, data = NULL, ...) {
     if (is.null(data)) {
@@ -1561,6 +1539,10 @@ ret <- summary.predictrecreg(object,times=times,type=type[1],np=np,...)
 return(ret)
 }# }}}
 
+##' @export
+print.predictphreg <- function(x,...) {# {{{
+   return(summary(x,...))
+}# }}}
 
 ##' @export
 plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
@@ -1696,33 +1678,33 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 ##'
-##' rm1 <- resmean.phreg(out1,times=10*(1:6))
+##' rm1 <- resmean_phreg(out1,times=10*(1:6))
 ##' summary(rm1)
 ##' par(mfrow=c(1,2))
 ##' plot(rm1,se=1)
 ##' plot(rm1,years.lost=TRUE,se=1)
 ##'
 ##' ## comparing populations, can also be done using rmstIPCW via influence functions
-##' rm1 <- resmean.phreg(out1,times=40)
+##' rm1 <- resmean_phreg(out1,times=40)
 ##' e1 <- estimate(rm1)
 ##' e1
 ##' estimate(e1,rbind(c(1,-1,0,0)))
 ##' estimate(e1,list(1:4))
 ##'
 ##' ## years.lost decomposed into causes
-##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
+##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
 ##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 ##' summary(drm1)
 ##'
 ##' ## comparing populations, can also be done using rmstIPCW via influence functions
-##' drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
+##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
 ##' summary(drm1,contrast=list(1:4))
 ##' ## first cause
 ##' e1 <- estimate(drm1)
 ##' estimate(e1,rbind(c(1,-1,0,0)))
 ##' @export
-##' @aliases cif.yearslost  rmst.phreg
-resmean.phreg <- function(x,times=NULL,covs=NULL,...)
+##' @aliases cif_yearslost  rmst_phreg
+resmean_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
   ii <- invhess <- x$II
 
@@ -1842,14 +1824,14 @@ coef.resmean_phreg <- function(object,cause=1,...)
 }# }}}
 
 ##' @export
-rmst.phreg <- function(x,times=NULL,covs=NULL,...)
+rmst_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
-out <- resmean.phreg(x,times=NULL,covs=NULL,...)
+out <- resmean_phreg(x,times=NULL,covs=NULL,...)
 return(out)
 }# }}}
 
 ##' @export
-cif.yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
+cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 {# {{{
   cl <- match.call()
   m <- match.call(expand.dots = TRUE)[1:3]
@@ -2982,78 +2964,6 @@ class(x) <- c(class(x),"aalenMets")
 return(x)
 }# }}}
 
-aalenMetsOld <- function(formula,data=data,...)
-{# {{{
-formula.call <- formula
-x <- phreg(formula,data=data,no.opt=TRUE,...)
-
-xx <- x$cox.prep
-###ii <- solve(x$hessian)
-###S0i <- rep(0,length(xx$strata))
-###S0i[xx$jumps+1] <- 1/x$S0
-###Z <- xx$X
-###U <- E <- matrix(0,nrow(xx$X),x$p)
-###E[xx$jumps+1,] <- x$E
-###U[xx$jumps+1,] <- x$U
-###cumhaz <- cbind(xx$time,cumsumstrata(S0i,xx$strata,xx$nstrata))
-###EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
-
-### computation of intZHZ matrix, and gamma and baseline ##################
-# {{{
-eXb <- c(xx$sign) * c(xx$weights)
-S0 = c(revcumsumstrata(eXb,xx$strata,xx$nstrata))
-E=apply(eXb*xx$X,2,revcumsumstrata,xx$strata,xx$nstrata)/S0;
-S2=apply(eXb*xx$XX,2,revcumsumstrata,xx$strata,xx$nstrata)
-###
-###E2=.Call("vecMatMat",E,E)$vXZ;
-E2  <- .Call("vecCPMat",E)$XX
-###
-dts <- c(diffstrata(xx$time,xx$strata,xx$nstrata))
-dt <- diff(c(0,xx$time))
-###
-intZbar <- apply(E*dts,2,cumsumstrata,xx$strata,xx$nstrata)
-intZHZt <- apply((S2-S0*E2)*dts,2,cumsum)
-intZHZ <- matrix(0,ncol(E),ncol(E));
-intZHZ[lower.tri(intZHZ,diag=TRUE)] <- tail(intZHZt,1)
-intZHZ<- intZHZ+t(intZHZ)
-diag(intZHZ) <- diag(intZHZ)/2
-###intZHZ <- matrix(tail(intZHZt,1),ncol(E), ncol(E))
-IintZHZ  <-  pinv(intZHZ)
-intZHdN <- matrix(x$gradient,ncol(E),1)
-gamma <- IintZHZ %*% intZHdN
-rownames(gamma)  <-  colnames(x$X)
-x$cumhaz[,2] <- x$cumhaz[,2]- intZbar[xx$jumps+1,] %*% gamma
-# }}}
-
-### iid gamma #########################################
-# {{{
-mm <-  xx$X * c(xx$X %*% gamma) * c(xx$time)+ apply( E* c(E %*% gamma)*dts,2,cumsumstrata,xx$strata,xx$nstrata) -  xx$X* c(intZbar %*% gamma) - c(xx$X %*% gamma)* intZbar
-mm <- c(xx$weights) * mm
-
-id <- xx$id
-mm <- apply(mm,2,sumstrata,id,max(id)+1)
-MGt <- t(x$hessian %*% t(iid(x))) + mm
-iid <-  MGt %*% IintZHZ
-# }}}
-
-coef <- c(gamma)
-names(coef) <- rownames(gamma)
-x$coef <- coef
-x$var <- crossprod(iid)
-x$iid <- iid
-x$intZHdN <- intZHdN
-x$intZHZ  <-  intZHZ
-x$formula <- formula.call
-x$ihessian <- IintZHZ
-## score of gamma
-x$gradient <- c(intZHdN-intZHZ %*% gamma)
-
-x$no.opt <- FALSE
-class(x) <- c(class(x),"aalenMets")
-
-return(x)
-}# }}}
-
 ##' Kaplan-Meier with robust standard errors
 ##'
 ##' Kaplan-Meier with robust standard errors
@@ -3278,7 +3188,6 @@ logitSurv <- function(formula,data,offset=NULL,weights=NULL,...)
 
 ## {{{ Utility functions, cumsumstrata ....
 
-##' @export
 tailstrata <- function(strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3287,7 +3196,6 @@ if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res
 return(res$where)
 }# }}}
 
-##' @export
 headstrata <- function(strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3323,7 +3231,6 @@ res <- .Call("diffstrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
-
 ##' @export
 revcumsumstrata <- function(x,strata,nstrata)
 {# {{{
@@ -3333,7 +3240,6 @@ res <- .Call("revcumsumstrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
-##' @export
 revcumsum2strata <- function(x,strata,nstrata,strata2,nstrata2,lag=FALSE)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3344,7 +3250,6 @@ res <- .Call("revcumsum2strataR",as.double(x),strata,nstrata,strata2,nstrata2,PA
 return(res)
 }# }}}
 
-##' @export
 revcumsum2stratafdN <- function(x,y,strata,nstrata,strata2,nstrata2,startx)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1))    stop("strata index not ok\n");
@@ -3357,7 +3262,6 @@ return(res)
 }# }}}
 
 
-##' @export
 cumsum2strata <- function(x,y,strata,nstrata,strata2,nstrata2,startx)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1))    stop("strata index not ok\n");
@@ -3378,7 +3282,6 @@ res <- .Call("vecAllStrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
-
 ##' @export
 revcumsum <- function(x)
 {# {{{
@@ -3386,7 +3289,6 @@ res <- .Call("revcumsumR",x,PACKAGE="mets")$res
 return(res)
 }# }}}
 
-##' @export
 revcumsumstratasum <- function(x,strata,nstrata,type="all")
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3397,7 +3299,6 @@ if (type=="all")    res <- .Call("revcumsumstratasumR",x,strata,nstrata)
 return(res)
 }# }}}
 
-##' @export
 cumsumstratasum <- function(x,strata,nstrata,type="all")
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3430,7 +3331,6 @@ return(res)
 ##' @export
 mdi <- function(x,...) matdoubleindex(x,...)
 
-##' @export
 covfr  <- function(x,y,strata,nstrata)
 {# {{{
 if (any(strata<0) | any(strata>nstrata-1)) stop("strata index not ok\n");
@@ -3438,7 +3338,6 @@ res <- .Call("covrfR",x,y,strata,nstrata)
 return(res)
 }# }}}
 
-##' @export
 revcumsumidstratasum <- function(x,id,nid,strata,nstrata,type="all")
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");
@@ -3450,7 +3349,6 @@ if (type=="all")    res <- .Call("revcumsumidstratasumR",x,id,nid,strata,nstrata
 return(res)
 }# }}}
 
-##' @export
 revcumsumidstratasumCov <- function(x,y,id,nid,strata,nstrata,type="all")
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");
@@ -3462,7 +3360,6 @@ if (type=="all")    res <- .Call("revcumsumidstratasumCovR",x,y,id,nid,strata,ns
 return(res)
 }# }}}
 
-##' @export
 cumsumidstratasumCov <- function(x,y,id,nid,strata,nstrata,type="all")
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");
@@ -3472,7 +3369,6 @@ else res <- .Call("cumsumidstratasumCovR",x,y,id,nid,strata,nstrata)
 return(res)
 }# }}}
 
-##' @export
 cumsumidstratasum <- function(x,id,nid,strata,nstrata,type="all")
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");
@@ -3482,7 +3378,6 @@ else res <- .Call("cumsumidstratasumR",x,id,nid,strata,nstrata)
 return(res)
 }# }}}
 
-##' @export
 covfridstrata  <- function(x,y,id,nid,strata,nstrata)
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");
@@ -3491,7 +3386,6 @@ res <- .Call("covrfstrataR",x,y,id,nid,strata,nstrata)
 return(res)
 }# }}}
 
-##' @export
 covfridstrataCov  <- function(x,y,x1,y1,id,nid,strata,nstrata)
 {# {{{
 if (any(id<0) | any(id>nid-1)) stop("id index not ok\n");

@@ -777,17 +777,17 @@ Frailty models (simulations based on the rates/intensities)
  rr <- simRecurrent(n,base1,death.cumhaz=dr)
  ###
  par(mfrow=c(1,3))
- showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
+ mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 
  rr <- simRecurrentII(n,base1,base4,death.cumhaz=dr)
  dtable(rr,~death+status)
- showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
+ mets:::showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 
  cumhaz <- list(base1,base1,base4)
  drl <- list(dr,base4)
  rr <- simRecurrentList(n,cumhaz,death.cumhaz=drl)
  dtable(rr,~death+status)
- showfitsimList(rr,cumhaz,drl) 
+ mets:::showfitsimList(rr,cumhaz,drl) 
 ```
 
 

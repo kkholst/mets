@@ -678,7 +678,6 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	return(out)
 } ## }}}
 
-##' @export
 IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbeta=NULL,beta.iid=NULL,adm.cens=NULL,tminus=FALSE)
 { ## {{{
 	if (is.null(fixbeta)) 
@@ -924,6 +923,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	} else {
 		out <- list(time=time,base.iid=MGAiid,id=xx2$id,beta.iid=Uiid,beta.iid.naive=Uiid.naive, MGt=UU,MGc=MGc,Ut=U,EdLam0=EdLam0,cumhaz=cumhaz)
 	}
+	class(out) <- "iidBaseline"
 	return(out)
 }  ## }}}
 
@@ -1027,7 +1027,6 @@ plot.predictrecreg <- function(x,se=FALSE,ylab=NULL,type="cumhaz",...)
 	plotpredictphreg(x,se=se,ylab=ylab,type=type[1],...)
 } ## }}}
 
-##' @export
 predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,conf.type="log",conf.int=0.95,np=50,...)
 { ## {{{
 	if (!inherits(x,c("cifreg","recreg","phreg")))  stop("only for phreg/recreg/cifreg models\n")

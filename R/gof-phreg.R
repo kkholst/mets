@@ -140,7 +140,7 @@ return(out)
 ##' TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
 ##' dcut(TRACEsam)  <- ~. 
 ##' mm <- model.matrix(~-1+factor(wmicat.4),data=TRACEsam)
-##' m1 <- gofM.phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
+##' m1 <- gofM_phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
 ##' summary(m1)
 ##' if (interactive()) {
 ##' par(mfrow=c(2,2))
@@ -149,13 +149,13 @@ return(out)
 ##' 
 ##' 
 ##' ## cumulative sums in covariates, via design matrix mm 
-##' mm <- cumContr(TRACEsam$wmi,breaks=10,equi=TRUE)
-##' m1 <- gofM.phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,
+##' mm <- mets:::cumContr(TRACEsam$wmi,breaks=10,equi=TRUE)
+##' m1 <- gofM_phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,
 ##' 		  modelmatrix=mm,silent=0)
 ##' summary(m1)
 ##' 
 ##' @export
-gofM.phreg  <- function(formula,data,offset=NULL,weights=NULL,modelmatrix=NULL,
+gofM_phreg  <- function(formula,data,offset=NULL,weights=NULL,modelmatrix=NULL,
 			n.sim=1000,silent=1,...)
 {# {{{
 
@@ -260,13 +260,13 @@ return(out)
 ##' 
 ##' ## cumulative sums in covariates, via design matrix mm
 ##' \donttest{ ## Reduce Ex.Timings
-##' m1 <- gofZ.phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
+##' m1 <- gofZ_phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
 ##' summary(m1) 
 ##' plot(m1,type="z")
 ##' }
 ##' @aliases cumContr 
 ##' @export
-gofZ.phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=50,equi=FALSE,
+gofZ_phreg  <- function(formula,data,vars=NULL,offset=NULL,weights=NULL,breaks=50,equi=FALSE,
 			n.sim=1000,silent=1,...)
 {# {{{
 if (is.null(vars)) {
@@ -294,7 +294,7 @@ if (is.null(vars)) {
 i <- 1
 for (vv in vars) {
  modelmatrix <- cumContr(data[,vv],breaks=breaks,equi=equi)
- lres <- gofM.phreg(formula,data,modelmatrix=modelmatrix) 
+ lres <- gofM_phreg(formula,data,modelmatrix=modelmatrix) 
  lres$xaxs <- attr(modelmatrix,"breaks")
 
  res[i,] <- c(lres$Utlast,lres$pval.last)
@@ -311,7 +311,6 @@ class(out) <- c("gof.phreg")
 return(out)
 }# }}}
 
-##' @export
 cumContr <- function(data,breaks=4,probs=NULL,equi=TRUE,na.rm=TRUE,unique.breaks=TRUE,...)
  {# {{{
  if (is.vector(data)) {

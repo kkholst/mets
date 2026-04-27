@@ -52,10 +52,10 @@ For fully saturated model with full censoring model this is equal to the integra
 illustrated below. 
 
 We can also compute the integral of the Kaplan-Meier or Cox based  survival estimator to
-get the RMST (with the resmean.phreg function)
+get the RMST (with the resmean_phreg function)
 \[ \int_0^t S(s|X) ds \].
 
-For competing risks the years lost can be computed via cumulative incidence functions (cif.yearslost)
+For competing risks the years lost can be computed via cumulative incidence functions (cif_yearslost)
 or as IPCW estimator since  
 \[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \] 
 For fully saturated model with full censoring model these estimators are equivalent as illustrated below.
@@ -77,7 +77,7 @@ set.seed(101)
                                   cens.model=~strata(platelet,tcell),model="lin")
      estimate(out)
      out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-     rm1 <- resmean.phreg(out1,times=30)
+     rm1 <- resmean_phreg(out1,times=30)
      summary(rm1)
      
      ## competing risks years-lost for cause 1  
@@ -85,7 +85,7 @@ set.seed(101)
                                  cens.model=~strata(platelet,tcell),model="lin")
      estimate(out)
      ## same as integrated cumulative incidence 
-     rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
+     rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
      summary(rmc1)
 
      ## plotting the years lost for different horizon's and the two causes 

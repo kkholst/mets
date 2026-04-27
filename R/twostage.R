@@ -199,7 +199,7 @@
 ##' @keywords survival
 ##' @author Thomas Scheike
 ##' @param margsurv Marginal model
-##' @param data data frame
+##' @param data data.frame must be given 
 ##' @param method Scoring method "nr", for lava NR optimizer
 ##' @param detail Detail
 ##' @param clusters Cluster variable
@@ -232,7 +232,7 @@
 ##' and ascertained sampling
 ##' @aliases survival.twostage twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv 
 ##' @export survival.twostage
-survival.twostage <- function(margsurv,data=parent.frame(),
+survival.twostage <- function(margsurv,data=NULL,
     method="nr",detail=0,clusters=NULL,
     silent=1,weights=NULL,theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,model="clayton.oakes",
@@ -250,13 +250,14 @@ else stop("Model must by either clayton.oakes or plackett \n");
 start.time <- NULL; ptrunc <- NULL; psurvmarg <- NULL; status <- NULL; score.iid <- NULL
 fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler converges
 
+if (is.null(data)) stop("Must give data \n"); 
+
   if ((!is.null(margsurv)) | (!is.null(marginal.survival))) fix.baseline <- 1
   antpers <- nrow(data); RR <-  rep(1,antpers);
 
 
   if (!is.null(margsurv)) {
      rrr <-  readmargsurv(margsurv,data,clusters)
-
      psurvmarg <- rrr$psurvmarg; ptrunc <- rrr$ptrunc; start.time <- rrr$entry;
      time2 <- rrr$exit; status <- rrr$status; clusters <- rrr$clusters
   }
@@ -268,6 +269,8 @@ fix.baseline <- 0; convergence.bp <- 1;  ### to control if baseline profiler con
   if (is.null(weights)==TRUE) weights <- rep(1,antpers);
   if (is.null(strata)==TRUE) strata<- rep(1,antpers);
   if (length(strata)!=antpers) stop("Strata must have length equal to number of data points \n");
+
+  if (is.null(clusters)) stop("Clusters must be specified \n"); 
 
   # cluster set up
   cluster.call <- clusters
@@ -562,7 +565,7 @@ if (dep.model==3 & pair.structure==0) {
 
 ##' @export
 randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,var.link,clusterindex,dim.theta)
-{
+{ ## {{{ 
    additive.gamma.sum <- ags
 
   if (!is.null(random.design)) { ### different parameters for Additive random effects 
@@ -626,13 +629,10 @@ randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,
 	 dep.model=dep.model,dim.rv=dim.rv, additive.gamma.sum=additive.gamma.sum,
          theta=theta,ptheta=ptheta,theta.des=theta.des))
 
-}
+} ## }}} 
 
-
-
-##' @export
 readmargsurv <- function(margsurv,data,clusters)
-{
+{ ## {{{ 
 start.time <- 0
 
 if (inherits(margsurv,c("aalen","cox.aalen"))) {
@@ -739,7 +739,7 @@ if (is.null(clusters) &  (!inherits(margsurv,"phreg"))) stop("must give clusters
 return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 	    status=status,clusters=clusters,cum=cum,RR=RR))
 
-} #
+}  ## }}} 
 
 ##' @title Twostage survival model fitted by pseudo MLE
 ##'
@@ -772,6 +772,7 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ##' parameter for the Clayton Oakes model, LIDA, (2000).
 ##'
 ##' @examples
+##' library(mets)
 ##' data(diabetes)
 ##' dd <- phreg(Surv(time,status==1)~treat+cluster(id),diabetes)
 ##' oo <- twostageMLE(dd,data=diabetes)
@@ -797,12 +798,12 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ##' @export
 twostageMLE <-function(margsurv,data=parent.frame(),
 theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,se.cluster=NULL,...)
-{
+{ ## {{{ 
  if (!inherits(margsurv,"phreg"))  stop("Must use phreg for this \n");
+ if (is.null(margsurv$call.id))  stop("Must be called with cluster(id) \n");
 
  clusters <- margsurv$cox.prep$id
  n <- nrow(margsurv$cox.prep$X)
-
 
  if (is.null(theta.des)==TRUE) ptheta<-1;
  if (is.null(theta.des)==TRUE) theta.des<-matrix(1,n,ptheta) else theta.des<-as.matrix(theta.des);
@@ -1027,11 +1028,12 @@ with(val, structure(-ploglik,gradient=-gradient,hessian=hessian))
   attr(val,"twostage") <- "two.stage"
 
   return(val)
-}
+} ## }}}
+
 
 ##' @export
 summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
-{ #
+{ ## {{{ 
   if (!(inherits(object,"mets.twostage"))) stop("Must be a Two-Stage object")
 
   var.link<-attr(object,"var.link");
@@ -1131,7 +1133,8 @@ summary.mets.twostage <- function(object,digits = 3,silent=0,theta.des=NULL,...)
 
   class(res) <- "summary.mets.twostage"
   res
-} #
+} ## }}}
+
 
 ##' @export
 coef.mets.twostage <- function(object,var.link=NULL,response="survival",...)
@@ -1482,7 +1485,6 @@ print.summary.pc.twostage <- function(x,var.link=NULL, digits=3,...)
   cat("\n")
 } #
 
-##' @export
 coefmat <- function(est,stderr,digits=3,...) { #
   myest <- round(10^digits*(est))/10^digits;
   myest <- paste(ifelse(myest<0,""," "),myest,sep="")
@@ -1735,59 +1737,59 @@ return(list(new.pairs=new.pairs,theta.des=theta.des,random.design=random.des))
 } #
 
 
-##' Relative risk for additive gamma model
-##'
-##' Computes the relative risk for additive gamma model at time 0
-##'
-##' @references
-##'
-##' Eriksson and Scheike (2015), Additive Gamma frailty models for competing risks data, Biometrics (2015)
-##'
-##' @examples
-##' lam0 <- c(0.5,0.3)
-##' pars <- c(1,1,1,1,0,1)
-##' ## genetic random effects, cause1, cause2 and overall
-##' parg <- pars[c(1,3,5)]
-##' ## environmental random effects, cause1, cause2 and overall
-##' parc <- pars[c(2,4,6)]
-##'
-##' ## simulate competing risks with two causes with hazards 0.5 and 0.3
-##' ## ace for each cause, and overall ace
-##' out <- simCompete.twin.ace(10000,parg,parc,0,2,lam0=lam0,overall=1,all.sum=1)
-##'
-##' ## setting up design for running the model
-##' mm <- familycluster.index(out$cluster)
-##' head(mm$familypairindex,n=10)
-##' pairs <- matrix(mm$familypairindex,ncol=2,byrow=TRUE)
-##' tail(pairs,n=12)
-##' #
-##' kinship <- (out[pairs[,1],"zyg"]=="MZ")+ (out[pairs[,1],"zyg"]=="DZ")*0.5
-##'
-##' # dout <- make.pairwise.design.competing(pairs,kinship,
-##' #          type="ace",compete=length(lam0),overall=1)
-##' # head(dout$ant.rvs)
-##' ## MZ
-##' # dim(dout$theta.des)
-##' # dout$random.design[,,1]
-##' ## DZ
-##' # dout$theta.des[,,nrow(pairs)]
-##' # dout$random.design[,,nrow(pairs)]
-##' #
-##' # thetades <- dout$theta.des[,,1]
-##' # x <- dout$random.design[,,1]
-##' # x
-##' ##EVaddGam(rep(1,6),x[1,],x[3,],thetades,matrix(1,18,6))
-##'
-##' # thetades <- dout$theta.des[,,nrow(out)/2]
-##' # x <- dout$random.design[,,nrow(out)/2]
-##' ##EVaddGam(rep(1,6),x[1,],x[4,],thetades,matrix(1,18,6))
-##' @author Thomas Scheike
-##' @export
-##' @param theta theta
-##' @param x1 x1
-##' @param x2 x2
-##' @param thetades thetades
-##' @param ags ags
+#####' Relative risk for additive gamma model
+#####'
+#####' Computes the relative risk for additive gamma model at time 0
+#####'
+#####' @references
+#####'
+#####' Eriksson and Scheike (2015), Additive Gamma frailty models for competing risks data, Biometrics (2015)
+#####'
+#####' @examples
+#####' lam0 <- c(0.5,0.3)
+#####' pars <- c(1,1,1,1,0,1)
+#####' ## genetic random effects, cause1, cause2 and overall
+#####' parg <- pars[c(1,3,5)]
+#####' ## environmental random effects, cause1, cause2 and overall
+#####' parc <- pars[c(2,4,6)]
+#####'
+#####' ## simulate competing risks with two causes with hazards 0.5 and 0.3
+#####' ## ace for each cause, and overall ace
+#####' out <- simCompete.twin.ace(10000,parg,parc,0,2,lam0=lam0,overall=1,all.sum=1)
+#####'
+#####' ## setting up design for running the model
+#####' mm <- familycluster.index(out$cluster)
+#####' head(mm$familypairindex,n=10)
+#####' pairs <- matrix(mm$familypairindex,ncol=2,byrow=TRUE)
+#####' tail(pairs,n=12)
+#####' #
+#####' kinship <- (out[pairs[,1],"zyg"]=="MZ")+ (out[pairs[,1],"zyg"]=="DZ")*0.5
+#####'
+#####' # dout <- make.pairwise.design.competing(pairs,kinship,
+#####' #          type="ace",compete=length(lam0),overall=1)
+#####' # head(dout$ant.rvs)
+#####' ## MZ
+#####' # dim(dout$theta.des)
+#####' # dout$random.design[,,1]
+#####' ## DZ
+#####' # dout$theta.des[,,nrow(pairs)]
+#####' # dout$random.design[,,nrow(pairs)]
+#####' #
+#####' # thetades <- dout$theta.des[,,1]
+#####' # x <- dout$random.design[,,1]
+#####' # x
+#####' ##EVaddGam(rep(1,6),x[1,],x[3,],thetades,matrix(1,18,6))
+#####'
+#####' # thetades <- dout$theta.des[,,nrow(out)/2]
+#####' # x <- dout$random.design[,,nrow(out)/2]
+#####' ##EVaddGam(rep(1,6),x[1,],x[4,],thetades,matrix(1,18,6))
+#####' @author Thomas Scheike
+#####' @export
+#####' @param theta theta
+#####' @param x1 x1
+#####' @param x2 x2
+#####' @param thetades thetades
+#####' @param ags ags
 EVaddGam <- function(theta,x1,x2,thetades,ags)
 { #
 	pars <- thetades %*% theta
@@ -1803,7 +1805,6 @@ EVaddGam <- function(theta,x1,x2,thetades,ags)
 	list(x1m=x1mvar,mx2=x2mvar,
 	     dN=x1x2vvar/x2mvar)
 } #
-
 
 ##' @export
 twostage.aalen <- function(object,...) survival.twostage(object,...)

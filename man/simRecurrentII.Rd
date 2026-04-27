@@ -3,8 +3,6 @@
 \name{simRecurrentII}
 \alias{simRecurrentII}
 \alias{showfitsim}
-\alias{covIntH1dM1IntH2dM2}
-\alias{squareintHdM}
 \alias{simRecurrentList}
 \alias{showfitsimList}
 \title{Simulation of recurrent events data based on cumulative hazards with two
@@ -90,7 +88,7 @@ dlist(rr,.~id,n=0)
 
 rr <- simRecurrent(100,base1,death.cumhaz=dr)
 par(mfrow=c(1,3))
-showfitsim(causes=1,rr,dr,base1,base1)
+mets:::showfitsim(causes=1,rr,dr,base1,base1)
 ######################################################################
 ### simulating simple model 
 ### random effect for all causes (Z shared for death and recurrent) 
@@ -105,7 +103,7 @@ set.seed(100)
 rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
 dtable(rr,~death+status)
 par(mfrow=c(2,2))
-showfitsim(causes=2,rr,dr,base1,base4)
+mets:::showfitsim(causes=2,rr,dr,base1,base4)
 
 ######################################################################
 ### now with three event types and two causes of death 
@@ -115,7 +113,7 @@ cumhaz <- list(base1,base1,base4)
 drl <- list(dr,base4)
 rr <- simRecurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
 dtable(rr,~death+status)
-showfitsimList(rr,cumhaz,drl) 
+mets:::showfitsimList(rr,cumhaz,drl) 
 
 }
 \author{

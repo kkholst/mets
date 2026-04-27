@@ -271,7 +271,6 @@ out <- summaryRecurrentobject(object,...)
 return(out)
 }# }}}
 
-##' @export
 summaryRecurrentobject <- function(object,times=NULL,strata=NULL,estimates=FALSE,
 			      name="mean",cumhaz="cumhaz",se.cumhaz="se.cumhaz",robust=FALSE,
 	      conf.type=c("log","log-log","plain"),...) {# {{{
@@ -313,7 +312,6 @@ print.summary.recurrent  <- function(x,...) {# {{{
 if (is.null(x$times)) print(x$baseci) else print(x$pbaseci)
 } # }}}
 
-##' @export
 iidRecurrent <- function(recurrent,death,wt=NULL,km=TRUE,start=0,time=NULL) { ## {{{ 
 xr <- recurrent
 dr <- death 
@@ -840,7 +838,6 @@ recmarg <- function(recurrent,death,Xr=NULL,Xd=NULL,km=TRUE,...)
  return(out)
 }# }}}
 
-##' @export
 squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
 {# {{{
 ###  sum_k ( int_0^t f(s)/S_0^r(s) dM_k.^r(s) )^2
@@ -905,7 +902,6 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
 	      betaiid=betaiidR,vbeta=vbeta,covv=covv))
 } # }}}
 
-##' @export
 covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 {# {{{
 
@@ -1073,7 +1069,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'
 ##' rr <- simRecurrent(100,base1,death.cumhaz=dr)
 ##' par(mfrow=c(1,3))
-##' showfitsim(causes=1,rr,dr,base1,base1)
+##' mets:::showfitsim(causes=1,rr,dr,base1,base1)
 ##' ######################################################################
 ##' ### simulating simple model 
 ##' ### random effect for all causes (Z shared for death and recurrent) 
@@ -1088,7 +1084,7 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
 ##' par(mfrow=c(2,2))
-##' showfitsim(causes=2,rr,dr,base1,base4)
+##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
 ##'
 ##' ######################################################################
 ##' ### now with three event types and two causes of death 
@@ -1098,10 +1094,10 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' drl <- list(dr,base4)
 ##' rr <- simRecurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
 ##' dtable(rr,~death+status)
-##' showfitsimList(rr,cumhaz,drl) 
+##' mets:::showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @aliases simRecurrentII showfitsim covIntH1dM1IntH2dM2 squareintHdM simRecurrentList showfitsimList
+##' @aliases simRecurrentII showfitsim simRecurrentList showfitsimList
 simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
@@ -1258,7 +1254,6 @@ simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,
   return(tall)
   }# }}}
 
-##' @export
 showfitsimList <- function(rr,cumhaz,dr,...)  {# {{{
  colp <- max(length(cumhaz),length(dr))
  par(mfrow=c(2,colp))
@@ -1279,7 +1274,6 @@ showfitsimList <- function(rr,cumhaz,dr,...)  {# {{{
 }
 # }}}
 
-##' @export
 showfitsim <- function(causes=2,rr,dr,base1,base4,which=1:3) 
 {# {{{
 if (1 %in% which) {
@@ -1599,7 +1593,7 @@ simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,r
 ##'
 ##' rr <- simRecurrentTS(1000,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
-##' showfitsim(causes=2,rr,dr,base1,base4)
+##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
 ##'
 ##' @export
 simRecurrentTS <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
@@ -1806,7 +1800,6 @@ data[,paste(names.count,types[1],sep="")] <-
 return(data)
 }# }}}
 
-##' @export
 count.historyVar <- function(data,var="status",id="id",names.count="Count",lag=TRUE)
 {# {{{
 vvar <- data[,var]
@@ -2083,290 +2076,4 @@ return(out)
 
 ##' @export
 print.exceed  <- function(x,...) summary.exceed(x,...)
-
-###prob.exceed.recurrent <- function(formula,data, cause=1, death.code=2, cens.code=0,
-###                      exceed=NULL,marks=NULL,cifmets=TRUE,all.cifs=FALSE,return.data=FALSE,...)
-###{# {{{
-###    cl <- match.call()# {{{
-###    m <- match.call(expand.dots = TRUE)[1:3]
-###    des <- proc_design(
-###        formula,
-###        data = data,
-###        specials = c("marks","strata","offset", "weights", "cluster"),
-###        intercept = TRUE
-###    )
-###    Y <- des$y
-###    if (!inherits(Y, c("Event", "Surv"))) {
-###        stop("Expected a 'Surv' or 'Event'-object")
-###    }
-###    if (ncol(Y) == 2) {
-###        exit <- Y[, 1]
-###        entry <- rep(0, nrow(Y))
-###        status <- Y[, 2]
-###    } else {
-###        entry <- Y[, 1]
-###        exit <- Y[, 2]
-###        status <- Y[, 3]
-###    }
-###    X <- des$x
-###    des.weights <- des$weights
-###    des.offset  <- des$offset
-###    id      <- des$cluster
-###    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###    strata <- des$strata
-###    if (!is.null(strata))  {
-###      ns <- grep("strata",names(des$levels))
-###      strata.name  <-  names(des$levels)[1]
-###    } else strata.name <- NULL
-###    des.marks <- des$marks
-###    id      <- des$cluster
-###    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
-###    ## no use of 
-###    pos.cluster <- pos.strata <- NULL
-###
-### ## take offset and weight first from formula, but then from arguments
-###  if (is.null(des.offset)) {
-###	  if (is.null(offset)) offset <- rep(0,length(exit)) 
-###  } else offset <- des.offset
-###  if (is.null(des.weights)) {
-###	  if (is.null(weights)) weights <- rep(1,length(exit)) 
-###  } else weights <- des.weights
-###  if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
-###  marks.call <- marks
-###  if (is.null(marks)) marks <- rep(1,length(statusE))
-###  ## }}}
-###
-### call.id <- id;
-### conid <- construct_id(id,nrow(X),as.data=TRUE)
-### name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
-###
-### times <- NULL
-### statusD <- (status %in% death.code)*1
-### statusE <- (status %in% cause)*1
-### if (sum(statusE)==0) stop("none of type events")
-### if (!is.null(strata) & !cifmets) stop("strata only for cifmets=TRUE\n")
-### allvars <- all.vars(formula)
-### if (is.null(times)) times <- sort(unique(exit[statusE==1]))
-###
-### countE <- cumsumstrata(statusE*marks,id,nid)
-### if (is.null(marks.call)) {
-###    mc <- max(countE)+1
-###    idcount <- id*mc+countE
-###    idcount <- cumsumstrata(rep(1,length(idcount)),idcount,mc*(nid+1))
-### } else {
-###    ex <- outer(countE,exceed,">=")[,1,]
-###    exC <- apply(ex,2,cumsumstrata,id,nid)
-###    idcount <- exC
-### }
-###
-### if (is.null(exceed)) exceed <- sort(unique(countE))
-### w0 <- which(exceed==0)
-### if (length(w0)>=1) exceed <- exceed[-w0]
-###
-###if (!cifmets) {
-###  ## can not handle start stop and id, so uses MG standard errors 
-###  pp <- as.formula(paste("Hist(entry=",allvars[1],",",allvars[2],",statN)~+1",sep=""))
-###  ###rhs <- update(formula,-1~.)
-###  ###form <- as.formula(update.formula(rhs,pp))
-###  form <- as.formula(pp)
-###} else {
-###  pp <- as.formula(paste("Event(",allvars[1],",",allvars[2],",statN)~.",sep=""))
-###  rhs <- update(formula,-1~.)
-###  form <- as.formula(update.formula(rhs,pp))
-###}
-###
-###cif.exceed <- NULL
-###dataList <- NULL
-###if (all.cifs) cif.exceed <- list() 
-###if (return.data) dataList <- list() 
-###se.probs <- probs <- matrix(0,length(times),length(exceed)+1)
-###lower <-  matrix(0,length(times),length(exceed)+1)
-###upper <-  matrix(0,length(times),length(exceed)+1)
-###i <- 1
-###for (n1 in exceed) {# {{{
-###	i <- i+1
-###	### first time that get to n1
-###        if (is.null(marks.call)) keep <- (countE<n1 ) | (countE==n1 & idcount==1) else keep <- exC[,i-1]<=1 
-######	keep <- (countE<n1 ) | (firsttoE==n1)
-###
-###	### status, censoring, get to n1, or die
-###        statN <- rep(0,nrow(data))
-###        if (is.null(marks.call)) statN[countE==n1] <- 1 else statN[exC[,i-1]==1] <- 1
-###	statN[statusD==1] <- 2
-###	statN <- statN[keep]
-###	dataN <- data[keep,]
-###	dataN$statN <- statN
-###	if (return.data) dataList[[i-1]] <- dataN
-###
-###        if (!cifmets) pN1 <-  suppressWarnings(prodlim::prodlim(form,data=dataN)) else pN1 <-  suppressWarnings(cif(form,data=dataN))
-###	if (all.cifs) cif.exceed[[i-1]] <- pN1
-###
-###	if ((sum(statN==1)==0) | !cifmets) {
-###	lower[,i] <- upper[,i] <- se.probs[,i] <- probs[,i] <- rep(0,length(times)) } else  {
-###
-###        where <- fast.approx(c(0,pN1$times),times,type="left")
-######     cifs <-cbind(pN1$times,vecAllStrata(pN1$cumhaz[,2],pN1$strata,pN1$nstrata))
-######     se.cifs <-cbind(pN1$times,vecAllStrata(pN1$se.cumhaz[,2],pN1$strata,pN1$nstrata))
-###	probs[,i] <- c(0,pN1$mu)[where]
-###	se.probs[,i] <- c(0,pN1$se.mu)[where]
-###	lower[,i] <- c(0,exp(log(pN1$mu)-1.96*pN1$se.mu/pN1$mu))[where]
-###	upper[,i] <- c(0,exp(log(pN1$mu)+1.96*pN1$se.mu/pN1$mu))[where]
-###	}
-###	if (i==2) { probs[,1]    <- 1-probs[,2]; 
-###                    se.probs[,1] <- se.probs[,2]; 
-###                    lower[,1] <- 1-lower[,2]; 
-###                    upper[,1] <- 1-upper[,2]; 
-###	}
-###}# }}}
-###
-###if (is.null(marks.call)) {
-###dp <- -t(apply(cbind(probs[,-1],0),1,diff))
-###meanN <- apply(probs[,-1,drop=FALSE],1,sum)
-###meanN2 <- apply(t(exceed^2 * t(dp)),1,sum)
-###varN <- meanN2-meanN^2
-###} else dp <- meanN <- meanN2 <- varN <- NULL
-### 
-###colnames(probs) <- c(paste("N<",exceed[1],sep=""),paste("exceed>=",exceed,sep=""))
-###colnames(se.probs) <- c(paste("N<",exceed[1],sep=""),paste("exceed>=",exceed,sep=""))
-###
-###out <- list(time=times,times=times,prob=probs,se.prob=se.probs,meanN=meanN,
-###	    lower=lower,upper=upper,meanN2=meanN2,varN=varN,exceed=exceed[-1],formula=form,
-###	    cif.exceed=cif.exceed,dataList=dataList)
-###class(out) <- "exceed"
-###return(out)
-###}# }}}
-###
-###prob.exceed.recurrentO <- function(data,type,status="status",death="death",
-### start="start",stop="stop",id="id",times=NULL,exceed=NULL,cifmets=TRUE,strata=NULL,all.cifs=FALSE,...)
-###{# {{{
-###### setting up data 
-###stat <-     data[,status]
-###dd   <-     data[,death]
-###tstop <-    data[,stop]
-###tstart <-   data[,start]
-###clusters <- data[,id]
-###
-###if (sum(stat==type)==0) stop("none of type events")
-###if (!is.null(strata) & !cifmets) stop("strata only for cifmets=TRUE\n")
-###
-###if (is.numeric(clusters)) {
-###      clusters <- fast.approx(unique(clusters), clusters) - 1
-###      max.clust <- max(clusters)
-###}
-###else {
-###     max.clust <- length(unique(clusters))
-###     clusters <- as.integer(factor(clusters, labels = seq(max.clust))) - 1
-###}
-###
-### count <- cumsumstrata((stat==type),clusters,max.clust+1)
-###### count  <- cumsumidstratasum((stat==type),rep(0,nrow(data)),1,clusters,max.clust+1)$lagsum 
-### mc <- max(count)+1
-### idcount <- clusters*mc + count
-### idcount <- cumsumstrata(rep(1,length(idcount)),idcount,mc*(max.clust+1))
-###
-###if (is.null(times)) times <- sort(unique(tstop[stat==type]))
-###if (is.null(exceed)) exceed <- sort(unique(count))
-###
-###if (!cifmets) {
-###   if (is.null(strata)) form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+1",sep=""))
-###   else form <- as.formula(paste("Hist(entry=",start,",",stop,",statN)~+",strata,sep="")) 
-###}
-###else {
-###   if (is.null(strata)) form <- as.formula(paste("Event(",start,",",stop,",statN)~+1",sep=""))
-###   else form <- as.formula(paste("Event(",start,",",stop,",statN)~strata(",strata,")",sep=""))
-###}
-###
-###cif.exceed <- NULL
-###if (all.cifs) cif.exceed <- list() 
-###probs.orig <- se.probs <- probs <- matrix(0,length(times),length(exceed))
-###se.lower <-  matrix(0,length(times),length(exceed))
-###se.upper <-  matrix(0,length(times),length(exceed))
-###i <- 1
-###for (n1 in exceed[-1]) {# {{{
-###	i <- i+1
-###	### first time that get to n1
-###	keep <- (count<n1 ) | (count==n1 & idcount==1)
-###	### status, censoring, get to n1, or die
-###        statN <- rep(0,nrow(data))
-###	statN[count==n1] <- 1
-###	statN[dd==1] <- 2
-###	statN <- statN[keep]
-###        if (!cifmets) 
-###	pN1 <-  suppressWarnings(prodlim::prodlim(form,data=data[keep,]))
-###        else pN1 <-  suppressWarnings(cif(form,data=data[keep,]))
-###	if (all.cifs) cif.exceed[[i-1]] <- pN1
-###
-###	if (sum(statN)==0) {
-###		se.lower[,i] <- se.upper[,i] <- se.probs[,i] <- probs[,i] <- rep(0,length(times)) } else  {
-###
-###                if (!cifmets) {
-###			mps  <- summary(pN1,times=times,cause=1)
-###			mps  <- suppressWarnings(summary(pN1,times=times,cause=1)$table)
-###			if (is.list(mps)) mps <- mps$"1"
-###			probs.orig[,i] <- ps <- mps[,5]
-###			mm <- which.max(ps)
-###			probs[,i] <- ps
-###			probs[is.na(ps),i] <- ps[mm]
-###			se.probs[,i] <- mps[,6]
-###			se.probs[is.na(ps),i] <- se.probs[mm,i]
-###			se.lower[,i] <- mps[,7] 
-###			se.lower[is.na(ps),i] <- se.lower[mm,i]
-###			se.upper[,i] <- mps[,8]
-###			se.upper[is.na(ps),i] <- se.upper[mm,i]
-###	        } else {
-###			where <- fast.approx(c(0,pN1$times),times,type="left")
-###	   	        probs[,i] <- c(0,pN1$mu)[where]
-###			se.probs[,i] <- c(0,pN1$se.mu)[where]
-###			se.lower[,i] <- probs[,i]-1.96*se.probs[,i] 
-###			se.upper[,i] <- probs[,i]+1.96*se.probs[,i] 
-###		}
-###
-###	}
-###	if (i==2) { probs[,1]    <- 1-probs[,2]; 
-###                    se.probs[,1] <- se.probs[,2]; 
-###                    se.lower[,1] <- 1-se.lower[,2]; 
-###                    se.upper[,1] <- 1-se.upper[,2]; 
-###	}
-###}# }}}
-###
-###dp <- -t(apply(cbind(probs[,-1],0),1,diff))
-###meanN <- apply(probs[,-1,drop=FALSE],1,sum)
-###meanN2 <- apply(t(exceed[-1]^2 * t(dp)),1,sum)
-### 
-###colnames(probs) <- c(paste("N=",exceed[1],sep=""),paste("exceed>=",exceed[-1],sep=""))
-###colnames(se.probs) <- c(paste("N=",exceed[1],sep=""),paste("exceed>=",exceed[-1],sep=""))
-###
-###return(list(time=times,times=times,prob=probs,se.prob=se.probs,meanN=meanN,probs.orig=probs.orig[,-1],
-###	    se.lower=se.lower,se.upper=se.upper,meanN2=meanN2,varN=meanN2-meanN^2,exceed=exceed[-1],formula=form,
-###	    cif.exceed=cif.exceed))
-###}# }}}
-###
-#####' @export
-###plot.exceed <- function(x,types=NULL,se=1,where=0.6,legend=NULL,...) { ## {{{ 
-###if (is.null(types)) types <- 1:ncol(x$prob)
-###matplot(x$time,x$prob[,types],type="s",xlab="time",ylab="probabilty",xlim=range(c(0,x$times)),...)
-###if (se==1) 
-###for (i in types) plotConfRegion(x$time,cbind(x$lower[,i],x$upper[,i]),col=i)
-###if (!is.null(where)) {
-###if (is.null(legend)) legend <- colnames(x$prob)[types]
-###legend(0,0.6,legend=legend,lty=types,col=types)
-###}
-###} ## }}}
-###
-#####' @export
-###summary.exceed <- function(object,times=NULL,types=NULL,...) { ## {{{ 
-###if (is.null(types)) types <- 1:ncol(object$prob)
-###prob <- cbind(object$time,object$prob[,types])
-###se <- cbind(object$time,object$se.prob[,types])
-###lower <- cbind(object$time,object$lower[,types])
-###upper <- cbind(object$time,object$upper[,types])
-###if (is.null(times)) 
-###out <- list(prob=prob,se=se,lower=lower,upper=upper)
-###else {
-###   rows <- fast.approx(object$time,times)
-###   out <- list(prob=prob[rows,],se=se[rows,],lower=lower[rows,],upper=upper[rows,])
-###}
-###return(out)
-###} ## }}}
-###
 

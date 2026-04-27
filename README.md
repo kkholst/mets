@@ -409,7 +409,7 @@ years lost at the different time horizons
 ``` r
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  
- rm1 <- resmean.phreg(out1, times=c(50))
+ rm1 <- resmean_phreg(out1, times=c(50))
  summary(rm1)
 #>                     strata times    rmean se.rmean    lower    upper years.lost
 #> tcell=0, platelet=0      0    50 20.48245 1.411055 17.89542 23.44348   29.51755
@@ -429,7 +429,7 @@ different strata
 
 ``` r
  ## years.lost decomposed into causes
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
+drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")
 ```
 
@@ -916,7 +916,7 @@ get these estimates via IPCW adjustment and then we can do regression
 #> [6,] -0.05341259    0    0    0
  ## same as 
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
- rm1 <- resmean.phreg(out1,times=30)
+ rm1 <- resmean_phreg(out1,times=30)
  summary(rm1)
 #>                     strata times    rmean  se.rmean    lower    upper
 #> tcell=0, platelet=0      0    30 13.60584 0.8314012 12.07012 15.33695
@@ -939,7 +939,7 @@ get these estimates via IPCW adjustment and then we can do regression
 #> inttcell=1, platelet=0    7.260  2.3529  2.648 11.871 2.033e-03
 #> inttcell=1, platelet=1    5.779  2.0921  1.679  9.880 5.737e-03
  ## same as 
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+ drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
  summary(drm1)
 #> $estimate
 #>                     strata times    intF_1   intF_2 se.intF_1 se.intF_2
