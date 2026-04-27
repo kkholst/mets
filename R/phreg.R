@@ -1855,8 +1855,7 @@ return(out)
 vcov.resmean_phreg <- function(object,cause=1,...)
 {# {{{
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-  return(diag(object$intkmtimes[,name,drop=TRUE]^2,
-              nrow=NROW(object$intkmtimes)))
+  return(diag(object$intkmtimes[,name,drop=TRUE]^2, nrow=NROW(object$intkmtimes)))
 }# }}}
 
 ##' @export
@@ -1867,6 +1866,8 @@ coef.resmean_phreg <- function(object,cause=1,...)
   if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
   return(res)
 }# }}}
+
+
 
 ##' @export
 rmst_phreg <- function(x,times=NULL,covs=NULL,...)
@@ -2151,6 +2152,14 @@ if (ncol(out)==5) {
 return(outl)
 }# }}}
 
+##' @export
+estimate.resmean_phreg <- function(object,cause=1,...)
+{# {{{
+  if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
+  out <- estimate(coef=coef(object,cause=cause),vcov=vcov(object,cause=cause),...)
+  return(out)
+}# }}}
+
 
 ##' @export
 print.resmean_phreg <- function(x,...)
@@ -2282,6 +2291,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
      }
 
 }# }}}
+
 
 # }}}
 
