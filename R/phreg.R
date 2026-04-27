@@ -1534,9 +1534,26 @@ model.matrix.phreg <- function(object, data=NULL, ...) {
 }
 
 ##' @export
-summary.predictphreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],np=10,...) {# {{{
-ret <- summary.predictrecreg(object,times=times,type=type[1],np=np,...)
-return(ret)
+summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],np=10,...) {# {{{
+	times <- object$times
+	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
+            if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
+	    if (length(np)>1) ids <- np else 	{
+            if (is.numeric(np) & length(np)>1) ids <- np else 	
+            if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
+	     else 
+		{
+			ids <- sample(1:nrow(object$surv),np) 
+		}
+	    }
+	}
+        se.type <- paste("se.",type,sep="")
+	lower.type <- paste(type,".lower",sep="")
+	upper.type <- paste(type,".upper",sep="")
+	out <- list(pred=object[[type]][ids,],se.pred=object[[se.type]][ids,], 
+		    lower.pred=object[[lower.type]][ids,],
+		    upper.pred=object[[upper.type]][ids,],times=object$times,rows=ids)
+return(out)
 }# }}}
 
 ##' @export
