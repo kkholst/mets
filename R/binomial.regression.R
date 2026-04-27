@@ -542,11 +542,9 @@ coef.binreg <- function(object,...) {# {{{
 }# }}}
 
 ##' @export
-predict.binreg <- function(object,newdata,se=TRUE,pred.iid=FALSE,level=0.95,design=FALSE,...)
+predict.binreg <- function(object,newdata=NULL,se=TRUE,pred.iid=FALSE,level=0.95,design=FALSE,...)
 {# {{{
-   if (!is.null(newdata)) 
-   x <- update_design(object$design,data = newdata,response=FALSE)
-  else x <- object$design
+   if (!is.null(newdata)) x <- update_design(object$design,data = newdata,response=FALSE) else x <- object$design
   Z <- x$x
 
   if (object$model[1]=="logit") {
