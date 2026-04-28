@@ -991,10 +991,7 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 	    if (length(np)>1) ids <- np else 	{
             if (is.numeric(np) & length(np)>1) ids <- np else 	
             if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
-	     else 
-		{
-			ids <- sample(1:nrow(object$surv),np) 
-		}
+	     else ids <- seq(np)
 	    }
 	}
 

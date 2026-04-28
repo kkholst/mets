@@ -36,6 +36,7 @@ out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 
 rm1 <- resmean_phreg(out1,times=10*(1:6))
 summary(rm1)
+e1 <- estimate(rm1)
 par(mfrow=c(1,2))
 plot(rm1,se=1)
 plot(rm1,years.lost=TRUE,se=1)

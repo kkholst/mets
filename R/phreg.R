@@ -1548,10 +1548,7 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=N
 	    if (length(np)>1) ids <- np else 	{
             if (is.numeric(np) & length(np)>1) ids <- np else 	
             if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
-	     else 
-		{
-			ids <- sample(1:nrow(object$surv),np) 
-		}
+	     else ids <- seq(np) 
 	    }
 	}
 
@@ -1725,6 +1722,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##'
 ##' rm1 <- resmean_phreg(out1,times=10*(1:6))
 ##' summary(rm1)
+##' e1 <- estimate(rm1)
 ##' par(mfrow=c(1,2))
 ##' plot(rm1,se=1)
 ##' plot(rm1,years.lost=TRUE,se=1)
@@ -1854,17 +1852,80 @@ return(out)
 ##' @export
 vcov.resmean_phreg <- function(object,cause=1,...)
 {# {{{
+  if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-  return(diag(object$intkmtimes[,name,drop=TRUE]^2, nrow=NROW(object$intkmtimes)))
+
+  rest <- object$intkmtimes[,name]
+  inttimes <- object$intkmtimes[,2]
+  times <- unique(object$intkmtimes[,2])
+
+  if (length(times)==1)   {
+   res <- rest 
+   out <- diag(res^2, nrow=length(res))
+   if (length(res) == length(object$strata.level)) rownames(out) <- colnames(out) <- object$strata.level
+  } else {
+	  out <- list()
+	  k <- 1
+          for (tt in times)  {
+		  res <- rest[tt==inttimes]
+                  if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
+                 res <- diag(res^2, nrow=length(res))
+                 if (nrow(res) == length(object$strata.level)) rownames(res) <- colnames(res) <- object$strata.level
+		  out[[k]] <- res
+		  k <- k+1
+           }
+  }
+
+  return(out)
 }# }}}
 
 ##' @export
 coef.resmean_phreg <- function(object,cause=1,...) 
 {# {{{
+  if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF_",cause,sep="") else name <- "rmean"
-  res <- object$intkmtimes[,name]
-  if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
-  return(res)
+  rest <- object$intkmtimes[,name]
+  inttimes <- object$intkmtimes[,2]
+  times <- unique(object$intkmtimes[,2])
+
+  if (length(times)==1)   {
+   res <- rest 
+   if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
+   out <- res
+  } else {
+	  out <- list()
+	  k <- 1
+          for (tt in times)  {
+		  res <- rest[tt==inttimes]
+                  if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
+		  out[[k]] <- res
+		  k <- k+1
+           }
+  }
+
+  return(out)
+}# }}}
+
+##' @export
+estimate.resmean_phreg <- function(x,cause=1,...)
+{# {{{
+  if (is.null(x$intkmtimes)) stop("Only for the times given in the call 'times' \n");
+
+  if (is.na(match("rmean",names(x$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
+
+  coeft <- coef(x,cause=cause,...)
+  vcovt <- vcov(x,cause=cause,...)
+  times <- unique(x$intkmtimes[,2])
+  if (length(times)==1)  
+   out <- estimate(coef=coeft,vcov=vcovt,...)
+  else {
+	  out <- list()
+          for (k in seq_along(times)) {
+	  out[[k]] <- estimate(coef=coeft[[k]],vcov=vcovt[[k]],...)
+	  }
+  }
+
+  return(out)
 }# }}}
 
 
@@ -2150,14 +2211,6 @@ if (ncol(out)==5) {
 }
 
 return(outl)
-}# }}}
-
-##' @export
-estimate.resmean_phreg <- function(object,cause=1,...)
-{# {{{
-  if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-  out <- estimate(coef=coef(object,cause=cause),vcov=vcov(object,cause=cause),...)
-  return(out)
 }# }}}
 
 
