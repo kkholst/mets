@@ -1856,6 +1856,7 @@ vcov.resmean_phreg <- function(object,cause=1,...)
 {# {{{
   if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
+  if (!(name %in% colnames(object$intkmtimes))) stop( paste("Cause not consistent with names, looks for ",name,"\n"))
 
   rest <- object$intkmtimes[,name]
   inttimes <- object$intkmtimes[,2]
@@ -1886,6 +1887,7 @@ coef.resmean_phreg <- function(object,cause=1,...)
 {# {{{
   if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
   if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF_",cause,sep="") else name <- "rmean"
+  if (!(name %in% colnames(object$intkmtimes))) stop( paste("Cause not consistent with names, looks for ",name,"\n"))
   rest <- object$intkmtimes[,name]
   inttimes <- object$intkmtimes[,2]
   times <- unique(object$intkmtimes[,2])
