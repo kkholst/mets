@@ -17,6 +17,7 @@ binregRatio(
   cens.weights = NULL,
   cens.model = ~+1,
   se = TRUE,
+  relative.to.causes = NULL,
   kaplan.meier = TRUE,
   cens.code = 0,
   no.opt = FALSE,
@@ -50,6 +51,8 @@ binregRatio(
 \item{cens.model}{only stratified cox model without covariates}
 
 \item{se}{to compute se's  based on IPCW}
+
+\item{relative.to.causes}{if not NULL, then then compares RMTL of cause to RMTL of specified causes (the total for these causes)}
 
 \item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
 

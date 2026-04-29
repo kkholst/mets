@@ -31,6 +31,7 @@
 ##' @param cens.weights censoring weights 
 ##' @param cens.model only stratified cox model without covariates
 ##' @param se to compute se's  based on IPCW 
+##' @param relative.to.causes if not NULL, then then compares RMTL of cause to RMTL of specified causes (the total for these causes)
 ##' @param kaplan.meier uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
 ##' @param cens.code gives censoring code
 ##' @param no.opt to not optimize 
@@ -72,7 +73,7 @@
 ##' @aliases rmtlRatio
 ##' @export
 binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","II","I"),
-	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
+	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,relative.to.causes=NULL,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
@@ -124,6 +125,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","I
   ccc <- which(ucauses %in% cens.code)
   if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
   competing  <-  (length(Causes)>1) 
+  if (!is.null(relative.to.causes)) Causes <- relative.to.causes
   data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -154,7 +156,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","I
  if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
      if (outcome[1]=="cif") Y <- cbind( c((status %in% Causes)*(exit<=time)/cens.weights) , c((status %in% cause)*(exit<=time)/cens.weights) )
      else { 
-            Y <- cbind(c((time-pmin(exit,time))*obs)/cens.weights, c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights)
+            Y <- cbind(c((status %in% Causes)*(time-pmin(exit,time))*obs)/cens.weights, c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights)
      }
   }
   Yipcw <- Y
