@@ -1738,6 +1738,8 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
 ##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
 ##' summary(drm1)
+##' estimate(drm1,cause=1)
+##' estimate(drm1,cause=2)
 ##'
 ##' ## comparing populations, can also be done using rmstIPCW via influence functions
 ##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
