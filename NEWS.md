@@ -2,6 +2,7 @@
 
     Development version
 
+  - Changed the naming of some functions for RMTL and RMST `resmean.phreg` ->  `resmean_phreg` and  `cif.yearslost` ->  `cif_yearslost`  
   - Cumulative incidence simulation with delayed entry `simul.cifs`, `sim.cif`, `sim.cifs`   
   - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with administrative censoring and additional random censoring.
   - iid and IC methods for `recurrentMarginal`
