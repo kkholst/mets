@@ -2,7 +2,6 @@
 % Please edit documentation in R/casewise.R
 \name{casewise.test}
 \alias{casewise.test}
-\alias{slope.process}
 \alias{casewise.bin}
 \title{Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence}
 \usage{
@@ -61,9 +60,6 @@ plot(cmz,ylim=c(0,0.7),xlim=c(60,100))
 par(new=TRUE)
 plot(cdz,ylim=c(0,0.7),xlim=c(60,100))
 
-slope.process(cdz$casewise[,1],cdz$casewise[,2],iid=cdz$casewise.iid)
-
-slope.process(cmz$casewise[,1],cmz$casewise[,2],iid=cmz$casewise.iid)
 
 }
 }
