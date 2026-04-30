@@ -1022,9 +1022,10 @@ basecumhaz <- function(x,type=c("list"),only=0,joint=0,cumhaz="cumhaz",se.cumhaz
 }# }}}
 
 baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
-	 lty=NULL,col=NULL,lwd=NULL,legend=TRUE,legend.args=list(),
+     lty=NULL,col=NULL,lwd=NULL,legend=TRUE,legend.args=list(),
      ylab="Cumulative hazard",xlab="time",
-	 polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,cumhaz="cumhaz",se.cumhaz="se.cumhaz",
+     polygon=TRUE,level=0.95,stratas=NULL,robust=FALSE,cumhaz="cumhaz",
+     se.cumhaz="se.cumhaz",
      conf.type=c("log","plain"),restrict = c("positive","prob", "none"),...) {# {{{
 
 ###   if (!inherits(x,"phreg")) stop("must be phreg/recreg/ \n")
@@ -1168,7 +1169,6 @@ baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
 ##' plot(out1,stratas=c(0,3),col=2:3,lty=1:2,se=TRUE)
 ##' plot(out1,stratas=c(0),col=2,lty=2,se=TRUE,polygon=FALSE)
 ##' plot(out1,stratas=c(0),col=matrix(c(2,1,3),1,3),lty=matrix(c(1,2,3),1,3),se=TRUE,polygon=FALSE)
-##' @export
 basehazplot.phreg  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,
 			       lwd=NULL,legend=TRUE,legend.args=list(),
                    ylab=NULL,xlab=NULL,polygon=TRUE,level=0.95,
