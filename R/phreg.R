@@ -1667,12 +1667,13 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' standard error. Standard error is computed using linear interpolation between
 ##' standard errors at jump-times. Plots gives restricted mean at all times.
 ##' Years lost can be computed based on this and decomposed into years lost for
-##' different causes using the cif.yearslost function that is based on
+##' different causes using the cif_yearslost function that is based on
 ##' integrating the cumulative incidence functions.
 ##' One particular feature of these functions are that the restricted mean and years-lost are
 ##' computed for all event times as functions and can be plotted/viewed.  When times are given and beyond
 ##' the last event time withn a strata the curves are extrapolated using the estimates of
-##' cumulative incidence.
+##' cumulative incidence. The RMST and RMTL can also be computed using rmstIPCW at specific time-points and then
+##' influence functions are available. 
 ##'
 ##' @param x phreg object
 ##' @param times possible times for which to report restricted mean
@@ -1697,21 +1698,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' estimate(e1,rbind(c(1,-1,0,0)))
 ##' estimate(e1,list(1:4))
 ##'
-##' ## years.lost decomposed into causes
-##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
-##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
-##' summary(drm1)
-##' estimate(drm1,cause=1)
-##' estimate(drm1,cause=2)
-##'
-##' ## comparing populations, can also be done using rmstIPCW via influence functions
-##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
-##' summary(drm1,contrast=list(1:4))
-##' ## first cause
-##' e1 <- estimate(drm1)
-##' estimate(e1,rbind(c(1,-1,0,0)))
 ##' @export
-##' @aliases cif_yearslost  rmst_phreg
 resmean_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
   ii <- invhess <- x$II
@@ -1904,6 +1891,36 @@ out <- resmean_phreg(x,times=NULL,covs=NULL,...)
 return(out)
 }# }}}
 
+
+##' Restricted mean time lost for competing risks with martingale standard errors
+##'
+##' Restricted mean time lost for competing risks based on integrated Aalen-Johansen.
+##' A set of time points can be given to be returned in a summary.
+##' One particular feature of these functions are that the years-lost are
+##' computed for all event times as functions and can be plotted/viewed.  
+##'
+##' @param formula for  phreg object with strata or just a +1 if no strata is given 
+##' @param data frame for calculations 
+##' @param times possible times for which to report restricted mean
+##' @param cens.code censoring code (needed to separate event codes from censorings)
+##' @param ... Additional arguments to phreg 
+##' @author Thomas Scheike
+##' @examples
+##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
+##'
+##' ## years.lost decomposed into causes
+##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
+##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
+##' summary(drm1)
+##' estimate(drm1,cause=1)
+##' estimate(drm1,cause=2)
+##'
+##' ## comparing populations, can also be done using rmstIPCW via influence functions
+##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
+##' summary(drm1,contrast=list(1:4))
+##' ## first cause
+##' e1 <- estimate(drm1)
+##' estimate(e1,rbind(c(1,-1,0,0)))
 ##' @export
 cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 {# {{{
@@ -1927,7 +1944,7 @@ cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
     status <- Y[,3]
   }
 
-  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1,Z=as.matrix(status,ncol=1))
+  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1,Z=as.matrix(status,ncol=1),...)
   causes <- sort(unique(x$cox.prep$Z[,1]))
   ccc <- which(causes %in% cens.code)
   if (length(ccc)>=1) causes <- causes[-ccc]
