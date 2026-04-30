@@ -2494,7 +2494,6 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
 ###	fpar <- glm(treat.model,dataw,family=binomial)
 ###	mm <- model.matrix(treat.model,dataw)
 ###	cpar <- coef(fpar)
-###   	 ### library(numderiv)
 ###
 ###	ff <- function(par,base=0) {
 ###	pa <-        expit(mm %*% par)

@@ -109,7 +109,6 @@ if (check.derivative==1) {
 ###fpar <- glm(treat.model,data,family=binomial)
 ###mm <- as.matrix(model.matrix(treat.model,data))
 ###cpar <- coef(fpar)
-###library(numDeriv)
 ###X <- model.matrix(formula,data)
 ###formulaS <- Event(tt,status)~tcell+platelet+age.f
 ###ff <- function(par) {
