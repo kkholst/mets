@@ -22,7 +22,6 @@ Cumulative score process residuals for Cox PH regression
 p-values based on Lin, Wei, Ying resampling.
 }
 \examples{
-library(mets)
 data(sTRACE)
 
 m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=sTRACE) 

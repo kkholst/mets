@@ -52,7 +52,6 @@ where there is terminal event, based on this also estimate of variance of recurr
 In contrast the probability of exceeding k events can also be computed as a counting process integral.
 }
 \examples{
-library(mets)
 data(hfactioncpx12)
 dtable(hfactioncpx12,~status)
 

@@ -45,7 +45,6 @@
 ##' Scheike & Tanaka (2025), Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' 
 ##' rmtl30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age,bmt,time=30,cause=1,outcome="rmtl")

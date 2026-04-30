@@ -53,7 +53,6 @@
 ##' Scheike TH, Zhang MJ, Gerds TA (2008). “Predicting cumulative incidence probability by direct binomial regression.” Biometrika, 95(1), 205–220.
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' # logistic regresion with IPCW binomial regression 
 ##' out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
@@ -1098,7 +1097,7 @@ if (length(dots)==0) {
 ##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
 ##' 29, 441–482. 
 ##' @examples
-##' library(mets); data(bmt)
+##' data(bmt)
 ##' dfactor(bmt)  <-  ~.
 ##'
 ##' brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
@@ -1504,7 +1503,6 @@ out <-estimate(coef=coefs,IC=iidGDR*nrow(iidGDR),...)
 ##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
 ##' 29, 441–482. 
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1
 ##' 

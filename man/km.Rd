@@ -20,7 +20,6 @@ Kaplan-Meier with robust standard errors
 Robust variance is default variance and obtained from the predict call
 }
 \examples{
-library(mets)
 data(sTRACE)
 sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)

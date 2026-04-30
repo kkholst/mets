@@ -72,7 +72,6 @@ The terminal event may share this random effect (dependence=1) or not
 ########################################
 ## getting some rates to mimick 
 ########################################
-library(mets)
 data(CPH_HPN_CRBSI)
 dr <- CPH_HPN_CRBSI$terminal
 base1 <- CPH_HPN_CRBSI$crbsi 

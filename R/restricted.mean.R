@@ -48,7 +48,6 @@
 ##' @param ... Additional arguments to binreg
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 ##' # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 ##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
@@ -197,7 +196,7 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##' @param ... Additional arguments to pass to binregATE 
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+##' data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
 ##' out <- resmeanATE(Event(time,event)~tcell+platelet,
 ##'                   data=bmt,time=40,treat.model=tcell~platelet,outcome="rmtl")
 ##' summary(out)

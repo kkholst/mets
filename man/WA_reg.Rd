@@ -40,7 +40,6 @@ Does regression for the mean of the events per time unit \deqn{ Z(t)= N(min(D,t)
 IPCW etimation calling the binreg after constructing the outcome \deqn{Z(t)}
 }
 \examples{
-library(mets)
 data(hfactioncpx12)
 hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id] 
 

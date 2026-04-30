@@ -50,7 +50,6 @@ will give censoring that looks like the data.  Covariates are drawn from data-se
 with replacement. This gives covariates like the data.  Calls sim.phregs
 }
 \examples{
-library(mets)
 data(bmt)
 nsim <- 100; 
 

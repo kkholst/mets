@@ -28,7 +28,6 @@
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' res <- 0
 ##' data(bmt)
 ##' bmt$age2 <- bmt$age

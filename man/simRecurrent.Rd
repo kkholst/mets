@@ -36,7 +36,6 @@ Simulation of recurrent events data based on cumulative hazards for event and de
 ########################################
 ## getting some rates to mimick 
 ########################################
-library(mets)
 data(CPH_HPN_CRBSI)
 dr <- CPH_HPN_CRBSI$terminal
 base1 <- CPH_HPN_CRBSI$crbsi 

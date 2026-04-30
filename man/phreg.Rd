@@ -34,7 +34,6 @@ influence functions (iid) will follow numerical order of given cluster variable
 so ordering after $id will give iid in order of data-set.
 }
 \examples{
-library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
 out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)

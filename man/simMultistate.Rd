@@ -81,7 +81,6 @@ Must give cumulative hazards on some time-range
 ########################################
 ## getting some rates to mimick 
 ########################################
-library(mets)
 data(CPH_HPN_CRBSI)
 dr <- CPH_HPN_CRBSI$terminal
 base1 <- CPH_HPN_CRBSI$crbsi 

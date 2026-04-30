@@ -94,7 +94,7 @@ typeATE="II" will augment the estimating equation with \deqn{ (A/\pi(X)) \int E(
 outcome for the treated.
 }
 \examples{
-library(mets); data(bmt)
+data(bmt)
 dfactor(bmt)  <-  ~.
 
 brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,

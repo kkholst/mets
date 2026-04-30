@@ -73,7 +73,6 @@ given then takes average rate of in simulated data from cox model.}
 Simulates data that looks like fit from fitted cumulative incidence model
 }
 \examples{
-library(mets)
 data(bmt)
 nsim <- 100
 

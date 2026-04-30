@@ -102,7 +102,6 @@ under known censoring model.
 Censoring model may depend on strata (cens.model=~strata(gX)).
 }
 \examples{
-library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)

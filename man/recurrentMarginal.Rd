@@ -36,7 +36,6 @@ combined to give the estimator
 Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
 }
 \examples{
-library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment) 

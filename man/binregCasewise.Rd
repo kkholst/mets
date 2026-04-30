@@ -24,7 +24,6 @@ Estimates the casewise concordance based on Concordance and marginal estimate us
 Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
 }
 \examples{
-library(mets)
 data(prt)
 prt <- force.same.cens(prt,cause="status")
 

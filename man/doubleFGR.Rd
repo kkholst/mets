@@ -43,7 +43,6 @@ F_2(t,X_2,X) = ( 1 - \exp(  - \exp( X_2^T \beta_2 ) \Lambda_2(t)) ) (1 - F_1(\in
 }
 }
 \examples{
-library(mets)
 res <- 0
 data(bmt)
 bmt$age2 <- bmt$age

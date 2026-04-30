@@ -81,7 +81,6 @@ and cause (code), censoring-codes (cens.code) and death-codes (death.code) inden
 }
 \examples{
 ## data with no ties
-library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment) 

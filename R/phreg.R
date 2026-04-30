@@ -203,7 +203,6 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' @author Klaus K. Holst, Thomas Scheike
 ##' @aliases phreg robust.phreg readPhreg conftype plotpredictphreg predictrecreg summarybase.phreg nameme construct_id
 ##' @examples
-##' library(mets)
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
 ##' out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)
@@ -1716,7 +1715,6 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
 ##'
@@ -2377,7 +2375,6 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 ##' @param ...  arguments for phreg call
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 ##' dfactor(data) <- Z.f~Z
 ##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
@@ -2680,7 +2677,6 @@ return(phw)
 ##' @param First to only use first record for G-averaging, for example when start,stop structure is used with phreg
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
 ##' dfactor(bmt) <- tcell.f~tcell
@@ -3086,7 +3082,6 @@ return(x)
 ##' @param ... Additional arguments to phreg
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(sTRACE)
 ##' sTRACE$cluster <- sample(1:100,500,replace=TRUE)
 ##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
@@ -3146,7 +3141,6 @@ plot.km <- function(x,...) { ## {{{
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt)
 ##' bmt$cluster <- sample(1:100,408,replace=TRUE)
 ##' out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)
@@ -3283,7 +3277,6 @@ summary.cif <- function(object,se=FALSE,ylab=NULL,times=NULL,conf.type=c("log","
 ##' Biometrics, 2015, 3, 687--695, 71,
 ##'
 ##' @examples
-##' library(mets)
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
 ##' out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)

@@ -99,7 +99,6 @@
 ##' Eriksson and Scheike (2015),
 ##'
 ##' @examples
-##' library(mets)
 ##' data(diabetes)
 ##'
 ##' # Marginal Cox model  with treat as covariate
@@ -772,7 +771,6 @@ return(list(psurvmarg=psurvmarg,ptrunc=ptrunc,entry=start.time,exit=time2,
 ##' parameter for the Clayton Oakes model, LIDA, (2000).
 ##'
 ##' @examples
-##' library(mets)
 ##' data(diabetes)
 ##' dd <- phreg(Surv(time,status==1)~treat+cluster(id),diabetes)
 ##' oo <- twostageMLE(dd,data=diabetes)

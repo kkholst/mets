@@ -55,7 +55,6 @@ a robust variance estimate derived from the influence functions of
 in the output via the iid() function.
 }
 \examples{
-library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 

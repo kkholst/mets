@@ -53,7 +53,6 @@ the mean of the events per time unit \deqn{E(N(min(D,t))/min(D,t))} both based o
 IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator.
 }
 \examples{
-library(mets)
 data(hfactioncpx12)
 
 dtable(hfactioncpx12,~status)

@@ -19,7 +19,6 @@
 ##' @param ...  arguments for binregATE 
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' 
 ##' dtable(hfactioncpx12,~status)
@@ -273,7 +272,6 @@ return(out)
 ##' @param ...  arguments for binreg
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id] 
 ##' 

@@ -14,7 +14,6 @@
 ##' @author Thomas Scheike
 ##' 
 ##' @examples
-##' library(mets)
 ##' data(bmt,package="mets")
 ##' bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 ##' bmt$id <- 1:nrow(bmt)

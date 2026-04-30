@@ -42,7 +42,7 @@ log-scale), these ratio's are then compared with another ratio (still on
 log-scale). Standard errors are based on the derived influence functions.
 }
 \examples{
-library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
 out <- resmeanATE(Event(time,event)~tcell+platelet,
                   data=bmt,time=40,treat.model=tcell~platelet,outcome="rmtl")
 summary(out)

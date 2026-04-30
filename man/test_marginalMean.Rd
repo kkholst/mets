@@ -39,7 +39,6 @@ test_marginalMean(
 For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only based on IPCW formulation.
 }
 \examples{
-library(mets)
 data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)

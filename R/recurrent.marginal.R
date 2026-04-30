@@ -21,7 +21,6 @@
 ##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment) 
@@ -458,7 +457,6 @@ return(ic)
 ##' @references 
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##'
@@ -1053,7 +1051,6 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
-##' library(mets)
 ##' data(CPH_HPN_CRBSI)
 ##' dr <- CPH_HPN_CRBSI$terminal
 ##' base1 <- CPH_HPN_CRBSI$crbsi 
@@ -1332,7 +1329,6 @@ if (3 %in% which) {
 ##' @references 
 ##' Scheike (2024), Twostage recurrent events models, under review.
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment)
@@ -1848,7 +1844,6 @@ return(data)
 ##'    Scheike, Eriksson, Tribler (2019), The mean, variance and correlation for bivariate 
 ##'                                        recurrent events with a terminal event, JRSS-C
 ##' @examples
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' dtable(hfactioncpx12,~status)
 ##' 

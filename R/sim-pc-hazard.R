@@ -26,7 +26,6 @@
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
-#' library(mets)
 #' chaz <-  c(0,1,1.5,2,2.1)
 #' breaks <- c(0,10,   20,  30,   40)
 #' cumhaz <- cbind(breaks,chaz)
@@ -238,7 +237,6 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
-#' library(mets)
 #' data(bmt); 
 #' n <- 100
 #' cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
@@ -325,7 +323,6 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
-#' library(mets)
 #' data(sTRACE)
 #' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
@@ -519,7 +516,6 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
-#' library(mets)
 #' data(bmt)
 #' nsim <- 100; 
 #' 
@@ -818,7 +814,6 @@ subdist <- function(F1,times)
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
-#' library(mets)
 #' data(bmt)
 #' nsim <- 100
 #' 
@@ -1269,7 +1264,6 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' ########################################
 ##' ## getting some rates to mimick 
 ##' ########################################
-##' library(mets)
 ##' data(CPH_HPN_CRBSI)
 ##' dr <- CPH_HPN_CRBSI$terminal
 ##' base1 <- CPH_HPN_CRBSI$crbsi 

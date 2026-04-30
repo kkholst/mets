@@ -64,7 +64,6 @@ the estimating equations. Alternatively, one can also bootstrap the standard err
 }
 \examples{
 ## data with no ties
-library(mets)
 data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)

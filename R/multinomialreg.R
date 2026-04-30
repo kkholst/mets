@@ -21,7 +21,6 @@
 ##' @param ... Additional arguments to lower level funtions
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(bmt)
 ##' bmt$id <- sample(200,408,replace=TRUE)
 ##' dfactor(bmt) <- cause1f~cause

@@ -49,7 +49,6 @@ the quartiles, and then the plot will show if for the different quartiles of the
 prediction is consistent over time  (time x covariate interaction).
 }
 \examples{
-library(mets)
 data(TRACE)
 set.seed(1)
 TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)

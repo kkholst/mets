@@ -11,7 +11,6 @@
 ##' @export
 ##' @aliases gof.phreg 
 ##' @examples
-##' library(mets)
 ##' data(sTRACE)
 ##' 
 ##' m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=sTRACE) 
@@ -134,7 +133,6 @@ return(out)
 ##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @examples
-##' library(mets)
 ##' data(TRACE)
 ##' set.seed(1)
 ##' TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
@@ -253,7 +251,6 @@ return(out)
 ##' @author Thomas Scheike and Klaus K. Holst
 ##' @export
 ##' @examples
-##' library(mets)
 ##' data(TRACE)
 ##' set.seed(1)
 ##' TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)

@@ -40,7 +40,6 @@
 ##' @param ... Additional arguments to lower level funtions lava::NR  optimizer or nlm
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(ttpd) 
 ##' dtable(ttpd,~entry+time2)
 ##' 

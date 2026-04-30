@@ -39,7 +39,6 @@
 ##' @author Thomas Scheike
 ##' @examples
 ##' ## data with no ties
-##' library(mets)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' hf$x <- as.numeric(hf$treatment) 

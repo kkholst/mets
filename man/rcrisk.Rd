@@ -45,7 +45,6 @@ Cox type. Censor data at highest value of the break points for either of the
 cumulatives, see also sim.phregs
 }
 \examples{
-library(mets)
 data(bmt); 
 n <- 100
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)

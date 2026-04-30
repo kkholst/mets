@@ -79,7 +79,6 @@ Likelihood is maximized:
 }
 }
 \examples{
-library(mets)
 data(ttpd) 
 dtable(ttpd,~entry+time2)
 

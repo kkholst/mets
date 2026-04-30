@@ -62,7 +62,6 @@ directly (type="I") without any additional terms.
 Censoring model may depend on strata.
 }
 \examples{
-library(mets)
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
 # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
 out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,

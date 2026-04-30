@@ -406,7 +406,6 @@ back2timereg <- function(obj)
 ##' @param ... to pass to estimate function
 ##' @author Thomas Scheike
 ##' @examples
-##' library(mets)
 ##' data(prt)
 ##' prt <- force.same.cens(prt,cause="status")
 ##' 

@@ -50,7 +50,6 @@ of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A
 time of 2nd randomization.
 }
 \examples{
-library(mets)
 data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
 dfactor(data) <- Z.f~Z
 out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)

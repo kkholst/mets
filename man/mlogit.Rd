@@ -36,7 +36,6 @@ Can also get influence functions (possibly robust) via iid() function, response 
 Can fit cumulative odds model as a special case of interval.logitsurv.discrete
 }
 \examples{
-library(mets)
 data(bmt)
 bmt$id <- sample(200,408,replace=TRUE)
 dfactor(bmt) <- cause1f~cause

@@ -51,7 +51,6 @@ Simulates data that looks like fit from Cox model. Censor data automatically
 for highest value of the event times by using cumulative hazard.
 }
 \examples{
-library(mets)
 data(sTRACE)
 nsim <- 100
 coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)

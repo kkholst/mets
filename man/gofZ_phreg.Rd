@@ -58,7 +58,6 @@ this will give the orginal test of Lin, Wei and Ying for linearity, that is also
 the timereg package.
 }
 \examples{
-library(mets)
 data(TRACE)
 set.seed(1)
 TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)

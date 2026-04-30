@@ -55,7 +55,6 @@ random effects  and their variances that may depend on cluster covariates. So
 where \eqn{z} is specified by theta.des . The link function can be the exp when var.link=1
 }
 \examples{
-library(mets)
 data(diabetes)
 dd <- phreg(Surv(time,status==1)~treat+cluster(id),diabetes)
 oo <- twostageMLE(dd,data=diabetes)
