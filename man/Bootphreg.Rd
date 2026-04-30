@@ -2,7 +2,6 @@
 % Please edit documentation in R/wild-phreg.R
 \name{Bootphreg}
 \alias{Bootphreg}
-\alias{pred.cif.boot}
 \title{Wild bootstrap for Cox PH regression}
 \usage{
 Bootphreg(
@@ -53,7 +52,7 @@ wild bootstrap for uniform bands for Cox models
  c2 <- phreg(Surv(time,status==2)~x,data)
 
  ### exp to make all bootstraps positive
- out <- pred.cif.boot(b1,b2,c1,c2,gplot=0)
+ out <- mets:::pred.cif.boot(b1,b2,c1,c2,gplot=0)
 
  cif.true <- (1-exp(-out$time))*.5
  with(out,plot(time,cif,ylim=c(0,1),type="l"))
