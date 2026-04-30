@@ -253,7 +253,6 @@ pud <- predict(ud,se.fit=TRUE,type="response")
 return(list(p.casewise=pud$fit,ci.casewise=exp(udci)))
 } ## }}}
 
-
 ##' @export
 plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",
                           legend=FALSE,add=FALSE, ...)
@@ -377,18 +376,12 @@ test.conc <- function(conc1,conc2,same.cluster=FALSE)
   return(outtest)
 } ## }}}
 
-##' convert to timereg object
-##'
-##' @title Convert to timereg object
-##' @param obj no use
-##' @author Thomas Scheike
 back2timereg <- function(obj)
 { ## {{{
   out <- obj
   attr(out,"class") <- rev(attr(out,"class")) 
   return(out)
 } ## }}}
-
 
 ##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
 ##'

@@ -29,7 +29,7 @@
 ##'  c2 <- phreg(Surv(time,status==2)~x,data)
 ##' 
 ##'  ### exp to make all bootstraps positive
-##'  out <- pred.cif.boot(b1,b2,c1,c2,gplot=0)
+##'  out <- mets:::pred.cif.boot(b1,b2,c1,c2,gplot=0)
 ##' 
 ##'  cif.true <- (1-exp(-out$time))*.5
 ##'  with(out,plot(time,cif,ylim=c(0,1),type="l"))
@@ -43,7 +43,6 @@
 ##' Wild bootstrap based confidence intervals for multiplicative hazards models, 
 ##' Dobler, Pauly, and Scheike (2018), 
 ##' 
-##' @aliases pred.cif.boot 
 ##' @export
 Bootphreg <- function(formula,data,offset=NULL,weights=NULL,B=1000,type=c("exp","poisson","normal"),...) {# {{{
   cl <- match.call()
@@ -218,8 +217,7 @@ Bootphreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weig
 
 ###}}} phreg0
 
-##' @export
-pred.cif.boot <- function(b1,b2,c1,c2,gplot=1)
+pred_cif_boot <- function(b1,b2,c1,c2,gplot=1)
 {# {{{
 B <- length(b1)
 
