@@ -8,7 +8,7 @@
 ##' @param test Type of test for independence assumption. "conc" makes test on concordance scale and "case" means a test on the casewise concordance
 ##' @param p check that marginal probability is greater at some point than p
 ##' @author Thomas Scheike
-##' @aliases casewise.test slope.process casewise.bin
+##' @aliases casewise.test casewise.bin
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
@@ -46,9 +46,6 @@
 ##' par(new=TRUE)
 ##' plot(cdz,ylim=c(0,0.7),xlim=c(60,100))
 ##' 
-##' slope.process(cdz$casewise[,1],cdz$casewise[,2],iid=cdz$casewise.iid)
-##' 
-##' slope.process(cmz$casewise[,1],cmz$casewise[,2],iid=cmz$casewise.iid)
 ##'
 ##' }
 ##' @export
@@ -135,7 +132,6 @@ casewise.test <- function(conc,marg,test="no-test",p=0.01)
   return(out)
 } ## }}}
 
-##' @export
 slope.process  <-  function(time,y,iid=NULL)
 { ## {{{ 
 ctime <- scale(time)
@@ -256,7 +252,6 @@ udci <- confint(ud)
 pud <- predict(ud,se.fit=TRUE,type="response")
 return(list(p.casewise=pud$fit,ci.casewise=exp(udci)))
 } ## }}}
-
 
 ##' @export
 plot.casewise <- function(x,ci=NULL,lty=NULL,ylim=NULL,col=NULL,xlab="time",ylab="concordance",
@@ -381,19 +376,12 @@ test.conc <- function(conc1,conc2,same.cluster=FALSE)
   return(outtest)
 } ## }}}
 
-##' convert to timereg object
-##'
-##' @title Convert to timereg object
-##' @param obj no use
-##' @author Thomas Scheike
-##' @export
 back2timereg <- function(obj)
 { ## {{{
   out <- obj
   attr(out,"class") <- rev(attr(out,"class")) 
   return(out)
 } ## }}}
-
 
 ##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
 ##'

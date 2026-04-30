@@ -13,6 +13,7 @@
 ##' @param ... Additional arguments
 ##' @author Klaus K. Holst
 ##' @examples
+##' library(mets)
 ##' set.seed(1)
 ##' d <- subset(simClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
 ##' e <- ClaytonOakes(survival::Surv(lefttime,time,status)~x+cluster(~1,cluster),
@@ -38,7 +39,7 @@
 ##' ##ts0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~1,cluster),
 ##' ##                   data=d2,type="two.stage")
 ##' ##plot(ts0)
-##' plot(e0)
+##' ##plot(e0)
 ##'
 ##' e3 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~1,cluster),cuts=c(0,0.5,1,2),
 ##'                    data=d,var.invlink=identity)
