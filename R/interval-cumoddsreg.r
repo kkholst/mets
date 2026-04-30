@@ -56,7 +56,7 @@
 ##' summary(out)
 ##' head(iid(out)) 
 ##' 
-##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg simTTP predictSurvd plotSurvd 
+##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg  predictSurvd plotSurvd 
 ##' @export
 interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)
@@ -470,7 +470,6 @@ if (missing(Z)) Z <- NULL
 return(preds)
 } ## }}} 
 
-##' @export
 simTTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
 {# {{{
 	  
