@@ -520,19 +520,7 @@ if (is.null(time)) stop("must give time of response \n")
 	       id=cr2$name.id,n=nid)
 } ## }}}
 
-##' Evaluates piece constant covariates at min(D,t) where D is a terminal event
-##'
-##' returns X(min(D,t)) and min(D,t) and their ratio. for censored observation 0. 
-##' to use with the IPCW models implemented. 
-##'
-##' @param formula formula with 'Event' outcome and X to evaluate at min(D,t)
-##' @param data data frame
-##' @param death.code codes for death (terminating event, 2 default)
-##' @param time for evaluation 
-##' @param marks for terminal events to add marks*I(D <=t ,epsilon "in" mark.codes)  to X(min(D,t))
-##' @param mark.codes gives death codes for which to add mark value
-##' @author Thomas Scheike
-##' @export
+
 evalTerminal <- function(formula,data=data,death.code=2,time=NULL,marks=NULL,mark.codes=NULL)
 {# {{{
     cl <- match.call()# {{{
