@@ -223,7 +223,9 @@ NULL
 ##'  sim_BinPlack sim_BinFam sim_BinFam2 sim_SurvFam corsim_prostate_random
 ##' sim_nordic_random sim_Cox sim
 ##' grouptable jumptimes folds
-##' casewise_bin force.same.cens or_cif recurrent_marginalAIPCW 
+##' casewise_bin force.same.cens or_cif 
+##' Grandom.cif conftype kendall.ClaytonOakes.twin.ace random.cif
+##' recurrentMarginal summarybase.phreg survival.twostage twin.polygen.design
 ##' rmst_phreg rr_cif ‘sim_binClaytonOakes_pairs’ sim_bptwin    
 ##' sim_Compete_twin_ace ‘sim_nordictwin’ simrchaz 
 ##' ace_family_design ascertained_pairs summaryTimeobject 

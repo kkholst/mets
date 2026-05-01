@@ -27,7 +27,14 @@
 \alias{casewise_bin}
 \alias{force.same.cens}
 \alias{or_cif}
-\alias{recurrent_marginalAIPCW}
+\alias{Grandom.cif}
+\alias{conftype}
+\alias{kendall.ClaytonOakes.twin.ace}
+\alias{random.cif}
+\alias{recurrentMarginal}
+\alias{summarybase.phreg}
+\alias{survival.twostage}
+\alias{twin.polygen.design}
 \alias{rmst_phreg}
 \alias{rr_cif}
 \alias{‘sim_binClaytonOakes_pairs’}
