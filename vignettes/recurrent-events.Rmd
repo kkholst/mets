@@ -242,7 +242,7 @@ death.
 To compute the marginal mean we simply estimate the two rates functions of the 
 number of events of interest and death by using the phreg function 
 (to start without covariates). Then the estimates are combined with standard 
-error computation in the recurrentMarginal function
+error computation in the recurrent_marginal function
 
 ```{r}
 #  to fit non-parametric models with just a baseline 
@@ -361,7 +361,7 @@ recEFF1 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr
 with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 
 times <- 500*(1:10)
-###recEFF14 <- recurrentMarginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+###recEFF14 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
 ###death.code=3,cause=1,augment.model=~Nt+Nt2+expNt+NtexpNt)
 ###with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 

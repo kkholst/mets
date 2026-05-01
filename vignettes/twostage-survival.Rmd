@@ -378,7 +378,7 @@ random effect that is given by its own parameter $\theta_2$ (here $\sigma_e^2$ )
 
 ```{r}
 ### data <- sim_ClaytonOakes_twin_ace(2000,2,1,0,3)
-### out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
+### out <- twin_polygen_design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
  ts <- twostage(aa,data=data,clusters=data$cluster,
       theta=c(2,1),var.link=0,random.design=out$des.rv,theta.des=out$pardes)
@@ -393,7 +393,7 @@ run <- 0
 if (run==1) {
  data <- sim_ClaytonOakes_twin_ace(1000000,2,1,0,3)
 
- out <- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
+ out <- twin_polygen_design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")
  pardes <- out$pardes
  aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
  system.time(

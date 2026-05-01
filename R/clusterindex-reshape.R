@@ -51,6 +51,7 @@ cluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,r
   clustud
 } ## }}}
 
+##' @export
 cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
   n <- length(clusters)
