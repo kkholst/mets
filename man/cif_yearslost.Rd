@@ -7,21 +7,22 @@
 cif_yearslost(formula, data = data, cens.code = 0, times = NULL, ...)
 }
 \arguments{
-\item{formula}{for  phreg object with strata or just a +1 if no strata is given}
+\item{formula}{for phreg object with strata to inidicate strata or +1 if no strata is given}
 
 \item{data}{frame for calculations}
 
 \item{cens.code}{censoring code (needed to separate event codes from censorings)}
 
-\item{times}{possible times for which to report restricted mean}
+\item{times}{possible times for which to report restricted mean, summary will display the estimates}
 
 \item{...}{Additional arguments to phreg}
 }
 \description{
 Restricted mean time lost for competing risks based on integrated Aalen-Johansen.
-A set of time points can be given to be returned in a summary.
-One particular feature of these functions are that the years-lost are
-computed for all event times as functions and can be plotted/viewed.
+A set of time points can be given to be returned in the summary,
+but the function compuates years-lost for all event times and can be plotted/viewed.  
+The RMTL for a specific time-point can be computed by using the rmstIPCW function and
+the influence functions for the estimator is available.
 }
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001

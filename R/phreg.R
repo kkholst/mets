@@ -1895,13 +1895,14 @@ return(out)
 ##' Restricted mean time lost for competing risks with martingale standard errors
 ##'
 ##' Restricted mean time lost for competing risks based on integrated Aalen-Johansen.
-##' A set of time points can be given to be returned in a summary.
-##' One particular feature of these functions are that the years-lost are
-##' computed for all event times as functions and can be plotted/viewed.  
+##' A set of time points can be given to be returned in the summary,
+##' but the function compuates years-lost for all event times and can be plotted/viewed.  
+##' The RMTL for a specific time-point can be computed by using the rmstIPCW function and
+##' the influence functions for the estimator is available. 
 ##'
-##' @param formula for  phreg object with strata or just a +1 if no strata is given 
+##' @param formula for phreg object with strata to inidicate strata or +1 if no strata is given 
 ##' @param data frame for calculations 
-##' @param times possible times for which to report restricted mean
+##' @param times possible times for which to report restricted mean, summary will display the estimates
 ##' @param cens.code censoring code (needed to separate event codes from censorings)
 ##' @param ... Additional arguments to phreg 
 ##' @author Thomas Scheike
