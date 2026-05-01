@@ -848,8 +848,8 @@ subdist <- function(F1,times)
 #' plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
 #'    
 #' @aliases sim_cif sim_cifs simul_cifs subdist sim_subdist invsubdist
-#' @export sim.cif
-sim.cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
+#' @export sim_cif
+sim_cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
                     drawZ=TRUE,cens=NULL,rrc=NULL,entry=NULL,Sentry=NULL,
 		    cumstart=c(0,0),U=NULL,pU=NULL,type=NULL,extend=NULL,...)
 {# {{{
@@ -927,9 +927,8 @@ attr(ptt,"cumhaz") <-  cumhaz
 return(ptt)
 }# }}}
 
-
 #' @export 
-sim_parcifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
+simul_cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
                bin=1,type=c("cloglog","logistic"),rate=1,entry=NULL,
                Z=NULL,U=NULL,pU=NULL,...) {# {{{
     p=length(beta)/2
@@ -964,8 +963,7 @@ sim_parcifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
     return(data)
 }# }}}
 
-
-simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens.R = 0, rcZ = 0.5,pCA=0.5,pCR=0.5,
+simul_cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens.R = 0, rcZ = 0.5,pCA=0.5,pCR=0.5,
     bin = 1, type = c("cloglog", "logistic"), rate = 1, Z = NULL,rc2=0.3,depcens.Adm=0)
 {# {{{
     p = length(beta)/2
