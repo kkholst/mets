@@ -690,10 +690,10 @@ random_cif<-function(cif,data,cause=NULL,cif2=NULL,
 } ## }}}
 
 ##' @export
-random.cif<-function(cif,...) random_cif(x,...)
+random.cif<-function(cif,...) random_cif(cif,...)
 
 ##' @export
-Grandom.cif<-function(cif,...) Grandom_cif(x,...)
+Grandom.cif<-function(cif,...) Grandom_cif(cif,...)
 
 ##'Additive Random effects model for competing risks data for polygenetic modelling
 ##' 
