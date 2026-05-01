@@ -80,7 +80,7 @@ lifecourse <- function(formula,data,id="id",group=NULL,
 
         y <- response <- all.vars( update(formula,.~+1))
         ###
-	ccid <- cluster.index(data[,id])
+	ccid <- cluster_index(data[,id])
 	ccm <- ccid$idclustmat+1
         ccm <- ccm[!is.na(ccm)]
         ###
@@ -104,7 +104,7 @@ lifecourse <- function(formula,data,id="id",group=NULL,
     } else {# {{{
         y <- response <- all.vars( update(formula,.~+1))
         ###
-	ccid <- cluster.index(data[,id])
+	ccid <- cluster_index(data[,id])
 	ccm <- ccid$idclustmat+1
 	ccm <- ccm[!is.na(ccm)]
 
@@ -178,7 +178,7 @@ lifecourse <- function(formula,data,id="id",group=NULL,
     if (length(x)==0) {# {{{
         y <- response <- all.vars( update(formula,.~+1))
         ###
-	ccid <- cluster.index(data[,id])
+	ccid <- cluster_index(data[,id])
 	ccm <- ccid$idclustmat+1
         ccm <- ccm[!is.na(ccm)]
         ###
@@ -230,7 +230,7 @@ lifecourse <- function(formula,data,id="id",group=NULL,
     } else {# {{{
         y <- response <- all.vars( update(formula,.~+1))
         ###
-	ccid <- cluster.index(data[,id])
+	ccid <- cluster_index(data[,id])
 	ccm <- ccid$idclustmat+1
 	ccm <- ccm[!is.na(ccm)]
 

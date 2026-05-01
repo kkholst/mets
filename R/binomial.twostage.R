@@ -70,8 +70,6 @@
 ##' }
 ##' here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
 ##'
-##' @export
-##' @aliases binomial.twostage binomial.twostage.time
 ##' @references
 ##' Two-stage binomial modelling
 ##' @examples
@@ -81,44 +79,25 @@
 ##' twinstut$binstut <- (twinstut$stutter=="yes")*1
 ##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 ##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
-##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
+##' bin <- binomial_twostage(margbin,data=twinstut,var.link=1,
 ##'          clusters=twinstut$tvparnr,theta.des=theta.des,detail=0)
 ##' summary(bin)
 ##'
 ##' twinstut$cage <- scale(twinstut$age)
 ##' theta.des <- model.matrix( ~-1+factor(zyg)+cage,data=twinstut)
-##' bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+##' bina <- binomial_twostage(margbin,data=twinstut,var.link=1,
 ##' 		         clusters=twinstut$tvparnr,theta.des=theta.des)
 ##' summary(bina)
 ##'
 ##' theta.des <- model.matrix( ~-1+factor(zyg)+factor(zyg)*cage,data=twinstut)
-##' bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+##' bina <- binomial_twostage(margbin,data=twinstut,var.link=1,
 ##' 		         clusters=twinstut$tvparnr,theta.des=theta.des)
 ##' summary(bina)
-##'
-##' \donttest{ ## Reduce Ex.Timings
-##' ## refers to zygosity of first subject in eash pair : zyg1
-##' ## could also use zyg2 (since zyg2=zyg1 within twinpair's))
-##' out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
-##'                           response="binstut",id="tvparnr",var.link=1,
-##' 	             	      theta.formula=~-1+factor(zyg1))
-##' summary(out)
-##'
-##' ## refers to zygosity of first subject in eash pair : zyg1
-##' ## could also use zyg2 (since zyg2=zyg1 within twinpair's))
-##' desfs<-function(x,num1="zyg1",num2="zyg2")
-##'     c(x[num1]=="dz",x[num1]=="mz",x[num1]=="os")*1
-##'
-##' out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
-##'       data=twinstut,response="binstut",id="tvparnr",var.link=1,
-##'       theta.formula=desfs,desnames=c("mz","dz","os"))
-##' summary(out3)
-##' }
 ##'
 ##' ### use of clayton oakes binomial additive gamma model
 ##' ###########################################################
 ##' \donttest{ ## Reduce Ex.Timings
-##' data <- simbinClaytonOakes.family.ace(10000,2,1,beta=NULL,alpha=NULL)
+##' data <- sim_binClaytonOakes_family_ace(10000,2,1,beta=NULL,alpha=NULL)
 ##' margbin <- glm(ybin~x,data=data,family=binomial())
 ##' margbin
 ##'
@@ -127,23 +106,23 @@
 ##' data$child <- 1*(data$number==3)
 ##'
 ##' ### make ace random effects design
-##' out <- ace.family.design(data,member="type",id="cluster")
+##' out <- ace_family_design(data,member="type",id="cluster")
 ##' out$pardes
 ##' head(out$des.rv)
 ##'
-##' bints <- binomial.twostage(margbin,data=data,
+##' bints <- binomial_twostage(margbin,data=data,
 ##'      clusters=data$cluster,detail=0,var.par=1,
 ##'      theta=c(2,1),var.link=0,
 ##'      random.design=out$des.rv,theta.des=out$pardes)
 ##' summary(bints)
 ##'
-##' data <- simbinClaytonOakes.twin.ace(10000,2,1,beta=NULL,alpha=NULL)
-##' out  <- twin.polygen.design(data,id="cluster",zygname="zygosity")
+##' data <- sim_binClaytonOakes_twin_ace(10000,2,1,beta=NULL,alpha=NULL)
+##' out  <- twin_polygen_design(data,id="cluster",zygname="zygosity")
 ##' out$pardes
 ##' head(out$des.rv)
 ##' margbin <- glm(ybin~x,data=data,family=binomial())
 ##'
-##' bintwin <- binomial.twostage(margbin,data=data,
+##' bintwin <- binomial_twostage(margbin,data=data,
 ##'      clusters=data$cluster,var.par=1,
 ##'      theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 ##' summary(bintwin)
@@ -152,7 +131,6 @@
 ##'
 ##' @keywords binomial regression
 ##' @author Thomas Scheike
-##' @export
 ##' @param margbin Marginal binomial model
 ##' @param data data frame
 ##' @param method Scoring method "nr", for lava NR optimizer
@@ -161,8 +139,7 @@
 ##' @param silent Debug information
 ##' @param weights Weights for log-likelihood, can be used for each type of outcome in 2x2 tables.
 ##' @param theta Starting values for variance components
-##' @param theta.des design for dependence parameters, when pairs are given the indeces of the
-##' theta-design for this pair, is given in pairs as column 5
+##' @param theta.des design for dependence parameters, when pairs are given the indeces of the theta-design for this pair, is given in pairs as column 5
 ##' @param var.link Link function for variance
 ##' @param var.par parametrization
 ##' @param var.func when alternative parametrizations are used this function can specify how the paramters are related to the \eqn{\lambda_j}'s.
@@ -187,7 +164,9 @@
 ##' @param beta is starting value for beta for MLE version
 ##' @param no.opt for not optimizing 
 ##' @param ... for NR of lava 
-binomial.twostage <- function(margbin,data=parent.frame(),
+##' @aliases binomial_twostage binomial_twostage_time
+##' @export
+binomial_twostage <- function(margbin,data=parent.frame(),
      method="nr",detail=0,clusters=NULL,silent=1,weights=NULL,
      theta=NULL,theta.des=NULL,var.link=0,var.par=1,var.func=NULL,
      iid=1,notaylor=1,model="plackett",marginal.p=NULL,beta.iid=NULL,Dbeta.iid=NULL,
@@ -239,7 +218,7 @@ binomial.twostage <- function(margbin,data=parent.frame(),
     if (length(strata)!=antpers) stop("Strata must have length equal to number of data points \n");
 
 # {{{ cluster setup
-    out.clust <- cluster.index(clusters);
+    out.clust <- cluster_index(clusters);
     clusters <- out.clust$clusters
     maxclust <- out.clust$maxclust
     antclust <- out.clust$cluster.size
@@ -490,7 +469,6 @@ if (pair.structure==1) {
 } ## }}}
 
 
-##' @export
 p11.binomial.twostage.RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,i=1,j=1) { ## {{{
 	## computes p11 pij for additive gamma binary random effects model
      if (is.null(ags)) ags <- matrix(1,dim(pardes))
@@ -499,7 +477,7 @@ p11.binomial.twostage.RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,
 } ## }}}
 
 ##' @export
-concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL,link=0,var.par=0,...)
+
 {# {{{
 
    ### takes dependence paramter from output
@@ -599,7 +577,7 @@ if (is.null(ags)) ags <- matrix(1,ncol(rv1),length(theta));
 }	# }}}
 
 ##' @export
-binomial.twostage.time <- function(formula,data,id,...,silent=1,fix.censweights=1,
+binomial_twostage_time <- function(formula,data,id,...,silent=1,fix.censweights=1,
 breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights="w") {
    ## {{{
     m <- match.call(expand.dots = FALSE)
@@ -667,250 +645,8 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
     return(res)
 } ## }}}
 
-
-##' Fits two-stage binomial for describing depdendence in binomial data
-##' using marginals that are on logistic form using the binomial.twostage funcion, but
-##' call is different and easier and the data manipulation is build into the function.
-##' Useful in particular for family design data.
-##'
-##' If clusters contain more than two times, the algoritm uses a compososite likelihood
-##' based on the pairwise bivariate models.
-##'
-##' The reported standard errors are based on the estimated information from the
-##' likelihood assuming that the marginals are known. This gives correct standard errors
-##' in the case of the plackett distribution (OR model for dependence), but incorrect for
-##' the clayton-oakes types model. The OR model is often known as the ALR model.
-##' Our fitting procedures gives correct standard errors due to the ortogonality and is
-##' fast.
-##'
-##' @examples
-##' data(twinstut)
-##' twinstut0 <- subset(twinstut, tvparnr<4000)
-##' twinstut <- twinstut0
-##' twinstut$binstut <- (twinstut$stutter=="yes")*1
-##' theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
-##' margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
-##' bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
-##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0,
-##' 	                 method="nr")
-##' summary(bin)
-##' lava::estimate(coef=bin$theta,vcov=bin$var.theta,f=function(p) exp(p))
-##'
-##' twinstut$cage <- scale(twinstut$age)
-##' theta.des <- model.matrix( ~-1+factor(zyg)+cage,data=twinstut)
-##' bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
-##' 		         clusters=twinstut$tvparnr,theta.des=theta.des,detail=0)
-##' summary(bina)
-##'
-##' theta.des <- model.matrix( ~-1+factor(zyg)+factor(zyg)*cage,data=twinstut)
-##' bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
-##' 		         clusters=twinstut$tvparnr,theta.des=theta.des)
-##' summary(bina)
-##'
-##' out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
-##'                               response="binstut",id="tvparnr",var.link=1,
-##' 			          theta.formula=~-1+factor(zyg1))
-##' summary(out)
-##'
-##' ## refers to zygosity of first subject in eash pair : zyg1
-##' ## could also use zyg2 (since zyg2=zyg1 within twinpair's))
-##' ## do not run t save time
-##' # desfs <- function(x,num1="zyg1",namesdes=c("mz","dz","os"))
-##' #     c(x[num1]=="mz",x[num1]=="dz",x[num1]=="os")*1
-##' #
-##' #out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
-##' #                               data=twinstut, response="binstut",id="tvparnr",
-##' #                               var.link=1,theta.formula=desfs,
-##' #                               desnames=c("mz","dz","os"))
-##' #summary(out3)
-##'
-##' \donttest{ ## Reduce Ex.Timings
-##' n <- 1000
-##' set.seed(100)
-##' dd <- simBinFam(n,beta=0.3)
-##' binfam <- fast.reshape(dd,varying=c("age","x","y"))
-##' ## mother, father, children  (ordered)
-##' head(binfam)
-##'
-##' ########### ########### ########### ########### ########### ###########
-##' ####  simple analyses of binomial family data
-##' ########### ########### ########### ########### ########### ###########
-##' desfs <- function(x,num1="num1",num2="num2")
-##' {
-##'      pp <- 1*(((x[num1]=="m")*(x[num2]=="f"))|(x[num1]=="f")*(x[num2]=="m"))
-##'      pc <- (x[num1]=="m" | x[num1]=="f")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'      cc <- (x[num1]=="b1")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'      c(pp,pc,cc)
-##' }
-##'
-##' ud <- easy.binomial.twostage(y~+1,data=binfam,
-##'      response="y",id="id",
-##'      theta.formula=desfs,desnames=c("pp","pc","cc"))
-##' summary(ud)
-##'
-##' udx <- easy.binomial.twostage(y~+x,data=binfam,
-##'      response="y",id="id",
-##'      theta.formula=desfs,desnames=c("pp","pc","cc"))
-##' summary(udx)
-##'
-##' ########### ########### ########### ########### ########### ###########
-##' ####  now allowing parent child POR to be different for mother and father
-##' ########### ########### ########### ########### ########### ###########
-##'
-##' desfsi <- function(x,num1="num1",num2="num2")
-##' {
-##'     pp <- (x[num1]=="m")*(x[num2]=="f")*1
-##'     mc <- (x[num1]=="m")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     fc <- (x[num1]=="f")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     cc <- (x[num1]=="b1")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     c(pp,mc,fc,cc)
-##' }
-##'
-##' udi <- easy.binomial.twostage(y~+1,data=binfam,
-##'      response="y",id="id",
-##'      theta.formula=desfsi,desnames=c("pp","mother-child","father-child","cc"))
-##' summary(udi)
-##'
-##' ##now looking to see if interactions with age or age influences marginal models
-##' ##converting factors to numeric to make all involved covariates numeric
-##' ##to use desfai2 rather then desfai that works on binfam
-##'
-##' nbinfam <- binfam
-##' nbinfam$num <- as.numeric(binfam$num)
-##' head(nbinfam)
-##'
-##' desfsai <- function(x,num1="num1",num2="num2")
-##' {
-##'     pp <- (x[num1]=="m")*(x[num2]=="f")*1
-##' ### av age for pp=1 i.e parent pairs
-##'     agepp <- ((as.numeric(x["age1"])+as.numeric(x["age2"]))/2-30)*pp
-##'     mc <- (x[num1]=="m")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     fc <- (x[num1]=="f")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     cc <- (x[num1]=="b1")*(x[num2]=="b1" | x[num2]=="b2")*1
-##'     agecc <- ((as.numeric(x["age1"])+as.numeric(x["age2"]))/2-12)*cc
-##'     c(pp,agepp,mc,fc,cc,agecc)
-##' }
-##'
-##' desfsai2 <- function(x,num1="num1",num2="num2")
-##' {
-##'     pp <- (x[num1]==1)*(x[num2]==2)*1
-##'     agepp <- (((x["age1"]+x["age2"]))/2-30)*pp ### av age for pp=1 i.e parent pairs
-##'     mc <- (x[num1]==1)*(x[num2]==3 | x[num2]==4)*1
-##'     fc <- (x[num1]==2)*(x[num2]==3 | x[num2]==4)*1
-##'     cc <- (x[num1]==3)*(x[num2]==3 | x[num2]==4)*1
-##'     agecc <- ((x["age1"]+x["age2"])/2-12)*cc ### av age for children
-##'     c(pp,agepp,mc,fc,cc,agecc)
-##' }
-##'
-##' udxai2 <- easy.binomial.twostage(y~+x+age,data=binfam,
-##'      response="y",id="id",
-##'      theta.formula=desfsai,
-##'      desnames=c("pp","pp-age","mother-child","father-child","cc","cc-age"))
-##' summary(udxai2)
-##' }
-##' @keywords binomial regression
 ##' @export
-##' @param margbin Marginal binomial model
-##' @param data data frame
-##' @param response name of response variable in data frame
-##' @param id name of cluster variable in data frame
-##' @param method Scoring method
-##' @param Nit Number of iterations
-##' @param detail Detail for more output for iterations
-##' @param silent Debug information
-##' @param weights Weights for log-likelihood, can be used for each type of outcome in 2x2 tables.
-##' @param control Optimization arguments
-##' @param theta Starting values for variance components
-##' @param theta.formula design for depedence, either formula or design function
-##' @param desnames names for dependence parameters
-##' @param deshelp if 1 then prints out some data sets that are used, on on which the design function operates
-##' @param var.link Link function for variance
-##' @param iid Calculate i.i.d. decomposition
-##' @param step Step size
-##' @param model model
-##' @param marginal.p vector of marginal probabilities
-##' @param strata strata for fitting
-##' @param max.clust max clusters used for i.i.d. decompostion
-##' @param se.clusters clusters for iid decomposition for roubst standard errors
-easy.binomial.twostage <- function(margbin=NULL,data=parent.frame(),method="nr",
-                                   response="response",id="id",
-                                   Nit=60,detail=0, silent=1,weights=NULL,control=list(),
-                                   theta=NULL,theta.formula=NULL,desnames=NULL,deshelp=0,var.link=1,iid=1,
-                                   step=1.0,model="plackett",marginal.p=NULL,
-				   strata=NULL,max.clust=NULL,se.clusters=NULL)
-{ ## {{{
-   if (inherits(margbin,"glm")) ps <- predict(margbin,type="response")
-   else if (inherits(margbin,"formula")) {
-       margbin <- glm(margbin,data=data,family=binomial())
-       ps <- predict(margbin,type="response")
-   }  else if (is.null(marginal.p))
-	   stop("without marginal model, marginal p's must be given\n");
-
-    if (!is.null(marginal.p)) ps <- marginal.p
-
-    data <- cbind(data,ps)
-
-### make all pairs in the families,
-    fam <- familycluster.index(data[,id])
-    data.fam <- data[c(fam$familypairindex),]
-    data.fam$subfam <- c(fam$subfamilyindex)
-
-### make dependency design using wide format for all pairs
-    data.fam.clust <- fast.reshape(data.fam,id="subfam")
-    if (is.function(theta.formula)) {
-        desfunction <- compiler::cmpfun(theta.formula)
-	if (deshelp==1){
-            cat("These names appear in wide version of pairs for dependence \n")
-            cat("design function must be defined in terms of these: \n")
-            cat(names(data.fam.clust)); cat("\n")
-            cat("Here is head of wide version with pairs\n")
-            print(head(data.fam.clust)); cat("\n")
-	}
-###	des.theta <- Reduce("rbind",lapply(seq(nrow(data.fam.clust)),function(i) unlist(desfunction(data.fam.clust[i,] ))))
-        des.theta <- t(apply(data.fam.clust,1, function(x) desfunction(x)))
-	colnames(des.theta) <- desnames
-	desnames <- desnames
-    } else {
-        if (is.null(theta.formula)) theta.formula <- ~+1
-        des.theta <- model.matrix(theta.formula,data=data.fam.clust)
-        desnames <- colnames(des.theta);
-    }
-    data.fam.clust <- cbind(data.fam.clust,des.theta)
-    if (deshelp==1) {
-        cat("These names appear in wide version of pairs for dependence \n")
-        print(head(data.fam.clust))
-    }
-
-### back to long format keeping only needed variables
-    data.fam <- fast.reshape(data.fam.clust,varying=c(response,id,"ps"))
-    if (deshelp==1) {
-	cat("Back to long format for binomial.twostage (head)\n");
-        print(head(data.fam));
-	cat("\n")
-	cat(paste("binomial.twostage, called with reponse",response,"\n"));
-	cat(paste("cluster=",id,",  subcluster (pairs)=subfam \n"));
-	cat(paste("design variables ="));
-	cat(desnames)
-	cat("\n  theta design (head) \n")
-        print(head(data.fam[,desnames]));
-	cat("\n  response (head) \n")
-        print(head(data.fam[,response]));
-	cat("\n")
-    }
-
-    out <- binomial.twostage(data.fam[,response],data=data.fam,
-                             clusters=data.fam$subfam,
-                             theta.des=data.fam[,desnames],
-                             detail=detail, method=method, Nit=Nit,step=step,
-                             iid=iid,theta=theta,var.link=var.link,model=model,
-                             max.clust=max.clust,
-                             marginal.p=data.fam[,"ps"],se.clusters=data.fam[,id])
-
-    return(out)
-} ## }}}
-
-##' @export
-simBinPlack <- function(n,beta=0.3,theta=1,...) { ## {{{
+sim_BinPlack <- function(n,beta=0.3,theta=1,...) { ## {{{
     x1 <- rbinom(n,1,0.5)
     x2 <- rbinom(n,1,0.5)
 ###
@@ -930,7 +666,7 @@ simBinPlack <- function(n,beta=0.3,theta=1,...) { ## {{{
 } ## }}}
 
 ##' @export
-simBinFam <- function(n,beta=0.0,rhopp=0.1,rhomb=0.7,rhofb=0.1,rhobb=0.7) { ## {{{
+sim_BinFam <- function(n,beta=0.0,rhopp=0.1,rhomb=0.7,rhofb=0.1,rhobb=0.7) { ## {{{
     xc <- runif(n)*0.5
     xm <- rbinom(n,1,0.5+xc);
     xf <- rbinom(n,1,0.5+xc);
@@ -961,7 +697,7 @@ simBinFam <- function(n,beta=0.0,rhopp=0.1,rhomb=0.7,rhofb=0.1,rhobb=0.7) { ## {
 } ## }}}
 
 ##' @export
-simBinFam2 <- function(n,beta=0.0,alpha=0.5,lam1=1,lam2=1,...) { ## {{{
+sim_BinFam2 <- function(n,beta=0.0,alpha=0.5,lam1=1,lam2=1,...) { ## {{{
     x1 <- rbinom(n,1,0.5); x2 <- rbinom(n,1,0.5);
     x3 <- rbinom(n,1,0.5); x4 <- rbinom(n,1,0.5);
 ### random effects speicification of model via gamma distributions
@@ -983,7 +719,7 @@ simBinFam2 <- function(n,beta=0.0,alpha=0.5,lam1=1,lam2=1,...) { ## {{{
 } ## }}}
 
 ##' @export
-simbinClaytonOakes.family.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{{
+sim_binClaytonOakes_family_ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{{
 {
   ## K antal clustre (families), n=antal i clustre
 ###  K <- 10000
@@ -1038,7 +774,7 @@ return(ud)
 } ## }}}
 
 ##' @export
-simbinClaytonOakes.twin.ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{{
+sim_binClaytonOakes_twin_ace <- function(K,varg,varc,beta=NULL,alpha=NULL)  ## {{{
 {
   ## K antal clustre (families), n=antal i clustre
   n <- 2 # twins with ace structure
@@ -1093,7 +829,7 @@ return(ud)
 } ## }}}
 
 ##' @export
-simbinClaytonOakes.pairs <- function(K,varc,beta=NULL,alpha=NULL)  ## {{{
+sim_binClaytonOakes_pairs <- function(K,varc,beta=NULL,alpha=NULL)  ## {{{
 {
   ## K antal clustre (families), n=antal i clustre
 ###  K <- 10000
@@ -1141,78 +877,4 @@ names(ud)<-c("ybin","x","cluster")
 return(ud)
 } ## }}}
 
-### pairwise POR model based on case-control data
-##' @export
-CCbinomial.twostage <- function(margbin=NULL,data=parent.frame(),method="nlminb",
-    response="response",id="id",num="num",case.num=0,
-    Nit=60,detail=0, silent=1,weights=NULL, control=list(),
-    theta=NULL,theta.formula=NULL,desnames=NULL,
-    deshelp=0,var.link=1,iid=1,
-    step=0.5,model="plackett",marginal.p=NULL,
-    strata=NULL,max.clust=NULL,se.clusters=NULL)
-{ ## {{{
-  ### under construction
 
-    if (inherits(margbin,"glm")) ps <- predict(margbin,type="response")
-    else if (inherits(margbin,"formula")) {
-        margbin <- glm(margbin,data=data,family=binomial())
-        ps <- predict(margbin,type="response")
-    }  else if (is.null(marginal.p)) stop("without marginal model, marginal p's must be given\n");
-
-    if (!is.null(marginal.p)) ps <- marginal.p
-
-    data <- cbind(data,ps)
-
-### make all pairs in the families,
-    fam <- familycluster.index(data[,id])
-    data.fam <- data[fam$familypairindex,]
-    data.fam$subfam <- fam$subfamilyindex
-
-### make dependency design using wide format for all pairs
-    data.fam.clust <- fast.reshape(data.fam,id="subfam")
-    if (is.function(theta.formula)) {
-        desfunction <- compiler::cmpfun(theta.formula)
-	if (deshelp==1){
-            cat("These names appear in wide version of pairs for dependence \n")
-            cat("design function must be defined in terms of these: \n")
-            cat(names(data.fam.clust)); cat("\n")
-            cat("Here is head of wide version with pairs\n")
-            print(head(data.fam.clust)); cat("\n")
-	}
-###	des.theta <- Reduce("rbind",lapply(seq(nrow(data.fam.clust)),function(i) unlist(desfunction(data.fam.clust[i,] ))))
-        des.theta <- t(apply(data.fam.clust,1, function(x) desfunction(x)))
-	colnames(des.theta) <- desnames
-	desnames <- desnames
-    } else {
-        if (is.null(theta.formula)) theta.formula <- ~+1
-        des.theta <- model.matrix(theta.formula,data=data.fam.clust)
-        desnames <- colnames(des.theta);
-    }
-    data.fam.clust <- cbind(data.fam.clust,des.theta)
-    if (deshelp==1) {
-        cat("These names appear in wide version of pairs for dependence \n")
-        print(head(data.fam.clust))
-    }
-
-### back to long format keeping only needed variables
-    data.fam <- fast.reshape(data.fam.clust,varying=c(response,id,"ps"))
-    if (deshelp==1) {
-	cat("Back to long format for binomial.twostage (head)\n");
-        print(head(data.fam));
-	cat("\n")
-	cat(paste("binomial.twostage, called with reponse",response,"\n"));
-	cat(paste("cluster=",id,",  subcluster (pairs)=subfam \n"));
-	cat(paste("design variables ="));
-	cat(desnames)
-	cat("\n")
-    }
-
-    out <- binomial.twostage(data.fam[,response],data=data.fam,
-                             clusters=data.fam$subfam,
-                             theta.des=data.fam[,desnames],
-                             detail=detail, method=method, Nit=Nit,step=step,
-                             iid=iid,theta=theta, var.link=var.link,model=model,
-                             max.clust=max.clust,
-                             marginal.p=data.fam[,"ps"], se.clusters=data.fam[,id])
-    return(out)
-} ## }}}

@@ -13,7 +13,7 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
 ##' data("prt",package="mets");
-##' prt <- force.same.cens(prt,cause="status")
+##' prt <- force_same_cens(prt,cause="status")
 ##' 
 ##' prt <- prt[which(prt$id %in% sample(unique(prt$id),7500)),]
 ##' ### marginal cumulative incidence of prostate cancer
@@ -39,8 +39,8 @@
 ##' cdz <- cc$model$"DZ"
 ##' cmz <- cc$model$"MZ"
 ##' 
-##' cdz <- casewise.test(cdz,cifmz,test="case") ## test based on casewise
-##' cmz <- casewise.test(cmz,cifmz,test="conc") ## based on concordance
+##' cdz <- test_casewise(cdz,cifmz,test="case") ## test based on casewise
+##' cmz <- test_casewise(cmz,cifmz,test="conc") ## based on concordance
 ##' 
 ##' plot(cmz,ylim=c(0,0.7),xlim=c(60,100))
 ##' par(new=TRUE)
@@ -49,7 +49,7 @@
 ##'
 ##' }
 ##' @export
-casewise.test <- function(conc,marg,test="no-test",p=0.01)
+test_casewise <- function(conc,marg,test="no-test",p=0.01)
 { ## {{{
   if (sum(marg$P1>p)==0) stop("No timepoints where marginal > ",p,"\n"); 
   time1 <- conc$time; time2 <- marg$time[marg$P1>0.01]
@@ -167,7 +167,7 @@ return(out)
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library(prodlim)
 ##' data(prt);
-##' prt <- force.same.cens(prt,cause="status")
+##' prt <- force_same_cens(prt,cause="status")
 ##' 
 ##' ### marginal cumulative incidence of prostate cancer##' 
 ##' outm <- prodlim(Hist(time,status)~+1,data=prt)
@@ -245,7 +245,7 @@ casewise <- function(conc,marg,cause.marg)
 } ## }}}
 
 ##' @export
-casewise.bin <- function(nc,nd)
+casewise_bin <- function(nc,nd)
 { ## {{{
 ud <- 	glm(cbind(nc,round(0.5*nd+nc))~ +1,family=binomial())
 udci <- confint(ud)
@@ -320,7 +320,7 @@ print.casewise <- function(x,digits=3,...)
 ##' @param same.cluster if FALSE then groups are independent, otherwise estimates are based on same data. 
 ##' @author Thomas Scheike
 ##' @export
-test.conc <- function(conc1,conc2,same.cluster=FALSE)
+test_conc <- function(conc1,conc2,same.cluster=FALSE)
 { ## {{{
   time  <- time1 <- conc1$time
   time2 <- conc2$time
@@ -395,7 +395,7 @@ back2timereg <- function(obj)
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(prt)
-##' prt <- force.same.cens(prt,cause="status")
+##' prt <- force_same_cens(prt,cause="status")
 ##' 
 ##' dd <- bicompriskData(Event(time, status)~strata(zyg)+id(id), data=prt, cause=c(2, 2))
 ##' newdata <- data.frame(zyg=c("DZ","MZ"),id=1)

@@ -805,7 +805,7 @@ print.summary.binregTSR  <- function(x,...) {# {{{
    colnames(covX0) <- c("A0","X01","X02")
    covX1 <- cbind(A1[iddata$id],X1[iddata$id,])
 
-   iddata  <-  count.history(iddata,types=2)
+   iddata  <-  count_history(iddata,types=2)
    ## only covariates after having gone to stage 2
    covX1 <- covX1*c(iddata$Count2)
    colnames(covX1) <- c("A1","X11","X12")
@@ -940,7 +940,7 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
 ###  datat <- EventSplit(data,cuts="TR",entry="entry")
 
   datat <- dtransform(datat,status=2,time==TR)
-  datat  <-  count.history(datat,types=2)
+  datat  <-  count_history(datat,types=2)
   datat  <-  dtransform(datat,A1=0,Count2==0)
   datat$response <- (datat$Count2==1)*1
   datat$A11t <- (datat$A1==1)*1

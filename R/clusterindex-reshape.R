@@ -4,11 +4,11 @@
 ##' Cluster indeces 
 ##' @examples
 ##' i<-c(1,1,2,2,1,3)
-##' d<- cluster.index(i)
+##' d<- cluster_index(i)
 ##' print(d)
 ##'
 ##' type<-c("m","f","m","c","c","c")
-##' d<- cluster.index(i,num=type,Rindex=1)
+##' d<- cluster_index(i,num=type,Rindex=1)
 ##' print(d)
 ##' @seealso familycluster.index familyclusterWithProbands.index
 ##' @author Klaus Holst, Thomas Scheike
@@ -21,7 +21,7 @@
 ##' @param code.na how to code missing values
 ##' @aliases countID pairRisk mystrata mystrata2index
 ##' @export
-cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
+cluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
   n <- length(clusters)
 
@@ -189,7 +189,7 @@ mystrata2index <- function(ll,sort=TRUE) {# {{{
 ##' Cluster indeces 
 ##' @examples
 ##' i<-c(1,1,2,2,1,3)
-##' d<- familycluster.index(i)
+##' d<- familycluster_index(i)
 ##' print(d)
 ##' @seealso cluster.index familyclusterWithProbands.index
 ##' @author Klaus Holst, Thomas Scheike
@@ -198,7 +198,7 @@ mystrata2index <- function(ll,sort=TRUE) {# {{{
 ##' @param num num 
 ##' @param Rindex index starts with 1 in R, and 0 in C
 ##' @export
-familycluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=1)
+familycluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=1)
 { ## {{{
   clusters <- cluster.index(clusters,Rindex=Rindex)
   totpairs <- sum(clusters$cluster.size*(clusters$cluster.size-1)/2)
@@ -218,17 +218,17 @@ familycluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=1)
 ##' @examples
 ##' i<-c(1,1,2,2,1,3)
 ##' p<-c(1,0,0,1,0,1)
-##' d<- familyclusterWithProbands.index(i,p)
+##' d<- familyclusterWithProbands_index(i,p)
 ##' print(d)
 ##' @author Klaus Holst, Thomas Scheike
-##' @seealso familycluster.index cluster.index
+##' @seealso familycluster_index cluster_index
 ##' @param clusters list of indeces giving the clusters (families)
 ##' @param probands list of 0,1 where 1 specifices which of the subjects that are probands 
 ##' @param index.type argument passed to other functions
 ##' @param num argument passed to other functions
 ##' @param Rindex index starts with 1, in C is it is 0
 ##' @export
-familyclusterWithProbands.index <- function(clusters,probands,index.type=FALSE,num=NULL,Rindex=1)
+familyclusterWithProbands_index <- function(clusters,probands,index.type=FALSE,num=NULL,Rindex=1)
 { ## {{{
     famc <-familycluster.index(clusters,index.type=index.type,num=num,Rindex=Rindex)
     if (length(probands)!=length(clusters)) stop("clusters and probands not same length\n"); 
@@ -251,7 +251,7 @@ familyclusterWithProbands.index <- function(clusters,probands,index.type=FALSE,n
 } ## }}}
 
 ##' @export
-coarse.clust <- function(clusters,max.clust=100)
+coarse_clust <- function(clusters,max.clust=100)
 { ## {{{ 
 
 if (is.numeric(clusters)) 

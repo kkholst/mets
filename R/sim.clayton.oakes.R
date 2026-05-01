@@ -15,7 +15,7 @@
 ##' @author Thomas Scheike and Klaus K. Holst
 ##' @aliases simClaytonOakes simClaytonOakesLam
 ##' @export
-simClaytonOakes <- function(K,n,eta,beta,stoptime,lam=1,left=0,pairleft=0,trunc.prob=0.5,same=0)  ## {{{ 
+sim_ClaytonOakes <- function(K,n,eta,beta,stoptime,lam=1,left=0,pairleft=0,trunc.prob=0.5,same=0)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre
   ###	K <- 100; n=2; stoptime=2; eta=1/2; beta=0; lam=0.5;left=0.5; trunc.prob=0.5; pairleft=0; same=0
@@ -54,7 +54,7 @@ if (left>0) {
 } ## }}} 
 
 ##' @export
-simClaytonOakesLam <- function(n,k,cumhaz,vargam,entry=NULL)  
+sim_ClaytonOakesLam <- function(n,k,cumhaz,vargam,entry=NULL)  
 { ## {{{ 
 base1 <- cumhaz
 dtt <- diff(c(0,base1[,1]))
@@ -86,7 +86,7 @@ return(ddd)
 ##' @param pairleft pairwise (1) left truncation or individual (0)
 ##' @author Klaus K. Holst 
 ##' @export
-simClaytonOakesWei <- function(K,n,eta,beta,stoptime,weiscale=1,weishape=2,left=0,pairleft=0)
+sim_ClaytonOakesWei <- function(K,n,eta,beta,stoptime,weiscale=1,weishape=2,left=0,pairleft=0)
 { ## {{{ 
 ###cat(" not quite \n"); 
 ## K antal clustre, n=antal i clustre
@@ -127,7 +127,7 @@ if (left>0) {
 } ## }}} 
 
 ##' @export
-simClaytonOakes.twin.ace <- function(K,varg,varc,beta,stoptime,Cvar=0,left=0,pairleft=0,trunc.prob=0.5,lam0=1)  ## {{{ 
+sim_ClaytonOakes_twin_ace <- function(K,varg,varc,beta,stoptime,Cvar=0,left=0,pairleft=0,trunc.prob=0.5,lam0=1)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre
   n <- 2 # twins with ace structure
@@ -180,7 +180,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-simClaytonOakes.family.ace <- function(K,varg,varc,beta,stoptime,lam0=0.5,Cvar=0,left=0,pairleft=0,trunc.prob=0.5)  ## {{{ 
+sim_ClaytonOakes_family_ace <- function(K,varg,varc,beta,stoptime,lam0=0.5,Cvar=0,left=0,pairleft=0,trunc.prob=0.5)  ## {{{ 
 {
   ## K antal clustre (families), n=antal i clustre
   n <- 4 # twins with ace structure
@@ -233,7 +233,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-simCompete.twin.ace <- function(K,varg,varc,beta,stoptime,lam0=c(0.2,0.3),
+sim_Compete_twin_ace <- function(K,varg,varc,beta,stoptime,lam0=c(0.2,0.3),
 		Cvar=0,left=0,pairleft=0,trunc.prob=0.5,overall=1,all.sum=1)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre
@@ -323,7 +323,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-simCompete.simple <- function(K,varr,beta,stoptime,lam0=c(0.2,0.3),
+sim_Compete_simple <- function(K,varr,beta,stoptime,lam0=c(0.2,0.3),
 	Cvar=0,left=0,pairleft=0,trunc.prob=0.5,overall=1,all.sum=1)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre
@@ -403,7 +403,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-simFrailty.simple <- function(K,varr,beta,stoptime,lam0=c(0.2),
+sim_Frailty_simple <- function(K,varr,beta,stoptime,lam0=c(0.2),
 		Cvar=0,left=0,pairleft=0,trunc.prob=0.5,overall=1,all.sum=NULL)  ## {{{ 
 {
   n=2 
@@ -474,7 +474,7 @@ return(ud)
 } ## }}} 
 
 ##' @export
-kendall.ClaytonOakes.twin.ace <- function(parg,parc,K=10000,test=0)  ## {{{ 
+kendall_ClaytonOakes_twin_ace <- function(parg,parc,K=10000,test=0)  ## {{{ 
 { 
   ## K antal clustre, n=antal i clustre
   ### total variance of gene and env. 
@@ -522,7 +522,7 @@ kendall.ClaytonOakes.twin.ace <- function(parg,parc,K=10000,test=0)  ## {{{
 } ## }}} 
 
 ##' @export
-kendall.normal.twin.ace <- function(parg,parc,K=10000)  ## {{{ 
+kendall_normal_twin_ace <- function(parg,parc,K=10000)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre
   ### total variance of gene and env. 

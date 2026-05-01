@@ -41,14 +41,14 @@
 ##' ## summary(out,times=1:5) 
 ##' 
 ##' ## marginal mean using formula  
-##' outN <- recurrentMarginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
+##' outN <- recurrent_marginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
 ##' plot(outN,se=TRUE,col=2,add=TRUE)
 ##' summary(outN,times=1:5) 
 ##' 
 ##' ########################################################################
 ##' ###   with strata     ##################################################
 ##' ########################################################################
-##' out <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+##' out <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
 ##'                          data=hf,cause=1,death.code=2,test=TRUE)
 ##' plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ##' 
@@ -64,7 +64,7 @@
 ##' @references 
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @export
-recurrentMarginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
+recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
 {# {{{
   if (missing(formula)) { # Fall-back to recurrentMarginalPhreg for backward compatibility <= 1.3.5
     return(recurrentMarginalPhreg(...))
@@ -406,7 +406,6 @@ estimate.recurrent <- function(x,time=NULL,...) { ## {{{
 return(out)
 } ## }}}
 
-
 ##' @export
 iid.recurrent <- function(x,...) { ## {{{ 
 iid <- iidRecurrent(attr(x,"recurrent"),attr(x,"death"),...)
@@ -467,10 +466,10 @@ return(ic)
 ##' ## same as 
 ##' outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
 ##'                          data=hf,cause=1,death.code=2)
-##' logrankRecurrent(outN)
+##' test_logrankRecurrent(outN)
 ##' @aliases logrankRecurrentBase
 ##' @export
-logrankRecurrent <- function(recurrent,death,
+test_logrankRecurrent <- function(recurrent,death,
               weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL) { ## {{{ 
   if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
     if (inherits(death, "phreg")) {
@@ -562,7 +561,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
 } ## }}} 
 
 ##' @export
-recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
+recurrent_marginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	  cens.model=~1,km=TRUE,times=NULL,augment.model=~Nt,...)
 {# {{{
     cl <- match.call()# {{{
@@ -624,7 +623,7 @@ recurrentMarginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.c
  data$status__ <-  status 
  data$id__ <-  id
  ## lave Countcause
- data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+ data <- count_history(data,status="status__",id="id__",types=cause,multitype=TRUE)
  data$Count1__ <- data[,paste("Count",cause[1],sep="")]
  data$death__ <- (status %in% death.code)*1
  data$entry__ <- entry 
@@ -975,7 +974,7 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 } # }}}
 
 ##' @export
-tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE,cause=NULL,cens.code=0)
+tie_breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE,cause=NULL,cens.code=0)
 {# {{{
 
    if (!is.null(id)) id <- data[,id]
@@ -1059,26 +1058,26 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##'######################################################################
 ##' ### simulating simple model that mimicks data 
 ##'######################################################################
-##' rr <- simRecurrent(5,base1)
+##' rr <- sim_recurrent(5,base1)
 ##' dlist(rr,.~id,n=0)
-##' rr <- simRecurrent(5,base1,death.cumhaz=dr)
+##' rr <- sim_recurrent(5,base1,death.cumhaz=dr)
 ##' dlist(rr,.~id,n=0)
 ##'
-##' rr <- simRecurrent(100,base1,death.cumhaz=dr)
+##' rr <- sim_recurrent(100,base1,death.cumhaz=dr)
 ##' par(mfrow=c(1,3))
 ##' mets:::showfitsim(causes=1,rr,dr,base1,base1)
 ##' ######################################################################
 ##' ### simulating simple model 
 ##' ### random effect for all causes (Z shared for death and recurrent) 
 ##' ######################################################################
-##' rr <- simRecurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
+##' rr <- sim_recurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
 ##' dtable(rr,~death+status)
 ##'
 ##' ######################################################################
 ##' ### now with two event types and second type has same rate as death rate
 ##' ######################################################################
 ##' set.seed(100)
-##' rr <- simRecurrentII(100,base1,base4,death.cumhaz=dr)
+##' rr <- sim_recurrentII(100,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
 ##' par(mfrow=c(2,2))
 ##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
@@ -1089,13 +1088,13 @@ tie.breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' set.seed(100)
 ##' cumhaz <- list(base1,base1,base4)
 ##' drl <- list(dr,base4)
-##' rr <- simRecurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
+##' rr <- sim_recurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
 ##' dtable(rr,~death+status)
 ##' mets:::showfitsimList(rr,cumhaz,drl) 
 ##'
 ##' @export
-##' @aliases simRecurrentII showfitsim simRecurrentList showfitsimList
-simRecurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
+##' @aliases sim_recurrentII sim_recurrent_list 
+sim_recurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
 cumhazL <- list(cumhaz,cumhaz2)
@@ -1122,7 +1121,7 @@ return(data)
 ##' @param rc potential relative risk adjustment of rate
 ##' @param ... Additional arguments to simRecurrentList
 ##' @export
-simRecurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
+sim_recurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
 {# {{{
 ## wrapper for simRecurrentII without type-2 events
 if (!is.null(death.cumhaz)) death.cumhaz <- list(death.cumhaz)
@@ -1134,7 +1133,7 @@ return(rr)
 }# }}}
 
 ##' @export
-simRecurrentList <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,zzr=NULL,zzd=NULL,
+sim_recurrent_list <- function(n,cumhaz,death.cumhaz=NULL,rr=NULL,rd=NULL,rc=NULL,zzr=NULL,zzd=NULL,
   gap.time=FALSE,max.recurrent=100,dhaz=NULL,haz2=NULL,dependence=0,var.z=1,cor.mat=NULL,cens=NULL,extend=TRUE,...) 
 {# {{{
   status <- fdeath <- dtime <- NULL # to avoid R-check 
@@ -1337,14 +1336,14 @@ if (3 %in% which) {
 ##' dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
 ##' simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf,death.code=2)
 ##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
-##' simglcox <- sim.recurrent(recGL,dr,n=n,data=hf,death.code=2)
+##' simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
 ##'
 #' @export sim.recurrent
 #' @usage sim.recurrent(cox1,coxd=NULL,n=1,data=NULL,
 #' type=c("default","cox-cox","gl-cox"),id="id",
 #' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
 #' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,...)
-sim.recurrent <- function(cox1,coxd=NULL,
+sim_recurrent_ts <- function(cox1,coxd=NULL,
                           n=1, data=NULL,type=c("default","cox-cox","gl-cox"),
                           id="id",varz=1,share=1,cens=0.001,
 			  scale1=1,scaled=1,dependence=NULL,
@@ -1435,7 +1434,7 @@ return(rrs)
 }
 # }}}
 
-simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
+sim_RecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,rd=NULL,
 	    max.recurrent=100,dependence=0,var.z=0.22,cor.mat=NULL,
 	    HistN1=~I(Nt^.5),HistD=~I(Nt^.5),HistN1.beta=c(1.0),HistD.beta=c(1.0),...) 
 {# {{{
@@ -1587,12 +1586,12 @@ simRecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,r
 ##' base1 <- CPH_HPN_CRBSI$crbsi 
 ##' base4 <- CPH_HPN_CRBSI$mechanical
 ##'
-##' rr <- simRecurrentTS(1000,base1,base4,death.cumhaz=dr)
+##' rr <- sim_recurrentTS(1000,base1,base4,death.cumhaz=dr)
 ##' dtable(rr,~death+status)
 ##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
 ##'
 ##' @export
-simRecurrentTS <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
+sim_recurrentTS <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
 		    nu=rep(1,3),share1=0.3,vargamD=2,vargam12=0.5,
 		    gap.time=FALSE,max.recurrent=100,cens=NULL,...) 
 {# {{{
@@ -1752,12 +1751,11 @@ zs <- cbind(z1,z2,zd)
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' dtable(hf,~status)
-##' rr <-  count.history(hf,types=1:2,id="id",status="status")
+##' rr <-  count_history(hf,types=1:2,id="id",status="status")
 ##' dtable(rr,~"Count*"+status,level=1)
 ##'
-##' @aliases count.historyVar 
 ##' @export
-count.history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
+count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
 {# {{{
 stat <- data[,status]
 
@@ -1796,7 +1794,7 @@ data[,paste(names.count,types[1],sep="")] <-
 return(data)
 }# }}}
 
-count.historyVar <- function(data,var="status",id="id",names.count="Count",lag=TRUE)
+count_historyVar <- function(data,var="status",id="id",names.count="Count",lag=TRUE)
 {# {{{
 vvar <- data[,var]
 
@@ -1847,15 +1845,14 @@ return(data)
 ##' data(hfactioncpx12)
 ##' dtable(hfactioncpx12,~status)
 ##' 
-##' oo <- prob.exceed.recurrent(Event(entry,time,status)~cluster(id),
+##' oo <- prob_exceed_recurrent(Event(entry,time,status)~cluster(id),
 ##'         hfactioncpx12,cause=1,death.code=2)
 ##' plot(oo)
 ##' summary(oo,times=c(1,2,5))
 ##' 
 ##' @export
-##' @aliases summaryRecurrentobject summaryTimeobject
 ##' @export
-prob.exceed.recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0, exceed=NULL,marks=NULL,all.cifs=FALSE,
+prob_exceed_recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0, exceed=NULL,marks=NULL,all.cifs=FALSE,
 				  return.data=FALSE,conf.type=c("log","plain"),level=0.95,...)
 {# {{{
     cifmets <- TRUE

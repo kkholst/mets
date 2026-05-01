@@ -90,7 +90,7 @@ so the effect of an increase in $X_1$ is $\beta_1$ and leads to $1-F_1(t,X)$ on 
  n <- 400
  beta=c(0.0,-0.1,-0.5,0.3)
  ## beta1=c(0.0,-0.1); beta2=c(-0.5,0.3)
- dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,rate=7)
+ dats <- simul_cifs(n,rho1,rho2,beta,rc=0.5,rate=7)
  dtable(dats,~status)
  dsort(dats) <- ~time
 ```
@@ -286,7 +286,7 @@ Logistic-link
  rho1 <- 0.2; rho2 <- 10
  n <- 400
  beta=c(0.0,-0.1,-0.5,0.3)
- dats <- simul.cifs(n,rho1,rho2,beta,rc=0.5,rate=7,type="logistic")
+ dats <- simul_cifs(n,rho1,rho2,beta,rc=0.5,rate=7,type="logistic")
  dtable(dats,~status)
  dsort(dats) <- ~time
 ```
@@ -328,7 +328,7 @@ n <- 100
 beta=c(0.3,-0.3,-0.5,0.3)
 rc <- 0.5
 ###
-dats <- mets:::simul.cifsRA(n,rho1,rho2,beta,bin=1,rc=rc,rate=c(3,7))
+dats <- mets:::simul_cifsRA(n,rho1,rho2,beta,bin=1,rc=rc,rate=c(3,7))
 dats$status07 <- dats$status
 dats$status07[dats$status %in% c(0,7)] <- 0
 tt <- seq(0,6,by=0.1)

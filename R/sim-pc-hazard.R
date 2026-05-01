@@ -38,7 +38,7 @@
 #' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
 #' 
 #' @export 
-#' @aliases simrchaz addCums lin.approx simCens extendCums 
+#' @aliases sim_rchaz lin_approx 
 rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=FALSE)
 {# {{{
   if (!is.null(n)) rr <- rep(1,n)
@@ -60,11 +60,11 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
    ###
    if (!is.null(entry)) {
 	   if (length(entry)==1) entry <- rep(entry,n) else entry <- entry
-	   cumentry <- lin.approx(entry,cumhazard,x=1)
+	   cumentry <- lin_approx(entry,cumhazard,x=1)
    } else { entry <- cumentry <- rep(0,n) }
    ###
    ttte <- ttt+cumentry
-   rrx <- lin.approx(ttte,cumhazard,x=-1)
+   rrx <- lin_approx(ttte,cumhazard,x=-1)
    rrx <- ifelse(rrx>mm,mm,rrx)
    status <- rep(0,n)
    status <- ifelse(rrx<mm,cause,status)
@@ -108,7 +108,7 @@ rchazl <- function (cumhaz, rr, causes=NULL,...)
 }# }}}
 
 #' @export
-lin.approx <- function (x2, xfx, x = 1)
+lin_approx <- function (x2, xfx, x = 1)
 { ## {{{ 
     breaks <- xfx[, x]
     fx <- xfx[, -x]
@@ -124,19 +124,17 @@ lin.approx <- function (x2, xfx, x = 1)
     return(res)
 } ## }}}
 
-#' @export
 addCums <- function(cumB,cumA,max=NULL)
 {# {{{
  ## take times
  times <- sort(unique(c(cumB[,1],cumA[,1])))
  if (!is.null(max)) times <- times[times<max]
- cumBjx <- lin.approx(times,cumB,x=1)
- cumAjx <- lin.approx(times,cumA,x=1)
+ cumBjx <- lin_approx(times,cumB,x=1)
+ cumAjx <- lin_approx(times,cumA,x=1)
  cumBA <- cumBjx+cumAjx
  return(cbind(times,cumBA))
 }# }}}
 
-##' @export
 extendCums <- function(cumA,cumB,extend=NULL)
 {# {{{
 ## setup as list to run within loop
@@ -201,7 +199,6 @@ simrchaz <- function(cumhazard,rr,n=NULL,cens=NULL,rrc=NULL,entry=NULL,...)
    return(dt)
 }# }}}
 
-#' @export
 simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 {# {{{
    if (is.null(rrc) & is.null(n)) stop("must give either rr or n\n"); 
@@ -336,15 +333,14 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 #' Z <- sim3[,c("vf","chf","wmi")]
 #' strata <- sim3[,c("chf")]
 #' rr <- exp(as.matrix(Z[,-2]) %*% coef(coxs))
-#' sim4 <- sim.phreg(coxs,nsim,data=NULL,rr=rr,strata=strata)
+#' sim4 <- sim_phreg(coxs,nsim,data=NULL,rr=rr,strata=strata)
 #' sim4 <- cbind(sim4,Z)
 #' cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim4)
 #' cbind(coxs$coef,cc$coef)
 #' plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 #' 
-#' @aliases draw.phreg draw.phregs setup.phreg
-#' @export sim.phreg 
-sim.phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
+#' @export sim_phreg 
+sim_phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 	if  (!is.null(data)) {
@@ -409,9 +405,7 @@ return(ptt)
 }# }}}
 
 
-#' @export draw.phreg 
-#' @usage draw.phreg(cox,n,data=NULL,Z=NULL,drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=FALSE)
-draw.phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,
+draw_phreg <- function(cox,n,data=NULL,Z=NULL,strata=NULL,
                        drawZ=TRUE,fixZ=FALSE,id=NULL,onlyX=TRUE)
 {# {{{
 ###if (!inherits(cox,"phreg")) stop("must be phreg object\n"); 
@@ -450,8 +444,7 @@ out <- list(Z=Z,cumhaz=cumhaz,rr=rr,id=xid,model=model,strata=strata,data=dataid
 return(out)
 } ## }}}
 
-#' @export draw.phregs
-draw.phregs <- function(coxs,n,data,onlyX=TRUE,...) { ## {{{ 
+draw_phregs <- function(coxs,n,data,onlyX=TRUE,...) { ## {{{ 
    scox1 <- draw.phreg(coxs[[1]],n,data=data,onlyX=onlyX,...)
    datas <- scox1$data
    stratam <-  scox1$strata
@@ -474,8 +467,7 @@ draw.phregs <- function(coxs,n,data,onlyX=TRUE,...) { ## {{{
    return(out)
 } ## }}} 
 
-#' @export
-setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
+setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 {# {{{
     cox <- list()
     cox$cumhaz <- cumhazard
@@ -523,7 +515,7 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
 #' coxs <- list(cox1,cox2)
 #' ## just calls sim.phregs !
-#' dd <- sim.phregs(coxs,nsim,data=bmt,extend=c(0.001))
+#' dd <- sim_phregs(coxs,nsim,data=bmt,extend=c(0.001))
 #' scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=dd)
 #' scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
 #'
@@ -534,7 +526,7 @@ setup.phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' plot(cox2); plot(scox2,add=TRUE); 
 #' 
 #' @export sim.phregs
-sim.phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
+sim_phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
                        entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
    out <- draw.phregs(coxs,n,data)
@@ -585,7 +577,7 @@ return(ptt)
 ## {{{ cumulative incidence 
 
 #' @export sim.cifs
-sim.cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,
+sim_cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,
                      cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),
                      U=NULL,pU=NULL,extend=TRUE,type=NULL,restrict=TRUE,entry=NULL,...)
 {# {{{
@@ -675,7 +667,7 @@ if (!is.null(data)) ptt <- cbind(ptt,out$data)
 return(ptt)
 }# }}}
 
-simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,Sentry=NULL,type="cloglog",startcum=c(0,0),U=NULL,...)
+sim_subdist <- function(cumhazard,rr,n=NULL,entry=NULL,Sentry=NULL,type="cloglog",startcum=c(0,0),U=NULL,...)
 {# {{{
   ## Fine-Gray model cloglog F1= 1-exp(-cum(t)*rr)
   ## logistic                F1= cum(t)*rr/(1+cum(t)*rr)
@@ -690,7 +682,7 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,Sentry=NULL,type="cloglog"
   mm <- tail(breaks,1)
   n <- length(rr)
   if (!is.null(entry)) {
-       cumhentry <- lin.approx(entry,cumhazard,x=1)
+       cumhentry <- lin_approx(entry,cumhazard,x=1)
   } else cumhentry <- 0
   F1entry <- 0
 
@@ -714,7 +706,7 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,Sentry=NULL,type="cloglog"
      F1entry <- (F1entry)*rr 
   } else stop(" cloglog or logistic or give function (fun=) \n"); 
   ###
-   rrx <- lin.approx(ttt,cumhazard,x=-1)
+   rrx <- lin_approx(ttt,cumhazard,x=-1)
   if (is.null(entry)) entry <- 0
   timecause <- rrx
   ###
@@ -737,7 +729,7 @@ simsubdist <- function(cumhazard,rr,n=NULL,entry=NULL,Sentry=NULL,type="cloglog"
 calcCIF <- function(cumhaz,tau,rr,entry=NULL,type=c("cloglog","logistic","rr")) { ## {{{
 
   if (!is.null(entry)) {
-       cumhentry <- lin.approx(entry,cumhaz,x=1)
+       cumhentry <- lin_approx(entry,cumhaz,x=1)
   } else F1entry <- NULL
 
   if (type[1]=="cloglog") {
@@ -767,7 +759,7 @@ invsubdist <- function(F1,u,entry=NULL,cond=1,ptrunc=NULL)
   if (cond==0 & !is.null(entry))  u<-u*ptrunc+F1entry
   if (cond==1 & !is.null(entry))  u<-u*(F1max-F1entry)+F1entry 
   if (cond==1 & is.null(entry))   u<-u*F1max
-  rrx  <- lin.approx(u,F1,x=-1)
+  rrx  <- lin_approx(u,F1,x=-1)
   status <- rep(1,length(u))
   status[u>=F1max] <- 0
   dt <- data.frame(time=rrx,status=status,y=u)
@@ -780,7 +772,7 @@ invsubdist <- function(F1,u,entry=NULL,cond=1,ptrunc=NULL)
 #' @export
 subdist <- function(F1,times)
 {# {{{
-  rrx <-   lin.approx(times,F1,x=1)
+  rrx <-   lin_approx(times,F1,x=1)
   dt <- cbind(times,rrx)
   colnames(dt) <- c("time","subdist")
   return(dt)
@@ -810,7 +802,7 @@ subdist <- function(F1,times)
 #' @param pU uniforms to use for drawing event type (F1,F2,1-F1-F2). 
 #' @param type of model logistic,cloglog,rr 
 #' @param extend  to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.
-#' @param ... arguments for simsubdist (for example Uniform variable for realizations)
+#' @param ... arguments for sim_subdist (for example Uniform variable for realizations)
 #' @author Thomas Scheike
 #' @keywords survival
 #' @examples
@@ -821,7 +813,7 @@ subdist <- function(F1,times)
 #' cif <- cifreg(Event(time,cause)~platelet+age,data=bmt,cause=1)
 #' estimate(cif)  
 #' plot(cif,col=1)
-#' simbmt <- sim.cif(cif,nsim,data=bmt)
+#' simbmt <- sim_cif(cif,nsim,data=bmt)
 #' dtable(simbmt,~cause)
 #' scif <- cifreg(Event(time,cause)~platelet+age,data=simbmt,cause=1)
 #' estimate(scif)
@@ -831,7 +823,7 @@ subdist <- function(F1,times)
 #' cif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 #' estimate(cif)  
 #' plot(cif,col=1)
-#' simbmt <- sim.cif(cif,nsim,data=bmt)
+#' simbmt <- sim_cif(cif,nsim,data=bmt)
 #' scif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=simbmt,cause=1)
 #' estimate(scif)
 #' plot(scif,add=TRUE,col=2)
@@ -842,7 +834,7 @@ subdist <- function(F1,times)
 #' cif1 <-  cifreg(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 #' cif2 <-  cifreg(Event(time,cause)~strata(platelet)+tcell+age,data=bmt,cause=2)
 #' cifss <-  list(cif1,cif2)
-#' simbmt <- sim.cifs(list(cif1,cif2),nsim,data=bmt,extend=0.005)
+#' simbmt <- sim_cifs(list(cif1,cif2),nsim,data=bmt,extend=0.005)
 #' scif1 <-  cifreg(Event(time,cause)~strata(tcell)+age,data=simbmt,cause=1)
 #' scif2 <-  cifreg(Event(time,cause)~strata(platelet)+tcell+age,data=simbmt,cause=2)
 #' cbind(cif1$coef,scif1$coef)   
@@ -855,7 +847,7 @@ subdist <- function(F1,times)
 #' # Cause 2:second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 #' plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
 #'    
-#' @aliases sim.cif sim.cifs simul.cifs setup.cif subdist simsubdist invsubdist
+#' @aliases sim_cif sim_cifs simul_cifs subdist sim_subdist invsubdist
 #' @export sim.cif
 sim.cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
                     drawZ=TRUE,cens=NULL,rrc=NULL,entry=NULL,Sentry=NULL,
@@ -904,7 +896,7 @@ lentry <- Slentry <- NULL
       if (!is.null(entry)) lentry <- entry[whichi]
       if (!is.null(Sentry)) Slentry <- Sentry[whichi]
       if (!is.null(U)) Ui <- U[whichi] else Ui <- NULL
-      simj <- simsubdist(cumhazj,rr[whichi],type=type,U=Ui,entry=lentry,Sentry=Slentry)
+      simj <- sim_subdist(cumhazj,rr[whichi],type=type,U=Ui,entry=lentry,Sentry=Slentry)
       simj$id <- ids[whichi]
       ptt  <-  rbind(ptt,simj)
     }
@@ -937,7 +929,7 @@ return(ptt)
 
 
 #' @export 
-simul.cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
+sim_parcifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
                bin=1,type=c("cloglog","logistic"),rate=1,entry=NULL,
                Z=NULL,U=NULL,pU=NULL,...) {# {{{
     p=length(beta)/2
@@ -1022,8 +1014,7 @@ simul.cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens.R = 0, rcZ = 0.
 }# }}}
 
 
-#' @export
-setup.cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
+setup_cif  <- function(cumhazard,coef,Znames=NULL,type="logistic")
 {# {{{
     cif <- list()
     cif$cumhaz <- cumhazard
@@ -1166,7 +1157,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 ## First simple model, then with covariates addedd 
 ## effect of transition into 2 being early for cause 3, and 4
 ######################## ##################### #####################
-simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
+sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 		    rr=NULL,rd=NULL,rd2=NULL,gamma23=0,gamma24=0,early2=10000,
 		    gap.time=FALSE,max.recurrent=100,cens=NULL,rrc=NULL,extend=TRUE,...) 
 {# {{{
@@ -1231,7 +1222,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##'
 ##' Simulation of illness-death model 
 ##'
-##' simMultistate with different death intensities from states 1 and 2 
+##' sim_multistateII allows two causes of death from the alive and illness state
 ##'
 ##' Must give cumulative hazards on some time-range 
 ##'
@@ -1271,7 +1262,7 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' dr2 <- scalecumhaz(dr,1.5)
 ##' cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 ##'
-##' iddata <- simMultistate(100,base1,base1,dr,dr2,cens=cens)
+##' iddata <- sim_multistate(100,base1,base1,dr,dr2,cens=cens)
 ##' dlist(iddata,.~id|id<3,n=0)
 ##'  
 ##' ### estimating rates from simulated data  
@@ -1293,9 +1284,9 @@ simMultistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' plot(c2,main="rate 2->1")
 ##' lines(base1,lwd=2)
 ##'  
-##' @aliases simMultistateII
+##' @aliases sim_multistateII
 ##' @export
-simMultistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
+sim_multistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		    rr12=NULL,rr21=NULL,rd13=NULL,rd23=NULL,rrc=NULL,
 		    gap.time=FALSE,max.recurrent=100,
 		    dependence=0,var.z=0.5,cor.mat=NULL,cens=NULL,extend=TRUE,...) 

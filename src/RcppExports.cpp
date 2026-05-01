@@ -667,13 +667,11 @@ RcppExport SEXP _mets_RcppExport_registerCCallable() {
     return R_NilValue;
 }
 
-RcppExport SEXP Bhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP biprobit0(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP biprobit2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP bvncdf(SEXP, SEXP, SEXP);
 RcppExport SEXP claytonoakes(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP claytonoakesbinRV(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP claytonoakesR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP clusterindexdata(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP clusterindexM(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP cor(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -751,13 +749,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mets_logl_weibull", (DL_FUNC) &_mets_logl_weibull, 6},
     {"_mets_score_weibull", (DL_FUNC) &_mets_score_weibull, 7},
     {"_mets_RcppExport_registerCCallable", (DL_FUNC) &_mets_RcppExport_registerCCallable, 0},
-    {"Bhat",                     (DL_FUNC) &Bhat,                      6},
     {"biprobit0",                (DL_FUNC) &biprobit0,                 8},
     {"biprobit2",                (DL_FUNC) &biprobit2,                10},
     {"bvncdf",                   (DL_FUNC) &bvncdf,                    3},
     {"claytonoakes",             (DL_FUNC) &claytonoakes,              9},
     {"claytonoakesbinRV",        (DL_FUNC) &claytonoakesbinRV,        10},
-    {"claytonoakesR",            (DL_FUNC) &claytonoakesR,             6},
     {"clusterindexdata",         (DL_FUNC) &clusterindexdata,          4},
     {"clusterindexM",            (DL_FUNC) &clusterindexM,             5},
     {"cor",                      (DL_FUNC) &cor,                      40},

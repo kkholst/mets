@@ -147,7 +147,7 @@ Now looking at a simple cox model
  data <- bmt
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
 
- dd <- sim.phreg(cox1,n,data=bmt)
+ dd <- sim_phreg(cox1,n,data=bmt)
  dtable(dd,~cause)
  scox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox1),coef(scox1))
@@ -157,7 +157,7 @@ Now looking at a simple cox model
  ## changing the parameters 
  cox10 <- cox1
  cox10$coef <- c(0,0.4,0.3)
- dd <- sim.phreg(cox10,n,data=bmt)
+ dd <- sim_phreg(cox10,n,data=bmt)
  dtable(dd,~cause)
  scox1 <- phreg(Surv(time,cause==1)~tcell+platelet+age,data=dd)
  cbind(coef(cox10),coef(scox1))
@@ -200,12 +200,12 @@ Now fully nonparametric model with stratified baselines
  dtable(sTRACE,~chf+diabetes)
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
  strata <- sample(0:3,nsim,replace=TRUE)
- simb <- sim.phreg(coxs,nsim,data=NULL,strata=strata)
+ simb <- sim_phreg(coxs,nsim,data=NULL,strata=strata)
 
  cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 
- simb1 <- sim.phreg(coxs,nsim,data=sTRACE)
+ simb1 <- sim_phreg(coxs,nsim,data=sTRACE)
  cc1 <-   phreg(Surv(time,status)~strata(diabetes,chf),data=simb1)
  plot(cc1,add=TRUE,col=3)
 ```
@@ -220,7 +220,7 @@ Here a situation with stratified baselines for some of the models:
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
  coxs <- list(cox0,cox1,cox2)
- dd <- sim.phregs(coxs,n,data=bmt)
+ dd <- sim_phregs(coxs,n,data=bmt)
 
  ## checking that  cause specific hazards are as given, make n larger
  scox0 <- phreg(Surv(time,cause==1)~tcell+platelet,data=dd)
@@ -241,7 +241,7 @@ Here a situation with stratified baselines for some of the models:
  cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
  coxs <- list(cox1,cox2)
- dd <- sim.phregs(coxs,n,data=bmt)
+ dd <- sim_phregs(coxs,n,data=bmt)
  scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet,data=dd)
  scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
  cbind(cox1$coef,scox1$coef)
@@ -251,8 +251,8 @@ Here a situation with stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
- - sim.phreg for phreg, can deal with strata 
- - sim.phregs cause specific hazards on phreg form 
+ - sim_phreg for phreg, can deal with strata 
+ - sim_phregs cause specific hazards on phreg form 
 
 
 One more example  fully non-parametric 
@@ -269,7 +269,7 @@ One more example  fully non-parametric
  cox3 <- phreg(Surv(time,cause==0)~strata(platelet)+bmi,data=bmt)
  coxs <- list(cox1,cox2,cox3)
 
- dd <- sim.phregs(coxs,n,data=bmt,extend=0.002)
+ dd <- sim_phregs(coxs,n,data=bmt,extend=0.002)
  dtable(dd,~cause)
  scox1 <- phreg(Surv(time,cause==1)~strata(tcell,platelet),data=dd)
  scox2 <- phreg(Surv(time,cause==2)~strata(gage,tcell),data=dd)
@@ -420,7 +420,7 @@ data to validate the procedure.
  dr2 <- scalecumhaz(dr,1.5)
  cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
 
- iddata <- simMultistate(nsim,base1,base1,dr,dr2,cens=cens)
+ iddata <- sim_multistate(nsim,base1,base1,dr,dr2,cens=cens)
  dlist(iddata,.~id|id<3,n=0)
   
  ### estimating rates from simulated data  
@@ -519,7 +519,7 @@ nsim <- 400
 rho1 <- 0.4; rho2 <- 2
 beta <- c(0.3,-0.3,-0.3,0.3)
 
-dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="logistic")
+dats <- simul_cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="logistic")
 
 par(mfrow=c(1,2))
 # Fitting regression model with CIF logistic-link 
@@ -528,7 +528,7 @@ summary(cif1)
 plot(cif1)
 lines(attr(dats,"Lam1"))
 
-dats <- simul.cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
+dats <- simul_cifs(nsim,rho1,rho2,beta,rc=0.5,depcens=0,type="cloglog")
 ciff <- cifregFG(Event(time,status)~Z1+Z2,dats)
 summary(ciff)
 plot(ciff)
@@ -546,7 +546,7 @@ We can also use the parameters based on fitted models
  cif1 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=1)
  cif2 <-  cifreg(Event(time,cause)~tcell+age,data=bmt,cause=2)
 
- dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt)
+ dd <- sim_cifs(list(cif1,cif2),nsim,data=bmt)
 
  ## still logistic link 
  scif1 <-  cifreg(Event(time,cause)~tcell+age,data=dd,cause=1)
@@ -603,7 +603,7 @@ and for the logit-link as
 
  nsim <- 400
  entry <- rbinom(nsim,1,0.5)*runif(nsim)*60
- dd <- sim.cif(cif1,nsim,data=bmt,entry=entry)
+ dd <- sim_cif(cif1,nsim,data=bmt,entry=entry)
 
  scif1 <-  cif(Event(entry,time,cause)~strata(tcell,platelet),data=dd,cause=1)
  plot(scif1); 
@@ -616,7 +616,7 @@ Combining two causes drawn with restriction $F_1+\tilde F_2 \leq 1$, thus modify
 $F_1$ and $F_2$ are the two input cumulative incidence models 
 
 ```{r}
- dd <- sim.cifs(list(cif1,cif2),nsim,data=bmt,entry=entry)
+ dd <- sim_cifs(list(cif1,cif2),nsim,data=bmt,entry=entry)
 
  ## still logistic link ; non-parametric Aalen-Johansen with delatyed entry
  scif1 <-  cif(Event(entry,time,cause)~strata(tcell,platelet),data=dd,cause=1)
@@ -639,14 +639,14 @@ rc <- 0.9
 
 n <- nsim
 entry <- rbinom(n,1,0.5)*runif(n)*6
-data <- simul.cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7),entry=entry) 
+data <- simul_cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7),entry=entry) 
 ###
 scif1 <- cif(Event(entry,time,status)~strata(Z1,Z2),data)
 plot(scif1,ylim=c(0,0.4))
 ###
 
 ## and without delayed entry for comparison
-data <- simul.cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7)) 
+data <- simul_cifs(n,rho1,rho2,beta,bin=1,rc=0.5,rate=c(3,7)) 
 scif1 <- cif(Event(entry,time,status)~strata(Z1,Z2),data)
 plot(scif1,add=TRUE)
 
@@ -689,7 +689,7 @@ library(mets)
  estimate(xr)
  estimate(dr)
 
- simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf)
+ simcoxcox <- sim_recurrent(xr,dr,n=n,data=hf)
 
  xrs <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=simcoxcox)
  drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simcoxcox)
@@ -712,7 +712,7 @@ and a now with Ghosh-Lin and Cox marginals
  estimate(recGL)
  estimate(dr)
 
- simglcox <- sim.recurrent(recGL,dr,n=n,data=hf)
+ simglcox <- sim_recurrent(recGL,dr,n=n,data=hf)
 
  GLs <- recreg(Event(entry,time,status)~treatment+cluster(id),data=simglcox,death.code=3)
  drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simglcox)
@@ -739,7 +739,7 @@ hf$Z1 <- rbinom(741,1,0.5)[hf$id]
 xr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=hf)
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 400 
-rr <- sim.recurrent(xr,dr,n=n,data=hf)
+rr <- sim_recurrent(xr,dr,n=n,data=hf)
 rxr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=rr)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
@@ -753,7 +753,7 @@ plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 glr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=hf,death.code=2)
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 400
-rr <- sim.recurrent(glr,dr,n=n,data=hf)
+rr <- sim_recurrent(glr,dr,n=n,data=hf)
 rxr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=rr,death.code=3)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
@@ -774,22 +774,21 @@ Frailty models (simulations based on the rates/intensities)
  base4 <- CPH_HPN_CRBSI$mechanical
 
  n <- 400
- rr <- simRecurrent(n,base1,death.cumhaz=dr)
+ rr <- sim_recurrent(n,base1,death.cumhaz=dr)
  ###
  par(mfrow=c(1,3))
  mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 
- rr <- simRecurrentII(n,base1,base4,death.cumhaz=dr)
+ rr <- sim_recurrentII(n,base1,base4,death.cumhaz=dr)
  dtable(rr,~death+status)
  mets:::showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 
  cumhaz <- list(base1,base1,base4)
  drl <- list(dr,base4)
- rr <- simRecurrentList(n,cumhaz,death.cumhaz=drl)
+ rr <- sim_recurrentList(n,cumhaz,death.cumhaz=drl)
  dtable(rr,~death+status)
  mets:::showfitsimList(rr,cumhaz,drl) 
 ```
-
 
 
 # SessionInfo

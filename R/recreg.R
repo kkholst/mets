@@ -211,7 +211,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	data$status__ <- (status %in% cause)*1
 	cens.strata <- cens.nstrata <- NULL
 	## lag-count to use for augment.model=~Nt+X1+X2
-	data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+	data <- count_history(data,status="status__",id="id__",types=cause,multitype=TRUE)
 	data$Nt <- data[,paste("Count",cause[1],sep="")]
 
 	## augmentation model and remove intercept
@@ -1166,7 +1166,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	data$status__ <-  status 
 	data$id__ <-  id
 	## lave Countcause
-	data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+	data <- count_history(data,status="status__",id="id__",types=cause,multitype=TRUE)
 	data$Count1__ <- data[,paste("Count",cause[1],sep="")]
 	data$death__ <- (status %in% death.code)*1
 	data$entry__ <- entry 
@@ -1469,7 +1469,7 @@ strataAugment <- survival::strata
 ##' @references 
 ##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
 ##' @export
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
+sim_GLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 { ## {{{
 	## setting up baselines for simulations 
@@ -1480,8 +1480,8 @@ simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fd
 	seqt <- seq(from=0,to=maxt,length.out=nmin)
 	if (base1[1,1]!=0) base1 <- rbind(0,base1) 
 	if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
-	base1 <- cbind(seqt, lin.approx(seqt,base1))
-	cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
+	base1 <- cbind(seqt, lin_approx(seqt,base1))
+	cumD <- cbind(seqt, lin_approx(seqt,drcumhaz))
 	###
 	St <- exp(-cumD[,2])
 	Stm <- cbind(base1[,1],St)
@@ -1568,7 +1568,7 @@ simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fd
 } ## }}}
 
 
-simGLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
+sim_GLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		      model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
 { ## {{{
 	## setting up baselines for simulations 
@@ -1651,7 +1651,7 @@ simGLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,f
 } ## }}}
 
 
-simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
+sim_RecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
 			    model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
 { ## {{{
 	if (is.null(r1)) r1 <- rep(1,n)
@@ -1751,7 +1751,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 } ## }}}
 
 
-simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
+sim_MarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
 			       beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),X=NULL,...)
 { ## {{{
 
@@ -1790,7 +1790,7 @@ GLprediid <- function(...)
 } ## }}}
 
 
-simGLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
+sim_GLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
 	    depcens.Adm=0,depcens.R=1,Z=NULL,bin=1) { ## {{{
 Count0 <- NULL ## to fix R check, variable name returned below 
 if (length(bin)==1) bin <- rep(bin,2)
@@ -1824,7 +1824,7 @@ censor <- pmin(censorR,censorA)
 outRA <- out
 outRA$censorR <- censorR[outRA$id+1]
 outRA <- event.split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
-outRA <- count.history(outRA,status="statusD",types=0)
+outRA <- count_history(outRA,status="statusD",types=0)
 outRA <- subset(outRA,Count0==0)
 ###print(table(out$statusD))
 ###print(table(outRA$statusD))
@@ -1833,7 +1833,7 @@ data <- list(out=out,outRA=outRA)
 return(data)
 } ## }}} 
 
-simGLcoxRA <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rrc=NULL,rcA=0.5,fz=NULL,fdz=NULL,
+sim_GLcoxRA <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rrc=NULL,rcA=0.5,fz=NULL,fdz=NULL,
      pCA=0.5,depcens.Adm=1,
      model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 { ## {{{
@@ -1845,8 +1845,8 @@ nmin <- min(nmax,nmin)
 seqt <- seq(from=0,to=maxt,length.out=nmin)
 if (base1[1,1]!=0) base1 <- rbind(0,base1) 
 if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
-base1 <- cbind(seqt, lin.approx(seqt,base1))
-cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
+base1 <- cbind(seqt, lin_approx(seqt,base1))
+cumD <- cbind(seqt, lin_approx(seqt,drcumhaz))
 ###
 St <- exp(-cumD[,2])
 Stm <- cbind(base1[,1],St)
@@ -1936,7 +1936,6 @@ attr(ll,"base1events") <- base1
 attr(ll,"deathcumbase") <- cumD
 return(ll)
 } ## }}}
-
 
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsize=0.5,...) 
 { ## {{{
@@ -2053,7 +2052,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     H1 <- c(cumhaz1 * RR1)
     ###
     ## designs of fixed time covariates and weights
-    cc <- cluster.index(xx$id)
+    cc <- cluster_index(xx$id)
     firstid <- cc$firstclustid + 1
     if (max(cc$cluster.size) == 1) stop("No clusters !, maxclust size=1\n")
     ###

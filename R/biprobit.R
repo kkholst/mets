@@ -518,7 +518,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
       if (indiv) {
           val <- U$score
           if (!is.null(MyData$idmarg) && !pairs.only) {
-              val <- with(MyData, cluster.index(c(id,idmarg),mat=U$score))
+              val <- with(MyData, cluster_index(c(id,idmarg),mat=U$score))
           }          
           ## val <- U$score[MyData$id,,drop=FALSE]
           ## N <- length(MyData$id)
@@ -603,7 +603,7 @@ biprobit <- function(x, data, id, rho=~1, num=NULL, strata=NULL, eqmarg=TRUE,
     UU <- U(op$par,indiv=TRUE)
     idx <- seq(nrow(UU))
     if (!is.null(MyData$idmarg))
-        idx <- with(MyData,cluster.index(c(id,idmarg)))$firstclustid+1
+        idx <- with(MyData,cluster_index(c(id,idmarg)))$firstclustid+1
     idvar <- with(MyData, c(id0,idmarg0))[idx] 
        
   J <- crossprod(UU)
@@ -757,7 +757,7 @@ Ubiprobit <- function(p,Rho,eqmarg,nx,MyData,indiv=FALSE) {
     }
 
     if (indiv) {
-        val <- with(MyData, cluster.index(c(id,idmarg),mat=U$score))
+        val <- with(MyData, cluster_index(c(id,idmarg),mat=U$score))
         attributes(val)$logLik <- U$loglik
         return(val)
     }

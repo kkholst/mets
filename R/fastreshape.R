@@ -337,7 +337,7 @@ fast.reshape <- function(data,varying,id,num,sep="",keep,
     
     if (any(nn=="")) data <- data.frame(data)
 
-    clustud <- cluster.index(id,num=num)
+    clustud <- cluster_index(id,num=num)
     maxclust <- clustud$maxclust
     idclust <- clustud$idclust  
     obs1 <- clustud$firstclustid+1 ## as.vector(apply(idclust,1,function(x) na.omit(x)[1]))+1
@@ -418,7 +418,7 @@ fast.reshape <- function(data,varying,id,num,sep="",keep,
 } 
 
 simple.reshape <- function (data, id = "id", num = NULL) {
-    cud <- cluster.index(data[, c(id)], num = num, Rindex = 1)
+    cud <- cluster_index(data[, c(id)], num = num, Rindex = 1)
     N <- nrow(cud$idclust)
     p <- ncol(data)
     dataw <- matrix(NA, nrow = N, ncol = p * cud$maxclust)
