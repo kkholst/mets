@@ -2,9 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{recurrent_marginal}
 \alias{recurrent_marginal}
-\alias{tie.breaker}
-\alias{recmarg}
-\alias{recurrentMarginalAIPCW}
+\alias{recurrent_marginalAIPCW}
 \alias{recurrentMarginalPhreg}
 \alias{iidRecurrent}
 \title{Fast recurrent marginal mean when death is possible}

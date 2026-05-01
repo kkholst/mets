@@ -212,7 +212,7 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 ##' plot(out1)
 ##'
 ##' ## computing robust variance for baseline
-##' rob1 <- robust.phreg(out1)
+##' rob1 <- robust_phreg(out1)
 ##' plot(rob1,se=TRUE,robust=TRUE)
 ##'
 ##' ## iid decomposition, with scaled influence functions
@@ -806,8 +806,8 @@ robust.basehaz.phreg  <- function(x,type="robust",fixbeta=NULL,...) {# {{{
   return(list(cumhaz=cumhaz,se.cumhaz=se.cumhaz,strata=strata))
 } # }}}
 
-##' @export robust.phreg
-robust.phreg  <- function(x,fixbeta=NULL,...) {
+##' @export robust_phreg
+robust_phreg  <- function(x,fixbeta=NULL,...) {
 
   if (is.null(fixbeta))
   if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
@@ -2580,7 +2580,7 @@ if (estpr[1] == 1) {
 	DAw <- apply(xx$caseweights[xx$jumps+1]*xx$Z[xx$jumps + 1, ,drop=FALSE]/c(S0),2,cumsumstrata,phw$strata.jumps,xx$nstrata)
 	DA2 <- apply(wPAJ*DS0[xx$jumps + 1, , drop = FALSE]/c(S0)^2,2,cumsumstrata,phw$strata.jumps,xx$nstrata)
 	DAt <- 1*(DAw-DA2)
-	phw <- robust.phreg(phw,beta.iid=iidbeta)
+	phw <- robust_phreg(phw,beta.iid=iidbeta)
 	varA <- phw$robse.cumhaz[,2]^2
 	phw$naive.se.cumhaz <- phw$robse.cumhaz
 	vtheta <- crossprod(iidalpha0)
@@ -2621,7 +2621,7 @@ if (estpr[1] == 1) {
 	phw$iptw <- ww
 } else {
    phw$iptw <- ww
-   phw <- robust.phreg(phw)
+   phw <- robust_phreg(phw)
    phw$naive.se.cumhaz <- phw$se.cumhaz
    phw$se.cumhaz <- phw$robse.cumhaz
    phw$naive.var <- phw$var

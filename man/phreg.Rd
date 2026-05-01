@@ -43,7 +43,7 @@ par(mfrow=c(1,2))
 plot(out1)
 
 ## computing robust variance for baseline
-rob1 <- robust.phreg(out1)
+rob1 <- robust_phreg(out1)
 plot(rob1,se=TRUE,robust=TRUE)
 
 ## iid decomposition, with scaled influence functions

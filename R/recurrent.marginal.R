@@ -60,7 +60,7 @@
 ##' ########################################################################
 ##' head(iid(outN,time=3))
 ##'
-##' @aliases tie.breaker recmarg recurrentMarginalAIPCW  recurrentMarginalPhreg iidRecurrent
+##' @aliases recurrent_marginalAIPCW  recurrentMarginalPhreg iidRecurrent
 ##' @references 
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @export
@@ -464,7 +464,7 @@ return(ic)
 ##' ##logrankRecurrent(xr,dr,stop=5)
 ##'
 ##' ## same as 
-##' outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+##' outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
 ##'                          data=hf,cause=1,death.code=2)
 ##' test_logrankRecurrent(outN)
 ##' @aliases logrankRecurrentBase
@@ -792,7 +792,6 @@ summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {#
  return(out)
 }# }}}
 
-##' @export
 recmarg <- function(recurrent,death,Xr=NULL,Xd=NULL,km=TRUE,...)
 {# {{{
   xr <- recurrent
@@ -1334,7 +1333,7 @@ if (3 %in% which) {
 ##' n <- 100
 ##' xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
 ##' dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-##' simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf,death.code=2)
+##' simcoxcox <- sim_recurrent_ts(xr,dr,n=n,data=hf,death.code=2)
 ##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
 ##' simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
 ##'

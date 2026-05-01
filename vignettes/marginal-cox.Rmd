@@ -108,7 +108,7 @@ computed in mets as:
    out <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
    summary(out)
    # robust standard errors attached to output
-   rob <- robust.phreg(out)
+   rob <- robust_phreg(out)
 ```
 
 We can get the iid decomposition of the $\hat \beta - \beta$ by 

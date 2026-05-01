@@ -78,7 +78,7 @@ hf$x <- as.numeric(hf$treatment)
 n <- 100
 xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
 dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-simcoxcox <- sim.recurrent(xr,dr,n=n,data=hf,death.code=2)
+simcoxcox <- sim_recurrent_ts(xr,dr,n=n,data=hf,death.code=2)
 recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
 simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
 

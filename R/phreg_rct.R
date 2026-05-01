@@ -611,8 +611,8 @@ if (typeR!=typeC) {
       R0baseline.augment <-  c(XRs %*% t(gamR0Base))
       R0baseline.reduction<- apply(covBase*gamR0Base,1,sum)
       ## using augmented estimator of beta 
-      if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=iid[[j]])
-      else fitr0 <- robust.phreg(fit0)
+      if (fit0$p>0) fitr0 <- robust_phreg(fitts,beta.iid=iid[[j]])
+      else fitr0 <- robust_phreg(fit0)
       cumhazR0 <- cumhaz <- fitts$cumhaz
       cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
       se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz

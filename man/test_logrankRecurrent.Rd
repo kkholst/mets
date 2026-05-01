@@ -63,7 +63,7 @@ hf <- hfactioncpx12
 ##logrankRecurrent(xr,dr,stop=5)
 
 ## same as 
-outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),
+outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
                          data=hf,cause=1,death.code=2)
 test_logrankRecurrent(outN)
 }
