@@ -33,7 +33,7 @@
 ##' title(main="death")
 ##' plot(xr,se=TRUE)
 ##' ### robust standard errors 
-##' rxr <-  robust.phreg(xr,fixbeta=1)
+##' rxr <-  robust_phreg(xr,fixbeta=1)
 ##' plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
 ##' 
 ##' ## marginal mean of expected number of recurrent events 

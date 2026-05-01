@@ -2,14 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{phreg}
 \alias{phreg}
-\alias{robust.phreg}
-\alias{readPhreg}
-\alias{conftype}
-\alias{plotpredictphreg}
-\alias{predictrecreg}
-\alias{summarybase.phreg}
-\alias{nameme}
-\alias{construct_id}
+\alias{robust_phreg}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)
