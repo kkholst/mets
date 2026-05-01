@@ -254,7 +254,6 @@ Here a situation with stratified baselines for some of the models:
  - sim_phreg for phreg, can deal with strata 
  - sim_phregs cause specific hazards on phreg form 
 
-
 One more example  fully non-parametric 
 
 ```{r}
@@ -601,7 +600,7 @@ and for the logit-link as
  cif1 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=1)
  cif2 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=2)
 
- nsim <- 400
+ nsim <- 800
  entry <- rbinom(nsim,1,0.5)*runif(nsim)*60
  dd <- sim_cif(cif1,nsim,data=bmt,entry=entry)
 
@@ -662,13 +661,13 @@ lines(timet,F1base,lwd=3)
 
 See also recurrent events vignette
 
- - sim.recurrent can simulate based on the Two-Stage model where the the 
+ - sim_recurrent can simulate based on the Two-Stage model where the the 
     - the rate of the terminal event among survivors in on Cox form (phreg)
       - the rate of the recurrent events among survivors is on Cox form (phreg)
       - the rate of the recurrent events is a  marginal Ghosh-Lin model (recreg)
     - the simulations is based on approximations with piecewise linear models based on a grid.
     - the events can be dependent via a frailty random effects (Gamma distributed)
-  - simRecurrentII, simRecurrent, simRecurrentList
+  - sim_recurrentII, sim_recurrent, sim_recurrent_list
     - A frailty Gamma model where the rate of the  events and the terminal event are given based on 
        cumulative baselines and relative risk covariate effects. Thus ends up on Cox form  given the frailty and covariates.
     - simRecurrentList can take multiple recurrent events and multiple causes of death 
@@ -689,7 +688,7 @@ library(mets)
  estimate(xr)
  estimate(dr)
 
- simcoxcox <- sim_recurrent(xr,dr,n=n,data=hf)
+ simcoxcox <- sim_recurrent_ts(xr,dr,n=n,data=hf)
 
  xrs <- phreg(Surv(entry,time,status==1)~treatment+cluster(id),data=simcoxcox)
  drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simcoxcox)
@@ -712,7 +711,7 @@ and a now with Ghosh-Lin and Cox marginals
  estimate(recGL)
  estimate(dr)
 
- simglcox <- sim_recurrent(recGL,dr,n=n,data=hf)
+ simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf)
 
  GLs <- recreg(Event(entry,time,status)~treatment+cluster(id),data=simglcox,death.code=3)
  drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simglcox)
@@ -739,7 +738,7 @@ hf$Z1 <- rbinom(741,1,0.5)[hf$id]
 xr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=hf)
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 400 
-rr <- sim_recurrent(xr,dr,n=n,data=hf)
+rr <- sim_recurrent_ts(xr,dr,n=n,data=hf)
 rxr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=rr)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
@@ -753,7 +752,7 @@ plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 glr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=hf,death.code=2)
 dr <- phreg(Surv(entry,time,status==2)~x+strata(Z1)+age+cluster(id),data=hf)
 n <- 400
-rr <- sim_recurrent(glr,dr,n=n,data=hf)
+rr <- sim_recurrent_ts(glr,dr,n=n,data=hf)
 rxr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=rr,death.code=3)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
@@ -785,7 +784,7 @@ Frailty models (simulations based on the rates/intensities)
 
  cumhaz <- list(base1,base1,base4)
  drl <- list(dr,base4)
- rr <- sim_recurrentList(n,cumhaz,death.cumhaz=drl)
+ rr <- sim_recurrent_list(n,cumhaz,death.cumhaz=drl)
  dtable(rr,~death+status)
  mets:::showfitsimList(rr,cumhaz,drl) 
 ```
