@@ -251,7 +251,7 @@ modelling, so here it is better to use the twostageMLE.
 ```
 
 Note, the standard errors are slightly different when comparing 
-fitco1 with fitco3 since the survival.twostage uses numerical 
+fitco1 with fitco3 since the survival_twostage uses numerical 
 derivatives for the hessian and the derivative in the 
 direction of the marginal model. 
 
@@ -644,7 +644,7 @@ kinship  <- rep(0.5,nrow(pair.types))
 kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
 head(kinship,n=10)
 
-out <- make.pairwise.design(pair.new,kinship,type="ace") 
+out <- make_pairwise_design(pair.new,kinship,type="ace") 
 ```
 
 Same output as before 
@@ -775,7 +775,7 @@ This model has a more free parameter than the Clayton-Oakes model.
                  clusters=diabetes$id)
  summary(fitpa)
  
- fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
+ fitcoa <- survival_twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
                   model="clayton.oakes")
  summary(fitcoa)
 ```
