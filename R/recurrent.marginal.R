@@ -1338,16 +1338,12 @@ if (3 %in% which) {
 ##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
 ##' simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
 ##'
-#' @export sim_recurrent
-#' @usage sim_recurrent(cox1,coxd=NULL,n=1,data=NULL,
-#' type=c("default","cox-cox","gl-cox"),id="id",
-#' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
-#' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,...)
+#' @export sim_recurrent_ts
 sim_recurrent_ts <- function(cox1,coxd=NULL,
-                          n=1, data=NULL,type=c("default","cox-cox","gl-cox"),
-                          id="id",varz=1,share=1,cens=0.001,
-			  scale1=1,scaled=1,dependence=NULL,
-			  r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,
+             n=1, data=NULL,type=c("default","cox-cox","gl-cox"),
+             id="id",varz=1,share=1,cens=0.001,
+      scale1=1,scaled=1,dependence=NULL,
+ r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,
                           ...) {# {{{
 ## exp censoring default
 statusD <- death <- NULL

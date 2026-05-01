@@ -4,10 +4,27 @@
 \alias{sim_recurrent_ts}
 \title{Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure}
 \usage{
-sim_recurrent(cox1,coxd=NULL,n=1,data=NULL,
-type=c("default","cox-cox","gl-cox"),id="id",
-varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
-r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,...)
+sim_recurrent_ts(
+  cox1,
+  coxd = NULL,
+  n = 1,
+  data = NULL,
+  type = c("default", "cox-cox", "gl-cox"),
+  id = "id",
+  varz = 1,
+  share = 1,
+  cens = 0.001,
+  scale1 = 1,
+  scaled = 1,
+  dependence = NULL,
+  r1 = NULL,
+  rd = NULL,
+  rc = NULL,
+  strata1 = NULL,
+  stratad = NULL,
+  death.code = 3,
+  ...
+)
 }
 \arguments{
 \item{cox1}{cox/ghosh-lin for recurrent events}

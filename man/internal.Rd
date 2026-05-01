@@ -59,6 +59,8 @@
 \alias{sim_ClaytonOakes_family_ace}
 \alias{sim_ClaytonOakes_twin_ace}
 \alias{sim_Frailty_simple}
+\alias{sim_binClaytonOakes_pairs}
+\alias{sim_nordictwin}
 \alias{sim_Compete_simple}
 \alias{simCompete_twin_ace}
 \alias{twin_polygen_design}

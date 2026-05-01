@@ -182,8 +182,8 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' ### structured random effects model additive gamma ACE
 ##' ### simulate structured two-stage additive gamma ACE model
-##' data <- sim_ClaytonOakes.twin.ace(4000,2,1,0,3)
-##' out <- twin.polygen.design(data,id="cluster")
+##' data <- sim_ClaytonOakes_twin_ace(4000,2,1,0,3)
+##' out <- twin_polygen_design(data,id="cluster")
 ##' pardes <- out$pardes
 ##' pardes
 ##' des.rv <- out$des.rv

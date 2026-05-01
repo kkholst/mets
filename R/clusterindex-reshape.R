@@ -19,9 +19,39 @@
 ##' @param mat to return matrix of indeces
 ##' @param return.all return all arguments
 ##' @param code.na how to code missing values
-##' @aliases countID pairRisk mystrata mystrata2index
+##' @aliases countID pairRisk mystrata mystrata2index cluster.index
 ##' @export
 cluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
+{ ## {{{
+  n <- length(clusters)
+
+  if (index.type==FALSE)  {
+    if (is.numeric(clusters)) clusters <-  fast.approx(unique(clusters),clusters)-1 else  {
+      max.clust <- length(unique(clusters))
+      clusters <- as.integer(factor(clusters, labels = seq(max.clust)))-1
+    }
+  }
+  
+  if ((!is.null(num))) { ### different types in different columns
+    mednum <- 1
+    if (is.numeric(num)) numnum <-  fast.approx(unique(num),num)-1
+    else {
+      numnum <- as.integer(factor(num, labels = seq(length(unique(clusters))))) -1
+    }
+  } else { numnum <- 0; mednum <- 0; }
+
+  clustud <- .Call("clusterindexM",as.integer(clusters),as.integer(mednum), as.integer(numnum),mat,return.all,PACKAGE="mets")
+  if (!is.null(mat) && !return.all) return(clustud)
+  
+  if (Rindex==1) clustud$idclust <- clustud$idclustmat+1
+  if (Rindex==1) clustud$firstclustid <- clustud$firstclustid +1 
+  ### avoid NA's for C call
+  if (Rindex==0 & !is.na(code.na)) clustud$idclust[is.na(clustud$idclust)] <- code.na
+  
+  clustud
+} ## }}}
+
+cluster.index <- function(clusters,index.type=FALSE,num=NULL,Rindex=0,mat=NULL,return.all=FALSE,code.na=NA)
 { ## {{{
   n <- length(clusters)
 

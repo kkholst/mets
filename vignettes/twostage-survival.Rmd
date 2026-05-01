@@ -309,7 +309,7 @@ First we generate some data from the Clayton-Oakes model with variance $0.5$ and
 And fit the related model. 
 
 ```{r}
- d <- simClaytonOakes(200,2,0.5,0,3)
+ d <- sim_ClaytonOakes(200,2,0.5,0,3)
   margph <- phreg(Surv(time,status)~x+cluster(cluster),data=d)
  # Clayton-Oakes, MLE 
  fitco1<-twostageMLE(margph,data=d)
@@ -467,7 +467,7 @@ The model can also be fitted by specifying the pairs that
 one wants for the pairwise likelihood. This is done by
 specifying the pairs argument.  We start by considering all pairs as we also did before. 
 
-All pairs can be written up by calling the familycluster.index
+All pairs can be written up by calling the familycluster_index
 function. 
 
 There are <!-- TODO: insert pair count --> pairs to consider, and the first 6 pairs for the first family 

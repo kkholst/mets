@@ -7,7 +7,7 @@ test_recregMarginal <- function() {
  library(mets)
  data(hfactioncpx12)
  hf <- hfactioncpx12
- hf <- tie.breaker(hf,cause=c(0,1,2),cens.code=4)
+ hf <- tie_breaker(hf,cause=c(0,1,2),cens.code=4)
 
  ngl <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
  cause=1,death.code=2,cens.model=~strata(treatment))
@@ -18,7 +18,7 @@ test_recregMarginal <- function() {
  pgl
 
  ### 
- meann <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
+ meann <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
  smeann <- summary(meann,time=3)
  smeann <- rbind(smeann$pbaseci[[1]],smeann$pbaseci[[2]])
  smeann
@@ -38,14 +38,14 @@ test_recregMarginalIPCW <- function() {
  data(hfactioncpx12)
  hf <- hfactioncpx12
  ## break all-ties for cause=0,1,2
- hf <- tie.breaker(hf,cause=c(0,1,2),cens.code=4)
+ hf <- tie_breaker(hf,cause=c(0,1,2),cens.code=4)
 
  ngl <- recregIPCW(Event(entry,time,status)~treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
 		   cens.model=~strata(treatment))
  dd <- data.frame(treatment=levels(hf$treatment),id=1)
  pngl <- predict(ngl,dd,times=3,se=1)
  ### 
- meann <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
+ meann <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
  smeann <- summary(meann,time=3)
  smeann <- rbind(smeann$pbaseci[[1]],smeann$pbaseci[[2]])
  smeann

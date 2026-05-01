@@ -237,6 +237,7 @@ NULL
 ##' predictPairPlack sim_binClaytonOakes_family_ace
 ##' sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
 ##' sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
+##' sim_binClaytonOakes_pairs sim_nordictwin   
 ##'  sim_Compete_simple simCompete_twin_ace twin_polygen_design
 ##'  procform procform3 procformdata drop.specials
 NULL

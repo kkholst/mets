@@ -6,6 +6,7 @@
 \alias{pairRisk}
 \alias{mystrata}
 \alias{mystrata2index}
+\alias{cluster.index}
 \title{Finds subjects related to same cluster}
 \usage{
 cluster_index(
