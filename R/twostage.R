@@ -134,7 +134,7 @@
 ##' ### Piecewise constant cross hazards ratio modelling
 ##' ########################################################
 ##'
-##' d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
+##' d <- subset(sim_ClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
 ##' udp <- piecewise_twostage(c(0,0.5,2),data=d,method="optimize",
 ##'                           id="cluster",timevar="time",
 ##'                           status="status",model="clayton.oakes",silent=0)
@@ -144,10 +144,10 @@
 ##' ### Same model using the strata option, a bit slower
 ##' ########################################################
 ##' ## makes the survival pieces for different areas in the plane
-##' ##ud1=surv.boxarea(c(0,0),c(0.5,0.5),data=d,id="cluster",timevar="time",status="status")
-##' ##ud2=surv.boxarea(c(0,0.5),c(0.5,2),data=d,id="cluster",timevar="time",status="status")
-##' ##ud3=surv.boxarea(c(0.5,0),c(2,0.5),data=d,id="cluster",timevar="time",status="status")
-##' ##ud4=surv.boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")
+##' ##ud1=surv_boxarea(c(0,0),c(0.5,0.5),data=d,id="cluster",timevar="time",status="status")
+##' ##ud2=surv_boxarea(c(0,0.5),c(0.5,2),data=d,id="cluster",timevar="time",status="status")
+##' ##ud3=surv_boxarea(c(0.5,0),c(2,0.5),data=d,id="cluster",timevar="time",status="status")
+##' ##ud4=surv_boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")
 ##'
 ##' ## everything done in one call
 ##' ud <- piecewise_data(c(0,0.5,2),data=d,timevar="time",status="status",id="cluster")
@@ -182,7 +182,7 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' ### structured random effects model additive gamma ACE
 ##' ### simulate structured two-stage additive gamma ACE model
-##' data <- simClaytonOakes.twin.ace(4000,2,1,0,3)
+##' data <- sim_ClaytonOakes.twin.ace(4000,2,1,0,3)
 ##' out <- twin.polygen.design(data,id="cluster")
 ##' pardes <- out$pardes
 ##' pardes
@@ -229,8 +229,8 @@
 ##' @param no.opt for not optimizng
 ##' @param ... Additional arguments to maximizer NR of lava.
 ##' and ascertained sampling
-##' @aliases survival.twostage twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv 
-##' @export survival.twostage
+##' @aliases survival_twostage twostage_aalen twostage_cox.aalen twostage_coxph twostage_phreg randomDes readmargsurv 
+##' @export survival_twostage
 survival_twostage <- function(margsurv,data=NULL,
     method="nr",detail=0,clusters=NULL,
     silent=1,weights=NULL,theta=NULL,theta.des=NULL,
@@ -1315,7 +1315,7 @@ alpha2kendall <- function(theta,link=0) {  #
    return(1/(1+2/theta))
 } #
 
-##' @export piecewise.twostage
+##' @export piecewise_twostage
 piecewise_twostage <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
             method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
             control=list(),theta=NULL,theta.des=NULL,var.link=1,
@@ -1342,7 +1342,7 @@ for (i2 in 2:nc2)
 {
 k <-(i1-2)*(nc2-1)+(i2-1)
 if (silent<=0) cat(paste("Data-set ",k,"out of ",(nc1-1)*(nc2-1)),"\n");
-datalr <- surv.boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
+datalr <- surv_boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
 status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent)
 if (silent<=-1) print("back in piecewise.twostage");
 if (silent<=-1) print(summary(datalr));
@@ -1359,10 +1359,10 @@ f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+fact
 else f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+factor(",num,"):",covars)))
 marg1 <- timereg::aalen(f,data=datalr,n.sim=0,robust=0)
 
-fitlr<-  survival.twostage(marg1,data=datalr,clusters=datalr$tsid,
+fitlr<-  survival_twostage(marg1,data=datalr,clusters=datalr$tsid,
 ,model=model, Nit=Nit,detail=detail,silent=silent,weights=weights,
 theta=theta,theta.des=theta.des,var.link=var.link,step=step)
-###fitlr<-  survival.twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
+###fitlr<-  survival_twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
 ###Nit=Nit,detail=detail,silent=silent,weights=weights,
 ###baseline.iid=0,control=control,
 ###theta=theta,theta.des=theta.des,var.link=var.link,step=step)
@@ -1408,7 +1408,7 @@ attr(ud, "Type") <- model
 return(ud);
 } #}}}
 
-##' @export piecewise.data
+##' @export piecewise_data
 piecewise_data <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1)
 { #
 ud <- list()
@@ -1422,7 +1422,7 @@ for (i2 in 2:nc2)
 {
 k <-(i1-2)*(nc2-1)+(i2-1)
 if (silent<=0) cat(paste("Data-set ",k,"out of ",(nc1-1)*(nc2-1)),"\n");
- datalr <- surv.boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
+ datalr <- surv_boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
 			status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent)
 if (silent<=-1) print(summary(datalr));
 if (silent<=-1) print(head(datalr));
@@ -1752,13 +1752,13 @@ EVaddGam <- function(theta,x1,x2,thetades,ags)
 } #
 
 ##' @export
-twostage.aalen <- function(object,...) survival.twostage(object,...)
+twostage.aalen <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.cox.aalen <- function(object,...) survival.twostage(object,...)
+twostage.cox.aalen <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.coxph <- function(object,...) survival.twostage(object,...)
+twostage.coxph <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.phreg <- function(object,...) survival.twostage(object,...)
+twostage.phreg <- function(object,...) survival_twostage(object,...)

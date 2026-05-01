@@ -10,7 +10,7 @@
 ##' type<-c("m","f","m","c","c","c")
 ##' d<- cluster_index(i,num=type,Rindex=1)
 ##' print(d)
-##' @seealso familycluster.index familyclusterWithProbands.index
+##' @seealso familycluster_index familyclusterWithProbands.index
 ##' @author Klaus Holst, Thomas Scheike
 ##' @param clusters  list of indeces
 ##' @param index.type if TRUE then already list of integers of index.type
@@ -191,7 +191,7 @@ mystrata2index <- function(ll,sort=TRUE) {# {{{
 ##' i<-c(1,1,2,2,1,3)
 ##' d<- familycluster_index(i)
 ##' print(d)
-##' @seealso cluster.index familyclusterWithProbands.index
+##' @seealso cluster_index familyclusterWithProbands_index
 ##' @author Klaus Holst, Thomas Scheike
 ##' @param clusters  list of indeces 
 ##' @param index.type argument of cluster index 
@@ -200,7 +200,7 @@ mystrata2index <- function(ll,sort=TRUE) {# {{{
 ##' @export
 familycluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=1)
 { ## {{{
-  clusters <- cluster.index(clusters,Rindex=Rindex)
+  clusters <- cluster_index(clusters,Rindex=Rindex)
   totpairs <- sum(clusters$cluster.size*(clusters$cluster.size-1)/2)
   clustud <- .Call("familypairindex",clusters$idclust,clusters$cluster.size,as.integer(2*totpairs),PACKAGE="mets")
   clustud$pairs <- matrix(clustud$familypairindex,ncol=2,byrow=TRUE)
@@ -230,7 +230,7 @@ familycluster_index <- function(clusters,index.type=FALSE,num=NULL,Rindex=1)
 ##' @export
 familyclusterWithProbands_index <- function(clusters,probands,index.type=FALSE,num=NULL,Rindex=1)
 { ## {{{
-    famc <-familycluster.index(clusters,index.type=index.type,num=num,Rindex=Rindex)
+    famc <-familycluster_index(clusters,index.type=index.type,num=num,Rindex=Rindex)
     if (length(probands)!=length(clusters)) stop("clusters and probands not same length\n"); 
     index.probs <- (1:length(clusters))[probands==1]
     subfamsWprobands <-famc$subfamilyindex[ famc$familypairindex %in% index.probs ]

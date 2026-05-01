@@ -13,7 +13,7 @@
 ##' @param trunc.prob Truncation probability 
 ##' @param same if 1 then left-truncation is same also for univariate truncation
 ##' @author Thomas Scheike and Klaus K. Holst
-##' @aliases simClaytonOakes simClaytonOakesLam
+##' @aliases sim_ClaytonOakes sim_ClaytonOakesLam
 ##' @export
 sim_ClaytonOakes <- function(K,n,eta,beta,stoptime,lam=1,left=0,pairleft=0,trunc.prob=0.5,same=0)  ## {{{ 
 {

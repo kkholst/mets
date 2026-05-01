@@ -219,7 +219,7 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' 
 #' Simulates data from piecwise constant baseline hazard that can also be of
 #' Cox type. Censor data at highest value of the break points for either of the
-#' cumulatives, see also sim.phregs  
+#' cumulatives, see also sim_phregs  
 #' 
 #' @param cumA cumulative hazard of cause 1, or list of multiple cumulative hazards
 #' @param cumB cumulative hazard of cause 2 or NULL when cumA is a list 
@@ -324,7 +324,7 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 #' nsim <- 100
 #' coxs <-  phreg(Surv(time,status==9)~strata(chf)+vf+wmi,data=sTRACE)
 #' set.seed(100)
-#' sim3 <- sim.phreg(coxs,nsim,data=sTRACE)
+#' sim3 <- sim_phreg(coxs,nsim,data=sTRACE)
 #' head(sim3)
 #' cc <-   phreg(Surv(time,status)~strata(chf)+vf+wmi,data=sim3)
 #' cbind(coxs$coef,cc$coef)
@@ -344,7 +344,7 @@ sim_phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
 	if  (!is.null(data)) {
-		scox1 <- draw.phreg(cox,n,data=data,onlyX=TRUE,...)
+		scox1 <- draw_phreg(cox,n,data=data,onlyX=TRUE,...)
 		dat <- scox1$data
 		dat$orig.id <- scox1$id
 
@@ -445,14 +445,14 @@ return(out)
 } ## }}}
 
 draw_phregs <- function(coxs,n,data,onlyX=TRUE,...) { ## {{{ 
-   scox1 <- draw.phreg(coxs[[1]],n,data=data,onlyX=onlyX,...)
+   scox1 <- draw_phreg(coxs[[1]],n,data=data,onlyX=onlyX,...)
    datas <- scox1$data
    stratam <-  scox1$strata
    rrm <- scox1$rr
 
    if (length(coxs)>1) 
    for (i in 2:length(coxs)) {
-      coxn <- draw.phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id,onlyX=onlyX,...)
+      coxn <- draw_phreg(coxs[[i]],n,data=data,drawZ=FALSE,id=scox1$id,onlyX=onlyX,...)
       coxndata <- coxn$data
       ind <-  match(colnames(datas),colnames(coxndata),nomatch=0)
       ind <- ind[ind!=0]
@@ -487,7 +487,7 @@ setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' Simulates data that looks like fit from cause specific Cox models. 
 #' Censor data automatically. When censoring is given in the  list of causes this
 #' will give censoring that looks like the data.  Covariates are drawn from data-set
-#' with replacement. This gives covariates like the data.  Calls sim.phregs
+#' with replacement. This gives covariates like the data.  Calls sim_phregs
 #' 
 #' 
 #' @param coxs list of cox models.
@@ -514,7 +514,7 @@ setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' cox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=bmt)
 #' cox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=bmt)
 #' coxs <- list(cox1,cox2)
-#' ## just calls sim.phregs !
+#' ## just calls sim_phregs !
 #' dd <- sim_phregs(coxs,nsim,data=bmt,extend=c(0.001))
 #' scox1 <- phreg(Surv(time,cause==1)~strata(tcell)+platelet+age,data=dd)
 #' scox2 <- phreg(Surv(time,cause==2)~tcell+strata(platelet),data=dd)
@@ -525,11 +525,11 @@ setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' plot(cox1); plot(scox1,add=TRUE); 
 #' plot(cox2); plot(scox2,add=TRUE); 
 #' 
-#' @export sim.phregs
+#' @export sim_phregs
 sim_phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
                        entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
 {# {{{
-   out <- draw.phregs(coxs,n,data)
+   out <- draw_phregs(coxs,n,data)
    if (is.null(rr)) rr <- out$rr
    if (is.null(strata)) strata <- out$strata
    lentry <- NULL
@@ -542,11 +542,11 @@ sim_phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
    if (!is.null(extend)) cumhazl <- extendCums(cumhazl,NULL,extend=extend)
 
    ## simulate first  time
-   simdata <- sim.phreg(cumhazl[[1]],n,data=NULL,rr=rr[,1],strata=strata[,1],entry=entry)
+   simdata <- sim_phreg(cumhazl[[1]],n,data=NULL,rr=rr[,1],strata=strata[,1],entry=entry)
    l <- length(coxs)
    if (l>=2) 
    for (i in 2:l) {
-      tall2 <- sim.phreg(cumhazl[[i]],n,rr=rr[,i],strata=strata[,i],entry=entry)
+      tall2 <- sim_phreg(cumhazl[[i]],n,rr=rr[,i],strata=strata[,i],entry=entry)
       simdata$status <- ifelse(simdata$time<tall2$time,simdata$status,i*tall2$status)
       simdata$time <- pmin(simdata$time,tall2$time)
    }
@@ -576,7 +576,7 @@ return(ptt)
 
 ## {{{ cumulative incidence 
 
-#' @export sim.cifs
+#' @export sim_cifs
 sim_cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,
                      cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),
                      U=NULL,pU=NULL,extend=TRUE,type=NULL,restrict=TRUE,entry=NULL,...)
@@ -592,7 +592,7 @@ if (!is.null(type)) {
    if (is.null(cifs[[2]]$propodds)) model2 <- "cloglog" else model2 <- "logistic" 
 }
 
-   out <- draw.phregs(cifs,n,data,Z=Z)
+   out <- draw_phregs(cifs,n,data,Z=Z)
    if (is.null(rr)) rr <- out$rr
    if (is.null(strata)) strata <- out$strata
 
@@ -606,8 +606,8 @@ if (!is.null(type)) {
   tau <- tail(cumhazl[[1]][[1]],1)[1]
 
   ## simulate first  time
-  sim1 <- sim.cif(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1],U=U,type=model1,entry=entry)
-  sim2 <- sim.cif(cumhazl[[2]],n,rr=rr[,2],strata=strata[,2],U=U,type=model2,entry=entry)
+  sim1 <- sim_cif(cumhazl[[1]],n,rr=rr[,1],strata=strata[,1],U=U,type=model1,entry=entry)
+  sim2 <- sim_cif(cumhazl[[2]],n,rr=rr[,2],strata=strata[,2],U=U,type=model2,entry=entry)
 
    ## drawing which cause  is observed, 0,1,2
   if (!is.null(entry)) {
@@ -855,7 +855,7 @@ sim_cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 {# {{{
 ## also extracts coefficients and baseline from cifreg
 if (!is.null(data))  {
-   des <- 	draw.phreg(cif,n,data=data,Z=Z,drawZ=drawZ,...)
+   des <- 	draw_phreg(cif,n,data=data,Z=Z,drawZ=drawZ,...)
    dats <- des$data
    dats$orig.id <- des$id
 
@@ -945,10 +945,10 @@ simul_cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
     p <- ncol(Z)
     colnames(Z) <- paste("Z",1:p,sep="")
 
-    cif1 <- setup.cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
-    cif2 <- setup.cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
+    cif1 <- setup_cif(cbind(tt,Lam1),beta[1:p],Znames=colnames(Z),type=type[1])
+    cif2 <- setup_cif(cbind(tt,Lam2),beta[(p+1):(2*p)],Znames=colnames(Z),type=type[1])
 
-    data <- sim.cifs(list(cif1,cif2),n,Z=Z,U=U,pU=pU,type=type[1],extend=NULL,entry=entry,...)
+    data <- sim_cifs(list(cif1,cif2),n,Z=Z,U=U,pU=pU,type=type[1],extend=NULL,entry=entry,...)
 
     if (is.null(entry)) entry <- 0
     if (!is.null(rc)) {
@@ -982,11 +982,11 @@ simul_cifsRA <- function (n, rho1, rho2, beta, rc = 0.5, depcens.R = 0, rcZ = 0.
             1, 1/2)) + (bin[2] == 0) * rnorm(n))
     colnames(Z) <- paste("Z", 1:2, sep = "")
     p <- ncol(Z)
-    cif1 <- setup.cif(cbind(tt, Lam1), beta[1:p], Znames = colnames(Z),
+    cif1 <- setup_cif(cbind(tt, Lam1), beta[1:p], Znames = colnames(Z),
         type = type[1])
-    cif2 <- setup.cif(cbind(tt, Lam2), beta[(p + 1):(2 * p)],
+    cif2 <- setup_cif(cbind(tt, Lam2), beta[(p + 1):(2 * p)],
         Znames = colnames(Z), type = type[1])
-    data <- sim.cifs(list(cif1, cif2), n, Z = Z,extend=NULL)
+    data <- sim_cifs(list(cif1, cif2), n, Z = Z,extend=NULL)
 
     admcens <- rbinom(n,1,pCA)
     if (depcens.Adm==1) rrA <- exp( Z %*% rcZ) else rrA <- 0
@@ -1057,9 +1057,9 @@ kumarsim <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
     Z <- Zs[samn,]
 
     colnames(Z) <- labels
-    cif1 <- setup.cif(cbind(tt, Lam1), beta[1:4], Znames = colnames(Z), type = type[1])
-    cif2 <- setup.cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z), type = type[1])
-    data <- sim.cifs(list(cif2, cif1), n, Z = Z,extend=NULL,restrict=restrict,...)
+    cif1 <- setup_cif(cbind(tt, Lam1), beta[1:4], Znames = colnames(Z), type = type[1])
+    cif2 <- setup_cif(cbind(tt, Lam2), beta[5:8], Znames = colnames(Z), type = type[1])
+    data <- sim_cifs(list(cif2, cif1), n, Z = Z,extend=NULL,restrict=restrict,...)
     stat12 <- which(data$status %in% c(1,2))
     data$status[stat12] <- c(2,1)[data$status[stat12]]
 
@@ -1115,9 +1115,9 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 	    Z[,1] <- rbinom(n,1, expit(lp))
     }
     colnames(Z) <- labels
-    cif1 <- setup.cif(cbind(tt, Lam1), F1par*beta[1:4], Znames = colnames(Z), type = type[1])
-    cif2 <- setup.cif(cbind(tt, Lam2), F2par*beta[5:8], Znames = colnames(Z), type = type[1])
-    data <- sim.cifs(list(cif2, cif1), n, Z = Z,extend=NULL,restrict=restrict,...)
+    cif1 <- setup_cif(cbind(tt, Lam1), F1par*beta[1:4], Znames = colnames(Z), type = type[1])
+    cif2 <- setup_cif(cbind(tt, Lam2), F2par*beta[5:8], Znames = colnames(Z), type = type[1])
+    data <- sim_cifs(list(cif2, cif1), n, Z = Z,extend=NULL,restrict=restrict,...)
     stat12 <- which(data$status %in% c(1,2))
     data$status[stat12] <- c(2,1)[data$status[stat12]]
 

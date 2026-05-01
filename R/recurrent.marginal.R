@@ -1044,7 +1044,7 @@ tie_breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' @param var.z variance of random effects 
 ##' @param cor.mat correlation matrix for var.z variance of random effects 
 ##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to simRecurrentList
+##' @param ... Additional arguments to sim_recurrent_list
 ##' @author Thomas Scheike
 ##' @examples
 ##' ########################################
@@ -1088,7 +1088,7 @@ tie_breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
 ##' set.seed(100)
 ##' cumhaz <- list(base1,base1,base4)
 ##' drl <- list(dr,base4)
-##' rr <- sim_recurrentList(100,cumhaz,death.cumhaz=drl,dependence=0)
+##' rr <- sim_recurrent_list(100,cumhaz,death.cumhaz=drl,dependence=0)
 ##' dtable(rr,~death+status)
 ##' mets:::showfitsimList(rr,cumhaz,drl) 
 ##'
@@ -1104,7 +1104,7 @@ if (!is.null(r1)) {
 	if (!is.null(r2)) r2 <- rep(1,length(r1))
 	rr <- cbind(r1,r2)
 }
-data <-     simRecurrentList(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
+data <-     sim_recurrent_list(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
 		     rd=rd,rc=rc,dependence=dependence,var.z=var.z,
 		     cor.mat=cor.mat,cens=cens,gap.time=gap.time,
 		     max.recurrent=max.recurrent,...)
@@ -1112,23 +1112,23 @@ return(data)
 }# }}}
 
 ##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
-##' @inherit simRecurrentII examples author
+##' @inherit sim_recurrentII examples author
 ##' @param n number of id's 
 ##' @param cumhaz  cumulative hazard of recurrent events 
 ##' @param death.cumhaz cumulative hazard of death 
 ##' @param r1 potential relative risk adjustment of rate 
 ##' @param rd potential relative risk adjustment of rate
 ##' @param rc potential relative risk adjustment of rate
-##' @param ... Additional arguments to simRecurrentList
+##' @param ... Additional arguments to sim_recurrent_list
 ##' @export
 sim_recurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
 {# {{{
-## wrapper for simRecurrentII without type-2 events
+## wrapper for sim_recurrentII without type-2 events
 if (!is.null(death.cumhaz)) death.cumhaz <- list(death.cumhaz)
 if (!is.null(r1)) r1 <- as.matrix(r1,ncol=1)
 if (!is.null(rd)) rd <- as.matrix(rd,ncol=1)
 
-rr <- simRecurrentList(n,list(cumhaz),death.cumhaz=death.cumhaz,rr=r1,rd=rd,rc=rc,...)
+rr <- sim_recurrent_list(n,list(cumhaz),death.cumhaz=death.cumhaz,rr=r1,rd=rd,rc=rc,...)
 return(rr)
 }# }}}
 
@@ -1316,14 +1316,14 @@ if (3 %in% which) {
 ##' @param cens censoring rate for exponential censoring
 ##' @param scale1 to scale baseline of recurrent events model
 ##' @param scaled to scale baseline of terminal event
-##' @param dependence if dependence different from NULL, then uses simRecurrentList based on models given 
+##' @param dependence if dependence different from NULL, then uses sim_recurrent_list based on models given 
 ##' @param r1 relative risk for cox1 baseline, then data is not needed
 ##' @param rd relative risk for coxd baseline, then data is not needed
 ##' @param rc relative risk for exponential censoring 
 ##' @param strata1 strata variable for cox1 baseline, then data is not needed
 ##' @param stratad strata variable for coxd baseline, then data is not needed
 ##' @param death.code code for death (default is 3) in status variable, events are coded as 1
-##' @param ... Additional arguments to simGLcox, nmin, nmax regulates linear approximation grid 
+##' @param ... Additional arguments to sim_GLcox, nmin, nmax regulates linear approximation grid 
 ##' @author Thomas Scheike
 ##' @references 
 ##' Scheike (2024), Twostage recurrent events models, under review.
@@ -1338,8 +1338,8 @@ if (3 %in% which) {
 ##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
 ##' simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
 ##'
-#' @export sim.recurrent
-#' @usage sim.recurrent(cox1,coxd=NULL,n=1,data=NULL,
+#' @export sim_recurrent
+#' @usage sim_recurrent(cox1,coxd=NULL,n=1,data=NULL,
 #' type=c("default","cox-cox","gl-cox"),id="id",
 #' varz=1,share=1,cens=0.001,scale1=1,scaled=1,dependence=NULL,
 #' r1=NULL,rd=NULL,rc=NULL,strata1=NULL,stratad=NULL,death.code=3,...)
@@ -1358,7 +1358,7 @@ if (type[1]=="cox-cox") type <- 3 else type <- 2
 
 if (!is.null(data)) {
    coxs <- list(cox1,coxd)
-   rrdata <- draw.phregs(coxs,n,data=data)
+   rrdata <- draw_phregs(coxs,n,data=data)
    rr1 <- rrdata$rr[,1]
    rstrata1 <- rrdata$strata[,1]
 
@@ -1401,7 +1401,7 @@ for (j in 1:attr(strat1d,"nlevel")) {
      Lam1s <- Lam1[[strata1ss]]
      LamDs <- LamD[[stratadss]]
      ns <- length(r1i)
-     rrss <- simGLcox(ns,Lam1s,LamDs,var.z=varz,r1=r1[r1i],rd=rd[r1i],rc=rc[r1i],
+     rrss <- sim_GLcox(ns,Lam1s,LamDs,var.z=varz,r1=r1[r1i],rd=rd[r1i],rc=rc[r1i],
 		model="twostage",cens=cens,type=type,share=share,...)
     rrss$ids <- rrss$id
     rrss$id <- r1i[rrss$id+1]
@@ -1411,8 +1411,8 @@ rrs <- dtransform(rrs,statusD=death.code,statusD==3)
 } else { 
 if (is.null(dependence)) dependence <- 0
 if (!is.null(LamD)) 
-rrs <- simRecurrentList(n,Lam1,death.cumhaz=LamD,rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
-else rrs <- simRecurrentList(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+rrs <- sim_recurrent_list(n,Lam1,death.cumhaz=LamD,rr=matrix(r1,ncol=1),rd=matrix(rd,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
+else rrs <- sim_recurrent_list(n,list(Lam1),rr=matrix(r1,ncol=1),rc=rc,cens=cens,var.z=varz,dependence=dependence)
 rrs$Z <- attr(rrs,"z")[rrs$id+1]
 rrs$statusD <- rrs$status
 if (!is.null(LamD))  {

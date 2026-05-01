@@ -152,7 +152,7 @@ if (nlev==2) {
 	wt[is.na(wt)] <- 0
 	Wt <- cumsum(diff(c(0,kms$time))*wt)
 
-	Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
+	Wtmark <- lin_approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 	Wfinal <- tail(Wt,1)
 	###
 	data$pmmark__ <- Wfinal-Wtmark
@@ -181,7 +181,7 @@ if (nlev==2) {
 ###	   wt <- (n1+n2)*kmss[,2]*kmss[,3]/(n1*kmss[,2]+n2*kmss[,3])
 ###	   wt[is.na(wt)] <- 0
 ###	   Wt <- cumsum(diff(c(0,kms$time))*wt)
-###	   Wtmark <- lin.approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
+###	   Wtmark <- lin_approx(pmin(exit,time),rbind(0,cbind(kms$time,Wt)))
 ###	   Wfinal <- tail(Wt,1)
 ###	   ###
 ###	   data$pmmark__ <- Wfinal-Wtmark

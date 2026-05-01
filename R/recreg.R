@@ -1650,8 +1650,7 @@ sim_GLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,
 	return(ll)
 } ## }}}
 
-
-sim_RecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
+sim_recurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
 			    model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
 { ## {{{
 	if (is.null(r1)) r1 <- rep(1,n)
@@ -1671,7 +1670,7 @@ sim_RecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r
 
 	## addapt to make recurrent mean on cox form with this baseline
 	base1 <- cumhaz
-	if (is.null(death.cumhaz)) stop("Modification for death in this function otherwise just use simRecurrentII\n")
+	if (is.null(death.cumhaz)) stop("Modification for death in this function otherwise just use sim_recurrentII\n")
 	if (is.null(X)) stop("X must be given to link with simulated data\n"); 
 
 	### Cox baseline 
@@ -1702,7 +1701,7 @@ sim_RecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r
 			cumhaz1 <- cbind(base1[,1],cumsum(lam1ms))
 			LamDr <- scalecumhaz(death.cumhaz,rdss) 
 
-			datss <- simRecurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
+			datss <- sim_recurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
 						r1=r1[where],r2=NULL,rd=NULL,rc=rc[where],...)
 			Xs <- X[where,,drop=FALSE][datss$id,,drop=FALSE]
 			XX <- rbind(XX,Xs)
@@ -1726,7 +1725,7 @@ sim_RecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r
 			if (!frailty) LamDr <- cbind(base1[,1],-log(Stt)) 
 			if (frailty) LamDr <- scalecumhaz(death.cumhaz,z[k]*rdss) 
 
-			datss <- simRecurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
+			datss <- sim_recurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
 						r1=r1[where],r2=NULL,rd=NULL,rc=rc[where],...)
 			Xs <- X[where,,drop=FALSE][datss$id,,drop=FALSE]
 			XX <- rbind(XX,Xs)
@@ -1769,7 +1768,7 @@ sim_MarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=N
 
 	if (is.null(Lam2)) Lam2 <- Lam1; 
 
-	rr <- simRecurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
+	rr <- sim_recurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
 
 	if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
 	if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2
@@ -1803,7 +1802,7 @@ rd <- exp( Z %*% beta[(p+1):(2*p)])
 rrc <-  exp( Z %*% rcZ)
 
 ## generate with Adm censurering 
-out <- simGLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
+out <- sim_GLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000,
     depcens.Adm=depcens.Adm)
 

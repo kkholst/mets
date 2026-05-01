@@ -221,17 +221,22 @@ NULL
 ##'  alpha2kendall alpha2spear coefmat piecewise_twostage surv_boxarea
 ##'  faster.reshape piecewise_data
 ##'  sim_BinPlack sim_BinFam sim_BinFam2 sim_SurvFam corsim_prostate_random
-##'  sim_nordic_random sim_Cox sim
-##'  grouptable jumptimes folds
-##'  ace_family_design ascertained_pairs 
-##'  coarse_clust concordanceTwinACE concordanceTwostage
-##'  fast.cluster force_same_cens ilap
-##'  kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace
-##'  make_pairwise_design make_pairwise_design_competing
-##'  matplot.mets.twostage object.defined p11.binomial.twostage.RV
-##'  predictPairPlack sim_binClaytonOakes_family_ace
-##'  sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
-##'  sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
+##' sim_nordic_random sim_Cox sim
+##' grouptable jumptimes folds
+##' casewise_bin force.same.cens or_cif recurrent_marginalAIPCW 
+##' rmst_phreg rr_cif ‘sim_binClaytonOakes_pairs’ sim_bptwin    
+##' sim_Compete_twin_ace ‘sim_nordictwin’ simrchaz 
+##' ace_family_design ascertained_pairs summaryTimeobject 
+##' tie_breaker    
+##' ace_family_design ascertained_pairs 
+##' coarse_clust concordanceTwinACE concordanceTwostage
+##' fast.cluster force_same_cens ilap
+##' kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace
+##' make_pairwise_design make_pairwise_design_competing
+##' matplot.mets.twostage object.defined p11.binomial.twostage.RV
+##' predictPairPlack sim_binClaytonOakes_family_ace
+##' sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
+##' sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
 ##'  sim_Compete_simple simCompete_twin_ace twin_polygen_design
 ##'  procform procform3 procformdata drop.specials
 NULL

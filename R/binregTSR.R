@@ -799,7 +799,7 @@ print.summary.binregTSR  <- function(x,...) {# {{{
    rd <- cbind(rr13,rr14)
    rd2 <- cbind(rr23,rr24)
    ###
-   iddata <- simMultistateII(base12,base1d,base2d,rr=rr,rd=rd,rd2=rd2,
+   iddata <- sim_multistateII(base12,base1d,base2d,rr=rr,rd=rd,rd2=rd2,
 			     early2=1800,gamma23=gamma23,gamma24=gamma24,...)
    covX0 <- cbind(A0[iddata$id],X0[iddata$id,])
    colnames(covX0) <- c("A0","X01","X02")

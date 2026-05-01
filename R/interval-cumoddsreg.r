@@ -336,7 +336,7 @@ cumoddsreg <- function (formula,data,...)
   xf <- update.formula(formula,Interval(entrytime__,time2__)~.)
   data$entrytime__ <- entrytime__
   data$time2__ <- time2__
-  out <- interval.logitsurv.discrete(xf,data,...)
+  out <- interval_logitsurv_discrete(xf,data,...)
 
  return(out)
 } ## }}}
@@ -489,7 +489,7 @@ sim_TTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
   y <- rbinom(length(p),1,p)
 
   data <- cbind(y,data)
-  data <- count.history(data,status="y",id="id",types=1)
+  data <- count_history(data,status="y",id="id",types=1)
   data <- subset(data,data$Count1<=0)
 
   attr(data,"coef") <- beta

@@ -469,7 +469,7 @@ if (pair.structure==1) {
 } ## }}}
 
 
-p11.binomial.twostage.RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,i=1,j=1) { ## {{{
+p11_binomial_twostage_RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,i=1,j=1) { ## {{{
 	## computes p11 pij for additive gamma binary random effects model
      if (is.null(ags)) ags <- matrix(1,dim(pardes))
      out <- .Call("claytonoakesbinRV",theta,i,j,p1,p2,rv1,rv2,pardes,ags,link,PACKAGE="mets")$like
@@ -498,7 +498,7 @@ concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL
    {
         p1 <- p[i,1]
         p2 <- p[i,2]
-	p11 <- p11.binomial.twostage.RV(theta,rv1[i,],rv2[i,],p1,p2,theta.des,ags=ags,link=link)
+	p11 <- p11_binomial_twostage_RV(theta,rv1[i,],rv2[i,],p1,p2,theta.des,ags=ags,link=link)
 	p01 <- p[i,1]-p11
 	p10 <- p[i,2]-p11
 	p00 <- 1-p01-p10+p11
@@ -555,7 +555,7 @@ if (is.null(ags)) ags <- matrix(1,ncol(rv1),length(theta));
        xp  <- sum(xmarg*beta);
        pm <- exp(xp)/(1+exp(xp));
        if (var.par==1) pp <- pp/sum(pp)^2
-       p11 <- p11.binomial.twostage.RV(pp,rv1l,rv2l,pm,pm,theta.des,ags=ags,link=0)
+       p11 <- p11_binomial_twostage_RV(pp,rv1l,rv2l,pm,pm,theta.des,ags=ags,link=0)
        casewise <- p11/pm
        ret <- c(p11,casewise,pm)
        names(ret) <- c("concordance","casewise concordance","marginal")
@@ -630,7 +630,7 @@ breaks=Inf,pairsonly=TRUE,fix.marg=NULL,cens.formula,cens.model="aalen",weights=
 	dataw2  <- subset(dataw2,!is.na(dataw2$minw))
 	k <- k+1
 	if (!is.null(fix.marg)) dataw2$pudz <- fix.marg[k]
-        suppressWarnings( b <- binomial.twostage(dataw2[,outcome],data=dataw2,clusters=dataw2[,id],marginal.p=dataw2$pudz,weights=1/dataw2$minw,...))
+        suppressWarnings( b <- binomial_twostage(dataw2[,outcome],data=dataw2,clusters=dataw2[,id],marginal.p=dataw2$pudz,weights=1/dataw2$minw,...))
         theta0 <- b$theta[1,1]
         prev <- prev0 <- exp(coef(marg.bin)[1])/(1+exp(coef(marg.bin)[1]))
 	if (!is.null(fix.marg)) prev <- fix.marg[k]
