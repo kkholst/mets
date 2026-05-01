@@ -363,7 +363,6 @@ outae <- binreg(formula,rrR,cause=death.code,time=time,cens.code=cens.code,Ydire
 return(outae)
 } ## }}}
 
-
 ##' @export
 print.WA  <- function(x,type="log",...) {# {{{
   print(summary(x),type=type,...)
@@ -517,7 +516,6 @@ if (is.null(time)) stop("must give time of response \n")
    res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times,
 	       id=cr2$name.id,n=nid)
 } ## }}}
-
 
 evalTerminal <- function(formula,data=data,death.code=2,time=NULL,marks=NULL,mark.codes=NULL)
 {# {{{

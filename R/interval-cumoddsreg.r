@@ -43,7 +43,7 @@
 ##' data(ttpd) 
 ##' dtable(ttpd,~entry+time2)
 ##' 
-##' out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+##' out <- interval_logitsurv_discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' head(iid(out)) 
 ##' 
@@ -57,7 +57,7 @@
 ##' 
 ##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg  predictSurvd plotSurvd 
 ##' @export
-interval.logitsurv.discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
+interval_logitsurv_discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)
 { ## {{{ 
 
@@ -469,7 +469,7 @@ if (missing(Z)) Z <- NULL
 return(preds)
 } ## }}} 
 
-simTTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
+sim_TTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
 {# {{{
 	  
   Z <- Xglm  
@@ -514,7 +514,6 @@ summary.cumoddsreg <- function(object,...) { ## {{{
 	} else out <- list(baseline=outb)
 	return(out)
 } ## }}} 
-
 
 ##' @export
 print.cumoddsreg <- function(x,...) summary(x,...)

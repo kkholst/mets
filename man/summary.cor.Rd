@@ -7,7 +7,7 @@
 \method{summary}{cor}(object, marg.cif = NULL, marg.cif2 = NULL, digits = 3, ...)
 }
 \arguments{
-\item{object}{object from cor.cif rr.cif or or.cif for dependence between competing risks data for two causes.}
+\item{object}{object from cor_cif rr_cif or or_cif for dependence between competing risks data for two causes.}
 
 \item{marg.cif}{a number that gives the cumulative incidence in one time point for which concordance and 
 casewise concordance are computed.}
@@ -29,7 +29,7 @@ prints summary for dependence model.
 }
 \description{
 Computes concordance and casewise concordance for dependence models for competing risks 
-models of the type cor.cif, rr.cif or or.cif for the given cumulative incidences and the different dependence
+models of the type cor_cif, rr_cif or or_cif for the given cumulative incidences and the different dependence
 measures in the object.
 }
 \examples{
@@ -41,7 +41,7 @@ measures in the object.
 ## add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),
 ##                           data=multcif,n.sim=0,times=times,cause=1)
 ###
-## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
+## out1<- cor_cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
 ## summary(out1)
 ## 
 ## pad <- predict(add,X=1,se=0,uniform=0)

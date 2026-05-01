@@ -25,7 +25,7 @@ Uses cluster iid for the two binomial-regression estimates  standard errors bett
 }
 \examples{
 data(prt)
-prt <- force.same.cens(prt,cause="status")
+prt <- force_same_cens(prt,cause="status")
 
 dd <- bicompriskData(Event(time, status)~strata(zyg)+id(id), data=prt, cause=c(2, 2))
 newdata <- data.frame(zyg=c("DZ","MZ"),id=1)

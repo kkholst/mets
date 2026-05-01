@@ -16,7 +16,7 @@ concordanceCor(
 )
 }
 \arguments{
-\item{object}{Output from the cor.cif, rr.cif or or.cif function}
+\item{object}{Output from the cor_cif, rr_cif or or_cif function}
 
 \item{cif1}{Marginal cumulative incidence}
 

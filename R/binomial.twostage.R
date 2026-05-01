@@ -477,9 +477,8 @@ p11.binomial.twostage.RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,
 } ## }}}
 
 ##' @export
-
+concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL,link=0,var.par=0,...)
 {# {{{
-
    ### takes dependence paramter from output
       ptheta <- length(theta)
 
