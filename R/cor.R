@@ -1,4 +1,4 @@
-dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
+dep_cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
                   cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,tol=1e-6,detail=0,
                   clusters=NULL,theta=NULL,theta.des=NULL,step=1,sym=1,weights=NULL,
 		  same.cens=FALSE,censoring.weights=NULL,silent=1,entry=NULL,estimator=1,
@@ -551,7 +551,7 @@ cor_cif<-function(cif,data,cause=NULL,times=NULL,
 		  par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		  score.method="nlminb",same.cens=FALSE,censoring.weights=NULL,silent=1,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="COR",times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="COR",times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des,par.func=par.func,dpar.func=dpar.func,
 		 dimpar=dimpar,
@@ -568,7 +568,7 @@ rr_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  same.cens=FALSE,censoring.weights=NULL,silent=1,par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		 score.method="nlminb",entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="RR",cif2=cif2,times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="RR",cif2=cif2,times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des, step=step,sym=sym,weights=weights,
                  same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,
@@ -584,7 +584,7 @@ or_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  same.cens=FALSE,censoring.weights=NULL,silent=1,par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		 score.method="nlminb",entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="OR",cif2=cif2,times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="OR",cif2=cif2,times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des, step=step,sym=sym,weights=weights,
                  same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,
@@ -681,7 +681,7 @@ random_cif<-function(cif,data,cause=NULL,cif2=NULL,
                      step=1,same.cens=FALSE,var.link=0,score.method="nr",
                      entry=NULL,trunkp=1,...)
 { ## {{{
-  fit <- dep.cif(cif,data=data,cause=cause,model="RANCIF",cif2=cif2,sym=sym,
+  fit <- dep_cif(cif,data=data,cause=cause,model="RANCIF",cif2=cif2,sym=sym,
      cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
      clusters=clusters,theta=theta,theta.des=theta.des,step=step,same.cens=same.cens,
      var.link=var.link,score.method=score.method,entry=entry,trunkp=trunkp,...)
@@ -825,7 +825,7 @@ clusters=NULL, theta=NULL,theta.des=NULL, weights=NULL, step=1,sym=0,
 same.cens=FALSE,censoring.weights=NULL,silent=1,var.link=0,score.method="nr",
 entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,random.design=NULL,...)
 { ## {{{
-fit <- dep.cif(cif,data=data,cause=cause,model="ARANCIF",cif2=cif2,times=times,
+fit <- dep_cif(cif,data=data,cause=cause,model="ARANCIF",cif2=cif2,times=times,
          cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
          clusters=clusters,theta=theta,theta.des=theta.des,step=step,sym=sym,weights=weights,
          same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,var.link=var.link,

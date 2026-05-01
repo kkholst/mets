@@ -736,7 +736,7 @@ c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
-data <- event.split(data,cuts="TR")
+data <- event_split(data,cuts="TR")
 ###data <- EventSplit(data,cuts="TR")
 data <- dtransform(data,status=2,TR==time)
 data <- dtransform(data,Z1=0,start<TR)

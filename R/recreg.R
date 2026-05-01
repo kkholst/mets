@@ -1823,7 +1823,7 @@ censor <- pmin(censorR,censorA)
 ###laststatusD <- out$statusD[out$reverseCountid==1]
 outRA <- out
 outRA$censorR <- censorR[outRA$id+1]
-outRA <- event.split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
+outRA <- event_split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
 outRA <- count_history(outRA,status="statusD",types=0)
 outRA <- subset(outRA,Count0==0)
 ###print(table(out$statusD))
