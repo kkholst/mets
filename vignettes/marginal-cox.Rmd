@@ -61,7 +61,7 @@ in each cluster and a variance parameter at $2$
  n <- 1000
  k <- 5
  theta <- 2
- data <- simClaytonOakes(n,k,theta,0.3,3)
+ data <- sim_ClaytonOakes(n,k,theta,0.3,3)
 ```
 
 The data is on has one subject per row.

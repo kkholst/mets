@@ -522,6 +522,9 @@ kendall_ClaytonOakes_twin_ace <- function(parg,parc,K=10000,test=0)  ## {{{
 } ## }}} 
 
 ##' @export
+kendall.ClaytonOakes.twin.ace <- function(x,y,...) kendall_ClaytonOakes_twin_ace(x,y,...)
+
+##' @export
 kendall_normal_twin_ace <- function(parg,parc,K=10000)  ## {{{ 
 {
   ## K antal clustre, n=antal i clustre

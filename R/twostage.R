@@ -562,6 +562,9 @@ if (dep.model==3 & pair.structure==0) {
 
 } # }}}
 
+##' @export 
+survival.twostage <- function(x,...) survival_twostage(x,...)
+
 ##' @export
 randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,var.link,clusterindex,dim.theta)
 { ## {{{ 
@@ -1587,6 +1590,10 @@ twin_polygen_design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",t
 res <- list(pardes=pard,des.rv=des.rv)
 return(res)
 } #
+
+
+##' @export
+twin.polygen.design <-function (x,...) twin_polygen_design(x,...) 
 
 ##' @export
 ace_family_design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) {

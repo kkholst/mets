@@ -314,7 +314,7 @@ rr$X <- rr$lz1
 rr$lX <- rr$z1
 rr$statusD <- rr$status
 rr <- dtransform(rr,statusD=2,death==1)
-rr <- count.history(rr)
+rr <- count_history(rr)
 rr$Z <- rr$A0
 data <- rr
 data$Z.f <- as.factor(data$Z)
@@ -360,7 +360,7 @@ rr$z1 <- attr(rr,"z")[rr$id]
 rr$A1 <- A1[rr$id]
 rr$A0 <- A0[rr$id]
 rr$lz1 <- log(rr$z1)
-rr <- count.history(rr,types=1:2)
+rr <- count_history(rr,types=1:2)
 rr$A1t <- 0
 rr <- dtransform(rr,A1t=A1,Count2==1) 
 rr$At.f <- rr$A0

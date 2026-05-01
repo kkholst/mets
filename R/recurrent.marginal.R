@@ -174,6 +174,9 @@ recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
 }# }}}
 
 ##' @export
+recurrentMarginal <- function(formula,data,...) recurrent_marginal(formula,data,...)
+
+##' @export
 recurrentMarginalPhreg <- function(recurrent,death,fixbeta=NULL,km=TRUE)
 {# {{{
   xr <- recurrent
