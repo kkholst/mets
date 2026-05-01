@@ -6,7 +6,7 @@ set.seed(100)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 ## break ties after cause and censoring
-hf <- tie.breaker(hf,id="id",cause=c(1,0),cens.code=5)
+hf <- tie_breaker(hf,id="id",cause=c(1,0),cens.code=5)
 hf$idn <- hf$id
 hf$x <- as.numeric(hf$treatment) 
 hf$z <- rnorm(741)[hf$id]
