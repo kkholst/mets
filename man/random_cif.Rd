@@ -96,7 +96,7 @@ cluster covariates.
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
- d <- sim_nordic_random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+ d <- sim_nordic_random(1000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
  times <- seq(50,90,by=10)
  add1 <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
  times=times,cause=1,max.clust=NULL)

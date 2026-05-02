@@ -506,11 +506,11 @@ dep_cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##'               score.method="nr",detail=1)
 ##' summary(or1)
 ##' 
-##'  cor1 <- cor_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
-##'                  same.cens=TRUE,theta=c(0.5,1.0,0.1,0.1),
-##'                  par.func=parfunc,dpar.func=dparfunc,dimpar=4,
-##'                  control=list(trace=TRUE),detail=1)
-##' summary(cor1)
+##' ## cor1 <- cor_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
+##' ##                 same.cens=TRUE,theta=c(0.5,1.0,0.1,0.1),
+##' ##                 par.func=parfunc,dpar.func=dparfunc,dimpar=4,
+##' ##                 control=list(trace=TRUE),detail=1)
+##' ## summary(cor1)
 ##' 
 ##' ### piecewise contant OR model
 ##' gparfunc <- function(par,t,pardes)
@@ -577,6 +577,7 @@ rr_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
   fit$call <- match.call()
   fit
 } ## }}}
+
 ##' @export
 or_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
@@ -646,7 +647,7 @@ or_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  d <- sim_nordic_random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+##'  d <- sim_nordic_random(1000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  add1 <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
@@ -781,7 +782,7 @@ Grandom.cif<-function(cif,...) Grandom_cif(cif,...)
 ##' Estimating heritability for cause specific hazards based on twin data
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  d <- sim_nordic_random(5000,delayed=TRUE,
+##'  d <- sim_nordic_random(1000,delayed=TRUE,
 ##'        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  addm <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,

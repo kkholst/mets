@@ -97,7 +97,7 @@
 ##' ### use of clayton oakes binomial additive gamma model
 ##' ###########################################################
 ##' \donttest{ ## Reduce Ex.Timings
-##' data <- sim_binClaytonOakes_family_ace(10000,2,1,beta=NULL,alpha=NULL)
+##' data <- sim_binClaytonOakes_family_ace(1000,2,1,beta=NULL,alpha=NULL)
 ##' margbin <- glm(ybin~x,data=data,family=binomial())
 ##' margbin
 ##'
@@ -116,7 +116,7 @@
 ##'      random.design=out$des.rv,theta.des=out$pardes)
 ##' summary(bints)
 ##'
-##' data <- sim_binClaytonOakes_twin_ace(10000,2,1,beta=NULL,alpha=NULL)
+##' data <- sim_binClaytonOakes_twin_ace(1000,2,1,beta=NULL,alpha=NULL)
 ##' out  <- twin_polygen_design(data,id="cluster",zygname="zygosity")
 ##' out$pardes
 ##' head(out$des.rv)

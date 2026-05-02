@@ -213,11 +213,11 @@ or1 <- or_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
               score.method="nr",detail=1)
 summary(or1)
 
- cor1 <- cor_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
-                 same.cens=TRUE,theta=c(0.5,1.0,0.1,0.1),
-                 par.func=parfunc,dpar.func=dparfunc,dimpar=4,
-                 control=list(trace=TRUE),detail=1)
-summary(cor1)
+## cor1 <- cor_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
+##                 same.cens=TRUE,theta=c(0.5,1.0,0.1,0.1),
+##                 par.func=parfunc,dpar.func=dparfunc,dimpar=4,
+##                 control=list(trace=TRUE),detail=1)
+## summary(cor1)
 
 ### piecewise contant OR model
 gparfunc <- function(par,t,pardes)
