@@ -33,7 +33,7 @@ Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}
 
 Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
 
-Can fit cumulative odds model as a special case of interval.logitsurv.discrete
+Can fit cumulative odds model as a special case of interval_logitsurv_discrete
 }
 \examples{
 data(bmt)

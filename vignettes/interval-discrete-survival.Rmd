@@ -67,7 +67,7 @@ library(mets)
 
 data(ttpd) 
 dtable(ttpd,~entry+time2)
-out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+out <- interval_logitsurv_discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
 
 dfactor(ttpd) <- entry.f~entry
@@ -86,7 +86,7 @@ Z <- matrix(rbinom(n*4,1,0.5),n,4)
 outsim <- simlogitSurvd(out$coef,Z)
 outsim <- transform(outsim,left=time,right=time+1)
 outsim <- dtransform(outsim,right=Inf,status==0)
-outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
+outss <- interval_logitsurv_discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
 summary(outss)
 
 pred <- predictlogitSurvd(out,se=TRUE)
@@ -168,7 +168,7 @@ fit <- ic_sp(cbind(Ileft, Iright) ~ gender, data = IRdia, model = "po")
 summary(fit)
 
 ## sometimes NR-algorithm needs modifications of stepsize to run 
-## outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
+## outss <- interval_logitsurv_discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
 }
 
 ```

@@ -79,7 +79,7 @@ Estimation of concordance in bivariate competing risks data
 library("timereg")
 
 ## Simulated data example
-prt <- simnordic.random(2000,delayed=TRUE,ptrunc=0.7,
+prt <- sim_nordic_random(2000,delayed=TRUE,ptrunc=0.7,
 	      cordz=0.5,cormz=2,lam0=0.3)
 ## Bivariate competing risk, concordance estimates
 p11 <- bicomprisk(Event(time,cause)~strata(zyg)+id(id),data=prt,cause=c(1,1))

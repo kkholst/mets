@@ -72,7 +72,7 @@ blocksample <- function(data, size, idvar=NULL, replace=TRUE, ...) {
         id0 <- interaction(as.data.frame(id0))
     }
     id0 <- as.matrix(id0)[,1,drop=TRUE]
-    ii <-  cluster.index(as.matrix(id0))
+    ii <-  cluster_index(as.matrix(id0))
     size <- ifelse(missing(size) || is.null(size),ii$uniqueclust,size)
     ids <- sample(seq(ii$uniqueclust), size=size,replace=replace)
     idx <- na.omit(as.vector(t(ii$idclustmat[ids,])))+1

@@ -44,12 +44,12 @@ Clayton-Oakes frailty model
 \examples{
 library(mets)
 set.seed(1)
-d <- subset(simClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
+d <- subset(sim_ClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
 e <- ClaytonOakes(survival::Surv(lefttime,time,status)~x+cluster(~1,cluster),
                   cuts=c(0,0.5,1,2),data=d)
 e
 
-d2 <- simClaytonOakes(500,4,2,1,stoptime=2,left=0)
+d2 <- sim_ClaytonOakes(500,4,2,1,stoptime=2,left=0)
 d2$z <- rep(1,nrow(d2)); d2$z[d2$cluster\%in\%sample(d2$cluster,100)] <- 0
 ## Marginal=Cox Proportional Hazards model:
 ## ts <- ClaytonOakes(survival::Surv(time,status)~timereg::prop(x)+cluster(~1,cluster),
@@ -61,7 +61,6 @@ d2$z <- rep(1,nrow(d2)); d2$z[d2$cluster\%in\%sample(d2$cluster,100)] <- 0
 e2 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)
 e2
-
 
 e0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)

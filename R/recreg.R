@@ -211,7 +211,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	data$status__ <- (status %in% cause)*1
 	cens.strata <- cens.nstrata <- NULL
 	## lag-count to use for augment.model=~Nt+X1+X2
-	data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+	data <- count_history(data,status="status__",id="id__",types=cause,multitype=TRUE)
 	data$Nt <- data[,paste("Count",cause[1],sep="")]
 
 	## augmentation model and remove intercept
@@ -1166,7 +1166,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	data$status__ <-  status 
 	data$id__ <-  id
 	## lave Countcause
-	data <- count.history(data,status="status__",id="id__",types=cause,multitype=TRUE)
+	data <- count_history(data,status="status__",id="id__",types=cause,multitype=TRUE)
 	data$Count1__ <- data[,paste("Count",cause[1],sep="")]
 	data$death__ <- (status %in% death.code)*1
 	data$entry__ <- entry 
@@ -1469,7 +1469,7 @@ strataAugment <- survival::strata
 ##' @references 
 ##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
 ##' @export
-simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
+sim_GLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 { ## {{{
 	## setting up baselines for simulations 
@@ -1480,8 +1480,8 @@ simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fd
 	seqt <- seq(from=0,to=maxt,length.out=nmin)
 	if (base1[1,1]!=0) base1 <- rbind(0,base1) 
 	if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
-	base1 <- cbind(seqt, lin.approx(seqt,base1))
-	cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
+	base1 <- cbind(seqt, lin_approx(seqt,base1))
+	cumD <- cbind(seqt, lin_approx(seqt,drcumhaz))
 	###
 	St <- exp(-cumD[,2])
 	Stm <- cbind(base1[,1],St)
@@ -1568,7 +1568,7 @@ simGLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fd
 } ## }}}
 
 
-simGLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
+sim_GLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		      model=c("twostage","frailty","shared","multiplicative"),type=NULL,share=1,cens=NULL,nmax=200,by=1)
 { ## {{{
 	## setting up baselines for simulations 
@@ -1650,8 +1650,7 @@ simGLcoxC <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,f
 	return(ll)
 } ## }}}
 
-
-simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
+sim_recurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL, 
 			    model=c("not-random","random"),frailty=TRUE,var.z=0.5,death.code=3,alpha=1,...)
 { ## {{{
 	if (is.null(r1)) r1 <- rep(1,n)
@@ -1671,7 +1670,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 
 	## addapt to make recurrent mean on cox form with this baseline
 	base1 <- cumhaz
-	if (is.null(death.cumhaz)) stop("Modification for death in this function otherwise just use simRecurrentII\n")
+	if (is.null(death.cumhaz)) stop("Modification for death in this function otherwise just use sim_recurrentII\n")
 	if (is.null(X)) stop("X must be given to link with simulated data\n"); 
 
 	### Cox baseline 
@@ -1702,7 +1701,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 			cumhaz1 <- cbind(base1[,1],cumsum(lam1ms))
 			LamDr <- scalecumhaz(death.cumhaz,rdss) 
 
-			datss <- simRecurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
+			datss <- sim_recurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
 						r1=r1[where],r2=NULL,rd=NULL,rc=rc[where],...)
 			Xs <- X[where,,drop=FALSE][datss$id,,drop=FALSE]
 			XX <- rbind(XX,Xs)
@@ -1726,7 +1725,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 			if (!frailty) LamDr <- cbind(base1[,1],-log(Stt)) 
 			if (frailty) LamDr <- scalecumhaz(death.cumhaz,z[k]*rdss) 
 
-			datss <- simRecurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
+			datss <- sim_recurrentII(nk,cumhaz1,cumhaz2,death.cumhaz=LamDr,
 						r1=r1[where],r2=NULL,rd=NULL,rc=rc[where],...)
 			Xs <- X[where,,drop=FALSE][datss$id,,drop=FALSE]
 			XX <- rbind(XX,Xs)
@@ -1751,7 +1750,7 @@ simRecurrentCox <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,X=NULL,r1=NULL,r2
 } ## }}}
 
 
-simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
+sim_MarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NULL,LamD=NULL,
 			       beta1=rep(0,2),betad=rep(0,2),betac=rep(0,2),X=NULL,...)
 { ## {{{
 
@@ -1769,7 +1768,7 @@ simMarginalMeanCox <- function(n,cens=3/5000,k1=0.1,k2=0,bin=1,Lam1=NULL,Lam2=NU
 
 	if (is.null(Lam2)) Lam2 <- Lam1; 
 
-	rr <- simRecurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
+	rr <- sim_recurrentCox(n,scalecumhaz(Lam1,k1),cumhaz2=scalecumhaz(Lam1,k2),death.cumhaz=LamD,X=X,cens=cens,r1=r1,rd=rd,rc=rc,...)
 
 	if (bin==0) dcut(rr,breaks=4) <- X1g~X1 else rr$X1g <- rr$X1
 	if (bin==0) dcut(rr,breaks=4) <- X2g~X2 else rr$X2g <- rr$X2
@@ -1790,7 +1789,7 @@ GLprediid <- function(...)
 } ## }}}
 
 
-simGLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
+sim_GLRA <- function(n,base1,drcumhaz,varz=0,beta=c(0.3,-0.3,-0.3,0.3),rcZ=c(0.5,-0.5),pCA=0.5,pCR=0.5,censA=0.5,censR=0.5,
 	    depcens.Adm=0,depcens.R=1,Z=NULL,bin=1) { ## {{{
 Count0 <- NULL ## to fix R check, variable name returned below 
 if (length(bin)==1) bin <- rep(bin,2)
@@ -1803,7 +1802,7 @@ rd <- exp( Z %*% beta[(p+1):(2*p)])
 rrc <-  exp( Z %*% rcZ)
 
 ## generate with Adm censurering 
-out <- simGLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
+out <- sim_GLcoxRA(n,base1,drcumhaz,var.z=varz,r1=r1,rd=rd,rrc=rrc,rcA=censA,fz=NULL,fdz=NULL,pCA=pCA,
     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000,
     depcens.Adm=depcens.Adm)
 
@@ -1823,8 +1822,8 @@ censor <- pmin(censorR,censorA)
 ###laststatusD <- out$statusD[out$reverseCountid==1]
 outRA <- out
 outRA$censorR <- censorR[outRA$id+1]
-outRA <- event.split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
-outRA <- count.history(outRA,status="statusD",types=0)
+outRA <- event_split(outRA,status="statusD",time="stop",name.start="start",name.id="id",cuts="censorR",cens.code=0)
+outRA <- count_history(outRA,status="statusD",types=0)
 outRA <- subset(outRA,Count0==0)
 ###print(table(out$statusD))
 ###print(table(outRA$statusD))
@@ -1833,7 +1832,7 @@ data <- list(out=out,outRA=outRA)
 return(data)
 } ## }}} 
 
-simGLcoxRA <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rrc=NULL,rcA=0.5,fz=NULL,fdz=NULL,
+sim_GLcoxRA <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rrc=NULL,rcA=0.5,fz=NULL,fdz=NULL,
      pCA=0.5,depcens.Adm=1,
      model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
 { ## {{{
@@ -1845,8 +1844,8 @@ nmin <- min(nmax,nmin)
 seqt <- seq(from=0,to=maxt,length.out=nmin)
 if (base1[1,1]!=0) base1 <- rbind(0,base1) 
 if (drcumhaz[1,1]!=0) drcumhaz <- rbind(0,drcumhaz) 
-base1 <- cbind(seqt, lin.approx(seqt,base1))
-cumD <- cbind(seqt, lin.approx(seqt,drcumhaz))
+base1 <- cbind(seqt, lin_approx(seqt,base1))
+cumD <- cbind(seqt, lin_approx(seqt,drcumhaz))
 ###
 St <- exp(-cumD[,2])
 Stm <- cbind(base1[,1],St)
@@ -1936,7 +1935,6 @@ attr(ll,"base1events") <- base1
 attr(ll,"deathcumbase") <- cumD
 return(ll)
 } ## }}}
-
 
 boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsize=0.5,...) 
 { ## {{{
@@ -2053,7 +2051,7 @@ twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NU
     H1 <- c(cumhaz1 * RR1)
     ###
     ## designs of fixed time covariates and weights
-    cc <- cluster.index(xx$id)
+    cc <- cluster_index(xx$id)
     firstid <- cc$firstclustid + 1
     if (max(cc$cluster.size) == 1) stop("No clusters !, maxclust size=1\n")
     ###

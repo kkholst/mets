@@ -2,14 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{phreg}
 \alias{phreg}
-\alias{robust.phreg}
-\alias{readPhreg}
-\alias{conftype}
-\alias{plotpredictphreg}
-\alias{predictrecreg}
-\alias{summarybase.phreg}
-\alias{nameme}
-\alias{construct_id}
+\alias{robust_phreg}
 \title{Fast Cox PH regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)
@@ -43,7 +36,7 @@ par(mfrow=c(1,2))
 plot(out1)
 
 ## computing robust variance for baseline
-rob1 <- robust.phreg(out1)
+rob1 <- robust_phreg(out1)
 plot(rob1,se=TRUE,robust=TRUE)
 
 ## iid decomposition, with scaled influence functions

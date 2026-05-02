@@ -1,4 +1,4 @@
-dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
+dep_cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
                   cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,tol=1e-6,detail=0,
                   clusters=NULL,theta=NULL,theta.des=NULL,step=1,sym=1,weights=NULL,
 		  same.cens=FALSE,censoring.weights=NULL,silent=1,entry=NULL,estimator=1,
@@ -129,7 +129,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
     clusters <- as.integer(factor(clusters, labels = 1:(antclust)))-1;
   }
 
-  outc <- cluster.index(clusters,index.type=TRUE); 
+  outc <- cluster_index(clusters,index.type=TRUE); 
   clustsize <- outc$cluster.size
   maxclust <- outc$maxclust
   clusterindex <- outc$idclust
@@ -462,19 +462,19 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' add2 <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),data=multcif,cause=2,
 ##'                n.sim=0,times=times,model="fg",max.clust=NULL)
 ##' 
-##' out1 <- cor.cif(add,data=multcif,cause1=1,cause2=1)
+##' out1 <- cor_cif(add,data=multcif,cause1=1,cause2=1)
 ##' summary(out1)
 ##' 
-##' out2 <- cor.cif(add,data=multcif,cause1=1,cause2=1,theta.des=theta.des)
+##' out2 <- cor_cif(add,data=multcif,cause1=1,cause2=1,theta.des=theta.des)
 ##' summary(out2)
 ##' 
-##' ##out3 <- cor.cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)
+##' ##out3 <- cor_cif(add,data=multcif,cause1=1,cause2=2,cif2=add2)
 ##' ##summary(out3)
 ##' ###########################################################
 ##' # investigating further models using parfunc and dparfunc
 ##' ###########################################################
 ##' set.seed(100)
-##' prt<-simnordic.random(2000,cordz=2,cormz=5)
+##' prt<-sim_nordic_random(2000,cordz=2,cormz=5)
 ##' prt$status <-prt$cause
 ##' table(prt$status)
 ##' 
@@ -500,13 +500,13 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' head(dparfunc(c(0.1,1,0.1,1),50,theta.des))
 ##' 
 ##' names(prt)
-##' or1 <- or.cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
+##' or1 <- or_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
 ##'               same.cens=TRUE,theta=c(0.6,1.1,0.1,0.1),
 ##'               par.func=parfunc,dpar.func=dparfunc,dimpar=4,
 ##'               score.method="nr",detail=1)
 ##' summary(or1)
 ##' 
-##'  cor1 <- cor.cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
+##'  cor1 <- cor_cif(cifmod,data=prt,cause1=1,cause2=1,theta.des=theta.des,
 ##'                  same.cens=TRUE,theta=c(0.5,1.0,0.1,0.1),
 ##'                  par.func=parfunc,dpar.func=dparfunc,dimpar=4,
 ##'                  control=list(trace=TRUE),detail=1)
@@ -535,7 +535,7 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' head(dgparfunc(rep(0.1,6),50,theta.des))
 ##' head(gparfunc(rep(0.1,6),50,theta.des))
 ##' 
-##' or1g <- or.cif(cifmod,data=prt,cause1=1,cause2=1,
+##' or1g <- or_cif(cifmod,data=prt,cause1=1,cause2=1,
 ##'                theta.des=theta.des, same.cens=TRUE,
 ##'                par.func=gparfunc,dpar.func=dgparfunc,
 ##'                dimpar=6,score.method="nr",detail=1)
@@ -545,13 +545,13 @@ dep.cif<-function(cif,data,cause=NULL,model="OR",cif2=NULL,times=NULL,
 ##' }
 ##' @export
 ##' @keywords survival
-cor.cif<-function(cif,data,cause=NULL,times=NULL,
+cor_cif<-function(cif,data,cause=NULL,times=NULL,
                   cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
                   clusters=NULL, theta=NULL,theta.des=NULL,step=1,sym=0,weights=NULL, 
 		  par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		  score.method="nlminb",same.cens=FALSE,censoring.weights=NULL,silent=1,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="COR",times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="COR",times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des,par.func=par.func,dpar.func=dpar.func,
 		 dimpar=dimpar,
@@ -562,13 +562,13 @@ cor.cif<-function(cif,data,cause=NULL,times=NULL,
 } ## }}}
 
 ##' @export
-rr.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
+rr_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
                  clusters=NULL, theta=NULL,theta.des=NULL, step=1,sym=0,weights=NULL,
                  same.cens=FALSE,censoring.weights=NULL,silent=1,par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		 score.method="nlminb",entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="RR",cif2=cif2,times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="RR",cif2=cif2,times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des, step=step,sym=sym,weights=weights,
                  same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,
@@ -578,13 +578,13 @@ rr.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
   fit
 } ## }}}
 ##' @export
-or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
+or_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
                  clusters=NULL, theta=NULL,theta.des=NULL, step=1,sym=0, weights=NULL,
                  same.cens=FALSE,censoring.weights=NULL,silent=1,par.func=NULL,dpar.func=NULL,dimpar=NULL,
 		 score.method="nlminb",entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,...)
 { ## {{{
-  fit <- dep.cif(cif=cif,data=data,cause=cause,model="OR",cif2=cif2,times=times,
+  fit <- dep_cif(cif=cif,data=data,cause=cause,model="OR",cif2=cif2,times=times,
                  cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
                  clusters=clusters,theta=theta,theta.des=theta.des, step=step,sym=sym,weights=weights,
                  same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,
@@ -646,7 +646,7 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' Multivariate Competing Risks Data, Scheike and Sun (2012), work in progress.
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  d <- simnordic.random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
+##'  d <- sim_nordic_random(5000,delayed=TRUE,cordz=0.5,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  add1 <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'  times=times,cause=1,max.clust=NULL)
@@ -654,10 +654,10 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##'  ### making group indidcator 
 ##'  mm <- model.matrix(~-1+factor(zyg),d)
 ##' 
-##'  out1<-random.cif(add1,data=d,cause1=1,cause2=1,theta=1,same.cens=TRUE)
+##'  out1<-random_cif(add1,data=d,cause1=1,cause2=1,theta=1,same.cens=TRUE)
 ##'  summary(out1)
 ##' 
-##'  out2<-random.cif(add1,data=d,cause1=1,cause2=1,theta=1,
+##'  out2<-random_cif(add1,data=d,cause1=1,cause2=1,theta=1,
 ##' 		   theta.des=mm,same.cens=TRUE)
 ##'  summary(out2)
 ##' 
@@ -667,27 +667,33 @@ or.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 ##' 
 ##'  add2 <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
 ##'                   times=times,cause=2,max.clust=NULL)
-##'  out3 <- random.cif(add1,data=d,cause1=1,cause2=2,cif2=add2,sym=1,same.cens=TRUE)
+##'  out3 <- random_cif(add1,data=d,cause1=1,cause2=2,cif2=add2,sym=1,same.cens=TRUE)
 ##'  summary(out3) ## negative dependence
 ##' 
-##'  out4 <- random.cif(add1,data=d,cause1=1,cause2=2,cif2=add2,theta.des=mm,sym=1,same.cens=TRUE)
+##'  out4 <- random_cif(add1,data=d,cause1=1,cause2=2,cif2=add2,theta.des=mm,sym=1,same.cens=TRUE)
 ##'  summary(out4) ## negative dependence
 ##' }
 ##' @keywords survival
 ##' @author Thomas Scheike
-random.cif<-function(cif,data,cause=NULL,cif2=NULL,
+random_cif<-function(cif,data,cause=NULL,cif2=NULL,
                      cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
                      clusters=NULL,theta=NULL,theta.des=NULL,sym=1,
                      step=1,same.cens=FALSE,var.link=0,score.method="nr",
                      entry=NULL,trunkp=1,...)
 { ## {{{
-  fit <- dep.cif(cif,data=data,cause=cause,model="RANCIF",cif2=cif2,sym=sym,
+  fit <- dep_cif(cif,data=data,cause=cause,model="RANCIF",cif2=cif2,sym=sym,
      cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
      clusters=clusters,theta=theta,theta.des=theta.des,step=step,same.cens=same.cens,
      var.link=var.link,score.method=score.method,entry=entry,trunkp=trunkp,...)
   fit$call <- match.call()
   fit
 } ## }}}
+
+##' @export
+random.cif<-function(cif,...) random_cif(cif,...)
+
+##' @export
+Grandom.cif<-function(cif,...) Grandom_cif(cif,...)
 
 ##'Additive Random effects model for competing risks data for polygenetic modelling
 ##' 
@@ -775,7 +781,7 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##' Estimating heritability for cause specific hazards based on twin data
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
-##'  d <- simnordic.random(5000,delayed=TRUE,
+##'  d <- sim_nordic_random(5000,delayed=TRUE,
 ##'        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
 ##'  times <- seq(50,90,by=10)
 ##'  addm <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
@@ -784,13 +790,13 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##'  ### making group indidcator 
 ##'  mm <- model.matrix(~-1+factor(zyg),d)
 ##' 
-##'  out1m<-random.cif(addm,data=d,cause1=1,cause2=1,theta=1,
+##'  out1m<-random_cif(addm,data=d,cause1=1,cause2=1,theta=1,
 ##' 		   theta.des=mm,same.cens=TRUE)
 ##'  summary(out1m)
 ##'  
 ##'  ## this model can also be formulated as a random effects model 
 ##'  ## but with different parameters
-##'  out2m<-Grandom.cif(addm,data=d,cause1=1,cause2=1,
+##'  out2m<-Grandom_cif(addm,data=d,cause1=1,cause2=1,
 ##' 		    theta=c(0.5,1),step=1.0,
 ##' 		    random.design=mm,same.cens=TRUE)
 ##'  summary(out2m)
@@ -810,7 +816,7 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##'  ### design making parameters half the variance for dizygotic components
 ##'  pardes <- rbind(c(1,0), c(0.5,0),c(0.5,0), c(0.5,0), c(0,1))
 ##' 
-##'  outacem <-Grandom.cif(addm,data=d,cause1=1,cause2=1,
+##'  outacem <-Grandom_cif(addm,data=d,cause1=1,cause2=1,
 ##' 		same.cens=TRUE,theta=c(0.35,0.15),
 ##'             step=1.0,theta.des=pardes,random.design=des.rv)
 ##'  summary(outacem)
@@ -819,13 +825,13 @@ random.cif<-function(cif,data,cause=NULL,cif2=NULL,
 ##' @keywords survival
 ##' @author Thomas Scheike
 ##' @export
-Grandom.cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
+Grandom_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
 cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
 clusters=NULL, theta=NULL,theta.des=NULL, weights=NULL, step=1,sym=0,
 same.cens=FALSE,censoring.weights=NULL,silent=1,var.link=0,score.method="nr",
 entry=NULL,estimator=1,trunkp=1,admin.cens=NULL,random.design=NULL,...)
 { ## {{{
-fit <- dep.cif(cif,data=data,cause=cause,model="ARANCIF",cif2=cif2,times=times,
+fit <- dep_cif(cif,data=data,cause=cause,model="ARANCIF",cif2=cif2,times=times,
          cause1=cause1,cause2=cause2,cens.code=cens.code,cens.model=cens.model,Nit=Nit,detail=detail,
          clusters=clusters,theta=theta,theta.des=theta.des,step=step,sym=sym,weights=weights,
          same.cens=same.cens,censoring.weights=censoring.weights,silent=silent,var.link=var.link,
@@ -862,12 +868,12 @@ print.summary.cor <- function(x,digits=3,...)
 } ## }}}
 
 ##' Computes concordance and casewise concordance for dependence models for competing risks 
-##' models of the type cor.cif, rr.cif or or.cif for the given cumulative incidences and the different dependence
+##' models of the type cor_cif, rr_cif or or_cif for the given cumulative incidences and the different dependence
 ##' measures in the object.
 ##'
 ##'
 ##' @title Summary for dependence models for competing risks
-##' @param object object from cor.cif rr.cif or or.cif for dependence between competing risks data for two causes.
+##' @param object object from cor_cif rr_cif or or_cif for dependence between competing risks data for two causes.
 ##' @param marg.cif a number that gives the cumulative incidence in one time point for which concordance and 
 ##' casewise concordance are computed.
 ##' @param marg.cif2 the cumulative incidence for cause 2 for concordance and 
@@ -898,7 +904,7 @@ print.summary.cor <- function(x,digits=3,...)
 ##' ## add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),
 ##' ##                           data=multcif,n.sim=0,times=times,cause=1)
 ##' ###
-##' ## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
+##' ## out1<- cor_cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
 ##' ## summary(out1)
 ##' ## 
 ##' ## pad <- predict(add,X=1,se=0,uniform=0)
@@ -906,7 +912,7 @@ print.summary.cor <- function(x,digits=3,...)
 ##' @method summary cor
 ##' @export
 summary.cor <- function(object,marg.cif=NULL,marg.cif2=NULL,digits=3,...) { ## {{{
-  if (!(attr(object,"class") %in% c("cor","randomcif"))) stop("Must be a cor.cif or randomcif object")
+  if (!(attr(object,"class") %in% c("cor","randomcif"))) stop("Must be a cor_cif or randomcif object")
   if (sum(abs(object$score))>0.001) warning("WARNING: check score for convergence\n")
 
   coefs <- coef(object,...) 
@@ -1042,7 +1048,7 @@ concordance.cor <- function(object,...) {
 ##' that is the probability that twin "2" has the event given that twins "1" has. 
 ##'
 ##' @title Concordance Computes concordance and casewise concordance
-##' @param object Output from the cor.cif, rr.cif or or.cif function
+##' @param object Output from the cor_cif, rr_cif or or_cif function
 ##' @param cif1 Marginal cumulative incidence
 ##' @param cif2 Marginal cumulative incidence of other cause (cause2) if  it is different from cause1
 ##' @param messages  To print messages
@@ -1065,7 +1071,7 @@ concordanceCor <- function(object,cif1,cif2=NULL,messages=TRUE,model=NULL,coefs=
 { ## {{{
 
   if (is.null(model)) { 
-    if (!inherits(object, "cor")) stop("Must be a rr.cif, cor.cif or or.cif object")
+    if (!inherits(object, "cor")) stop("Must be a rr_cif, cor_cif or or_cif object")
     model <- attr(object,"Type")
   } 
   if (is.null(coefs)) coefs <- coef(object)
@@ -1141,7 +1147,7 @@ concordanceCor <- function(object,cif1,cif2=NULL,messages=TRUE,model=NULL,coefs=
 ##' @param cif2 Cumulative incidence of second argument.
 ##' @param object or.cif object with dependence parameters.
 ##' @author Thomas Scheike
-plack.cif <- function(cif1,cif2,object) 
+plack_cif <- function(cif1,cif2,object) 
 { ## {{{
   coefs <- coef(object)
   theta <- exp(object$theta); 
@@ -1295,7 +1301,7 @@ print.randomcifrv<- function (x , digits = 3, ...)
 
 ## summary.cor<-function(object,digits=3,marg.cif=NULL,...)
 ## { ## {{{
-##   if (!inherits(object, "cor")) stop("Must be a cor.cif  object")
+##   if (!inherits(object, "cor")) stop("Must be a cor_cif  object")
 ##   if (sum(abs(object$score))>0.001) warning("WARNING: check score for convergence\n")
 ##   coefs <- coef.cor(object,...);
 

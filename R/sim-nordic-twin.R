@@ -5,8 +5,7 @@ baset <- lam0*pnorm((t-.70)/0.15)
 return( 1 - exp(-baset*exp(c(x * beta)))) 
 } ## }}}
 
-##' @export 
-corsim.prostate <- function(n,theta=1,thetaslope=0,censS=c(0,1),pcens=0.5,test=0,mt=1,same.cens=TRUE,country=TRUE,
+corsim_prostate <- function(n,theta=1,thetaslope=0,censS=c(0,1),pcens=0.5,test=0,mt=1,same.cens=TRUE,country=TRUE,
    delayed=FALSE,ptrunc=0.5,lam0=0.13,truncS=c(0,1)) 
 { ## {{{
 ###n <- 10; theta <- 1; thetaslope <- 0; mt <- 1
@@ -139,7 +138,7 @@ return(data)
 } ## }}}
 
 ##' @export 
-simnordic <- function(n,cordz=2,cormz=3,
+sim_nordictwin <- function(n,cordz=2,cormz=3,
 		      censSmz=c(0,1),censSdz=c(0,1),
 		      pcensmz=0.5,pcensdz=0.5,
 		      ptrunc=0.5,
@@ -147,9 +146,9 @@ simnordic <- function(n,cordz=2,cormz=3,
 		      country=TRUE,same.cens=TRUE,
                       delayed=FALSE,only.delayed=FALSE,lam0=0.13) 
 { ## {{{
-outdz <- corsim.prostate(n,theta=cordz,censS=censSdz,pcens=pcensdz,mt=1,same.cens=same.cens,test=0,country=country,
+outdz <- corsim_prostate(n,theta=cordz,censS=censSdz,pcens=pcensdz,mt=1,same.cens=same.cens,test=0,country=country,
 	 delayed=delayed,ptrunc=ptrunc,lam0=lam0,truncS=truncSdz) 
-outmz <- corsim.prostate(n,theta=cormz,censS=censSmz,pcens=pcensmz,mt=1,same.cens=same.cens,test=0,country=country,
+outmz <- corsim_prostate(n,theta=cormz,censS=censSmz,pcens=pcensmz,mt=1,same.cens=same.cens,test=0,country=country,
 	 delayed=delayed,ptrunc=ptrunc,lam0=lam0,truncS=truncSmz)
 outdz$zyg <- "DZ" 
 outmz$zyg <-  "MZ"
@@ -187,7 +186,7 @@ F1<-function(t,lam0=0.5,beta=0.3,x=0) # additive version
 F2<-function(t,lam0=0.5,beta=0.3,x=0) # additive version
 { return( 1 - exp(-t*lam0-t*x*beta)) }
 
-sim.F1F2<-function(n,theta=1,lam0=0.1,beta=0.3,lam02=0.1,beta2=0,crate=3,cstart=0) 
+sim_F1F2<-function(n,theta=1,lam0=0.1,beta=0.3,lam02=0.1,beta2=0,crate=3,cstart=0) 
 { ## {{{
 	x<-rbinom(n,1,0.5); 
 	tt<-seq(0,3,length=100)
@@ -230,7 +229,7 @@ sim.F1F2<-function(n,theta=1,lam0=0.1,beta=0.3,lam02=0.1,beta2=0,crate=3,cstart=
 	return(data)
 } ## }}}
 
-sim.F1<-function(n,lam0=0.5,beta=0.3,Cint=c(0,1)) 
+sim_F1<-function(n,lam0=0.5,beta=0.3,Cint=c(0,1)) 
 { ## {{{
 	x<-runif(n);
 	tt<-seq(0,1,length=100)
@@ -252,7 +251,7 @@ sim.F1<-function(n,lam0=0.5,beta=0.3,Cint=c(0,1))
 	return(data)
 } ## }}}
 
-sim.F1clust<-function(n,theta=1,lam0=0.5,Clims=c(0,1),
+sim_F1clust<-function(n,theta=1,lam0=0.5,Clims=c(0,1),
 		      beta=-0.5,same.cens=FALSE,fix.cens=FALSE)
 { ## {{{ 
 	k<-n/2; tt<-seq(0,1,length=100)
@@ -291,7 +290,7 @@ sim.F1clust<-function(n,theta=1,lam0=0.5,Clims=c(0,1),
 ## }}}
 
 ##' @export 
-corsim.prostate.random <- function(n,theta=1,censS=c(0,1),
+corsim_prostate_random <- function(n,theta=1,censS=c(0,1),
    pcens=0.5,test=0,mt=1,same.cens=TRUE,country=TRUE,
    delayed=FALSE,ptrunc=0.5,lam0=0.13,truncS=c(0.5,1)) 
 { ## {{{
@@ -356,16 +355,16 @@ return(data)
 } ## }}}
 
 ##' @export 
-simnordic.random <- function(n,cordz=2,cormz=3,
+sim_nordic_random <- function(n,cordz=2,cormz=3,
      censSmz=c(0,1),censSdz=c(0,1),pcensmz=0.5,pcensdz=0.5,
      ptrunc=0.5,truncSmz=c(0.5,1),truncSdz=c(0.5,1),
      country=TRUE,same.cens=TRUE,
      delayed=FALSE,only.delayed=FALSE,lam0=0.13) 
 { ## {{{
-outdz <- corsim.prostate.random(n,theta=cordz,censS=censSdz,
+outdz <- corsim_prostate_random(n,theta=cordz,censS=censSdz,
  pcens=pcensdz,mt=1,same.cens=same.cens,test=0,country=country,
  delayed=delayed,ptrunc=ptrunc,lam0=lam0,truncS=truncSdz) 
-outmz <- corsim.prostate.random(n,theta=cormz,censS=censSmz,
+outmz <- corsim_prostate_random(n,theta=cormz,censS=censSmz,
  pcens=pcensmz,mt=1,same.cens=same.cens,test=0,country=country,
  delayed=delayed,ptrunc=ptrunc,lam0=lam0,truncS=truncSmz)
 outdz$zyg <- "DZ" 

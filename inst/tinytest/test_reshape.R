@@ -56,7 +56,7 @@ test_fastrehape_different_data_types()
 ## ud <- fast.reshape(data.frame(x),"cluster")
 ## ud
 ## ###
-## out=cluster.index(cluster)
+## out=cluster_index(cluster)
 ## out
 ## ###
 ## ud <- faster.reshape(x,cluster)

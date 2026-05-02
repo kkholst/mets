@@ -1,4 +1,4 @@
-#' event.split (SurvSplit).
+#' event_split (SurvSplit).
 #' 
 #' contstructs start stop formulation of event time data after a variable in
 #' the data.set. Similar to SurvSplit of the survival package but can also
@@ -23,18 +23,18 @@
 #' 		status=rbinom(5,1,0.5),x=1:5)
 #' d
 #' 
-#' d0 <- event.split(d,cuts="event",name.start=0)
+#' d0 <- event_split(d,cuts="event",name.start=0)
 #' d0
 #' 
-#' dd <- event.split(d,cuts="event")
+#' dd <- event_split(d,cuts="event")
 #' dd
-#' ddd <- event.split(dd,cuts=3.5)
+#' ddd <- event_split(dd,cuts=3.5)
 #' ddd
-#' event.split(ddd,cuts=5.5)
+#' event_split(ddd,cuts=5.5)
 #' 
 #' ### successive cutting for many values 
 #' dd <- d
-#' for  (cuts in seq(2,3,by=0.3)) dd <- event.split(dd,cuts=cuts)
+#' for  (cuts in seq(2,3,by=0.3)) dd <- event_split(dd,cuts=cuts)
 #' dd
 #' 
 #' ###########################################################################
@@ -46,14 +46,14 @@
 #' d$event2[4:5] <- NA 
 #' d
 #' 
-#' d0 <- event.split(d,cuts="event1",name.start="start",time="time",status="status")
+#' d0 <- event_split(d,cuts="event1",name.start="start",time="time",status="status")
 #' d0
 #' ###
-#' d00 <- event.split(d0,cuts="event2",name.start="start",time="time",status="status")
+#' d00 <- event_split(d0,cuts="event2",name.start="start",time="time",status="status")
 #' d00
 #' 
 #' @export
-event.split <- function(data,
+event_split <- function(data,
 		time="time",status="status",cuts="cuts",name.id="id",
 		name.start="start", cens.code=0,order.id=TRUE, time.group=FALSE)
 { ## {{{
@@ -115,8 +115,6 @@ event.split <- function(data,
     return(data)
 }  ## }}}
 
-
-
 ##' Event split with two time-scales, time and gaptime 
 ##'
 ##' Cuts time for two time-scales, as event.split 
@@ -139,14 +137,14 @@ event.split <- function(data,
 ##' rr$gaptime <-  rr$time-rr$start
 ##' rr$gapstart <- 0
 ##'
-##' rr1 <- EventSplit2(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
-##' rr2 <- EventSplit2(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
+##' rr1 <- event_split2(rr,cuts=600,cuttime="time",   gaptime="gaptime",gaptime.entry="gapstart")
+##' rr2 <- event_split2(rr1,cuts=100,cuttime="gaptime",gaptime="gaptime",gaptime.entry="gapstart")
 ##'
 ##' dlist(rr1,start-time+status+gapstart+gaptime~id)
 ##' dlist(rr2,start-time+status+gapstart+gaptime~id)
 ##'
 ##' @export 
-EventSplit2 <- function(data,
+event_split2 <- function(data,
 		time="time",status="status",entry="start",cuts="cuts",name.id="id",
 		gaptime=NULL,gaptime.entry=NULL,cuttime=c("time","gaptime"),
 		cens.code=0,order.id=TRUE)

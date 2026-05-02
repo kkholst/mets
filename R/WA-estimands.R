@@ -134,7 +134,7 @@ ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=f,logg=1)
 RAW <- list(iid=cciid,coef=cc,time=time,rmst=dd,meanN=ddN,ratio.means=ratio.means,ratio.means.log=ratio.means.log)
 ## }}}
 
-data <- count.history(data,id="id__",lag=TRUE,types=cause,status=vars[3],marks=marks,multitype=TRUE)
+data <- count_history(data,id="id__",lag=TRUE,types=cause,status=vars[3],marks=marks,multitype=TRUE)
 
 nameCount <- paste("Count",cause[1],sep="")
 formulaCount <- update.formula(formula,.~+1)
@@ -335,7 +335,7 @@ WA_reg <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,marks
 cid <- countID(data,"id__",sorted=TRUE)
 rrR <- subset(data,cid$reverseCountid==1)
 
-data <- count.history(data,id="id__",lag=TRUE,types=cause,status="status__",marks=marks,multitype=TRUE)
+data <- count_history(data,id="id__",lag=TRUE,types=cause,status="status__",marks=marks,multitype=TRUE)
 nameCount <- paste("Count",cause[1],sep="")
 
 formulaCount <- update.formula(formula,.~+1)
@@ -362,7 +362,6 @@ outae <- binreg(formula,rrR,cause=death.code,time=time,cens.code=cens.code,Ydire
 
 return(outae)
 } ## }}}
-
 
 ##' @export
 print.WA  <- function(x,type="log",...) {# {{{
@@ -517,7 +516,6 @@ if (is.null(time)) stop("must give time of response \n")
    res <- list(MGCiid=MGCiid,gammat=gammatt,augment=augment.times,
 	       id=cr2$name.id,n=nid)
 } ## }}}
-
 
 evalTerminal <- function(formula,data=data,death.code=2,time=NULL,marks=NULL,mark.codes=NULL)
 {# {{{

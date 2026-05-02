@@ -4,7 +4,7 @@ propOdds <- function(time,status,X,
   theta <- 1
   dix <- which(status==1)
   fB <- fast.approx(time[dix],time)
-  cc <- cluster.index(id)
+  cc <- cluster_index(id)
   ncluster <- length(cc$clusters)
   U <- function(beta,indiv=FALSE) {
       B <- .Call("pBhat",as.integer(status),X,beta,as.integer(cc$clusters),

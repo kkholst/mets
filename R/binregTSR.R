@@ -799,13 +799,13 @@ print.summary.binregTSR  <- function(x,...) {# {{{
    rd <- cbind(rr13,rr14)
    rd2 <- cbind(rr23,rr24)
    ###
-   iddata <- simMultistateII(base12,base1d,base2d,rr=rr,rd=rd,rd2=rd2,
+   iddata <- sim_multistateII(base12,base1d,base2d,rr=rr,rd=rd,rd2=rd2,
 			     early2=1800,gamma23=gamma23,gamma24=gamma24,...)
    covX0 <- cbind(A0[iddata$id],X0[iddata$id,])
    colnames(covX0) <- c("A0","X01","X02")
    covX1 <- cbind(A1[iddata$id],X1[iddata$id,])
 
-   iddata  <-  count.history(iddata,types=2)
+   iddata  <-  count_history(iddata,types=2)
    ## only covariates after having gone to stage 2
    covX1 <- covX1*c(iddata$Count2)
    colnames(covX1) <- c("A1","X11","X12")
@@ -936,11 +936,11 @@ gsim <- function(n,null=1,cens=NULL,ce=2,covs=1,
 		     TR=(A0==1)*TR1+(A0==2)*TR2,Resp=(A0==1)*R1+(A0==2)*R2)
   dfactor(data) <- A0.f~A0
   dfactor(data) <- A1.f~A1
-  datat <- event.split(data,cuts="TR",name.start="entry")
+  datat <- event_split(data,cuts="TR",name.start="entry")
 ###  datat <- EventSplit(data,cuts="TR",entry="entry")
 
   datat <- dtransform(datat,status=2,time==TR)
-  datat  <-  count.history(datat,types=2)
+  datat  <-  count_history(datat,types=2)
   datat  <-  dtransform(datat,A1=0,Count2==0)
   datat$response <- (datat$Count2==1)*1
   datat$A11t <- (datat$A1==1)*1

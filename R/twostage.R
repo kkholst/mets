@@ -109,33 +109,33 @@
 ##'
 ##' ### Plackett model
 ##' mph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
-##' fitp <- survival.twostage(mph,data=diabetes,theta=3.0,Nit=40,
+##' fitp <- survival_twostage(mph,data=diabetes,theta=3.0,Nit=40,
 ##'                clusters=diabetes$id,var.link=1,model="plackett")
 ##' summary(fitp)
 ##'
 ##' ### Clayton-Oakes
-##' fitco2 <- survival.twostage(mph,data=diabetes,theta=0.0,detail=0,
+##' fitco2 <- survival_twostage(mph,data=diabetes,theta=0.0,detail=0,
 ##'                  clusters=diabetes$id,var.link=1,model="clayton.oakes")
 ##' summary(fitco2)
-##' fitco3 <- survival.twostage(margph,data=diabetes,theta=1.0,detail=0,
+##' fitco3 <- survival_twostage(margph,data=diabetes,theta=1.0,detail=0,
 ##'                  clusters=diabetes$id,var.link=0,model="clayton.oakes")
 ##' summary(fitco3)
 ##'
 ##' ### without covariates but with stratafied
 ##' marg <- phreg(Surv(time,status)~+strata(treat)+cluster(id),data=diabetes)
-##' fitpa <- survival.twostage(marg,data=diabetes,theta=1.0,
+##' fitpa <- survival_twostage(marg,data=diabetes,theta=1.0,
 ##'                 clusters=diabetes$id,model="clayton.oakes")
 ##' summary(fitpa)
 ##'
-##' fitcoa <- survival.twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
+##' fitcoa <- survival_twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
 ##'                  model="clayton.oakes")
 ##' summary(fitcoa)
 ##'
 ##' ### Piecewise constant cross hazards ratio modelling
 ##' ########################################################
 ##'
-##' d <- subset(simClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
-##' udp <- piecewise.twostage(c(0,0.5,2),data=d,method="optimize",
+##' d <- subset(sim_ClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
+##' udp <- piecewise_twostage(c(0,0.5,2),data=d,method="optimize",
 ##'                           id="cluster",timevar="time",
 ##'                           status="status",model="clayton.oakes",silent=0)
 ##' summary(udp)
@@ -144,13 +144,13 @@
 ##' ### Same model using the strata option, a bit slower
 ##' ########################################################
 ##' ## makes the survival pieces for different areas in the plane
-##' ##ud1=surv.boxarea(c(0,0),c(0.5,0.5),data=d,id="cluster",timevar="time",status="status")
-##' ##ud2=surv.boxarea(c(0,0.5),c(0.5,2),data=d,id="cluster",timevar="time",status="status")
-##' ##ud3=surv.boxarea(c(0.5,0),c(2,0.5),data=d,id="cluster",timevar="time",status="status")
-##' ##ud4=surv.boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")
+##' ##ud1=surv_boxarea(c(0,0),c(0.5,0.5),data=d,id="cluster",timevar="time",status="status")
+##' ##ud2=surv_boxarea(c(0,0.5),c(0.5,2),data=d,id="cluster",timevar="time",status="status")
+##' ##ud3=surv_boxarea(c(0.5,0),c(2,0.5),data=d,id="cluster",timevar="time",status="status")
+##' ##ud4=surv_boxarea(c(0.5,0.5),c(2,2),data=d,id="cluster",timevar="time",status="status")
 ##'
 ##' ## everything done in one call
-##' ud <- piecewise.data(c(0,0.5,2),data=d,timevar="time",status="status",id="cluster")
+##' ud <- piecewise_data(c(0,0.5,2),data=d,timevar="time",status="status",id="cluster")
 ##' ud$strata <- factor(ud$strata);
 ##' ud$intstrata <- factor(ud$intstrata)
 ##'
@@ -161,7 +161,7 @@
 ##' marg2 <- timereg::aalen(Surv(boxtime,status)~-1+factor(num):factor(intstrata),
 ##'                data=ud,n.sim=0,robust=0)
 ##' tdes <- model.matrix(~-1+factor(strata),data=ud)
-##' fitp2 <- survival.twostage(marg2,data=ud,se.clusters=ud$cluster,clusters=ud$idstrata,
+##' fitp2 <- survival_twostage(marg2,data=ud,se.clusters=ud$cluster,clusters=ud$idstrata,
 ##'                 model="clayton.oakes",theta.des=tdes,step=0.5)
 ##' summary(fitp2)
 ##'
@@ -169,12 +169,12 @@
 ##' ud$stratas <- ud$strata;
 ##' ud$stratas[ud$strata=="0.5-2,0-0.5"] <- "0-0.5,0.5-2"
 ##' tdes2 <- model.matrix(~-1+factor(stratas),data=ud)
-##' fitp3 <- survival.twostage(marg2,data=ud,clusters=ud$idstrata,se.cluster=ud$cluster,
+##' fitp3 <- survival_twostage(marg2,data=ud,clusters=ud$idstrata,se.cluster=ud$cluster,
 ##'                 model="clayton.oakes",theta.des=tdes2,step=0.5)
 ##' summary(fitp3)
 ##'
 ##' ### same model using strata option, a bit slower
-##' fitp4 <- survival.twostage(marg2,data=ud,clusters=ud$cluster,se.cluster=ud$cluster,
+##' fitp4 <- survival_twostage(marg2,data=ud,clusters=ud$cluster,se.cluster=ud$cluster,
 ##'                 model="clayton.oakes",theta.des=tdes2,step=0.5,strata=ud$strata)
 ##' summary(fitp4)
 ##' }
@@ -182,14 +182,14 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' ### structured random effects model additive gamma ACE
 ##' ### simulate structured two-stage additive gamma ACE model
-##' data <- simClaytonOakes.twin.ace(4000,2,1,0,3)
-##' out <- twin.polygen.design(data,id="cluster")
+##' data <- sim_ClaytonOakes_twin_ace(4000,2,1,0,3)
+##' out <- twin_polygen_design(data,id="cluster")
 ##' pardes <- out$pardes
 ##' pardes
 ##' des.rv <- out$des.rv
 ##' head(des.rv)
 ##' aa <- phreg(Surv(time,status)~x+cluster(cluster),data=data,robust=0)
-##' ts <- survival.twostage(aa,data=data,clusters=data$cluster,detail=0,
+##' ts <- survival_twostage(aa,data=data,clusters=data$cluster,detail=0,
 ##' 	       theta=c(2,1),var.link=0,step=0.5,
 ##' 	       random.design=des.rv,theta.des=pardes)
 ##' summary(ts)
@@ -229,9 +229,9 @@
 ##' @param no.opt for not optimizng
 ##' @param ... Additional arguments to maximizer NR of lava.
 ##' and ascertained sampling
-##' @aliases survival.twostage twostage.aalen twostage.cox.aalen twostage.coxph twostage.phreg randomDes readmargsurv 
-##' @export survival.twostage
-survival.twostage <- function(margsurv,data=NULL,
+##' @aliases survival_twostage twostage_aalen twostage_cox.aalen twostage_coxph twostage_phreg randomDes readmargsurv 
+##' @export survival_twostage
+survival_twostage <- function(margsurv,data=NULL,
     method="nr",detail=0,clusters=NULL,
     silent=1,weights=NULL,theta=NULL,theta.des=NULL,
     var.link=1,baseline.iid=1,model="clayton.oakes",
@@ -273,7 +273,7 @@ if (is.null(data)) stop("Must give data \n");
 
   # cluster set up
   cluster.call <- clusters
-  out.clust <- cluster.index(clusters);
+  out.clust <- cluster_index(clusters);
   clusters <- out.clust$clusters
   maxclust <- out.clust$maxclust
   antclust <- out.clust$cluster.size
@@ -562,6 +562,9 @@ if (dep.model==3 & pair.structure==0) {
 
 } # }}}
 
+##' @export 
+survival.twostage <- function(x,...) survival_twostage(x,...)
+
 ##' @export
 randomDes <- function(dep.model,random.design,theta.des,theta,antpers,ags,pairs,var.link,clusterindex,dim.theta)
 { ## {{{ 
@@ -840,7 +843,7 @@ theta=NULL,theta.des=NULL,var.link=0,method="NR",no.opt=FALSE,weights=NULL,se.cl
   if (!is.null(margsurv$coef)) RR <- exp(xx$X %*% margsurv$coef) else RR  <-  rep(1,nn)
   H <- c(cumhazD * RR)
 
-  cc <- cluster.index(xx$id)
+  cc <- cluster_index(xx$id)
   firstid <- cc$firstclustid+1
   if (max(cc$cluster.size)==1) stop("No clusters !, maxclust size=1\n");
 
@@ -1273,8 +1276,8 @@ out=list(St1t2=St1t2,S1=S1,S2=S2,times=times,times2=times2,theta=theta)
 return(out)
 } #
 
-##' @export ascertained.pairs
-ascertained.pairs <-function (pairs,data,cr.models,bin=FALSE)
+##' @export ascertained_pairs
+ascertained_pairs <-function (pairs,data,cr.models,bin=FALSE)
 {
       timestatus <- all.vars(cr.models)
       ### let first event by second column and only
@@ -1315,8 +1318,8 @@ alpha2kendall <- function(theta,link=0) {  #
    return(1/(1+2/theta))
 } #
 
-##' @export piecewise.twostage
-piecewise.twostage <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
+##' @export piecewise_twostage
+piecewise_twostage <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
             method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
             control=list(),theta=NULL,theta.des=NULL,var.link=1,
 	    step=0.5,model="plackett",data.return=0)
@@ -1342,7 +1345,7 @@ for (i2 in 2:nc2)
 {
 k <-(i1-2)*(nc2-1)+(i2-1)
 if (silent<=0) cat(paste("Data-set ",k,"out of ",(nc1-1)*(nc2-1)),"\n");
-datalr <- surv.boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
+datalr <- surv_boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
 status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent)
 if (silent<=-1) print("back in piecewise.twostage");
 if (silent<=-1) print(summary(datalr));
@@ -1359,10 +1362,10 @@ f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+fact
 else f <- as.formula(with(attributes(datalr),paste("Surv(",time,",",status,")~-1+factor(",num,"):",covars)))
 marg1 <- timereg::aalen(f,data=datalr,n.sim=0,robust=0)
 
-fitlr<-  survival.twostage(marg1,data=datalr,clusters=datalr$tsid,
+fitlr<-  survival_twostage(marg1,data=datalr,clusters=datalr$tsid,
 ,model=model, Nit=Nit,detail=detail,silent=silent,weights=weights,
 theta=theta,theta.des=theta.des,var.link=var.link,step=step)
-###fitlr<-  survival.twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
+###fitlr<-  survival_twostageCC(marg1,data=datalr,clusters=datalr$tsid,model=model,method=method,
 ###Nit=Nit,detail=detail,silent=silent,weights=weights,
 ###baseline.iid=0,control=control,
 ###theta=theta,theta.des=theta.des,var.link=var.link,step=step)
@@ -1408,8 +1411,8 @@ attr(ud, "Type") <- model
 return(ud);
 } #}}}
 
-##' @export piecewise.data
-piecewise.data <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1)
+##' @export piecewise_data
+piecewise_data <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1)
 { #
 ud <- list()
 if (missing(cut2)) cut2 <- cut1;
@@ -1422,7 +1425,7 @@ for (i2 in 2:nc2)
 {
 k <-(i1-2)*(nc2-1)+(i2-1)
 if (silent<=0) cat(paste("Data-set ",k,"out of ",(nc1-1)*(nc2-1)),"\n");
- datalr <- surv.boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
+ datalr <- surv_boxarea(c(cut1[i1-1],cut2[i2-1]),c(cut1[i1],cut2[i2]),data,timevar=timevar,
 			status=status,id=id,covars=covars,covars.pairs=covars.pairs,num=num,silent=silent)
 if (silent<=-1) print(summary(datalr));
 if (silent<=-1) print(head(datalr));
@@ -1495,7 +1498,7 @@ coefmat <- function(est,stderr,digits=3,...) { #
 
 
 ##' @export
-simSurvFam <- function(n,beta=0.0,theta=1,lam0=0.5,lam1=1,lam2=1,ctime=10,...) { #
+sim_SurvFam <- function(n,beta=0.0,theta=1,lam0=0.5,lam1=1,lam2=1,ctime=10,...) { #
 xm <- rbinom(n,1,0.5); xf <- rbinom(n,1,0.5);
 xb1 <- rbinom(n,1,0.5); xb2 <- rbinom(n,1,0.5);
 ###
@@ -1520,7 +1523,7 @@ object.defined <- function(object)
 }
 
 ##' @export
-twin.polygen.design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { #
+twin_polygen_design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { #
   ### twin case
   id <- data[,id]
   tv <- diff(c(NA,id))
@@ -1588,8 +1591,12 @@ res <- list(pardes=pard,des.rv=des.rv)
 return(res)
 } #
 
+
 ##' @export
-ace.family.design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) {
+twin.polygen.design <-function (x,...) twin_polygen_design(x,...) 
+
+##' @export
+ace_family_design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) {
 #
   ### standard family case
 ###  nid <- table(data[,id])
@@ -1673,7 +1680,7 @@ return(res)
 } #
 
 ##' @export
-make.pairwise.design  <- function(pairs,kinship,type="ace")
+make_pairwise_design  <- function(pairs,kinship,type="ace")
 { #
 ### makes pairwise random effects design for shared and non-shared random effects
 ### kinship gives shared genes for each pair
@@ -1752,13 +1759,13 @@ EVaddGam <- function(theta,x1,x2,thetades,ags)
 } #
 
 ##' @export
-twostage.aalen <- function(object,...) survival.twostage(object,...)
+twostage.aalen <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.cox.aalen <- function(object,...) survival.twostage(object,...)
+twostage.cox.aalen <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.coxph <- function(object,...) survival.twostage(object,...)
+twostage.coxph <- function(object,...) survival_twostage(object,...)
 
 ##' @export
-twostage.phreg <- function(object,...) survival.twostage(object,...)
+twostage.phreg <- function(object,...) survival_twostage(object,...)

@@ -1112,7 +1112,6 @@ if (length(dots)==0) {
 ##' head(brs$riskDR.iid)
 ##' head(brs$riskG.iid)
 ##'
-##'
 ##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT 
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,

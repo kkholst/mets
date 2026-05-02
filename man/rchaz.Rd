@@ -2,11 +2,8 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{rchaz}
 \alias{rchaz}
-\alias{simrchaz}
-\alias{addCums}
-\alias{lin.approx}
-\alias{simCens}
-\alias{extendCums}
+\alias{sim_rchaz}
+\alias{lin_approx}
 \title{Simulation of Piecewise constant hazard model (Cox).}
 \usage{
 rchaz(

@@ -611,8 +611,8 @@ if (typeR!=typeC) {
       R0baseline.augment <-  c(XRs %*% t(gamR0Base))
       R0baseline.reduction<- apply(covBase*gamR0Base,1,sum)
       ## using augmented estimator of beta 
-      if (fit0$p>0) fitr0 <- robust.phreg(fitts,beta.iid=iid[[j]])
-      else fitr0 <- robust.phreg(fit0)
+      if (fit0$p>0) fitr0 <- robust_phreg(fitts,beta.iid=iid[[j]])
+      else fitr0 <- robust_phreg(fit0)
       cumhazR0 <- cumhaz <- fitts$cumhaz
       cumhazR0[,2] <- cumhaz[,2]-R0baseline.augment
       se.R0cumhaz <- se.cumhaz <- fitr0$robse.cumhaz
@@ -736,7 +736,7 @@ c <- exp(z0*betac)*rexp(n)*ce
 status <- (tt<c)
 time <- pmin(tt,c)
 data <- data.frame(time=time,status=status,X=x,X1=x1,Z0=z0,Z1=z1,TR=tr)
-data <- event.split(data,cuts="TR")
+data <- event_split(data,cuts="TR")
 ###data <- EventSplit(data,cuts="TR")
 data <- dtransform(data,status=2,TR==time)
 data <- dtransform(data,Z1=0,start<TR)

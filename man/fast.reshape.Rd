@@ -93,7 +93,7 @@ fast.reshape(xw2,c("y","x"),idname="id")
 ### varying=list(c("ym","yf","yb1","yb2")))
 
 ##### Family cluster example
-d <- mets:::simBinFam(3)
+d <- mets:::sim_BinFam(3)
 d
 fast.reshape(d,var="y")
 fast.reshape(d,varying=list(c("ym","yf","yb1","yb2")))

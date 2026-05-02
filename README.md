@@ -669,7 +669,7 @@ dtable(hfactioncpx12,~status)
 #>    0    1    2 
 #>  617 1391  124
 
-gl1 <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfactioncpx12,cause=1,death.code=2)
+gl1 <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),hfactioncpx12,cause=1,death.code=2)
 summary(gl1,times=1:5)
 #> [[1]]
 #>       new.time      mean         se   CI-2.5% CI-97.5% strata
@@ -863,7 +863,7 @@ hf <- hfactioncpx12
 hf$severity <- abs((5+rnorm(741)*2))[hf$id]
 
 ## marginal mean using formula  
-outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+outNZ <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id)
 			 +marks(severity),hf,cause=1,death.code=2)
 plot(outNZ,se=TRUE)
 summary(outNZ,times=3) 

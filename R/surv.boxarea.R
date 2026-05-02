@@ -77,7 +77,7 @@
 ###} ## }}}
 
 ##' @export
-surv.boxarea <- function(left.trunc,right.cens,data,timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1,boxtimevar="boxtime")
+surv_boxarea <- function(left.trunc,right.cens,data,timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1,boxtimevar="boxtime")
 { ## {{{
   if (is.null(data[,id])) stop("Wrong cluster variable")
   if (is.null(data[,timevar])) stop("Wrong time variable")

@@ -11,7 +11,7 @@
 ##'
 ##' Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
 ##'
-##' Can fit cumulative odds model as a special case of interval.logitsurv.discrete
+##' Can fit cumulative odds model as a special case of interval_logitsurv_discrete
 ##'
 ##' @param formula formula with outcome (see \code{coxph})
 ##' @param data data frame

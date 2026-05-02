@@ -80,13 +80,13 @@
 ##' X <- cbind(X,Xdes)
 ##' Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
 ##' desnames=paste("X",1:6,sep="")   # six X's related to 6 cycles 
-##' out <- haplo.surv.discrete(X=X,y="y",time.name="time",
+##' out <- haplo_surv_discrete(X=X,y="y",time.name="time",
 ##'          Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
 ##' names(out$coef) <- c(desnames,types)
 ##' out$coef
 ##' summary(out)
 ##' @export
-haplo.surv.discrete <- function (X=NULL,y="y",time.name="time",Haplos=NULL,id="id",desnames=NULL,designfunc=NULL,
+haplo_surv_discrete <- function (X=NULL,y="y",time.name="time",Haplos=NULL,id="id",desnames=NULL,designfunc=NULL,
     beta=NULL,no.opt=FALSE,method="NR",stderr=TRUE,designMatrix=NULL,response=NULL,idhap=NULL,design.only=FALSE,
     covnames=NULL,fam=binomial,weights=NULL,offsets=NULL,idhapweights=NULL,...)
 { ## {{{ 

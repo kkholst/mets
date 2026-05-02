@@ -76,14 +76,14 @@ Weights and adds them to a data.frame
 \examples{
 library("timereg")
 set.seed(1)
-d <- simnordic.random(5000,delayed=TRUE,ptrunc=0.7,
+d <- sim_nordic_random(5000,delayed=TRUE,ptrunc=0.7,
       cordz=0.5,cormz=2,lam0=0.3,country=FALSE)
 d$strata <- as.numeric(d$country)+(d$zyg=="MZ")*4
 times <- seq(60,100,by=10)
 ## c1 <- timereg::comp.risk(Event(time,cause)~1+cluster(id),data=d,cause=1,
 ## 	model="fg",times=times,max.clust=NULL,n.sim=0)
 ## mm=model.matrix(~-1+zyg,data=d)
-## out1<-random.cif(c1,data=d,cause1=1,cause2=1,same.cens=TRUE,theta.des=mm)
+## out1<-random_cif(c1,data=d,cause1=1,cause2=1,same.cens=TRUE,theta.des=mm)
 ## summary(out1)
 ## pc1 <- predict(c1,X=1,se=0)
 ## plot(pc1)
@@ -99,7 +99,7 @@ times <- seq(60,100,by=10)
 ## pcl <- predict(cl,X=1,se=0)
 ## lines(pcl$time,pcl$P1,col=2)
 ## mm=model.matrix(~-1+factor(zyg),data=dl)
-## out2<-random.cif(cl,data=dl,cause1=1,cause2=1,theta.des=mm,
+## out2<-random_cif(cl,data=dl,cause1=1,cause2=1,theta.des=mm,
 ##                  weights=dl$weights,censoring.weights=rep(1,nrow(dl)))
 ## summary(out2)
 }
