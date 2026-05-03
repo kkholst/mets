@@ -118,7 +118,7 @@
 ##'                  clusters=diabetes$id,var.link=1,model="clayton.oakes")
 ##' summary(fitco2)
 ##' fitco3 <- survival_twostage(margph,data=diabetes,theta=1.0,detail=0,
-##'                  clusters=diabetes$id,var.link=0,model="clayton.oakes")
+##'              clusters=diabetes$id,var.link=0,model="clayton.oakes")
 ##' summary(fitco3)
 ##'
 ##' ### without covariates but with stratafied
@@ -127,14 +127,11 @@
 ##'                 clusters=diabetes$id,model="clayton.oakes")
 ##' summary(fitpa)
 ##'
-##' fitcoa <- survival_twostage(marg,data=diabetes,theta=1.0,clusters=diabetes$id,
-##'                  model="clayton.oakes")
-##' summary(fitcoa)
 ##'
 ##' ### Piecewise constant cross hazards ratio modelling
 ##' ########################################################
 ##'
-##' d <- subset(sim_ClaytonOakes(2000,2,0.5,0,stoptime=2,left=0),!truncated)
+##' d <- subset(sim_ClaytonOakes(1000,2,0.5,0,stoptime=2,left=0),!truncated)
 ##' udp <- piecewise_twostage(c(0,0.5,2),data=d,method="optimize",
 ##'                           id="cluster",timevar="time",
 ##'                           status="status",model="clayton.oakes",silent=0)
@@ -182,7 +179,7 @@
 ##' \donttest{ ## Reduce Ex.Timings
 ##' ### structured random effects model additive gamma ACE
 ##' ### simulate structured two-stage additive gamma ACE model
-##' data <- sim_ClaytonOakes_twin_ace(4000,2,1,0,3)
+##' data <- sim_ClaytonOakes_twin_ace(2000,2,1,0,3)
 ##' out <- twin_polygen_design(data,id="cluster")
 ##' pardes <- out$pardes
 ##' pardes

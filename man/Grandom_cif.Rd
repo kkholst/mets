@@ -140,7 +140,7 @@ with the (k) underlying \eqn{\theta} parameters
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
- d <- sim_nordic_random(5000,delayed=TRUE,
+ d <- sim_nordic_random(1000,delayed=TRUE,
        cordz=1.0,cormz=2,lam0=0.3,country=TRUE)
  times <- seq(50,90,by=10)
  addm <- timereg::comp.risk(Event(time,cause)~-1+factor(country)+cluster(id),data=d,
