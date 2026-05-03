@@ -57,7 +57,6 @@ aaMss22 <- binreg(Event(time,status)~dnr+preauto+ttt24+cluster(id),data=dat,time
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),
                 data=wdata,time=50,weights=wdata$weights,cause=2)
 ## to compute standard errors , requires numDeriv
-library(numDeriv)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 ## not run bootstrap (to save time)

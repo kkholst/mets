@@ -42,7 +42,6 @@ ClaytonOakes(
 Clayton-Oakes frailty model
 }
 \examples{
-library(mets)
 set.seed(1)
 d <- subset(sim_ClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
 e <- ClaytonOakes(survival::Surv(lefttime,time,status)~x+cluster(~1,cluster),

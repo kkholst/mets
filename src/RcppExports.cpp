@@ -684,8 +684,6 @@ RcppExport SEXP CubeVec(SEXP, SEXP, SEXP);
 RcppExport SEXP cumsum2strataR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP cumsumidstratasumCovR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP cumsumidstratasumR(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP cumsumstrataDFGR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP cumsumstrataDFGRestrictR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP cumsumstrataPOR(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP cumsumstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP diffstrataR(SEXP, SEXP, SEXP);
@@ -766,8 +764,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"cumsum2strataR",           (DL_FUNC) &cumsum2strataR,            7},
     {"cumsumidstratasumCovR",    (DL_FUNC) &cumsumidstratasumCovR,     6},
     {"cumsumidstratasumR",       (DL_FUNC) &cumsumidstratasumR,        5},
-    {"cumsumstrataDFGR",         (DL_FUNC) &cumsumstrataDFGR,          6},
-    {"cumsumstrataDFGRestrictR", (DL_FUNC) &cumsumstrataDFGRestrictR,  7},
     {"cumsumstrataPOR",          (DL_FUNC) &cumsumstrataPOR,           6},
     {"cumsumstrataR",            (DL_FUNC) &cumsumstrataR,             3},
     {"diffstrataR",              (DL_FUNC) &diffstrataR,               3},
