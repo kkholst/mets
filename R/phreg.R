@@ -1547,7 +1547,10 @@ return(out)
 
 ##' @export
 print.predictphreg <- function(x,...) {# {{{
-   return(summary(x,...))
+   out <- summary(x,...)
+   cat("Predictions displayed, for rows:\n")
+   print(out$rows)
+   return(out)
 }# }}}
 
 ##' @export

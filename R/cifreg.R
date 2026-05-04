@@ -196,6 +196,8 @@ return(ret)
 ##' @export
 print.predictcifreg <- function(x,...) {# {{{
 ret <- summary.predictrecreg(x,...)
+cat("Predictions displayed, for rows:\n")
+print(ret$rows)
 return(ret)
 }# }}}
 

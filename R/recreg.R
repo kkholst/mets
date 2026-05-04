@@ -1040,7 +1040,10 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 
 ##' @export
 print.predictrecreg <- function(x,...) { ## }}}
-	summary(x,...)
+out <- summary(x,...)
+cat("Predictions displayed, for rows:\n")
+print(out$rows)
+return(out)
 } ## }}}
 
 
