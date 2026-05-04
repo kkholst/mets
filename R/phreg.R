@@ -840,7 +840,7 @@ vcov.phreg  <- function(object,...) {     ## {{{
 ###  attributes(res)$invhess <- attributes(ii)$invhess
   if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
 } else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
-  res <- as.matrix(object$var)
+  res <- object$var
   if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
 }
   res

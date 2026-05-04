@@ -647,8 +647,10 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		Uiid.augment.times  <- nameme(Uiid.augment.times,name.id)
 	}
 
-	out <- list(coef=beta.s,var=varmc,se.coef=diag(varmc)^.5,iid.naive=UUiid,
-   iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
+	if (p==0) {beta.s <- NULL; varmc <- NULL;se.coef <- NULL} else se.coef <- diag(varmc)^.5
+
+	out <- list(coef=beta.s,var=varmc,se.coef=se.coef,iid.naive=UUiid,
+                    iid=Uiid,ncluster=nid,ihessian=iH,hessian=opt$hessian,var1=var1,se1.coef=diag(var1)^.5,
 		    hessianttime=opt$hessianttime,
 		    ploglik=opt$ploglik,gradient=opt$gradient,
 		    cumhaz=cumhaz,se.cumhaz=se.cumhaz,MGciid=MGc,
