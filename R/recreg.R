@@ -200,6 +200,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 	name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 	orig.id <- id
 
+	exit.call <- exit
 	### censoring weights constructed
 	whereC <- which(status %in% cens.code)
 	time <- exit
@@ -659,7 +660,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 		    nstrata=nstrata,strata.name=strata.name,strata.level=strata.level,
 		    propodds=propodds,
 		    S0=opt$S0,E=opt$E,S2S0=opt$S2S0,time=opt$time,Ut=opt$U,
-		    jumps=jumps,exit=exit,
+		    jumps=jumps,exit=exit.call,
 		    p=p,S0s=val$S0s,
 		    no.opt=no.opt,##n=nrow(X),nevent=length(jumps),
 		    Pcens.model=Pcens.model,Gjumps=Gjumps,
