@@ -995,7 +995,6 @@ predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { 
 
 ##' @export
 summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,...) { ## {{{
-
 	if (is.null(times)) {
 		indexcol <- seq(ncol(object$surv)) 
 		times <- object$times
@@ -1034,7 +1033,7 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
 
 	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],se.pred=se.out[ids,indexcol],lower=lower[ids,indexcol],upper=upper[ids,indexcol],times=times,rows=ids)
-	else  out <- list(pred=out[ids,indexcol],times=times)
+	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
 	return(out)
 } ## }}}
 
