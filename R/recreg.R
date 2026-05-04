@@ -957,6 +957,23 @@ IC.recreg <- function(x, time = NULL, ..., wwww) {
 }
 
 ##' @export
+estimate.recreg <- function(x, ..., time = NULL, all=FALSE, baseline.args = list()) {
+  if (NCOL(model.matrix(x))==0L & is.null(time)) stop("Non-parametric model; need `time` argument")
+  ic <- do.call(IC, c(list(x, time = time,all=all), baseline.args))
+  cc <- attr(ic, "coef")
+  if (is.null(cc)) cc <- coef(x)
+###  lab <- names(cc)
+  if (!is.null(time)) {
+    lab <- x$strata.level
+    if (is.null(lab)) lab <- "mean"
+  }
+  b <- lava::estimate( coef = cc, IC = ic)
+  return(lava::estimate(b, ...))
+}
+
+
+
+##' @export
 plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { #
 	if (inherits(x,"recreg") & is.null(ylab)) ylab <- "Mean number"
 	if (!se) baseplot(x,se=se,ylab=ylab,...)
