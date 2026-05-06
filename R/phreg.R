@@ -1499,6 +1499,7 @@ model.matrix.phreg <- function(object, data=NULL, ...) {
 
 ##' @export
 summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=NULL,np=10,...) {# {{{
+	call.times <- times
 	if (is.null(times)) {
 		indexcol <- seq(ncol(object$surv)) 
 		times <- object$times
@@ -1540,8 +1541,8 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=N
 					 se.pred=se.out[ids,indexcol],
 					 lower=lower[ids,indexcol],
 					 upper=upper[ids,indexcol],
-					 times=times,rows=ids)
-	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
+					 times=times,rows=ids,call.times=call.times)
+	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids,call.times=call.times)
 return(out)
 }# }}}
 
@@ -1550,6 +1551,10 @@ print.predictphreg <- function(x,...) {# {{{
    out <- summary(x,...)
    cat("Predictions displayed, for rows:\n")
    print(out$rows)
+   if (!is.null(call.times))  {
+   cat("t- Predictions based on predict object, for times:\n")
+   print(out$times)
+   }
    return(out)
 }# }}}
 

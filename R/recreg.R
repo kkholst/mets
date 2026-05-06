@@ -986,11 +986,13 @@ plot.recreg <- function(x,se=FALSE,ylab=NULL,...) { #
 
 ##' @export
 predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { #
+	call.times <- times
 	if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 	else {
 		out <- predictrecreg(object,newdata,times=times,np=np,...)
 	}
 	class(out) <- c("predictrecreg",class(object)[1])
+	out$call.times <- call.times
 	return(out)
 } #
 
@@ -1043,6 +1045,11 @@ print.predictrecreg <- function(x,...) { ## }}}
 out <- summary(x,...)
 cat("Predictions displayed, for rows:\n")
 print(out$rows)
+  if (!is.null(call.times))  {
+   cat("t- Predictions based on predict object, for times:\n")
+   print(out$times)
+   }
+
 return(out)
 } ## }}}
 

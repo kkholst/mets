@@ -178,12 +178,14 @@ else {
 
 ##' @export
 predict.cifreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { ## {{{
+	call.times <- times
 if (!is.null(object$propodds) & se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
 if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
   out <- predictrecreg(object,newdata,times=times,np=np,...)
 }
 class(out) <- c("predictcifreg",class(object)[1])
+out$call.times <- call.times
 return(out)
 } ## }}}
 
@@ -198,6 +200,10 @@ print.predictcifreg <- function(x,...) {# {{{
 ret <- summary.predictrecreg(x,...)
 cat("Predictions displayed, for rows:\n")
 print(ret$rows)
+if (!is.null(call.times))  {
+  cat("t- Predictions based on predict object, for times:\n")
+  print(out$times)
+}
 return(ret)
 }# }}}
 
