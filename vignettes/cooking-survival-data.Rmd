@@ -34,19 +34,19 @@ knitr::opts_chunk$set(
 Simulation of survival data is important for both
 theoretical and practical work. In a practical setting we might wish to
 validate that standard errors are valid even in a rather small sample,
-or validate that a complicated procedure is doing as intended. 
+or validate that a complicated procedure is doing as intended.
 Therefore it is useful to have simple tools for generating survival data
-that looks as much as possible like particular data. In a theoretical
-setting we often are interested in evaluating the finite sample
-properties of a new procedure in different settings that often are
-motivated by a specific practical problem. The aim is provide such tools.
+that resembles a particular dataset as closely as possible. In a theoretical
+setting we are often interested in evaluating the finite-sample
+properties of a new procedure in different settings that are
+motivated by a specific practical problem. The aim is to provide such tools.
 
-Bender et al. in discussed how to generate survival data based on the Cox model, 
-and restricted attention to some of the many useful parametric survival models (weibull, exponential).
-We here to start out restrict attentation to piecewise linear baseline functions that make it easy to simulate
-data that follows closely the baseline given by the data using semi or 
-nonparametric models. This makes it easy to capture important aspects of the
-data. We later return to extended Weibull baseline hazards models.
+Bender et al. discussed how to generate survival data based on the Cox model,
+and considered only a subset of the available parametric survival models (Weibull, exponential).
+We start by restricting attention to piecewise linear baseline functions, which make it easy to simulate
+data that follows closely the baseline estimated from the data using semi- or
+nonparametric models. This makes it straightforward to capture important aspects of the
+data. We later return to extended Weibull baseline hazard models.
 
 Different survival models can be cooked, and we here give recipes for
 hazard and cumulative incidence based simulations. More recipes are
@@ -72,35 +72,33 @@ given in vignette about recurrent events.
 
 
 Given a survival time $T$ with cumulative hazard $\Lambda(t)=\int_0^t \lambda(s) ds$, it
-follows that \cite{}
-with $E \sim Exp(1)$ (exponential with rate 1), that $\Lambda^{-1}(E)$ will have the
+follows that, with $E \sim Exp(1)$ (exponential with rate 1), $\Lambda^{-1}(E)$ will have the
 same distribution as $T$.
 
-This provides the basis for simulations of survival times with a given hazard  and is 
+This provides the basis for simulations of survival times with a given hazard and is
 a consequence of this simple calculation
 $$
   P(\Lambda^{-1}(E) > t) = P(E > \Lambda(t)) = \exp( - \Lambda(t)) = P(T > t).
 $$
 
-Similarly if $T$ given $X$ have hazard on Cox form 
+Similarly if $T$ given $X$ has hazard on Cox form
 $$
   \lambda_0(t) \exp( X^T \beta)
 $$
-where $\beta$ is a $p$-dimensional regression coefficient and $\lambda_0(t)$ a baseline 
-hazard function, 
-then it is useful to observe also that 
-$\Lambda^{-1}(E/HR)$ with $HR=\exp(X^T \beta)$ has the same distribution as $T$ given $X$. 
+where $\beta$ is a $p$-dimensional regression coefficient and $\lambda_0(t)$ a baseline
+hazard function,
+then it is useful to observe also that
+$\Lambda^{-1}(E/HR)$ with $HR=\exp(X^T \beta)$ has the same distribution as $T$ given $X$.
 
-Therefore if the inverse of the cumulative hazard can be computed we can generate survival with 
-a specified hazard function. One useful observation is note that for a piecewise linear continuous
-cumulative hazard on an interval $[0,\tau]$ $\Lambda_l(t)$ it is easy to compute the inverse. 
+Therefore, if the inverse of the cumulative hazard can be computed, we can generate survival times with
+a specified hazard function. One useful observation is that for a piecewise linear continuous
+cumulative hazard on an interval $[0,\tau]$, $\Lambda_l(t)$, it is easy to compute the inverse.
 
-Further, we can approximate any cumulative hazard with a piecewise linear continous 
-cumulative hazard and then simulate data according to this approximation. Recall that fitting
-the Cox model to data will give a piecewise constant cumulative hazard and the regression coefficients so 
-with these at hand we can first approximate the piecewise constant "Breslow"-estimator with a linear
-upper (or lower bound) by simply connecting the values by 
-straight lines. 
+Further, any cumulative hazard can be approximated by a piecewise linear continuous
+cumulative hazard, enabling simulation from this approximation. Recall that fitting
+the Cox model to data yields a piecewise constant cumulative hazard and regression coefficients;
+with these in hand we can approximate the piecewise constant Breslow estimator
+by simply connecting the jump points with straight lines.
 
 # Delayed entry 
 
@@ -136,7 +134,7 @@ the cumulative hazard `cumhaz`:
  pctimecox <- rchaz(cumhaz,rrcox)
 ```
 
-Now looking at a simple cox model 
+Now we fit a simple Cox model
 
 ```{r}
  library(mets)
@@ -154,7 +152,7 @@ Now looking at a simple cox model
  par(mfrow=c(1,1))
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
 
- ## changing the parameters 
+ ## modify regression coefficients 
  cox10 <- cox1
  cox10$coef <- c(0,0.4,0.3)
  dd <- sim_phreg(cox10,n,data=bmt)
@@ -165,9 +163,9 @@ Now looking at a simple cox model
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
 ```
 
-Multiple Cox models for cause specific hazards can be combined, and we start by drawing the 
-covariates manually, below we just call the sim.phregs function that draws covariates from
-the data 
+Multiple Cox models for cause-specific hazards can be combined. Below we draw the
+covariates manually; alternatively, `sim_phregs` draws covariates directly from
+the data.
 
 ```{r}
  data(bmt); 
@@ -193,7 +191,7 @@ the data
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
 ```
 
-Now fully nonparametric model with stratified baselines 
+We now consider a fully nonparametric model with stratified baselines.
 
 ```{r}
  data(sTRACE)
@@ -210,19 +208,19 @@ Now fully nonparametric model with stratified baselines
  plot(cc1,add=TRUE,col=3)
 ```
 
-We now fit cause-specific hazard models with 3 causes (censoring as one of them)
-and generate competing risks data with hazards taken from the fitted Cox models. 
-Here a situation with stratified baselines for some of the models:
+We now fit cause-specific hazard models with three causes (treating censoring as one of them)
+and generate competing risks data with hazards taken from the fitted Cox models.
+The following example includes stratified baselines for some of the models:
 
 ```{r,stratified}
- ## r with phreg 
+ ## competing risks with phreg 
  cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~strata(tcell)+platelet,data=bmt)
  coxs <- list(cox0,cox1,cox2)
  dd <- sim_phregs(coxs,n,data=bmt)
 
- ## checking that  cause specific hazards are as given, make n larger
+ ## verify cause-specific hazards match fitted model; increase n for better agreement
  scox0 <- phreg(Surv(time,cause==1)~tcell+platelet,data=dd)
  scox1 <- phreg(Surv(time,cause==2)~tcell+platelet,data=dd)
  scox2 <- phreg(Surv(time,cause==3)~strata(tcell)+platelet,data=dd)
@@ -251,10 +249,10 @@ Here a situation with stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
- - sim_phreg for phreg, can deal with strata 
- - sim_phregs cause specific hazards on phreg form 
+ - `sim_phreg`: simulates from a single `phreg` model, supports stratified baselines
+ - `sim_phregs`: simulates cause-specific hazards from a list of `phreg` models
 
-One more example  fully non-parametric 
+One further example, again fully nonparametric:
 
 ```{r}
  library(mets)
@@ -351,24 +349,23 @@ simulate(coxw, nsim = 5)
 
 # Multistate models: The Illness Death model 
 
-Using a hazard based simulation with delayed entry we can then simulate data 
-from for example the general illness-death model. Here the cumulative hazards 
+Using hazard-based simulation with delayed entry we can simulate data
+from the general illness-death model. The cumulative hazards for each transition
 must be specified.
 
-We thus give 
+We specify
 
  - $\Lambda_{12}(t)$ the cumulative hazard for $1 \rightarrow 2$ transitions
  - $\Lambda_{21}(t)$ the cumulative hazard for $2 \rightarrow 1$ transitions
  - $\Lambda_{13}(t)$ the cumulative hazard for $1 \rightarrow 3$ transitions
  - $\Lambda_{23}(t)$ the cumulative hazard for $2 \rightarrow 3$ transitions
- 
-then transitions will be generated using these hazards. It is possible to give also 
-covariate effects via proportional hazards models by giving hazard ratios related to the covariates, RR,  for all 
-components as well as the exponential censoring. Certain dependencies can be generated by specifying the type of 
-dependence structure 
 
- - dependence=0, independence
- - dependence=1, all hazards have the gamma-distributed frailty multiplied (with variance var.z)
+Transitions are then generated using these hazards. Covariate effects can be included
+via proportional hazards models by supplying hazard ratios for all components,
+as well as an exponential censoring model. Dependence between transitions can be introduced via:
+
+ - `dependence=0`: independence
+ - `dependence=1`: all hazards share a common gamma-distributed frailty (variance `var.z`)
 
 
 \begin{tikzpicture}[
@@ -406,9 +403,9 @@ dependence structure
 
 \end{tikzpicture}
 
-We simply give the cumulative hazards for the different transitions to the function simMultistate
-to simulate data from the model, subsequently we re-estimate the parameters based on the simulated
-data to validate the procedure. 
+We pass the cumulative hazards for each transition to `simMultistate`
+to simulate data from the model, then re-estimate the parameters on the simulated
+data to validate the procedure.
 
 
 ```{r}
@@ -446,38 +443,38 @@ data to validate the procedure.
 
 # Cumulative incidence 
 
-In this section we discuss how to simulate competing risks data that have a specified cumulative 
-incidence function.  We consider for simplicity a competing risks model with two causes and denote the
-cumulative incidence curves as $F_1(t,X) = P(T < t, \epsilon=1|X)$ and  $F_2(t,X) = P(T < t, \epsilon=2|X)$.
-Here given some covariate $X$.
+In this section we discuss how to simulate competing risks data with a specified cumulative
+incidence function. We consider for simplicity a competing risks model with two causes and denote the
+cumulative incidence functions as $F_1(t,X) = P(T < t, \epsilon=1|X)$ and $F_2(t,X) = P(T < t, \epsilon=2|X)$,
+given covariate $X$.
 
-To generate data with the required cumulative incidence functions a simple approach is to first figure out
-if the subject dies and then from what cause, then finally draw the survival time according to the
+To generate data with the required cumulative incidence functions, a simple approach is to first determine
+whether the subject experiences an event and, if so, from which cause; then draw the event time according to the
 conditional distribution.
 
-For simplicity we consider survival times in a fixed interval $[0,\tau]$, and given $X$
+For simplicity we consider survival times in a fixed interval $[0,\tau]$. Given $X$:
 
-  - first, flip a three sided coin with probabilities $F_1(\tau,X)$, $F_2(\tau,X)$ $1-F_1(\tau,X)-F_2(\tau,X)$ to decide if the subject is a survivor or 
-     experience one of the causes.
-  - second, draw the survival time using the cumulative incidence distribution. The timing of a cause $j$ event is  thus 
-       $T = (\tilde F_1^{-1}(U,X)$ with $\tilde F_1(s,X) = F_1(s,X)/F_1(\tau,X)$ and $U$ is a uniform.
+  - first, flip a three-sided coin with probabilities $F_1(\tau,X)$, $F_2(\tau,X)$, $1-F_1(\tau,X)-F_2(\tau,X)$ to decide whether the subject survives or
+     experiences one of the two causes.
+  - second, draw the event time using the cumulative incidence distribution. The timing of a cause $j$ event is
+       $T = \tilde F_j^{-1}(U,X)$ with $\tilde F_j(s,X) = F_j(s,X)/F_j(\tau,X)$ and $U$ uniform.
 
 Then indeed $P(T \leq t, \epsilon=j|X) = F_j(t,X)$ for $j=1,2$.
 
 We again note and use that if $\tilde F_j(s)$ and $F_j(s)$ are piecewise linear
 continuous functions then the inverse is easy to compute. 
 
-A couple of details is that 
+A couple of details worth noting:
 
- - the conflip to decide cause is based on a underlying uniform, $pU$, that can be given and shared among subjects
-     to generate  dependence is the risk.
- - the uniform using for generating the timing, $U$, can also be given and shared among subjects to 
-    generate dependence is the timing.
+ - the coin flip to determine cause is based on an underlying uniform, $pU$, which can be supplied and shared across subjects
+     to generate dependence in the risk.
+ - the uniform used for generating the timing, $U$, can also be supplied and shared across subjects to
+    generate dependence in the timing.
 
 
 ## Cumulative incidence I
 
-We here simulate two causes of death with two binary covarites of logistic type
+Here we simulate two causes of death with two binary covariates using a logistic link
 \begin{align*}
 F_1(t,X)  &= \frac{ \Lambda_1(t,\rho_1) exp(X^T  \beta_1)}{1+\Lambda_1(t,\rho_1) exp(X^T  \beta_1)}
 \end{align*}
@@ -485,7 +482,7 @@ and $F_2$ here enforcing the sum condition $F_1+F_2 \leq 1$
 \begin{align*}
 F_2(t,X)  & =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta_2)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta_2)} [ 1- F_1(\tau,X) ]
 \end{align*}
-or not 
+or without the constraint
 \begin{align*}
 F_2(t,X)  & =  \frac{ \Lambda_2(t,\rho_2) exp(X^T  \beta_2)}{1+\Lambda_2(t,\rho_2) exp(X^T  \beta_2)}.
 \end{align*}
@@ -499,17 +496,17 @@ To simulate the survival time we use a piecewise linear approximation of the cum
 incidence functions and will thus depends on some grid for linear approximation. Our linear 
 approximation can be made arbitrarily close to any specific smooth cumulative incidence function.
 
-The function simul.cifs
+The function `simul_cifs`
 
- - has a time-scale $[0,6]$, and obviously can be rescaled. 
- - the regression coefficients are given as one vector and should contain first $\beta_1$ and then $\beta_2$.
- - the default is 2 binary covariates, but a covariate matrix $Z$ can be specified (and then the dimensions of the covariate effects must match).
- - the censoring is exponential with rate rc=0.5 and can be made covariate dependent (dependence=1) with covariate effects given by
-   rcZ, thus with rate $rc \cdot  \exp(Z^T rcZ)$, and dimensions must match. The censoring can be avoided by setting $rc=NULL$.
+ - uses a time-scale $[0,6]$, which can obviously be rescaled.
+ - takes regression coefficients as a single vector, with $\beta_1$ followed by $\beta_2$.
+ - defaults to two binary covariates, but a covariate matrix $Z$ can be supplied (dimensions must match the coefficient vector).
+ - uses exponential censoring with rate `rc=0.5`, which can be made covariate-dependent (`dependence=1`) with covariate effects given by
+   `rcZ`, giving rate $rc \cdot \exp(Z^T rcZ)$ (dimensions must match). Censoring can be disabled by setting `rc=NULL`.
 
 
-The function sim.cifs takes the output from cifregFG or cifreg and makes simulations with
-the baselines and covariates in these objects in the same way.  
+The function `sim_cifs` takes the output from `cifregFG` or `cifreg` and simulates using the
+baselines and covariate effects stored in those objects.
 
 
 ```{r}
@@ -573,7 +570,7 @@ and
 $$
 \tilde F_2(t,s;X)=   \frac{F_2(t;X) - F_2(s;X)}{ 1 - F_1(s;X) - F_2(s;X)}
 $$
-this can be done according to the recipe in the previous section.  
+This can be done according to the recipe in the previous section.
 
  - First draw event type with conditional probabilities $\tilde F_j(t,sX)$ for $j=1,2$ and the remaining survivors
  - Second draw event time (timing) of chosen type with distribution  (still conditional on being a survivor at entry)
@@ -581,7 +578,7 @@ this can be done according to the recipe in the previous section.
   \frac{\tilde F_j(t,sX)}{\tilde F_j(\tau,X)} & = \frac{F_j(t,X)- F_j(s,X)}{F_j(\tau,X)-F_j(s,X)} \mbox{for} j=1,2.
    \end{align*}
 
-If only $F_1$ is specified then assumes that that we are in survival setting with $F_2 \equiv 0$. Note also that 
+If only $F_1$ is specified, the function assumes a pure survival setting with $F_2 \equiv 0$. Note also that 
 given event type the timing is unaffected by the truncation probability.
 
 For the cloglog link the Fine-Gray model the timing can be drawn as 
@@ -617,7 +614,7 @@ $F_1$ and $F_2$ are the two input cumulative incidence models
 ```{r}
  dd <- sim_cifs(list(cif1,cif2),nsim,data=bmt,entry=entry)
 
- ## still logistic link ; non-parametric Aalen-Johansen with delatyed entry
+ ## logistic link; nonparametric Aalen-Johansen with delayed entry
  scif1 <-  cif(Event(entry,time,cause)~strata(tcell,platelet),data=dd,cause=1)
  plot(scif1); 
  ###
@@ -625,8 +622,9 @@ $F_1$ and $F_2$ are the two input cumulative incidence models
  plot(pcif1,add=TRUE)
 ```
 
-Still combining two causes but now using parametric baselines with the simul.cifs, where the baselines for the
-base $F_1$ and $F_2$ are returned as attributes (remember that due to the restriction the $F_2$ model is modified)
+Here we again combine two causes, now using parametric baselines via `simul_cifs`.
+The baselines for $F_1$ and $F_2$ are returned as attributes; note that $F_2$ is modified
+to satisfy the constraint $F_1 + F_2 \leq 1$ (remember that due to the restriction the $F_2$ model is modified).
 
 
 ```{r}
@@ -661,19 +659,22 @@ lines(timet,F1base,lwd=3)
 
 See also recurrent events vignette
 
- - sim_recurrent can simulate based on the Two-Stage model where the the 
-    - the rate of the terminal event among survivors in on Cox form (phreg)
-      - the rate of the recurrent events among survivors is on Cox form (phreg)
-      - the rate of the recurrent events is a  marginal Ghosh-Lin model (recreg)
-    - the simulations is based on approximations with piecewise linear models based on a grid.
-    - the events can be dependent via a frailty random effects (Gamma distributed)
-  - sim_recurrentII, sim_recurrent, sim_recurrent_list
-    - A frailty Gamma model where the rate of the  events and the terminal event are given based on 
-       cumulative baselines and relative risk covariate effects. Thus ends up on Cox form  given the frailty and covariates.
-    - simRecurrentList can take multiple recurrent events and multiple causes of death 
+ - `sim_recurrent_ts` simulates from the Two-Stage model where:
+    - Rate of the terminal event among survivors is on Cox form (`phreg`)
+    - Rate of recurrent events among survivors is on Cox form (`phreg`)
+    - Marginal rate of recurrent events follows a Ghosh-Lin model (`recreg`)
+    - Simulations are based on piecewise linear approximations on a grid
+    - Events can be dependent via a gamma-distributed frailty
+  - `sim_recurrentII`, `sim_recurrent`, `sim_recurrent_list`:
+    - Frailty gamma models where the rates of recurrent events and the terminal event are specified via
+       cumulative baselines and relative risk covariate effects, yielding a Cox model given the frailty and covariates
+    - `simRecurrentList` supports multiple recurrent event types and multiple causes of death
 
 
-Two-stage models 
+Two-stage models
+
+The following example fits Cox models for recurrent events and the terminal event on the `hfactioncpx12` dataset,
+then simulates data from the estimated two-stage model and re-estimates to verify recovery of the parameters.
 
 ```{r}
 library(mets)
@@ -704,7 +705,7 @@ library(mets)
 
 ```
 
-and a now with Ghosh-Lin and Cox marginals 
+Now with Ghosh-Lin and Cox marginals:
 
 ```{r}
  recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
@@ -726,7 +727,7 @@ and a now with Ghosh-Lin and Cox marginals
 
 ```
 
-We can also consider stratified models 
+We can also fit and simulate from stratified models:
 
 ```{r}
 data(hfactioncpx12)
