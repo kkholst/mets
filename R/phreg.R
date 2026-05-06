@@ -1389,13 +1389,6 @@ else x <- object$design
 X <- x$x
 if (!is.null(x$strata)) strataNew <- as.numeric(x$strata)-1 else strataNew <- rep(0,nrow(X))
 
-### setting up newdata with factors and strata
-###desX <- readPhreg(object,newdata)
-###print(head(X))
-###X <- desX$X
-###strataNew <- desX$strata
-###print(strataNew)
-
 if (is.null(times)) times <- sort(unique(c(object$exit)))
 if (individual.time & is.null(times)) times <- c(object$exit)
 if (individual.time & length(times)==1) times <- rep(times,length(object$exit))
@@ -1510,18 +1503,21 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=N
 	    }  else {
                     indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
 		    times[indexcol==0] <- NA
+		    if (any(indexcol == 0) ) warning("Some requested times are before the first event time, returning NA\n")
 	    }
 	}
 
-	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
-            if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
-	    if (length(np)>1) ids <- np else 	{
-            if (is.numeric(np) & length(np)>1) ids <- np else 	
-            if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
-	     else ids <- seq(np) 
-	    }
-	}
+	if (is.null(np)) {
+              ids <- seq(nrow(object$surv)) 
+       } else {
+           if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
+           if (length(np) > 1)               ids <- np                        # specific row ids
+           else if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))   # np larger than data
+           else                               ids <- seq(np)                   # first np rows
+        }
 
+
+	if (is.null(object[[type[1]]])) stop("type '", type[1], "' not found in predict object\n")
         out <- object[[type[1]]]
 	nlower <- paste(type[1],".lower",sep="")
 	nupper <- paste(type[1],".upper",sep="")
@@ -1563,7 +1559,7 @@ print.predictphreg <- function(x,...) {# {{{
    cat("t- Predictions based on predict object, for times:\n")
    print(out$times)
    }
-   return(out)
+invisible(out)
 }# }}}
 
 ##' @export

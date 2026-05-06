@@ -1007,18 +1007,20 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 	    }  else {
                     indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
 		    times[indexcol==0] <- NA
+		    if (any(indexcol == 0) ) warning("Some requested times are before the first event time, returning NA\n")
 	    }
 	}
 
-	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
-            if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
-	    if (length(np)>1) ids <- np else 	{
-            if (is.numeric(np) & length(np)>1) ids <- np else 	
-            if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))
-	     else ids <- seq(np)
-	    }
-	}
+	if (is.null(np)) {
+              ids <- seq(nrow(object$surv)) 
+       } else {
+           if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
+           if (length(np) > 1)               ids <- np                        # specific row ids
+           else if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))   # np larger than data
+           else                               ids <- seq(np)                   # first np rows
+        }
 
+	if (is.null(object[[type[1]]])) stop("type '", type[1], "' not found in predict object\n")
 	out <- object[[type[1]]]
 	nlower <- paste(type[1],".lower",sep="")
 	nupper <- paste(type[1],".upper",sep="")
@@ -1057,7 +1059,7 @@ cat("t- Predictions based on predict object, for times:\n")
 print(out$times)
 }
 
-return(out)
+invisible(out)
 } ## }}}
 
 

@@ -202,7 +202,7 @@ if (!is.null(out$call.times))  {
   cat("t- Predictions based on predict object, for times:\n")
   print(out$times)
 }
-return(out)
+invisible(out)
 }# }}}
 
 
