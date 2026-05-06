@@ -1482,6 +1482,7 @@ coefs <- x$riskG
 names(coefs)  <- paste("G",names(x$riskG),sep="-")
 }
 out <-estimate(coef=coefs,IC=iidGDR*nrow(iidGDR),...)
+return(out)
 }
 
 

@@ -2806,6 +2806,7 @@ return(out)
 estimate.survivalG  <- function(x,...)
 {
 out <-estimate(coef=x$risk$coefmat[,1],IC=x$risk.iid*nrow(x$risk.iid),...)
+return(out)
 }
 
 ###{{{ summary  survivalG

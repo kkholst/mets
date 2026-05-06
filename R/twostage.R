@@ -1513,11 +1513,10 @@ data.frame(xm=xm,xf=xf,xb1=xb1,xb2=xb2,timem=tm,timef=tf,timeb1=tb1,timeb2=tb2,s
 	   statusb1=cb1,statusb2=cb2,id=1:n)
 } #
 
-##' @export
-object.defined <- function(object)
-{
-   exists(as.character(substitute(object)))
-}
+###object.defined <- function(object)
+###{
+###   exists(as.character(substitute(object)))
+###}
 
 ##' @export
 twin_polygen_design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { #
