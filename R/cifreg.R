@@ -189,7 +189,9 @@ return(out)
 
 ##' @export
 summary.predictcifreg <- function(object,times=NULL,type=c("cif","cumhaz","surv")[1],...) {# {{{
+call.times <- times
 ret <- summary.predictrecreg(object,type=type[1],times=times,...)
+ret$call.times <- call.times
 return(ret)
 }# }}}
 
