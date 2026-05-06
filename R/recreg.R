@@ -992,12 +992,12 @@ predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { 
 		out <- predictrecreg(object,newdata,times=times,np=np,...)
 	}
 	class(out) <- c("predictrecreg",class(object)[1])
-	out$call.times <- call.times
 	return(out)
 } #
 
 ##' @export
 summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,...) { ## {{{
+	out$call.times <- call.times
 	if (is.null(times)) {
 		indexcol <- seq(ncol(object$surv)) 
 		times <- object$times
