@@ -26,7 +26,6 @@ binreg(
   outcome = c("cif", "rmst", "rmtl"),
   model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
-  monotone = TRUE,
   ...
 )
 }
@@ -68,8 +67,6 @@ binreg(
 \item{model}{link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
 
 \item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
-
-\item{monotone}{if true then uses del link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
 
 \item{...}{Additional arguments to lower level funtions}
 }
