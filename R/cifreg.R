@@ -200,9 +200,9 @@ print.predictcifreg <- function(x,...) {# {{{
 ret <- summary.predictrecreg(x,...)
 cat("Predictions displayed, for rows:\n")
 print(ret$rows)
-if (!is.null(call.times))  {
+if (!is.null(ret$call.times))  {
   cat("t- Predictions based on predict object, for times:\n")
-  print(out$times)
+  print(ret$times)
 }
 return(ret)
 }# }}}
