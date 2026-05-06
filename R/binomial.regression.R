@@ -45,7 +45,6 @@
 ##' @param outcome  can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X) 
 ##' @param model link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)
 ##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model
-##' @param monotone if true then uses del link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)
 ##' @param ... Additional arguments to lower level funtions
 ##' @references
 ##' Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
@@ -118,8 +117,9 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	   offset=NULL,weights=NULL,cens.weights=NULL,cens.model=~+1,se=TRUE,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,
 	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),
-	   Ydirect=NULL,monotone=TRUE,...)
+	   Ydirect=NULL,...)
 {# {{{
+	monotone <- TRUE
 cl <- match.call()# {{{
     m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
@@ -220,10 +220,6 @@ cl <- match.call()# {{{
     exit <- exit[ord]
     weights <- weights[ord]
     offset <- offset[ord]
-    cens.weights <- cens.weights[ord]
-###    lp <- c(X %*% val$coef+offset)
-###    p <- expit(lp)
-###    Y <- c((status %in% cause)*weights*(exit<=time)/cens.weights)
     Y <- Y[ord]
 
     xx <- resC$cox.prep
@@ -360,7 +356,7 @@ if (length(dots)==0) {
 
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
-    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
+    cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
     n=length(exit),nevent=nevent,ncluster=nid))
 
   if ( (!monotone) & se) { ## {{{ censoring adjustment of variance 
@@ -402,9 +398,8 @@ if (length(dots)==0) {
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
   }## }}}
 
-
   val$call <- cl
-  val$MGciid <- MGCiid
+  val$MGciid <- MGCiid 
   val$call.id <- call.id
   val$id <- orig.id
   val$name.id <- name.id
@@ -867,7 +862,6 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	  if (is.null(weights)) weights <- rep(1,length(exit)) 
   } else weights <- des.weights
 
-
 # }}}
 
   if (is.null(time)) stop("Must give time for logistic modelling \n"); 
@@ -995,7 +989,7 @@ if (length(dots)==0) {
 
   if (length(val$coef)==length(colnames(X))) names(val$coef) <- colnames(X)
   val <- c(val,list(time=time,formula=formula,formC=formC,
-    exit=exit, cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
+    cens.weights=cens.weights, cens.strata=cens.strata, cens.nstrata=cens.nstrata, 
     n=length(exit),nevent=nevent,ncluster=nid,weights=weights))
   
  if (se) {## {{{ censoring adjustment of variance 
