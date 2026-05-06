@@ -1498,14 +1498,19 @@ model.matrix.phreg <- function(object, data=NULL, ...) {
 }
 
 ##' @export
-summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=NULL,np=10,...) {# {{{
+summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=NULL,np=10,extend=FALSE,...) {# {{{
 	call.times <- times
 	if (is.null(times)) {
 		indexcol <- seq(ncol(object$surv)) 
 		times <- object$times
 	} else {
             if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
-            indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	    if (extend) {
+                    indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	    }  else {
+                    indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
+		    times[indexcol==0] <- NA
+	    }
 	}
 
 	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
@@ -1524,6 +1529,7 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=N
 	upper <- object[[nupper]]
 	nse <-  paste("se.",type[1],sep="")
 	se.out  <- object[[paste("se.",type[1],sep="")]]
+	if (extend) {
 	if (type[1]=="surv") {
 		out <- cbind(1,out) 
 		if (!is.null(se.out)) se.out <- cbind(0,se.out)
@@ -1535,14 +1541,16 @@ summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=N
 		if (!is.null(lower)) lower <- cbind(0,lower) 
 		if (!is.null(upper)) upper <- cbind(0,upper) 
 	}
+	}
 	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
 
 	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],
 					 se.pred=se.out[ids,indexcol],
 					 lower=lower[ids,indexcol],
 					 upper=upper[ids,indexcol],
-					 times=times,rows=ids,call.times=call.times)
-	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids,call.times=call.times)
+					 times=times,rows=ids)
+	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
+	out$call.times <- call.times
 return(out)
 }# }}}
 

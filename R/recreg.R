@@ -995,14 +995,19 @@ predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { 
 } #
 
 ##' @export
-summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,...) { ## {{{
+summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,extend=FALSE,...) { ## {{{
 	call.times <- times
 	if (is.null(times)) {
 		indexcol <- seq(ncol(object$surv)) 
 		times <- object$times
 	} else {
             if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
-            indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	    if (extend) {
+                    indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
+	    }  else {
+                    indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
+		    times[indexcol==0] <- NA
+	    }
 	}
 
 	if (is.null(np)) ids <- seq(nrow(object$surv)) else {
@@ -1021,6 +1026,7 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 	upper <- object[[nupper]]
 	nse <-  paste("se.",type[1],sep="")
 	se.out  <- object[[paste("se.",type[1],sep="")]]
+	if (extend) {
 	if (type[1]=="surv") {
 		out <- cbind(1,out) 
 		if (!is.null(se.out)) se.out <- cbind(0,se.out)
@@ -1031,6 +1037,7 @@ summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv
 		if (!is.null(se.out)) se.out <- cbind(0,se.out)
 		if (!is.null(lower)) lower <- cbind(0,lower) 
 		if (!is.null(upper)) upper <- cbind(0,upper) 
+	}
 	}
 	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
 
