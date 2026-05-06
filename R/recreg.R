@@ -1045,10 +1045,10 @@ print.predictrecreg <- function(x,...) { ## }}}
 out <- summary(x,...)
 cat("Predictions displayed, for rows:\n")
 print(out$rows)
-###  if (!is.null(x$call.times))  {
-###   cat("t- Predictions based on predict object, for times:\n")
-###   print(x$times)
-###   }
+if (!is.null(out$call.times))  {
+cat("t- Predictions based on predict object, for times:\n")
+print(out$times)
+}
 
 return(out)
 } ## }}}
