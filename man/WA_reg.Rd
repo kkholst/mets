@@ -2,7 +2,7 @@
 % Please edit documentation in R/WA-estimands.R
 \name{WA_reg}
 \alias{WA_reg}
-\title{While-Alive regression for recurrent events}
+\title{While-Alive Regression for Recurrent Events}
 \usage{
 WA_reg(
   formula,
@@ -17,32 +17,43 @@ WA_reg(
 )
 }
 \arguments{
-\item{formula}{Event formula with regression design}
+\item{formula}{Formula with regression design. The first covariate on the RHS must 
+be the treatment factor. Can include other covariates and \code{cluster(id)}.}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{time}{for estimation}
+\item{time}{Time point \eqn{t} for estimation.}
 
-\item{cens.code}{of censorings}
+\item{cens.code}{Censoring code.}
 
-\item{cause}{of events}
+\item{cause}{Event cause code.}
 
-\item{death.code}{of terminal events}
+\item{death.code}{Death code.}
 
-\item{marks}{possible marks for for recurrent events}
+\item{marks}{Marks for composite outcomes.}
 
-\item{...}{arguments for binreg}
+\item{...}{Additional arguments passed to \code{binreg}.}
 
-\item{trans}{possible power for mean of events per time-unit, default is 1}
+\item{trans}{Power transformation for the outcome (default 1).}
+}
+\value{
+An object of class \code{"binreg"} containing coefficient estimates, 
+  standard errors, confidence intervals, and influence functions for the 
+  regression of the event rate per time alive.
 }
 \description{
-Does regression for the mean of the events per time unit \deqn{ Z(t)= N(min(D,t))/min(D,t))} based on
-IPCW etimation calling the binreg after constructing the outcome \deqn{Z(t)}
+Performs regression analysis for the "While-Alive" mean of events per time unit, 
+defined as \eqn{Z(t) = N(\min(D,t)) / \min(D,t)}. This function models how covariates 
+affect the rate of recurrent events per unit of time alive.
+}
+\details{
+The estimation is based on IPCW (Inverse Probability of Censoring Weighting) and 
+calls \code{binreg} after constructing the outcome variable. It supports double 
+robust estimation if covariate augmentation is specified.
 }
 \examples{
 data(hfactioncpx12)
 hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id] 
-
 dtable(hfactioncpx12,~status)
 ## exp-link regression 
 dd <- WA_reg(Event(entry,time,status)~treatment+age+cluster(id),data=hfactioncpx12,
@@ -50,7 +61,7 @@ dd <- WA_reg(Event(entry,time,status)~treatment+age+cluster(id),data=hfactioncpx
 summary(dd)
 }
 \references{
-Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
+Ragni, A., Martinussen, T., & Scheike, T. H. (2023). Nonparametric estimation of the Patient Weighted While-Alive Estimand. arXiv preprint.
 }
 \author{
 Thomas Scheike

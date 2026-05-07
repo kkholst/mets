@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{count_history}
 \alias{count_history}
-\title{Counts the number of previous events of two types for recurrent events processes}
+\title{Count previous events for recurrent event processes}
 \usage{
 count_history(
   data,
@@ -16,32 +16,38 @@ count_history(
 )
 }
 \arguments{
-\item{data}{data-frame}
+\item{data}{Data frame containing the event history.}
 
-\item{status}{name of status}
+\item{status}{Name of the column containing event status codes.}
 
-\item{id}{id}
+\item{id}{Name of the column containing subject IDs.}
 
-\item{types}{types of the events (code) related to status (multiple values possible)}
+\item{types}{Numeric vector of status codes to count (e.g., \code{c(1, 2)}).}
 
-\item{names.count}{name of Counts, for example Count1 Count2 when types=c(1,2)}
+\item{names.count}{Prefix for the new count columns (e.g., "Count").}
 
-\item{lag}{if true counts previously observed, and if lag=FALSE counts up to know}
+\item{lag}{Logical; if TRUE, counts events strictly before the current time 
+(lagged); if FALSE, counts events up to and including the current time.}
 
-\item{multitype, }{if multitype is true then counts when status "in" types, otherwise counts for each value of type, types=c(1,2)}
+\item{multitype}{Logical; if TRUE, counts events where status is \code{in} \code{types}; 
+if FALSE, counts events for each value in \code{types} separately.}
 
-\item{marks}{values related to status ("in" types), counts marks for types, only when multitype=TRUE}
+\item{marks}{Values associated with events (used if \code{multitype=TRUE}).}
+}
+\value{
+The input data frame with new columns added containing the event counts.
 }
 \description{
-Counts the number of previous events of two types for recurrent events processes
+Calculates the cumulative count of previous events of specific types for each 
+subject up to each time point. Useful for creating time-dependent covariates 
+representing the history of recurrent events.
 }
 \examples{
 data(hfactioncpx12)
 hf <- hfactioncpx12
-dtable(hf,~status)
-rr <-  count_history(hf,types=1:2,id="id",status="status")
-dtable(rr,~"Count*"+status,level=1)
-
+dtable(hf, ~status)
+rr <- count_history(hf, types=1:2, id="id", status="status")
+dtable(rr, ~"Count*"+status, level=1)
 }
 \author{
 Thomas Scheike

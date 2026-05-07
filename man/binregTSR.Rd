@@ -2,7 +2,7 @@
 % Please edit documentation in R/binregTSR.R
 \name{binregTSR}
 \alias{binregTSR}
-\title{2 Stage Randomization for Survival Data or competing Risks Data}
+\title{Two-Stage Randomization for Survival or Competing Risks Data}
 \usage{
 binregTSR(
   formula,
@@ -40,91 +40,102 @@ binregTSR(
 )
 }
 \arguments{
-\item{formula}{formula with outcome (see \code{coxph})}
+\item{formula}{Formula with outcome (see \code{coxph}), typically \code{Event(entry,time,status)~+1+cluster(id)}.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing all variables.}
 
-\item{cause}{cause of interest}
+\item{cause}{Cause of interest for competing risks (default 1).}
 
-\item{time}{time of interest}
+\item{time}{Time point for estimation.}
 
-\item{cens.code}{gives censoring code}
+\item{cens.code}{Censoring code (default 0).}
 
-\item{response.code}{code of status of survival data that indicates a response at which 2nd randomization is performed}
+\item{response.code}{Code of status indicating response at which 2nd randomization occurs.}
 
-\item{augmentR0}{augmentation model for  1st randomization}
+\item{augmentR0}{Covariates for augmentation model of the first randomization.}
 
-\item{treat.model0}{logistic treatment model for 1st randomization}
+\item{treat.model0}{Logistic treatment model for the first randomization.}
 
-\item{augmentR1}{augmentation model for  2nd randomization}
+\item{augmentR1}{Covariates for augmentation model of the second randomization.}
 
-\item{treat.model1}{logistic treatment model for 2ndrandomization}
+\item{treat.model1}{Logistic treatment model for the second randomization.}
 
-\item{augmentC}{augmentation model for censoring}
+\item{augmentC}{Covariates for censoring augmentation model.}
 
-\item{cens.model}{stratification for censoring model based on observed covariates}
+\item{cens.model}{Stratification for censoring model based on observed covariates.}
 
-\item{estpr}{estimate randomization probabilities using model}
+\item{estpr}{Logical; estimate randomization probabilities using model (default TRUE).}
 
-\item{response.name}{can give name of response variable, otherwise reads this as first variable of treat.model1}
+\item{response.name}{Name of response variable (reads from \code{treat.model1} if NULL).}
 
-\item{offset}{not implemented}
+\item{offset}{Not implemented.}
 
-\item{weights}{not implemented}
+\item{weights}{Not implemented.}
 
-\item{cens.weights}{can be given}
+\item{cens.weights}{Can be provided externally.}
 
-\item{beta}{starting values}
+\item{beta}{Starting values for optimization.}
 
-\item{kaplan.meier}{for censoring weights, rather than exp cumulative hazard}
+\item{kaplan.meier}{Logical; use Kaplan-Meier for censoring weights rather than exp cumulative hazard.}
 
-\item{no.opt}{not implemented}
+\item{no.opt}{Not implemented.}
 
-\item{method}{not implemented}
+\item{method}{Not implemented.}
 
-\item{augmentation}{not implemented}
+\item{augmentation}{Not implemented.}
 
-\item{outcome}{can be c("cif","rmst","rmst-cause")}
+\item{outcome}{Outcome type: \code{"cif"} (cumulative incidence), \code{"rmst"} (restricted mean survival time), 
+or \code{"rmst-cause"} (restricted mean time lost for cause).}
 
-\item{model}{not implemented, uses linear regression for augmentation}
+\item{model}{Not implemented, uses linear regression for augmentation.}
 
-\item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), see binreg for more on this}
+\item{Ydirect}{Use this Y instead of outcome constructed inside the program.}
 
-\item{return.dataw}{to return weighted data for all treatment regimes}
+\item{return.dataw}{Logical; return weighted data for all treatment regimes.}
 
-\item{pi0}{set up known randomization probabilities}
+\item{pi0}{Known randomization probabilities for first randomization.}
 
-\item{pi1}{set up known randomization probabilities}
+\item{pi1}{Known randomization probabilities for second randomization.}
 
-\item{cens.time.fixed}{to use time-dependent weights for censoring estimation using weights}
+\item{cens.time.fixed}{Logical; use time-dependent weights for censoring estimation.}
 
-\item{outcome.iid}{to get iid contribution from outcome model (here linear regression working models).}
+\item{outcome.iid}{Logical; get iid contribution from outcome model.}
 
-\item{meanCs}{(0) indicates that censoring augmentation is centered by CensAugment.times/n}
+\item{meanCs}{Logical; indicates censoring augmentation is centered by \code{CensAugment.times/n}.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments to lower-level functions.}
+}
+\value{
+An object of class \code{"binregTSR"} containing:
+  \item{riskG}{Simple estimator results (coefficient, SE).}
+  \item{riskG0}{First randomization augmentation results.}
+  \item{riskG1}{Second randomization augmentation results.}
+  \item{riskG01}{Both randomizations augmentation results.}
+  \item{riskG.iid}{Influence functions for all estimators.}
+  \item{varG}{Variance-covariance matrices.}
+  \item{MGc}{Censoring martingale contributions.}
+  \item{CensAugment.times}{Censoring augmentation terms.}
+  \item{dynCens.coef}{Dynamic censoring coefficients.}
+  \item{dataW}{Weighted data (if \code{return.dataw=TRUE}).}
 }
 \description{
-Under two-stage randomization we can estimate the average treatment effect E(Y(i,j)) of treatment regime (i,j). 
-The estimator can be agumented in different ways: using the two randomizations and the dynamic censoring augmetatation.
-The treatment's must be given as factors.
+Estimates the average treatment effect \eqn{E(Y(i,j))} of treatment regime \eqn{(i,j)} 
+under two-stage randomization. The estimator can be augmented using information from 
+both randomizations and dynamic censoring augmentation to improve efficiency.
 }
 \details{
-The solved estimating eqution is 
-\deqn{  (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 }
-where  using the covariates from augmentR0
-\deqn{ AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0}
-and  using the covariates from augmentR1
-\deqn{ AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1}
-and   the censoring augmentation is 
-\deqn{  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) }
-where 
-\deqn{ \gamma_c(s)} is chosen to minimize the variance given the dynamic  covariates specified by augmentC.
+The method solves the estimating equation:
+\deqn{ \frac{I(\min(T_i,t) < G_i)}{G_c(\min(T_i,t))} I(T \leq t, \epsilon=1) - AUG_0 - AUG_1 + AUG_C - p(i,j) = 0 }
+where:
+\itemize{
+  \item \eqn{AUG_0 = \frac{A_0(i) - \pi_0(i)}{\pi_0(i)} X_0 \gamma_0} uses covariates from \code{augmentR0}
+  \item \eqn{AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{\pi_1(j)} X_1 \gamma_1} uses covariates from \code{augmentR1}
+  \item \eqn{AUG_C = \int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s)} dM_c(s)} is the censoring augmentation
+}
 
-In the observational case, we can use propensity score modelling and outcome modelling (using linear regression).
-
-Standard errors are estimated using the influence function  of all estimators and tests of differences can therefore be computed
-subsequently.
+Standard errors are estimated using the influence function of all estimators, enabling 
+tests of differences to be computed subsequently. The method handles both survival 
+data and competing risks data, and supports multiple treatment levels.
 }
 \examples{
 ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
@@ -135,6 +146,12 @@ bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c
         augmentC=~A01+A02+X01+X02+A11t+A12t+X11+X12+TR,
         response.code=2)
 summary(bb) 
+}
+\references{
+Scheike, T. H. (2024). Two-stage randomization analysis for survival data. mets package documentation.
+}
+\seealso{
+\code{\link{binreg}}, \code{\link{phreg_rct}}
 }
 \author{
 Thomas Scheike

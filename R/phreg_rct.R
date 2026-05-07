@@ -1,45 +1,60 @@
-##' Lu-Tsiatis More Efficient Log-Rank for Randomized studies with baseline covariates
+
+##' Lu-Tsiatis More Efficient Log-Rank for Randomized Studies with Baseline Covariates
 ##'
-##' Efficient implementation of the Lu-Tsiatis improvement using baseline covariates, extended to competing risks and recurrent events. Results
-##' almost equivalent with the speffSurv function of the speff2trial function in the survival case. A dynamic 
-##' censoring augmentation regression is also computed to gain even more from the censoring augmentation. Furhter, we also deal with twostage
-##' randomizations. The function was implemented to deal with recurrent events (start,stop) + cluster, and  more examples in vignette. 
+##' Efficient implementation of the Lu-Tsiatis improvement using baseline covariates, 
+##' extended to competing risks and recurrent events. The results are almost equivalent 
+##' to the \code{speffSurv} function of the \code{speff2trial} package in the survival case. 
+##' A dynamic censoring augmentation regression is also computed to gain additional 
+##' efficiency from the censoring augmentation. The function handles two-stage 
+##' randomizations and recurrent events (start,stop) with cluster structure.
+##' 
+##' The method improves the efficiency of the log-rank test by utilizing auxiliary 
+##' baseline covariates to reduce variance, particularly useful in randomized clinical 
+##' trials (RCTs) where covariate adjustment can increase power.
 ##'
-##' @param formula formula with 'Surv' or 'Event' outcome (see \code{coxph}) and
-##'   treatment (randomization 0/1)
-##' @param data data frame
-##' @param cause to use for competing risks, recurrent events data
-##' @param cens.code to use for competing risks, recurrent events data
-##' @param weights to be used for phreg
-##' @param typesR augmentations used for randomization
-##' @param typesC augmentations used for censoring
-##' @param weights weights for score equation
-##' @param augmentR0 formula for the randomization augmentation (~age+sex)
-##' @param augmentR1 formula for the randomization augmentation (~age+sex)
-##' @param augmentC formula for the censoring augmentation (~age+sex)
-##' @param treat.model propensity score model, default is ~+1, assuming an RCT study
-##' @param RCT if false will use propensity score adjustment for marginal model
-##' @param treat.var in case of twostage randomization, this variable is 1 for
-##'   the treatment times, if start,stop then default assumes that only one
-##'   treatment at first record
-##' @param km use Kaplan-Meier for the censoring weights (stratified on
-##'   treatment)
-##' @param level of confidence intervals
-##' @param cens.model default is censoring model ~strata(treatment) but any
-##'   model can be used to make censoring martingales
-##' @param estpr estimates propensity scores
-##' @param pi0 possible fixed propensity scores for randomizations
-##' @param base.augment TRUE to covariate augment baselines (only for R0
-##'   augmentation)
-##' @param return.augmentR0 to return augmentation data
-##' @param mlogit if TRUE then forces use of this function for propensity
-##'   scores, default for binary treatment is glm
-##' @param ... Additional arguments to phreg function
+##' @param formula Formula with \code{Surv} or \code{Event} outcome (see \code{coxph}) and 
+##'   treatment variable (randomization 0/1). The treatment variable must be the first 
+##'   covariate on the right-hand side.
+##' @param data Data frame containing all variables referenced in the formula.
+##' @param cause Numeric code for the event of interest in competing risks or recurrent events.
+##' @param cens.code Numeric code for censoring in competing risks or recurrent events.
+##' @param weights Weights to be used for \code{phreg}.
+##' @param typesR Character vector specifying augmentation types for randomization 
+##'   (options: "R0" for baseline, "R1" for post-baseline, "R01" for both).
+##' @param typesC Character vector specifying augmentation types for censoring 
+##'   (options: "C" for static, "dynC" for dynamic).
+##' @param augmentR0 Formula for the first randomization augmentation (e.g., \code{~age+sex}).
+##' @param augmentR1 Formula for the second randomization augmentation (e.g., \code{~age+sex}).
+##' @param augmentC Formula for the censoring augmentation (e.g., \code{~age+sex}).
+##' @param treat.model Propensity score model formula (default is \code{~+1}, assuming RCT).
+##' @param RCT Logical; if FALSE, uses propensity score adjustment for marginal model.
+##' @param treat.var Variable indicating treatment times in two-stage randomization.
+##' @param km Logical; use Kaplan-Meier for censoring weights (stratified on treatment).
+##' @param level Confidence level for intervals (default 0.95).
+##' @param cens.model Censoring model formula (default is \code{~strata(treatment)}).
+##' @param estpr Logical; estimate propensity scores (default TRUE).
+##' @param pi0 Fixed propensity scores for randomizations (if not estimating).
+##' @param base.augment Logical; covariate augment baselines (only for R0 augmentation).
+##' @param return.augmentR0 Logical; return augmentation data.
+##' @param mlogit Logical; use multinomial logistic regression for propensity scores.
+##' @param ... Additional arguments passed to \code{phreg} function.
+##' @return An object of class \code{"phreg_rct"} containing:
+##'   \item{coefs}{Coefficient estimates for the treatment effect.}
+##'   \item{iid}{Influence function (IID) decomposition for variance estimation.}
+##'   \item{AugR0, AugR1, AugCdyn, AugClt}{Augmentation terms for different strategies.}
+##'   \item{cumhaz}{Cumulative hazards.}
+##'   \item{var}{Variance-covariance matrix.}
+##'   \item{se}{Standard errors.}
+##'   \item{call}{Original function call.}
+##'   \item{formula}{Formula used.}
+##'   \item{data}{The data used (if requested).}
+##'   
+##'   The object includes results for different augmentation combinations (R0, R1, R01, C, dynC).
 ##' @author Thomas Scheike
 ##' @references 
-##' Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 679--694
+##' Lu, T. and Tsiatis, A. A. (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 95, 679--694.
 ##' 
-##' Scheike, Nerstroem and Martinussen (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST 
+##' Scheike, T. H., Nerstroem, E. and Martinussen, T. (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST.
 ##' @examples
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,100)

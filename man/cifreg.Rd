@@ -8,7 +8,7 @@
 \alias{indexstratarightR}
 \alias{gofFG}
 \alias{cifregFG}
-\title{CIF regression}
+\title{Cumulative Incidence Function (CIF) Regression}
 \usage{
 cifreg(
   formula,
@@ -22,45 +22,53 @@ cifreg(
 )
 }
 \arguments{
-\item{formula}{formula with 'Event' outcome}
+\item{formula}{Formula with an 'Event' outcome.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{propodds}{to fit logit link model, and propodds=NULL to fit Fine-Gray model}
+\item{propodds}{Logical; if \code{1} (default), fits the logit link model. If \code{NULL}, fits the Fine-Gray model.}
 
-\item{cause}{of interest}
+\item{cause}{Cause of interest (default is 1).}
 
-\item{cens.code}{code of censoring}
+\item{cens.code}{Code for censoring (default is 0).}
 
-\item{no.codes}{certain event codes to be ignored when finding competing causes, can be used with administrative censoring.}
+\item{no.codes}{Event codes to be ignored when identifying competing causes (useful for administrative censoring).}
 
-\item{death.code}{can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)}
+\item{death.code}{Codes for death (terminal events). If \code{NULL}, defaults to all remaining codes (excluding \code{cause}, \code{cens.code}, and \code{no.codes}).}
 
-\item{...}{Additional arguments to recreg}
+\item{...}{Additional arguments passed to \code{recreg}.}
+}
+\value{
+An object of class \code{"cifreg"} (extending \code{"phreg"}) containing:
+\item{coef}{Estimated coefficients.}
+\item{var}{Robust variance-covariance matrix.}
+\item{iid}{Influence functions for the coefficients.}
+\item{cumhaz}{Cumulative incidence estimates.}
+\item{propodds}{Indicator of the link function used.}
 }
 \description{
-CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog) regression for propodds=NULL. The
-FG model can also be called using the cifregFG function that has propodds=NULL.
+Fits a regression model for the cumulative incidence function (CIF) in the presence of competing risks.
+Supports two link functions:
+\itemize{
+\item \code{propodds=1} (default): Logistic link model (logit of CIF), providing Odds Ratio (OR) interpretations.
+\item \code{propodds=NULL}: Fine-Gray (cloglog) regression model, providing subdistribution hazard ratio interpretations.
+}
 }
 \details{
-For FG model:
-\deqn{
-\int (X - E ) Y_1(t) w(t) dM_1
-}
-is computed and summed over clusters and returned multiplied with inverse
-of second derivative as iid.naive. Here \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
-\deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}.
+For the Fine-Gray model, the score equations are:
+\deqn{ \int (X - E(t)) Y_1(t) w(t) dM_1 }
+summed over clusters and returned as \code{iid.naive} (multiplied by the inverse of the second derivative).
+Here, \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))},
+\deqn{E(t) = S_1(t)/S_0(t)}, and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}.
 
-The iid decomposition of the beta's, however, also have a censoring term that is also
-is computed and added (still scaled with inverse second derivative)
-\deqn{
-\int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c
-}
-and returned as the iid 
+The full influence function (IID decomposition) for the beta coefficients includes a censoring term:
+\deqn{ \int (X - E(t)) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c }
+which is returned as the \code{iid} component.
 
-For logistic link standard errors are slightly to small since uncertainty from recursive baseline is not considered, so for smaller
-data-sets it is recommended to use the prop.odds.subdist of timereg that is also more efficient due to use of different weights for
-the estimating equations. Alternatively, one can also bootstrap the standard errors.
+For the logistic link model, standard errors may be slightly underestimated because uncertainty from the
+recursive baseline estimation is not fully accounted for. For smaller datasets, it is recommended to use
+the \code{prop.odds.subdist} function from the \pkg{timereg} package (which uses more efficient weights)
+or to bootstrap the standard errors.
 }
 \examples{
 ## data with no ties
@@ -107,6 +115,9 @@ fg <- cifregFG(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1)
 Biid <- iidBaseline(fg,time=20)
 pfg1 <- FGprediid(Biid,nd)
 pfg1
+}
+\seealso{
+\code{\link{cifregFG}}, \code{\link{recreg}}, \code{\link{gofFG}}
 }
 \author{
 Thomas Scheike

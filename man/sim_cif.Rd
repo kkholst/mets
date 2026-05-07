@@ -7,7 +7,7 @@
 \alias{subdist}
 \alias{sim_subdist}
 \alias{invsubdist}
-\title{Simulation of output from Cumulative incidence regression model}
+\title{Simulation of Output from Cumulative Incidence Regression Model}
 \usage{
 sim_cif(
   cif,
@@ -30,46 +30,47 @@ sim_cif(
 )
 }
 \arguments{
-\item{cif}{output form prop.odds.subdist or ccr (cmprsk), can also call invsubdist with 
-with cumulative and linear predictor}
+\item{cif}{Output from \code{prop.odds.subdist} or \code{ccr} (\code{cmprsk}), 
+or call \code{invsubdist} with cumulative and linear predictor.}
 
-\item{n}{number of simulations.}
+\item{n}{Number of simulations.}
 
-\item{data}{to extract covariates for simulations (draws from observed
-covariates).}
+\item{data}{Data frame to extract covariates.}
 
-\item{Z}{to use these covariates for simulation rather than drawing new ones.}
+\item{Z}{Design matrix instead of data.}
 
-\item{rr}{possible vector of relative risk for cox model.}
+\item{rr}{Relative risks.}
 
-\item{strata}{possible vector of strata}
+\item{strata}{Strata vector.}
 
-\item{drawZ}{to random sample from Z or not}
+\item{drawZ}{Logical; randomly sample from Z.}
 
-\item{cens}{specifies censoring model, if "is.matrix" then uses cumulative
-hazard given, if "is.scalar" then uses rate for exponential, and if not
-given then takes average rate of in simulated data from cox model.}
+\item{cens}{Censoring specification.}
 
-\item{rrc}{possible vector of relative risk for cox-type censoring.}
+\item{rrc}{Relative risks for censoring.}
 
-\item{entry}{delayed entry time}
+\item{entry}{Delayed entry time.}
 
-\item{Sentry}{survival related to delayed entry, if not specfied assumes that there is just one cause and uses 1-F1(entry,X)}
+\item{Sentry}{Survival related to delayed entry.}
 
-\item{cumstart}{to start cumulatives at time 0 in 0.}
+\item{cumstart}{Start cumulatives at time 0.}
 
-\item{U}{uniforms to use for drawing of timing for cumulative incidence.}
+\item{U}{Uniforms for drawing timing.}
 
-\item{pU}{uniforms to use for drawing event type (F1,F2,1-F1-F2).}
+\item{pU}{Uniforms for drawing event type.}
 
-\item{type}{of model logistic,cloglog,rr}
+\item{type}{Model type: \code{"logistic"}, \code{"cloglog"}, or \code{"rr"}.}
 
-\item{extend}{to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.}
+\item{extend}{Extend piecewise constant with constant rate.}
 
-\item{...}{arguments for sim_subdist (for example Uniform variable for realizations)}
+\item{...}{Arguments for \code{sim_subdist}.}
+}
+\value{
+Data frame with simulated event times, status, and covariates.
 }
 \description{
-Simulates data that looks like fit from fitted cumulative incidence model
+Simulates data that looks like fit from a fitted cumulative incidence model 
+(Fine-Gray or logistic).
 }
 \examples{
 data(bmt)
@@ -117,4 +118,5 @@ plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
 \author{
 Thomas Scheike
 }
+\keyword{simulation}
 \keyword{survival}

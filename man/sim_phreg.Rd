@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{sim_phreg}
 \alias{sim_phreg}
-\title{Simulation of output from Cox model.}
+\title{Simulation of Output from Cox Model}
 \usage{
 sim_phreg(
   cox,
@@ -19,33 +19,34 @@ sim_phreg(
 )
 }
 \arguments{
-\item{cox}{output form coxph or cox.aalen model fitting cox model.}
+\item{cox}{Output from \code{coxph} or \code{phreg} model fitting.}
 
-\item{n}{number of simulations.}
+\item{n}{Number of simulations.}
 
-\item{data}{to extract covariates for simulations (draws from observed covariates).}
+\item{data}{Data frame to extract covariates for simulations (draws from observed covariates).}
 
-\item{Z}{give design matrix instead of data}
+\item{Z}{Design matrix instead of data.}
 
-\item{rr}{possible vector of relative risk for cox model.}
+\item{rr}{Vector of relative risks for Cox model.}
 
-\item{strata}{possible vector of strata}
+\item{strata}{Vector of strata.}
 
-\item{entry}{delayed entry variable for simulation.}
+\item{entry}{Delayed entry variable for simulation.}
 
-\item{extend}{to extend possible stratified baselines to largest end-point 
-given then takes average rate of in simulated data from cox model.}
+\item{extend}{Extend possible stratified baselines to largest endpoint.}
 
-\item{cens}{specifies censoring model, if "is.matrix" then uses cumulative
-hazard given, if "is.scalar" then uses rate for exponential, and if not}
+\item{cens}{Censoring specification (matrix = cumulative hazard, scalar = rate).}
 
-\item{rrc}{possible vector of relative risk for cox-type censoring.}
+\item{rrc}{Relative risks for Cox-type censoring.}
 
-\item{...}{arguments for rchaz, for example entry-time.}
+\item{...}{Arguments for \code{rchaz} (e.g., entry-time).}
+}
+\value{
+Data frame with simulated event times, status, and covariates.
 }
 \description{
-Simulates data that looks like fit from Cox model. Censor data automatically
-for highest value of the event times by using cumulative hazard.
+Simulates data that looks like fit from a Cox model. Automatically censors data 
+for the highest value of the event times by using cumulative hazard.
 }
 \examples{
 data(sTRACE)
@@ -71,4 +72,5 @@ plot(coxs,col=1); plot(cc,add=TRUE,col=2)
 \author{
 Thomas Scheike
 }
+\keyword{simulation}
 \keyword{survival}

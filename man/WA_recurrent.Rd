@@ -2,7 +2,7 @@
 % Please edit documentation in R/WA-estimands.R
 \name{WA_recurrent}
 \alias{WA_recurrent}
-\title{While-Alive estimands for recurrent events}
+\title{While-Alive Estimands for Recurrent Events}
 \usage{
 WA_recurrent(
   formula,
@@ -21,49 +21,82 @@ WA_recurrent(
 )
 }
 \arguments{
-\item{formula}{Event formula first covariate on rhs must be a factor giving the treatment}
+\item{formula}{Formula with an \code{Event} object. The first covariate on the RHS 
+must be a factor representing the treatment group. Can include \code{cluster(id)}.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing all variables referenced in the formula.}
 
-\item{time}{for estimation}
+\item{time}{Time point \eqn{t} for estimation. If NULL, defaults to the maximum event time.}
 
-\item{cens.code}{of censorings}
+\item{cens.code}{Numeric code for censoring (default 0).}
 
-\item{cause}{of events}
+\item{cause}{Numeric code for the recurrent event of interest (default 1).}
 
-\item{death.code}{of terminal events}
+\item{death.code}{Numeric code for the terminal event/death (default 2).}
 
-\item{trans}{possible power for mean of events per time-unit}
+\item{trans}{Power transformation for the mean of events per time-unit (default NULL, i.e., linear).}
 
-\item{cens.formula}{censoring model, default is to use strata(treatment)}
+\item{cens.formula}{Formula for the censoring model. Default is \code{~strata(treatment)}.}
 
-\item{augmentR}{covariates for model of mean ratio}
+\item{augmentR}{Formula for covariate augmentation in the randomization model 
+(e.g., \code{~age+sex}). Improves efficiency.}
 
-\item{augmentC}{covariates for censoring augmentation}
+\item{augmentC}{Formula for covariate augmentation in the censoring model. 
+Enables double robustness.}
 
-\item{type}{augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"}
+\item{type}{Type of augmentation for the binomial regression call. Default is "I" 
+if \code{augmentC} is given, otherwise "II".}
 
-\item{marks}{possible marks for composite outcome situation for model for counts with marks}
+\item{marks}{Optional marks for composite outcome situations (e.g., distinguishing 
+event types in a composite endpoint).}
 
-\item{...}{arguments for binregATE}
+\item{...}{Additional arguments passed to \code{binregATE}.}
+}
+\value{
+An object of class \code{"WA"} containing:
+  \item{RAW}{List of raw estimates: RMST, mean number of events, ratio of means, 
+    and their log-transformed versions with standard errors.}
+  \item{ET}{List of estimated treatment effects: risk difference for the mean rate 
+    (\code{riskDR}) and optionally the augmented version (\code{riskDRC}).}
+  \item{time}{The time point used for estimation.}
+  \item{cause, death.code, cens.code}{Codes used.}
+  \item{augmentR, augmentC}{Formulas used for augmentation.}
+  
+  The object includes influence functions (IID) for all estimators, allowing for 
+  further variance calculations or combination with other estimators.
 }
 \description{
-Considers the ratio of means \deqn{E(N(min(D,t)))/E(min(D,t))} and the
-the mean of the events per time unit \deqn{E(N(min(D,t))/min(D,t))} both based on
-IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator.
+Computes the "While-Alive" estimands for recurrent events in the presence of a 
+terminal event (death). These estimands address the challenge of defining meaningful 
+treatment effects when death prevents further observation of recurrent events.
+}
+\details{
+The function estimates two primary quantities:
+\enumerate{
+  \item \strong{Ratio of Means}: \deqn{E(N(\min(D,t))) / E(\min(D,t))}
+    The expected number of events up to time \eqn{t} (censored by death \eqn{D}) 
+    divided by the expected time alive up to \eqn{t}.
+  \item \strong{Mean of Events per Time Unit}: \deqn{E(N(\min(D,t)) / \min(D,t))}
+    The expected rate of events per unit of time alive.
+}
+
+Estimation is based on Inverse Probability of Censoring Weighting (IPCW) to handle 
+administrative censoring and death. The method can be augmented with covariates 
+(double robust estimation) to improve efficiency and robustness.
 }
 \examples{
 data(hfactioncpx12)
-
 dtable(hfactioncpx12,~status)
 dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,
                    time=2,death.code=2)
 summary(dd)
 }
 \references{
-Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
-Mao, L. (2023). Nonparametric inference of general while-alive estimands for recurrent events. Biometrics, 79(3):1749–1760.
-Schmidli, H., Roger, J. H., and Akacha, M. (2023). Estimands for recurrent event endpoints in the presence of a terminal event. Statistics in Biopharmaceutical Research, 15(2):238–248.
+Ragni, A., Martinussen, T., & Scheike, T. H. (2023). Nonparametric estimation of the Patient Weighted While-Alive Estimand. arXiv preprint.
+
+Mao, L. (2023). Nonparametric inference of general while-alive estimands for recurrent events. Biometrics, 79(3), 1749–1760.
+
+Schmidli, H., Roger, J. H., & Akacha, M. (2023). Estimands for recurrent event endpoints in the presence of a terminal event. Statistics in Biopharmaceutical Research, 15(2), 238–248.
 }
 \author{
 Thomas Scheike

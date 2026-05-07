@@ -1,42 +1,52 @@
 
 ## {{{ hazard simulation
 
-#' Simulation of Piecewise constant hazard model (Cox).
-#' 
-#' Simulates data from piecwise constant baseline hazard that can also be of
-#' Cox type. Censor data at highest value of the break points.
-#' 
-#' For a piecewise linear cumulative hazard the inverse is easy to compute with 
-#' and delayed entry x we compute 
-#' \deqn{\Lambda^{-1}(\Lambda(x) + E/RR)}, 
-#' where RR are the relative risks and E is exponential with mean 1.
-#' This quantity has survival function 
-#' \deqn{P(T > t | T>x) = exp(-RR (\Lambda(t) - \Lambda(x)))}. 
-#' 
-#' @param cumhazard cumulative hazard, or piece-constant rates for periods
-#'   defined by first column of input.
-#' @param rr relative risk for simulations, alternatively when rr=1 specify n
-#' @param n number of simulation if rr not given
-#' @param entry delayed entry time for simuations.
-#' @param cum.hazard specifies wheter input is cumulative hazard or rates.
-#' @param cause name of cause
-#' @param extend to extend piecewise constant with constant rate. Default is
-#'   average rate over time from cumulative (when TRUE), if numeric then uses
-#'   given rate.
-#' @author Thomas Scheike
-#' @keywords survival
-#' @examples
-#' chaz <-  c(0,1,1.5,2,2.1)
-#' breaks <- c(0,10,   20,  30,   40)
-#' cumhaz <- cbind(breaks,chaz)
-#' n <- 10
-#' X <- rbinom(n,1,0.5)
-#' beta <- 0.2
-#' rrcox <- exp(X * beta)
-#' 
-#' pctime <- rchaz(cumhaz,n=10)
-#' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
-#' 
+##' Simulation of Piecewise Constant Hazard Model (Cox)
+##'
+##' Simulates data from a piecewise constant baseline hazard that can also be of Cox type. 
+##' Censors data at the highest value of the break points.
+##' 
+##' For a piecewise linear cumulative hazard, the inverse is easy to compute. With delayed 
+##' entry \eqn{x}, we compute:
+##' \deqn{\Lambda^{-1}(\Lambda(x) + E/RR)}
+##' where \eqn{RR} are the relative risks and \eqn{E} is exponential with mean 1.
+##' This quantity has survival function:
+##' \deqn{P(T > t | T>x) = \exp(-RR (\Lambda(t) - \Lambda(x)))}
+##'
+##' @param cumhazard Cumulative hazard matrix (columns: time, cumulative hazard), or 
+##'   piece-constant rates for periods defined by the first column of input.
+##' @param rr Relative risk vector for simulations, or alternatively when \code{rr=1} 
+##'   specify \code{n}.
+##' @param n Number of simulations if \code{rr} not given.
+##' @param entry Delayed entry time for simulations (optional).
+##' @param cum.hazard Specifies whether input is cumulative hazard (\code{TRUE}) or rates 
+##'   (\code{FALSE}).
+##' @param cause Name/code of the event cause (default 1).
+##' @param extend To extend piecewise constant with constant rate beyond the last break point. 
+##'   Default is \code{FALSE}. If \code{TRUE}, extends with average rate over time from 
+##'   cumulative. If numeric, uses the given rate.
+##' @return A data frame containing:
+##'   \item{entry}{Entry times.}
+##'   \item{time}{Event/censoring times.}
+##'   \item{status}{Event status (1=event, 0=censored).}
+##'   \item{rr}{Relative risks used.}
+##'   
+##'   Attributes include:
+##'   \item{cumhaz}{The cumulative hazard used.}
+##'   \item{extend.rate}{The extension rate if used.}
+##' @author Thomas Scheike
+##' @keywords survival simulation
+##' @examples
+##' chaz <-  c(0,1,1.5,2,2.1)
+##' breaks <- c(0,10,   20,  30,   40)
+##' cumhaz <- cbind(breaks,chaz)
+##' n <- 10
+##' X <- rbinom(n,1,0.5)
+##' beta <- 0.2
+##' rrcox <- exp(X * beta)
+##' 
+##' pctime <- rchaz(cumhaz,n=10)
+##' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
 #' @export 
 #' @aliases sim_rchaz lin_approx 
 rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=FALSE)
@@ -89,7 +99,19 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
    return(dt)
 }# }}}
 
-#' @export 
+##' Multiple Cause Piecewise Constant Hazard Simulation
+##'
+##' Simulates data from multiple piecewise constant baseline hazards for competing risks. 
+##' Takes the minimum of all cause-specific event times and assigns the corresponding cause.
+##'
+##' @param cumhaz List of cumulative hazard matrices, one for each cause.
+##' @param rr Matrix of relative risks (rows = subjects, columns = causes).
+##' @param causes Vector of cause codes to assign (default NULL, uses 1,2,...).
+##' @param ... Additional arguments passed to \code{rchaz}.
+##' @return A data frame with event times and status indicating the cause of the first event.
+##' @author Thomas Scheike
+##' @seealso \code{\link{rchaz}}
+##' @export 
 rchazl <- function (cumhaz, rr, causes=NULL,...)
 {# {{{
     l <- length(cumhaz)
@@ -299,26 +321,25 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 	return(ptt)
 }# }}}
 
-#' Simulation of output from Cox model.
-#' 
-#' Simulates data that looks like fit from Cox model. Censor data automatically
-#' for highest value of the event times by using cumulative hazard. 
-#' 
-#' @param cox output form coxph or cox.aalen model fitting cox model.
-#' @param n number of simulations.
-#' @param data to extract covariates for simulations (draws from observed covariates).
-#' @param Z give design matrix instead of data
-#' @param rr possible vector of relative risk for cox model.
-#' @param strata possible vector of strata 
-#' @param entry delayed entry variable for simulation.
-#' @param extend to extend possible stratified baselines to largest end-point 
-#' given then takes average rate of in simulated data from cox model.
-#' @param cens specifies censoring model, if "is.matrix" then uses cumulative
-#' hazard given, if "is.scalar" then uses rate for exponential, and if not
-#' @param rrc possible vector of relative risk for cox-type censoring.
-#' @param ... arguments for rchaz, for example entry-time.
-#' @author Thomas Scheike
-#' @keywords survival
+##' Simulation of Output from Cox Model
+##'
+##' Simulates data that looks like fit from a Cox model. Automatically censors data 
+##' for the highest value of the event times by using cumulative hazard.
+##'
+##' @param cox Output from \code{coxph} or \code{phreg} model fitting.
+##' @param n Number of simulations.
+##' @param data Data frame to extract covariates for simulations (draws from observed covariates).
+##' @param Z Design matrix instead of data.
+##' @param rr Vector of relative risks for Cox model.
+##' @param strata Vector of strata.
+##' @param entry Delayed entry variable for simulation.
+##' @param extend Extend possible stratified baselines to largest endpoint.
+##' @param cens Censoring specification (matrix = cumulative hazard, scalar = rate).
+##' @param rrc Relative risks for Cox-type censoring.
+##' @param ... Arguments for \code{rchaz} (e.g., entry-time).
+##' @return Data frame with simulated event times, status, and covariates.
+##' @author Thomas Scheike
+##' @keywords survival simulation
 #' @examples
 #' data(sTRACE)
 #' nsim <- 100
@@ -482,31 +503,26 @@ setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
     return(cox)
 }# }}}
 
-#' Simulation of cause specific from Cox models.
-#' 
-#' Simulates data that looks like fit from cause specific Cox models. 
-#' Censor data automatically. When censoring is given in the  list of causes this
-#' will give censoring that looks like the data.  Covariates are drawn from data-set
-#' with replacement. This gives covariates like the data.  Calls sim_phregs
-#' 
-#' 
-#' @param coxs list of cox models.
-#' @param n number of simulations.
-#' @param data to extract covariates for simulations (draws from observed covariates).
-#' @param rr possible vector of relative risk for cox model.
-#' @param strata possible vector of strata 
-#' @param entry delayed entry variable for simulation.
-#' @param extend to extend possible stratified baselines to largest end-point 
-#' @param cens specifies censoring model, if NULL then only censoring for 
-#'   	       each cause at end of last event of this type. 
-#' 	       if "is.matrix" then uses cumulative. 
-#'             hazard given, if "is.scalar" then uses rate for exponential, and if not
-#'             given then takes average rate of in simulated data from cox model.
-#'             But censoring can also be given as a cause.
-#' @param rrc possible vector of relative risk for cox-type censoring.
-#' @param ... arguments for rchaz, for example entry-time
-#' @author Thomas Scheike
-#' @keywords survival
+
+##' Simulation of Cause-Specific Cox Models
+##'
+##' Simulates data that looks like fit from cause-specific Cox models. Censors data 
+##' automatically. When censoring is given in the list of causes, this provides censoring 
+##' that looks like the data.
+##'
+##' @param coxs List of Cox models.
+##' @param n Number of simulations.
+##' @param data Data frame to extract covariates.
+##' @param rr Relative risks.
+##' @param strata Strata vector.
+##' @param entry Delayed entry.
+##' @param extend Extend baselines to largest endpoint.
+##' @param cens Censoring specification.
+##' @param rrc Relative risks for censoring.
+##' @param ... Arguments for \code{rchaz}.
+##' @return Data frame with simulated event times, status, and covariates.
+##' @author Thomas Scheike
+##' @keywords survival simulation
 #' @examples
 #' data(bmt)
 #' nsim <- 100; 
@@ -576,7 +592,7 @@ return(ptt)
 
 ## {{{ cumulative incidence 
 
-#' @export sim_cifs
+##' @export sim_cifs
 sim_cifs <- function(cifs,n,data=NULL,rr=NULL,strata=NULL,Z=NULL,
                      cens=NULL,rrc=NULL,max.times=NULL,causes=c(1,2),
                      U=NULL,pU=NULL,extend=TRUE,type=NULL,restrict=TRUE,entry=NULL,...)
@@ -778,34 +794,33 @@ subdist <- function(F1,times)
   return(dt)
 }# }}}
 
-#' Simulation of output from Cumulative incidence regression model 
-#' 
-#' Simulates data that looks like fit from fitted cumulative incidence model
-#' 
-#' @param cif output form prop.odds.subdist or ccr (cmprsk), can also call invsubdist with 
-#'    with cumulative and linear predictor 
-#' @param n number of simulations.
-#' @param data to extract covariates for simulations (draws from observed
-#' covariates).
-#' @param Z to use these covariates for simulation rather than drawing new ones. 
-#' @param rr possible vector of relative risk for cox model.
-#' @param strata possible vector of strata 
-#' @param drawZ to random sample from Z or not 
-#' @param cens specifies censoring model, if "is.matrix" then uses cumulative
-#' hazard given, if "is.scalar" then uses rate for exponential, and if not
-#' given then takes average rate of in simulated data from cox model.
-#' @param rrc possible vector of relative risk for cox-type censoring.
-#' @param entry delayed entry time
-#' @param Sentry survival related to delayed entry, if not specfied assumes that there is just one cause and uses 1-F1(entry,X) 
-#' @param cumstart to start cumulatives at time 0 in 0. 
-#' @param U uniforms to use for drawing of timing for cumulative incidence. 
-#' @param pU uniforms to use for drawing event type (F1,F2,1-F1-F2). 
-#' @param type of model logistic,cloglog,rr 
-#' @param extend  to extend piecewise constant with constant rate. Default is average rate over time from cumulative (when TRUE), if numeric then uses given rate.
-#' @param ... arguments for sim_subdist (for example Uniform variable for realizations)
-#' @author Thomas Scheike
-#' @keywords survival
-#' @examples
+##' Simulation of Output from Cumulative Incidence Regression Model
+##'
+##' Simulates data that looks like fit from a fitted cumulative incidence model 
+##' (Fine-Gray or logistic).
+##'
+##' @param cif Output from \code{prop.odds.subdist} or \code{ccr} (\code{cmprsk}), 
+##'   or call \code{invsubdist} with cumulative and linear predictor.
+##' @param n Number of simulations.
+##' @param data Data frame to extract covariates.
+##' @param Z Design matrix instead of data.
+##' @param rr Relative risks.
+##' @param strata Strata vector.
+##' @param drawZ Logical; randomly sample from Z.
+##' @param cens Censoring specification.
+##' @param rrc Relative risks for censoring.
+##' @param entry Delayed entry time.
+##' @param Sentry Survival related to delayed entry.
+##' @param cumstart Start cumulatives at time 0.
+##' @param U Uniforms for drawing timing.
+##' @param pU Uniforms for drawing event type.
+##' @param type Model type: \code{"logistic"}, \code{"cloglog"}, or \code{"rr"}.
+##' @param extend Extend piecewise constant with constant rate.
+##' @param ... Arguments for \code{sim_subdist}.
+##' @return Data frame with simulated event times, status, and covariates.
+##' @author Thomas Scheike
+##' @keywords survival simulation
+##' @examples
 #' data(bmt)
 #' nsim <- 100
 #' 
@@ -927,7 +942,8 @@ attr(ptt,"cumhaz") <-  cumhaz
 return(ptt)
 }# }}}
 
-#' @export 
+
+##' @export
 simul_cifs <- function(n,rho1,rho2,beta,rc=0.5,depcens=0,rcZ=0.5,
                bin=1,type=c("cloglog","logistic"),rate=1,entry=NULL,
                Z=NULL,U=NULL,pU=NULL,...) {# {{{
@@ -1155,11 +1171,35 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 ## First simple model, then with covariates addedd 
 ## effect of transition into 2 being early for cause 3, and 4
 ######################## ##################### #####################
+
+##' Illness-Death Competing Risks with Two Causes of Death
+##'
+##' Simulates data from an illness-death model with two causes of death from the 
+##' illness state. First transition is simple, then with covariates effects can be added.
+##'
+##' @param cumhaz Cumulative hazard from state 1 to 2.
+##' @param death.cumhaz Cumulative hazard of death from state 1.
+##' @param death.cumhaz2 Cumulative hazard of death from state 2.
+##' @param n Number of simulations.
+##' @param rr Relative risks.
+##' @param rd Relative risks for death from state 1.
+##' @param rd2 Relative risks for death from state 2.
+##' @param gamma23, gamma24 Early effect parameters for death causes.
+##' @param early2 Time threshold for early effect.
+##' @param gap.time Gap time indicator.
+##' @param max.recurrent Maximum recurrent events.
+##' @param cens Censoring specification.
+##' @param rrc Censoring relative risks.
+##' @param extend Extend hazards.
+##' @param ... Additional arguments.
+##' @return Data frame with multi-state event history.
+##' @author Thomas Scheike
+##' @keywords survival simulation
+##' @export
 sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 		    rr=NULL,rd=NULL,rd2=NULL,gamma23=0,gamma24=0,early2=10000,
-		    gap.time=FALSE,max.recurrent=100,cens=NULL,rrc=NULL,extend=TRUE,...) 
+		    gap.time=FALSE,max.recurrent=100,cens=NULL,rrc=NULL,extend=TRUE,...)
 {# {{{
-
   status <- NULL
 
   ## cumhaz is cumulative out of state 1 to state 2 
@@ -1216,39 +1256,33 @@ sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
   return(tall)
   }# }}}
 
-##' Simulation of illness-death model 
+##' Simulation of Illness-Death Model
 ##'
-##' Simulation of illness-death model 
+##' Simulates data from a full illness-death model with reversible transitions 
+##' and multiple causes of death. Supports various dependence structures via 
+##' shared frailties.
 ##'
-##' sim_multistateII allows two causes of death from the alive and illness state
-##'
-##' Must give cumulative hazards on some time-range 
-##'
-##' @param n number of id's
-##' @param cumhaz cumulative hazard of going from state 1 to 2.
-##' @param cumhaz2 cumulative hazard of going from state 2 to 1.
-##' @param death.cumhaz cumulative hazard of death from state 1.
-##' @param death.cumhaz2 cumulative hazard of death from state 2.
-##' @param rr12 relative risk adjustment for cumhaz12 from 1->2
-##' @param rr21 relative risk adjustment for cumhaz21 from 2->1
-##' @param rd13 relative risk adjustment for death.cumhaz from 1->3
-##' @param rd23 relative risk adjustment for death.cumhaz2 from 2->3
-##' @param rrc relative risk adjustment for censoring
-##' @param gap.time if true simulates gap-times with specified cumulative hazard
-##' @param max.recurrent limits number recurrent events to 100
-##' @param dependence 0:independence; 1:all share same random effect with
-##'   variance var.z; 2:random effect exp(normal) with correlation structure
-##'   from cor.mat; 3:additive gamma distributed random effects, z1= (z11+
-##'   z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3=
-##'   (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with
-##'   mean and variance 1 , first random effect is z1 and for N1 second random
-##'   effect is z2 and for N2 third random effect is for death
-##' @param var.z variance of random effects, for dependence=1  for example
-##' @param cor.mat correlation matrix for var.z variance of random effects
-##' @param cens rate of censoring exponential distribution
-##' @param extend to extend hazards to max-time
-##' @param ... Additional arguments to lower level funtions
+##' @param n Number of IDs.
+##' @param cumhaz Cumulative hazard from state 1 to 2.
+##' @param cumhaz2 Cumulative hazard from state 2 to 1.
+##' @param death.cumhaz Cumulative hazard of death from state 1.
+##' @param death.cumhaz2 Cumulative hazard of death from state 2.
+##' @param rr12 Relative risk for 1->2.
+##' @param rr21 Relative risk for 2->1.
+##' @param rd13 Relative risk for death 1->3.
+##' @param rd23 Relative risk for death 2->3.
+##' @param rrc Relative risk for censoring.
+##' @param gap.time Gap time indicator. If true simulates gap-times with specified cumulative hazard.
+##' @param max.recurrent Maximum recurrent events.
+##' @param dependence Dependence structure (0-3).
+##' @param var.z Variance of random effects.
+##' @param cor.mat Correlation matrix.
+##' @param cens Censoring rate.
+##' @param extend Extend hazards.
+##' @param ... Additional arguments.
+##' @return Data frame with multi-state event history.
 ##' @author Thomas Scheike
+##' @keywords survival simulation
 ##' @examples
 ##' ########################################
 ##' ## getting some rates to mimick 

@@ -1,60 +1,70 @@
-
-##' 2 Stage Randomization for Survival Data or competing Risks Data 
+##' Two-Stage Randomization for Survival or Competing Risks Data
 ##'
-##' Under two-stage randomization we can estimate the average treatment effect E(Y(i,j)) of treatment regime (i,j). 
-##' The estimator can be agumented in different ways: using the two randomizations and the dynamic censoring augmetatation.
-##' The treatment's must be given as factors. 
-##'
-##' The solved estimating eqution is 
-##' \deqn{  (  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C  -  p(i,j)) = 0 }
-##' where  using the covariates from augmentR0
-##' \deqn{ AUG_0 = \frac{A_0(i) - \pi_0(i)}{ \pi_0(i)} X_0 \gamma_0}
-##' and  using the covariates from augmentR1
-##' \deqn{ AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1}
-##' and   the censoring augmentation is 
-##' \deqn{  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) }
-##' where 
-##' \deqn{ \gamma_c(s)} is chosen to minimize the variance given the dynamic  covariates specified by augmentC.
-##'
-##' In the observational case, we can use propensity score modelling and outcome modelling (using linear regression).
+##' Estimates the average treatment effect \eqn{E(Y(i,j))} of treatment regime \eqn{(i,j)} 
+##' under two-stage randomization. The estimator can be augmented using information from 
+##' both randomizations and dynamic censoring augmentation to improve efficiency.
 ##' 
-##' Standard errors are estimated using the influence function  of all estimators and tests of differences can therefore be computed
-##' subsequently.
+##' The method solves the estimating equation:
+##' \deqn{ \frac{I(\min(T_i,t) < G_i)}{G_c(\min(T_i,t))} I(T \leq t, \epsilon=1) - AUG_0 - AUG_1 + AUG_C - p(i,j) = 0 }
+##' where:
+##' \itemize{
+##'   \item \eqn{AUG_0 = \frac{A_0(i) - \pi_0(i)}{\pi_0(i)} X_0 \gamma_0} uses covariates from \code{augmentR0}
+##'   \item \eqn{AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{\pi_1(j)} X_1 \gamma_1} uses covariates from \code{augmentR1}
+##'   \item \eqn{AUG_C = \int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s)} dM_c(s)} is the censoring augmentation
+##' }
+##' 
+##' Standard errors are estimated using the influence function of all estimators, enabling 
+##' tests of differences to be computed subsequently. The method handles both survival 
+##' data and competing risks data, and supports multiple treatment levels.
 ##'
-##' @param formula formula with outcome (see \code{coxph})
-##' @param data data frame
-##' @param cause cause of interest
-##' @param time  time of interest 
-##' @param cens.code gives censoring code
-##' @param beta starting values 
-##' @param treat.model0 logistic treatment model for 1st randomization
-##' @param treat.model1 logistic treatment model for 2ndrandomization
-##' @param augmentR0 augmentation model for  1st randomization
-##' @param augmentR1 augmentation model for  2nd randomization
-##' @param augmentC augmentation model for censoring 
-##' @param cens.model stratification for censoring model based on observed covariates
-##' @param estpr estimate randomization probabilities using model
-##' @param response.name can give name of response variable, otherwise reads this as first variable of treat.model1
-##' @param response.code code of status of survival data that indicates a response at which 2nd randomization is performed
-##' @param offset not implemented 
-##' @param weights not implemented 
-##' @param cens.weights can be given 
-##' @param kaplan.meier  for censoring weights, rather than exp cumulative hazard
-##' @param no.opt not implemented 
-##' @param method not implemented 
-##' @param augmentation not implemented 
-##' @param outcome can be c("cif","rmst","rmst-cause")
-##' @param model  not implemented, uses linear regression for augmentation
-##' @param Ydirect use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), see binreg for more on this
-##' @param return.dataw to return weighted data for all treatment regimes
-##' @param pi0 set up known randomization probabilities 
-##' @param pi1 set up known randomization probabilities 
-##' @param cens.time.fixed to use time-dependent weights for censoring estimation using weights 
-##' @param outcome.iid to get iid contribution from outcome model (here linear regression working models). 
-##' @param outcome.iid to get iid contribution from outcome model (here linear regression working models). 
-##' @param meanCs (0) indicates that censoring augmentation is centered by CensAugment.times/n
-##' @param ... Additional arguments to lower level funtions
+##' @param formula Formula with outcome (see \code{coxph}), typically \code{Event(entry,time,status)~+1+cluster(id)}.
+##' @param data Data frame containing all variables.
+##' @param cause Cause of interest for competing risks (default 1).
+##' @param time Time point for estimation.
+##' @param cens.code Censoring code (default 0).
+##' @param beta Starting values for optimization.
+##' @param treat.model0 Logistic treatment model for the first randomization.
+##' @param treat.model1 Logistic treatment model for the second randomization.
+##' @param augmentR0 Covariates for augmentation model of the first randomization.
+##' @param augmentR1 Covariates for augmentation model of the second randomization.
+##' @param augmentC Covariates for censoring augmentation model.
+##' @param cens.model Stratification for censoring model based on observed covariates.
+##' @param estpr Logical; estimate randomization probabilities using model (default TRUE).
+##' @param response.name Name of response variable (reads from \code{treat.model1} if NULL).
+##' @param response.code Code of status indicating response at which 2nd randomization occurs.
+##' @param offset Not implemented.
+##' @param weights Not implemented.
+##' @param cens.weights Can be provided externally.
+##' @param kaplan.meier Logical; use Kaplan-Meier for censoring weights rather than exp cumulative hazard.
+##' @param no.opt Not implemented.
+##' @param method Not implemented.
+##' @param augmentation Not implemented.
+##' @param outcome Outcome type: \code{"cif"} (cumulative incidence), \code{"rmst"} (restricted mean survival time), 
+##'   or \code{"rmst-cause"} (restricted mean time lost for cause).
+##' @param model Not implemented, uses linear regression for augmentation.
+##' @param Ydirect Use this Y instead of outcome constructed inside the program.
+##' @param return.dataw Logical; return weighted data for all treatment regimes.
+##' @param pi0 Known randomization probabilities for first randomization.
+##' @param pi1 Known randomization probabilities for second randomization.
+##' @param cens.time.fixed Logical; use time-dependent weights for censoring estimation.
+##' @param outcome.iid Logical; get iid contribution from outcome model.
+##' @param meanCs Logical; indicates censoring augmentation is centered by \code{CensAugment.times/n}.
+##' @param ... Additional arguments to lower-level functions.
+##' @return An object of class \code{"binregTSR"} containing:
+##'   \item{riskG}{Simple estimator results (coefficient, SE).}
+##'   \item{riskG0}{First randomization augmentation results.}
+##'   \item{riskG1}{Second randomization augmentation results.}
+##'   \item{riskG01}{Both randomizations augmentation results.}
+##'   \item{riskG.iid}{Influence functions for all estimators.}
+##'   \item{varG}{Variance-covariance matrices.}
+##'   \item{MGc}{Censoring martingale contributions.}
+##'   \item{CensAugment.times}{Censoring augmentation terms.}
+##'   \item{dynCens.coef}{Dynamic censoring coefficients.}
+##'   \item{dataW}{Weighted data (if \code{return.dataw=TRUE}).}
 ##' @author Thomas Scheike
+##' @references 
+##' Scheike, T. H. (2024). Two-stage randomization analysis for survival data. mets package documentation.
+##' @seealso \code{\link{binreg}}, \code{\link{phreg_rct}}
 ##' @examples
 ##' ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 ##' 

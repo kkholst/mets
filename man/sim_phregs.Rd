@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{sim_phregs}
 \alias{sim_phregs}
-\title{Simulation of cause specific from Cox models.}
+\title{Simulation of Cause-Specific Cox Models}
 \usage{
 sim_phregs(
   coxs,
@@ -18,36 +18,33 @@ sim_phregs(
 )
 }
 \arguments{
-\item{coxs}{list of cox models.}
+\item{coxs}{List of Cox models.}
 
-\item{n}{number of simulations.}
+\item{n}{Number of simulations.}
 
-\item{data}{to extract covariates for simulations (draws from observed covariates).}
+\item{data}{Data frame to extract covariates.}
 
-\item{rr}{possible vector of relative risk for cox model.}
+\item{rr}{Relative risks.}
 
-\item{strata}{possible vector of strata}
+\item{strata}{Strata vector.}
 
-\item{entry}{delayed entry variable for simulation.}
+\item{entry}{Delayed entry.}
 
-\item{extend}{to extend possible stratified baselines to largest end-point}
+\item{extend}{Extend baselines to largest endpoint.}
 
-\item{cens}{specifies censoring model, if NULL then only censoring for 
-  each cause at end of last event of this type. 
-if "is.matrix" then uses cumulative. 
- hazard given, if "is.scalar" then uses rate for exponential, and if not
- given then takes average rate of in simulated data from cox model.
- But censoring can also be given as a cause.}
+\item{cens}{Censoring specification.}
 
-\item{rrc}{possible vector of relative risk for cox-type censoring.}
+\item{rrc}{Relative risks for censoring.}
 
-\item{...}{arguments for rchaz, for example entry-time}
+\item{...}{Arguments for \code{rchaz}.}
+}
+\value{
+Data frame with simulated event times, status, and covariates.
 }
 \description{
-Simulates data that looks like fit from cause specific Cox models. 
-Censor data automatically. When censoring is given in the  list of causes this
-will give censoring that looks like the data.  Covariates are drawn from data-set
-with replacement. This gives covariates like the data.  Calls sim_phregs
+Simulates data that looks like fit from cause-specific Cox models. Censors data 
+automatically. When censoring is given in the list of causes, this provides censoring 
+that looks like the data.
 }
 \examples{
 data(bmt)
@@ -71,4 +68,5 @@ plot(cox2); plot(scox2,add=TRUE);
 \author{
 Thomas Scheike
 }
+\keyword{simulation}
 \keyword{survival}

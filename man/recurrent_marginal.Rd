@@ -5,33 +5,41 @@
 \alias{recurrent_marginalAIPCW}
 \alias{recurrentMarginalPhreg}
 \alias{iidRecurrent}
-\title{Fast recurrent marginal mean when death is possible}
+\title{Fast recurrent marginal mean estimation when death is possible}
 \usage{
 recurrent_marginal(formula, data, cause = 1, ..., death.code = 2, test = FALSE)
 }
 \arguments{
-\item{formula}{with Event object}
+\item{formula}{Formula with \code{Event} object specifying entry time, exit time, 
+and status. Can include \code{cluster()} for subject-level clustering and 
+\code{strata()} for stratified analysis.}
 
-\item{data}{data frame for computation}
+\item{data}{Data frame containing all variables referenced in the formula.}
 
-\item{cause}{of interest (1 default)}
+\item{cause}{Numeric code(s) for the event of interest (default is 1).}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions (e.g., \code{phreg}).}
 
-\item{death.code}{codes for death (terminating event, 2 default)}
+\item{death.code}{Numeric code(s) for death/terminating event (default is 2).}
 
-\item{test}{to compute logrank type test, only for two groups}
+\item{test}{Logical; if TRUE, computes a logrank-type test for two-group comparisons.}
+}
+\value{
+An object of class \code{"recurrent"} containing the marginal mean (\code{mu}), standard errors (\code{se.mu}), times, survival probabilities (\code{St}), and cumulative hazards. Attributes include the logrank test result (if \code{test=TRUE}), cause, and death code.
 }
 \description{
-Fast Marginal means of recurrent events using the Ghosh and Lin (2000) 
-robust standard errors. Fitting two models for death and recurent events, respectively, these are
-combined to give the estimator 
-\deqn{ \int_0^t  S(u-) dR(u)} the mean number of recurrent events (or the cumulative incidence), here
-\deqn{ S(u) } is the probability of survival for the baseline group, and 
-\deqn{ dR(u)} is the hazard rate of an event among survivors for the baseline.
+Computes fast marginal means of recurrent events using the Ghosh and Lin (2000) 
+robust standard error methodology. The method fits two separate models—one for death 
+(terminating event) and one for recurrent events—which are then combined to produce 
+the estimator:
+\deqn{ \int_0^t S(u-) dR(u) }
+where this represents the mean number of recurrent events (or cumulative incidence). 
+Here, \deqn{S(u)} is the probability of survival for the baseline group, and 
+\deqn{dR(u)} is the hazard rate of an event among survivors for the baseline.
 }
 \details{
-Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
+The function assumes no ties in the sense that jump times need to be unique, 
+which is particularly important for the stratified version.
 }
 \examples{
 data(hfactioncpx12)
@@ -78,6 +86,7 @@ head(iid(outN,time=3))
 Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 
+Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 }
 \author{

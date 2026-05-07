@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{prob_exceed_recurrent}
 \alias{prob_exceed_recurrent}
-\title{Estimation of probability of more that k events for recurrent events process}
+\title{Probability of exceeding k recurrent events}
 \usage{
 prob_exceed_recurrent(
   formula,
@@ -20,48 +20,63 @@ prob_exceed_recurrent(
 )
 }
 \arguments{
-\item{formula}{formula}
+\item{formula}{Formula with \code{Event} object.}
 
-\item{data}{data-frame}
+\item{data}{Data frame.}
 
-\item{cause}{of interest}
+\item{cause}{Cause of interest (default 1).}
 
-\item{death.code}{for status}
+\item{death.code}{Code for death (default 2).}
 
-\item{cens.code}{censoring codes}
+\item{cens.code}{Code for censoring (default 0).}
 
-\item{exceed}{values (if not given then all observed values)}
+\item{exceed}{Vector of thresholds \eqn{k} to evaluate. If NULL, uses all 
+observed event counts.}
 
-\item{marks}{may be give for jump-times and then exceed values needs to be specified}
+\item{marks}{Marks for events (optional).}
 
-\item{all.cifs}{if true then returns list of all fitted objects in cif.exceed}
+\item{all.cifs}{Logical; if TRUE, returns a list of all fitted CIF objects.}
 
-\item{return.data}{if true then returns list of data for fitting the different excess thresholds}
+\item{return.data}{Logical; if TRUE, returns the data used for fitting each threshold.}
 
-\item{conf.type}{type of confidence interval c("log","plain")}
+\item{conf.type}{Type of confidence interval: \code{"log"} or \code{"plain"}.}
 
-\item{level}{of confidence intervals default is 0.95}
+\item{level}{Confidence level (default 0.95).}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments.}
+}
+\value{
+An object of class \code{"exceed"} containing:
+  \item{time}{Time points.}
+  \item{prob}{Array of probabilities for each threshold and time.}
+  \item{se.prob}{Standard errors.}
+  \item{lower, upper}{Confidence intervals.}
+  \item{meanN, meanN2, varN}{Mean, second moment, and variance of the event count.}
+  \item{exceed}{Thresholds evaluated.}
+  \item{cif.exceed}{List of CIF objects (if \code{all.cifs=TRUE}).}
+  \item{dataList}{List of datasets (if \code{return.data=TRUE}).}
 }
 \description{
-Estimation of probability of more that k events for recurrent events process
-where there is terminal event, based on this also estimate of variance of recurrent events. The estimator is based on cumulative incidence of exceeding "k" events.
-In contrast the probability of exceeding k events can also be computed as a counting process integral.
+Estimates the probability that the number of recurrent events exceeds a 
+specified threshold \eqn{k} by time \eqn{t}, in the presence of a terminal 
+event (death). The estimator is based on the cumulative incidence of 
+exceeding \eqn{k} events.
+}
+\details{
+The method calculates \eqn{P(N(t) > k)} by treating the event "reaching k+1 
+events" as the primary event of interest and using IPCW (Inverse Probability 
+of Censoring Weighting) to handle censoring and death.
 }
 \examples{
 data(hfactioncpx12)
-dtable(hfactioncpx12,~status)
-
+dtable(hfactioncpx12, ~status)
 oo <- prob_exceed_recurrent(Event(entry,time,status)~cluster(id),
-        hfactioncpx12,cause=1,death.code=2)
+        hfactioncpx12, cause=1, death.code=2)
 plot(oo)
-summary(oo,times=c(1,2,5))
-
+summary(oo, times=c(1, 2, 5))
 }
 \references{
-Scheike, Eriksson, Tribler (2019), The mean, variance and correlation for bivariate 
-                                       recurrent events with a terminal event, JRSS-C
+Scheike, T. H., Eriksson, L., & Tribler, P. (2019). The mean, variance and correlation for bivariate recurrent events with a terminal event. JRSS-C.
 }
 \author{
 Thomas Scheike

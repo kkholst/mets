@@ -3,37 +3,51 @@
 \name{mlogit}
 \alias{mlogit}
 \alias{predict}
-\title{Multinomial regression based on phreg regression}
+\title{Multinomial Regression Based on phreg}
 \usage{
 mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
 }
 \arguments{
-\item{formula}{formula with outcome (see \code{coxph})}
+\item{formula}{Formula with the outcome (similar to \code{coxph}). The outcome must be a factor.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{offset}{offsets for partial likelihood}
+\item{offset}{Offsets for the partial likelihood.}
 
-\item{weights}{for score equations}
+\item{weights}{Weights for the score equations.}
 
-\item{fix.X}{to have same coefficients for all categories}
+\item{fix.X}{Logical; if \code{TRUE}, forces the same coefficients for all categories (except intercepts).}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"mlogit"} (extending \code{"phreg"}) containing:
+\item{coef}{Matrix of estimated coefficients (rows correspond to categories, columns to covariates).}
+\item{var}{Robust variance-covariance matrix.}
+\item{iid}{Influence functions for the coefficients.}
+\item{nlev}{Number of levels in the outcome.}
+\item{px}{Number of covariates.}
 }
 \description{
-Fits multinomial regression model 
-\deqn{ P_i = \frac{ \exp( X^\beta_i ) }{ \sum_{j=1}^K \exp( X^\beta_j ) }} 
-for \deqn{i=1,..,K}
-where \deqn{\beta_1 = 0}, such that \deqn{\sum_j P_j = 1} using phreg function. 
-Thefore the ratio \deqn{\frac{P_i}{P_1} = \exp( X^\beta_i )}
+Fits a multinomial regression model for a categorical outcome with \eqn{K} levels:
+\deqn{ P_i = \frac{ \exp( X^\top \beta_i ) }{ \sum_{j=1}^K \exp( X^\top \beta_j ) } }
+for \eqn{i=1, \dots, K}, where \eqn{\beta_1 = 0} (baseline category).
 }
 \details{
-Coefficients give log-Relative-Risk relative to baseline group (first level of factor, so that it can reset by relevel command).  
-Standard errors computed based on sandwhich form \deqn{ DU^-1  \sum U_i^2 DU^-1}.  
+This ensures that \eqn{\sum_j P_j = 1}. The model is fitted using the \code{phreg} function
+by expanding the data into a long format with strata for each category.
 
-Can also get influence functions (possibly robust) via iid() function, response should be a factor. 
+The coefficients represent the log-Relative-Risk (log-RR) relative to the baseline group
+(the first level of the factor, which can be reset using \code{relevel}).
 
-Can fit cumulative odds model as a special case of interval_logitsurv_discrete
+Standard errors are computed based on the sandwich form:
+\deqn{ D U^{-1} \left( \sum U_i^2 \right) D U^{-1} }
+where \eqn{U} is the score vector and \eqn{D} is the derivative matrix.
+
+Influence functions (possibly robust) can be obtained via the \code{iid()} function.
+The response variable should be a factor.
+
+Can also fit a cumulative odds model as a special case of \code{interval_logitsurv_discrete}.
 }
 \examples{
 data(bmt)

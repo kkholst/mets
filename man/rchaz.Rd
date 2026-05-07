@@ -4,7 +4,7 @@
 \alias{rchaz}
 \alias{sim_rchaz}
 \alias{lin_approx}
-\title{Simulation of Piecewise constant hazard model (Cox).}
+\title{Simulation of Piecewise Constant Hazard Model (Cox)}
 \usage{
 rchaz(
   cumhazard,
@@ -17,34 +17,47 @@ rchaz(
 )
 }
 \arguments{
-\item{cumhazard}{cumulative hazard, or piece-constant rates for periods
-defined by first column of input.}
+\item{cumhazard}{Cumulative hazard matrix (columns: time, cumulative hazard), or 
+piece-constant rates for periods defined by the first column of input.}
 
-\item{rr}{relative risk for simulations, alternatively when rr=1 specify n}
+\item{rr}{Relative risk vector for simulations, or alternatively when \code{rr=1} 
+specify \code{n}.}
 
-\item{n}{number of simulation if rr not given}
+\item{n}{Number of simulations if \code{rr} not given.}
 
-\item{entry}{delayed entry time for simuations.}
+\item{entry}{Delayed entry time for simulations (optional).}
 
-\item{cum.hazard}{specifies wheter input is cumulative hazard or rates.}
+\item{cum.hazard}{Specifies whether input is cumulative hazard (\code{TRUE}) or rates 
+(\code{FALSE}).}
 
-\item{cause}{name of cause}
+\item{cause}{Name/code of the event cause (default 1).}
 
-\item{extend}{to extend piecewise constant with constant rate. Default is
-average rate over time from cumulative (when TRUE), if numeric then uses
-given rate.}
+\item{extend}{To extend piecewise constant with constant rate beyond the last break point. 
+Default is \code{FALSE}. If \code{TRUE}, extends with average rate over time from 
+cumulative. If numeric, uses the given rate.}
+}
+\value{
+A data frame containing:
+  \item{entry}{Entry times.}
+  \item{time}{Event/censoring times.}
+  \item{status}{Event status (1=event, 0=censored).}
+  \item{rr}{Relative risks used.}
+  
+  Attributes include:
+  \item{cumhaz}{The cumulative hazard used.}
+  \item{extend.rate}{The extension rate if used.}
 }
 \description{
-Simulates data from piecwise constant baseline hazard that can also be of
-Cox type. Censor data at highest value of the break points.
+Simulates data from a piecewise constant baseline hazard that can also be of Cox type. 
+Censors data at the highest value of the break points.
 }
 \details{
-For a piecewise linear cumulative hazard the inverse is easy to compute with 
-and delayed entry x we compute 
-\deqn{\Lambda^{-1}(\Lambda(x) + E/RR)}, 
-where RR are the relative risks and E is exponential with mean 1.
-This quantity has survival function 
-\deqn{P(T > t | T>x) = exp(-RR (\Lambda(t) - \Lambda(x)))}.
+For a piecewise linear cumulative hazard, the inverse is easy to compute. With delayed 
+entry \eqn{x}, we compute:
+\deqn{\Lambda^{-1}(\Lambda(x) + E/RR)}
+where \eqn{RR} are the relative risks and \eqn{E} is exponential with mean 1.
+This quantity has survival function:
+\deqn{P(T > t | T>x) = \exp(-RR (\Lambda(t) - \Lambda(x)))}
 }
 \examples{
 chaz <-  c(0,1,1.5,2,2.1)
@@ -57,9 +70,9 @@ rrcox <- exp(X * beta)
 
 pctime <- rchaz(cumhaz,n=10)
 pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
-
 }
 \author{
 Thomas Scheike
 }
+\keyword{simulation}
 \keyword{survival}

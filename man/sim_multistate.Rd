@@ -3,7 +3,7 @@
 \name{sim_multistate}
 \alias{sim_multistate}
 \alias{sim_multistateII}
-\title{Simulation of illness-death model}
+\title{Simulation of Illness-Death Model}
 \usage{
 sim_multistate(
   n,
@@ -27,55 +27,49 @@ sim_multistate(
 )
 }
 \arguments{
-\item{n}{number of id's}
+\item{n}{Number of IDs.}
 
-\item{cumhaz}{cumulative hazard of going from state 1 to 2.}
+\item{cumhaz}{Cumulative hazard from state 1 to 2.}
 
-\item{cumhaz2}{cumulative hazard of going from state 2 to 1.}
+\item{cumhaz2}{Cumulative hazard from state 2 to 1.}
 
-\item{death.cumhaz}{cumulative hazard of death from state 1.}
+\item{death.cumhaz}{Cumulative hazard of death from state 1.}
 
-\item{death.cumhaz2}{cumulative hazard of death from state 2.}
+\item{death.cumhaz2}{Cumulative hazard of death from state 2.}
 
-\item{rr12}{relative risk adjustment for cumhaz12 from 1->2}
+\item{rr12}{Relative risk for 1->2.}
 
-\item{rr21}{relative risk adjustment for cumhaz21 from 2->1}
+\item{rr21}{Relative risk for 2->1.}
 
-\item{rd13}{relative risk adjustment for death.cumhaz from 1->3}
+\item{rd13}{Relative risk for death 1->3.}
 
-\item{rd23}{relative risk adjustment for death.cumhaz2 from 2->3}
+\item{rd23}{Relative risk for death 2->3.}
 
-\item{rrc}{relative risk adjustment for censoring}
+\item{rrc}{Relative risk for censoring.}
 
-\item{gap.time}{if true simulates gap-times with specified cumulative hazard}
+\item{gap.time}{Gap time indicator. If true simulates gap-times with specified cumulative hazard.}
 
-\item{max.recurrent}{limits number recurrent events to 100}
+\item{max.recurrent}{Maximum recurrent events.}
 
-\item{dependence}{0:independence; 1:all share same random effect with
-variance var.z; 2:random effect exp(normal) with correlation structure
-from cor.mat; 3:additive gamma distributed random effects, z1= (z11+
-z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3=
-(z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with
-mean and variance 1 , first random effect is z1 and for N1 second random
-effect is z2 and for N2 third random effect is for death}
+\item{dependence}{Dependence structure (0-3).}
 
-\item{var.z}{variance of random effects, for dependence=1  for example}
+\item{var.z}{Variance of random effects.}
 
-\item{cor.mat}{correlation matrix for var.z variance of random effects}
+\item{cor.mat}{Correlation matrix.}
 
-\item{cens}{rate of censoring exponential distribution}
+\item{cens}{Censoring rate.}
 
-\item{extend}{to extend hazards to max-time}
+\item{extend}{Extend hazards.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments.}
+}
+\value{
+Data frame with multi-state event history.
 }
 \description{
-Simulation of illness-death model
-}
-\details{
-sim_multistateII allows two causes of death from the alive and illness state
-
-Must give cumulative hazards on some time-range
+Simulates data from a full illness-death model with reversible transitions 
+and multiple causes of death. Supports various dependence structures via 
+shared frailties.
 }
 \examples{
 ########################################
@@ -114,3 +108,5 @@ lines(base1,lwd=2)
 \author{
 Thomas Scheike
 }
+\keyword{simulation}
+\keyword{survival}

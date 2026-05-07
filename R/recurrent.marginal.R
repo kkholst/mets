@@ -1,20 +1,27 @@
-##' Fast recurrent marginal mean when death is possible
+
+##' Fast recurrent marginal mean estimation when death is possible
 ##'
-##' Fast Marginal means of recurrent events using the Ghosh and Lin (2000) 
-##' robust standard errors. Fitting two models for death and recurent events, respectively, these are
-##' combined to give the estimator 
-##' \deqn{ \int_0^t  S(u-) dR(u)} the mean number of recurrent events (or the cumulative incidence), here
-##' \deqn{ S(u) } is the probability of survival for the baseline group, and 
-##' \deqn{ dR(u)} is the hazard rate of an event among survivors for the baseline. 
+##' Computes fast marginal means of recurrent events using the Ghosh and Lin (2000) 
+##' robust standard error methodology. The method fits two separate models—one for death 
+##' (terminating event) and one for recurrent events—which are then combined to produce 
+##' the estimator:
+##' \deqn{ \int_0^t S(u-) dR(u) }
+##' where this represents the mean number of recurrent events (or cumulative incidence). 
+##' Here, \deqn{S(u)} is the probability of survival for the baseline group, and 
+##' \deqn{dR(u)} is the hazard rate of an event among survivors for the baseline.
 ##' 
-##' Assumes no ties in the sense that jump times needs to be unique, this is particularly so for the stratified version.
+##' The function assumes no ties in the sense that jump times need to be unique, 
+##' which is particularly important for the stratified version.
 ##'
-##' @param formula with Event object
-##' @param data data frame for computation
-##' @param cause of interest (1 default)
-##' @param ... Additional arguments to lower level funtions
-##' @param death.code codes for death (terminating event, 2 default)
-##' @param test to compute logrank type test, only for two groups
+##' @param formula Formula with \code{Event} object specifying entry time, exit time, 
+##'   and status. Can include \code{cluster()} for subject-level clustering and 
+##'   \code{strata()} for stratified analysis.
+##' @param data Data frame containing all variables referenced in the formula.
+##' @param cause Numeric code(s) for the event of interest (default is 1).
+##' @param death.code Numeric code(s) for death/terminating event (default is 2).
+##' @param test Logical; if TRUE, computes a logrank-type test for two-group comparisons.
+##' @param ... Additional arguments passed to lower-level functions (e.g., \code{phreg}).
+##' @return An object of class \code{"recurrent"} containing the marginal mean (\code{mu}), standard errors (\code{se.mu}), times, survival probabilities (\code{St}), and cumulative hazards. Attributes include the logrank test result (if \code{test=TRUE}), cause, and death code.
 ##' @author Thomas Scheike
 ##' 
 ##' @references 
@@ -62,6 +69,7 @@
 ##'
 ##' @aliases recurrent_marginalAIPCW  recurrentMarginalPhreg iidRecurrent
 ##' @references 
+##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
 ##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
 ##' @export
 recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
@@ -425,50 +433,73 @@ ic <- iid*nrow(iid)
 return(ic)
 } ## }}}
 
-##' logrank type test for recurrent marginal mean or cumulative incidence 
+##' Logrank-type test for recurrent marginal mean or cumulative incidence
 ##'
-##' The logrank type test-statistic 
-##' \deqn{ z_1 = \int_0^t  w(t) [ d \hat m_1(s) - d \hat m_2(s) ] } is 
-##' computed and returned
-##' with a robust variance estimate based on the influence functions. Works for the
-##' recurrent events and cumulative incidence and also with delayed entry.
-##' The weights are either default  "I" \deqn{ w(t)= R_1 R_2 / (R_1+R_2)} 
-##' or  "II" \deqn{ w(t)= Y_1 Y_2 / (Y_1+Y_2) }  with 
-##' \deqn{ Y_j(t)}  the number of subjects under risk in each group and 
-##' \deqn{ R_j(t)=Y_j(t)/\hat S_j(t-)}  where the denominator is the 
-##' Kaplan-Meier of death. To get Grays test we need the weights of type="III" 
-##' \deqn{ R_j(t)=(1-F_j(s-)) Y_j(t)/\hat S_j(t-)}  where 
-##' \deqn{ F_j(s)} is the cumulative incidence for strata j and a slight modification
-##' to give the subdistribution hazards rather than the cumulative incidences.
-##' In general 
-##' \deqn{ z_k = \int_0^t  R_k(s) [ d \hat m_k(s) -  \sum_j \frac{R_j(t)}{R_\bullet (s)} d \hat m_j(s) ] } 
-##' is computed and  the test is based on \deqn{ T= (z_1,...,z_{K-1})} with 
-##' a robust variance estimate derived from the influence functions of 
-##' \deqn{ \hat m_j(s)}. The influence functions of \deqn{T} can be found 
-##' in the output via the iid() function. 
+##' Computes a logrank-type test statistic for comparing recurrent marginal means 
+##' or cumulative incidence functions between groups, extending the standard logrank 
+##' test to settings with recurrent events and a terminating event (death).
+##' 
+##' The test statistic is defined as:
+##' \deqn{ z_1 = \int_0^t w(s) [ d \hat m_1(s) - d \hat m_2(s) ] }
+##' where \eqn{w(s)} are weights and \eqn{\hat m_j(s)} are the estimated marginal 
+##' means for group \eqn{j}. The variance is estimated robustly using influence 
+##' functions derived from the Ghosh and Lin (2000) methodology.
+##' 
+##' The function supports various weighting schemes:
+##' \itemize{
+##'   \item \code{"I"}: \eqn{w(t) = R_1 R_2 / (R_1 + R_2)}, where \eqn{R_j(t) = Y_j(t)/\hat S_j(t-)} 
+##'     and \eqn{Y_j} is the number at risk, \eqn{\hat S_j} is the Kaplan-Meier survival estimate.
+##'   \item \code{"II"}: \eqn{w(t) = Y_1 Y_2 / (Y_1 + Y_2)}, standard logrank weights based on numbers at risk.
+##'   \item \code{"III"}: Weights corresponding to Gray's test for cumulative incidence, 
+##'     involving subdistribution hazards.
+##' }
+##' The test works for recurrent events, cumulative incidence, and handles delayed entry.
 ##'
-##' @param recurrent phreg object
-##' @param death phreg object 
-##' @param weight "I" or "II"
-##' @param km to use Kaplan-Meier rather than exp(-cumhaz) 
-##' @param start integral start
-##' @param stop integral stop, default max jumptime
-##' @param at.risk only uses time-points where at most at.risk under risk
-##' @param cluster.id additional cluster to combine iid representation that is ordered after id given (so safest to order data after id, that then can be GEE clustered additionally)
+##' @param recurrent A \code{phreg} object for the recurrent events model, or an object 
+##'   of class \code{"recurrent"} (output from \code{recurrent_marginal}).
+##' @param death A \code{phreg} object for the death (terminating event) model.
+##' @param weight Character string specifying the weighting scheme: \code{"I"}, \code{"II"}, 
+##'   or \code{"III"} (default is \code{"I"}).
+##' @param km Logical; if TRUE, uses Kaplan-Meier estimates for survival probabilities 
+##'   in the weights; if FALSE, uses \eqn{\exp(-\text{cumulative hazard})}.
+##' @param start Numeric; start time for the integral (default 0).
+##' @param stop Numeric; stop time for the integral. If NULL, defaults to the maximum 
+##'   jump time in the recurrent event model.
+##' @param at.risk Numeric; if > 0, the test only uses time points where the minimum 
+##'   number of subjects at risk in any group is greater than this value.
+##' @param cluster.id Optional vector of cluster IDs to combine IID representations 
+##'   (useful for GEE-style clustering).
+##' @param ... Additional arguments (currently unused).
+##' @return An object of class \code{"estimate"} (from the \code{lava} package) containing:
+##'   \item{coef}{The test statistic (difference in weighted marginal means).}
+##'   \item{se}{The robust standard error of the test statistic.}
+##'   \item{lower, upper}{Lower and upper bounds of the confidence interval.}
+##'   \item{p.value}{Two-sided p-value for the test.}
+##'   \item{iid}{The influence function (IID) decomposition of the test statistic, 
+##'     useful for further variance calculations or combining with other estimators.}
+##'   
+##' The object also includes attributes for the weights used and the time range.
 ##' @author Thomas Scheike
+##' 
 ##' @references 
-##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+##' Ghosh, D. and Lin, D. Y. (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 58, 554--562.
+##' 
+##' @seealso \code{\link{recurrent_marginal}}, \code{\link{logrankRecurrentBase}}
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##'
-##' ##xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-##' ##dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
-##' ##logrankRecurrent(xr,dr,stop=5)
+##' ## Fit separate models for recurrent events and death
+##' xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
+##' dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
 ##'
-##' ## same as 
+##' ## Compute logrank test for recurrent marginal means
+##' out <- test_logrankRecurrent(xr, dr, stop=5)
+##' summary(out)
+##'
+##' ## Alternatively, using the recurrent_marginal object directly
 ##' outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-##'                          data=hf,cause=1,death.code=2)
+##'                            data=hf,cause=1,death.code=2)
 ##' test_logrankRecurrent(outN)
 ##' @aliases logrankRecurrentBase
 ##' @export
@@ -1019,6 +1050,7 @@ tie_breaker <- function(data,stop="time",start="entry",status="status",id=NULL,d
    
    return(data)
  } # }}}
+
 
 ##' Simulation of recurrent events data based on cumulative hazards with two
 ##' types of recurrent events
@@ -1732,26 +1764,33 @@ zs <- cbind(z1,z2,zd)
   return(tall)
   }# }}}
 
-##' Counts the number of previous events of two types for recurrent events processes
+##' Count previous events for recurrent event processes
 ##'
-##' Counts the number of previous events of two types for recurrent events processes
+##' Calculates the cumulative count of previous events of specific types for each 
+##' subject up to each time point. Useful for creating time-dependent covariates 
+##' representing the history of recurrent events.
 ##'
-##' @param data data-frame
-##' @param status name of status 
-##' @param id  id 
-##' @param types types of the events (code) related to status (multiple values possible)
-##' @param names.count name of Counts, for example Count1 Count2 when types=c(1,2)
-##' @param lag if true counts previously observed, and if lag=FALSE counts up to know
-##' @param multitype, if multitype is true then counts when status "in" types, otherwise counts for each value of type, types=c(1,2)
-##' @param marks values related to status ("in" types), counts marks for types, only when multitype=TRUE
+##' @param data Data frame containing the event history.
+##' @param status Name of the column containing event status codes.
+##' @param id Name of the column containing subject IDs.
+##' @param types Numeric vector of status codes to count (e.g., \code{c(1, 2)}).
+##' @param names.count Prefix for the new count columns (e.g., "Count").
+##' @param lag Logical; if TRUE, counts events strictly before the current time 
+##'   (lagged); if FALSE, counts events up to and including the current time.
+##' @param multitype Logical; if TRUE, counts events where status is \code{in} \code{types}; 
+##'   if FALSE, counts events for each value in \code{types} separately.
+##' @param marks Values associated with events (used if \code{multitype=TRUE}).
+##' @return The input data frame with new columns added containing the event counts.
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
-##' dtable(hf,~status)
-##' rr <-  count_history(hf,types=1:2,id="id",status="status")
-##' dtable(rr,~"Count*"+status,level=1)
-##'
+##' dtable(hf, ~status)
+##' rr <- count_history(hf, types=1:2, id="id", status="status")
+##' dtable(rr, ~"Count*"+status, level=1)
+##' @export
+count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
+
 ##' @export
 count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
 {# {{{
@@ -1817,38 +1856,49 @@ data[,names.count] <-
 return(data)
 }# }}}
 
-##' Estimation of probability of more that k events for recurrent events process
+##' Probability of exceeding k recurrent events
 ##'
-##' Estimation of probability of more that k events for recurrent events process
-##' where there is terminal event, based on this also estimate of variance of recurrent events. The estimator is based on cumulative incidence of exceeding "k" events.
-##' In contrast the probability of exceeding k events can also be computed as a counting process integral. 
+##' Estimates the probability that the number of recurrent events exceeds a 
+##' specified threshold \eqn{k} by time \eqn{t}, in the presence of a terminal 
+##' event (death). The estimator is based on the cumulative incidence of 
+##' exceeding \eqn{k} events.
+##' 
+##' The method calculates \eqn{P(N(t) > k)} by treating the event "reaching k+1 
+##' events" as the primary event of interest and using IPCW (Inverse Probability 
+##' of Censoring Weighting) to handle censoring and death.
 ##'
-##' @param formula formula
-##' @param data  data-frame 
-##' @param cause of interest 
-##' @param death.code for status 
-##' @param cens.code censoring codes
-##' @param exceed values (if not given then all observed values)
-##' @param marks may be give for jump-times and then exceed values needs to be specified
-##' @param all.cifs if true then returns list of all fitted objects in cif.exceed 
-##' @param return.data if true then returns list of data for fitting the different excess thresholds 
-##' @param conf.type  type of confidence interval c("log","plain")
-##' @param  level of confidence intervals default is 0.95
-##' @param ... Additional arguments to lower level funtions
+##' @param formula Formula with \code{Event} object.
+##' @param data Data frame.
+##' @param cause Cause of interest (default 1).
+##' @param death.code Code for death (default 2).
+##' @param cens.code Code for censoring (default 0).
+##' @param exceed Vector of thresholds \eqn{k} to evaluate. If NULL, uses all 
+##'   observed event counts.
+##' @param marks Marks for events (optional).
+##' @param all.cifs Logical; if TRUE, returns a list of all fitted CIF objects.
+##' @param return.data Logical; if TRUE, returns the data used for fitting each threshold.
+##' @param conf.type Type of confidence interval: \code{"log"} or \code{"plain"}.
+##' @param level Confidence level (default 0.95).
+##' @param ... Additional arguments.
+##' @return An object of class \code{"exceed"} containing:
+##'   \item{time}{Time points.}
+##'   \item{prob}{Array of probabilities for each threshold and time.}
+##'   \item{se.prob}{Standard errors.}
+##'   \item{lower, upper}{Confidence intervals.}
+##'   \item{meanN, meanN2, varN}{Mean, second moment, and variance of the event count.}
+##'   \item{exceed}{Thresholds evaluated.}
+##'   \item{cif.exceed}{List of CIF objects (if \code{all.cifs=TRUE}).}
+##'   \item{dataList}{List of datasets (if \code{return.data=TRUE}).}
 ##' @author Thomas Scheike
 ##' @references 
-##'    Scheike, Eriksson, Tribler (2019), The mean, variance and correlation for bivariate 
-##'                                        recurrent events with a terminal event, JRSS-C
+##' Scheike, T. H., Eriksson, L., & Tribler, P. (2019). The mean, variance and correlation for bivariate recurrent events with a terminal event. JRSS-C.
 ##' @examples
 ##' data(hfactioncpx12)
-##' dtable(hfactioncpx12,~status)
-##' 
+##' dtable(hfactioncpx12, ~status)
 ##' oo <- prob_exceed_recurrent(Event(entry,time,status)~cluster(id),
-##'         hfactioncpx12,cause=1,death.code=2)
+##'         hfactioncpx12, cause=1, death.code=2)
 ##' plot(oo)
-##' summary(oo,times=c(1,2,5))
-##' 
-##' @export
+##' summary(oo, times=c(1, 2, 5))
 ##' @export
 prob_exceed_recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0, exceed=NULL,marks=NULL,all.cifs=FALSE,
 				  return.data=FALSE,conf.type=c("log","plain"),level=0.95,...)

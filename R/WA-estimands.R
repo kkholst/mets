@@ -1,34 +1,65 @@
-##' While-Alive estimands for recurrent events 
+
+##' While-Alive Estimands for Recurrent Events
 ##'
-##' Considers the ratio of means \deqn{E(N(min(D,t)))/E(min(D,t))} and the
-##' the mean of the events per time unit \deqn{E(N(min(D,t))/min(D,t))} both based on
-##' IPCW etimation. RMST estimator equivalent to Kaplan-Meier based estimator.
+##' Computes the "While-Alive" estimands for recurrent events in the presence of a 
+##' terminal event (death). These estimands address the challenge of defining meaningful 
+##' treatment effects when death prevents further observation of recurrent events.
+##' 
+##' The function estimates two primary quantities:
+##' \enumerate{
+##'   \item \strong{Ratio of Means}: \deqn{E(N(\min(D,t))) / E(\min(D,t))}
+##'     The expected number of events up to time \eqn{t} (censored by death \eqn{D}) 
+##'     divided by the expected time alive up to \eqn{t}.
+##'   \item \strong{Mean of Events per Time Unit}: \deqn{E(N(\min(D,t)) / \min(D,t))}
+##'     The expected rate of events per unit of time alive.
+##' }
+##' 
+##' Estimation is based on Inverse Probability of Censoring Weighting (IPCW) to handle 
+##' administrative censoring and death. The method can be augmented with covariates 
+##' (double robust estimation) to improve efficiency and robustness.
 ##'
-##' @param formula Event formula first covariate on rhs must be a factor giving the treatment
-##' @param data data frame 
-##' @param time for estimation 
-##' @param cens.code of censorings 
-##' @param cause of events 
-##' @param death.code of terminal events 
-##' @param trans possible power for mean of events per time-unit
-##' @param cens.formula censoring model, default is to use strata(treatment)
-##' @param augmentR covariates for model of mean ratio
-##' @param augmentC covariates for censoring augmentation
-##' @param type augmentation for call of binreg, when augmentC is given default is "I" and otherwise "II"
-##' @param marks possible marks for composite outcome situation for model for counts with marks
-##' @param ...  arguments for binregATE 
+##' @param formula Formula with an \code{Event} object. The first covariate on the RHS 
+##'   must be a factor representing the treatment group. Can include \code{cluster(id)}.
+##' @param data Data frame containing all variables referenced in the formula.
+##' @param time Time point \eqn{t} for estimation. If NULL, defaults to the maximum event time.
+##' @param cens.code Numeric code for censoring (default 0).
+##' @param cause Numeric code for the recurrent event of interest (default 1).
+##' @param death.code Numeric code for the terminal event/death (default 2).
+##' @param trans Power transformation for the mean of events per time-unit (default NULL, i.e., linear).
+##' @param cens.formula Formula for the censoring model. Default is \code{~strata(treatment)}.
+##' @param augmentR Formula for covariate augmentation in the randomization model 
+##'   (e.g., \code{~age+sex}). Improves efficiency.
+##' @param augmentC Formula for covariate augmentation in the censoring model. 
+##'   Enables double robustness.
+##' @param type Type of augmentation for the binomial regression call. Default is "I" 
+##'   if \code{augmentC} is given, otherwise "II".
+##' @param marks Optional marks for composite outcome situations (e.g., distinguishing 
+##'   event types in a composite endpoint).
+##' @param ... Additional arguments passed to \code{binregATE}.
+##' @return An object of class \code{"WA"} containing:
+##'   \item{RAW}{List of raw estimates: RMST, mean number of events, ratio of means, 
+##'     and their log-transformed versions with standard errors.}
+##'   \item{ET}{List of estimated treatment effects: risk difference for the mean rate 
+##'     (\code{riskDR}) and optionally the augmented version (\code{riskDRC}).}
+##'   \item{time}{The time point used for estimation.}
+##'   \item{cause, death.code, cens.code}{Codes used.}
+##'   \item{augmentR, augmentC}{Formulas used for augmentation.}
+##'   
+##'   The object includes influence functions (IID) for all estimators, allowing for 
+##'   further variance calculations or combination with other estimators.
 ##' @author Thomas Scheike
+##' @references 
+##' Ragni, A., Martinussen, T., & Scheike, T. H. (2023). Nonparametric estimation of the Patient Weighted While-Alive Estimand. arXiv preprint.
+##' 
+##' Mao, L. (2023). Nonparametric inference of general while-alive estimands for recurrent events. Biometrics, 79(3), 1749–1760.
+##' 
+##' Schmidli, H., Roger, J. H., & Akacha, M. (2023). Estimands for recurrent event endpoints in the presence of a terminal event. Statistics in Biopharmaceutical Research, 15(2), 238–248.
 ##' @examples
 ##' data(hfactioncpx12)
-##' 
 ##' dtable(hfactioncpx12,~status)
 ##' dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),data=hfactioncpx12,
 ##'                    time=2,death.code=2)
 ##' summary(dd)
-##' @references 
-##' Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
-##' Mao, L. (2023). Nonparametric inference of general while-alive estimands for recurrent events. Biometrics, 79(3):1749–1760.
-##' Schmidli, H., Roger, J. H., and Akacha, M. (2023). Estimands for recurrent event endpoints in the presence of a terminal event. Statistics in Biopharmaceutical Research, 15(2):238–248.
 ##' @export
 WA_recurrent <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,
 	 trans=NULL,cens.formula=NULL,augmentR=NULL,augmentC=NULL,type=NULL,marks=NULL,...)
@@ -255,33 +286,40 @@ class(out) <- "WA"
 return(out)
 } ## }}}
 
-
-##' While-Alive regression for recurrent events 
+##' While-Alive Regression for Recurrent Events
 ##'
-##' Does regression for the mean of the events per time unit \deqn{ Z(t)= N(min(D,t))/min(D,t))} based on
-##' IPCW etimation calling the binreg after constructing the outcome \deqn{Z(t)}
+##' Performs regression analysis for the "While-Alive" mean of events per time unit, 
+##' defined as \eqn{Z(t) = N(\min(D,t)) / \min(D,t)}. This function models how covariates 
+##' affect the rate of recurrent events per unit of time alive.
+##' 
+##' The estimation is based on IPCW (Inverse Probability of Censoring Weighting) and 
+##' calls \code{binreg} after constructing the outcome variable. It supports double 
+##' robust estimation if covariate augmentation is specified.
 ##'
-##' @param formula Event formula with regression design
-##' @param data data frame 
-##' @param time for estimation 
-##' @param cens.code of censorings 
-##' @param cause of events 
-##' @param death.code of terminal events 
-##' @param marks possible marks for for recurrent events
-##' @param trans possible power for mean of events per time-unit, default is 1
-##' @param ...  arguments for binreg
+##' @param formula Formula with regression design. The first covariate on the RHS must 
+##'   be the treatment factor. Can include other covariates and \code{cluster(id)}.
+##' @param data Data frame.
+##' @param time Time point \eqn{t} for estimation.
+##' @param cens.code Censoring code.
+##' @param cause Event cause code.
+##' @param death.code Death code.
+##' @param marks Marks for composite outcomes.
+##' @param trans Power transformation for the outcome (default 1).
+##' @param ... Additional arguments passed to \code{binreg}.
+##' @return An object of class \code{"binreg"} containing coefficient estimates, 
+##'   standard errors, confidence intervals, and influence functions for the 
+##'   regression of the event rate per time alive.
 ##' @author Thomas Scheike
+##' @references 
+##' Ragni, A., Martinussen, T., & Scheike, T. H. (2023). Nonparametric estimation of the Patient Weighted While-Alive Estimand. arXiv preprint.
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id] 
-##' 
 ##' dtable(hfactioncpx12,~status)
 ##' ## exp-link regression 
 ##' dd <- WA_reg(Event(entry,time,status)~treatment+age+cluster(id),data=hfactioncpx12,
 ##'                     time=2,death.code=2)
 ##' summary(dd)
-##' @references 
-##' Nonparametric estimation of the Patient Weighted While-Alive Estimand arXiv preprint by A. Ragni, T. Martinussen, T. Scheike
 ##' @export
 WA_reg <- function(formula,data,time=NULL,cens.code=0,cause=1,death.code=2,marks=NULL,...,trans=1)
 { ## {{{
