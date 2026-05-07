@@ -24,19 +24,17 @@ library(mets)
 Binomial Regression for censored data 
 =====================================
 
-The binreg function fits a logistic link model with IPCW adjustment for a specific time-point, 
-and can thus be used for describing both survival or competing risks data. 
-The function can be used for large data and is completely scalable, that is, linear in the data. 
-A nice feature is that influcence functions are computed and are available, and can thus be
-used for other computations based on these parameters. 
+The `binreg` function fits a logistic link model with IPCW adjustment for a specific time-point,
+and can thus be used for both survival and competing risks data.
+Computation is linear in data size, and influence functions are computed and available
+for downstream calculations.
 
-In addition and to summarize
+Key features:
 
-  - the censoring weights can be strata dependent
-  - predictions can be computed with standard errors 
-  - computation time linear in data
-     - including standard errors
-  - clusters can be given and then cluster corrected standard errors are computed
+  - the censoring weights can be stratum-dependent
+  - predictions can be computed with standard errors
+  - computation time is linear in data size, including standard errors
+  - cluster-corrected standard errors are available via the `clusters` argument
 
 
 Details
@@ -92,9 +90,9 @@ We demonstrate this in another vignette.
 
 The functions logitATE/binregATE can be used when there is no censoring and we thus have simple binary outcome. 
 
-The variance is based on sandwich formula with IPCW adjustment (using the influence functions), 
-and naive.var is the variance under known censoring model. The influence functions are stored in the output. 
-Clusters can be specified to get cluster corrected standard errors. 
+The variance is based on a sandwich formula with IPCW adjustment (using the influence functions),
+and `naive.var` is the variance under a known censoring model. The influence functions are stored in the output.
+Clusters can be specified to obtain cluster-corrected standard errors.
 
 Examples
 ========
@@ -143,9 +141,9 @@ ps
 sum( c(1,-1) * ps[,1])
 ```
 
-Getting the standard errors are easy enough since the two-groups are
-independent. In the case where we in addition had adjusted for other covariates, however, we would need 
-to apply the delta-theorem thus using the relevant covariances along the lines of 
+Getting the standard errors is straightforward since the two groups are
+independent. If we had additionally adjusted for other covariates, however, we would need
+to apply the delta theorem using the relevant covariances, along the lines of:
 
 ```{r}
 dd <- data.frame(tcell=c(0,1))

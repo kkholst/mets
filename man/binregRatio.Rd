@@ -3,7 +3,7 @@
 \name{binregRatio}
 \alias{binregRatio}
 \alias{rmtlRatio}
-\title{Percentage of years lost due to cause regression}
+\title{Percentage of Years Lost Due to a Cause Regression}
 \usage{
 binregRatio(
   formula,
@@ -30,98 +30,123 @@ binregRatio(
 )
 }
 \arguments{
-\item{formula}{formula with outcome (see \code{coxph})}
+\item{formula}{Formula with an outcome (see \code{coxph}). The first covariate on the RHS 
+is typically the treatment or group indicator. Can include \code{cluster(id)}.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{cause}{cause of interest (numeric variable)}
+\item{cause}{Numeric code of the cause of interest.}
 
-\item{time}{time of interest}
+\item{time}{Time point \eqn{t} for the analysis. Required.}
 
-\item{beta}{starting values}
+\item{beta}{Starting values for optimization (default NULL, uses zeros).}
 
-\item{type}{"II" and "III" adds augmentation term, and "I" classical outcome IPCW regression}
+\item{type}{Type of estimator: \code{"I"} (IPCW only), \code{"II"} (IPCW + augmentation), 
+or \code{"III"} (IPCW + complex augmentation). Default is \code{"III"}.}
 
-\item{offset}{offsets for partial likelihood}
+\item{offset}{Offsets for the partial likelihood.}
 
-\item{weights}{for score equations}
+\item{weights}{Weights for the score equations.}
 
-\item{cens.weights}{censoring weights}
+\item{cens.weights}{External censoring weights (if provided, \code{cens.model} is ignored).}
 
-\item{cens.model}{only stratified cox model without covariates}
+\item{cens.model}{Formula for the censoring model (default \code{~+1}, stratified KM). 
+Can include \code{strata()} for stratified censoring.}
 
-\item{se}{to compute se's  based on IPCW}
+\item{se}{Logical; if TRUE, computes standard errors based on IPCW (default TRUE).}
 
-\item{relative.to.causes}{if not NULL, then then compares RMTL of cause to RMTL of specified causes (the total for these causes)}
+\item{relative.to.causes}{If not NULL, compares the RMTL of the specified \code{cause} 
+to the RMTL of the causes in this vector (the denominator becomes the sum of these causes).}
 
-\item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
+\item{kaplan.meier}{Logical; if TRUE, uses Kaplan-Meier for IPCW weights; if FALSE, 
+uses \eqn{\exp(-\text{cumulative hazard})}.}
 
-\item{cens.code}{gives censoring code}
+\item{cens.code}{Censoring code (default 0).}
 
-\item{no.opt}{to not optimize}
+\item{no.opt}{Logical; if TRUE, skips optimization and uses \code{beta} directly.}
 
-\item{method}{for optimization}
+\item{method}{Optimization method: \code{"nr"} (Newton-Raphson) or \code{"nlm"}.}
 
-\item{augmentation}{to augment binomial regression}
+\item{augmentation}{Initial augmentation term (used for type "II" and "III").}
 
-\item{outcome}{can do CIF regression "cif"=F(t|X), "rmtl"=E( t- min(T, t) | X)"}
+\item{outcome}{Outcome type: \code{"rmtl"} (years lost) or \code{"cif"} (cumulative incidence).}
 
-\item{model}{logit, exp or lin(ear)}
+\item{model}{Link function: \code{"logit"} (default), \code{"exp"}, or \code{"lin"}.}
 
-\item{Ydirect}{use this Y instead of outcome constructed inside the program, should be a matrix with two column for numerator and denominator.}
+\item{Ydirect}{Matrix with two columns (numerator, denominator) to use directly as the response.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"binreg"} and \code{"ratio"} containing:
+  \item{coef}{Coefficient estimates.}
+  \item{se.coef}{Standard errors.}
+  \item{var}{Variance-covariance matrix.}
+  \item{iid}{Influence function decomposition (with censoring adjustment).}
+  \item{iidI}{Influence function without censoring adjustment.}
+  \item{naive.var}{Variance assuming known censoring.}
+  \item{time}{Time point used.}
+  \item{cause}{Cause of interest.}
+  \item{Causes}{Set of causes considered in the denominator.}
+  \item{Yipcw}{IPCW-adjusted response matrix.}
+  \item{coefI, varI}{Results from the initial (type "I") fit.}
+  \item{augmentation}{Final augmentation term used.}
 }
 \description{
-Estimates the percentage of the years lost that is due to a cause and how covariates affects this percentage by doing ICPW regression.
+Estimates the percentage of the restricted mean time lost (RMTL) that is attributable 
+to a specific cause and models how covariates affect this percentage using IPCW regression.
 }
 \details{
-Let the years lost be  \deqn{Y= t- min(T ,) } and the years lost due to cause 1 \deqn{Y1= I(epsilon==1) ( t- min(T ,t) } , then
-we model the ratio \deqn{logit( E(Y1 | X)/E(Y | X))  = X^T \beta }. Estimation is based on 
-on binomial regresion IPCW response estimating equation: 
-\deqn{ X ( \Delta^{ipcw}(t) ( Y expit(X^T \beta) -  Y1)  ) = 0 }
-where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
-IPCW adjustment of the response \deqn{Z(t)= Y expit(X^T \beta) -  Y1   }.  
+Let the total years lost be \eqn{Y = t - \min(T, t)} and the years lost due to cause 1 be 
+\eqn{Y_1 = I(\epsilon=1) (t - \min(T, t))}. The function models the ratio:
+\deqn{ \text{logit}\left( \frac{E(Y_1 | X)}{E(Y | X)} \right) = X^T \beta }
 
-(type="I") sovlves this estimating equation using a stratified Kaplan-Meier for the
-censoring distribution. For (type="II") the default an additional 
-censoring augmentation term \deqn{X \int E(Z(t)| T>s)/G_c(s) d \hat M_c} is added, and where this term is estimated using an 
-initial estimate of \deqn{\beta} based on type="I". Similarly, type="III" adds the augmentation term
-\deqn{X [ expit(X^T \beta) \int E(Y | T>s)  - \int E(Y1 | T>s)] /G_c(s) d \hat M_c}. 
+Estimation is based on a binomial regression IPCW response estimating equation:
+\deqn{ X \left( \Delta^{\text{ipcw}}(t) \left( Y \cdot \text{expit}(X^T \beta) - Y_1 \right) \right) = 0 }
+where \eqn{\Delta^{\text{ipcw}}(t) = I(\min(t,T) < C) / G_c(\min(t,T))} is the IPCW adjustment.
 
-The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
-under known censoring model. 
+The function supports three types of estimators:
+\itemize{
+  \item \code{"I"}: Classical outcome IPCW regression (no augmentation).
+  \item \code{"II"}: Adds a censoring augmentation term \eqn{X \int E(Z(t)| T>s)/G_c(s) d \hat M_c} 
+    to improve efficiency (requires an initial estimate of \eqn{\beta}).
+  \item \code{"III"}: Adds a more complex augmentation term separating the expectations of 
+    \eqn{Y} and \eqn{Y_1} for further efficiency gains.
+}
 
-Censoring model may depend on strata (cens.model=~strata(gX)).
+The variance is based on the squared influence functions (IID). A "naive" variance 
+(assuming known censoring) is also provided for comparison.
 }
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 
-rmtl30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age,bmt,time=30,cause=1,outcome="rmtl")
-rmtl301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
-rmtl302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=2)
+rmtl30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age, bmt, time=30, cause=1, outcome="rmtl")
+rmtl301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1)
+rmtl302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=2)
 
 estimate(rmtl30)
 estimate(rmtl301)
 estimate(rmtl302)
 
-## percentage of total RMTL due to cause 1
-rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+## Percentage of total RMTL due to cause 1
+rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1)
 summary(rmtlratioI)
 
-newdata <- data.frame(platelet=1,tcell=1,age=1)
-pp <- predict(rmtlratioI,newdata)
+newdata <- data.frame(platelet=1, tcell=1, age=1)
+pp <- predict(rmtlratioI, newdata)
 pp
 
-## percentage of total cumulative incidence due to cause 1
-cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1,model="cif")
+## Percentage of total cumulative incidence due to cause 1
+cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, model="cif")
 summary(cifratio)
-pp <- predict(cifratio,newdata)
+pp <- predict(cifratio, newdata)
 pp
-
 }
 \references{
-Scheike & Tanaka (2025), Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause, WIP
+Scheike, T. & Tanaka, S. (2025). Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause. WIP.
+}
+\seealso{
+\code{\link{resmeanIPCW}}, \code{\link{binreg}}
 }
 \author{
 Thomas Scheike

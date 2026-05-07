@@ -2,7 +2,7 @@
 % Please edit documentation in R/gof-phreg.R
 \name{gofM_phreg}
 \alias{gofM_phreg}
-\title{GOF for Cox covariates in  PH regression}
+\title{Goodness-of-Fit for Cox Covariates (Model Matrix)}
 \usage{
 gofM_phreg(
   formula,
@@ -16,58 +16,71 @@ gofM_phreg(
 )
 }
 \arguments{
-\item{formula}{formula for cox regression}
+\item{formula}{Formula for the Cox regression model.}
 
-\item{data}{data for model}
+\item{data}{Data frame.}
 
-\item{offset}{offset}
+\item{offset}{Offset vector.}
 
-\item{weights}{weights}
+\item{weights}{Weights vector.}
 
-\item{modelmatrix}{matrix for cumulating residuals}
+\item{modelmatrix}{Matrix for cumulating residuals. Typically constructed using 
+\code{cumContr()} or manually (e.g., quartiles of a continuous covariate).}
 
-\item{n.sim}{number of simulations for score processes}
+\item{n.sim}{Number of simulations (default 1000).}
 
-\item{silent}{to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.}
+\item{silent}{Logical; suppresses timing estimates if TRUE.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to \code{phreg}.}
+}
+\value{
+An object of class \code{"gof.phreg"} containing:
+  \item{jumptimes}{Event times.}
+  \item{supUsim}{Simulated supremum values.}
+  \item{res}{Matrix with observed supremum and p-values for each column of \code{modelmatrix}.}
+  \item{score}{Cumulative score process.}
+  \item{simUt}{Simulated processes.}
+  \item{Utlast, pval.last}{Supremum and p-value for the final time point (covariate direction).}
+  \item{type}{Type of test ("modelmatrix").}
 }
 \description{
-Cumulative residuals after model matrix for Cox PH regression
-p-values based on Lin, Wei, Ying resampling.
+Tests the functional form of covariates in a Cox PH model by computing cumulative 
+residuals against a user-specified model matrix. This helps detect non-linear effects 
+or time-varying coefficients (interaction with time).
 }
 \details{
-That is, computes 
-\deqn{
- U(t) = \int_0^t M^t d \hat M 
-}
-and resamples its asymptotic distribution. 
+The test statistic is:
+\deqn{ U(t) = \int_0^t M^T d \hat M }
+where \eqn{M} is the model matrix (e.g., a set of basis functions for a continuous covariate) 
+and \eqn{\hat M} are the martingale residuals.
 
-This will show if the residuals are consistent with the model. Typically,
-M will be a design matrix for the continous covariates that gives for example
-the quartiles, and then the plot will show if for the different quartiles of the covariate the risk
-prediction is consistent over time  (time x covariate interaction).
+P-values are based on the Lin, Wei, and Ying (1993) resampling method. The plot shows 
+whether the residuals are consistent with the model across the range of the covariate.
 }
 \examples{
 data(TRACE)
 set.seed(1)
-TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
-dcut(TRACEsam)  <- ~. 
-mm <- model.matrix(~-1+factor(wmicat.4),data=TRACEsam)
-m1 <- gofM_phreg(Surv(time,status==9)~vf+chf+wmi,data=TRACEsam,modelmatrix=mm)
+TRACEsam <- blocksample(TRACE, idvar="id", replace=FALSE, 100)
+dcut(TRACEsam) <- ~. 
+mm <- model.matrix(~-1+factor(wmicat.4), data=TRACEsam)
+m1 <- gofM_phreg(Surv(time,status==9)~vf+chf+wmi, data=TRACEsam, modelmatrix=mm)
 summary(m1)
 if (interactive()) {
 par(mfrow=c(2,2))
 plot(m1)
 }
 
-
-## cumulative sums in covariates, via design matrix mm 
-mm <- mets:::cumContr(TRACEsam$wmi,breaks=10,equi=TRUE)
-m1 <- gofM_phreg(Surv(time,status==9)~strata(vf)+chf+wmi,data=TRACEsam,
-		  modelmatrix=mm,silent=0)
+## Cumulative sums in covariates via design matrix
+mm <- mets:::cumContr(TRACEsam$wmi, breaks=10, equi=TRUE)
+m1 <- gofM_phreg(Surv(time,status==9)~strata(vf)+chf+wmi, data=TRACEsam,
+         modelmatrix=mm, silent=0)
 summary(m1)
-
+}
+\references{
+Lin, D. Y., Wei, L. J., & Ying, Z. (1993). Checking the Cox model with cumulative sums of martingale-based residuals. Biometrika, 80(3), 557-572.
+}
+\seealso{
+\code{\link{gof.phreg}}, \code{\link{gofZ_phreg}}, \code{\link{cumContr}}
 }
 \author{
 Thomas Scheike and Klaus K. Holst

@@ -29,19 +29,19 @@ fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
 library(mets)
 ```
 
-Overview 
+Overview
 ========
 
-We here describe how to do regression modelling for cumulative cost
+We describe how to perform regression modelling for cumulative cost
 \begin{align*}
 {\cal U}(t) & = \int_0^t Z(s) dN(s)
 \end{align*}
-where $N(s)$ is a counting process that registers the times at which the cost is realized and accumulated, 
-and $Z(t)$ is the cost (or marks) at the event times. The counting process can be 
-a mix of random and fixed times. The data would thus be represented in counting process format with
-the marks/costs going along with the event times. There are many  additional uses of
-such cumulative process, for example, when considering time-lost in a recurrent events setting, that we return to
-below. 
+where $N(s)$ is a counting process that registers the times at which costs are realised and accumulated,
+and $Z(t)$ is the cost (or mark) at the event times. The counting process can be
+a mix of random and fixed times, and the data are represented in counting process format with
+the marks/costs attached to the event times. There are many additional uses of
+such cumulative processes; for example, when considering time lost in a recurrent events setting, which we return to
+below.
 
 We can estimate the marginal mean of the cumulative process
 \begin{align*}
@@ -60,16 +60,16 @@ E ( {\cal U}(t) | X) & = \exp( X^T \beta)
 \end{align*}
 where $\tau$ is some maximum follow-up time. 
 
- - These quantities are estimated in a setting with independent right-censoring given $X$, and based on IPCW adjusted estimating equations. 
-    - similarly to the Ghosh-Lin model for recurrent events 
- - A terminal event can be specified. 
+ - These quantities are estimated under independent right-censoring given $X$, using IPCW-adjusted estimating equations,
+    - similarly to the Ghosh-Lin model for recurrent events.
+ - A terminal event can be specified.
 
 We also estimate the probability of exceeding thresholds over time
 \begin{align*}
  P ( {\cal U}(t)  > k ) & = \mu_k(t),
 \end{align*}
-and in the situation with a terminal this is based on a derived competing risks data that 
-keeps track of the competing terminal event. 
+and in the setting with a terminal event this is based on a derived competing risks data structure that
+keeps track of the competing terminal event.
 
 \begin{tikzpicture}[
     node distance=3.5cm,
@@ -85,14 +85,14 @@ keeps track of the competing terminal event.
 \draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (death);
 \end{tikzpicture}
 
-Regression modelling of this quantity is also possible using competing risks 
-regression models, using for example, the cifreg function of mets. 
+Regression modelling of this quantity is also possible using competing risks
+regression models, for example via the `cifreg` function in mets.
 
 
 HF-action data
-=============
+==============
 
-Considering the HF-action data we simulate a severity score for each event. 
+Using the HF-action data, we simulate a severity score for each event.
 
 
 ```{r}
@@ -113,8 +113,8 @@ plot(outN,se=TRUE,add=TRUE)
 summary(outN,times=3) 
 ```
 
-For comparison we also compute the IPCW estimates with and without marks at time 3, using the linear model, 
-and note that they are identical. Standard errors are however based on different formula that are asymptotically 
+For comparison we also compute the IPCW estimates with and without marks at time 3 using the linear model,
+and note that they are identical. Standard errors are based on different formulae that are asymptotically
 equivalent, and we note that they are very similar.
 
 ```{r}
@@ -140,13 +140,13 @@ GL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,cause=1,death.cod
 summary(GL)
 plot(GL,add=TRUE,col=2)
 ```
-Those treated have 14 \% lower cumulative severity and 11\%  lower number of expected events. 
+Those treated have 14\% lower cumulative severity and 11\% lower expected number of events.
 
 
 Exceed threshold
-=================
+================
 
-Finally, we also estimate the probability of exceeding a cumulative severity at 1,5,10
+Finally, we estimate the probability of exceeding cumulative severity thresholds of 1, 5, and 10:
 
 ```{r}
 ooNZ <- prob_exceed_recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
@@ -156,14 +156,14 @@ plot(ooNZ,strata=2,add=TRUE)
 summary(ooNZ,times=3)
 ```
 
-Cumulative time lost for recurrent events 
+Cumulative time lost for recurrent events
 =========================================
 
-The cumulative time lost for recurrent events has been defined as
+The cumulative time lost for recurrent events is defined as
 \begin{align*}
-  {\cal M}(t) = E[ \int_0^\tau (\tau-s) dN(s) ] = \int_0^\tau \mu(s) ds
+  {\cal M}(t) = E\left[ \int_0^\tau (\tau-s) dN(s) \right] = \int_0^\tau \mu(s) ds
 \end{align*}
-where $\mu(t) = E( N(t) )$ is the marginal mean of the recurrent events at time $t$. 
+where $\mu(t) = E( N(t) )$ is the marginal mean of the recurrent events at time $t$.
 
 
 ```{r}

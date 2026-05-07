@@ -24,8 +24,8 @@ library(mets)
 Utility functions for GLM objects
 =================================
 
-Getting the OR with confidence intervals  using the GEE (sandwich) 
-standard errors
+Computing odds ratios with confidence intervals using GEE (sandwich)
+standard errors:
 
 ```{r}
 set.seed(100)
@@ -41,7 +41,7 @@ summaryGLM(glm1)
 summaryGLM(glm1,id=bmt$id)
 ```
 
-Predictions also simple 
+Predictions are equally straightforward:
 
 ```{r}
 age <- seq(-2,2,by=0.1)

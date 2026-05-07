@@ -3,7 +3,7 @@
 \name{gofZ_phreg}
 \alias{gofZ_phreg}
 \alias{cumContr}
-\title{GOF for Cox covariates in  PH regression}
+\title{Goodness-of-Fit for Cox Covariates (Linearity)}
 \usage{
 gofZ_phreg(
   formula,
@@ -19,55 +19,60 @@ gofZ_phreg(
 )
 }
 \arguments{
-\item{formula}{formula for cox regression}
+\item{formula}{Formula for the Cox regression.}
 
-\item{data}{data for model}
+\item{data}{Data frame.}
 
-\item{vars}{which variables to test for linearity}
+\item{vars}{Vector of variable names to test. If NULL, automatically detects continuous 
+covariates with more than 2 levels.}
 
-\item{offset}{offset}
+\item{offset}{Offset vector.}
 
-\item{weights}{weights}
+\item{weights}{Weights vector.}
 
-\item{breaks}{number of breaks for cumulatives in covarirate direction}
+\item{breaks}{Number of break points for the grid (default 50).}
 
-\item{equi}{equidistant breaks  or not}
+\item{equi}{Logical; if TRUE, uses equidistant breaks; if FALSE, uses quantiles.}
 
-\item{n.sim}{number of simulations for score processes}
+\item{n.sim}{Number of simulations (default 1000).}
 
-\item{silent}{to keep it absolutely silent, otherwise timing estimate will be prduced for longer jobs.}
+\item{silent}{Logical; suppresses timing estimates.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to \code{gofM_phreg}.}
+}
+\value{
+An object of class \code{"gof.phreg"} with type "Zmodelmatrix" containing:
+  \item{res}{Matrix of p-values for each tested variable.}
+  \item{Zres}{List of \code{gof.phreg} objects, one for each variable.}
+  \item{type}{Type of test ("Zmodelmatrix").}
 }
 \description{
-That is, computes 
-\deqn{
- U(z,\tau) = \int_0^\tau M(z)^t d \hat M 
-}
-and resamples its asymptotic distribution.
+Tests the functional form of continuous covariates in a Cox PH model to check for 
+linearity. It computes cumulative residuals evaluated at a grid of covariate values \eqn{z}.
 }
 \details{
-This will show if the residuals are consistent with the model evaulated in the z covariate. 
-M is here chosen based on a grid (z_1, ..., z_m) and the different columns are \eqn{I(Z_i \leq z_l)}.
-for \eqn{l=1,...,m}. 
-The process in z is resampled to find extreme values.  The time-points of evuluation is by default
-50 points, chosen as 2%,4%,..., percentiles of the covariates.
+The test statistic is:
+\deqn{ U(z, \tau) = \int_0^\tau M(z)^T d \hat M }
+where \eqn{M(z)} is a design matrix based on indicator functions \eqn{I(Z_i \leq z_l)} 
+for a grid of points \eqn{z_l}.
 
-The p-value is valid but depends on the chosen grid. When the number of break points are high
-this will give the orginal test of Lin, Wei and Ying for linearity, that is also computed in 
-the timereg package.
+The p-value is valid but depends on the chosen grid. As the number of break points increases, 
+this test converges to the original Lin, Wei, and Ying test for linearity.
 }
 \examples{
 data(TRACE)
 set.seed(1)
-TRACEsam <- blocksample(TRACE,idvar="id",replace=FALSE,100)
+TRACEsam <- blocksample(TRACE, idvar="id", replace=FALSE, 100)
 
-## cumulative sums in covariates, via design matrix mm
+## Test linearity of continuous covariates
 \donttest{ ## Reduce Ex.Timings
-m1 <- gofZ_phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age,data=TRACEsam)
+m1 <- gofZ_phreg(Surv(time,status==9)~strata(vf)+chf+wmi+age, data=TRACEsam)
 summary(m1) 
-plot(m1,type="z")
+plot(m1, type="z")
 }
+}
+\seealso{
+\code{\link{gofM_phreg}}, \code{\link{cumContr}}
 }
 \author{
 Thomas Scheike and Klaus K. Holst

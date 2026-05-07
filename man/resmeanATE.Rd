@@ -3,62 +3,62 @@
 \name{resmeanATE}
 \alias{resmeanATE}
 \alias{rmstATE}
-\alias{ratioATE}
-\title{Average Treatment effect for Restricted Mean for censored competing risks data using IPCW}
+\title{Average Treatment Effect for Restricted Mean Time}
 \usage{
 resmeanATE(formula, data, model = "exp", outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
-\item{formula}{formula with 'Event' outcome}
+\item{formula}{Formula with an \code{Event} outcome. The first covariate must be the treatment factor.}
 
-\item{data}{data-frame}
+\item{data}{Data frame.}
 
-\item{model}{exp ("exp") or identity link ("lin")}
+\item{model}{Link function: \code{"exp"} (exponential) or \code{"lin"} (identity).}
 
-\item{outcome}{restricted mean time (rmst) or restricted mean time lost (rmtl)}
+\item{outcome}{Outcome type: \code{"rmst"} or \code{"rmtl"}.}
 
-\item{...}{Additional arguments to pass to binregATE}
+\item{...}{Additional arguments passed to \code{binregATE}, such as \code{time}, \code{treat.model}, 
+\code{augmentR0}, \code{augmentC}, etc.}
+}
+\value{
+An object of class \code{"binregATE"} containing:
+  \item{riskG}{Simple IPCW estimator results.}
+  \item{riskDR}{Double Robust estimator results.}
+  \item{riskG.iid, riskDR.iid}{Influence functions.}
+  \item{coef}{Treatment effect estimates.}
+  \item{se}{Standard errors.}
 }
 \description{
-Under the standard causal assumptions we can estimate the average treatment
-effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep
-A given X), and positivity.
+Estimates the Average Treatment Effect (ATE) for Restricted Mean Survival Time (RMST) 
+or Restricted Mean Time Lost (RMTL) in censored competing risks data using IPCW.
 }
 \details{
-The first covariate in the specification of the competing risks regression
-model must be the treatment effect that is a factor. If the factor has more
-than two levels then it uses the mlogit for propensity score modelling. We
-consider the outcome mint(T;tau) or I(epsion==cause1)(t- min(T;t)) that
-gives years lost due to cause "cause" depending on the number of causes. The
-default model is the exp(X^ beta) and otherwise a linear model is used.
+Under standard causal assumptions (Consistency, Ignorability, Positivity), the ATE is 
+estimated as \eqn{E(Y(1) - Y(0))}, where \eqn{Y(a)} is the potential outcome under treatment \eqn{a}.
+The method uses double robust estimating equations that are IPCW-adjusted for censoring.
 
-Estimates the ATE using the the standard binary double robust estimating
-equations that are IPCW censoring adjusted.
-
-In the example given here, out gives the ATE for the total RMTL, and out1 is
-ATE the RMTL for cause 1. These are then combined into the percentage of the
-total RMTL due to cause 1 for the treated and un-treated (that are given on
-log-scale), these ratio's are then compared with another ratio (still on
-log-scale). Standard errors are based on the derived influence functions.
+The first covariate in the formula must be the treatment effect (a factor). If the factor 
+has more than two levels, multinomial logistic regression (mlogit) is used for propensity 
+score modeling.
 }
 \examples{
 data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
-out <- resmeanATE(Event(time,event)~tcell+platelet,
-                  data=bmt,time=40,treat.model=tcell~platelet,outcome="rmtl")
+
+out <- resmeanATE(Event(time,event)~tcell+platelet, data=bmt, time=40, 
+                  treat.model=tcell~platelet, outcome="rmtl")
 summary(out)
 
-out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
-                   treat.model=tcell~platelet,outcome="rmtl")
+out1 <- resmeanATE(Event(time,cause)~tcell+platelet, data=bmt, cause=1, time=40,
+                   treat.model=tcell~platelet, outcome="rmtl")
 summary(out1)
 
-ratioATE(out,out1,h=function(x) log(x))
 }
 \references{
-Scheike, T. and Holst, K. K., Restricted mean time lost for
-  survival and competing risks data using mets in R, WIP
+Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for survival and competing risks data using mets in R. WIP.
 
-Scheike, T. and Tanaka, S., Restricted mean time lost ratio regression:
-  Percentage of restricted mean time lost due to specific cause, WIP
+Scheike, T. and Tanaka, S. (2025). Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause. WIP.
+}
+\seealso{
+\code{\link{binregATE}}, \code{\link{ratioATE}}
 }
 \author{
 Thomas Scheike

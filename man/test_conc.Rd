@@ -2,19 +2,30 @@
 % Please edit documentation in R/casewise.R
 \name{test_conc}
 \alias{test_conc}
-\title{Concordance test Compares two concordance estimates}
+\title{Compare Two Concordance Estimates}
 \usage{
 test_conc(conc1, conc2, same.cluster = FALSE)
 }
 \arguments{
-\item{conc1}{Concordance estimate of group 1}
+\item{conc1}{Concordance estimate of group 1.}
 
-\item{conc2}{Concordance estimate of group 2}
+\item{conc2}{Concordance estimate of group 2.}
 
-\item{same.cluster}{if FALSE then groups are independent, otherwise estimates are based on same data.}
+\item{same.cluster}{Logical; if FALSE, groups are assumed independent. If TRUE, 
+estimates are based on the same data (e.g., paired twins).}
+}
+\value{
+An object of class \code{"testconc"} containing:
+  \item{test}{Matrix with cumulative difference, standard error, z-value, and p-value.}
+  \item{mintime, maxtime}{Time range used.}
+  \item{same.cluster}{Logical flag.}
 }
 \description{
-.. content for description (no empty lines) ..
+Performs a Pepe-Mori type test to compare two concordance estimates (e.g., MZ vs DZ twins).
+The test evaluates whether the concordance functions differ significantly over time.
+}
+\seealso{
+\code{\link{test_casewise}}
 }
 \author{
 Thomas Scheike

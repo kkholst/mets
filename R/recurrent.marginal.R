@@ -1790,9 +1790,6 @@ zs <- cbind(z1,z2,zd)
 ##' dtable(rr, ~"Count*"+status, level=1)
 ##' @export
 count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
-
-##' @export
-count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
 {# {{{
 stat <- data[,status]
 

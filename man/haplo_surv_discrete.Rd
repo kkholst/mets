@@ -2,7 +2,7 @@
 % Please edit documentation in R/discrete-survival-haplo.R
 \name{haplo_surv_discrete}
 \alias{haplo_surv_discrete}
-\title{Discrete time to event haplo type analysis}
+\title{Discrete Time-to-Event Haplotype Analysis}
 \usage{
 haplo_surv_discrete(
   X = NULL,
@@ -29,113 +29,136 @@ haplo_surv_discrete(
 )
 }
 \arguments{
-\item{X}{design matrix data-frame (sorted after id and time variable) with id time response  and desnames}
+\item{X}{Design matrix data frame (must be sorted by \code{id} and \code{time}) containing 
+the ID, time variable, binary response, and covariates.}
 
-\item{y}{name of response (binary response with logistic link) from X}
+\item{y}{Name of the response variable (binary, 0/1) in \code{X}.}
 
-\item{time.name}{to sort after time  for X}
+\item{time.name}{Name of the time variable in \code{X} used for sorting and cycle definition.}
 
-\item{Haplos}{(data.frame with id, haplo1, haplo2 (haplotypes (h)) and  p=P(h|G)) haplotypes given as factor.}
+\item{Haplos}{Data frame containing \code{id}, \code{haplo1}, \code{haplo2} (haplotypes as factors), 
+and \code{p} (probability \eqn{P(H|G)}).}
 
-\item{id}{name of id variale from X}
+\item{id}{Name of the ID variable in \code{X} and \code{Haplos}.}
 
-\item{desnames}{names for design matrix}
+\item{desnames}{Names of the covariate columns in \code{X} to be used in the design matrix.}
 
-\item{designfunc}{function that computes design given haplotypes h=(h1,h2) x(h)}
+\item{designfunc}{Function that computes the design vector given haplotypes \eqn{h=(h_1, h_2)} 
+and covariates. Must return a vector or matrix compatible with the model.}
 
-\item{beta}{starting values}
+\item{beta}{Starting values for the optimization (vector of length \eqn{p + k}, where \eqn{p} 
+is the number of covariate effects and \eqn{k} is the number of time cycles).}
 
-\item{no.opt}{optimization TRUE/FALSE}
+\item{no.opt}{Logical; if TRUE, skips optimization and returns estimates based on the 
+provided \code{beta} (useful for initialization or diagnostics).}
 
-\item{method}{NR, nlm}
+\item{method}{Optimization method: \code{"NR"} (Newton-Raphson, default) or \code{"nlm"}.}
 
-\item{stderr}{to return only estimate}
+\item{stderr}{Logical; if FALSE, returns only the coefficient estimates.}
 
-\item{designMatrix}{gives response and designMatrix directly not implemented (mush contain: p, id, idhap)}
+\item{designMatrix}{Alternative to \code{X} and \code{Haplos}: provides the response and 
+design matrix directly (not fully implemented).}
 
-\item{response}{gives response and design directly designMatrix not implemented}
+\item{response}{Alternative to \code{X}: provides the response and design directly (not fully implemented).}
 
-\item{idhap}{name of id-hap variable to specify different haplotypes for different id}
+\item{idhap}{Name of the ID-haplotype variable to specify different haplotypes for different IDs.}
 
-\item{design.only}{to return only design matrices for haplo-type analyses.}
+\item{design.only}{Logical; if TRUE, returns only the design matrices constructed for the analysis.}
 
-\item{covnames}{names of covariates to extract from object for regression}
+\item{covnames}{Names of covariates to extract from the object for regression output.}
 
-\item{fam}{family of models, now binomial default and only option}
+\item{fam}{Family of the model (default \code{binomial}, currently the only option).}
 
-\item{weights}{weights following id for GLM}
+\item{weights}{Weights following ID for the GLM component.}
 
-\item{offsets}{following id  for GLM}
+\item{offsets}{Offsets following ID for the GLM component.}
 
-\item{idhapweights}{weights following id-hap for GLM (WIP)}
+\item{idhapweights}{Weights following ID-haplotype for the GLM component (Work in Progress).}
 
-\item{...}{Additional arguments to lower level funtions lava::NR  optimizer or nlm}
+\item{...}{Additional arguments passed to the optimizer (\code{lava::NR} or \code{nlm}).}
+}
+\value{
+An object of class \code{"haplosurvd"} containing:
+  \item{coef}{Estimated coefficients (baseline time effects and haplotype/covariate effects).}
+  \item{se}{Standard errors of the coefficients.}
+  \item{var}{Variance-covariance matrix.}
+  \item{se.robust}{Robust standard errors (if available).}
+  \item{iid}{Influence function (IID) decomposition.}
+  \item{ploglik}{Log-likelihood at convergence.}
+  \item{gradient, hessian}{Optimization results.}
+  \item{Xhap, X, Haplos}{Data and design matrices used.}
+  \item{nid, nidhap}{Number of IDs and ID-haplotype combinations.}
 }
 \description{
-Can be used for logistic regression when time variable is "1" for all id.
+Performs cycle-specific logistic regression to estimate haplotype effects on discrete 
+time-to-event data, accounting for phase ambiguity. Given observed genotypes \eqn{G} 
+and unobserved haplotypes \eqn{H}, the method integrates (mixes out) over the possible 
+haplotype configurations using the conditional probabilities \eqn{P(H|G)}.
 }
 \details{
-Cycle-specific logistic regression of haplo-type effects with known 
-haplo-type probabilities. Given observed genotype G and unobserved haplotypes H
-we here mix out over the possible haplotypes using that P(H|G) is provided. 
+The survival function is computed by averaging over the possible haplotypes:
+\deqn{ S(t|x,G) = E[ S(t|x,H) | G ] = \sum_{h \in G} P(h|G) S(t|x,h) }
 
-\deqn{
-S(t|x,G)) = E( S(t|x,H) | G)  = \sum_{h \in G} P(h|G) S(t|z,h) 
-}
-so survival can be computed by mixing out over possible h given g.
+The discrete hazard function is modeled using logistic regression:
+\deqn{ \text{logit}(P(T=t | T \geq t, x, h)) = \alpha_t + x(h) \beta }
+where \eqn{\alpha_t} are time-specific intercepts (baseline hazards), \eqn{x(h)} is the 
+regression design constructed from covariates and haplotypes \eqn{h=(h_1, h_2)}, and 
+\eqn{\beta} are the regression coefficients.
 
-Survival is based on logistic regression for the discrete hazard function of the
-form 
-\deqn{
-logit(P(T=t| T \geq t, x,h)) = \alpha_t + x(h) \beta
-}
-where x(h) is a regression design of x and haplotypes \eqn{h=(h_1,h_2)}
+The likelihood is maximized numerically. Standard errors are computed assuming that 
+\eqn{P(H|G)} is known (i.e., ignoring the uncertainty in haplotype estimation).
 
-Likelihood is maximized and standard errors assumes that P(H|G) is known. 
-
-The design over the possible haplotypes is constructed by merging X with Haplos and  
-can be viewed by design.only=TRUE
+The design matrix over possible haplotypes is constructed by merging the covariate 
+data \eqn{X} with the haplotype probabilities \eqn{Haplos} and applying a user-defined 
+\code{designfunc}.
 }
 \examples{
-## some haplotypes of interest
+## Some haplotypes of interest
 types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
 
-## some haplotypes frequencies for simulations 
+## Some haplotype frequencies for simulations 
 data(haplo)
 hapfreqs <- haplo$hapfreqs 
 
-www <-which(hapfreqs$haplotype \%in\% types)
+www <- which(hapfreqs$haplotype \%in\% types)
 hapfreqs$freq[www]
 
-baseline=hapfreqs$haplotype[9]
+baseline <- hapfreqs$haplotype[9]
 baseline
 
-designftypes <- function(x,sm=0) {# {{{
-hap1=x[1]
-hap2=x[2]
-if (sm==0) y <- 1*( (hap1==types) | (hap2==types))
-if (sm==1) y <- 1*(hap1==types) + 1*(hap2==types)
-return(y)
-}# }}}
+## Design function: indicator for presence of any 'types' haplotype
+designftypes <- function(x, sm=0) {
+  hap1 <- x[1]
+  hap2 <- x[2]
+  if (sm == 0) y <- 1 * ((hap1 == types) | (hap2 == types))
+  if (sm == 1) y <- 1 * (hap1 == types) + 1 * (hap2 == types)
+  return(y)
+}
 
-tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
-0.88830288,0.60756224,0.39802821,0.32706859)
+tcoef <- c(-1.93110204, -0.47531630, -0.04118204, -1.57872602, -0.22176426, -0.13836416,
+           0.88830288, 0.60756224, 0.39802821, 0.32706859)
 
 ghaplos <- haplo$ghaplos
 haploX  <- haplo$haploX
 
 haploX$time <- haploX$times
-Xdes <- model.matrix(~factor(time),haploX)
-colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
-X <- dkeep(haploX,~id+y+time)
-X <- cbind(X,Xdes)
-Haplos <- dkeep(ghaplos,~id+"haplo*"+p)
-desnames=paste("X",1:6,sep="")   # six X's related to 6 cycles 
-out <- haplo_surv_discrete(X=X,y="y",time.name="time",
-         Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
-names(out$coef) <- c(desnames,types)
+Xdes <- model.matrix(~ factor(time), haploX)
+colnames(Xdes) <- paste("X", 1:ncol(Xdes), sep="")
+X <- dkeep(haploX, ~ id + y + time)
+X <- cbind(X, Xdes)
+Haplos <- dkeep(ghaplos, ~ id + "haplo*" + p)
+desnames <- paste("X", 1:6, sep="")   # Six X's related to 6 cycles 
+out <- haplo_surv_discrete(X=X, y="y", time.name="time",
+         Haplos=Haplos, desnames=desnames, designfunc=designftypes) 
+names(out$coef) <- c(desnames, types)
 out$coef
 summary(out)
+}
+\references{
+Scheike, T. H. (2024). Discrete time survival analysis with haplotype effects. mets package documentation.
+}
+\seealso{
+\code{\link{summary.haplosurvd}}, \code{\link{vcov.haplosurvd}}
 }
 \author{
 Thomas Scheike

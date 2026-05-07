@@ -1,14 +1,46 @@
-##' Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
+
+##' Test for Independence Using Casewise Concordance
 ##'
-##' @title Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
-##' @details Uses cluster based conservative standard errors for marginal and sometimes only the uncertainty of the concordance estimates. This works prettey well, alternatively one can use also the 
-##'          funcions Casewise for a specific time point 
-##' @param conc Concordance 
-##' @param marg Marginal estimate
-##' @param test Type of test for independence assumption. "conc" makes test on concordance scale and "case" means a test on the casewise concordance
-##' @param p check that marginal probability is greater at some point than p
+##' Estimates the casewise concordance based on concordance and marginal estimates, 
+##' and performs tests for the independence assumption. This is particularly useful 
+##' in twin studies to assess genetic vs. environmental contributions to disease risk.
+##' 
+##' The casewise concordance is defined as:
+##' \deqn{ C(t) = \frac{P(T_1 \leq t, T_2 \leq t)}{P(T_1 \leq t)} }
+##' where the numerator is the joint probability of both twins having the event by time \eqn{t}, 
+##' and the denominator is the marginal probability.
+##' 
+##' The function supports two types of tests:
+##' \itemize{
+##'   \item \code{"case"}: Tests on the casewise concordance scale (difference between observed and expected under independence).
+##'   \item \code{"conc"}: Tests on the concordance scale (difference between observed concordance and squared marginal).
+##' }
+##' 
+##' Standard errors are computed using cluster-based conservative estimates or influence 
+##' functions (IID) if available from the input objects.
+##'
+##' @param conc An object containing concordance estimates (e.g., from \code{bicomprisk}). 
+##'   Must contain \code{time}, \code{P1}, \code{se.P1}, and ideally \code{P1.iid}.
+##' @param marg An object containing marginal cumulative incidence estimates (e.g., from \code{comp.risk} or \code{prodlim}). 
+##'   Must contain \code{time}, \code{P1}, \code{se.P1}, and ideally \code{P1.iid}.
+##' @param test Type of test: \code{"case"} (test on casewise concordance) or \code{"conc"} (test on concordance). 
+##'   Default is \code{"no-test"}.
+##' @param p Threshold for checking that marginal probability is greater than this value at some point 
+##'   (default 0.01). Used to avoid division by near-zero probabilities.
+##' @return An object of class \code{"casewise"} containing:
+##'   \item{casewise}{Matrix with time, casewise concordance, and standard errors.}
+##'   \item{marg}{Matrix with time, marginal CIF, and standard errors.}
+##'   \item{conc}{Matrix with time, concordance, and standard errors.}
+##'   \item{casewise.iid}{Influence function decomposition for casewise concordance.}
+##'   \item{test}{Test results (if \code{test} is specified): Pepe-Mori type test statistics, 
+##'     standard errors, z-values, and p-values.}
+##'   \item{mintime, maxtime}{Time range used for the analysis.}
+##'   \item{same.cluster}{Logical indicating if clusters were assumed identical.}
+##'   \item{testtype}{Type of test performed.}
 ##' @author Thomas Scheike
-##' @aliases casewise.test casewise.bin
+##' @references 
+##' Scheike, T. H. (2024). Casewise concordance estimation and testing. mets package documentation.
+##' @seealso \code{\link{bicomprisk}}, \code{\link{casewise}}, \code{\link{test_conc}}
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library("timereg")
@@ -46,7 +78,6 @@
 ##' par(new=TRUE)
 ##' plot(cdz,ylim=c(0,0.7),xlim=c(60,100))
 ##' 
-##'
 ##' }
 ##' @export
 test_casewise <- function(conc,marg,test="no-test",p=0.01)
@@ -156,24 +187,35 @@ out <- list(intercept=coef(caselm)[1],slope=slope,se.slope=se.slope,pval.slope=p
 return(out)
 } ## }}} 
 
-##' .. content for description (no empty lines) ..
+
+##' Estimate Casewise Concordance from prodlim Objects
 ##'
-##' @title Estimates the casewise concordance based on Concordance and marginal estimate using prodlim but no testing
-##' @param conc Concordance 
-##' @param marg Marginal estimate
-##' @param cause.marg specififes which cause that should be used for marginal cif based on prodlim
+##' Estimates the casewise concordance based on concordance and marginal estimates 
+##' derived from \code{prodlim} objects. Unlike \code{test_casewise}, this function 
+##' does not perform hypothesis testing but focuses on estimation and plotting.
+##'
+##' @param conc Concordance object from \code{prodlim} (output of \code{bicomprisk} with \code{prodlim=TRUE}).
+##' @param marg Marginal cumulative incidence object from \code{prodlim} (output of \code{prodlim}).
+##' @param cause.marg Specifies which cause should be used for the marginal CIF based on the \code{Event} object.
+##' @return An object of class \code{"casewise"} containing:
+##'   \item{casewise}{Matrix with time, casewise concordance, and standard errors.}
+##'   \item{marg}{Matrix with time, marginal CIF, and standard errors.}
+##'   \item{concordance}{Matrix with time, concordance, and standard errors.}
+##'   \item{timer}{Time points used.}
+##'   \item{P1, se.P1}{Extracted concordance values and SEs.}
 ##' @author Thomas Scheike
+##' @seealso \code{\link{test_casewise}}, \code{\link{bicomprisk}}
 ##' @examples
 ##' \donttest{ ## Reduce Ex.Timings
 ##' library(prodlim)
 ##' data(prt);
 ##' prt <- force_same_cens(prt,cause="status")
 ##' 
-##' ### marginal cumulative incidence of prostate cancer##' 
+##' ### marginal cumulative incidence of prostate cancer
 ##' outm <- prodlim(Hist(time,status)~+1,data=prt)
 ##' 
 ##' times <- 60:100
-##' cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ")) ## cause is 2 (second cause) 
+##' cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ"))
 ##' cifdz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="DZ"))
 ##' 
 ##' ### concordance for MZ and DZ twins
@@ -312,13 +354,21 @@ print.casewise <- function(x,digits=3,...)
     }    
 } ## }}}
 
-##' .. content for description (no empty lines) ..
+##' Compare Two Concordance Estimates
 ##'
-##' @title Concordance test Compares two concordance estimates
-##' @param conc1 Concordance estimate of group 1
-##' @param conc2 Concordance estimate of group 2
-##' @param same.cluster if FALSE then groups are independent, otherwise estimates are based on same data. 
+##' Performs a Pepe-Mori type test to compare two concordance estimates (e.g., MZ vs DZ twins).
+##' The test evaluates whether the concordance functions differ significantly over time.
+##'
+##' @param conc1 Concordance estimate of group 1.
+##' @param conc2 Concordance estimate of group 2.
+##' @param same.cluster Logical; if FALSE, groups are assumed independent. If TRUE, 
+##'   estimates are based on the same data (e.g., paired twins).
+##' @return An object of class \code{"testconc"} containing:
+##'   \item{test}{Matrix with cumulative difference, standard error, z-value, and p-value.}
+##'   \item{mintime, maxtime}{Time range used.}
+##'   \item{same.cluster}{Logical flag.}
 ##' @author Thomas Scheike
+##' @seealso \code{\link{test_casewise}}
 ##' @export
 test_conc <- function(conc1,conc2,same.cluster=FALSE)
 { ## {{{
@@ -383,15 +433,20 @@ back2timereg <- function(obj)
   return(out)
 } ## }}}
 
-##' Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
+##' Estimate Casewise Concordance Using Binomial Regression
 ##'
-##' @title Estimates the casewise concordance based on Concordance and marginal estimate using binreg 
-##' @details Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
-##' @param concbreg Concordance 
-##' @param margbreg Marginal estimate
-##' @param zygs order of zygosity for estimation of concordance and casewise.
-##' @param newdata to give instead of zygs.
-##' @param ... to pass to estimate function
+##' Estimates the casewise concordance based on concordance and marginal estimates 
+##' obtained from \code{binreg} objects. Uses cluster-based IID for standard errors, 
+##' which are often better than those from \code{casewise} (which can be conservative).
+##'
+##' @param concbreg Concordance object from \code{binreg}.
+##' @param margbreg Marginal estimate object from \code{binreg}.
+##' @param zygs Order of zygosity for estimation (e.g., \code{c("DZ","MZ")}).
+##' @param newdata Data frame to give instead of \code{zygs}.
+##' @param ... Arguments passed to \code{estimate}.
+##' @return A list containing:
+##'   \item{coef}{Exponentiated coefficients (ratios).}
+##'   \item{logcoef}{Log-scale coefficients and standard errors.}
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(prt)

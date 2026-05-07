@@ -2,48 +2,76 @@
 % Please edit documentation in R/gof-phreg.R
 \name{gof.phreg}
 \alias{gof.phreg}
-\title{GOF for Cox PH regression}
+\title{Goodness-of-Fit for Cox PH Regression (Proportionality)}
 \usage{
 \method{gof}{phreg}(object, n.sim = 1000, silent = 1, robust = NULL, ...)
 }
 \arguments{
-\item{object}{is phreg object}
+\item{object}{A fitted \code{phreg} object (from \code{mets} or \code{survival}).}
 
-\item{n.sim}{number of simulations for score processes}
+\item{n.sim}{Number of simulations for the resampling procedure (default 1000).}
 
-\item{silent}{to show timing estimate will be produced for longer jobs}
+\item{silent}{Logical; if TRUE, suppresses timing estimates for long jobs.}
 
-\item{robust}{to control wether robust dM_i(t) or dN_i  are used for simulations}
+\item{robust}{Logical; if TRUE, uses robust martingale-based simulations. 
+If NULL, defaults to TRUE if a cluster term is detected in the model call.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"gof.phreg"} containing:
+  \item{jumptimes}{Event times used in the process.}
+  \item{supUsim}{Matrix of simulated supremum values for each covariate.}
+  \item{res}{Matrix with observed supremum (\code{Sup|U(t)|}) and p-values.}
+  \item{supU}{Observed supremum values.}
+  \item{pvals}{Vector of p-values for each covariate.}
+  \item{score}{Cumulative score process values over time.}
+  \item{simUt}{Simulated score processes.}
+  \item{type}{Type of test performed ("prop").}
+  \item{robust}{Logical flag indicating if robust simulation was used.}
 }
 \description{
-Cumulative score process residuals for Cox PH regression
-p-values based on Lin, Wei, Ying resampling.
+Performs cumulative score process residual tests for the proportional hazards (PH) 
+assumption in Cox regression. The test statistics are based on the cumulative 
+score process:
+\deqn{ U(t) = \int_0^t \hat M_i(s) d \hat \beta(s) }
+where \eqn{\hat M_i(s)} are the martingale residuals.
+}
+\details{
+P-values are computed using the Lin, Wei, and Ying (1993) resampling method, which 
+simulates the asymptotic distribution of the supremum of the score process under 
+the null hypothesis of proportional hazards.
+
+The function supports two types of simulation:
+\itemize{
+  \item \strong{Standard}: Uses \eqn{dN_i} (counting process increments) for simulation.
+  \item \strong{Robust}: Uses \eqn{\hat M_i(t)} (martingale residuals) adjusted for clustering 
+    if a \code{cluster()} term is present in the model.
+}
 }
 \examples{
 data(sTRACE)
 
-m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes,data=sTRACE) 
+m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes, data=sTRACE) 
 gg <- gof(m1)
 gg
 par(mfrow=c(1,3))
 plot(gg)
 
-m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes,data=sTRACE) 
-## to get Martingale ~ dN based simulations
+m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes, data=sTRACE) 
 gg <- gof(m1)
-gg
 
-## to get Martingale robust simulations, specify cluster in  call 
+## Robust simulations with cluster
 sTRACE$id <- 1:500
-m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes+cluster(id),data=sTRACE) 
+m1 <- phreg(Surv(time,status==9)~vf+chf+diabetes+cluster(id), data=sTRACE) 
 gg <- gof(m1)
 gg
-
-m1 <- phreg(Surv(time,status==9)~strata(vf)+chf+diabetes+cluster(id),data=sTRACE) 
-gg <- gof(m1)
-gg
+}
+\references{
+Lin, D. Y., Wei, L. J., & Ying, Z. (1993). Checking the Cox model with cumulative sums of martingale-based residuals. Biometrika, 80(3), 557-572.
+}
+\seealso{
+\code{\link{gofM_phreg}}, \code{\link{gofZ_phreg}}
 }
 \author{
 Thomas Scheike and Klaus K. Holst

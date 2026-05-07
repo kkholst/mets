@@ -1,71 +1,101 @@
-##' Estimation of concordance in bivariate competing risks data
+##' Estimation of Concordance in Bivariate Competing Risks Data
 ##'
-##' @title Estimation of concordance in bivariate competing risks data
-##' @param formula Formula with left-hand-side being a \code{Event} object (see example below) and the left-hand-side specying the covariate structure
-##' @param data Data frame
-##' @param cause Causes (default (1,1)) for which to estimate the bivariate cumulative incidence
-##' @param cens The censoring code
-##' @param causes causes
-##' @param indiv indiv
-##' @param strata Strata
-##' @param id Clustering variable
-##' @param num num
-##' @param max.clust max number of clusters in timereg::comp.risk call for iid decompostion, max.clust=NULL uses all clusters otherwise rougher grouping.
-##' @param marg marginal cumulative incidence to make stanard errors for same clusters for subsequent use in casewise.test()
-##' @param se.clusters to specify clusters for standard errors. Either a vector of cluster indices or a column name in \code{data}. Defaults to the \code{id} variable.
-##' @param wname name of additonal weight used for paired competing risks data.
-##' @param prodlim prodlim to use prodlim estimator (Aalen-Johansen) rather than IPCW weighted estimator based on comp.risk function.These are equivalent in the case of no covariates. These esimators are the same in the case of stratified fitting.
-##' @param messages Control amount of output
-##' @param model Type of competing risk model (default is Fine-Gray model "fg", see comp.risk).
-##' @param return.data Should data be returned (skipping modeling)
-##' @param uniform to compute uniform standard errors for concordance estimates based on resampling.
-##' @param conservative for conservative standard errors, recommended for larger data-sets.
-##' @param resample.iid to return iid residual processes for further computations such as tests.
-##' @param ... Additional arguments to timereg::comp.risk function
+##' Estimates the bivariate cumulative incidence function (concordance) for paired 
+##' data (e.g., twins, family members) in the presence of competing risks. The function 
+##' handles both the IPCW (Inverse Probability of Censoring Weighting) estimator and 
+##' the Aalen-Johansen estimator (via \code{prodlim}).
+##' 
+##' The concordance function \eqn{C(t)} is defined as the probability that both members 
+##' of a pair experience the event of interest by time \eqn{t}:
+##' \deqn{ C(t) = P(T_1 \leq t, T_2 \leq t, \epsilon_1 = k, \epsilon_2 = k) }
+##' where \eqn{T_i} is the event time and \eqn{\epsilon_i} is the cause of failure for individual \eqn{i}.
+##' 
+##' The function supports:
+##' \itemize{
+##'   \item Stratified analysis (e.g., by zygosity in twin studies).
+##'   \item Clustering for robust standard errors.
+##'   \item Both IPCW and Aalen-Johansen estimation methods.
+##'   \item Resampling for uniform standard errors.
+##'   \item IID decomposition for further inference (e.g., casewise concordance tests).
+##' }
+##'
+##' @param formula Formula with an \code{Event} object on the left-hand side. The right-hand 
+##'   side specifies the covariate structure, including \code{strata()} for grouping (e.g., MZ/DZ) 
+##'   and \code{id()} for pairing.
+##' @param data Data frame containing the variables.
+##' @param cause Vector of cause codes for which to estimate the bivariate cumulative incidence 
+##'   (default \code{c(1,1)}).
+##' @param cens Censoring code (default 0).
+##' @param causes Vector of all possible causes (optional, inferred from data if missing).
+##' @param indiv Variable indicating individual within a pair (optional, inferred from \code{id}).
+##' @param strata Variable for stratification (optional, can be specified in formula).
+##' @param id Clustering variable (pair ID). Required.
+##' @param num Variable for numbering individuals within pairs (optional, auto-generated if missing).
+##' @param max.clust Maximum number of clusters to use for IID decomposition in \code{timereg::comp.risk}. 
+##'   If NULL, uses all clusters. Useful for large datasets to speed up computation.
+##' @param marg Optional marginal cumulative incidence object (from \code{comp.risk}) to compute 
+##'   standard errors for same-cluster comparisons in subsequent \code{casewise.test()}.
+##' @param se.clusters Vector of cluster indices or column name in \code{data} for standard error calculation. 
+##'   Defaults to the \code{id} variable.
+##' @param wname Name of an additional weight variable for paired competing risks data.
+##' @param prodlim Logical; if TRUE, uses the \code{prodlim} (Aalen-Johansen) estimator instead of 
+##'   the IPCW estimator based on \code{comp.risk}. These are equivalent in the absence of covariates.
+##' @param messages Control amount of output (0 = silent, 1 = messages).
+##' @param model Type of competing risk model for \code{comp.risk} (default "fg" for Fine-Gray).
+##' @param return.data If 1, returns the reshaped data; if 2, returns only the data; otherwise returns the model.
+##' @param uniform Logical; if TRUE, computes uniform standard errors based on resampling.
+##' @param conservative Logical; if TRUE, uses conservative standard errors (recommended for large datasets).
+##' @param resample.iid Logical; if TRUE, returns IID residual processes for further computations.
+##' @param ... Additional arguments passed to \code{timereg::comp.risk}.
+##' @return An object of class \code{"bicomprisk"} (or \code{"bicomprisk.strata"} if stratified) containing:
+##'   \item{model}{List of fitted models for each stratum (or a single model).}
+##'   \item{strata}{Names of strata (if applicable).}
+##'   \item{N}{Number of strata (if applicable).}
+##'   \item{time}{Event times.}
+##'   \item{P1}{Bivariate cumulative incidence estimates.}
+##'   \item{se.P1}{Standard errors of the estimates.}
+##'   \item{P1.iid}{IID decomposition (if \code{resample.iid=TRUE}).}
+##'   \item{clusters}{Cluster assignments (if \code{marg} or \code{se.clusters} provided).}
 ##' @author Thomas Scheike, Klaus K. Holst
-##' @aliases bicompriskData
-##' @export
-##' @references
-##' Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B.
-##' Estimating twin concordance for bivariate competing risks twin data
-##' Statistics in Medicine, Wiley Online Library, 2014 , 33 , 1193-204
-##'
+##' @references 
+##' Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B. (2014). Estimating twin concordance for bivariate competing risks twin data. Statistics in Medicine, 33, 1193-1204.
+##' @seealso \code{\link{bicompriskData}}, \code{\link{test_casewise}}, \code{\link{casewise}}
 ##' @examples
 ##' library("timereg")
-##'
+##' 
 ##' ## Simulated data example
 ##' prt <- sim_nordic_random(2000,delayed=TRUE,ptrunc=0.7,
 ##'		      cordz=0.5,cormz=2,lam0=0.3)
 ##' ## Bivariate competing risk, concordance estimates
 ##' p11 <- bicomprisk(Event(time,cause)~strata(zyg)+id(id),data=prt,cause=c(1,1))
-##'
+##' 
 ##' p11mz <- p11$model$"MZ"
 ##' p11dz <- p11$model$"DZ"
 ##' par(mfrow=c(1,2))
 ##' ## Concordance
 ##' plot(p11mz,ylim=c(0,0.1));
 ##' plot(p11dz,ylim=c(0,0.1));
-##'
-##' ## entry time, truncation weighting
-##' ### other weighting procedure
+##' 
+##' ## Entry time, truncation weighting
+##' ### Other weighting procedure
 ##' prtl <-  prt[!prt$truncated,]
 ##' prt2 <- ipw2(prtl,cluster="id",same.cens=TRUE,
 ##'      time="time",cause="cause",entrytime="entry",
 ##'      pairs=TRUE,strata="zyg",obs.only=TRUE)
-##'
+##' 
 ##' prt22 <- fast.reshape(prt2,id="id")
-##'
+##' 
 ##' prt22$event <- (prt22$cause1==1)*(prt22$cause2==1)*1
 ##' prt22$timel <- pmax(prt22$time1,prt22$time2)
 ##' ipwc <- timereg::comp.risk(Event(timel,event)~-1+factor(zyg1),
 ##'   data=prt22,cause=1,n.sim=0,model="rcif2",times=50:90,
 ##'   weights=prt22$weights1,cens.weights=rep(1,nrow(prt22)))
-##'
+##' 
 ##' p11wmz <- ipwc$cum[,2]
 ##' p11wdz <- ipwc$cum[,3]
 ##' lines(ipwc$cum[,1],p11wmz,col=3)
 ##' lines(ipwc$cum[,1],p11wdz,col=3)
-##'
+##' @export
 bicomprisk <- function(formula, data, cause=c(1,1), cens=0, causes, indiv,
  strata=NULL, id,num, max.clust=1000, marg=NULL,se.clusters=NULL,wname=NULL,
  prodlim=FALSE,messages=TRUE,model,return.data=0,uniform=0,conservative=1,resample.iid=1,...) {

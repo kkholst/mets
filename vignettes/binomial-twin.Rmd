@@ -24,13 +24,13 @@ library(mets)
 Overview 
 ==========
 
-When looking at bivariate binomial data with the aim of learning about the 
-dependence that is present, possibly after correcting for some covariates many
-models are available. 
+When analysing bivariate binomial data with the aim of learning about the
+dependence present, possibly after adjusting for covariates, many
+models are available.
 
-   *  Random-effects models logistic regression covered elsewhere (glmer in lme4).
+   *  Random-effects logistic regression models covered elsewhere (`glmer` in `lme4`).
 
-in the mets package you can fit the 
+In the mets package you can fit the
 
    *  Pairwise odds ratio model
 
@@ -44,14 +44,14 @@ in the mets package you can fit the
         such as ACE, ADE ,AE and so forth.
 
 
-Typically it can be hard or impossible 
-to specify random effects models with special 
-structure among the parameters of the random effects. This is possible in
-our models. 
+Typically it can be hard or impossible
+to specify random effects models with special
+structure among the parameters of the random effects. This is possible with
+our models.
 
-To be concrete about the model structure assume that we have paired binomial 
-data $(Y_1, Y_2, X_1, X_)2$ where the responses are $Y_1, Y_2$ and we
-have covariates $X_1, X_2$.
+To be concrete about the model structure, assume that we have paired binomial
+data $(Y_1, Y_2, X_1, X_2)$ where the responses are $Y_1, Y_2$ and the
+covariates are $X_1, X_2$.
 
 We start by giving a brief description of these different models.  First we
 for bivariate data one can specify the marginal probability using logistic 
@@ -59,15 +59,13 @@ regression models
 \[
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2.
 \]
-These model can be estimated under working independence 
-\cite{zeger-liang-86}.  
+These models can be estimated under working independence (Zeger and Liang, 1986).
 
-
-A typical twin analysis will typically consist of  looking at both 
+A typical twin analysis will consist of looking at both
 
    *  Pairwise odds ratio model
 
-   *  Bivariate Probit model 
+   *  Bivariate Probit model
   
 The additive gamma can be used for the same as the bivariate probit model but 
 is more restrictive in terms of dependence structure, but is nevertheless 
@@ -78,33 +76,31 @@ model.
 Biprobit with random effects
 =============================
 
-For these model we assume that given random effects $Z$ and a covariate vector 
-$V_{12}$ we have independent logistic regression models 
+For these models we assume that given random effects $Z$ and a covariate vector
+$V_{12}$ we have independent probit regression models
 \[
-probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
+\mbox{probit}(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z,  \quad i=1,2.
 \]
-where $Z$ is a bivariate normal distribution with some covariance 
-$\Sigma$. The general covariance structure 
-$\Sigma$ makes the model very flexible. 
+where $Z$ follows a bivariate normal distribution with covariance
+$\Sigma$. The general covariance structure
+$\Sigma$ makes the model very flexible.
 
-We note that 
+We note that
 
- - Parameters $\beta$  are subject specific
- - The $\Sigma$ will reflect dependence
+ - Parameters $\beta$ are subject-specific
+ - $\Sigma$ reflects the dependence structure
 
-
-The more standard link function $logit$ rather than the $probit$ link
-is often used and implemented in for example 
-\cite{mm}.  The advantage is that one now gets an odds-ratio interpretation 
-of the subject specific effects, but one then needs  numerical integration to
-fit the model. 
+The more standard $\mbox{logit}$ link rather than the $\mbox{probit}$ link
+is often used and implemented in, for example, Tutz and Hennevogl (1996). The advantage is that one obtains an odds-ratio interpretation
+of the subject-specific effects, but numerical integration is then needed to
+fit the model.
 
 Pairwise odds ratio model 
 ------------------------
 
 
-Now the pairwise odds ratio model the specifies that given $ X_1, X_2 $
-the marginal models are 
+The pairwise odds ratio model specifies that given $X_1, X_2$
+the marginal models are
 \[
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
 \]
@@ -120,24 +116,23 @@ We model the odds ratio with the regression
 \[
 \gamma_{12} = \exp( Z_{12}^T \lambda)
 \]
-Where $Z_{12}$ are some covarites that may influence the odds-ratio 
-between between $Y_{1}$ and $Y_{2}$ and contains the marginal covariates,
+Where $Z_{12}$ are covariates that may influence the odds ratio
+between $Y_{1}$ and $Y_{2}$ and contains the marginal covariates
 \cite{carey-1993,dale1986global,palmgren1989,molenberghs1994marginal}. 
 This odds-ratio is given covariates as well as marginal covariates. 
 The odds-ratio and marginals specify the joint bivariate distribution via
 the so-called Placckett-distribution. 
 
-One way of fitting this model is the ALR algorithm, the alternating 
-logistic regression, and this has been described in several papers
-\cite{kuk2004permutation,kuk2007hybrid,qaqish2012orthogonalized}.
-We here simply estimate the parameters in a two stage-procedure
+One way of fitting this model is the ALR (alternating logistic regression) algorithm,
+described in several papers (Kuk, 2004; Kuk, 2007; Qaqish, 2012).
+We estimate the parameters in a two-stage procedure:
 
  * Estimating the marginal parameters via GEE
  * Using marginal estimates, estimate dependence parameters
 
-This gives efficient estimates of the dependence parameters because of
-orthogonality, but some efficiency may be gained for the marginal parameters 
-by using the full likelihood or iterative fitting such as for the ALR. 
+This gives efficient estimates of the dependence parameters due to
+orthogonality, though some efficiency may be gained for the marginal parameters
+by using the full likelihood or iterative fitting such as ALR.
 
 
 The pairwise odds-ratio model is very useful, but one does not have a random 
@@ -268,10 +263,9 @@ summary(bina)
 ```
 
 Now, and more interestingly, we consider an OR that depends on zygosity and
-note that MZ have a much larger OR than DZ twins. This type of trait is 
-somewhat complicated to interpret, but clearly, one option is that 
-that there is a genetic effect, alternatively there might be
-a stronger environmental effect for MZ twins. 
+note that MZ twins have a much larger OR than DZ twins. This type of result is
+somewhat complex to interpret: one possibility is a genetic effect, another is a
+stronger shared environmental effect for MZ twins.
 
 
 ```{r twostage2}
@@ -373,12 +367,12 @@ summary(bintwin)
 Polygenic modelling 
 -----------------------
 
-   First setting up the random effects design for the random effects and 
-   the the relationship between variance parameters.
-   We see that the genetic random effect has size one for MZ and 0.5 for DZ subjects, 
-   that have shared and non-shared genetic components with variance 0.5 such that the total 
-   genetic variance is the same for all subjects. The shared environmental effect is the samme for 
-all. Thus two parameters with these bands. 
+   First setting up the random effects design and
+   the relationship between variance parameters.
+   We see that the genetic random effect has size 1 for MZ and 0.5 for DZ subjects,
+   who have shared and non-shared genetic components with variance 0.5 such that the total
+   genetic variance is the same for all subjects. The shared environmental effect is the same for
+   all. Thus two parameters with these constraints.
 
 ```{r polygenic1}
 out <- twin_polygen_design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")

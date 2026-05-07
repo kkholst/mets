@@ -1,96 +1,91 @@
-##' Restricted IPCW mean for censored survival data 
+##' Restricted IPCW Mean for Censored Survival Data
 ##'
-##' Simple and fast version for IPCW regression for just one time-point thus
-##' fitting the model \deqn{E( min(T, t) | X ) = exp( X^T beta) } or in the case
-##' of competing risks data \deqn{E( I(epsilon=1) (t - min(T ,t)) | X ) = exp(
-##' X^T beta) } thus given years lost to cause, see \code{binreg} for the
-##' arguments.
+##' Provides a fast implementation of Inverse Probability of Censoring Weighting (IPCW) 
+##' regression for a single time point. It fits the model:
+##' \deqn{ E( \min(T, t) | X ) = \exp( X^T \beta) }
+##' or, in the case of competing risks data:
+##' \deqn{ E( I(\epsilon=1) (t - \min(T, t)) | X ) = \exp( X^T \beta) }
+##' which represents the "Years Lost Due to Cause" (RMTL).
 ##'
-##' When the status is binary assumes it is a survival setting and default is to
-##' consider outcome Y=min(T,t), if status has more than two levels, then
-##' computes years lost due to the specified cause, thus using the response
-##' \deqn{ Y = (t-min(T,t)) I(status=cause) }
+##' The method solves the binomial regression IPCW response estimating equation:
+##' \deqn{ X \left( \frac{\Delta(\min(T,t)) Y}{G_c(\min(T,t))} - \exp( X^T \beta) \right) = 0 }
+##' where \eqn{\Delta(\min(T,t)) = I(\min(T,t) \leq C)} is the indicator of being uncensored 
+##' at the time of interest.
 ##'
-##' Based on binomial regresion IPCW response estimating equation: \deqn{ X (
-##' \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 } for IPCW adjusted
-##' responses. Here \deqn{ \Delta(min(T,t)) = I ( min(T ,t) \leq C ) } is
-##' indicator of being uncensored. Concretely, the uncensored observations at
-##' time t will count those with an event (of any type) before t and those with
-##' a censoring time at t or further out. One should therefore be a bit careful
-##' when data has been constructed such that some of the event times T are
-##' equivalent to t.
+##' When the status variable is binary, the outcome is assumed to be \eqn{Y = \min(T,t)} (RMST).
+##' If the status has more than two levels (competing risks), the outcome is 
+##' \eqn{Y = (t - \min(T,t)) I(\text{status}=\text{cause})} (RMTL for a specific cause).
 ##'
-##' Can also solve the binomial regresion IPCW response estimating equation:
-##' \deqn{ h(X) X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
-##' for IPCW adjusted responses where $h$ is given as an argument together with
-##' iid of censoring with h.
-##' 
-##' By using appropriately the h argument we can also do the efficient IPCW
-##' estimator estimator.
-##' 
-##' Variance is based on \deqn{ \sum w_i^2 } also with IPCW adjustment, and
-##' naive.var is variance under known censoring model.
-##' 
-##' When Ydirect is given it solves : 
-##' \deqn{ X ( \Delta(min(T,t)) Ydirect /G_c(min(T,t)) - exp( X^T beta)) = 0 }
-##' for IPCW adjusted responses. 
+##' The function supports:
+##' \itemize{
+##'   \item \strong{IPCW Adjustment}: Weights by the inverse of the censoring survival probability.
+##'   \item \strong{Augmentation}: Can include an augmentation term (type="II" or "III") to improve efficiency 
+##'     and robustness (Double Robust estimation).
+##'   \item \strong{Variance Estimation}: Based on the influence function, including adjustments for 
+##'     the estimation of the censoring model.
+##' }
 ##'
-##' The actual influence (type="II") function is based on augmenting with \deqn{
-##' X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) } and alternatively just solved
-##' directly (type="I") without any additional terms.
-##'
-##' Censoring model may depend on strata. 
-##'
-##' @param formula formula with outcome on Event form
-##' @param data data frame
-##' @param outcome can do either rmst regression ('rmst') or years-lost
-##'   regression ('rmtl')
-##' @param ... Additional arguments to binreg
+##' @param formula Formula with an \code{Event} outcome (e.g., \code{Event(time, cause)}).
+##' @param data Data frame containing the variables.
+##' @param outcome Outcome type: \code{"rmst"} (Restricted Mean Survival Time) or 
+##'   \code{"rmtl"} (Restricted Mean Time Lost).
+##' @param ... Additional arguments passed to \code{binreg}, such as \code{time}, \code{cause}, 
+##'   \code{cens.model}, \code{model}, \code{type}, etc.
+##' @return An object of class \code{"binreg"} containing:
+##'   \item{coef}{Coefficient estimates.}
+##'   \item{se}{Standard errors.}
+##'   \item{var}{Variance-covariance matrix.}
+##'   \item{iid}{Influence function decomposition.}
+##'   \item{naive.var}{Variance under known censoring model (if applicable).}
+##'   \item{time}{Time point used.}
+##'   \item{outcome}{Type of outcome analyzed.}
 ##' @author Thomas Scheike
+##' @references 
+##' Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for survival and competing risks data using mets in R. WIP.
+##' @seealso \code{\link{binreg}}, \code{\link{resmeanATE}}, \code{\link{rmstIPCW}}
 ##' @examples
 ##' data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+##' 
 ##' # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
-##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-##'                 time=50,cens.model=~strata(platelet),model="exp")
+##' out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+##'                 time=50, cens.model=~strata(platelet), model="exp")
 ##' summary(out)
 ##' 
-##' ## weighted GLM version   RMST
-##' out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-##'             time=50,cens.model=~strata(platelet),model="exp",outcome="rmst")
+##' ## Weighted GLM version (RMST)
+##' out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+##'             time=50, cens.model=~strata(platelet), model="exp", outcome="rmst")
 ##' summary(out2)
 ##' 
-##' ### time-lost
-##' outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-##'                 time=50,cens.model=~strata(platelet),
-##'                 model="exp",outcome="rmtl")
+##' ### Time-lost (RMTL)
+##' outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+##'                 time=50, cens.model=~strata(platelet), model="exp", outcome="rmtl")
 ##' summary(outtl)
 ##' 
-##' ### same as Kaplan-Meier for full censoring model 
-##' bmt$int <- with(bmt,strata(tcell,platelet))
-##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
-##'                              cens.model=~strata(platelet,tcell),model="lin")
+##' ### Same as Kaplan-Meier for full censoring model 
+##' bmt$int <- with(bmt, strata(tcell, platelet))
+##' out <- resmeanIPCW(Event(time,cause!=0)~-1+int, bmt, time=30,
+##'                              cens.model=~strata(platelet, tcell), model="lin")
 ##' estimate(out)
-##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-##' rm1 <- resmean_phreg(out1,times=30)
+##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet), data=bmt)
+##' rm1 <- resmean_phreg(out1, times=30)
 ##' summary(rm1)
 ##' 
-##' ### years lost regression
-##' outl <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,outcome="years-lost",
-##'                              cens.model=~strata(platelet,tcell),model="lin")
+##' ### Years lost regression
+##' outl <- resmeanIPCW(Event(time,cause!=0)~-1+int, bmt, time=30, outcome="years-lost",
+##'                              cens.model=~strata(platelet, tcell), model="lin")
 ##' estimate(outl)
 ##' 
-##' ## competing risks years-lost for cause 1  
-##' out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
-##'                             cens.model=~strata(platelet,tcell),model="lin")
+##' ## Competing risks years-lost for cause 1  
+##' out <- resmeanIPCW(Event(time,cause)~-1+int, bmt, time=30, cause=1,
+##'                             cens.model=~strata(platelet, tcell), model="lin")
 ##' estimate(out)
-##' ## same as integrated cumulative incidence 
-##' rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+##' ## Same as integrated cumulative incidence 
+##' rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 ##' summary(rmc1)
-##' 
-##' @references Scheike, T. and Holst, K. K. Restricted mean time lost for
-##'   survival and competing risks data using mets in R, WIP
 ##' @export
-##' @aliases rmstIPCW resmeanIPCWold
+resmeanIPCW <- function(formula, data, outcome=c("rmst", "rmtl"), ...)
+##' @export
+##' @aliases rmstIPCW 
 resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)
@@ -166,54 +161,52 @@ Faugment <- apply(X*hh*Mc,2,sum)
 return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=hh,varY=varY,RRMt0=RRMt0))
 }# }}}
 
-##' Average Treatment effect for Restricted Mean for censored competing risks data using IPCW 
+
+##' Average Treatment Effect for Restricted Mean Time
 ##'
-##' Under the standard causal assumptions we can estimate the average treatment
-##' effect E(Y(1) - Y(0)). We need Consistency, ignorability ( Y(1), Y(0) indep
-##' A given X), and positivity.
-##'
-##' The first covariate in the specification of the competing risks regression
-##' model must be the treatment effect that is a factor. If the factor has more
-##' than two levels then it uses the mlogit for propensity score modelling. We
-##' consider the outcome mint(T;tau) or I(epsion==cause1)(t- min(T;t)) that
-##' gives years lost due to cause "cause" depending on the number of causes. The
-##' default model is the exp(X^ beta) and otherwise a linear model is used.
-##'
-##' Estimates the ATE using the the standard binary double robust estimating
-##' equations that are IPCW censoring adjusted.
+##' Estimates the Average Treatment Effect (ATE) for Restricted Mean Survival Time (RMST) 
+##' or Restricted Mean Time Lost (RMTL) in censored competing risks data using IPCW.
 ##' 
-##' In the example given here, out gives the ATE for the total RMTL, and out1 is
-##' ATE the RMTL for cause 1. These are then combined into the percentage of the
-##' total RMTL due to cause 1 for the treated and un-treated (that are given on
-##' log-scale), these ratio's are then compared with another ratio (still on
-##' log-scale). Standard errors are based on the derived influence functions.
+##' Under standard causal assumptions (Consistency, Ignorability, Positivity), the ATE is 
+##' estimated as \eqn{E(Y(1) - Y(0))}, where \eqn{Y(a)} is the potential outcome under treatment \eqn{a}.
+##' The method uses double robust estimating equations that are IPCW-adjusted for censoring.
 ##'
+##' The first covariate in the formula must be the treatment effect (a factor). If the factor 
+##' has more than two levels, multinomial logistic regression (mlogit) is used for propensity 
+##' score modeling.
 ##'
-##' @param formula formula with 'Event' outcome 
-##' @param data data-frame 
-##' @param model exp ("exp") or identity link ("lin") 
-##' @param outcome restricted mean time (rmst) or restricted mean time lost (rmtl)
-##' @param ... Additional arguments to pass to binregATE 
+##' @param formula Formula with an \code{Event} outcome. The first covariate must be the treatment factor.
+##' @param data Data frame.
+##' @param model Link function: \code{"exp"} (exponential) or \code{"lin"} (identity).
+##' @param outcome Outcome type: \code{"rmst"} or \code{"rmtl"}.
+##' @param ... Additional arguments passed to \code{binregATE}, such as \code{time}, \code{treat.model}, 
+##'   \code{augmentR0}, \code{augmentC}, etc.
+##' @return An object of class \code{"binregATE"} containing:
+##'   \item{riskG}{Simple IPCW estimator results.}
+##'   \item{riskDR}{Double Robust estimator results.}
+##'   \item{riskG.iid, riskDR.iid}{Influence functions.}
+##'   \item{coef}{Treatment effect estimates.}
+##'   \item{se}{Standard errors.}
 ##' @author Thomas Scheike
+##' @references 
+##' Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for survival and competing risks data using mets in R. WIP.
+##' 
+##' Scheike, T. and Tanaka, S. (2025). Restricted mean time lost ratio regression: Percentage of restricted mean time lost due to specific cause. WIP.
+##' @seealso \code{\link{binregATE}}, \code{\link{ratioATE}}
 ##' @examples
 ##' data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
-##' out <- resmeanATE(Event(time,event)~tcell+platelet,
-##'                   data=bmt,time=40,treat.model=tcell~platelet,outcome="rmtl")
+##' 
+##' out <- resmeanATE(Event(time,event)~tcell+platelet, data=bmt, time=40, 
+##'                   treat.model=tcell~platelet, outcome="rmtl")
 ##' summary(out)
 ##' 
-##' out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
-##'                    treat.model=tcell~platelet,outcome="rmtl")
+##' out1 <- resmeanATE(Event(time,cause)~tcell+platelet, data=bmt, cause=1, time=40,
+##'                    treat.model=tcell~platelet, outcome="rmtl")
 ##' summary(out1)
 ##' 
-##' ratioATE(out,out1,h=function(x) log(x))
-##' @references
-##' Scheike, T. and Holst, K. K., Restricted mean time lost for
-##'   survival and competing risks data using mets in R, WIP
-##'
-##' Scheike, T. and Tanaka, S., Restricted mean time lost ratio regression:
-##'   Percentage of restricted mean time lost due to specific cause, WIP
 ##' @export
-##' @aliases rmstATE ratioATE
+resmeanATE <- function(formula, data, model="exp", outcome=c("rmst", "rmtl"), ...)
+##' @aliases rmstATE 
 resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
@@ -227,6 +220,30 @@ out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...)
 return(out)
 }# }}}
 
+##' Ratio of Average Treatment Effects
+##'
+##' Computes the ratio of two Average Treatment Effects (ATEs), typically comparing the 
+##' ATE for a specific cause (e.g., RMTL due to cause 1) to the ATE for the total RMTL.
+##' 
+##' The function transforms the estimates (e.g., using log) to compute the ratio and 
+##' its standard error using the delta method and the joint influence functions.
+##'
+##' @param rmtl Object containing the ATE for the total RMTL (from \code{resmeanATE}).
+##' @param rmtl1 Object containing the ATE for the specific cause RMTL (from \code{resmeanATE}).
+##' @param h Transformation function (e.g., \code{log}) applied to the ratio. Default is identity.
+##' @param null Value under the null hypothesis for the ratio (default 1).
+##' @return A list containing:
+##'   \item{ratioG}{Ratio based on the simple IPCW estimator.}
+##'   \item{ratioDR}{Ratio based on the double robust estimator.}
+##' @author Thomas Scheike
+##' @seealso \code{\link{resmeanATE}}
+##' @examples
+##' data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+##' out <- resmeanATE(Event(time,event)~tcell+platelet, data=bmt, time=40, outcome="rmtl")
+##' out1 <- resmeanATE(Event(time,cause)~tcell+platelet, data=bmt, cause=1, time=40, outcome="rmtl")
+##' ratioATE(out, out1, h=log)
+##' @export
+ratioATE <- function(rmtl, rmtl1, h=NULL, null=1)
 ##' @export
 ratioATE <- function(rmtl,rmtl1,h=NULL,null=1) { ## {{{
 

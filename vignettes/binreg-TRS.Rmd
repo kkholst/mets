@@ -24,14 +24,14 @@ library(mets)
 Two-Stage Randomization for Competing risks and Survival outcomes
 =====================================================================
 
- Under two-stage randomization we can estimate the average treatment effect $E(Y(i,\bar k))$ of treatment regime $(i,\bar k)$. 
+Under two-stage randomization we can estimate the average treatment effect $E(Y(i,\bar k))$ of treatment regime $(i,\bar k)$.
 
-   - treatment A0=i
-and 
-     -  for all responses, randomization A1 = (k_1), so treatment k_1 
-     -  response*A1 = (k_1, k_2), so treatment k_1 if response 1, and treatment k_2 if response 2.
+   - treatment $A_0=i$
+and
+     - for all responses, randomization $A_1 = (k_1)$, so treatment $k_1$
+     - response$\times A_1 = (k_1, k_2)$, so treatment $k_1$ if response 1, and treatment $k_2$ if response 2.
 
- The estimator can be augmented in different ways: using the two randomizations and the dynamic censoring augmentation.
+The estimator can be augmented in different ways: using the two randomizations and the dynamic censoring augmentation.
 
 Estimating  $\mu_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) <= t)$, restricted mean
 $E( \min(Y(i,\bar k),\tau))$  or years lost $E( I(\epsilon=v) \cdot (\tau  -  \min(Y(i,\bar k),\tau)))$ 
@@ -56,21 +56,19 @@ using IPCW weighted estimating equations : \\
  where $\gamma_c(s)$ is chosen to minimize the variance given the dynamic covariates specified by augmentC.
 
 
-  - The treatment's must be given as factors. 
-  - Treatment for 2nd randomization may depend on response.
-      - Treatment probabilities are estimated by default and uncertainty from this adjusted for.
-  - Randomization augmentation for 1'st and 2'nd randomization possible. 
-  - Censoring model possibly stratified on observed covariates (at time 0). 
-  - Censoring augmentation done dynamically over time  with time-dependent covariates. 
+  - Treatments must be given as factors.
+  - Treatment for the 2nd randomization may depend on response.
+      - Treatment probabilities are estimated by default and uncertainty from this is adjusted for.
+  - Randomization augmentation for the 1st and 2nd randomization is possible.
+  - Censoring model can be stratified on observed covariates (at time 0).
+  - Censoring augmentation is done dynamically over time with time-dependent covariates.
 
- Standard errors are estimated using the influence function  of all estimators and tests of differences can therefore be computed
- subsequently.
+Standard errors are estimated using the influence functions of all estimators; tests of differences can therefore be computed subsequently.
 
+Data must be in start-stop-status survival format with
 
-Data must be given on start,stop,status survival format with
-
- - one code of status indicating response, that is 2nd randomization
- - other codes defines the outcome of interest
+ - one code of `status` indicating response, i.e. 2nd randomization
+ - other codes defining the outcome of interest
 
 
 ```{r}
@@ -172,29 +170,28 @@ bb
 Two-Stage Randomization CALGB-9823
 ==================================
 
-We here illustrate some analysis of one SMART conducted by Cancer and
-Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001). 
-388 patients were randomized to an initial treatment of GM-CSF (A1 ) or standard chemotherapy
-(A2 ). Patients with complete remission and informed consent to second stage were then re-randomized to
-only cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ). 
+We illustrate an analysis of one SMART conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone et al. (2001).
+388 patients were randomized to an initial treatment of GM-CSF ($A_1$) or standard chemotherapy
+($A_2$). Patients with complete remission and informed consent to the second stage were then re-randomized to
+cytarabine only ($B_1$) or cytarabine plus mitoxantrone ($B_2$).
 
-We first compute the weighted risk-set  estimator based on estimated weights
+We first compute the weighted risk-set estimator based on estimated weights
 \begin{align*}
 \Lambda_{A1,B1}(t) & = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
 \end{align*}
-where $w_i(s) = I(A0_i=A1) + (t>T_R) I(A1_i=B1)/\pi_1(X_i)$, that is 
-1 when you start on treatment $A1$ and
-then for those that changes to $B1$ at time $T_R$ then is scaled up 
-with the proportion doing this. This is equivalent to
-the IPTW (inverse probability of treatment weighted estimator). We estimate 
-the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those that are consistent with ending on $B1$. 
-$A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$, but stays $1$ if the subject is treated with $B1$. 
-We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similarly, for those that end being consistent with $B2$.
-Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
+where $w_i(s) = I(A0_i=A1) + I(t>T_R) I(A1_i=B1)/\pi_1(X_i)$, that is
+1 when starting on treatment $A1$, and then scaled up
+by the proportion switching to $B1$ at time $T_R$ for those that do so. This is equivalent to
+the IPTW (inverse probability of treatment weighted) estimator. We estimate
+the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those consistent with ending on $B1$.
+$A10$ starts at 1 and becomes 0 if the subject is treated with $B2$, but stays 1 if treated with $B1$.
+We can then look at the two strata where $A0=0, A10=1$ and $A0=1, A10=1$. Similarly, we define $A11$ to start at 1,
+remain 1 if $B2$ is taken, and become 0 if the second randomization is $B1$.
 
-  - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
+  - the treatment models apply to all time-points, unless the `weight.var` variable is given (1 for treatments, 0 otherwise) to accommodate a general start-stop format
   - the treatment model may also depend on a response value
-  - standard errors are based on influence functions and is also computed for the baseline
+  - standard errors are based on influence functions and are also computed for the baseline
 
 We here use the propensity score model $P(A1=B1|A0)$ that uses the 
 observed frequencies on arm $B1$ among those starting out on either $A1$ or $A2$.

@@ -2,26 +2,30 @@
 % Please edit documentation in R/casewise.R
 \name{binregCasewise}
 \alias{binregCasewise}
-\title{Estimates the casewise concordance based on Concordance and marginal estimate using binreg}
+\title{Estimate Casewise Concordance Using Binomial Regression}
 \usage{
 binregCasewise(concbreg, margbreg, zygs = c("DZ", "MZ"), newdata = NULL, ...)
 }
 \arguments{
-\item{concbreg}{Concordance}
+\item{concbreg}{Concordance object from \code{binreg}.}
 
-\item{margbreg}{Marginal estimate}
+\item{margbreg}{Marginal estimate object from \code{binreg}.}
 
-\item{zygs}{order of zygosity for estimation of concordance and casewise.}
+\item{zygs}{Order of zygosity for estimation (e.g., \code{c("DZ","MZ")}).}
 
-\item{newdata}{to give instead of zygs.}
+\item{newdata}{Data frame to give instead of \code{zygs}.}
 
-\item{...}{to pass to estimate function}
+\item{...}{Arguments passed to \code{estimate}.}
+}
+\value{
+A list containing:
+  \item{coef}{Exponentiated coefficients (ratios).}
+  \item{logcoef}{Log-scale coefficients and standard errors.}
 }
 \description{
-Estimates the casewise concordance based on Concordance and marginal estimate using binreg
-}
-\details{
-Uses cluster iid for the two binomial-regression estimates  standard errors better than those of casewise that are often conservative.
+Estimates the casewise concordance based on concordance and marginal estimates 
+obtained from \code{binreg} objects. Uses cluster-based IID for standard errors, 
+which are often better than those from \code{casewise} (which can be conservative).
 }
 \examples{
 data(prt)

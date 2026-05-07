@@ -21,43 +21,43 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-The cifreg function can fit the Fine-Gray model and the logit-link cumulative incidence function for the 
-cause of interest for competing risks, and is completely scalable, that is, linear in the data. 
-In addition, for the Fine-Gray model predictions can be provided standard errors for specific time-points based on 
-influence functions for the baseline and the regression coefficients.  
+The `cifreg` function fits the Fine-Gray model and the logit-link cumulative incidence
+model for the cause of interest in competing risks settings. Computation is linear in
+data size, making it suitable for large datasets.
+For the Fine-Gray model, predictions with standard errors can be provided for specific
+time-points based on influence functions for the baseline and the regression coefficients.
 
-To summarize
+Key features:
 
-  - the baseline can be stratified 
-  - the censoring weights can be strata dependent
-  - predictions can be computed with standard errors (only for Fine-Gray)
-  - computation time linear in data
-     - including standard errors
-  - only Fine-Gray: influence functions of baseline and regression coefficients computed and given by IC, iid and iidBaseline functions
-  - clusters can be given and then cluster corrected standard errors are computed
+  - the baseline can be stratified
+  - the censoring weights can be stratum-dependent
+  - predictions can be computed with standard errors (Fine-Gray only)
+  - computation time is linear in data size, including standard errors
+  - Fine-Gray only: influence functions of baseline and regression coefficients are computed and available via `IC`, `iid`, and `iidBaseline`
+  - cluster-corrected standard errors are available via the `clusters` argument
 
 
 Fine-Gray model
 ================
 
-\cite{fine:gray:1999} considered a cumulative incidence on the form 
+Fine and Gray (1999) considered a cumulative incidence of the form
 \begin{align*}
- F_1(t,X) & = P(T \leq t, \epsilon=1) = 1 - exp( - \Lambda_0(t) \exp(X^T \beta)).
+ F_1(t,X) & = P(T \leq t, \epsilon=1) = 1 - \exp( - \Lambda_0(t) \exp(X^T \beta)).
 \end{align*}
 
-In the case of independent right-censoring with the censoring distribtion $G_c(t,X) = P(C > t | S(X))$ where
-$S(X)$  is a set of strata defined from $X$, then an unbiased estimating equation is given by 
+In the case of independent right-censoring with the censoring distribution $G_c(t,X) = P(C > t | S(X))$ where
+$S(X)$ is a set of strata defined from $X$, then an unbiased estimating equation is given by
 \begin{align*}
-  U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where } 
+  U^{FG}_{n}(\beta) = \sum_{i=0}^{n} \int_0^{+\infty} \left( X_i- E_n(t,\beta) \right) w_i(t,X_i) dN_{1,i}(t)  \text{ where }
 	E_n(t,\beta)=\frac{\tilde S_1(t,\beta) }{\tilde S_0(t,\beta)},
 \end{align*}
-with \(w_i(t,X_i) = \frac{G_c(t,X_i)}{G_c(T_i \wedge t,X_i)} I( C_i > T_i \wedge t ) \) 
+with \(w_i(t,X_i) = \frac{G_c(t,X_i)}{G_c(T_i \wedge t,X_i)} I( C_i > T_i \wedge t ) \)
 ,$\tilde S_k(t,\beta) = \sum_{j=1}^n X_j^k \exp(X_j^T\beta) Y_{1,j}(t)$
-for $k=0,1$, and with with $\tilde Y_{1,i}(t) = Y_{1,i}(t) w_i(t,X_i)$ for $i=1,...,n$.
-$w_i(t)$ needs to be replaced by an estimator of the 
-censoring distribution, and since it does not depend on $X$ the 
-$\hat w_i(t) = \frac{\hat G_c(t,X_i)}{\hat G_c(T_i \wedge t,X_i)} I(C_i > T_i \wedge t)$ 
-where $\hat G_c$ is the Kaplan-Meier estimator of the censoring distribution. 
+for $k=0,1$, and with $\tilde Y_{1,i}(t) = Y_{1,i}(t) w_i(t,X_i)$ for $i=1,...,n$.
+$w_i(t)$ needs to be replaced by an estimator of the
+censoring distribution; since it does not depend on $X$, we use
+$\hat w_i(t) = \frac{\hat G_c(t,X_i)}{\hat G_c(T_i \wedge t,X_i)} I(C_i > T_i \wedge t)$
+where $\hat G_c$ is the Kaplan-Meier estimator of the censoring distribution.
 
 First we simulate some competing risks data using some utility functions.
 
@@ -71,9 +71,9 @@ $X$ being two independent binomials.
 Alternatively, one can also replace the FG-model with a logistic link 
 $\mbox{expit}( \Lambda_j(t) + \exp(X^T \beta_j))$.
 
-The advantage of the Fine-Gray model is that it is easy to fit and it is easy to get standard errors, 
-and that it is quite flexible. On the downside 
-is that the coefficients must be interpreted on $cloglog$-scale. 
+The advantage of the Fine-Gray model is that it is easy to fit, easy to obtain
+standard errors for, and quite flexible. On the downside,
+the coefficients must be interpreted on the $\mbox{cloglog}$ scale.
 Specifically, 
 \begin{align}
 \log(-\log( 1-F_1(t,X_1+1,X_2))) - \log(-\log( 1-F_1(t,X_1,X_2))) & =  \beta_1,
@@ -129,15 +129,14 @@ showing no problem with the proportionality of the model.
 SE's for the baseline and predictions of FG
 ===========================================
 
-The standard errors reported for the FG-estimator are based on the i.i.d 
-decompostion (influence functions) of the estimator that we give later. A similar decomposition
-exist for the baseline and is needed when standard errors of predictions are computed. These
-are a bit harder to compute for all time-points simultaneously, but they can be
-obtained for specific timepoints jointly with the iid decomposition of the regression coefficients and
-then used to get standard errors for predictions. 
+The standard errors reported for the Fine-Gray estimator are based on the i.i.d.
+decomposition (influence functions) of the estimator. A similar decomposition
+exists for the baseline and is needed when standard errors of predictions are computed. These
+are somewhat harder to compute for all time-points simultaneously, but they can be
+obtained for specific time-points jointly with the i.i.d. decomposition of the regression coefficients,
+and then used to obtain standard errors for predictions.
 
-We here plot the predictions with jittered confidence intervals for the predictions
-at time point 5
+We plot the predictions with confidence intervals for predictions at time point 5:
 
 ```{r,pred-cif}
 ### predictions with CI based on iid decomposition of baseline and beta
@@ -149,12 +148,12 @@ plot(pfg,ylim=c(0,0.2))
 for (i in 1:4) lines(c(5,5)+i/10,pfgse[i,3:4],col=i,lwd=2)
 ```
 
-The iid decompositions are stored inside Biid, in addition we note that the 
-iid decompositions for $\hat \beta - \beta_0$ are obtained by the command iid()
+The i.i.d. decompositions are stored inside `Biid`; the
+i.i.d. decomposition for $\hat \beta - \beta_0$ is obtained via the `iid()` function.
 
 # Comparison 
 
-We compare with the cmprsk function, that gives exactly the same, but without running it to avoid dependencies: 
+We compare with the `cmprsk` function, which gives exactly the same results, but omit the code to avoid dependencies:
 
 ```{r,cmprsk}
 run <- 0
@@ -169,11 +168,11 @@ cbind(cr$coef,diag(cr$var)^.5,fg$coef,fg$se.coef,cr$coef-fg$coef,diag(cr$var)^.5
 }
 ```
 
-When comparing with the results from the coxph based on setting up the data using
-the finegray function, we get the same estimates but note that the standard errors
-of the coxph is missing a term and therefore slightly different. When comparing to 
-the estimates from coxph missing the additional censoring term we see that we 
-get also the same standard errors
+When comparing with the results from `coxph` based on setting up the data using
+the `finegray` function, we get the same estimates but note that the standard errors
+from `coxph` are missing a term and therefore slightly different. When comparing to
+the estimates from `coxph` without the additional censoring term, we also get
+the same standard errors.
 
 ```{r,coxph}
 if (run==1) {
@@ -199,8 +198,8 @@ if (run==1) {
 }
 ```
 
-We also remove all censorings from the data to compare the estimates with those 
-based on coxph, and observe that the estimates as well as the standard errors agree 
+We also remove all censorings from the data to compare the estimates with those
+based on `coxph`, and observe that both the estimates and the standard errors agree.
 
 ```{r,no-cens}
 datsnc <- dtransform(dats,status=2,status==0)
@@ -239,8 +238,8 @@ if (run==1) {
 
 # Strata dependent Censoring weights 
 
-We can improve efficiency and avoid bias by allowing the censoring weights to depend on 
-the covariates 
+We can improve efficiency and reduce bias by allowing the censoring weights to depend on
+the covariates.
 
 ```{r}
  fgcm <- cifregFG(Event(time,status)~Z1+Z2,data=dats,cause=1,cens.model=~strata(Z1,Z2))
@@ -250,7 +249,7 @@ the covariates
 
 We note that the standard errors are slightly smaller for the more efficient estimator.
 
-The influence functions of the FG-estimator is given by \cite{fine:gray:1999},  
+The influence functions of the Fine-Gray estimator are given by Fine and Gray (1999),
 \begin{align*}
 \phi_i^{FG}  & = \int (X_i- e(t))  \tilde w_i(t) dM_{i1}(t,X_i)  + \int \frac{q(t)}{\pi(t)} dM_{ic}(t),  \\
              & = \phi_i^{FG,1}  + \phi_i^{FG,2},
@@ -291,15 +290,15 @@ Logistic-link
  dsort(dats) <- ~time
 ```
 
-The model where 
+The model
 \begin{align*}
  \mbox{logit}(F_1(t,X)) & =  \alpha(t) + X^T \beta
 \end{align*}
-that then leads to OR interpretation of the $F_1$, can also be fitted easily, however, the standard errors
-are harder to compute and only approximative 
-(assuming that the censoring weights are known) but this gives typically only a small error. 
-In the ${{\bf timereg}}$-package the model can be 
-fitted using different estimators that are more efficient using different weights but this is much slower.  
+leads to an odds-ratio interpretation of $F_1$ and can be fitted easily; however, the standard errors
+are harder to compute and only approximate
+(assuming that the censoring weights are known), though this typically introduces only a small error.
+In the `timereg` package the model can be
+fitted using different estimators that are more efficient but considerably slower.
 
 Fitting the model and getting OR's 
 
@@ -315,9 +314,9 @@ Administrative Censoring
 In the case with administrative censoring we can give the risk-set defined by the administrative censoring 
 times for the Fine-Gray or logistic link cumulative incidence regression models. 
 
- - when a administrative censoring time is given the risk-set will be increased for all those experiencing the alternative event. 
- - if there are also additional random censorings these can be adjusted for via IPCW weights and are then found using the cens.code 
- - the alternative causes are found by considering cause, cens.code and total number of values for the status variable, so it can be useful to specify the other death.code (s) also
+ - when an administrative censoring time is given, the risk-set is extended for all subjects experiencing the alternative event
+ - if there are also additional random censorings, these can be adjusted for via IPCW weights, specified using `cens.code`
+ - alternative causes are found by considering `cause`, `cens.code`, and the total number of values for the status variable; it can therefore be useful to also specify the other `death.code`(s)
 
 
 ```{r}
@@ -350,9 +349,9 @@ ccAR_ipcw2  <-  cifregFG(Event(time,status)~Z1+Z2,dats,cens.code=0,
 estimate(ccAR_ipcw2)
 ```
 
-When there is only administrative censoring the Fine-Gray model 
-can similarly be estimated using the modified risk-set and the 
-phreg/coxph function (thus equivalent to ccA)
+When there is only administrative censoring, the Fine-Gray model
+can similarly be estimated using the modified risk-set and the
+`phreg`/`coxph` function (equivalent to `ccA` above).
 
 ```{r}
 dats$entry <- 0

@@ -2,7 +2,7 @@
 % Please edit documentation in R/score-mean-tests.R
 \name{test_marginalMean}
 \alias{test_marginalMean}
-\title{Pepe-Mori test, score-test type test, proportionality test for marginal mean}
+\title{Pepe-Mori Test for Marginal Mean Comparison}
 \usage{
 test_marginalMean(
   formula,
@@ -17,26 +17,55 @@ test_marginalMean(
 )
 }
 \arguments{
-\item{formula}{with Event object}
+\item{formula}{Formula with an \code{Event} object on the left-hand side and 
+covariates (typically with \code{strata()} for group comparison) on the right. 
+Can include \code{cluster(id)} for correlated data.}
 
-\item{data}{data frame for computation}
+\item{data}{Data frame containing all variables referenced in the formula.}
 
-\item{cause}{of interest (1 default)}
+\item{cause}{Cause of interest (default 1).}
 
-\item{cens.code}{censoring code}
+\item{cens.code}{Censoring code (default 0).}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
 
-\item{death.code}{codes for death (terminating event, 2 default)}
+\item{death.code}{Code for death (terminating event, default 2).}
 
-\item{death.code.prop}{code for other causes of death for Fine-Gray regression model}
+\item{death.code.prop}{Code for other causes of death for Fine-Gray regression model.}
 
-\item{time}{upper limit in pepe-mori and AUC integrals  otherwise max event time}
+\item{time}{Upper limit for Pepe-Mori and AUC integrals. If NULL, defaults to 
+the maximum event time for the cause of interest.}
 
-\item{beta}{for score test}
+\item{beta}{Starting values for the score test (default NULL, uses zeros).}
+}
+\value{
+An object of class \code{"marginalTest"} containing:
+  \item{pepe.mori}{Pepe-Mori test results with compare p-value.}
+  \item{RatioAUC}{Ratio of AUC test results with compare p-value.}
+  \item{difAUC}{Difference of AUC test results with compare p-value.}
+  \item{prop.test}{Proportionality test results.}
+  \item{score.test}{Score test results (equivalent to Gray's test).}
+  \item{score.iid}{Influence function for the score test.}
+  \item{time}{Upper time limit used.}
+  \item{RAUCl, RAUCe}{Raw and transformed AUC estimates.}
 }
 \description{
-For competing risks data and recurrent events the pepe-mori test as presented in Ghosh and Lin (2000) and for right-censored data only based on IPCW formulation.
+Performs score-test type tests for proportionality of marginal means in competing 
+risks data and recurrent events, as presented in Ghosh and Lin (2000). The test 
+is based on an IPCW (Inverse Probability of Censoring Weighting) formulation.
+}
+\details{
+The function computes several tests:
+\enumerate{
+  \item \strong{Pepe-Mori Test}: Tests for equality of marginal mean functions between groups.
+  \item \strong{Ratio of AUC}: Compares the area under the curve of marginal means.
+  \item \strong{Difference of AUC}: Tests for difference in areas under the curve.
+  \item \strong{Score Test}: Tests for proportionality (equivalent to Gray's test for CIF).
+  \item \strong{Proportionality Test}: Tests the proportional hazards assumption.
+}
+
+The Pepe-Mori test uses weights based on the number at risk in each group to 
+construct a weighted integral of the difference in marginal means.
 }
 \examples{
 data(bmt,package="mets")
@@ -73,6 +102,12 @@ pmt <- test_marginalMean(Event(entry,time,status)~strata(treatment)+cluster(id),
 			 cause=1,death.code=2,cens.code=0)
 summary(pmt) 
  
+}
+\references{
+Ghosh, D. and Lin, D. Y. (2000). Nonparametric Analysis of Recurrent Events and Death. Biometrics, 56, 554--562.
+}
+\seealso{
+\code{\link{test_logrankRecurrent}}, \code{\link{test_conc}}
 }
 \author{
 Thomas Scheike

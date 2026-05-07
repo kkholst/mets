@@ -3,108 +3,103 @@
 \name{resmeanIPCW}
 \alias{resmeanIPCW}
 \alias{rmstIPCW}
-\alias{resmeanIPCWold}
-\title{Restricted IPCW mean for censored survival data}
+\title{Restricted IPCW Mean for Censored Survival Data}
 \usage{
 resmeanIPCW(formula, data, outcome = c("rmst", "rmtl"), ...)
 }
 \arguments{
-\item{formula}{formula with outcome on Event form}
+\item{formula}{Formula with an \code{Event} outcome (e.g., \code{Event(time, cause)}).}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{outcome}{can do either rmst regression ('rmst') or years-lost
-regression ('rmtl')}
+\item{outcome}{Outcome type: \code{"rmst"} (Restricted Mean Survival Time) or 
+\code{"rmtl"} (Restricted Mean Time Lost).}
 
-\item{...}{Additional arguments to binreg}
+\item{...}{Additional arguments passed to \code{binreg}, such as \code{time}, \code{cause}, 
+\code{cens.model}, \code{model}, \code{type}, etc.}
+}
+\value{
+An object of class \code{"binreg"} containing:
+  \item{coef}{Coefficient estimates.}
+  \item{se}{Standard errors.}
+  \item{var}{Variance-covariance matrix.}
+  \item{iid}{Influence function decomposition.}
+  \item{naive.var}{Variance under known censoring model (if applicable).}
+  \item{time}{Time point used.}
+  \item{outcome}{Type of outcome analyzed.}
 }
 \description{
-Simple and fast version for IPCW regression for just one time-point thus
-fitting the model \deqn{E( min(T, t) | X ) = exp( X^T beta) } or in the case
-of competing risks data \deqn{E( I(epsilon=1) (t - min(T ,t)) | X ) = exp(
-X^T beta) } thus given years lost to cause, see \code{binreg} for the
-arguments.
+Provides a fast implementation of Inverse Probability of Censoring Weighting (IPCW) 
+regression for a single time point. It fits the model:
+\deqn{ E( \min(T, t) | X ) = \exp( X^T \beta) }
+or, in the case of competing risks data:
+\deqn{ E( I(\epsilon=1) (t - \min(T, t)) | X ) = \exp( X^T \beta) }
+which represents the "Years Lost Due to Cause" (RMTL).
 }
 \details{
-When the status is binary assumes it is a survival setting and default is to
-consider outcome Y=min(T,t), if status has more than two levels, then
-computes years lost due to the specified cause, thus using the response
-\deqn{ Y = (t-min(T,t)) I(status=cause) }
+The method solves the binomial regression IPCW response estimating equation:
+\deqn{ X \left( \frac{\Delta(\min(T,t)) Y}{G_c(\min(T,t))} - \exp( X^T \beta) \right) = 0 }
+where \eqn{\Delta(\min(T,t)) = I(\min(T,t) \leq C)} is the indicator of being uncensored 
+at the time of interest.
 
-Based on binomial regresion IPCW response estimating equation: \deqn{ X (
-\Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 } for IPCW adjusted
-responses. Here \deqn{ \Delta(min(T,t)) = I ( min(T ,t) \leq C ) } is
-indicator of being uncensored. Concretely, the uncensored observations at
-time t will count those with an event (of any type) before t and those with
-a censoring time at t or further out. One should therefore be a bit careful
-when data has been constructed such that some of the event times T are
-equivalent to t.
+When the status variable is binary, the outcome is assumed to be \eqn{Y = \min(T,t)} (RMST).
+If the status has more than two levels (competing risks), the outcome is 
+\eqn{Y = (t - \min(T,t)) I(\text{status}=\text{cause})} (RMTL for a specific cause).
 
-Can also solve the binomial regresion IPCW response estimating equation:
-\deqn{ h(X) X ( \Delta(min(T,t)) Y /G_c(min(T,t)) - exp( X^T beta)) = 0 }
-for IPCW adjusted responses where $h$ is given as an argument together with
-iid of censoring with h.
-
-By using appropriately the h argument we can also do the efficient IPCW
-estimator estimator.
-
-Variance is based on \deqn{ \sum w_i^2 } also with IPCW adjustment, and
-naive.var is variance under known censoring model.
-
-When Ydirect is given it solves : 
-\deqn{ X ( \Delta(min(T,t)) Ydirect /G_c(min(T,t)) - exp( X^T beta)) = 0 }
-for IPCW adjusted responses. 
-
-The actual influence (type="II") function is based on augmenting with \deqn{
-X \int_0^t E(Y | T>s) /G_c(s) dM_c(s) } and alternatively just solved
-directly (type="I") without any additional terms.
-
-Censoring model may depend on strata.
+The function supports:
+\itemize{
+  \item \strong{IPCW Adjustment}: Weights by the inverse of the censoring survival probability.
+  \item \strong{Augmentation}: Can include an augmentation term (type="II" or "III") to improve efficiency 
+    and robustness (Double Robust estimation).
+  \item \strong{Variance Estimation}: Based on the influence function, including adjustments for 
+    the estimation of the censoring model.
+}
 }
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+
 # E( min(T;t) | X ) = exp( a+b X) with IPCW estimation 
-out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-                time=50,cens.model=~strata(platelet),model="exp")
+out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+                time=50, cens.model=~strata(platelet), model="exp")
 summary(out)
 
-## weighted GLM version   RMST
-out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-            time=50,cens.model=~strata(platelet),model="exp",outcome="rmst")
+## Weighted GLM version (RMST)
+out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+            time=50, cens.model=~strata(platelet), model="exp", outcome="rmst")
 summary(out2)
 
-### time-lost
-outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age,bmt,
-                time=50,cens.model=~strata(platelet),
-                model="exp",outcome="rmtl")
+### Time-lost (RMTL)
+outtl <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
+                time=50, cens.model=~strata(platelet), model="exp", outcome="rmtl")
 summary(outtl)
 
-### same as Kaplan-Meier for full censoring model 
-bmt$int <- with(bmt,strata(tcell,platelet))
-out <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,
-                             cens.model=~strata(platelet,tcell),model="lin")
+### Same as Kaplan-Meier for full censoring model 
+bmt$int <- with(bmt, strata(tcell, platelet))
+out <- resmeanIPCW(Event(time,cause!=0)~-1+int, bmt, time=30,
+                             cens.model=~strata(platelet, tcell), model="lin")
 estimate(out)
-out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-rm1 <- resmean_phreg(out1,times=30)
+out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet), data=bmt)
+rm1 <- resmean_phreg(out1, times=30)
 summary(rm1)
 
-### years lost regression
-outl <- resmeanIPCW(Event(time,cause!=0)~-1+int,bmt,time=30,outcome="years-lost",
-                             cens.model=~strata(platelet,tcell),model="lin")
+### Years lost regression
+outl <- resmeanIPCW(Event(time,cause!=0)~-1+int, bmt, time=30, outcome="years-lost",
+                             cens.model=~strata(platelet, tcell), model="lin")
 estimate(outl)
 
-## competing risks years-lost for cause 1  
-out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
-                            cens.model=~strata(platelet,tcell),model="lin")
+## Competing risks years-lost for cause 1  
+out <- resmeanIPCW(Event(time,cause)~-1+int, bmt, time=30, cause=1,
+                            cens.model=~strata(platelet, tcell), model="lin")
 estimate(out)
-## same as integrated cumulative incidence 
-rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+## Same as integrated cumulative incidence 
+rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 summary(rmc1)
-
 }
 \references{
-Scheike, T. and Holst, K. K. Restricted mean time lost for
-  survival and competing risks data using mets in R, WIP
+Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for survival and competing risks data using mets in R. WIP.
+}
+\seealso{
+\code{\link{binreg}}, \code{\link{resmeanATE}}, \code{\link{rmstIPCW}}
 }
 \author{
 Thomas Scheike

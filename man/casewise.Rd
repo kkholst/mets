@@ -2,19 +2,29 @@
 % Please edit documentation in R/casewise.R
 \name{casewise}
 \alias{casewise}
-\title{Estimates the casewise concordance based on Concordance and marginal estimate using prodlim but no testing}
+\title{Estimate Casewise Concordance from prodlim Objects}
 \usage{
 casewise(conc, marg, cause.marg)
 }
 \arguments{
-\item{conc}{Concordance}
+\item{conc}{Concordance object from \code{prodlim} (output of \code{bicomprisk} with \code{prodlim=TRUE}).}
 
-\item{marg}{Marginal estimate}
+\item{marg}{Marginal cumulative incidence object from \code{prodlim} (output of \code{prodlim}).}
 
-\item{cause.marg}{specififes which cause that should be used for marginal cif based on prodlim}
+\item{cause.marg}{Specifies which cause should be used for the marginal CIF based on the \code{Event} object.}
+}
+\value{
+An object of class \code{"casewise"} containing:
+  \item{casewise}{Matrix with time, casewise concordance, and standard errors.}
+  \item{marg}{Matrix with time, marginal CIF, and standard errors.}
+  \item{concordance}{Matrix with time, concordance, and standard errors.}
+  \item{timer}{Time points used.}
+  \item{P1, se.P1}{Extracted concordance values and SEs.}
 }
 \description{
-.. content for description (no empty lines) ..
+Estimates the casewise concordance based on concordance and marginal estimates 
+derived from \code{prodlim} objects. Unlike \code{test_casewise}, this function 
+does not perform hypothesis testing but focuses on estimation and plotting.
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
@@ -22,11 +32,11 @@ library(prodlim)
 data(prt);
 prt <- force_same_cens(prt,cause="status")
 
-### marginal cumulative incidence of prostate cancer##' 
+### marginal cumulative incidence of prostate cancer
 outm <- prodlim(Hist(time,status)~+1,data=prt)
 
 times <- 60:100
-cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ")) ## cause is 2 (second cause) 
+cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ"))
 cifdz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="DZ"))
 
 ### concordance for MZ and DZ twins
@@ -43,6 +53,9 @@ plot(cdz,ci=NULL,ylim=c(0,0.5),xlim=c(60,100),legend=TRUE)
 summary(cdz)
 summary(cmz)
 }
+}
+\seealso{
+\code{\link{test_casewise}}, \code{\link{bicomprisk}}
 }
 \author{
 Thomas Scheike

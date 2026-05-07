@@ -2,27 +2,54 @@
 % Please edit documentation in R/casewise.R
 \name{test_casewise}
 \alias{test_casewise}
-\alias{casewise.test}
-\alias{casewise.bin}
-\title{Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence}
+\title{Test for Independence Using Casewise Concordance}
 \usage{
 test_casewise(conc, marg, test = "no-test", p = 0.01)
 }
 \arguments{
-\item{conc}{Concordance}
+\item{conc}{An object containing concordance estimates (e.g., from \code{bicomprisk}). 
+Must contain \code{time}, \code{P1}, \code{se.P1}, and ideally \code{P1.iid}.}
 
-\item{marg}{Marginal estimate}
+\item{marg}{An object containing marginal cumulative incidence estimates (e.g., from \code{comp.risk} or \code{prodlim}). 
+Must contain \code{time}, \code{P1}, \code{se.P1}, and ideally \code{P1.iid}.}
 
-\item{test}{Type of test for independence assumption. "conc" makes test on concordance scale and "case" means a test on the casewise concordance}
+\item{test}{Type of test: \code{"case"} (test on casewise concordance) or \code{"conc"} (test on concordance). 
+Default is \code{"no-test"}.}
 
-\item{p}{check that marginal probability is greater at some point than p}
+\item{p}{Threshold for checking that marginal probability is greater than this value at some point 
+(default 0.01). Used to avoid division by near-zero probabilities.}
+}
+\value{
+An object of class \code{"casewise"} containing:
+  \item{casewise}{Matrix with time, casewise concordance, and standard errors.}
+  \item{marg}{Matrix with time, marginal CIF, and standard errors.}
+  \item{conc}{Matrix with time, concordance, and standard errors.}
+  \item{casewise.iid}{Influence function decomposition for casewise concordance.}
+  \item{test}{Test results (if \code{test} is specified): Pepe-Mori type test statistics, 
+    standard errors, z-values, and p-values.}
+  \item{mintime, maxtime}{Time range used for the analysis.}
+  \item{same.cluster}{Logical indicating if clusters were assumed identical.}
+  \item{testtype}{Type of test performed.}
 }
 \description{
-Estimates the casewise concordance based on Concordance and marginal estimate using timereg and performs test for independence
+Estimates the casewise concordance based on concordance and marginal estimates, 
+and performs tests for the independence assumption. This is particularly useful 
+in twin studies to assess genetic vs. environmental contributions to disease risk.
 }
 \details{
-Uses cluster based conservative standard errors for marginal and sometimes only the uncertainty of the concordance estimates. This works prettey well, alternatively one can use also the 
-         funcions Casewise for a specific time point
+The casewise concordance is defined as:
+\deqn{ C(t) = \frac{P(T_1 \leq t, T_2 \leq t)}{P(T_1 \leq t)} }
+where the numerator is the joint probability of both twins having the event by time \eqn{t}, 
+and the denominator is the marginal probability.
+
+The function supports two types of tests:
+\itemize{
+  \item \code{"case"}: Tests on the casewise concordance scale (difference between observed and expected under independence).
+  \item \code{"conc"}: Tests on the concordance scale (difference between observed concordance and squared marginal).
+}
+
+Standard errors are computed using cluster-based conservative estimates or influence 
+functions (IID) if available from the input objects.
 }
 \examples{
 \donttest{ ## Reduce Ex.Timings
@@ -61,8 +88,13 @@ plot(cmz,ylim=c(0,0.7),xlim=c(60,100))
 par(new=TRUE)
 plot(cdz,ylim=c(0,0.7),xlim=c(60,100))
 
-
 }
+}
+\references{
+Scheike, T. H. (2024). Casewise concordance estimation and testing. mets package documentation.
+}
+\seealso{
+\code{\link{bicomprisk}}, \code{\link{casewise}}, \code{\link{test_conc}}
 }
 \author{
 Thomas Scheike
