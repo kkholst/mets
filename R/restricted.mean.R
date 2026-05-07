@@ -202,9 +202,8 @@ return(list(Mc=Mc,Xaugment=Xaugment,Faugment=Faugment,hXaugment=augment,h=h,hh=h
 ##'                    treat.model=tcell~platelet, outcome="rmtl")
 ##' summary(out1)
 ##' 
-##' @export
-resmeanATE <- function(formula, data, model="exp", outcome=c("rmst", "rmtl"), ...)
 ##' @aliases rmstATE 
+##' @export
 resmeanATE <- function(formula,data,model="exp",outcome=c("rmst","rmtl"),...)
 {# {{{
 out <- 	binregATE(formula,data,outcome=outcome[1],model=model,...) 
