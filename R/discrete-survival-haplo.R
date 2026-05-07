@@ -61,7 +61,6 @@
 ##' @author Thomas Scheike
 ##' @references 
 ##' Scheike, T. H. (2024). Discrete time survival analysis with haplotype effects. mets package documentation.
-##' @seealso \code{\link{summary.haplosurvd}}, \code{\link{vcov.haplosurvd}}
 ##' @examples
 ##' ## Some haplotypes of interest
 ##' types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")

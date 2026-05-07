@@ -1,4 +1,3 @@
-
 ##' Discrete Time-to-Event Analysis with Interval Censoring
 ##'
 ##' Fits a cumulative odds model for discrete time-to-event data, handling interval 
@@ -62,7 +61,7 @@
 ##' out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 ##' summary(out)
 ##' @export
-##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd cumoddsreg  predictSurvd plotSurvd 
+##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd predictSurvd plotSurvd 
 ##' @export
 interval_logitsurv_discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)

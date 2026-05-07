@@ -2,7 +2,6 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{sim_multistate}
 \alias{sim_multistate}
-\alias{sim_multistateII}
 \title{Simulation of Illness-Death Model}
 \usage{
 sim_multistate(

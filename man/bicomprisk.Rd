@@ -2,6 +2,7 @@
 % Please edit documentation in R/bicomprisk.R
 \name{bicomprisk}
 \alias{bicomprisk}
+\alias{bicompriskData}
 \title{Estimation of Concordance in Bivariate Competing Risks Data}
 \usage{
 bicomprisk(
@@ -150,7 +151,7 @@ lines(ipwc$cum[,1],p11wdz,col=3)
 Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B. (2014). Estimating twin concordance for bivariate competing risks twin data. Statistics in Medicine, 33, 1193-1204.
 }
 \seealso{
-\code{\link{bicompriskData}}, \code{\link{test_casewise}}, \code{\link{casewise}}
+\code{\link{test_casewise}}, \code{\link{casewise}}
 }
 \author{
 Thomas Scheike, Klaus K. Holst

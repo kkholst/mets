@@ -1,4 +1,3 @@
-
 ##' While-Alive Estimands for Recurrent Events
 ##'
 ##' Computes the "While-Alive" estimands for recurrent events in the presence of a 
@@ -140,7 +139,7 @@ if (!is.null(augmentR)) {
 } else form1X <- form1
 
 ## ratio of means ## {{{
-dd <- resmeanIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time, model="lin")
+dd <- rmstIPCW(formD,data=rrR,cause=1,cens.code=0,cens.model=cens.formula,time=time, model="lin")
 ddN <- recregIPCW(formrec,data=data,cause=cause,death.code=death.code,cens.code=cens.code, cens.model=cens.formula,times=time,model="lin",marks=marks)
 
 treatdata <- list()

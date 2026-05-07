@@ -2,7 +2,6 @@
 % Please edit documentation in R/sim-pc-hazard.R
 \name{rcrisk}
 \alias{rcrisk}
-\alias{rchazl}
 \title{Simulation of Piecewise constant hazard models with two causes (Cox).}
 \usage{
 rcrisk(

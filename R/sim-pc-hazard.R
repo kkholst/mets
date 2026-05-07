@@ -289,7 +289,6 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' dtable(d3,~status)
 #' 
 #' @export 
-#' @aliases  rchazl 
 rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 		  cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
 {#'# {{{
@@ -1175,7 +1174,7 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 ##' Illness-Death Competing Risks with Two Causes of Death
 ##'
 ##' Simulates data from an illness-death model with two causes of death from the 
-##' illness state. First transition is simple, then with covariates effects can be added.
+##' illness state. Covariate effects can be introduced via relative risk terms.
 ##'
 ##' @param cumhaz Cumulative hazard from state 1 to 2.
 ##' @param death.cumhaz Cumulative hazard of death from state 1.
@@ -1184,7 +1183,8 @@ kumarsimRCT <- function (n,rho1=0.71,rho2=0.40,rate = c(6.11,24.2),
 ##' @param rr Relative risks.
 ##' @param rd Relative risks for death from state 1.
 ##' @param rd2 Relative risks for death from state 2.
-##' @param gamma23, gamma24 Early effect parameters for death causes.
+##' @param gamma23 Early effect parameters for death causes.
+##' @param gamma24 Early effect parameters for death causes.
 ##' @param early2 Time threshold for early effect.
 ##' @param gap.time Gap time indicator.
 ##' @param max.recurrent Maximum recurrent events.
@@ -1316,7 +1316,6 @@ sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
 ##' plot(c2,main="rate 2->1")
 ##' lines(base1,lwd=2)
 ##'  
-##' @aliases sim_multistateII
 ##' @export
 sim_multistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
 		    rr12=NULL,rr21=NULL,rd13=NULL,rd23=NULL,rrc=NULL,

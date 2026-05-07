@@ -6,7 +6,6 @@
 \alias{dInterval}
 \alias{simlogitSurvd}
 \alias{predictlogitSurvd}
-\alias{cumoddsreg}
 \alias{predictSurvd}
 \alias{plotSurvd}
 \title{Discrete Time-to-Event Analysis with Interval Censoring}

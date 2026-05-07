@@ -82,10 +82,8 @@
 ##' ## Same as integrated cumulative incidence 
 ##' rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 ##' summary(rmc1)
-##' @export
-resmeanIPCW <- function(formula, data, outcome=c("rmst", "rmtl"), ...)
-##' @export
 ##' @aliases rmstIPCW 
+##' @export
 resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
 {# {{{
    out <- binreg(formula,data,outcome=outcome[1],...)

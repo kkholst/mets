@@ -59,7 +59,7 @@
 ##' @author Thomas Scheike, Klaus K. Holst
 ##' @references 
 ##' Scheike, T. H.; Holst, K. K. & Hjelmborg, J. B. (2014). Estimating twin concordance for bivariate competing risks twin data. Statistics in Medicine, 33, 1193-1204.
-##' @seealso \code{\link{bicompriskData}}, \code{\link{test_casewise}}, \code{\link{casewise}}
+##' @seealso \code{\link{test_casewise}}, \code{\link{casewise}}
 ##' @examples
 ##' library("timereg")
 ##' 
@@ -95,6 +95,7 @@
 ##' p11wdz <- ipwc$cum[,3]
 ##' lines(ipwc$cum[,1],p11wmz,col=3)
 ##' lines(ipwc$cum[,1],p11wdz,col=3)
+##' @aliases bicompriskData
 ##' @export
 bicomprisk <- function(formula, data, cause=c(1,1), cens=0, causes, indiv,
  strata=NULL, id,num, max.clust=1000, marg=NULL,se.clusters=NULL,wname=NULL,

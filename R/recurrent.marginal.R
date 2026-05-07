@@ -504,7 +504,7 @@ return(ic)
 ##' @aliases logrankRecurrentBase
 ##' @export
 test_logrankRecurrent <- function(recurrent,death,
-              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL) { ## {{{ 
+              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL,...) { ## {{{ 
   if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
     if (inherits(death, "phreg")) {
         return(logrankRecurrentBase(recurrent,death,

@@ -7,7 +7,6 @@
 \alias{FGprediid}
 \alias{indexstratarightR}
 \alias{gofFG}
-\alias{cifregFG}
 \title{Cumulative Incidence Function (CIF) Regression}
 \usage{
 cifreg(

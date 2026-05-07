@@ -13,7 +13,8 @@ test_logrankRecurrent(
   start = 0,
   stop = NULL,
   at.risk = 5,
-  cluster.id = NULL
+  cluster.id = NULL,
+  ...
 )
 }
 \arguments{

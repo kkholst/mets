@@ -41,7 +41,7 @@
 ##'
 ##' @author Thomas Scheike
 ##' @seealso \code{\link{cifregFG}}, \code{\link{recreg}}, \code{\link{gofFG}}
-##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG cifregFG
+##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG 
 ##' @examples
 ##' ## data with no ties
 ##' data(bmt,package="mets")
@@ -87,7 +87,7 @@
 ##' Biid <- iidBaseline(fg,time=20)
 ##' pfg1 <- FGprediid(Biid,nd)
 ##' pfg1
-##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG cifregFG
+##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG 
 ##' @export
 cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,death.code=NULL,...)
 {# {{{
