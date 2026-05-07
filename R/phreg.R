@@ -617,20 +617,6 @@ IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# 
     }
 } ## }}}
 
-##' Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
-##'
-##' @title Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
-##' @param object phreg/recreg/cifregFG object
-##' @param time for baseline IID
-##' @param ft function to compute IID of baseline integrated against f(t)
-##' @param fixbeta to fix the coefficients
-##' @param beta.iid to use these iid of beta
-##' @param tminus to get predictions in t-
-##' @param ... additional arguments to lower level functions
-##' @author Thomas Scheike
-##' @aliases iidBaseline
-
-
 ##' Influence Functions or IID Decomposition of Baseline
 ##'
 ##' Computes the influence functions for the baseline cumulative hazard (and optionally
@@ -645,8 +631,7 @@ IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# 
 ##' @param ft Function to compute IID of baseline integrated against \eqn{f(t)}.
 ##' @param fixbeta Logical; if \code{TRUE}, fixes the coefficients (useful for specific tests).
 ##' @param beta.iid Optional matrix of beta influence functions to use.
-##' @param tminus Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}),
-##' useful for IPCW techniques.
+##' @param tminus Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}), useful for IPCW techniques.
 ##' @param ... Additional arguments passed to lower-level functions.
 ##'
 ##' @return An object of class \code{"iidBaseline"} containing:
@@ -751,8 +736,6 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
  class(out) <- c("iidBaseline","phreg")
  return(out)
 } # }}}
-
-
 
 ##' @export
 summary.iidBaseline  <- function(object,...) { ## {{{

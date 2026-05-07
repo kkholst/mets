@@ -2,52 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{iidBaseline}
 \alias{iidBaseline}
-\alias{Influence}
-\alias{Functions}
-\alias{or}
-\alias{IID}
-\alias{Decomposition}
-\alias{of}
-\alias{Baseline}
-\alias{Computes}
-\alias{the}
-\alias{influence}
-\alias{functions}
-\alias{for}
-\alias{baseline}
-\alias{cumulative}
-\alias{hazard}
-\alias{(and}
-\alias{optionally}
-\alias{regression}
-\alias{coefficients)}
-\alias{\code{phreg},}
-\alias{\code{recreg},}
-\alias{\code{cifregFG}}
-\alias{objects.}
-\alias{The}
-\alias{decomposition}
-\alias{is}
-\alias{based}
-\alias{on}
-\alias{formula:}
-\alias{\deqn{}
-\alias{\sum_i}
-\alias{\int_0^t}
-\alias{\frac{f(s)}{S_0(s)}}
-\alias{dM_{ki}(s)}
-\alias{-}
-\alias{P(t)}
-\alias{\beta_k}
-\alias{}}
-\alias{where}
-\alias{\eqn{k}}
-\alias{denotes}
-\alias{stratum}
-\alias{and}
-\alias{\eqn{i}}
-\alias{cluster.}
-\title{Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG}
+\title{Influence Functions or IID Decomposition of Baseline}
 \usage{
 iidBaseline(
   object,
@@ -70,8 +25,7 @@ iidBaseline(
 
 \item{beta.iid}{Optional matrix of beta influence functions to use.}
 
-\item{tminus}{Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}),
-useful for IPCW techniques.}
+\item{tminus}{Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}), useful for IPCW techniques.}
 
 \item{...}{Additional arguments passed to lower-level functions.}
 }
@@ -84,7 +38,13 @@ An object of class \code{"iidBaseline"} containing:
 \item{strata}{Strata indices.}
 }
 \description{
-Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
+Computes the influence functions for the baseline cumulative hazard (and optionally
+regression coefficients) for \code{phreg}, \code{recreg}, or \code{cifregFG} objects.
+}
+\details{
+The decomposition is based on the formula:
+\deqn{ \sum_i \int_0^t \frac{f(s)}{S_0(s)} dM_{ki}(s) - P(t) \beta_k }
+where \eqn{k} denotes the stratum and \eqn{i} the cluster.
 }
 \seealso{
 \code{\link{phreg}}, \code{\link{recreg}}, \code{\link{cifreg}}
