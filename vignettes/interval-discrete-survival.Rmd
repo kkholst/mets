@@ -45,7 +45,7 @@ This model is also called the cumulative odds model
 \begin{align*}
      P(T \leq t | x)  & =  \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta) }.
 \end{align*}
-and $\beta$ says something about the OR of probability of being before $t$. 
+and $\beta$ captures the odds ratio for the probability of being before $t$.
 
 The baseline is parametrized as 
 \begin{align*}
@@ -75,7 +75,7 @@ out <- cumoddsreg(entry.f~X1+X2+X3+X4,ttpd)
 summary(out)
 ```
 
-We note that the probability of dying is increased considerably for all covariates. 
+We note that the probability of an event (pregnancy) is considerably higher for all covariates.
 
 Now using this discrete survival model we simulate some data from this model 
 
@@ -94,12 +94,12 @@ plotSurvd(pred,se=TRUE)
 ```
 
 Finally, we look at some data and compare with the icenReg package that can also fit 
-the proportional odds model for continous or discrete data. 
+the proportional odds model for continuous or discrete data.
 We make the data fully interval censored/discrete by
 letting also exact observations be only observed to be in an interval.
 
 We consider the interval censored survival times for time from onset 
-of diabetes to to diabetic nephronpathy, then modify it to 
+of diabetes to diabetic nephropathy, then modify it to
 observe only that the event times are in certain intervals. 
 
 
@@ -173,9 +173,9 @@ summary(fit)
 
 ```
 
-Also agrees with the cumulative link regression of the ordinal package,
-although the baseline is parametrized differently. In addition the clm is
-describing the probability of surviving rather than the probabibility of 
+This also agrees with the cumulative link regression of the `ordinal` package,
+although the baseline is parametrised differently. Note that `clm` models the
+probability of surviving rather than the probability of
 dying. 
 
 ```{r}

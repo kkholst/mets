@@ -35,8 +35,8 @@ Overview
 ========
 
 For recurrent events data it is often of interest to compute basic descriptive
-quantities to get some basic understanding of the phenomenon studied. 
-We here demonstrate how one can compute: 
+quantities to gain some understanding of the phenomenon being studied.
+We demonstrate how to compute:
 
  * the marginal mean 
    * AUC and logrank test for comparison of marginal means (also for special case with cumulative incidence)
@@ -93,92 +93,84 @@ bivariate recurrent events data, also with a possible terminating event:
 \end{tikzpicture}
 
 
-Simulation of recurrents events
+Simulation of recurrent events
 ==============================
 
-We start by simulating some recurrent events data with two type of events with cumulative hazards 
+We start by simulating some recurrent events data with two event types having cumulative hazards
 
  * $\Lambda_1(t)$ (rate among survivors)
  * $\Lambda_2(t)$ (rate among survivors)
  * $\Lambda_D(t)$
 
- where we consider types 1 and 2 and with a rate of the terminal event given by 
- $\Lambda_D(t)$. We let the events be independent, but could also specify a random effects
- structure to generate dependence. 
+ where types 1 and 2 are considered and the terminal event rate is given by
+ $\Lambda_D(t)$. The events are independent by default, but a random effects
+ structure can also be specified to generate dependence.
 
- When simulating data we can impose various random-effects structures to generate dependence  
+ When simulating data, various random effects structures can be imposed to generate dependence:
 
-* Dependence=0: The intensities can be independent.
+* Dependence=0: The intensities are independent.
 
-* Dependence=1:  One gamma distributed random effects $Z$.  Then the intensities are 
+* Dependence=1: One gamma-distributed random effect $Z$. The intensities are
     + $Z \lambda_1(t)$
     + $Z \lambda_2(t)$
     + $Z \lambda_D(t)$
 
-* Dependence=4:  One gamma distributed random effects $Z$.  Then the intensities are 
+* Dependence=4: One gamma-distributed random effect $Z$. The intensities are
     + $Z \lambda_1(t)$
     + $Z \lambda_2(t)$
     + $\lambda_D(t)$
 
-* Dependence=2: We can draw normally distributed random effects $Z_1,Z_2,Z_d$ were the variance (var.z) 
-  and correlation can be specified (cor.mat).  Then the intensities are 
+* Dependence=2: Normally distributed random effects $Z_1,Z_2,Z_d$ with variance (`var.z`) 
+  and correlation (`cor.mat`) that can be specified. The intensities are
     + $\exp(Z_1) \lambda_1(t)$
     + $\exp(Z_2) \lambda_2(t)$
     + $\exp(Z_3) \lambda_D(t)$
 
-* Dependence=3: We can draw gamma distributed random effects $Z_1,Z_2,Z_d$ were the sum-structure can be specified via a matrix
-   cor.mat. We compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$.  
-   Then the intensities are
+* Dependence=3: Gamma-distributed random effects $Z_1,Z_2,Z_d$ where the sum structure can be specified via a matrix
+   `cor.mat`. We compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$.
+   The intensities are
     + $\tilde Z_1 \lambda_1(t)$
     + $\tilde Z_2 \lambda_2(t)$
     + $\tilde Z_3 \lambda_D(t)$
 
 We return to how to run the different set-ups later and start by simulating independent processes. 
 
-The key functions are 
+The key simulation functions are:
 
- * sim_recurrent
-   * simple simulation with only one event type and death 
- * sim_recurrentII 
-   * extended version with possibly multiple types of recurrent events (but rates can be 0) 
-   * Allows Cox types rates with subject specific rates 
- * sim_recurrent_list
-   * lists are allowed for multiple events and cause of death (competing risks)
-   * Allows Cox types rates with subject specific rates 
- * sim.recurrent to simulate from Cox-Cox  (marginals) or Ghosh-Lin-Cox
+ * `sim_recurrent`: simple simulation with one event type and death
+ * `sim_recurrentII`: extended version with possibly multiple types of recurrent events (rates can be zero);
+   allows Cox-type rates with subject-specific effects
+ * `sim_recurrent_list`: lists allowed for multiple event types and causes of death (competing risks);
+   allows Cox-type rates with subject-specific effects
+ * `sim_recurrent`: simulates from Cox-Cox (marginals) or Ghosh-Lin-Cox models
 
-In addition we can simulate data from the Ghosh-Lin model and where marginals of the rates among survivors are on
-on Cox form 
+Data can also be simulated from the Ghosh-Lin model where marginal rates among survivors are on Cox form:
 
- * simGLcox 
-   * can simulate data from Ghosh-Lin model  (also simRecurrentCox)
-   * with frailties
-      * where survival model for terminal event is on Cox form 
-   * can simulate data where rates among survivors are are con Cox form 
-     * with frailties
+ * `simGLcox` (also `simRecurrentCox`): simulates from the Ghosh-Lin model
+   * with frailties, where the survival model for the terminal event is on Cox form
+   * simulates data where rates among survivors are on Cox form, with or without frailties
 
 see examples below for specific models. 
 
 
-Utility functions 
+Utility functions
 =================
 
-We here mention two utility functions 
+Two utility functions worth noting:
 
- * tie.breaker for breaking ties among jump-times which is expected in the functions below.
- * count_history that counts the number of jumps previous for each subject that is $N_1(t-)$ and $N_2(t-)$. 
- 
+ * `tie.breaker`: breaks ties among jump times, which is expected by the functions below.
+ * `count_history`: counts the number of previous jumps for each subject, i.e. $N_1(t-)$ and $N_2(t-)$.
 
 Marginal Mean 
 =============
 
-We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the timing of the terminal event. 
-The marginal mean is the average number of events seen before time $t$. 
+We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the time of the terminal event.
+The marginal mean is the average number of events observed before time $t$.
 
-This is based on a  two rate models for 
+This is based on a two-rate model for
 
- * the type 1 events  $\sim E(dN_1(t) | D > t)$
- * the terminal event $\sim E(dN_d(t) | D > t)$
+ * the type 1 events: $E(dN_1(t) | D > t)$
+ * the terminal event: $E(dN_d(t) | D > t)$
 
 and is defined as $\mu_1(t)=E(N_1(t))$ 
 \begin{align}
@@ -198,9 +190,9 @@ where $Y_{\bullet}(t)= \sum_i Y_i(t)$ such that the estimator is
 \begin{align}
   \hat \mu_1(t) & =    \int_0^t \hat S(u) d\hat R_1(u),
 \end{align}
-see Cook & Lawless (1997) and  Gosh & Lin (2000). 
+see Cook & Lawless (1997) and Ghosh & Lin (2000).
 
-The variance can be estimated based on the asymptotic expansion 
+The variance can be estimated based on the asymptotic expansion
 of $\hat \mu_1(t) - \mu_1(t)$
 \begin{align*}
   & \sum_i \int_0^t \frac{S(s)}{\pi(s)} dM_{i1}  - \mu_1(t) \int_0^t  \frac{1}{\pi(s)} dM_i^d +  \int_0^t \frac{\mu_1(s) }{\pi(s)} dM_i^d,
@@ -211,7 +203,7 @@ with mean-zero processes
  * $M_i^d(t) = N_i^D(t)- \int_0^t Y_i(s) d \Lambda^D(s)$, 
  * $M_{i1}(t) = N_{i1}(t) - \int_0^t Y_{i}(s) dR_1(s)$. 
 
-as described in Gosh & Lin (2000)
+as described in Ghosh & Lin (2000).
 
 
 Generating data
@@ -679,26 +671,26 @@ summary(glout)
 glout$gradient
 ```
 
-Standard errors are computed assuming that the parameters of out and outs are 
-both known, and therefore propobly a bit to small. We could do a bootstrap to 
-get more reliable standard errors. 
+Standard errors are computed assuming that the parameters of `out` and `outs` are
+both known, and are therefore probably a little too small. A bootstrap could be used to
+obtain more reliable standard errors.
 
 
 Simulations with specific structure
 ===================================
 
-The function simGLcox can simulate data where the recurrent process has mean on Ghosh-Lin form. The key is that
+The function `simGLcox` can simulate data where the recurrent process has a mean on Ghosh-Lin form. The key identity is that
 \begin{align*}
 E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta) = \int_0^t S(t|X,Z) dR(t|X,Z)
 \end{align*}
-where $Z$ is a possible frailty. Therefore 
+where $Z$ is a possible frailty, so that
 \begin{align*}
  R(t|X,Z) & = \frac{Z \Lambda_0(t)  \exp(X^T \beta) }{S(t|X,Z)}
 \end{align*}
-leads to a Ghosh-Lin model. We can choose the survival model to have Cox form among survivors by the option
-model="twostage", otherwise model="frailty" uses the survival model with rate \( Z \lambda_d(t) rd \).
-The $Z$ is gamma distributed  with a variance that can be specified. The simulations are based on 
-a piecwise-linear approximation of the hazard functions for $S(t|X,Z)$ and $R(t|X,Z)$.
+leads to a Ghosh-Lin model. The survival model can be specified to have Cox form among survivors via
+`model="twostage"`; otherwise `model="frailty"` uses a survival model with rate $Z \lambda_d(t) r_d$.
+The frailty $Z$ is gamma distributed with a variance that can be specified. Simulations are based on
+a piecewise linear approximation of the hazard functions for $S(t|X,Z)$ and $R(t|X,Z)$.
 
 
 ```{r}
@@ -732,14 +724,10 @@ plot(margsurv); lines(dr,col=3);
 plot(recurrent); lines(base1,col=3)
 ```
 
-We can simulate data with underlying dependence fromm the two-stage model (simGLcox) or using 
-simRecurrent random effects models, for Cox-Cox or Ghosh-Lin-Cox models.
+We can also simulate data with underlying dependence from the two-stage model (`simGLcox`) or using
+`simRecurrent` random effects models, for Cox-Cox or Ghosh-Lin-Cox models.
 
-Here with marginals on 
-  - Cox- Cox form
-  - Ghosh-Lin - Cox form 
-
-Draws covariates from data and simulates data that has the marginals given. 
+Here with marginals on Cox-Cox and Ghosh-Lin-Cox form, drawing covariates from data:
 
 ```{r}
 simcoxcox <- sim_recurrent_ts(recurrent,margsurv,n=10,data=rr)
@@ -749,17 +737,16 @@ simglcox <- sim_recurrent_ts(recurrentGL,margsurv,n=10,data=rr)
 ```
 
 
-Other marginal properties 
+Other marginal properties
 =========================
 
-The mean is a useful summary measure but it is very easy and useful to look at other 
-simple summary measures such as the probability of exceeding $k$ events 
+The mean is a useful summary measure, but it is also easy and informative to examine other
+simple summary measures such as the probability of exceeding $k$ events,
 
- * $P(N_1^*(t) \ge k)$ 
-   * cumulative incidence of $T_{k} = \inf \{ t: N_1^*(t)=k \}$ with competing $D$. 
+ * $P(N_1^*(t) \ge k)$
+   * cumulative incidence of $T_{k} = \inf \{ t: N_1^*(t)=k \}$ with competing event $D$.
 
-that is thus equivalent to a certain cumulative incidence of $T_k$ occurring before $D$. We denote this
-cumulative incidence as $\hat F_k(t)$. 
+This is equivalent to a cumulative incidence of $T_k$ occurring before $D$, denoted $\hat F_k(t)$.
 
 We note also that $N_1^*(t)^2$ can be written as
 \begin{align*}
@@ -780,7 +767,7 @@ That is very similar to the "product-limit" estimator for $E( (N_1^*(t))^2 )$
   \hat \mu_{1,2}(t) & =    \sum_{k=0}^K k^2 ( \hat F_{k}(t) - \hat F_{k+1}(t) ).
 \end{align}
 
-We use the estimator of the probabilty  of exceeding "k" events based on the fact that 
+We use the estimator of the probability of exceeding $k$ events based on the fact that
 $I(N_1^*(t) \geq k)$ is  equivalent to 
 \begin{align*}
 	\int_0^t I(D > s) I(N_1^*(s-)=k-1) dN_1^*(s),
@@ -817,11 +804,11 @@ with(oo,plot(time,varN,type="l"))
 ```
 
 
-Multiple events 
+Multiple events
 ================
 
-We now generate recurrent events with two types of events. We start by
-generating data as before where all events are independent. 
+We now generate recurrent events data with two event types, starting with
+independent events.
 
 ```{r}
 rr <- sim_recurrentII(200,base1,cumhaz2=base4,death.cumhaz=dr)
@@ -840,16 +827,15 @@ the probability that $(N_1(t) \geq k_1, N_2(t) \geq k_2)$
 ## legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
 ```
 
-Looking at other simulations with dependence 
+Looking at simulations with dependence
 =============================================
 
-Using the normally distributed random effects we plot 4 different settings. We have variance $0.5$ for all
-random effects and change the correlation. We let the correlation between the random effect associated with
-$N_1$ and $N_2$ be denoted $\rho_{12}$ and the correlation between the random effects 
-associated between $N_j$ and $D$ the terminal event be denoted as $\rho_{j3}$, and organize all correlation
-in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
+Using normally distributed random effects we illustrate four settings. We set variance $0.5$ for all
+random effects and vary the correlation. We denote the correlation between the random effect associated with
+$N_1$ and $N_2$ as $\rho_{12}$, and the correlation between the random effects
+associated with $N_j$ and $D$ (the terminal event) as $\rho_{j3}$, organised in the vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 
- * Scenario I $\rho=(0,0.0,0.0)$ Independence among all efects.
+ * Scenario I: $\rho=(0,0.0,0.0)$ — independence among all effects.
 
 ```{r, eval=FALSE}
  data(CPH_HPN_CRBSI)
@@ -867,7 +853,7 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 ###  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
 ###  plot(coo,main ="Scenario I")
 ```
- * Scenario II $\rho=(0,0.5,0.5)$ Independence among survivors but dependence on terminal event 
+ * Scenario II: $\rho=(0,0.5,0.5)$ — independence among survivors but dependence on terminal event.
 
 ```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)
@@ -880,7 +866,7 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 ###  plot(coo,main ="Scenario II")
 ```
 
- * Scenario III $\rho=(0.5,0.5,0.5)$ Positive dependence among survivors and dependence on terminal event 
+ * Scenario III: $\rho=(0.5,0.5,0.5)$ — positive dependence among survivors and dependence on terminal event.
 
 ```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)
@@ -893,7 +879,7 @@ in a vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
 ###  plot(coo,main="Scenario III")
 ```
 
- * Scenario IV $\rho=(-0.4,0.5,0.5)$ Negative dependence among survivors and positive dependence on terminal event 
+ * Scenario IV: $\rho=(-0.4,0.5,0.5)$ — negative dependence among survivors and positive dependence on terminal event.
 
 ```{r, eval=FALSE}
   var.z <- c(0.5,0.5,0.5)

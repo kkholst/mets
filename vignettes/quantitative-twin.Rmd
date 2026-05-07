@@ -78,8 +78,8 @@ head(twinwide)
 
 Next we plot the association within each zygosity group
 
-We here show the log-transformed data which is slightly more symmetric
-and more appropiate for the twin analysis (see Figure \@ref(fig:scatter1) and \@ref(fig:scatter2))
+We show the log-transformed data here, which is slightly more symmetric
+and more appropriate for the twin analysis (see Figure \@ref(fig:scatter1) and \@ref(fig:scatter2)).
 
 ```{r  scatter1, warning=FALSE,message=FALSE,fig.cap="Scatter plot of logarithmic BMI measurements in MZ twins" }
 mz <- log(subset(twinwide, zyg=="MZ")[,c("bmi1","bmi2")])
@@ -91,9 +91,8 @@ dz <- log(subset(twinwide, zyg=="DZ")[,c("bmi1","bmi2")])
 plot_twin(dz)
 ```
 
-The plots and raw association measures shows considerable stronger
-dependence in the MZ twins, thus indicating genetic influence of the
-trait
+The plots and raw association measures show considerably stronger
+dependence in the MZ twins, indicating genetic influence on the trait.
 
 ```{r   }
 cor.test(mz[,1],mz[,2], method="spearman")
@@ -103,8 +102,7 @@ cor.test(mz[,1],mz[,2], method="spearman")
 cor.test(dz[,1],dz[,2], method="spearman")
 ```
 
-Ńext we examine the marginal distribution (GEE model with working
-independence)
+Next we examine the marginal distribution (GEE model with working independence):
 
 ```{r gee  }
 l0 <- lm(bmi ~ gender + I(age-40), data=twinbmi)
@@ -146,9 +144,9 @@ Y_i = A_i + D_i + C + E_i, \quad i=1,2
  \end{align*}
 
 -   **\(A\):** Additive genetic effects of alleles
--   **\(D\):** Dominante genetic effects of alleles
+-   **\(D\):** Dominant genetic effects of alleles
 -   **\(C\):** Shared environmental effects
--   **\(E\):** Unique environmental genetic effects
+-   **\(E\):** Unique environmental effects
 
 Dissimilarity of MZ twins arises from unshared environmental effects
 only, \(\cor(E_1,E_2)=0\) and

@@ -26,71 +26,66 @@ library(mets)
 Overview 
 ========
 
-Fit 
+We fit
 
- * binomial-regression IPCW, binreg 
- * additive Lin-Ying model, aalenMets
- * cox model phreg 
- * standard logistic regression via binreg
+ * binomial regression with IPCW: `binreg`
+ * additive Lin-Ying model: `aalenMets`
+ * Cox model: `phreg`
+ * standard logistic regression via `binreg`
 
-in the context of mediation analysis using mediation weights as in the medFlex package. 
-We thus fit natural effects models, that for example on the binary scale might state
-that
+in the context of mediation analysis using mediation weights as in the `medFlex` package.
+We thus fit natural effects models; for example, on the binary scale:
 \begin{align*}
 \mbox{logit}(P(Y(x,M(x^*))=1| Z)  = \beta_0+ \beta_1 x + \beta_2 x^* + \beta_3^T Z,
 \end{align*}
-in this case the the Natural Direct Effect (NDE) for fixed covariates $Z$ is 
+In this case the Natural Direct Effect (NDE) for fixed covariates $Z$ is
 \begin{align*}
  \mbox{OR}_{1,0|Z}^{\mbox{NDE}} = \frac{\mbox{odds}(Y(1,M(x))|Z)}{\mbox{odds}(Y(0,M(x))|Z)}  = \exp(\beta_1),
 \end{align*}
-and the Natural Indirect Effect (NIE) for fixed covariates $Z$ is 
+and the Natural Indirect Effect (NIE) for fixed covariates $Z$ is
 \begin{align*}
  \mbox{OR}_{1,0|Z}^{\mbox{NIE}} = \frac{\mbox{odds}(Y(x,M(1))|Z)}{\mbox{odds}(Y(x,M(0))|Z)} = \exp(\beta_2).
 \end{align*}
-See the medFlex package for additional discussion of the parametrization.
+See the `medFlex` package for additional discussion of the parametrisation.
 
-The mediator can  be
+The mediator can be:
 
- * binomial using glm-binomial.
- * multnomial via the mlogit function of mets
+ * binomial, using `glm` with family `binomial`.
+ * multinomial, via the `mlogit` function in `mets`.
 
 Both mediator and exposure must be coded as factors.
 
-In the below example these are
+In the example below:
 
- * mediator: gp.f
- * exposure : dnr.f
+ * mediator: `gp.f`
+ * exposure: `dnr.f`
 
-and the outcome model is concerned with the risk/hazard of cause=2. 
+The outcome model concerns the risk/hazard of cause 2.
 
-The key is that the standard errors are computed using the i.i.d influence
-functions and a Taylor expansion to deal with the uncertainty from the
-mediation weights. 
+Standard errors are computed using i.i.d. influence functions and a Taylor expansion to account for uncertainty in the
+mediation weights.
 
 
 Simulated Data 
 ==============
 
-First we simulate some data that mimics that of Kumar et al 2012. 
-This is data from multiple myeloma patients treated with allogeneic stem cell
+First we simulate data that mimics the dataset from Kumar et al. (2012),
+which consists of multiple myeloma patients treated with allogeneic stem cell
 transplantation from the Center for International Blood and Marrow Transplant Research
-(CIBMTR) Kumar et al (2012), "Trends in allogeneic stem cell transplantation for multiple myeloma: a CIBMTR
-analysis".  The data used in this paper consist of patients transplanted from 1995 to
-2005, and we compared the outcomes between transplant periods: 2001-2005 (N=488)
-versus 1995-2000 (N=375). The two competing events were
-relapse (cause 2) and treatment-related mortality (TRM, cause 1) 
+(CIBMTR). The data cover patients transplanted from 1995 to
+2005, comparing outcomes between transplant periods: 2001--2005 ($N=488$)
+versus 1995--2000 ($N=375$). The two competing events were
+relapse (cause 2) and treatment-related mortality (TRM, cause 1),
 defined as death without relapse.
-\cite{kumar-2012} considered the following risk covariates: 
-transplant time period (gp (main interest of the study): 1 for transplanted in
-2001-2005 versus 0 for transplanted in 1995-2000), donor type (dnr: 1 for Unrelated or
-other related donor (N=280) versus 0 for HLA-identical sibling (N=584)), prior
-autologous transplant (preauto: 1 for Auto+Allo transplant (N=399) versus 0 for
-allogeneic transplant alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months (N=289) versus 0 for less than or
-equal to 24 months (N=575))). 
+Kumar et al. (2012) considered the following risk covariates:
+transplant period (`gp`, the main variable of interest: 1 for 2001--2005, 0 for 1995--2000),
+donor type (`dnr`: 1 for unrelated or other related donor ($N=280$), 0 for HLA-identical sibling ($N=584$)),
+prior autologous transplant (`preauto`: 1 for auto+allo transplant ($N=399$), 0 for allogeneic alone ($N=465$)),
+and time to transplant (`ttt24`: 1 for more than 24 months ($N=289$), 0 for 24 months or less ($N=575$)).
 
-The interest is then on the effect of the period (gp) and the possible mediation
-via the amount of unrealted or related donors (dnr). A somewhat artificial example ! 
-All adjusted for other important confounders. 
+The interest is in the effect of transplant period (`gp`) and possible mediation
+via the proportion of unrelated or related donors (`dnr`) — a somewhat artificial example.
+All analyses are adjusted for other important confounders.
 
 ```{r}
  library(mets)
@@ -111,10 +106,10 @@ dat$ftime <- 1
 ```
 
 
-Mediation Weights 
+Mediation Weights
 =================
 
-Then  compute the mediation weights  based on a mediation model
+We compute the mediation weights based on a model for the mediator:
 
 ```{r}
 weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
@@ -124,18 +119,18 @@ wdata <- medweight(fit,data=dat)
 Binomial Regression 
 ===================
 
-A simple multvariate regression of the probaibility of relapse at 50 months with both
-exposure and mediator (given the other covariates)
+A simple multivariate regression of the probability of relapse at 50 months with both
+exposure and mediator (given the other covariates):
 
 ```{r}
 aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 summary(aaMss2)
 ```
 
-Binomial regression IPCW Mediation Analysis 
+Binomial regression IPCW Mediation Analysis
 ===========================================
 
-We first look at the probability of  relapse at 50 months
+We first look at the probability of relapse at 50 months:
 
 ```{r, label=firstmodel}
 ### binomial regression ###########################################################
@@ -148,12 +143,12 @@ summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 ```
 
-So the  NDE is $1.40 (0.72,2.76)$ and the NIE is $1.32 (1.05,1.66)$. 
+The estimated NDE is $1.40$ (95% CI: $0.72$, $2.76$) and the NIE is $1.32$ (95% CI: $1.05$, $1.66$).
 
-Mediation Analysis 
+Mediation Analysis
 ====================
 
-We here also illustrate how to use the other models mentioned above. 
+We illustrate how to use the other models mentioned above.
 
 ```{r, label=multiplemodels}
 ### lin-ying model ################################################################
@@ -200,10 +195,10 @@ if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary
 Multinomial regression
 ======================
 
-Also works with mediator with more than two levels
+Also works with a mediator with more than two levels:
 
- * meditor: wmi in 4 categories
- * exposure: age in 4 categories
+ * mediator: `wmi` in 4 categories
+ * exposure: `age` in 4 categories
 
 ```{r, label=multinom, cache=TRUE, eval=fullVignette}
 library(mets)

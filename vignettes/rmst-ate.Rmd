@@ -22,20 +22,17 @@ library(mets)
 ```
 
 
-The resmeanATE or resmeanIPCW/rmstIPCW functions can fit an exponential/linear link model with 
-IPCW adjustment for a specific time-point for the restricted mean survival or years lost for 
-competing risks. 
-The function can be used for large data and is completely scalable, that is, linear in the data. 
-The function can thus be used for large data. 
-A nice feature is that influence functions are computed and are available.
+The `resmeanATE` or `resmeanIPCW`/`rmstIPCW` functions fit an exponential or linear link model with
+IPCW adjustment at a specific time point for the restricted mean survival or years lost in
+competing risks. The computation is linear in the data size, making it suitable for large datasets.
+Influence functions are computed and available for downstream inference.
 
-In addition and to summarize
+Key features:
 
-  - the censoring weights can be strata dependent
-  - predictions can be computed with standard errors 
-  - computation time is linear in data
-     - including standard errors
-  - clusters can be given and then cluster corrected standard errors are computed
+  - censoring weights can be stratum-dependent
+  - predictions can be computed with standard errors
+  - computation time is linear in data size, including standard errors
+  - cluster-corrected standard errors are available via the `clusters` argument
 
 
 
@@ -48,17 +45,17 @@ the estimating equation
  & X^T [ (T \wedge t) \frac{I(C > T \wedge t)}{G_C(T \wedge t,X)} - exp(X^T \beta) ] = 0 .
 \end{align*}
 This is done with the resmeanIPCW function. 
-For fully saturated model with full censoring model this is equal to the integrals of the Kaplan-Meier estimators as
-illustrated below. 
+For a fully saturated model with a complete censoring model this is equal to the integral of the Kaplan-Meier estimator, as
+illustrated below.
 
-We can also compute the integral of the Kaplan-Meier or Cox based  survival estimator to
-get the RMST (with the resmean_phreg function)
-\[ \int_0^t S(s|X) ds \].
+We can also compute the integral of the Kaplan-Meier or Cox-based survival estimator to
+get the RMST (using the `resmean_phreg` function):
+\[ \int_0^t S(s|X) ds. \]
 
-For competing risks the years lost can be computed via cumulative incidence functions (cif_yearslost)
-or as IPCW estimator since  
-\[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \] 
-For fully saturated model with full censoring model these estimators are equivalent as illustrated below.
+For competing risks, the years lost can be computed via cumulative incidence functions (`cif_yearslost`)
+or as an IPCW estimator, since
+\[ E( I(\epsilon=1) ( t - T \wedge t ) | X) = \int_0^t F_1(s) ds. \]
+For a fully saturated model with a complete censoring model these estimators are equivalent, as illustrated below.
 
 
 ```{r}
@@ -111,10 +108,10 @@ measures <- function(p) {
  estimate(out,f=measures,labels=labs)
 ```
 
-Average treatment effect 
+Average treatment effect
 =========================
 
-Computes average treatment effect for restricted mean survival and years lost in competing risks situation
+This section computes the average treatment effect for restricted mean survival and years lost in the competing risks setting.
 
 ```{r}
  dfactor(bmt) <- tcell~tcell

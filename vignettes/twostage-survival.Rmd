@@ -28,9 +28,9 @@ library(mets)
 Overview 
 ==========
 
-When looking at multivariate survival data with the aim of learning about the 
-dependence that is present, possibly after correcting for some covariates 
-different approaches are available in the mets package  
+When analysing multivariate survival data with the aim of learning about the
+dependence present, possibly after adjusting for covariates,
+several approaches are available in the mets package:
 
    *  Binary models and adjust for censoring with inverse probabilty of  censoring weighting
       - biprobit  model
@@ -56,7 +56,7 @@ data $(T_1, \delta_1, T_2, \delta_2,  X_1, X_2)$ where the censored
 survival responses are $(T_1, \delta_1, T_2, \delta_2)$ and the 
 covariates are  $(X_1, X_2)$.
 
-The basic models assumes that each subject has a marginal on Cox-form
+The basic model assumes that each subject has a marginal on Cox form
 $$ 
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
 $$ 
@@ -70,13 +70,13 @@ The constructed likelihood is a composite likelihood based on
   * the specified pairs when the pairs argument is used. 
 
 
-In addition to the clusters specified for the construction of the composite likelihood these 
-can be added further summed using the se.clusters argument that sums the influence functions over 
-the se.clusters. When se.clusters are not specified it is the same as the cluster argument. 
+In addition to the clusters specified for constructing the composite likelihood, these
+can be further summed using the `se.clusters` argument, which sums the influence functions over
+the `se.clusters`. When `se.clusters` is not specified it defaults to the `cluster` argument.
 
-When the clusters of the dependence parametaters are the same as those of the marginal model and the
-phreg function is used then the standard errors are corrected for the uncertainty from the marginal models, otherwise
-the returned standard errors are computed as if the marginals are known. 
+When the clusters of the dependence parameters are the same as those of the marginal model and the
+`phreg` function is used, the standard errors are corrected for the uncertainty from the marginal models; otherwise
+the returned standard errors are computed as if the marginals are known.
 
 
 
@@ -84,17 +84,16 @@ the returned standard errors are computed as if the marginals are known.
 Gamma distributed frailties 
 ==========================
 
-The focus of this vignette is describe how to work on bivariate survival data using the
-additive gamma-random effects models. We present two different ways of specifying 
-different dependence structures. 
+The focus of this vignette is to describe how to work with bivariate survival data using
+additive gamma random effects models. We present two different ways of specifying
+different dependence structures.
 
 * Univariate models with a single random effect for each cluster and with 
   a regression design on the variance. 
 
 * Multivariate models with multiple random effects for each cluster. 
 
-The univariate models are 
-then given a given cluster random effects $Z_k$ with
+The univariate models are given a cluster random effect $Z_k$ with
 parameter $\theta$ the joint survival function is given by the Clayton copula 
 and on the form
 $$ 
@@ -131,15 +130,15 @@ with $\Psi$ the laplace of the gamma distribution with mean 1 and variance $1/\n
 Additive Gamma frailties 
 ========================
 
-For the multivariate models we are given a multivarite random effect each cluster
-$Z=(Z_1,...,Z_d)$ with d random effects. 
-The total random effect for each subject $j$ in  a cluster is then specified using a 
+For the multivariate models we are given a multivariate random effect for each cluster,
+$Z=(Z_1,...,Z_d)$ with $d$ random effects.
+The total random effect for each subject $j$ in a cluster is specified using a
 regression design on these random effects, with a regression vector
-$V_j$ such that the total random effect is 
-  $V_j^T (Z_1,...,Z_d)$.  The elements of $V_J$ are 1/0. 
-The 
-random effects $(Z_1,...,Z_d)$ has associated parameters $(\lambda_1,...,\lambda_d)$ 
-and  $Z_j$ is Gamma distributed with 
+$V_j$ such that the total random effect is
+  $V_j^T (Z_1,...,Z_d)$.  The elements of $V_j$ are 1/0.
+The
+random effects $(Z_1,...,Z_d)$ have associated parameters $(\lambda_1,...,\lambda_d)$
+and  $Z_j$ is Gamma distributed with
 
   * mean $\lambda_j/V_1^T \lambda$
 
@@ -199,7 +198,7 @@ In addition to survival times from this model, we assume that we independent rig
 $U_{k,i}$ such that the given $V_k$ and the covariates $X_{k,i}$ $i=1,\dots,n_k$ $(U_{k,1},\dots,U_{k,n_k})$
 of $(T_{k,1},\dots,T_{k,n_k})$, and the conditional censoring distribution do not depend on $V_k$.
 
-One consequence of the model structure is that the Kendall's can be computed for 
+One consequence of the model structure is that Kendall's tau can be computed for
 two-subjects $(i,j)$ across two clusters ``1'' and ``2'' as
 \begin{align}
 E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2i}Z_2 ) ( V_{1j}Z_1 + V_{2j}Z_2 )} ) 
@@ -286,24 +285,23 @@ assessment on the hazard scale with the constant $\eta(t_1,t_2)$. The
 Clayton-Oakes model also has the nice property that Kendall's tau is
 linked directly to the dependence parameter $\theta$ and is $1/(1+2/\theta)$.
 
-A very useful extension of the model the constant 
-cross-hazard ratio (CHR) model is the 
-piecewise constant cross-hazard ratio (CHR) for bivariate survival
-data (Nan et al., 2006), and this model was extended to competing
-risks in Shih and Lu (2010). 
+A very useful extension of the constant
+cross-hazard ratio (CHR) model is the
+piecewise constant cross-hazard ratio (PCHR) model for bivariate survival
+data (Nan et al., 2006), extended to competing
+risks by Shih and Lu (2010).
 
-In the survival setting we let the CHR 
+In the survival setting we let the CHR
 \begin{align}
   \eta(t_1,t_2) & = \sum \eta_{i,j} I(t_1 \in I_i, t_2 \in I_j)
 \end{align}
 
-The model lets the CHR by constant in different part of the plane. This can be thought of also 
-as having a separate
-Clayton-Oakes model for each of the regions specified in the plane here by
-the cut-points $c(0,0.5,2)$ thus defining 9 regions. 
+The model allows the CHR to be constant in different regions of the plane, specified here by
+the cut-points $c(0,0.5,2)$ thus defining 9 regions. This can also be thought of as fitting a separate
+Clayton-Oakes model for each region.
 
-This provides a constructive goodness of fit test for the whether the Clayton-Oakes model
-is valid. Indeed if valid the parameter should be the same in all regions. 
+This provides a constructive goodness-of-fit test for whether the Clayton-Oakes model
+is valid: if valid, the parameter should be the same across all regions.
 
 First we generate some data from the Clayton-Oakes model with variance $0.5$ and 2000 pairs.
 And fit the related model. 
@@ -420,11 +418,11 @@ kendall_ClaytonOakes_twin_ace(ts$theta[1],ts$theta[2],K=10000)
 Family data 
 =============
 
-For family data, things are quite similar since we use only the pairwise structure. 
-We show  how the designs are specified. 
+For family data, things are quite similar since we use only the pairwise structure.
+We show how the designs are specified.
 
-First we simulate data from an ACE model.  2000 families with two-parents that share
-only the environment, and two-children that share genes with their parents. 
+First we simulate data from an ACE model: 200 families each with two parents who share
+only the environment, and two children who share genes with their parents.
 
 ```{r}
 library(mets)
@@ -502,15 +500,15 @@ tsd <- twostage(pa,data=data,clusters=data$cluster,
 summary(tsd)
 ```
 
-Sometimes one only has the data from the pairs in addition to for example 
-a cohort estimate of the marginal surival models. We now demonstrate how this 
-is dealt with. Everything is essentially as before but need to organize the 
-design differently compared to before we specified the design  
-for everybody in the cohort.  In addition we do not here bring in the
-uncertainty from the baseline in the estimates, even though this is
-formally possible, but when the data of the marginal model and twostage data
-are not the same, we have to specify that we do not want the
-decomposition for the uncertainty due to the baseline (baseline.iid=0). 
+Sometimes one only has data from the pairs in addition to, for example,
+a cohort estimate of the marginal survival models. We now demonstrate how this
+is handled. Everything is essentially as before, except we need to organise the
+design differently compared to before, when we specified the design
+for everybody in the cohort. In addition, we do not bring in the
+uncertainty from the baseline in the estimates here; even though this is
+formally possible, when the data for the marginal model and the twostage model
+are not the same, we must specify that we do not want the
+decomposition for uncertainty due to the baseline (`baseline.iid=0`).
 
 ```{r}
 ids <- sort(unique(c(pairs[ssid,])))
@@ -715,9 +713,9 @@ tsp <- twostage(pa,data=data,theta.des=dm,pairs=cbind(pairs,1:nrow(dm)),se.clust
 summary(tsp)
 ```
 
-We note that mother-father have the smallest correlation since they only share the environmental random effect, whereas
-other pairs have a similar correlation (in fact the same due to the way the data was simulated) consisting of 
-half the genetic effect and the environmental effect that was also shared. 
+We note that mother-father pairs have the smallest correlation since they share only the environmental random effect, whereas
+other pairs have a similar correlation (in fact the same, due to how the data were simulated), consisting of
+half the genetic effect plus the shared environmental effect.
 
 
 Univariate plackett model twostage models 
@@ -751,7 +749,7 @@ computed as
 when $\theta \ne 1$, if $\theta=1$ then $\rho=0$.
 
 
-This model has a more free parameter than the Clayton-Oakes model. 
+This model has one more free parameter than the Clayton-Oakes model.
 
 ```{r}
  library(mets)

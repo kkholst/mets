@@ -21,90 +21,89 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-Two-Stage Randomization for counting process outcomes 
+Two-Stage Randomization for counting process outcomes
 ========================================================
 
-Specify rate models of $N_1(t)$. 
+Rate models are specified for $N_1(t)$, covering:
 
    - survival data
-   - competing risks, cause specific hazards. 
+   - competing risks, cause-specific hazards
    - recurrent events data
 
 
-Under simple randomization we can estimate the rate Cox model  
+Under simple randomization we can estimate the rate Cox model
 
-  - \(  \lambda_0(t) \exp(A_0 \beta_0) \) 
+  - \(  \lambda_0(t) \exp(A_0 \beta_0) \)
 
-Under two-stage randomization we can estimate the rate Cox model 
+Under two-stage randomization we can estimate the rate Cox model
 
-  - \( \lambda_0(t) \exp(A_0 \beta_0 + A_1(t) \beta_1 ) \) 
+  - \( \lambda_0(t) \exp(A_0 \beta_0 + A_1(t) \beta_1 ) \)
 
 
-Starting point is that Cox's partial likelihood score can be used for estimating parameters
+The starting point is that Cox's partial likelihood score can be used for estimating parameters:
  \begin{align*}
    U(\beta) & = \int (A(t) - e(t)) dN_1(t)
  \end{align*}
- where $A(t)$ is the combined treatments over time. 
+ where $A(t)$ is the combined treatment vector over time.
 
-  - the solution will converge to $\beta^*$ the Struthers-Kalbfleisch solution of the score and will have robust standard errors Lin-Wei. 
+  - The solution will converge to $\beta^*$, the Struthers-Kalbfleisch solution of the score, with robust Lin-Wei standard errors.
 
- The estimator can be augmented in different ways using additional covariates at the time of randomization and a censoring augmentation. 
- The solved estimating eqution is 
+ The estimator can be augmented in different ways using additional covariates at the time of randomization and a censoring augmentation.
+ The solved estimating equation is
  \begin{align*}
- \sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0 
+ \sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0
  \end{align*}
- using the covariates from augmentR0 to augment with 
+ using covariates from `augmentR0` to augment with
  \begin{align*}
  AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
  \end{align*}
- where possibly $P(A_0=1|X_0)=\pi_0(X_0)$ but does not depend on covariates under randomization, 
- and further using the covariates from augmentR1, to augment with R indiciating that the
- randomization takes place or not,
+ where $P(A_0=1|X_0)=\pi_0(X_0)$ (which does not depend on covariates under randomization),
+ and using covariates from `augmentR1` to augment with $R$ indicating whether the
+ second randomization takes place:
  \begin{align*}
  AUG_1 = R ( A_1 - \pi_1(X_1))  X_1 \gamma_1
  \end{align*}
- and  the dynamic censoring augmenting  
+ and the dynamic censoring augmentation
  \begin{align*}
-  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) 
+  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s)
  \end{align*}
- where $\gamma_c(s)$ is chosen to minimize the variance given the dynamic covariates specified by augmentC.
+ where $\gamma_c(s)$ is chosen to minimise the variance given the dynamic covariates specified by `augmentC`.
 
-The propensity score models are always estimated unless it is requested to use some fixed number $\pi_0=1/2$ for example, but
-always better to be adaptive and estimate $\pi_0$. Also $\gamma_0$ and $\gamma_1$ are estimated to reduce variance of $U_i$. 
-
-
-  - The treatment's must be given as factors. 
-  - Treatment for 2nd randomization may depend on response.
-      - Treatment probabilities are estimated by default and uncertainty from this adjusted for.
-      - treat.model must then typically allow for interaction with treatment number and covariates
-  - Randomization augmentation for 1'st and 2'nd randomization possible. 
-       - typesR=c("R0","R1","R01")
-  - Censoring model possibly stratified on observed covariates (at time 0). 
-     - default model is to stratify after randomization R0
-     - cens.model can be specified
-  - Censoring augmentation done dynamically over time  with time-dependent covariates. 
-      - typesC=c("C","dynC"), C fixed coefficients and dynC dynamic
-      - done for each strata in censoring model
-
- Standard errors are estimated using the influence function of all estimators and tests of differences 
- can therefore be computed subsequently.
- 
-  - variance adjustment for censoring augmentation computed subtracting variance gain
-  - influence functions given for case with R0 only
+Propensity score models are always estimated unless a fixed value such as $\pi_0=1/2$ is requested, though
+it is generally better to estimate $\pi_0$ adaptively. Similarly, $\gamma_0$ and $\gamma_1$ are estimated to reduce the variance of $U_i$.
 
 
-The times of randomization is specified by 
+  - Treatments must be given as factors.
+  - The treatment for the 2nd randomization may depend on the response.
+      - Treatment probabilities are estimated by default and uncertainty from this is adjusted for.
+      - `treat.model` must typically allow for interaction between treatment number and covariates.
+  - Randomization augmentation for the 1st and 2nd randomization is possible.
+       - `typesR=c("R0","R1","R01")`
+  - The censoring model can be stratified on observed baseline covariates.
+     - Default model stratifies on randomization `R0`.
+     - `cens.model` can be specified.
+  - Censoring augmentation is done dynamically over time with time-dependent covariates.
+      - `typesC=c("C","dynC")`: `C` for fixed coefficients and `dynC` for dynamic.
+      - Applied separately within each stratum of the censoring model.
 
-   - treat.var  is "1" when a randomization is given 
-     - default is to assume that all time-points corresponds to a treatment, the survival case without time-dependent
-       covariates 
-     - recurrent events situation must be specified as first record of each subject, see below example. 
+ Standard errors are estimated using the influence functions of all estimators, so tests of differences
+ can be computed subsequently.
+
+  - Variance adjustment for censoring augmentation is computed by subtracting the variance gain.
+  - Influence functions are given for the case with `R0` only.
 
 
-Data must be given on start,stop,status survival format with
+The times of randomization are specified by:
 
- - one code of status indicating events of interest
- - one code for the censorings
+   - `treat.var` is `"1"` when a randomization occurs.
+     - Default assumes all time points correspond to a treatment (the survival case without time-dependent covariates).
+     - For recurrent events, this must be specified as the first record for each subject; see example below.
+
+
+Data must be provided in start-stop-status survival format with:
+
+ - one status code indicating events of interest
+ - one code for censorings
 
 
 The phreg_rct can be used for counting process style data, and thus covers situations with 
@@ -168,9 +167,8 @@ out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~cd40+cd80+age,augme
 summary(out)
 ```
 
-The study is actually block-randomized according (?)
-so the standard should be computed with an adjustment that is 
-equivalent to augmenting with this block as factor 
+The study is actually block-randomized,
+so the standard errors should be computed with an adjustment equivalent to augmenting with the block as a factor:
 
 ```{r}
 dtable(data,~strat+arms)
@@ -182,11 +180,11 @@ summary(out)
 Two-Stage Randomization CALGB-9823 for survival outcomes
 =========================================================
 
-We here illustrate some analysis of one SMART conducted by Cancer and
-Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001). 
-388 patients were randomized to an initial treatment of GM-CSF (A1 ) or standard chemotherapy
-(A2 ). Patients with complete remission and informed consent to second stage were then re-randomized to
-only cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ). 
+We illustrate an analysis of one SMART (Sequential Multiple Assignment Randomised Trial) conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
+388 patients were randomised to an initial treatment of GM-CSF ($A_1$) or standard chemotherapy
+($A_2$). Patients with complete remission and informed consent were then re-randomised to
+cytarabine only ($B_1$) or cytarabine plus mitoxantrone ($B_2$).
 
 We first compute the weighted risk-set  estimator based on estimated weights
 \begin{align*}
@@ -202,7 +200,7 @@ $A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$,
 We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similarly, for those that end being consistent with $B2$.
 Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
 
-  - the treatment models are for all time-points, unless  the weight.var variable is given  (1 for treatments, 0 otherwise) to accomodate a general start,stop format
+  - the treatment models are for all time-points, unless the `weight.var` variable is given (1 for treatments, 0 otherwise) to accommodate a general start-stop format
   - the treatment model may also depend on a response value
   - standard errors are based on influence functions and is also computed for the baseline
 
@@ -280,10 +278,10 @@ ssf <- phreg_rct(Event(start,time,status)~A0.f+A10t+A11t+cluster(id),
 
 
 
-Recurrent events: Simple Randomization 
+Recurrent events: Simple Randomization
 ======================================
 
- Recurrents events simulation with death and censoring. 
+Recurrent events simulation with death and censoring.
 
 
 ```{r}
@@ -386,50 +384,43 @@ sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
 summary(sse)
 ```
 
-  - treat.model has A0 and A1 coded as At.f and we here allow a model that depends on the randomization to
-    be as adaptive as possible. 
-  - for the observational case one can here also adjust for covarites. 
-  - Censoring model was stratified on A0.f 
+  - `treat.model` codes $A_0$ and $A_1$ as `At.f`; here we allow a model that depends on the randomization to
+    be as adaptive as possible.
+  - For the observational case one can also adjust for covariates here.
+  - The censoring model was stratified on `A0.f`.
 
 
-Causal assumptions for Twostage Randomization: Recurrent events 
+Causal assumptions for Two-Stage Randomization: Recurrent events
 ===============================================================
 
-We take interest in $N_1$ but also have death $N_d$. 
+We are interested in $N_1$ and also have death $N_d$.
 
-Now we need that given $X_0$ 
+Given $X_0$, we require:
 
-  - \( A_0 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0 \) 
-  - positivity \(  1 > \pi_0(X_0) > 0 \) 
+  - \( A_0 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0 \)
+  - positivity: \(  1 > \pi_0(X_0) > 0 \)
 
+Given $\bar X_1$, the history accumulated up to the time $T_R$ of the second randomization:
 
-and given $\bar X_1$ the history accumulated at time $T_R$ of 2nd randomization
+  - \( A_1 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1 \)
+  - positivity: \(  1 > \pi_1(X_1) > 0 \)
 
-  - \( A_1 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1 \) 
-  - positivity \(  1 > \pi_1(X_1) > 0 \) 
+And consistency, to link counterfactual quantities to observed data.
 
+We must use an IPTW-weighted Cox score and augment as before.
 
-and 
+In addition we require that censoring is independent given, for example, $A_0$:
 
-  - consistency 
+  - Independent censoring.
 
-to link the counterfactual quantities to observed data. 
+To use `phreg_rct` in this setting:
 
-
-We must use IPTW weighted Cox score and augment as before
-
-In addition we need that the censoring is independent given for example $A_0$
-
-  - Independent censoring 
-
-To use the phreg_rct in this situation 
-
- - RCT=FALSE
- - propensity score models must be specified
- - marginal estimate is based on IPTW cox model phreg_IPTW
-    - when the same model is used for the propensity scores and the augmentation models
-      the augmentation models are not needed due to the adaptive nature from fitting the
-      propensity score models. 
+ - Set `RCT=FALSE`.
+ - Propensity score models must be specified.
+ - The marginal estimate is based on the IPTW Cox model `phreg_IPTW`.
+    - When the same model is used for both the propensity scores and the augmentation models,
+      the augmentation models are not needed due to the adaptive nature of fitting the
+      propensity score models.
 
 
 ```{r}

@@ -36,12 +36,12 @@ S(t,A=a,X_i) -  S(t,A=a)  + E( D_{A_0(t), \beta} S(t,A=a,X_i)  ) \epsilon_i(t)
 where $\epsilon_i(t)$ is the iid decomposition 
 of the baseline and regression coefficients $(\hat A(t) - A(t), \hat \beta- \beta)$.
 
-These estimates have a causal interpration under the assumption
-of no-unmeasured confounders, and even without the 
-causal assumptions the standardization can still be a useful summary measure. 
+These estimates have a causal interpretation under the assumption
+of no unmeasured confounders; even without the
+causal assumption, standardisation can still be a useful summary measure.
 
-First looking at the cumulative incidence via a Fine-Gray model for the two causes and making a plot of the 
-standardized cumulative incidence for cause 1.
+We begin by looking at the cumulative incidence via a Fine-Gray model for both causes and plotting the
+standardised cumulative incidence for cause 1.
 
 ```{r}
 library(mets)
@@ -78,10 +78,9 @@ plot(Gtime)
 G-computation for the binomial regression
 ==============================================
 
-We compare with the similar estimates using the Doubly Robust
-estimating equations using binregATE. The standardization from the
-G-computation can also be computed using a specialized function that 
-takes less memory and is quicker (for large data, binregG).
+We compare with similar estimates using doubly robust
+estimating equations via `binregATE`. The G-computation standardisation can also be computed using a specialised function that
+uses less memory and is faster for large data: `binregG`.
 
 ```{r}
 

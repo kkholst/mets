@@ -29,8 +29,8 @@ library(mets)
 Overview 
 ========
 
-A basic component for our modelling of multivariate survival data is that many models are 
-build around marginals that on Cox form. The marginal Cox model can be fitted efficiently
+A basic component of our modelling of multivariate survival data is that many models are
+built around marginals on Cox form. The marginal Cox model can be fitted efficiently
 in the mets package, in particular the handling of strata and robust standard errors is 
 optimized. 
 
@@ -64,7 +64,7 @@ in each cluster and a variance parameter at $2$
  data <- sim_ClaytonOakes(n,k,theta,0.3,3)
 ```
 
-The data is on has one subject per row.
+The data has one subject per row.
 
 * time : time of event 
 * status : 1 for event and 0 for censoring 
@@ -219,13 +219,13 @@ S_{jg}(t) & =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
 Cluster stratified Cox models
 ==============================
 
-For  clustered data it is possible to estimate the regression coefficient
+For clustered data it is possible to estimate the regression coefficient
 within clusters by using Cox's partial likelihood stratified on clusters.
 
 Note, here that the data is generated with a different subject specific structure, 
-so we will not recover the $\beta$ at 0.3 and the model will not be
-a proportional Cox model, we we would also expect to reject "proportionality" with
-the gof-test. 
+so we will not recover $\beta = 0.3$ and the model will not be
+a proportional Cox model; we would therefore also expect to reject "proportionality" with
+the goodness-of-fit test.
 
 The model can be thought of as 
 \[ 
