@@ -69,7 +69,7 @@ sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 summary(sb1)
 }
 \seealso{
-\code{\link{binreg}}, \code{\link{summary.binreg}}, \code{\link{binregATE}}
+\code{\link{binreg}}, \code{\link{binregATE}}
 }
 \author{
 Thomas Scheike

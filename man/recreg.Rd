@@ -113,7 +113,7 @@ cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 summary(ll2i)
 }
 \seealso{
-\code{\link{recregIPCW}}, \code{\link{summary.phreg}}, \code{\link{predict.recreg}}
+\code{\link{recregIPCW}}
 }
 \author{
 Thomas Scheike

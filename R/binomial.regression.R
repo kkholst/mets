@@ -1580,7 +1580,7 @@ return(out)
 ##'
 ##' @author Thomas Scheike
 ##'
-##' @seealso \code{\link{binreg}}, \code{\link{summary.binreg}}, \code{\link{binregATE}}
+##' @seealso \code{\link{binreg}}, \code{\link{binregATE}}
 ##' @examples
 ##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 ##' bmt$event <- (bmt$cause!=0)*1

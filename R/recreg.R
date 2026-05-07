@@ -41,7 +41,7 @@
 ##' \item{se.cumhaz}{Standard errors for cumulative hazard.}
 ##'
 ##' @author Thomas Scheike
-##' @seealso \code{\link{recregIPCW}}, \code{\link{summary.phreg}}, \code{\link{predict.recreg}}
+##' @seealso \code{\link{recregIPCW}} 
 ##' @aliases marks GLprediid IIDrecreg 
 ##' @examples
 ##' ## data with no ties
