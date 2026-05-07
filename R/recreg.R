@@ -1,42 +1,48 @@
-##' Recurrent events regression with terminal event 
+##' Recurrent Events Regression with Terminal Event
 ##'
-##' Fits Ghosh-Lin IPCW Cox-type model
+##' Fits a Ghosh-Lin IPCW (Inverse Probability of Censoring Weighted) Cox-type model for recurrent events
+##' in the presence of a terminal event (e.g., death).
 ##'
-##' For Cox type model :
-##' \deqn{
-##' E(dN_1(t)|X) = \mu_0(t)dt exp(X^T \beta)
-##' }
-##' by solving Cox-type IPCW weighted score equations 
-##' \deqn{
-##'  \int (Z - E(t)) w(t) dN_1(t) 
-##' }
-##' where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
-##' \deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j w_i(t) \exp(X_i^T \beta)}.
+##' For the Cox-type model, the expectation is modeled as:
+##' \deqn{ E(dN_1(t)|X) = \mu_0(t) dt \exp(X^T \beta) }
+##' by solving Cox-type IPCW weighted score equations:
+##' \deqn{ \int (Z - E(t)) w(t) dN_1(t) }
+##' where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))},
+##' \deqn{E(t) = S_1(t)/S_0(t)}, and \deqn{S_j(t) = \sum X_i^j w_i(t) \exp(X_i^T \beta)}.
 ##'
+##' The IID decomposition of the beta coefficients takes the form:
+##' \deqn{ \int (Z - E) w(t) dM_1 + \int q(s)/p(s) dM_c }
+##' and is returned as the \code{iid} component.
 ##'
-##' The iid decomposition of the beta's are on the form
-##' \deqn{
-##' \int (Z - E ) w(t) dM_1 + \int q(s)/p(s) dM_c
-##' }
-##' and returned as iid.
+##' Events, deaths, and censorings are specified via a start-stop structure and the \code{Event} call.
+##' The function identifies these via a status vector and cause codes, censoring codes (\code{cens.code}),
+##' and death codes (\code{death.code}). See examples and vignettes for details.
 ##'
-##' Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
-##' and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example and vignette. 
+##' @param formula Formula with an 'Event' outcome.
+##' @param data Data frame containing the variables.
+##' @param cause Cause of interest (default is 1).
+##' @param death.code Codes for the terminal event/death (default is 2).
+##' @param cens.code Code for censoring (default is 0).
+##' @param cens.model Formula for a stratified Cox model without covariates used to estimate censoring probabilities.
+##' @param weights Weights for the score equations.
+##' @param offset Offsets for the model.
+##' @param Gc Censoring weights for the time argument. If \code{NULL}, these are calculated using a Kaplan-Meier estimator
+##' (should then provide \eqn{G_c(T_i-)}).
+##' @param wcomp Weights for composite outcomes (e.g., when \code{cause=c(1,3)}, \code{wcomp} might be \code{c(1,2)}).
+##' @param augmentation.type Type of augmentation when an augmentation model is given (options: \code{"lindyn.augment"}, \code{"lin.augment"}).
+##' @param marks A mark value vector from the data frame, specifying the mark value at all events.
+##' @param ... Additional arguments passed to lower-level functions.
 ##'
-##' @param formula formula with 'Event' outcome
-##' @param data data frame
-##' @param cause of interest (1 default)
-##' @param death.code codes for death (terminating event, 2 default)
-##' @param cens.code code of censoring (0 default)
-##' @param cens.model for stratified Cox model without covariates
-##' @param weights weights for score equations
-##' @param offset offsets for model
-##' @param Gc censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)
-##' @param wcomp weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).
-##' @param augmentation.type of augmentation when augmentation model is given 
-##' @param marks  a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events
-##' @param ... Additional arguments to lower level funtions
+##' @return An object of class \code{"recreg"} (extending \code{"phreg"}) containing:
+##' \item{coef}{Estimated coefficients.}
+##' \item{var}{Robust variance-covariance matrix.}
+##' \item{iid}{Influence functions for the coefficients.}
+##' \item{cumhaz}{Cumulative hazard estimates.}
+##' \item{se.cumhaz}{Standard errors for cumulative hazard.}
+##'
 ##' @author Thomas Scheike
+##' @seealso \code{\link{recregIPCW}}, \code{\link{summary.phreg}}, \code{\link{predict.recreg}}
+##' @aliases marks GLprediid IIDrecreg 
 ##' @examples
 ##' ## data with no ties
 ##' data(hfactioncpx12)
@@ -68,7 +74,7 @@
 ##' ll2i <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,
 ##' cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 ##' summary(ll2i)
-##' @aliases marks strataAugment scalecumhaz GLprediid recregIPCW IIDrecreg predicttime
+##' @aliases marks scalecumhaz GLprediid IIDrecreg 
 ##' @export
 recreg <- function(formula,data,cause=1,death.code=2,cens.code=0,cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,augmentation.type=c("lindyn.augment","lin.augment"),...)
 { ## {{{
@@ -1144,6 +1150,41 @@ predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALS
 	return(out)
 } ## }}}
 
+##' IPCW Estimator for Recurrent Events
+##'
+##' Computes the Inverse Probability of Censoring Weighted (IPCW) estimator for the mean number of recurrent events.
+##' Supports various estimators including the Ghosh-Lin and Lawless-Cook estimators.
+##'
+##' @param formula Formula with an 'Event' outcome.
+##' @param data Data frame.
+##' @param cause Cause of interest (default is 1).
+##' @param cens.code Censoring code (default is 0).
+##' @param death.code Death code (default is 2).
+##' @param cens.model Formula for the censoring model (default is \code{~1}).
+##' @param km Logical; if \code{TRUE}, uses Kaplan-Meier for censoring weights; otherwise uses Cox model.
+##' @param times Time points for estimation (required).
+##' @param beta Initial values for coefficients (optional).
+##' @param offset Offsets.
+##' @param type Type of estimator: \code{"II"} (default) or \code{"I"}.
+##' @param marks Mark values.
+##' @param weights Weights.
+##' @param model Model type for the mean: \code{"exp"} (default) or \code{"lin"}.
+##' @param no.opt Logical; if \code{TRUE}, skips optimization.
+##' @param augmentation Augmentation terms.
+##' @param method Optimization method (default is "nr").
+##' @param se Logical; if \code{TRUE}, computes standard errors.
+##' @param ... Additional arguments.
+##'
+##' @return An object of class \code{"binreg"} (extending \code{"resmean"}) containing:
+##' \item{coef}{Estimated coefficients.}
+##' \item{var}{Variance-covariance matrix.}
+##' \item{iid}{Influence functions.}
+##' \item{times}{Time points.}
+##' \item{Y}{Observed counts.}
+##'
+##' @author Thomas Scheike
+##' @seealso \code{\link{recreg}} 
+##' @export
 ##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 		       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
@@ -1477,34 +1518,42 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 
 strataAugment <- survival::strata
 
-##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##' Simulation of Two-Stage Recurrent Events Data
 ##'
-##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure. type=3 will generate
-##' Cox/Cox twostage mode, type=2 will generate Ghosh-Lin/Cox model. 
-##' If the variance is var.z=0, then generates data without any dependence or frailty. If model="twostage" then default is to generate data from Ghosh-Lin/Cox model, and
-##' if type=3 then will generate data with marginal Cox models (Cox/Cox). 
-##' Simulation based on linear aproximation of hazard for two-stage models based on grid on time-scale. Must be sufficientyly fine. 
+##' Simulates data based on Cox/Cox or Cox/Ghosh-Lin structures for recurrent events with a terminal event.
 ##'
-##' Must specify baselines of recurrent events and terminal event and possible covariate effects.
+##' \itemize{
+##' \item \code{type=3}: Generates data from a Cox/Cox two-stage model.
+##' \item \code{type=2}: Generates data from a Ghosh-Lin/Cox model.
+##' }
 ##'
-##' @param n number of id's 
-##' @param base1 baseline for cox/ghosh-lin models
-##' @param drcumhaz baseline for terminal event
-##' @param var.z variance of gamma frailty 
-##' @param r1 relative risk term for baseline 
-##' @param rd relative risk term for terminal event 
-##' @param rc relative risk term for censorings
-##' @param fz possible transformation (function) of frailty term 
-##' @param fdz possible transformation (function) of frailty term for death 
-##' @param model twostage, frailty, shared (partly shared two-stage model)
-##' @param type type of simulation, default is decided based on model
-##' @param cens to right censor
-##' @param share to fit patly shared random effects model
-##' @param cens censoring rate for exponential censoring
-##' @param nmin default 100, at least nmin or number of rows of the two-baselines max(nmin,nrow(base1),nrow(drcumhaz)) points in time-grid from 0 to maximum time for base1
-##' @param nmax default 1000, at most nmax points in time-grid 
-##' @references 
-##' Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
+##' If \code{var.z=0}, data is generated without dependence or frailty.
+##' If \code{model="twostage"}, the default is to generate data from a Ghosh-Lin/Cox model.
+##' If \code{type=3}, data is generated with marginal Cox models (Cox/Cox).
+##'
+##' Simulation is based on a linear approximation of the hazard for two-stage models on a time grid.
+##' The grid must be sufficiently fine.
+##'
+##' @param n Number of IDs.
+##' @param base1 Baseline cumulative hazard for recurrent events.
+##' @param drcumhaz Baseline cumulative hazard for the terminal event.
+##' @param var.z Variance of the gamma frailty.
+##' @param r1 Relative risk term for the recurrent event baseline.
+##' @param rd Relative risk term for the terminal event.
+##' @param rc Relative risk term for censoring.
+##' @param fz Function for transformation of the frailty term.
+##' @param fdz Function for transformation of the frailty term for death.
+##' @param model Model type: \code{"twostage"}, \code{"frailty"}, or \code{"shared"}.
+##' @param type Type of simulation (default depends on \code{model}).
+##' @param cens Censoring rate for exponential censoring.
+##' @param share Proportion of shared random effects (for partially shared models).
+##' @param nmin Minimum number of points in the time grid (default 100).
+##' @param nmax Maximum number of points in the time grid (default 1000).
+##'
+##' @return A data frame with simulated recurrent events and terminal events, including frailty terms.
+##'
+##' @author Thomas Scheike
+##' @references Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear.
 ##' @export
 sim_GLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,fdz=NULL,
 		     model=c("twostage","frailty","shared"),type=NULL,share=1,cens=NULL,nmin=100,nmax=1000)
@@ -2002,31 +2051,46 @@ boottwostageREC <- function(margsurv,recurrent,data,bootstrap=100,id="id",stepsi
   list(outb=outb,var=varb,se=diag(varb)^.5,se.coxD=diag(vard)^.5,se.coxR=diag(varr)^.5)
 } ## }}}
 
-##' Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals 
+
+##' Fitting of Two-Stage Recurrent Events Random Effects Model
 ##'
-##' Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals. Random
-##' effects model fore recurrent events with terminal  event. Marginal models fitted first and given to twostageREC function.
+##' Fits a two-stage random effects model for recurrent events with a terminal event.
+##' Marginal models (Cox or Ghosh-Lin) are fitted first and passed to this function.
 ##'
-##' @param margsurv marginal model for terminal event 
-##' @param recurrent marginal model for recurrent events
-##' @param data used for fitting
-##' @param theta starting value for total variance of gamma frailty
-##' @param model can fully shared "full", partly shared "shared", or non-shared where the random effect acts only on recurrent events
-##' @param ghosh.lin to force use ghosh.lin marginals based on recurrent (taking baseline and coefficients) 
-##' @param theta.des regression design for variance
-##' @param var.link possible link  function 1 is exponential link
-##' @param method NR
-##' @param no.opt to not optimize
-##' @param weights possible weights
-##' @param se.cluster  to combine influence functions for naive variance based on these clusters GEE style
-##' @param fnu a function to make transformation for nu (amount shared)
-##' @param nufix to fix the amount shared
-##' @param nu starting value for amount shared
-##' @param numderiv uses numerical derivatives for some derivatives
-##' @param derivmethod method for numerical derivative
-##' @param ... arguments for 
-##' @references 
-##' Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear
+##' Supports:
+##' \itemize{
+##' \item Cox/Cox marginals.
+##' \item Cox/Ghosh-Lin marginals.
+##' \item Fully shared, partly shared, or non-shared random effects.
+##' }
+##'
+##' @param margsurv Marginal model for the terminal event (object of class \code{"phreg"}).
+##' @param recurrent Marginal model for recurrent events (object of class \code{"phreg"} or \code{"recreg"}).
+##' @param data Data frame used for fitting.
+##' @param theta Starting value for total variance of gamma frailty.
+##' @param model Model type: \code{"full"} (fully shared), \code{"shared"} (partly shared), or \code{"non-shared"}.
+##' @param ghosh.lin Logical; if \code{TRUE}, forces use of Ghosh-Lin marginals based on the recurrent model.
+##' @param theta.des Regression design for variance parameters.
+##' @param var.link Link function for variance (1 for exponential).
+##' @param method Optimization method (default "NR").
+##' @param no.opt Logical; if \code{TRUE}, skips optimization.
+##' @param weights Weights.
+##' @param se.cluster Clusters for SE calculation (GEE style).
+##' @param fnu Function to transform \eqn{\nu} (amount shared).
+##' @param nufix Logical; if \code{TRUE}, fixes the amount shared.
+##' @param nu Starting value for the amount shared.
+##' @param numderiv Logical; if \code{TRUE}, uses numerical derivatives.
+##' @param derivmethod Method for numerical derivative.
+##' @param ... Arguments for the optimizer.
+##'
+##' @return An object of class \code{"twostageREC"} containing:
+##' \item{coef}{Estimated coefficients.}
+##' \item{var}{Variance-covariance matrix.}
+##' \item{theta}{Dependence parameters.}
+##' \item{model}{Model type.}
+##'
+##' @author Thomas Scheike
+##' @references Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear.
 ##' @export
 twostageREC  <-  function (margsurv,recurrent, data = parent.frame(), theta = NULL, model=c("full","shared","non-shared"),ghosh.lin=NULL,
   theta.des = NULL, var.link = 0, method = "NR", no.opt = FALSE, weights = NULL, se.cluster = NULL, 

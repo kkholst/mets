@@ -3,57 +3,75 @@
 \name{phreg}
 \alias{phreg}
 \alias{robust_phreg}
-\title{Fast Cox PH regression}
+\title{Fast Cox Proportional Hazards Regression}
 \usage{
 phreg(formula, data, offset = NULL, weights = NULL, ...)
 }
 \arguments{
-\item{formula}{formula with 'Surv' outcome (see \code{coxph})}
+\item{formula}{Formula with a 'Surv' or 'Event' outcome (similar to \code{coxph}).}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{offset}{offsets for Cox model}
+\item{offset}{Offsets for the Cox model linear predictor.}
 
-\item{weights}{weights for Cox score equations}
+\item{weights}{Weights for the Cox score equations.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions (e.g., optimization controls).}
+}
+\value{
+An object of class \code{"phreg"} containing:
+\item{coef}{Vector of estimated coefficients.}
+\item{var}{Robust variance-covariance matrix.}
+\item{beta.iid}{Influence functions for the regression coefficients.}
+\item{cumhaz}{Matrix of cumulative hazard estimates (time, cumhaz).}
+\item{se.cumhaz}{Matrix of standard errors for the cumulative hazard.}
+\item{cox.prep}{List containing preprocessed data for the Cox model.}
+\item{opt}{Optimization results (if optimization was performed).}
+\item{call}{The matched call.}
 }
 \description{
-Fast Cox PH regression
-Robust variance is default variance with the summary.
+Fits a Cox proportional hazards model using a fast C++ backend.
+Robust variance (sandwich estimator) is the default variance estimate in the summary.
 }
 \details{
-influence functions (iid) will follow numerical order of given cluster variable
-so ordering after $id will give iid in order of data-set.
+The influence functions (IID decomposition) follow the numerical order of the given cluster variable.
+Ordering the results by `$id` will align the IID terms with the original dataset order.
 }
 \examples{
 data(TRACE)
 dcut(TRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)
+# Fit model with clustering
+out1 <- phreg(Surv(time, status == 9) ~ wmi + age + strata(vf, chf) + cluster(id), data = TRACE)
 summary(out1)
 
-par(mfrow=c(1,2))
+# Plotting baselines
+par(mfrow = c(1, 2))
 plot(out1)
 
-## computing robust variance for baseline
+# Computing robust variance for baseline
 rob1 <- robust_phreg(out1)
-plot(rob1,se=TRUE,robust=TRUE)
+plot(rob1, se = TRUE, robust = TRUE)
 
-## iid decomposition, with scaled influence functions
-## for regression parameters
+# IID decomposition for regression parameters
 head(iid(out1))
-## making iid decomposition of baseline at a specific time-point
-Aiiid <- iid(out1,time=30)
+
+# IID decomposition for baseline at a specific time-point
+Aiiid <- iid(out1, time = 30)
 head(Aiiid)
-## both iid decompositions
-dd <- iidBaseline(out1,time=30)
+
+# Combined IID decomposition (beta and baseline)
+dd <- iidBaseline(out1, time = 30)
 head(dd$beta.iid)
 head(dd$base.iid)
 
-outs <- phreg(Surv(time,status==9)~strata(vf,wmicat.4)+cluster(id),data=TRACE)
+# Stratified model
+outs <- phreg(Surv(time, status == 9) ~ strata(vf, wmicat.4) + cluster(id), data = TRACE)
 summary(outs)
-par(mfrow=c(1,2))
+par(mfrow = c(1, 2))
 plot(outs)
+}
+\seealso{
+\code{\link{plot.phreg}}, \code{\link{predict.phreg}}, \code{\link{robust_phreg}}
 }
 \author{
 Klaus K. Holst, Thomas Scheike

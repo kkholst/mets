@@ -4,7 +4,7 @@
 \alias{binreg}
 \alias{logitIPCW}
 \alias{binregt}
-\title{Binomial Regression for censored competing risks data}
+\title{Binomial Regression for Censored Competing Risks Data}
 \usage{
 binreg(
   formula,
@@ -30,74 +30,90 @@ binreg(
 )
 }
 \arguments{
-\item{formula}{formula with outcome (see \code{coxph})}
+\item{formula}{A formula object specifying the outcome and covariates. 
+The outcome must be an \code{Event} object (\code{Event(time, cause)}).}
 
-\item{data}{data frame}
+\item{data}{A data frame containing the variables in the formula.}
 
-\item{cause}{cause of interest (numeric variable)}
+\item{cause}{Numeric vector or scalar indicating the cause of interest for the competing risks.}
 
-\item{time}{time of interest}
+\item{time}{Numeric scalar indicating the time point of interest for the cumulative incidence.}
 
-\item{beta}{starting values}
+\item{beta}{Optional numeric vector of starting values for the coefficients. Defaults to zeros.}
 
-\item{type}{"II" adds augmentation term, and "I" classic binomial regression}
+\item{type}{Character string. Either \code{"I"} (classic binomial regression) or \code{"II"} (adds augmentation term).}
 
-\item{offset}{offsets for partial likelihood}
+\item{offset}{Optional numeric vector of offsets for the linear predictor.}
 
-\item{weights}{for score equations}
+\item{weights}{Optional numeric vector of weights for the score equations.}
 
-\item{cens.weights}{censoring weights}
+\item{cens.weights}{Optional numeric vector of pre-calculated censoring weights. If NULL, they are estimated internally.}
 
-\item{cens.model}{only stratified cox model without covariates}
+\item{cens.model}{A formula specifying the censoring model. Defaults to \code{~+1}. Can include strata (e.g., \code{~strata(group)}).}
 
-\item{se}{to compute se's  based on IPCW}
+\item{se}{Logical. If TRUE, computes standard errors based on IPCW influence functions.}
 
-\item{kaplan.meier}{uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)}
+\item{kaplan.meier}{Logical. If TRUE, uses Kaplan-Meier estimator for IPCW weights; otherwise uses exponential baseline.}
 
-\item{cens.code}{gives censoring code}
+\item{cens.code}{Numeric code representing censored observations in the status variable. Defaults to 0.}
 
-\item{no.opt}{to not optimize}
+\item{no.opt}{Logical. If TRUE, optimization is skipped and starting values are used.}
 
-\item{method}{for optimization}
+\item{method}{Character string. Optimization method: \code{"nr"} (Newton-Raphson) or \code{"nlm"}.}
 
-\item{augmentation}{to augment binomial regression}
+\item{augmentation}{Optional numeric vector for additional augmentation terms.}
 
-\item{outcome}{can do CIF regression "cif"=F(t|X), "rmst"=E( min(T, t) | X) , or years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) | X)}
+\item{outcome}{Character string. Outcome type: \code{"cif"} (Cumulative Incidence Function), \code{"rmst"} (Restricted Mean Survival Time), or \code{"rmtl"} (Restricted Mean Time Lost).}
 
-\item{model}{link functions used, with defaults logit for cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity link)}
+\item{model}{Character string. Link function: \code{"default"} (auto-selects based on outcome), \code{"logit"}, \code{"exp"}, or \code{"lin"} (identity).}
 
-\item{Ydirect}{use this Y instead of outcome constructed inside the program (e.g. I(T< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to "rmst" to fit using the model specified by model}
+\item{Ydirect}{Optional numeric vector. If provided, this outcome is used instead of constructing one from \code{outcome}. Useful for custom IPCW adjustments.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level optimization functions.}
+}
+\value{
+An object of class \code{"binreg"} containing coefficients, variance-covariance matrix, 
+  influence functions (\code{iid}), and model details.
 }
 \description{
-Simple version of comp.risk function of timereg for just one time-point thus fitting the model 
-\deqn{P(T \leq t, \epsilon=1 | X ) = expit( X^T beta) }
+Fits a binomial regression model for a specific time point in the presence of 
+right-censored data and competing risks. This function implements the 
+Inverse Probability of Censoring Weighted (IPCW) estimating equation approach.
 }
 \details{
+The model estimates the probability:
+\deqn{P(T \leq t, \epsilon=1 | X ) = \text{expit}( X^T \beta) }
+
 Based on binomial regresion IPCW response estimating equation: 
 \deqn{ X ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 }
 where \deqn{\Delta^{ipcw}(t) = I((min(t,T)< C)/G_c(min(t,T)-)} is 
 IPCW adjustment of the response \deqn{Y(t)= I(T \leq t, \epsilon=1 )}.  
+Two types of estimators are available:
+\itemize{
+  \item \code{type="I"}: Solves the standard IPCW estimating equation.
+  \item \code{type="II"}: Adds a censoring augmentation term for efficiency gains, 
+  solving \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c}.
+}
 
-(type="I") sovlves this estimating equation using, but 
-for (type="II") an additional censoring augmentation term \deqn{X \int E(Y(t)| T>s)/G_c(s) d \hat M_c} is added.
-
-If Ydirect is given, this outcome is used instead of Y((t) as constructed via the choice of outcome considered, in the 
-cumlative incidence case \deqn{Y(t)=I(T \leq t, \epsilon=1 )}.
-
-logitIPCW instead considers 
+Alternatively, \code{logitIPCW} performs a standard logistic regression with 
+IPCW weights applied directly to the likelihood. Thus solving 
 \deqn{ X  I(min(T_i,t) < G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 } 
-a standard logistic regression with weights that adjust for IPCW.
+a standard logistic regression with IPCW weights.
 
-When monotone is FALSE the solved equation for binreg is equivalent to minmizing the least squares problem and thus becomes 
-\deqn{ D_\beta h(\beta)  ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - h( X^T beta)) = 0 }.
-
-The variance is based on the squared influence functions that are also returned as the iid component. naive.var is variance 
-under known censoring model. 
+The variance estimation is based on squared influence functions, with options 
+for naive variance (assuming known censoring) and robust variance (accounting 
+for censoring model estimation).
 
 Censoring model may depend on strata (cens.model=~strata(gX)).
 }
+\section{References}{
+
+\itemize{
+  \item Blanche PF, Holt A, Scheike T (2022). "On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects." \emph{Lifetime data analysis}, 29, 441–482.
+  \item Scheike TH, Zhang MJ, Gerds TA (2008). "Predicting cumulative incidence probability by direct binomial regression." \emph{Biometrika}, 95(1), 205–220.
+}
+}
+
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
@@ -158,11 +174,6 @@ predict(cifdob,newdata)
 (p2 <- predict(cifs2,newdata))
 p1[1,1]/p2[1,1]
 
-}
-\references{
-Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
-29, 441–482. 
-Scheike TH, Zhang MJ, Gerds TA (2008). “Predicting cumulative incidence probability by direct binomial regression.” Biometrika, 95(1), 205–220.
 }
 \author{
 Thomas Scheike

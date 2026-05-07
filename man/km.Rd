@@ -2,35 +2,41 @@
 % Please edit documentation in R/phreg.R
 \name{km}
 \alias{km}
-\title{Kaplan-Meier with robust standard errors}
+\title{Kaplan-Meier with Robust Standard Errors}
 \usage{
 km(formula, data = data, km = TRUE, ...)
 }
 \arguments{
-\item{formula}{formula with 'Surv' 'Event' outcome}
+\item{formula}{Formula with 'Surv' or 'Event' outcome.}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{km}{TRUE to get Kaplan-Meier otherwise Nelson-Aalen based}
+\item{km}{Logical; if \code{TRUE}, returns Kaplan-Meier estimates; otherwise returns Nelson-Aalen based estimates.}
 
-\item{...}{Additional arguments to phreg}
+\item{...}{Additional arguments passed to \code{phreg}.}
+}
+\value{
+An object of class \code{"km"} (extends \code{"predictphreg"}) containing:
+\item{surr}{Survival probabilities.}
+\item{se.surv}{Standard errors.}
+\item{lower, upper}{Confidence intervals.}
 }
 \description{
-Kaplan-Meier with robust standard errors
-Robust variance is default variance and obtained from the predict call
+Computes Kaplan-Meier estimates with robust standard errors.
+Robust variance is the default and is obtained from the \code{predict} call.
 }
 \examples{
 data(sTRACE)
-sTRACE$cluster <- sample(1:100,500,replace=TRUE)
-out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
-out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
+sTRACE$cluster <- sample(1:100, 500, replace = TRUE)
+out1 <- km(Surv(time, status == 9) ~ strata(vf, chf), data = sTRACE)
+out2 <- km(Surv(time, status == 9) ~ strata(vf, chf) + cluster(cluster), data = sTRACE)
 
-summary(out1,times=1:3)
-summary(out2,times=1:3)
+summary(out1, times = 1:3)
+summary(out2, times = 1:3)
 
-par(mfrow=c(1,2))
-plot(out1,se=TRUE)
-plot(out2,se=TRUE)
+par(mfrow = c(1, 2))
+plot(out1, se = TRUE)
+plot(out2, se = TRUE)
 }
 \author{
 Thomas Scheike

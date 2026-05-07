@@ -2,50 +2,53 @@
 % Please edit documentation in R/phreg.R
 \name{resmean_phreg}
 \alias{resmean_phreg}
-\title{Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors}
+\title{Restricted Mean for Stratified Kaplan-Meier or Cox Model}
 \usage{
 resmean_phreg(x, times = NULL, covs = NULL, ...)
 }
 \arguments{
-\item{x}{phreg object}
+\item{x}{Object of class \code{"phreg"}.}
 
-\item{times}{possible times for which to report restricted mean}
+\item{times}{Possible times for which to report restricted mean. If \code{NULL}, reports for all event times.}
 
-\item{covs}{possible covariate for Cox model}
+\item{covs}{Possible covariates for Cox model adjustment.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"resmean_phreg"} containing:
+\item{rmst}{Matrix of restricted mean survival times.}
+\item{se.rmst}{Standard errors for RMST.}
+\item{intkmtimes}{Restricted mean at specified times.}
+\item{years.lost}{Years lost (if applicable).}
 }
 \description{
-Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale
-standard error. Standard error is computed using linear interpolation between
-standard errors at jump-times. Plots gives restricted mean at all times.
-Years lost can be computed based on this and decomposed into years lost for
-different causes using the cif_yearslost function that is based on
-integrating the cumulative incidence functions.
-One particular feature of these functions are that the restricted mean and years-lost are
-computed for all event times as functions and can be plotted/viewed.  When times are given and beyond
-the last event time withn a strata the curves are extrapolated using the estimates of
-cumulative incidence. The RMST and RMTL can also be computed using rmstIPCW at specific time-points and then
-influence functions are available.
+Computes the Restricted Mean Survival Time (RMST) for stratified Kaplan-Meier or
+stratified Cox models with martingale standard errors.
+}
+\details{
+The standard error is computed using linear interpolation between standard errors at jump-times.
+This allows plotting the restricted mean as a function of time.
+
+Years lost can be computed based on this and decomposed into years lost for different causes
+using the \code{cif_yearslost} function.
 }
 \examples{
-data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
+data(bmt)
+bmt$time <- bmt$time + runif(408) * 0.001
+out1 <- phreg(Surv(time, cause != 0) ~ strata(tcell, platelet), data = bmt)
 
-rm1 <- resmean_phreg(out1,times=10*(1:6))
+rm1 <- resmean_phreg(out1, times = 10 * (1:6))
 summary(rm1)
 e1 <- estimate(rm1)
-par(mfrow=c(1,2))
-plot(rm1,se=1)
-plot(rm1,years.lost=TRUE,se=1)
+par(mfrow = c(1, 2))
+plot(rm1, se = 1)
+plot(rm1, years.lost = TRUE, se = 1)
 
-## comparing populations, can also be done using rmstIPCW via influence functions
-rm1 <- resmean_phreg(out1,times=40)
+## Comparing populations
+rm1 <- resmean_phreg(out1, times = 40)
 e1 <- estimate(rm1)
-e1
-estimate(e1,rbind(c(1,-1,0,0)))
-estimate(e1,list(1:4))
-
+estimate(e1, rbind(c(1, -1, 0, 0)))
 }
 \author{
 Thomas Scheike

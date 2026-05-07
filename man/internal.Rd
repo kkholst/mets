@@ -75,6 +75,15 @@
 \alias{procform3}
 \alias{procformdata}
 \alias{drop.specials}
+\alias{cumsumstrata}
+\alias{matdoubleindex}
+\alias{mdi}
+\alias{revcumsum}
+\alias{revcumsumstrata}
+\alias{robust.basehaz.phreg}
+\alias{sumstrata}
+\alias{strataAugment}
+\alias{predicttime}
 \title{For internal use}
 \description{
 For internal use

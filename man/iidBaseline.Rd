@@ -2,6 +2,51 @@
 % Please edit documentation in R/phreg.R
 \name{iidBaseline}
 \alias{iidBaseline}
+\alias{Influence}
+\alias{Functions}
+\alias{or}
+\alias{IID}
+\alias{Decomposition}
+\alias{of}
+\alias{Baseline}
+\alias{Computes}
+\alias{the}
+\alias{influence}
+\alias{functions}
+\alias{for}
+\alias{baseline}
+\alias{cumulative}
+\alias{hazard}
+\alias{(and}
+\alias{optionally}
+\alias{regression}
+\alias{coefficients)}
+\alias{\code{phreg},}
+\alias{\code{recreg},}
+\alias{\code{cifregFG}}
+\alias{objects.}
+\alias{The}
+\alias{decomposition}
+\alias{is}
+\alias{based}
+\alias{on}
+\alias{formula:}
+\alias{\deqn{}
+\alias{\sum_i}
+\alias{\int_0^t}
+\alias{\frac{f(s)}{S_0(s)}}
+\alias{dM_{ki}(s)}
+\alias{-}
+\alias{P(t)}
+\alias{\beta_k}
+\alias{}}
+\alias{where}
+\alias{\eqn{k}}
+\alias{denotes}
+\alias{stratum}
+\alias{and}
+\alias{\eqn{i}}
+\alias{cluster.}
 \title{Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG}
 \usage{
 iidBaseline(
@@ -15,22 +60,34 @@ iidBaseline(
 )
 }
 \arguments{
-\item{object}{phreg/recreg/cifregFG object}
+\item{object}{Object of class \code{"phreg"}, \code{"recreg"}, or \code{"cifregFG"}.}
 
-\item{time}{for baseline IID}
+\item{time}{Time point for baseline IID (required).}
 
-\item{ft}{function to compute IID of baseline integrated against f(t)}
+\item{ft}{Function to compute IID of baseline integrated against \eqn{f(t)}.}
 
-\item{fixbeta}{to fix the coefficients}
+\item{fixbeta}{Logical; if \code{TRUE}, fixes the coefficients (useful for specific tests).}
 
-\item{beta.iid}{to use these iid of beta}
+\item{beta.iid}{Optional matrix of beta influence functions to use.}
 
-\item{tminus}{to get predictions in t-}
+\item{tminus}{Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}),
+useful for IPCW techniques.}
 
-\item{...}{additional arguments to lower level functions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"iidBaseline"} containing:
+\item{time}{Time point.}
+\item{base.iid}{Influence functions for the baseline.}
+\item{beta.iid}{Influence functions for the regression coefficients.}
+\item{cumhaz.time}{Cumulative hazard at the specified time.}
+\item{strata}{Strata indices.}
 }
 \description{
 Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
+}
+\seealso{
+\code{\link{phreg}}, \code{\link{recreg}}, \code{\link{cifreg}}
 }
 \author{
 Thomas Scheike

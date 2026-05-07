@@ -2,7 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{phreg_IPTW}
 \alias{phreg_IPTW}
-\title{IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression}
+\title{IPTW Cox Regression (Inverse Probability of Treatment Weighted)}
 \usage{
 phreg_IPTW(
   formula,
@@ -17,42 +17,50 @@ phreg_IPTW(
 )
 }
 \arguments{
-\item{formula}{for phreg}
+\item{formula}{Formula for \code{phreg}.}
 
-\item{data}{data frame for risk averaging}
+\item{data}{Data frame for risk averaging.}
 
-\item{treat.model}{propensity score model (binary or multinomial)}
+\item{treat.model}{Propensity score model (binary or multinomial).}
 
-\item{treat.var}{a 1/0 variable that indicates when treatment is given and the propensity score is computed}
+\item{treat.var}{A 1/0 variable indicating when treatment is given (for time-dependent weights).}
 
-\item{weights}{may be given, and then uses weights*w(A) as the weights}
+\item{weights}{Optional weights to multiply with the IPTW weights.}
 
-\item{estpr}{(=1, default) to estimate propensity scores and get infuence function contribution to uncertainty}
+\item{estpr}{(=1, default) to estimate propensity scores and include their uncertainty in the influence function.}
 
-\item{pi0}{fixed simple weights}
+\item{pi0}{Fixed simple weights (if \code{estpr=0}).}
 
-\item{se.cluster}{to compute GEE type standard errors when additional cluster structure is present}
+\item{se.cluster}{To compute GEE-type standard errors when additional cluster structure is present.}
 
-\item{...}{arguments for phreg call}
+\item{...}{Arguments for \code{phreg} call.}
+}
+\value{
+An object of class \code{"phreg"} with additional IPTW components:
+\item{IID}{Influence functions including propensity score uncertainty.}
+\item{iptw}{IPTW weights used.}
+\item{naive.var}{Naive variance ignoring propensity score uncertainty.}
 }
 \description{
-Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
- \deqn{\pi(a|X)=P(A=a|X)}. Computes
-standard errors via influence functions that are returned as the IID argument.
-Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are
-than treatment categories. The treatment needs to be a factor and is identified on the rhs
-of the "treat.model". Recurrent events can be considered with start,stop structure and then cluster(id) must be
-specified. Robust standard errors are computed in all cases.
+Fits a Cox model with treatment weights \deqn{w(A) = \sum_a I(A=a)/\pi(a|X)}, where
+\deqn{\pi(a|X) = P(A=a|X)}.
 }
 \details{
-Time-dependent propensity score weights can also be computed when treat.var is used, it must be 1 at the time
-of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
+Standard errors are computed via influence functions that are returned as the IID argument.
+Propensity scores are fitted using either logistic regression (\code{glm}) or the multinomial
+model (\code{mlogit}) when there are more than two treatment categories.
+
+The treatment variable must be a factor and is identified on the RHS of the \code{treat.model}.
+Recurrent events can be considered with a start-stop structure, requiring \code{cluster(id)}.
+Robust standard errors are computed in all cases.
+
+Time-dependent propensity score weights can be computed when \code{treat.var} is used. This weight
 time of 2nd randomization.
 }
 \examples{
-data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
-dfactor(data) <- Z.f~Z
-out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
+data <- mets:::simLT(0.7, 100, beta = 0.3, betac = 0, ce = 1, betao = 0.3)
+dfactor(data) <- Z.f ~ Z
+out <- phreg_IPTW(Surv(time, status) ~ Z.f, data = data, treat.model = Z.f ~ X)
 summary(out)
 }
 \author{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/twostage.R
 \name{twostageMLE}
 \alias{twostageMLE}
-\title{Twostage survival model fitted by pseudo MLE}
+\title{Twostage Survival Model Fitted by Pseudo MLE}
 \usage{
 twostageMLE(
   margsurv,
@@ -18,65 +18,67 @@ twostageMLE(
 )
 }
 \arguments{
-\item{margsurv}{Marginal model from phreg}
+\item{margsurv}{Marginal model from \code{phreg}.}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{theta}{Starting values for variance components}
+\item{theta}{Starting values for variance components.}
 
-\item{theta.des}{design for dependence parameters, when pairs are given this is could be a
-(pairs) x (numer of parameters)  x (max number random effects) matrix}
+\item{theta.des}{Design for dependence parameters; when pairs are given, this could be a
+(pairs) \eqn{\times} (number of parameters) \eqn{\times} (max number random effects) matrix.}
 
-\item{var.link}{Link function for variance  if 1 then uses exp link}
+\item{var.link}{Link function for variance; if 1 then uses exponential link.}
 
-\item{method}{type of opitmizer, default is Newton-Raphson "NR"}
+\item{method}{Type of optimizer; default is Newton-Raphson \code{"NR"}.}
 
-\item{no.opt}{to not optimize, for example to get score and iid for specific theta}
+\item{no.opt}{To not optimize, for example to get score and IID for specific theta.}
 
-\item{weights}{cluster specific weights, but given with length equivalent to data-set, weights for score equations}
+\item{weights}{Cluster-specific weights, but given with length equivalent to data-set; weights for score equations.}
 
-\item{se.cluster}{specifies how the influence functions are summed before squared when computing the variance. Note that the id from the marginal model is used to construct MLE, and then these scores can be summed with the se.cluster argument.}
+\item{se.cluster}{Specifies how the influence functions are summed before squared when computing the variance.
+Note that the id from the marginal model is used to construct MLE, and then these scores can be summed with the \code{se.cluster} argument.}
 
-\item{...}{arguments to be passed to  optimizer}
+\item{...}{Arguments to be passed to optimizer.}
+}
+\value{
+An object of class \code{"mets.twostage"} containing:
+\item{theta}{Estimated dependence parameters.}
+\item{coef}{Coefficients.}
+\item{var.theta}{Variance of theta parameters.}
+\item{robvar.theta}{Robust variance of theta parameters.}
+\item{theta.iid}{Influence functions for theta.}
+\item{theta.iid.naive}{Naive influence functions for theta.}
+\item{loglike}{Log-likelihood value.}
 }
 \description{
-Fits Clayton-Oakes clustered  survival data
-using marginals that are on Cox form in the likelihood for the dependence parameter
-as in Glidden (2000). The dependence can be modelled via  a
-\enumerate{
-\item  Regression design on dependence parameter.
+Fits Clayton-Oakes clustered survival data using marginals that are on Cox form
+in the likelihood for the dependence parameter as in Glidden (2000).
 }
-
-We allow a regression structure for the indenpendent gamma distributed
-random effects  and their variances that may depend on cluster covariates. So
-\deqn{
- \theta = h( z_j^T \alpha)
-}
-where \eqn{z} is specified by theta.des . The link function can be the exp when var.link=1
+\details{
+The dependence can be modelled via a regression structure for the independent
+gamma distributed random effects and their variances that may depend on cluster covariates.
+So:
+\deqn{ \theta = h( z_j^T \alpha) }
+where \eqn{z} is specified by \code{theta.des}. The link function can be the exponential
+when \code{var.link=1}.
 }
 \examples{
 data(diabetes)
-dd <- phreg(Surv(time,status==1)~treat+cluster(id),diabetes)
-oo <- twostageMLE(dd,data=diabetes)
+dd <- phreg(Surv(time, status == 1) ~ treat + cluster(id), diabetes)
+oo <- twostageMLE(dd, data = diabetes)
 summary(oo)
 
-theta.des <- model.matrix(~-1+factor(adult),diabetes)
-
-oo <-twostageMLE(dd,data=diabetes,theta.des=theta.des)
+theta.des <- model.matrix(~ -1 + factor(adult), diabetes)
+oo <- twostageMLE(dd, data = diabetes, theta.des = theta.des)
 summary(oo)
 }
 \references{
-Measuring early or late dependence for bivariate twin data
-Scheike, Holst, Hjelmborg (2015), LIDA
-
-Twostage modelling of additive gamma frailty models for survival data.
-Scheike and Holst, working paper
-
-Shih and Louis (1995) Inference on the association parameter in copula models for bivariate
-survival data, Biometrics, (1995).
-
-Glidden (2000), A Two-Stage estimator of the dependence
-parameter for the Clayton Oakes model, LIDA, (2000).
+\itemize{
+\item Measuring early or late dependence for bivariate twin data. Scheike, Holst, Hjelmborg (2015), LIDA.
+\item Twostage modelling of additive gamma frailty models for survival data. Scheike and Holst, working paper.
+\item Shih and Louis (1995) Inference on the association parameter in copula models for bivariate survival data, \emph{Biometrics}.
+\item Glidden (2000), A Two-Stage estimator of the dependence parameter for the Clayton Oakes model, LIDA.
+}
 }
 \author{
 Thomas Scheike

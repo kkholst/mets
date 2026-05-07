@@ -2,14 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{predict.phreg}
 \alias{predict.phreg}
-\alias{revcumsumstrata}
-\alias{cumsumstrata}
-\alias{sumstrata}
-\alias{revcumsum}
-\alias{robust.basehaz.phreg}
-\alias{matdoubleindex}
-\alias{mdi}
-\title{Predictions from proportional hazards model}
+\title{Predictions from Proportional Hazards Model}
 \usage{
 \method{predict}{phreg}(
   object,
@@ -26,28 +19,41 @@
 )
 }
 \arguments{
-\item{object}{phreg object}
+\item{object}{Object of class \code{"phreg"}.}
 
-\item{newdata}{data.frame}
+\item{newdata}{Data frame for prediction. If \code{NULL}, predictions are made for the original data.}
 
-\item{times}{Time where to predict variable, default is all time-points from the object sorted}
+\item{times}{Time points for prediction. Defaults to all unique event times in the model.}
 
-\item{individual.time}{to use one (individual) time per subject, and then newdata and times have same length and makes only predictions for these individual times.}
+\item{individual.time}{Logical; if \code{TRUE}, uses one time per subject (requires \code{newdata} and \code{times} to be same length).}
 
-\item{tminus}{to make predictions in T- that is strictly before given times, useful for IPCW techniques}
+\item{tminus}{Logical; if \code{TRUE}, predicts at \eqn{t-} (strictly before \eqn{t}).}
 
-\item{se}{with standard errors and upper and lower confidence intervals.}
+\item{se}{Logical; if \code{TRUE}, computes standard errors and confidence intervals.}
 
-\item{robust}{to get robust se's also default for most functions (uses robse.cumhaz otherwise se.cumhaz).}
+\item{robust}{Logical; if \code{TRUE}, uses robust standard errors (default for most functions).}
 
-\item{conf.type}{transformation for suvival estimates, default is log}
+\item{conf.type}{Transformation for survival estimates: \code{"log"} (default) or \code{"plain"}.}
 
-\item{conf.int}{significance level}
+\item{conf.int}{Confidence level (default 0.95).}
 
-\item{km}{to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.}
+\item{km}{Logical; if \code{TRUE}, uses Kaplan-Meier product-limit for baseline; otherwise uses exponential of cumulative baseline.}
 
-\item{...}{Additional arguments to plot functions}
+\item{...}{Additional arguments for plotting functions.}
+}
+\value{
+An object of class \code{"predictphreg"} containing:
+\item{surr}{Matrix of survival probabilities.}
+\item{cumhaz}{Matrix of cumulative hazards.}
+\item{cif}{Matrix of cumulative incidence functions (if applicable).}
+\item{times}{Vector of time points.}
+\item{surv.upper, surv.lower}{Confidence bounds for survival.}
+\item{RR}{Relative risks.}
 }
 \description{
-Predictions from proportional hazards model
+Computes predictions for survival probability, cumulative hazard, or risk at specified
+time points for new data or existing data. Includes standard errors and confidence intervals.
+}
+\author{
+Thomas Scheike
 }

@@ -2,36 +2,44 @@
 % Please edit documentation in R/phreg.R
 \name{aalenMets}
 \alias{aalenMets}
-\title{Fast additive hazards model with robust standard errors}
+\title{Fast Additive Hazards Model with Robust Standard Errors}
 \usage{
 aalenMets(formula, data = data, no.baseline = FALSE, ...)
 }
 \arguments{
-\item{formula}{formula with 'Surv' outcome (see \code{coxph})}
+\item{formula}{Formula with a 'Surv' outcome (similar to \code{coxph}).}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{no.baseline}{to fit model without baseline hazard}
+\item{no.baseline}{Logical; if \code{TRUE}, fits the model without baseline hazard estimation.}
 
-\item{...}{Additional arguments to phreg}
+\item{...}{Additional arguments passed to \code{phreg}.}
+}
+\value{
+An object of class \code{"aalenMets"} (extends \code{"phreg"}) containing:
+\item{coef}{Estimated coefficients.}
+\item{var}{Robust variance-covariance matrix.}
+\item{iid}{Influence functions.}
+\item{intZHZ}{Integrated ZHZ matrix.}
+\item{gamma}{Coefficient estimates.}
 }
 \description{
-Fast Lin-Ying additive hazards model with a possibly stratified baseline.
-Robust variance is default variance with the summary.
+Fits a fast Lin-Ying additive hazards model with a possibly stratified baseline.
+Robust variance is the default variance estimate in the summary.
 }
 \details{
-influence functions (iid) will follow numerical order of given cluster variable
-so ordering after $id will give iid in order of data-set.
+Influence functions (IID) follow the numerical order of the given cluster variable.
+Ordering by \code{$id} aligns the IID terms with the dataset order.
 }
 \examples{
-
-data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+data(bmt)
+bmt$time <- bmt$time + runif(408) * 0.001
+out <- aalenMets(Surv(time, cause == 1) ~ tcell + platelet + age, data = bmt)
 summary(out)
 
-## out2 <- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+## Comparison with timereg::aalen
+## out2 <- timereg::aalen(Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age), data = bmt)
 ## summary(out2)
-
 }
 \author{
 Thomas Scheike

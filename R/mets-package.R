@@ -242,6 +242,9 @@ NULL
 ##' sim_binClaytonOakes_pairs sim_nordictwin   
 ##'  sim_Compete_simple simCompete_twin_ace twin_polygen_design
 ##'  procform procform3 procformdata drop.specials
+##'  cumsumstrata matdoubleindex mdi revcumsum revcumsumstrata                                                                             
+##'  robust.basehaz.phreg sumstrata                                          
+##' strataAugment predicttime
 NULL
 
 

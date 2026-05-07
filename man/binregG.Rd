@@ -2,26 +2,64 @@
 % Please edit documentation in R/binomial.regression.R
 \name{binregG}
 \alias{binregG}
-\title{G-estimator for binomial regression model (Standardized estimates)}
+\title{G-Estimator for Binomial Regression Model (Standardized Estimates)}
 \usage{
 binregG(x, data, Avalues = NULL, varname = NULL)
 }
 \arguments{
-\item{x}{binreg object}
+\item{x}{An object of class \code{"binreg"} obtained from \code{binreg()} or \code{logitIPCW()}.}
 
-\item{data}{data frame for risk averaging}
+\item{data}{A data frame containing the covariates to be used for averaging the risk 
+estimates. This should ideally be the same data used to fit the model, or a 
+representative sample.}
 
-\item{Avalues}{values to compare for first covariate A, assumes that first variable is factor and take all levels}
+\item{Avalues}{Numeric or factor vector specifying the values of the first covariate 
+(\eqn{A}) for which to compute standardized risks. 
+\itemize{
+  \item If the first covariate is a factor and \code{Avalues} is \code{NULL}, 
+    all levels of the factor are used.
+  \item If the first covariate is continuous, \code{Avalues} must be provided.
+}}
 
-\item{varname}{if given then averages for this variable, default is first variable}
+\item{varname}{Optional character string specifying the name of the variable to be 
+treated as the treatment/exposure variable. If \code{NULL}, the first variable 
+in the model formula is used.}
+}
+\value{
+An object of class \code{"survivalG"} containing:
+\item{risk}{A table of standardized risk estimates for each value of \code{Avalues}.}
+\item{risk.iid}{Influence functions for the standardized risk estimates.}
+\item{difference}{Pairwise differences in risks between levels of \code{A}.}
+\item{ratio}{Risk ratios between levels of \code{A}.}
+\item{vcov}{Variance-covariance matrix of the risk estimates.}
+\item{model}{The link function used in the original model.}
 }
 \description{
-Computes G-estimator \deqn{ \hat F(t,A=a) = n^{-1} \sum_i \hat F(t,A=a,Z_i) }.
-Assumes that the first covariate is $A$.
-Gives influence functions of these risk estimates and SE's are based on these.  
-If first covariate is a factor then all contrast are computed, and if continuous 
-then considered covariate values are given by Avalues.
+Computes the G-estimator (G-formula) for standardized risk estimates based on a 
+fitted \code{binreg} object. The G-estimator standardizes predictions over the 
+covariate distribution in the data:
+\deqn{ \hat F(t, A=a) = n^{-1} \sum_{i=1}^n \hat F(t, A=a, Z_i) }
 }
+\details{
+This function assumes that the first covariate in the original model formula 
+represents the treatment or exposure variable (\eqn{A}). It calculates the 
+marginal risk for specified values of \eqn{A} by averaging the conditional 
+predictions over the observed covariate distribution \eqn{Z}.
+
+The function returns influence functions for these risk estimates, allowing 
+for the computation of standard errors and confidence intervals.
+
+If the first covariate is a factor, contrasts between all levels are computed 
+automatically. If it is continuous, specific values must be provided via 
+\code{Avalues}.
+}
+\section{References}{
+
+\itemize{
+  \item Blanche PF, Holt A, Scheike T (2022). "On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects." \emph{Lifetime Data Analysis}, 29, 441–482.
+}
+}
+
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 bmt$event <- (bmt$cause!=0)*1
@@ -30,9 +68,8 @@ b1 <- binreg(Event(time,cause)~age+tcell+platelet,bmt,cause=1,time=50)
 sb1 <- binregG(b1,bmt,Avalues=c(0,1,2))
 summary(sb1)
 }
-\references{
-Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right censored data, with or without competing risks, and its use for estimating treatment effects.” Lifetime data analysis,
-29, 441–482.
+\seealso{
+\code{\link{binreg}}, \code{\link{summary.binreg}}, \code{\link{binregATE}}
 }
 \author{
 Thomas Scheike

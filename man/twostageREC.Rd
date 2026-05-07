@@ -2,7 +2,7 @@
 % Please edit documentation in R/recreg.R
 \name{twostageREC}
 \alias{twostageREC}
-\title{Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals}
+\title{Fitting of Two-Stage Recurrent Events Random Effects Model}
 \usage{
 twostageREC(
   margsurv,
@@ -26,46 +26,64 @@ twostageREC(
 )
 }
 \arguments{
-\item{margsurv}{marginal model for terminal event}
+\item{margsurv}{Marginal model for the terminal event (object of class \code{"phreg"}).}
 
-\item{recurrent}{marginal model for recurrent events}
+\item{recurrent}{Marginal model for recurrent events (object of class \code{"phreg"} or \code{"recreg"}).}
 
-\item{data}{used for fitting}
+\item{data}{Data frame used for fitting.}
 
-\item{theta}{starting value for total variance of gamma frailty}
+\item{theta}{Starting value for total variance of gamma frailty.}
 
-\item{model}{can fully shared "full", partly shared "shared", or non-shared where the random effect acts only on recurrent events}
+\item{model}{Model type: \code{"full"} (fully shared), \code{"shared"} (partly shared), or \code{"non-shared"}.}
 
-\item{ghosh.lin}{to force use ghosh.lin marginals based on recurrent (taking baseline and coefficients)}
+\item{ghosh.lin}{Logical; if \code{TRUE}, forces use of Ghosh-Lin marginals based on the recurrent model.}
 
-\item{theta.des}{regression design for variance}
+\item{theta.des}{Regression design for variance parameters.}
 
-\item{var.link}{possible link  function 1 is exponential link}
+\item{var.link}{Link function for variance (1 for exponential).}
 
-\item{method}{NR}
+\item{method}{Optimization method (default "NR").}
 
-\item{no.opt}{to not optimize}
+\item{no.opt}{Logical; if \code{TRUE}, skips optimization.}
 
-\item{weights}{possible weights}
+\item{weights}{Weights.}
 
-\item{se.cluster}{to combine influence functions for naive variance based on these clusters GEE style}
+\item{se.cluster}{Clusters for SE calculation (GEE style).}
 
-\item{fnu}{a function to make transformation for nu (amount shared)}
+\item{fnu}{Function to transform \eqn{\nu} (amount shared).}
 
-\item{nufix}{to fix the amount shared}
+\item{nufix}{Logical; if \code{TRUE}, fixes the amount shared.}
 
-\item{nu}{starting value for amount shared}
+\item{nu}{Starting value for the amount shared.}
 
-\item{numderiv}{uses numerical derivatives for some derivatives}
+\item{numderiv}{Logical; if \code{TRUE}, uses numerical derivatives.}
 
-\item{derivmethod}{method for numerical derivative}
+\item{derivmethod}{Method for numerical derivative.}
 
-\item{...}{arguments for}
+\item{...}{Arguments for the optimizer.}
+}
+\value{
+An object of class \code{"twostageREC"} containing:
+\item{coef}{Estimated coefficients.}
+\item{var}{Variance-covariance matrix.}
+\item{theta}{Dependence parameters.}
+\item{model}{Model type.}
 }
 \description{
-Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals. Random
-effects model fore recurrent events with terminal  event. Marginal models fitted first and given to twostageREC function.
+Fits a two-stage random effects model for recurrent events with a terminal event.
+Marginal models (Cox or Ghosh-Lin) are fitted first and passed to this function.
+}
+\details{
+Supports:
+\itemize{
+\item Cox/Cox marginals.
+\item Cox/Ghosh-Lin marginals.
+\item Fully shared, partly shared, or non-shared random effects.
+}
 }
 \references{
-Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear
+Scheike (2026), Two-stage recurrent events random effects models, LIDA, to appear.
+}
+\author{
+Thomas Scheike
 }

@@ -3,13 +3,10 @@
 \name{recreg}
 \alias{recreg}
 \alias{marks}
-\alias{strataAugment}
-\alias{scalecumhaz}
 \alias{GLprediid}
-\alias{recregIPCW}
 \alias{IIDrecreg}
-\alias{predicttime}
-\title{Recurrent events regression with terminal event}
+\alias{scalecumhaz}
+\title{Recurrent Events Regression with Terminal Event}
 \usage{
 recreg(
   formula,
@@ -28,56 +25,60 @@ recreg(
 )
 }
 \arguments{
-\item{formula}{formula with 'Event' outcome}
+\item{formula}{Formula with an 'Event' outcome.}
 
-\item{data}{data frame}
+\item{data}{Data frame containing the variables.}
 
-\item{cause}{of interest (1 default)}
+\item{cause}{Cause of interest (default is 1).}
 
-\item{death.code}{codes for death (terminating event, 2 default)}
+\item{death.code}{Codes for the terminal event/death (default is 2).}
 
-\item{cens.code}{code of censoring (0 default)}
+\item{cens.code}{Code for censoring (default is 0).}
 
-\item{cens.model}{for stratified Cox model without covariates}
+\item{cens.model}{Formula for a stratified Cox model without covariates used to estimate censoring probabilities.}
 
-\item{weights}{weights for score equations}
+\item{weights}{Weights for the score equations.}
 
-\item{offset}{offsets for model}
+\item{offset}{Offsets for the model.}
 
-\item{Gc}{censoring weights for time argument, default is to calculate these with a Kaplan-Meier estimator, should then give G_c(T_i-)}
+\item{Gc}{Censoring weights for the time argument. If \code{NULL}, these are calculated using a Kaplan-Meier estimator
+(should then provide \eqn{G_c(T_i-)}).}
 
-\item{wcomp}{weights for composite outcome, so when cause=c(1,3), we might have wcomp=c(1,2).}
+\item{wcomp}{Weights for composite outcomes (e.g., when \code{cause=c(1,3)}, \code{wcomp} might be \code{c(1,2)}).}
 
-\item{marks}{a mark value can be specified, this is vector from the data-frame where the mark value can be found at all events}
+\item{marks}{A mark value vector from the data frame, specifying the mark value at all events.}
 
-\item{augmentation.type}{of augmentation when augmentation model is given}
+\item{augmentation.type}{Type of augmentation when an augmentation model is given (options: \code{"lindyn.augment"}, \code{"lin.augment"}).}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"recreg"} (extending \code{"phreg"}) containing:
+\item{coef}{Estimated coefficients.}
+\item{var}{Robust variance-covariance matrix.}
+\item{iid}{Influence functions for the coefficients.}
+\item{cumhaz}{Cumulative hazard estimates.}
+\item{se.cumhaz}{Standard errors for cumulative hazard.}
 }
 \description{
-Fits Ghosh-Lin IPCW Cox-type model
+Fits a Ghosh-Lin IPCW (Inverse Probability of Censoring Weighted) Cox-type model for recurrent events
+in the presence of a terminal event (e.g., death).
 }
 \details{
-For Cox type model :
-\deqn{
-E(dN_1(t)|X) = \mu_0(t)dt exp(X^T \beta)
-}
-by solving Cox-type IPCW weighted score equations 
-\deqn{
- \int (Z - E(t)) w(t) dN_1(t) 
-}
-where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
-\deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j w_i(t) \exp(X_i^T \beta)}.
+For the Cox-type model, the expectation is modeled as:
+\deqn{ E(dN_1(t)|X) = \mu_0(t) dt \exp(X^T \beta) }
+by solving Cox-type IPCW weighted score equations:
+\deqn{ \int (Z - E(t)) w(t) dN_1(t) }
+where \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))},
+\deqn{E(t) = S_1(t)/S_0(t)}, and \deqn{S_j(t) = \sum X_i^j w_i(t) \exp(X_i^T \beta)}.
 
+The IID decomposition of the beta coefficients takes the form:
+\deqn{ \int (Z - E) w(t) dM_1 + \int q(s)/p(s) dM_c }
+and is returned as the \code{iid} component.
 
-The iid decomposition of the beta's are on the form
-\deqn{
-\int (Z - E ) w(t) dM_1 + \int q(s)/p(s) dM_c
-}
-and returned as iid.
-
-Events, deaths and censorings are specified via stop start structure and the Event call, that via a status vector 
-and cause (code), censoring-codes (cens.code) and death-codes (death.code) indentifies these. See example and vignette.
+Events, deaths, and censorings are specified via a start-stop structure and the \code{Event} call.
+The function identifies these via a status vector and cause codes, censoring codes (\code{cens.code}),
+and death codes (\code{death.code}). See examples and vignettes for details.
 }
 \examples{
 ## data with no ties
@@ -110,6 +111,9 @@ summary(ll2)
 ll2i <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,
 cause=1,death.code=2,time=2,cens.model=~strata(treatment))
 summary(ll2i)
+}
+\seealso{
+\code{\link{recregIPCW}}, \code{\link{summary.phreg}}, \code{\link{predict.recreg}}
 }
 \author{
 Thomas Scheike

@@ -2,47 +2,46 @@
 % Please edit documentation in R/phreg.R
 \name{logitSurv}
 \alias{logitSurv}
-\title{Proportional odds survival model}
+\title{Proportional Odds Survival Model}
 \usage{
 logitSurv(formula, data, offset = NULL, weights = NULL, ...)
 }
 \arguments{
-\item{formula}{formula with 'Surv' outcome (see \code{coxph})}
+\item{formula}{Formula with 'Surv' outcome (similar to \code{coxph}).}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{offset}{offsets for exp(x beta) terms}
+\item{offset}{Offsets for \eqn{\exp(x \beta)} terms.}
 
-\item{weights}{weights for score equations}
+\item{weights}{Weights for score equations.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"phreg"} with \code{propodds=1}.
 }
 \description{
-Semiparametric Proportional odds model, that has the advantage that
-\deqn{
-logit(S(t|x)) = \log(\Lambda(t)) + x \beta
-}
-so covariate effects give OR of survival.
+Fits a semiparametric proportional odds model where:
+\deqn{ \logit(S(t|x)) = \log(\Lambda(t)) + x \beta }
+Thus, covariate effects represent the odds ratio (OR) of survival.
 }
 \details{
-This is equivalent to using a hazards model
-\deqn{
-  Z \lambda(t) \exp(x \beta)
-}
-where Z is gamma distributed with mean and variance 1.
+This is equivalent to using a hazards model:
+\deqn{ Z \lambda(t) \exp(x \beta) }
+where \eqn{Z} is gamma distributed with mean and variance 1.
 }
 \examples{
 data(TRACE)
 dcut(TRACE) <- ~.
-out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+out1 <- logitSurv(Surv(time, status == 9) ~ vf + chf + strata(wmicat.4), data = TRACE)
 summary(out1)
 gof(out1)
 plot(out1)
 }
 \references{
-The proportional odds cumulative incidence model for competing risks,
-Eriksson, Frank and Li, Jianing and Scheike, Thomas and Zhang, Mei-Jie,
-Biometrics, 2015, 3, 687--695, 71,
+Eriksson, Frank, Li, Jianing, Scheike, Thomas, and Zhang, Mei-Jie (2015).
+"The proportional odds cumulative incidence model for competing risks."
+\emph{Biometrics}, 71(3), 687--695.
 }
 \author{
 Thomas Scheike

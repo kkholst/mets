@@ -2,35 +2,41 @@
 % Please edit documentation in R/phreg.R
 \name{cif}
 \alias{cif}
-\title{Cumulative incidence with robust standard errors}
+\title{Cumulative Incidence with Robust Standard Errors}
 \usage{
 cif(formula, data = data, cause = 1, cens.code = 0, death.code = NULL, ...)
 }
 \arguments{
-\item{formula}{formula with 'Event' outcome and strata (only!)}
+\item{formula}{Formula with 'Event' outcome and \code{strata} (only!).}
 
-\item{data}{data frame}
+\item{data}{Data frame.}
 
-\item{cause}{NULL looks at all, otherwise specify which cause to consider}
+\item{cause}{Cause of interest (default is \code{NULL}, which looks at all causes).}
 
-\item{cens.code}{censoring code "0" is default, and death is cens.code!=0}
+\item{cens.code}{Censoring code (default is \code{"0"}).}
 
-\item{death.code}{alternative to cens.code give codes of death}
+\item{death.code}{Alternative to \code{cens.code}; specifies codes of death.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Additional arguments passed to lower-level functions.}
+}
+\value{
+An object of class \code{"cif"} (extends \code{"phreg"}) containing:
+\item{cumhaz}{Cumulative incidence estimates.}
+\item{se.cumhaz}{Standard errors.}
+\item{cause}{Cause of interest.}
 }
 \description{
-Cumulative incidence with robust standard errors
+Computes cumulative incidence functions with robust standard errors.
 }
 \examples{
 data(bmt)
-bmt$cluster <- sample(1:100,408,replace=TRUE)
-out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)
-out2 <- cif(Event(time,cause)~+1+cluster(cluster),data=bmt,cause=1)
+bmt$cluster <- sample(1:100, 408, replace = TRUE)
+out1 <- cif(Event(time, cause) ~ +1, data = bmt, cause = 1)
+out2 <- cif(Event(time, cause) ~ +1 + cluster(cluster), data = bmt, cause = 1)
 
-par(mfrow=c(1,2))
-plot(out1,se=TRUE)
-plot(out2,se=TRUE)
+par(mfrow = c(1, 2))
+plot(out1, se = TRUE)
+plot(out2, se = TRUE)
 }
 \author{
 Thomas Scheike

@@ -3,7 +3,7 @@
 \name{survivalG}
 \alias{survivalG}
 \alias{survivalGtime}
-\title{G-estimator for Cox and Fine-Gray model}
+\title{G-Estimator for Cox and Fine-Gray Models}
 \usage{
 survivalG(
   x,
@@ -16,51 +16,66 @@ survivalG(
 )
 }
 \arguments{
-\item{x}{phreg or cifreg object}
+\item{x}{Object of class \code{"phreg"} or \code{"cifreg"}.}
 
-\item{data}{data frame for risk averaging, must be part of the data used for fitting unless same.data=FALSE. When a subset of the data such as the treated model should be fitted with cluster(id)}
+\item{data}{Data frame for risk averaging. Must be part of the data used for fitting unless \code{same.data=FALSE}.}
 
-\item{time}{for estimate}
+\item{time}{Time point for estimation.}
 
-\item{Avalues}{values to compare for first covariate A}
+\item{Avalues}{Values to compare for the first covariate \eqn{A}.}
 
-\item{varname}{if given then averages for this variable, default is first variable}
+\item{varname}{Name of the variable to be treated as the treatment/exposure variable (default is the first variable).}
 
-\item{same.data}{assumes that same data is used for fitting of survival model and averaging.}
+\item{same.data}{Logical; assumes the same data is used for fitting and averaging.}
 
-\item{First}{to only use first record for G-averaging, for example when start,stop structure is used with phreg}
+\item{First}{Logical; if \code{TRUE}, uses only the first record for G-averaging (useful for start-stop structures).}
+}
+\value{
+An object of class \code{"survivalG"} containing:
+\item{risk}{Standardized risk estimates.}
+\item{risk.iid}{Influence functions for the risk estimates.}
+\item{difference}{Pairwise differences in risks.}
+\item{ratio}{Risk ratios.}
+\item{survival.ratio}{Survival ratios (for \code{phreg}).}
+\item{survival.difference}{Survival differences (for \code{phreg}).}
 }
 \description{
-Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
-for the Cox model based on phreg og the Fine-Gray model based on the
-cifreg function. Gives influence functions of these risk estimates and SE's are
-based on  these.  If first covariate is a factor then all contrast are computed,
-and if continuous then considered covariate values are given by Avalues.
+Computes the G-estimator (G-formula) for standardized survival or cumulative incidence estimates:
+\deqn{ \hat S(t, A=a) = n^{-1} \sum_i \hat S(t, A=a, Z_i) }
+}
+\details{
+Based on a \code{phreg} or \code{cifreg} object. Provides influence functions for these risk estimates,
+allowing for standard error computation.
+
+If the first covariate is a factor, contrasts between all levels are computed automatically.
+If it is continuous, specific values must be provided via \code{Avalues}.
 }
 \examples{
-data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
-dfactor(bmt) <- tcell.f~tcell
+data(bmt)
+bmt$time <- bmt$time + runif(408) * 0.001
+bmt$event <- (bmt$cause != 0) * 1
+bmt$id <- 1:408
+dfactor(bmt) <- tcell.f ~ tcell
 
-fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
-              cox.prep=TRUE,propodds=NULL)
-summary(survivalG(fg1,bmt,50))
+# Fine-Gray model
+fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt, cause = 1, cox.prep = TRUE, propodds = NULL)
+summary(survivalG(fg1, bmt, 50))
 
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt)
-summary(survivalG(ss,bmt,50))
+# Cox model
+ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age, bmt)
+summary(survivalG(ss, bmt, 50))
 
-ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt)
-summary(survivalG(ss,bmt,50))
+# Stratified Cox model
+ss <- phreg(Surv(time, event) ~ strata(tcell.f) + platelet + age, bmt)
+summary(survivalG(ss, bmt, 50))
 
-sst <- survivalGtime(ss,bmt,n=50)
+# Time-varying G-estimates
+sst <- survivalGtime(ss, bmt, n = 50)
 plot(sst)
 
-fg1t <- survivalGtime(fg1,bmt,n=50)
-plot(fg1t)
-
-#among treated: must specify id to link influence functions
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt)
-summary(survivalG(ss,subset(bmt,tcell==1),50))
+# Among treated (specify id to link influence functions)
+ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age + cluster(id), bmt)
+summary(survivalG(ss, subset(bmt, tcell == 1), 50))
 }
 \author{
 Thomas Scheike

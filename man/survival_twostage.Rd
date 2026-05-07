@@ -8,7 +8,7 @@
 \alias{twostage_phreg}
 \alias{randomDes}
 \alias{readmargsurv}
-\title{Twostage survival model for multivariate survival data}
+\title{Twostage Survival Model for Multivariate Survival Data}
 \usage{
 survival_twostage(
   margsurv,
@@ -39,139 +39,139 @@ survival_twostage(
 )
 }
 \arguments{
-\item{margsurv}{Marginal model}
+\item{margsurv}{Marginal model object.}
 
-\item{data}{data.frame must be given}
+\item{data}{Data frame (must be given).}
 
-\item{method}{Scoring method "nr", for lava NR optimizer}
+\item{method}{Scoring method: \code{"nr"} for lava NR optimizer.}
 
-\item{detail}{Detail}
+\item{detail}{Detail level for output.}
 
-\item{clusters}{Cluster variable}
+\item{clusters}{Cluster variable.}
 
-\item{silent}{Debug information}
+\item{silent}{Debug information level.}
 
-\item{weights}{Weights}
+\item{weights}{Weights for score equations.}
 
-\item{theta}{Starting values for variance components}
+\item{theta}{Starting values for variance components.}
 
-\item{theta.des}{design for dependence parameters, when pairs are given the indeces of the
-theta-design for this pair, is given in pairs as column 5}
+\item{theta.des}{Design for dependence parameters; when pairs are given, the indices of the
+theta-design for this pair are given in pairs as column 5.}
 
-\item{var.link}{Link function for variance:  exp-link.}
+\item{var.link}{Link function for variance: 1 for exponential link.}
 
-\item{baseline.iid}{to adjust for baseline estimation, using phreg function on same data.}
+\item{baseline.iid}{To adjust for baseline estimation, using \code{phreg} function on same data.}
 
-\item{model}{model}
+\item{model}{Model type: \code{"clayton.oakes"} or \code{"plackett"}.}
 
-\item{marginal.trunc}{marginal left truncation probabilities}
+\item{marginal.trunc}{Marginal left truncation probabilities.}
 
-\item{marginal.survival}{optional vector of marginal survival probabilities}
+\item{marginal.survival}{Optional vector of marginal survival probabilities.}
 
-\item{strata}{strata for fitting, see example}
+\item{strata}{Strata for fitting (see examples).}
 
-\item{se.clusters}{for clusters for se calculation with iid}
+\item{se.clusters}{Clusters for SE calculation with IID.}
 
-\item{numDeriv}{to get numDeriv version of second derivative, otherwise uses sum of squared scores for each pair}
+\item{numDeriv}{To get numDeriv version of second derivative; otherwise uses sum of squared scores for each pair.}
 
-\item{random.design}{random effect design for additive gamma model, when pairs are given the
-indeces of the pairs random.design rows are given as columns 3:4}
+\item{random.design}{Random effect design for additive gamma model; when pairs are given, the indices of the
+pairs' random.design rows are given as columns 3:4.}
 
-\item{pairs}{matrix with rows of indeces (two-columns) for the pairs considered in the pairwise
-composite score, useful for case-control sampling when marginal is known.}
+\item{pairs}{Matrix with rows of indices (two-columns) for the pairs considered in the pairwise
+composite score; useful for case-control sampling when marginal is known.}
 
-\item{dim.theta}{dimension of the theta parameter for pairs situation.}
+\item{dim.theta}{Dimension of the theta parameter for pairs situation.}
 
-\item{numDeriv.method}{uses simple to speed up things and second derivative not so important.}
+\item{numDeriv.method}{Method for numerical derivative (e.g., \code{"simple"} to speed up things).}
 
-\item{additive.gamma.sum}{for two.stage=0, this is specification of the lamtot in the models via
-a matrix that is multiplied onto the parameters theta (dimensions=(number random effects x number
-of theta parameters), when null then sums all parameters.}
+\item{additive.gamma.sum}{For \code{two.stage=0}, this is specification of the \code{lamtot} in the models via
+a matrix that is multiplied onto the parameters theta (dimensions = number of random effects \eqn{\times} number of theta parameters);
+when \code{NULL}, sums all parameters.}
 
-\item{var.par}{is 1 for the default parametrization with the variances of the random effects,
-var.par=0 specifies that the \eqn{\lambda_j}'s are used as parameters.}
+\item{var.par}{Is 1 for the default parametrization with the variances of the random effects;
+\code{var.par=0} specifies that the \eqn{\lambda_j}'s are used as parameters.}
 
-\item{no.opt}{for not optimizng}
+\item{no.opt}{For not optimizing.}
 
-\item{...}{Additional arguments to maximizer NR of lava.
-and ascertained sampling}
+\item{...}{Additional arguments to maximizer NR of lava.}
+}
+\value{
+An object of class \code{"mets.twostage"} containing:
+\item{theta}{Estimated dependence parameters.}
+\item{coef}{Coefficients.}
+\item{score}{Score vector.}
+\item{hess}{Hessian matrix.}
+\item{hessi}{Inverse Hessian matrix.}
+\item{var.theta}{Variance of theta parameters.}
+\item{robvar.theta}{Robust variance of theta parameters.}
+\item{loglike}{Log-likelihood value.}
+\item{theta.iid}{Influence functions for theta.}
+\item{model}{Model type used.}
 }
 \description{
 Fits Clayton-Oakes or bivariate Plackett models for bivariate survival data
-using marginals that are on Cox form. The dependence can be modelled via
+using marginals that are on Cox form. The dependence can be modelled via:
 \enumerate{
-\item  Regression design on dependence parameter.
-\item  Random effects, additive gamma model.
+\item Regression design on dependence parameter.
+\item Random effects, additive gamma model.
 }
-
-If clusters contain more than two subjects, we use a composite likelihood
-based on the pairwise bivariate models, for full MLE see twostageMLE.
-
-The two-stage model is constructed such that
-given the gamma distributed random effects it is assumed that the survival functions
-are indpendent, and that the marginal survival functions are on Cox form (or additive form)
-\deqn{
-P(T > t| x) = S(t|x)= exp( -exp(x^T \beta) A_0(t) )
 }
+\details{
+If clusters contain more than two subjects, a composite likelihood based on
+pairwise bivariate models is used (for full MLE see \code{twostageMLE}).
 
-One possibility is to model the variance within clusters via a regression design, and
-then one can specify a regression structure for the independent gamma distributed
-random effect for each cluster, such that the variance is given by
-\deqn{
- \theta = h( z_j^T \alpha)
-}
-where \eqn{z} is specified by theta.des, and a possible link function var.link=1 will
-will use the exponential link \eqn{h(x)=exp(x)}, and var.link=0 the identity link \eqn{h(x)=x}.
+The two-stage model is constructed such that, given gamma distributed random effects,
+the survival functions are assumed independent, and the marginal survival functions
+are on Cox form:
+\deqn{ P(T > t| x) = S(t|x)= \exp( -\exp(x^T \beta) A_0(t) ) }
+
+One possibility is to model the variance within clusters via a regression design,
+specifying a regression structure for the independent gamma distributed random
+effect for each cluster, such that the variance is given by:
+\deqn{ \theta = h( z_j^T \alpha) }
+where \eqn{z} is specified by \code{theta.des}, and a possible link function
+\code{var.link=1} will use the exponential link \eqn{h(x)=\exp(x)}, and
+\code{var.link=0} the identity link \eqn{h(x)=x}.
+
 The reported standard errors are based on the estimated information from the
-likelihood assuming that the marginals are known (unlike the twostageMLE and for the
-additive gamma model below).
+likelihood assuming that the marginals are known (unlike \code{twostageMLE}
+and for the additive gamma model below).
 
-Can also fit a structured additive gamma random effects model, such
-as the ACE, ADE model for survival data.  In this case the
-random.design specificies the random effects for each subject within a cluster. This is
-a matrix of 1's and 0's with dimension n x d.  With d random effects.
-For a cluster with two subjects, we let the random.design rows be
- \eqn{v_1} and \eqn{v_2}.
-Such that the random effects for subject
-1 is \deqn{v_1^T (Z_1,...,Z_d)}, for d random effects. Each random effect
-has an associated parameter \eqn{(\lambda_1,...,\lambda_d)}.
-By construction subjects 1's random effect are Gamma distributed with
-mean \eqn{\lambda_j/v_1^T \lambda}
-and variance \eqn{\lambda_j/(v_1^T \lambda)^2}. Note that the random effect
-\eqn{v_1^T (Z_1,...,Z_d)} has mean 1 and variance \eqn{1/(v_1^T \lambda)}.
-It is here asssumed that  \eqn{lamtot=v_1^T \lambda} is fixed within clusters
-as it would be for the ACE model below.
+Can also fit a structured additive gamma random effects model, such as the
+ACE, ADE model for survival data. In this case, the \code{random.design}
+specifies the random effects for each subject within a cluster. This is a
+matrix of 1's and 0's with dimension \eqn{n \times d} (for \eqn{d} random effects).
 
-Based on these parameters the relative contribution (the heritability, h) is
-equivalent to  the expected values of the random effects: \eqn{\lambda_j/v_1^T \lambda}
+For a cluster with two subjects, the \code{random.design} rows are \eqn{v_1} and \eqn{v_2}.
+Such that the random effect for subject 1 is \deqn{v_1^T (Z_1,...,Z_d)}, for \eqn{d} random effects.
+Each random effect has an associated parameter \eqn{(\lambda_1,...,\lambda_d)}.
+By construction, subject 1's random effect is Gamma distributed with
+mean \eqn{\lambda_j/v_1^T \lambda} and variance \eqn{\lambda_j/(v_1^T \lambda)^2}.
+Note that the random effect \eqn{v_1^T (Z_1,...,Z_d)} has mean 1 and variance \eqn{1/(v_1^T \lambda)}.
+It is assumed that \eqn{lamtot=v_1^T \lambda} is fixed within clusters as it would be for the ACE model.
 
-The DEFAULT parametrization (var.par=1) uses the variances of the random effecs
-\deqn{
-\theta_j  = \lambda_j/(v_1^T \lambda)^2
-}
-For alternative parametrizations one can specify how the parameters relate to \eqn{\lambda_j}
-with the argument var.par=0.
+Based on these parameters, the relative contribution (the heritability, \eqn{h}) is
+equivalent to the expected values of the random effects: \eqn{\lambda_j/v_1^T \lambda}.
 
-For both types of models the basic model assumptions are that
-given the random effects of the clusters the survival distributions within a cluster
-are independent and ' on the form
-\deqn{
-P(T > t| x,z) = exp( -Z \cdot Laplace^{-1}(lamtot,lamtot,S(t|x)) )
-}
-with the inverse laplace of the gamma distribution with mean 1 and variance 1/lamtot.
+The DEFAULT parametrization (\code{var.par=1}) uses the variances of the random effects:
+\deqn{ \theta_j  = \lambda_j/(v_1^T \lambda)^2 }
+For alternative parametrizations, specify how the parameters relate to \eqn{\lambda_j}
+with the argument \code{var.par=0}.
+
+For both types of models, the basic model assumptions are that given the random effects
+of the clusters, the survival distributions within a cluster are independent and on the form:
+\deqn{ P(T > t| x,z) = \exp( -Z \cdot \text{Laplace}^{-1}(lamtot,lamtot,S(t|x)) ) }
+with the inverse Laplace of the gamma distribution with mean 1 and variance \eqn{1/lamtot}.
 
 The parameters \eqn{(\lambda_1,...,\lambda_d)} are related to the parameters of the model
-by a regression construction \eqn{pard} (d x k), that links the \eqn{d}
-\eqn{\lambda} parameters
-with the (k) underlying \eqn{\theta} parameters
-\deqn{
-\lambda = theta.des  \theta
-}
-here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
+by a regression construction \code{pard} (\eqn{d \times k}), that links the \eqn{d}
+\eqn{\lambda} parameters with the \eqn{k} underlying \eqn{\theta} parameters:
+\deqn{ \lambda = theta.des \times \theta }
+here using \code{theta.des} to specify these low-dimension associations. Default is a diagonal matrix.
 This can be used to make structural assumptions about the variances of the random-effects
 as is needed for the ACE model for example.
 
-The case.control option that can be used with the pair specification of the pairwise parts
+The \code{case.control} option can be used with the pair specification of the pairwise parts
 of the estimating equations. Here it is assumed that the second subject of each pair is the proband.
 }
 \examples{
@@ -267,26 +267,16 @@ ts <- survival_twostage(aa,data=data,clusters=data$cluster,detail=0,
 	       random.design=des.rv,theta.des=pardes)
 summary(ts)
 }
-
 }
 \references{
-Twostage estimation of additive gamma frailty models for survival data.
-Scheike (2019), work in progress
-
-Shih and Louis (1995) Inference on the association parameter in copula models for bivariate
-survival data, Biometrics, (1995).
-
-Glidden (2000), A Two-Stage estimator of the dependence
-parameter for the Clayton Oakes model, LIDA, (2000).
-
-Measuring early or late dependence for bivariate twin data
-Scheike, Holst, Hjelmborg (2015), LIDA
-
-Estimating heritability for cause specific mortality based on twins studies
-Scheike, Holst, Hjelmborg (2014), LIDA
-
-Additive Gamma frailty models for competing risks data, Biometrics (2015)
-Eriksson and Scheike (2015),
+\itemize{
+\item Twostage estimation of additive gamma frailty models for survival data. Scheike (2019), work in progress.
+\item Shih and Louis (1995) Inference on the association parameter in copula models for bivariate survival data, \emph{Biometrics}.
+\item Glidden (2000), A Two-Stage estimator of the dependence parameter for the Clayton Oakes model, LIDA.
+\item Measuring early or late dependence for bivariate twin data. Scheike, Holst, Hjelmborg (2015), LIDA.
+\item Estimating heritability for cause specific mortality based on twins studies. Scheike, Holst, Hjelmborg (2014), LIDA.
+\item Additive Gamma frailty models for competing risks data. Eriksson and Scheike (2015), \emph{Biometrics}.
+}
 }
 \author{
 Thomas Scheike

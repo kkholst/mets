@@ -2,7 +2,7 @@
 % Please edit documentation in R/recreg.R
 \name{sim_GLcox}
 \alias{sim_GLcox}
-\title{Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure}
+\title{Simulation of Two-Stage Recurrent Events Data}
 \usage{
 sim_GLcox(
   n,
@@ -23,46 +23,58 @@ sim_GLcox(
 )
 }
 \arguments{
-\item{n}{number of id's}
+\item{n}{Number of IDs.}
 
-\item{base1}{baseline for cox/ghosh-lin models}
+\item{base1}{Baseline cumulative hazard for recurrent events.}
 
-\item{drcumhaz}{baseline for terminal event}
+\item{drcumhaz}{Baseline cumulative hazard for the terminal event.}
 
-\item{var.z}{variance of gamma frailty}
+\item{var.z}{Variance of the gamma frailty.}
 
-\item{r1}{relative risk term for baseline}
+\item{r1}{Relative risk term for the recurrent event baseline.}
 
-\item{rd}{relative risk term for terminal event}
+\item{rd}{Relative risk term for the terminal event.}
 
-\item{rc}{relative risk term for censorings}
+\item{rc}{Relative risk term for censoring.}
 
-\item{fz}{possible transformation (function) of frailty term}
+\item{fz}{Function for transformation of the frailty term.}
 
-\item{fdz}{possible transformation (function) of frailty term for death}
+\item{fdz}{Function for transformation of the frailty term for death.}
 
-\item{model}{twostage, frailty, shared (partly shared two-stage model)}
+\item{model}{Model type: \code{"twostage"}, \code{"frailty"}, or \code{"shared"}.}
 
-\item{type}{type of simulation, default is decided based on model}
+\item{type}{Type of simulation (default depends on \code{model}).}
 
-\item{share}{to fit patly shared random effects model}
+\item{share}{Proportion of shared random effects (for partially shared models).}
 
-\item{cens}{censoring rate for exponential censoring}
+\item{cens}{Censoring rate for exponential censoring.}
 
-\item{nmin}{default 100, at least nmin or number of rows of the two-baselines max(nmin,nrow(base1),nrow(drcumhaz)) points in time-grid from 0 to maximum time for base1}
+\item{nmin}{Minimum number of points in the time grid (default 100).}
 
-\item{nmax}{default 1000, at most nmax points in time-grid}
+\item{nmax}{Maximum number of points in the time grid (default 1000).}
+}
+\value{
+A data frame with simulated recurrent events and terminal events, including frailty terms.
 }
 \description{
-Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure. type=3 will generate
-Cox/Cox twostage mode, type=2 will generate Ghosh-Lin/Cox model. 
-If the variance is var.z=0, then generates data without any dependence or frailty. If model="twostage" then default is to generate data from Ghosh-Lin/Cox model, and
-if type=3 then will generate data with marginal Cox models (Cox/Cox). 
-Simulation based on linear aproximation of hazard for two-stage models based on grid on time-scale. Must be sufficientyly fine.
+Simulates data based on Cox/Cox or Cox/Ghosh-Lin structures for recurrent events with a terminal event.
 }
 \details{
-Must specify baselines of recurrent events and terminal event and possible covariate effects.
+\itemize{
+\item \code{type=3}: Generates data from a Cox/Cox two-stage model.
+\item \code{type=2}: Generates data from a Ghosh-Lin/Cox model.
+}
+
+If \code{var.z=0}, data is generated without dependence or frailty.
+If \code{model="twostage"}, the default is to generate data from a Ghosh-Lin/Cox model.
+If \code{type=3}, data is generated with marginal Cox models (Cox/Cox).
+
+Simulation is based on a linear approximation of the hazard for two-stage models on a time grid.
+The grid must be sufficiently fine.
 }
 \references{
-Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear
+Scheike (2025), Two-stage recurrent events random effects models, LIDA, to appear.
+}
+\author{
+Thomas Scheike
 }

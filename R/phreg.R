@@ -187,48 +187,64 @@ phreg01 <- function(X,entry,exit,status,id=NULL,strata=NULL, offset=NULL,weights
 
 ###{{{ phreg
 
-##' Fast Cox PH regression
+##' Fast Cox Proportional Hazards Regression
 ##'
-##' Fast Cox PH regression
-##' Robust variance is default variance with the summary.
+##' Fits a Cox proportional hazards model using a fast C++ backend.
+##' Robust variance (sandwich estimator) is the default variance estimate in the summary.
 ##'
-##' influence functions (iid) will follow numerical order of given cluster variable
-##' so ordering after $id will give iid in order of data-set.
+##' The influence functions (IID decomposition) follow the numerical order of the given cluster variable.
+##' Ordering the results by `$id` will align the IID terms with the original dataset order.
 ##'
-##' @param formula formula with 'Surv' outcome (see \code{coxph})
-##' @param data data frame
-##' @param offset offsets for Cox model
-##' @param weights weights for Cox score equations
-##' @param ... Additional arguments to lower level funtions
+##' @param formula Formula with a 'Surv' or 'Event' outcome (similar to \code{coxph}).
+##' @param data Data frame containing the variables.
+##' @param offset Offsets for the Cox model linear predictor.
+##' @param weights Weights for the Cox score equations.
+##' @param ... Additional arguments passed to lower-level functions (e.g., optimization controls).
+##'
+##' @return An object of class \code{"phreg"} containing:
+##' \item{coef}{Vector of estimated coefficients.}
+##' \item{var}{Robust variance-covariance matrix.}
+##' \item{beta.iid}{Influence functions for the regression coefficients.}
+##' \item{cumhaz}{Matrix of cumulative hazard estimates (time, cumhaz).}
+##' \item{se.cumhaz}{Matrix of standard errors for the cumulative hazard.}
+##' \item{cox.prep}{List containing preprocessed data for the Cox model.}
+##' \item{opt}{Optimization results (if optimization was performed).}
+##' \item{call}{The matched call.}
+##'
 ##' @author Klaus K. Holst, Thomas Scheike
-##' @aliases phreg robust_phreg 
+##' @seealso \code{\link{plot.phreg}}, \code{\link{predict.phreg}}, \code{\link{robust_phreg}}
+##' @aliases phreg robust_phreg
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
-##' out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)
+##' # Fit model with clustering
+##' out1 <- phreg(Surv(time, status == 9) ~ wmi + age + strata(vf, chf) + cluster(id), data = TRACE)
 ##' summary(out1)
 ##'
-##' par(mfrow=c(1,2))
+##' # Plotting baselines
+##' par(mfrow = c(1, 2))
 ##' plot(out1)
 ##'
-##' ## computing robust variance for baseline
+##' # Computing robust variance for baseline
 ##' rob1 <- robust_phreg(out1)
-##' plot(rob1,se=TRUE,robust=TRUE)
+##' plot(rob1, se = TRUE, robust = TRUE)
 ##'
-##' ## iid decomposition, with scaled influence functions
-##' ## for regression parameters
+##' # IID decomposition for regression parameters
 ##' head(iid(out1))
-##' ## making iid decomposition of baseline at a specific time-point
-##' Aiiid <- iid(out1,time=30)
+##'
+##' # IID decomposition for baseline at a specific time-point
+##' Aiiid <- iid(out1, time = 30)
 ##' head(Aiiid)
-##' ## both iid decompositions
-##' dd <- iidBaseline(out1,time=30)
+##'
+##' # Combined IID decomposition (beta and baseline)
+##' dd <- iidBaseline(out1, time = 30)
 ##' head(dd$beta.iid)
 ##' head(dd$base.iid)
 ##'
-##' outs <- phreg(Surv(time,status==9)~strata(vf,wmicat.4)+cluster(id),data=TRACE)
+##' # Stratified model
+##' outs <- phreg(Surv(time, status == 9) ~ strata(vf, wmicat.4) + cluster(id), data = TRACE)
 ##' summary(outs)
-##' par(mfrow=c(1,2))
+##' par(mfrow = c(1, 2))
 ##' plot(outs)
 ##' @export
 phreg <- function(formula,data,offset=NULL,weights=NULL,...) {# {{{
@@ -458,6 +474,24 @@ estimate.phreg <- function(x, ..., time = NULL,
   return(estimate(b, ...))
 } ## }}} 
 
+##' Influence Functions for phreg objects
+##'
+##' Computes the influence functions (IID decomposition) for the regression coefficients
+##' and/or the baseline cumulative hazard at a specific time point.
+##'
+##' @param x Object of class \code{"phreg"}.
+##' @param type Type of influence function: \code{"robust"} (default) or \code{"martingale"}.
+##' @param all Logical; if \code{TRUE}, returns both beta and baseline influence functions.
+##' @param time Time point for baseline influence function (required if baseline is requested).
+##' @param baseline Arguments for baseline estimation.
+##' @param ... Additional arguments.
+##'
+##' @return A matrix of influence functions. If \code{all=TRUE}, columns correspond to
+##' regression coefficients and baseline cumulative hazard. Attributes include \code{coef}
+##' and \code{time}.
+##'
+##' @author Thomas Scheike
+##' @seealso \code{\link{phreg}}, \code{\link{iidBaseline}}
 ##' @export
 IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# {{{
   if (x$p==0 & is.null(time)) stop("Non-parametric model; need `time` argument")
@@ -595,8 +629,37 @@ IC.phreg  <- function(x,type="robust",all=FALSE,time=NULL,baseline=NULL,...) {# 
 ##' @param ... additional arguments to lower level functions
 ##' @author Thomas Scheike
 ##' @aliases iidBaseline
+
+
+##' Influence Functions or IID Decomposition of Baseline
+##'
+##' Computes the influence functions for the baseline cumulative hazard (and optionally
+##' regression coefficients) for \code{phreg}, \code{recreg}, or \code{cifregFG} objects.
+##'
+##' The decomposition is based on the formula:
+##' \deqn{ \sum_i \int_0^t \frac{f(s)}{S_0(s)} dM_{ki}(s) - P(t) \beta_k }
+##' where \eqn{k} denotes the stratum and \eqn{i} the cluster.
+##'
+##' @param object Object of class \code{"phreg"}, \code{"recreg"}, or \code{"cifregFG"}.
+##' @param time Time point for baseline IID (required).
+##' @param ft Function to compute IID of baseline integrated against \eqn{f(t)}.
+##' @param fixbeta Logical; if \code{TRUE}, fixes the coefficients (useful for specific tests).
+##' @param beta.iid Optional matrix of beta influence functions to use.
+##' @param tminus Logical; if \code{TRUE}, computes predictions at \eqn{t-} (strictly before \eqn{t}),
+##' useful for IPCW techniques.
+##' @param ... Additional arguments passed to lower-level functions.
+##'
+##' @return An object of class \code{"iidBaseline"} containing:
+##' \item{time}{Time point.}
+##' \item{base.iid}{Influence functions for the baseline.}
+##' \item{beta.iid}{Influence functions for the regression coefficients.}
+##' \item{cumhaz.time}{Cumulative hazard at the specified time.}
+##' \item{strata}{Strata indices.}
+##'
+##' @author Thomas Scheike
+##' @seealso \code{\link{phreg}}, \code{\link{recreg}}, \code{\link{cifreg}}
 ##' @export
-iidBaseline <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...) UseMethod("iidBaseline")
+iidBaseline <- function(object, time = NULL, ft = NULL, fixbeta = NULL, beta.iid = NULL, tminus = FALSE, ...) UseMethod("iidBaseline")
 
 ##' @export
 iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NULL,tminus=FALSE,...)
@@ -1336,20 +1399,32 @@ plotpredictphreg <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,c
 
 ###{{{ predict.phreg print.predict plot.predict.phreg
 
-##' Predictions from proportional hazards model
+##' Predictions from Proportional Hazards Model
 ##'
-##' @param object phreg object
-##' @param newdata data.frame
-##' @param times Time where to predict variable, default is all time-points from the object sorted
-##' @param individual.time to use one (individual) time per subject, and then newdata and times have same length and makes only predictions for these individual times.
-##' @param tminus to make predictions in T- that is strictly before given times, useful for IPCW techniques
-##' @param se with standard errors and upper and lower confidence intervals.
-##' @param robust to get robust se's also default for most functions (uses robse.cumhaz otherwise se.cumhaz).
-##' @param conf.type transformation for suvival estimates, default is log
-##' @param conf.int significance level
-##' @param km to use Kaplan-Meier product-limit for baseline \deqn{S_{s0}(t)= (1 - dA_{s0}(t))}, otherwise take exp of cumulative baseline.
-##' @param ... Additional arguments to plot functions
-##' @aliases revcumsumstrata cumsumstrata sumstrata revcumsum robust.basehaz.phreg matdoubleindex mdi 
+##' Computes predictions for survival probability, cumulative hazard, or risk at specified
+##' time points for new data or existing data. Includes standard errors and confidence intervals.
+##'
+##' @param object Object of class \code{"phreg"}.
+##' @param newdata Data frame for prediction. If \code{NULL}, predictions are made for the original data.
+##' @param times Time points for prediction. Defaults to all unique event times in the model.
+##' @param individual.time Logical; if \code{TRUE}, uses one time per subject (requires \code{newdata} and \code{times} to be same length).
+##' @param tminus Logical; if \code{TRUE}, predicts at \eqn{t-} (strictly before \eqn{t}).
+##' @param se Logical; if \code{TRUE}, computes standard errors and confidence intervals.
+##' @param robust Logical; if \code{TRUE}, uses robust standard errors (default for most functions).
+##' @param conf.type Transformation for survival estimates: \code{"log"} (default) or \code{"plain"}.
+##' @param conf.int Confidence level (default 0.95).
+##' @param km Logical; if \code{TRUE}, uses Kaplan-Meier product-limit for baseline; otherwise uses exponential of cumulative baseline.
+##' @param ... Additional arguments for plotting functions.
+##'
+##' @return An object of class \code{"predictphreg"} containing:
+##' \item{surr}{Matrix of survival probabilities.}
+##' \item{cumhaz}{Matrix of cumulative hazards.}
+##' \item{cif}{Matrix of cumulative incidence functions (if applicable).}
+##' \item{times}{Vector of time points.}
+##' \item{surv.upper, surv.lower}{Confidence bounds for survival.}
+##' \item{RR}{Relative risks.}
+##'
+##' @author Thomas Scheike
 ##' @export
 predict.phreg <- function(object,newdata,times=NULL,individual.time=FALSE,tminus=FALSE,se=TRUE,robust=FALSE,conf.type="log",conf.int=0.95,km=FALSE,...)
 {# {{{ default is all time-points from the object
@@ -1673,43 +1748,45 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 
 # {{{ Restricted mean for stratified Kaplan-Meier with martingale standard errors
 
-##' Restricted mean for stratified Kaplan-Meier or Cox model with martingale standard errors
+##' Restricted Mean for Stratified Kaplan-Meier or Cox Model
 ##'
-##' Restricted mean for stratified Kaplan-Meier or stratified Cox with martingale
-##' standard error. Standard error is computed using linear interpolation between
-##' standard errors at jump-times. Plots gives restricted mean at all times.
-##' Years lost can be computed based on this and decomposed into years lost for
-##' different causes using the cif_yearslost function that is based on
-##' integrating the cumulative incidence functions.
-##' One particular feature of these functions are that the restricted mean and years-lost are
-##' computed for all event times as functions and can be plotted/viewed.  When times are given and beyond
-##' the last event time withn a strata the curves are extrapolated using the estimates of
-##' cumulative incidence. The RMST and RMTL can also be computed using rmstIPCW at specific time-points and then
-##' influence functions are available. 
+##' Computes the Restricted Mean Survival Time (RMST) for stratified Kaplan-Meier or
+##' stratified Cox models with martingale standard errors.
 ##'
-##' @param x phreg object
-##' @param times possible times for which to report restricted mean
-##' @param covs possible covariate for Cox model
-##' @param ... Additional arguments to lower level funtions
+##' The standard error is computed using linear interpolation between standard errors at jump-times.
+##' This allows plotting the restricted mean as a function of time.
+##'
+##' Years lost can be computed based on this and decomposed into years lost for different causes
+##' using the \code{cif_yearslost} function.
+##'
+##' @param x Object of class \code{"phreg"}.
+##' @param times Possible times for which to report restricted mean. If \code{NULL}, reports for all event times.
+##' @param covs Possible covariates for Cox model adjustment.
+##' @param ... Additional arguments passed to lower-level functions.
+##'
+##' @return An object of class \code{"resmean_phreg"} containing:
+##' \item{rmst}{Matrix of restricted mean survival times.}
+##' \item{se.rmst}{Standard errors for RMST.}
+##' \item{intkmtimes}{Restricted mean at specified times.}
+##' \item{years.lost}{Years lost (if applicable).}
+##'
 ##' @author Thomas Scheike
 ##' @examples
-##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-##' out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
+##' data(bmt)
+##' bmt$time <- bmt$time + runif(408) * 0.001
+##' out1 <- phreg(Surv(time, cause != 0) ~ strata(tcell, platelet), data = bmt)
 ##'
-##' rm1 <- resmean_phreg(out1,times=10*(1:6))
+##' rm1 <- resmean_phreg(out1, times = 10 * (1:6))
 ##' summary(rm1)
 ##' e1 <- estimate(rm1)
-##' par(mfrow=c(1,2))
-##' plot(rm1,se=1)
-##' plot(rm1,years.lost=TRUE,se=1)
+##' par(mfrow = c(1, 2))
+##' plot(rm1, se = 1)
+##' plot(rm1, years.lost = TRUE, se = 1)
 ##'
-##' ## comparing populations, can also be done using rmstIPCW via influence functions
-##' rm1 <- resmean_phreg(out1,times=40)
+##' ## Comparing populations
+##' rm1 <- resmean_phreg(out1, times = 40)
 ##' e1 <- estimate(rm1)
-##' e1
-##' estimate(e1,rbind(c(1,-1,0,0)))
-##' estimate(e1,list(1:4))
-##'
+##' estimate(e1, rbind(c(1, -1, 0, 0)))
 ##' @export
 resmean_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
@@ -1903,37 +1980,46 @@ out <- resmean_phreg(x,times=NULL,covs=NULL,...)
 return(out)
 }# }}}
 
-
-##' Restricted mean time lost for competing risks with martingale standard errors
+##' Restricted Mean Time Lost for Competing Risks
 ##'
-##' Restricted mean time lost for competing risks based on integrated Aalen-Johansen.
-##' A set of time points can be given to be returned in the summary,
-##' but the function compuates years-lost for all event times and can be plotted/viewed.  
-##' The RMTL for a specific time-point can be computed by using the rmstIPCW function and
-##' the influence functions for the estimator is available. 
+##' Computes the Restricted Mean Time Lost (RMTL) for competing risks based on the
+##' integrated Aalen-Johansen estimator.
 ##'
-##' @param formula for phreg object with strata to inidicate strata or +1 if no strata is given 
-##' @param data frame for calculations 
-##' @param times possible times for which to report restricted mean, summary will display the estimates
-##' @param cens.code censoring code (needed to separate event codes from censorings)
-##' @param ... Additional arguments to phreg 
+##' A set of time points can be given to be returned in the summary, but the function
+##' computes years-lost for all event times and can be plotted/viewed.
+##' The RMTL for a specific time-point can also be computed using the \code{rmstIPCW} function.
+##'
+##' @param formula Formula for \code{phreg} object with \code{strata} to indicate strata, or \code{+1} if no strata.
+##' @param data Data frame for calculations.
+##' @param times Possible times for which to report restricted mean. Summary displays estimates for these times.
+##' @param cens.code Censoring code (needed to separate event codes from censorings).
+##' @param ... Additional arguments passed to \code{phreg}.
+##'
+##' @return An object of class \code{"resmean_phreg"} containing:
+##' \item{cumhaz}{Matrix of cumulative hazards (years lost).}
+##' \item{se.cumhaz}{Standard errors.}
+##' \item{intF1times}{Years lost at specified times.}
+##' \item{causes}{Vector of cause codes.}
+##'
 ##' @author Thomas Scheike
 ##' @examples
-##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
+##' data(bmt)
+##' bmt$time <- bmt$time + runif(408) * 0.001
 ##'
-##' ## years.lost decomposed into causes
-##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=c(40,50))
-##' par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); plot(drm1,cause=2,se=1);
+##' ## Years lost decomposed into causes
+##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = c(40, 50))
+##' par(mfrow = c(1, 2))
+##' plot(drm1, cause = 1, se = 1)
+##' plot(drm1, cause = 2, se = 1)
 ##' summary(drm1)
-##' estimate(drm1,cause=1)
-##' estimate(drm1,cause=2)
+##' estimate(drm1, cause = 1)
+##' estimate(drm1, cause = 2)
 ##'
-##' ## comparing populations, can also be done using rmstIPCW via influence functions
-##' drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=40)
-##' summary(drm1,contrast=list(1:4))
-##' ## first cause
+##' ## Comparing populations
+##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = 40)
+##' summary(drm1, contrast = list(1:4))
 ##' e1 <- estimate(drm1)
-##' estimate(e1,rbind(c(1,-1,0,0)))
+##' estimate(e1, rbind(c(1, -1, 0, 0)))
 ##' @export
 cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 {# {{{
@@ -2345,34 +2431,43 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 # }}}
 
-##' IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression
+##' IPTW Cox Regression (Inverse Probability of Treatment Weighted)
 ##'
-##' Fits Cox model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/\pi(a|X)}, where
-##'  \deqn{\pi(a|X)=P(A=a|X)}. Computes
-##' standard errors via influence functions that are returned as the IID argument.
-##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when there are
-##' than treatment categories. The treatment needs to be a factor and is identified on the rhs
-##' of the "treat.model". Recurrent events can be considered with start,stop structure and then cluster(id) must be
-##' specified. Robust standard errors are computed in all cases.
+##' Fits a Cox model with treatment weights \deqn{w(A) = \sum_a I(A=a)/\pi(a|X)}, where
+##' \deqn{\pi(a|X) = P(A=a|X)}.
 ##'
-##' Time-dependent propensity score weights can also be computed when treat.var is used, it must be 1 at the time
-##' of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
+##' Standard errors are computed via influence functions that are returned as the IID argument.
+##' Propensity scores are fitted using either logistic regression (\code{glm}) or the multinomial
+##' model (\code{mlogit}) when there are more than two treatment categories.
+##'
+##' The treatment variable must be a factor and is identified on the RHS of the \code{treat.model}.
+##' Recurrent events can be considered with a start-stop structure, requiring \code{cluster(id)}.
+##' Robust standard errors are computed in all cases.
+##'
+##' Time-dependent propensity score weights can be computed when \code{treat.var} is used. This weight
+#3' be 1 at the time of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
 ##' time of 2nd randomization.
 ##'
-##' @param formula for phreg
-##' @param data data frame for risk averaging
-##' @param treat.model propensity score model (binary or multinomial)
-##' @param treat.var a 1/0 variable that indicates when treatment is given and the propensity score is computed
-##' @param weights may be given, and then uses weights*w(A) as the weights
-##' @param estpr (=1, default) to estimate propensity scores and get infuence function contribution to uncertainty
-##' @param pi0 fixed simple weights
-##' @param se.cluster to compute GEE type standard errors when additional cluster structure is present
-##' @param ...  arguments for phreg call
+##' @param formula Formula for \code{phreg}.
+##' @param data Data frame for risk averaging.
+##' @param treat.model Propensity score model (binary or multinomial).
+##' @param treat.var A 1/0 variable indicating when treatment is given (for time-dependent weights).
+##' @param weights Optional weights to multiply with the IPTW weights.
+##' @param estpr (=1, default) to estimate propensity scores and include their uncertainty in the influence function.
+##' @param pi0 Fixed simple weights (if \code{estpr=0}).
+##' @param se.cluster To compute GEE-type standard errors when additional cluster structure is present.
+##' @param ... Arguments for \code{phreg} call.
+##'
+##' @return An object of class \code{"phreg"} with additional IPTW components:
+##' \item{IID}{Influence functions including propensity score uncertainty.}
+##' \item{iptw}{IPTW weights used.}
+##' \item{naive.var}{Naive variance ignoring propensity score uncertainty.}
+##'
 ##' @author Thomas Scheike
 ##' @examples
-##' data <- mets:::simLT(0.7,100,beta=0.3,betac=0,ce=1,betao=0.3)
-##' dfactor(data) <- Z.f~Z
-##' out <- phreg_IPTW(Surv(time,status)~Z.f,data=data,treat.model=Z.f~X)
+##' data <- mets:::simLT(0.7, 100, beta = 0.3, betac = 0, ce = 1, betao = 0.3)
+##' dfactor(data) <- Z.f ~ Z
+##' out <- phreg_IPTW(Surv(time, status) ~ Z.f, data = data, treat.model = Z.f ~ X)
 ##' summary(out)
 ##' @export
 phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weights = NULL, estpr = 1, pi0 = 0.5,se.cluster=NULL,...)
@@ -2654,48 +2749,64 @@ class(phw) <- c("phreg","IPTW")
 return(phw)
 }# }}}
 
-##' G-estimator for Cox and Fine-Gray model
+
+##' G-Estimator for Cox and Fine-Gray Models
 ##'
-##' Computes G-estimator \deqn{ \hat S(t,A=a) = n^{-1} \sum_i \hat S(t,A=a,Z_i) }
-##' for the Cox model based on phreg og the Fine-Gray model based on the
-##' cifreg function. Gives influence functions of these risk estimates and SE's are
-##' based on  these.  If first covariate is a factor then all contrast are computed,
-##' and if continuous then considered covariate values are given by Avalues.
+##' Computes the G-estimator (G-formula) for standardized survival or cumulative incidence estimates:
+##' \deqn{ \hat S(t, A=a) = n^{-1} \sum_i \hat S(t, A=a, Z_i) }
 ##'
-##' @param x phreg or cifreg object
-##' @param data data frame for risk averaging, must be part of the data used for fitting unless same.data=FALSE. When a subset of the data such as the treated model should be fitted with cluster(id)
-##' @param time for estimate
-##' @param Avalues values to compare for first covariate A
-##' @param varname if given then averages for this variable, default is first variable
-##' @param same.data assumes that same data is used for fitting of survival model and averaging.
-##' @param First to only use first record for G-averaging, for example when start,stop structure is used with phreg
+##' Based on a \code{phreg} or \code{cifreg} object. Provides influence functions for these risk estimates,
+##' allowing for standard error computation.
+##'
+##' If the first covariate is a factor, contrasts between all levels are computed automatically.
+##' If it is continuous, specific values must be provided via \code{Avalues}.
+##'
+##' @param x Object of class \code{"phreg"} or \code{"cifreg"}.
+##' @param data Data frame for risk averaging. Must be part of the data used for fitting unless \code{same.data=FALSE}.
+##' @param time Time point for estimation.
+##' @param Avalues Values to compare for the first covariate \eqn{A}.
+##' @param varname Name of the variable to be treated as the treatment/exposure variable (default is the first variable).
+##' @param same.data Logical; assumes the same data is used for fitting and averaging.
+##' @param First Logical; if \code{TRUE}, uses only the first record for G-averaging (useful for start-stop structures).
+##'
+##' @return An object of class \code{"survivalG"} containing:
+##' \item{risk}{Standardized risk estimates.}
+##' \item{risk.iid}{Influence functions for the risk estimates.}
+##' \item{difference}{Pairwise differences in risks.}
+##' \item{ratio}{Risk ratios.}
+##' \item{survival.ratio}{Survival ratios (for \code{phreg}).}
+##' \item{survival.difference}{Survival differences (for \code{phreg}).}
+##'
 ##' @author Thomas Scheike
+##' @aliases survivalGtime
 ##' @examples
-##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-##' bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
-##' dfactor(bmt) <- tcell.f~tcell
+##' data(bmt)
+##' bmt$time <- bmt$time + runif(408) * 0.001
+##' bmt$event <- (bmt$cause != 0) * 1
+##' bmt$id <- 1:408
+##' dfactor(bmt) <- tcell.f ~ tcell
 ##'
-##' fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
-##'               cox.prep=TRUE,propodds=NULL)
-##' summary(survivalG(fg1,bmt,50))
+##' # Fine-Gray model
+##' fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt, cause = 1, cox.prep = TRUE, propodds = NULL)
+##' summary(survivalG(fg1, bmt, 50))
 ##'
-##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt)
-##' summary(survivalG(ss,bmt,50))
+##' # Cox model
+##' ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age, bmt)
+##' summary(survivalG(ss, bmt, 50))
 ##'
-##' ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt)
-##' summary(survivalG(ss,bmt,50))
+##' # Stratified Cox model
+##' ss <- phreg(Surv(time, event) ~ strata(tcell.f) + platelet + age, bmt)
+##' summary(survivalG(ss, bmt, 50))
 ##'
-##' sst <- survivalGtime(ss,bmt,n=50)
+##' # Time-varying G-estimates
+##' sst <- survivalGtime(ss, bmt, n = 50)
 ##' plot(sst)
 ##'
-##' fg1t <- survivalGtime(fg1,bmt,n=50)
-##' plot(fg1t)
-##'
-##' #among treated: must specify id to link influence functions
-##' ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt)
-##' summary(survivalG(ss,subset(bmt,tcell==1),50))
-##' @export
+##' # Among treated (specify id to link influence functions)
+##' ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age + cluster(id), bmt)
+##' summary(survivalG(ss, subset(bmt, tcell == 1), 50))
 ##' @aliases survivalGtime
+##' @export
 survivalG <- function(x,data,time=NULL,Avalues=NULL,varname=NULL,same.data=TRUE,First=FALSE)
 {# {{{
 if (is.null(time)) stop("Give time for estimation of survival/cumulative incidence\n")
@@ -2955,28 +3066,36 @@ for (ss in us[-1]) {
 }
 # }}}
 
-##' Fast additive hazards model with robust standard errors
+##' Fast Additive Hazards Model with Robust Standard Errors
 ##'
-##' Fast Lin-Ying additive hazards model with a possibly stratified baseline.
-##' Robust variance is default variance with the summary.
+##' Fits a fast Lin-Ying additive hazards model with a possibly stratified baseline.
+##' Robust variance is the default variance estimate in the summary.
 ##'
-##' influence functions (iid) will follow numerical order of given cluster variable
-##' so ordering after $id will give iid in order of data-set.
+##' Influence functions (IID) follow the numerical order of the given cluster variable.
+##' Ordering by \code{$id} aligns the IID terms with the dataset order.
 ##'
-##' @param formula formula with 'Surv' outcome (see \code{coxph})
-##' @param data data frame
-##' @param no.baseline to fit model without baseline hazard
-##' @param ... Additional arguments to phreg
+##' @param formula Formula with a 'Surv' outcome (similar to \code{coxph}).
+##' @param data Data frame.
+##' @param no.baseline Logical; if \code{TRUE}, fits the model without baseline hazard estimation.
+##' @param ... Additional arguments passed to \code{phreg}.
+##'
+##' @return An object of class \code{"aalenMets"} (extends \code{"phreg"}) containing:
+##' \item{coef}{Estimated coefficients.}
+##' \item{var}{Robust variance-covariance matrix.}
+##' \item{iid}{Influence functions.}
+##' \item{intZHZ}{Integrated ZHZ matrix.}
+##' \item{gamma}{Coefficient estimates.}
+##'
 ##' @author Thomas Scheike
 ##' @examples
-##'
-##' data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-##' out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+##' data(bmt)
+##' bmt$time <- bmt$time + runif(408) * 0.001
+##' out <- aalenMets(Surv(time, cause == 1) ~ tcell + platelet + age, data = bmt)
 ##' summary(out)
 ##'
-##' ## out2 <- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+##' ## Comparison with timereg::aalen
+##' ## out2 <- timereg::aalen(Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age), data = bmt)
 ##' ## summary(out2)
-##'
 ##' @export
 aalenMets <- function(formula,data=data,no.baseline=FALSE,...)
 {# {{{
@@ -3067,27 +3186,34 @@ class(x) <- c(class(x),"aalenMets")
 return(x)
 }# }}}
 
-##' Kaplan-Meier with robust standard errors
+##' Kaplan-Meier with Robust Standard Errors
 ##'
-##' Kaplan-Meier with robust standard errors
-##' Robust variance is default variance and obtained from the predict call
-##' @param formula formula with 'Surv' 'Event' outcome
-##' @param data data frame
-##' @param km TRUE to get Kaplan-Meier otherwise Nelson-Aalen based
-##' @param ... Additional arguments to phreg
+##' Computes Kaplan-Meier estimates with robust standard errors.
+##' Robust variance is the default and is obtained from the \code{predict} call.
+##'
+##' @param formula Formula with 'Surv' or 'Event' outcome.
+##' @param data Data frame.
+##' @param km Logical; if \code{TRUE}, returns Kaplan-Meier estimates; otherwise returns Nelson-Aalen based estimates.
+##' @param ... Additional arguments passed to \code{phreg}.
+##'
+##' @return An object of class \code{"km"} (extends \code{"predictphreg"}) containing:
+##' \item{surr}{Survival probabilities.}
+##' \item{se.surv}{Standard errors.}
+##' \item{lower, upper}{Confidence intervals.}
+##'
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(sTRACE)
-##' sTRACE$cluster <- sample(1:100,500,replace=TRUE)
-##' out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
-##' out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
+##' sTRACE$cluster <- sample(1:100, 500, replace = TRUE)
+##' out1 <- km(Surv(time, status == 9) ~ strata(vf, chf), data = sTRACE)
+##' out2 <- km(Surv(time, status == 9) ~ strata(vf, chf) + cluster(cluster), data = sTRACE)
 ##'
-##' summary(out1,times=1:3)
-##' summary(out2,times=1:3)
+##' summary(out1, times = 1:3)
+##' summary(out2, times = 1:3)
 ##'
-##' par(mfrow=c(1,2))
-##' plot(out1,se=TRUE)
-##' plot(out2,se=TRUE)
+##' par(mfrow = c(1, 2))
+##' plot(out1, se = TRUE)
+##' plot(out2, se = TRUE)
 ##' @export
 km <- function(formula,data=data,km=TRUE,...)
 {# {{{
@@ -3119,31 +3245,32 @@ plot.km <- function(x,...) { ## {{{
    plot.predictphreg(x,...)
 }# }}}
 
-###predict.km <- function(object,newdata,...) { ## {{{
-## take strata after readPhreg
-### take relevant parts of prediction that is only for each strata
-## out <- predict.phreg(object,newdata,se=se,conf.type=conf.type[1],...)
-###}# }}}
-
-##' Cumulative incidence with robust standard errors
+##' Cumulative Incidence with Robust Standard Errors
 ##'
-##' Cumulative incidence with robust standard errors
-##' @param formula formula with 'Event' outcome and strata (only!)
-##' @param data data frame
-##' @param cause NULL looks at all, otherwise specify which cause to consider
-##' @param cens.code censoring code "0" is default, and death is cens.code!=0
-##' @param death.code alternative to cens.code give codes of death
-##' @param ... Additional arguments to lower level funtions
+##' Computes cumulative incidence functions with robust standard errors.
+##'
+##' @param formula Formula with 'Event' outcome and \code{strata} (only!).
+##' @param data Data frame.
+##' @param cause Cause of interest (default is \code{NULL}, which looks at all causes).
+##' @param cens.code Censoring code (default is \code{"0"}).
+##' @param death.code Alternative to \code{cens.code}; specifies codes of death.
+##' @param ... Additional arguments passed to lower-level functions.
+##'
+##' @return An object of class \code{"cif"} (extends \code{"phreg"}) containing:
+##' \item{cumhaz}{Cumulative incidence estimates.}
+##' \item{se.cumhaz}{Standard errors.}
+##' \item{cause}{Cause of interest.}
+##'
 ##' @author Thomas Scheike
 ##' @examples
 ##' data(bmt)
-##' bmt$cluster <- sample(1:100,408,replace=TRUE)
-##' out1 <- cif(Event(time,cause)~+1,data=bmt,cause=1)
-##' out2 <- cif(Event(time,cause)~+1+cluster(cluster),data=bmt,cause=1)
+##' bmt$cluster <- sample(1:100, 408, replace = TRUE)
+##' out1 <- cif(Event(time, cause) ~ +1, data = bmt, cause = 1)
+##' out2 <- cif(Event(time, cause) ~ +1 + cluster(cluster), data = bmt, cause = 1)
 ##'
-##' par(mfrow=c(1,2))
-##' plot(out1,se=TRUE)
-##' plot(out2,se=TRUE)
+##' par(mfrow = c(1, 2))
+##' plot(out1, se = TRUE)
+##' plot(out2, se = TRUE)
 ##' @export
 cif <- function(formula,data=data,cause=1,cens.code=0,death.code=NULL,...)
 {# {{{
@@ -3245,36 +3372,34 @@ summary.cif <- function(object,se=FALSE,ylab=NULL,times=NULL,conf.type=c("log","
    return(out)
 } ## }}}
 
-##' Proportional odds survival model
+##' Proportional Odds Survival Model
 ##'
-##' Semiparametric Proportional odds model, that has the advantage that
-##' \deqn{
-##' logit(S(t|x)) = \log(\Lambda(t)) + x \beta
-##' }
-##' so covariate effects give OR of survival.
+##' Fits a semiparametric proportional odds model where:
+##' \deqn{ \logit(S(t|x)) = \log(\Lambda(t)) + x \beta }
+##' Thus, covariate effects represent the odds ratio (OR) of survival.
 ##'
-##' This is equivalent to using a hazards model
-##' \deqn{
-##'   Z \lambda(t) \exp(x \beta)
-##' }
-##' where Z is gamma distributed with mean and variance 1.
+##' This is equivalent to using a hazards model:
+##' \deqn{ Z \lambda(t) \exp(x \beta) }
+##' where \eqn{Z} is gamma distributed with mean and variance 1.
 ##'
-##' @param formula formula with 'Surv' outcome (see \code{coxph})
-##' @param data data frame
-##' @param offset offsets for exp(x beta) terms
-##' @param weights weights for score equations
-##' @param ... Additional arguments to lower level funtions
+##' @param formula Formula with 'Surv' outcome (similar to \code{coxph}).
+##' @param data Data frame.
+##' @param offset Offsets for \eqn{\exp(x \beta)} terms.
+##' @param weights Weights for score equations.
+##' @param ... Additional arguments passed to lower-level functions.
+##'
+##' @return An object of class \code{"phreg"} with \code{propodds=1}.
+##'
 ##' @author Thomas Scheike
 ##' @references
-##'
-##' The proportional odds cumulative incidence model for competing risks,
-##' Eriksson, Frank and Li, Jianing and Scheike, Thomas and Zhang, Mei-Jie,
-##' Biometrics, 2015, 3, 687--695, 71,
+##' Eriksson, Frank, Li, Jianing, Scheike, Thomas, and Zhang, Mei-Jie (2015).
+##' "The proportional odds cumulative incidence model for competing risks."
+##' \emph{Biometrics}, 71(3), 687--695.
 ##'
 ##' @examples
 ##' data(TRACE)
 ##' dcut(TRACE) <- ~.
-##' out1 <- logitSurv(Surv(time,status==9)~vf+chf+strata(wmicat.4),data=TRACE)
+##' out1 <- logitSurv(Surv(time, status == 9) ~ vf + chf + strata(wmicat.4), data = TRACE)
 ##' summary(out1)
 ##' gof(out1)
 ##' plot(out1)
