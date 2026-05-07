@@ -3358,7 +3358,7 @@ summary.cif <- function(object,se=FALSE,ylab=NULL,times=NULL,conf.type=c("log","
 ##' Proportional Odds Survival Model
 ##'
 ##' Fits a semiparametric proportional odds model where:
-##' \deqn{ \logit(S(t|x)) = \log(\Lambda(t)) + x \beta }
+##' \deqn{ \mbox{logit}(S(t|x)) = \log(\Lambda(t)) + x \beta }
 ##' Thus, covariate effects represent the odds ratio (OR) of survival.
 ##'
 ##' This is equivalent to using a hazards model:

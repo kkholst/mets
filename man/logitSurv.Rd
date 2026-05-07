@@ -22,7 +22,7 @@ An object of class \code{"phreg"} with \code{propodds=1}.
 }
 \description{
 Fits a semiparametric proportional odds model where:
-\deqn{ \logit(S(t|x)) = \log(\Lambda(t)) + x \beta }
+\deqn{ \mbox{logit}(S(t|x)) = \log(\Lambda(t)) + x \beta }
 Thus, covariate effects represent the odds ratio (OR) of survival.
 }
 \details{
