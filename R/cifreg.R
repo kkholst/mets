@@ -1,36 +1,47 @@
-##' CIF regression
+
+##' Cumulative Incidence Function (CIF) Regression
 ##'
-##' CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog) regression for propodds=NULL. The
-##' FG model can also be called using the cifregFG function that has propodds=NULL.
-##'
-##' For FG model:
-##' \deqn{
-##' \int (X - E ) Y_1(t) w(t) dM_1
+##' Fits a regression model for the cumulative incidence function (CIF) in the presence of competing risks.
+##' Supports two link functions:
+##' \itemize{
+##' \item \code{propodds=1} (default): Logistic link model (logit of CIF), providing Odds Ratio (OR) interpretations.
+##' \item \code{propodds=NULL}: Fine-Gray (cloglog) regression model, providing subdistribution hazard ratio interpretations.
 ##' }
-##' is computed and summed over clusters and returned multiplied with inverse
-##' of second derivative as iid.naive. Here \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))} and
-##' \deqn{E(t) = S_1(t)/S_0(t)} and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}.
 ##'
-##' The iid decomposition of the beta's, however, also have a censoring term that is also
-##' is computed and added (still scaled with inverse second derivative)
-##' \deqn{
-##' \int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c
-##' }
-##' and returned as the iid 
+##' For the Fine-Gray model, the score equations are:
+##' \deqn{ \int (X - E(t)) Y_1(t) w(t) dM_1 }
+##' summed over clusters and returned as \code{iid.naive} (multiplied by the inverse of the second derivative).
+##' Here, \deqn{w(t) = G(t) (I(T_i \wedge t < C_i)/G_c(T_i \wedge t))},
+##' \deqn{E(t) = S_1(t)/S_0(t)}, and \deqn{S_j(t) = \sum X_i^j Y_{i1}(t) w_i(t) \exp(X_i^T \beta)}.
 ##'
-##' For logistic link standard errors are slightly to small since uncertainty from recursive baseline is not considered, so for smaller
-##' data-sets it is recommended to use the prop.odds.subdist of timereg that is also more efficient due to use of different weights for
-##' the estimating equations. Alternatively, one can also bootstrap the standard errors.
+##' The full influence function (IID decomposition) for the beta coefficients includes a censoring term:
+##' \deqn{ \int (X - E(t)) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c }
+##' which is returned as the \code{iid} component.
 ##'
-##' @param formula formula with 'Event' outcome
-##' @param data data frame
-##' @param propodds to fit logit link model, and propodds=NULL to fit Fine-Gray model
-##' @param cause of interest
-##' @param cens.code code of censoring
-##' @param no.codes certain event codes to be ignored when finding competing causes, can be used with administrative censoring.
-##' @param death.code can also specify death.code (in addition to cause) to overrule default which takes all remaining codes (minus cause,cens.code,no.codes)
-##' @param ... Additional arguments to recreg 
+##' For the logistic link model, standard errors may be slightly underestimated because uncertainty from the
+##' recursive baseline estimation is not fully accounted for. For smaller datasets, it is recommended to use
+##' the \code{prop.odds.subdist} function from the \pkg{timereg} package (which uses more efficient weights)
+##' or to bootstrap the standard errors.
+##'
+##' @param formula Formula with an 'Event' outcome.
+##' @param data Data frame containing the variables.
+##' @param propodds Logical; if \code{1} (default), fits the logit link model. If \code{NULL}, fits the Fine-Gray model.
+##' @param cause Cause of interest (default is 1).
+##' @param cens.code Code for censoring (default is 0).
+##' @param no.codes Event codes to be ignored when identifying competing causes (useful for administrative censoring).
+##' @param death.code Codes for death (terminal events). If \code{NULL}, defaults to all remaining codes (excluding \code{cause}, \code{cens.code}, and \code{no.codes}).
+##' @param ... Additional arguments passed to \code{recreg}.
+##'
+##' @return An object of class \code{"cifreg"} (extending \code{"phreg"}) containing:
+##' \item{coef}{Estimated coefficients.}
+##' \item{var}{Robust variance-covariance matrix.}
+##' \item{iid}{Influence functions for the coefficients.}
+##' \item{cumhaz}{Cumulative incidence estimates.}
+##' \item{propodds}{Indicator of the link function used.}
+##'
 ##' @author Thomas Scheike
+##' @seealso \code{\link{cifregFG}}, \code{\link{recreg}}, \code{\link{gofFG}}
+##' @aliases vecAllStrata diffstrata FGprediid indexstratarightR gofFG cifregFG
 ##' @examples
 ##' ## data with no ties
 ##' data(bmt,package="mets")
@@ -113,6 +124,20 @@ cifreg  <- function(formula,data,propodds=1,cause=1,cens.code=0,no.codes=NULL,de
 return(cif)
 } # }}}
 
+##' Fine-Gray Cumulative Incidence Function Regression
+##'
+##' Convenience wrapper for \code{cifreg} that specifically fits the Fine-Gray model
+##' by setting \code{propodds=NULL}. This provides subdistribution hazard ratio interpretations.
+##'
+##' @param formula Formula with an 'Event' outcome.
+##' @param data Data frame.
+##' @param propodds Set to \code{NULL} to fit the Fine-Gray model (default behavior of this function).
+##' @param ... Additional arguments passed to \code{cifreg}.
+##'
+##' @return An object of class \code{"cifreg"} (extending \code{"phreg"}) with \code{propodds=NULL}.
+##'
+##' @author Thomas Scheike
+##' @seealso \code{\link{cifreg}} 
 ##' @export
 cifregFG  <- function(formula,data,propodds=NULL,...)
 {# {{{
