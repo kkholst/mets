@@ -1001,70 +1001,14 @@ predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { 
 } #
 
 ##' @export
-summary.predictrecreg <- function(object,strata=NULL,type=c("cif","cumhaz","surv")[2],times=NULL,np=10,extend=FALSE,...) { ## {{{
-	call.times <- times
-	if (is.null(times)) {
-		indexcol <- seq(ncol(object$surv)) 
-		times <- object$times
-	} else {
-            if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
-	    if (extend) {
-                    indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
-	    }  else {
-                    indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
-		    times[indexcol==0] <- NA
-		    if (any(indexcol == 0) ) warning("Some requested times are before the first event time, returning NA\n")
-	    }
-	}
-
-	if (is.null(np)) {
-              ids <- seq(nrow(object$surv)) 
-       } else {
-           if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
-           if (length(np) > 1)               ids <- np                        # specific row ids
-           else if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))   # np larger than data
-           else                               ids <- seq(np)                   # first np rows
-        }
-
-	if (is.null(object[[type[1]]])) stop("type '", type[1], "' not found in predict object\n")
-	out <- object[[type[1]]]
-	nlower <- paste(type[1],".lower",sep="")
-	nupper <- paste(type[1],".upper",sep="")
-	lower <- object[[nlower]]
-	upper <- object[[nupper]]
-	nse <-  paste("se.",type[1],sep="")
-	se.out  <- object[[paste("se.",type[1],sep="")]]
-	if (extend) {
-	if (type[1]=="surv") {
-		out <- cbind(1,out) 
-		if (!is.null(se.out)) se.out <- cbind(0,se.out)
-		if (!is.null(lower)) lower <- cbind(1,lower) 
-		if (!is.null(upper)) upper <- cbind(1,upper) 
-	} else { 
-		out <- cbind(0,out)
-		if (!is.null(se.out)) se.out <- cbind(0,se.out)
-		if (!is.null(lower)) lower <- cbind(0,lower) 
-		if (!is.null(upper)) upper <- cbind(0,upper) 
-	}
-	}
-	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
-
-	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],se.pred=se.out[ids,indexcol],lower=lower[ids,indexcol],upper=upper[ids,indexcol],times=times,rows=ids)
-	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
-	out$call.times <- call.times
-	return(out)
+summary.predictrecreg <- function(object,type=c("cif","cumhaz","surv")[2],...) { ## {{{
+   mets:::summary.predictphreg(object,type=type[1],...)
 } ## }}}
 
 ##' @export
-print.predictrecreg <- function(x,...) { ## }}}
-out <- summary(x,...)
-cat("Predictions displayed, for rows:\n")
-print(out$rows)
-if (!is.null(out$call.times))  {
-cat("Predictions based on predict object, for times:\n")
-print(out$times)
-}
-print(out)
+print.predictrecreg <- function(x,type=c("cif","cumhaz","surv")[2],...) 
+{ ## }}}
+ mets:::print.predictphreg(x,type=type[1],...)
 } ## }}}
 
 

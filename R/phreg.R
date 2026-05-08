@@ -1549,76 +1549,127 @@ model.matrix.phreg <- function(object, data=NULL, ...) {
 }
 
 ##' @export
-summary.predictphreg <- function(object,type=c("cif","cumhaz","surv")[3],times=NULL,np=10,extend=FALSE,...) {# {{{
-	call.times <- times
-	if (is.null(times)) {
-		indexcol <- seq(ncol(object$surv)) 
-		times <- object$times
-	} else {
-            if (!is.numeric(times)) stop("times of predictions displayed in summary, or NULL (all times)\n")
-	    if (extend) {
-                    indexcol <- predictCumhaz(c(0,object$times),times,return.index=TRUE)
-	    }  else {
-                    indexcol <- predictCumhaz(object$times,times,return.index=TRUE)
-		    times[indexcol==0] <- NA
-		    if (any(indexcol == 0) ) warning("Some requested times are before the first event time, returning NA\n")
-	    }
-	}
+summary.predictphreg <- function(object, type = c("surv", "cumhaz", "cif")[1],
+                                 times = NULL, np = 10, extend = FALSE,
+                                 digits = 4, ...) { ## {{{ 
+  # ---- resolve time indices ----------------------------------------
+  call.times <- times
+  if (is.null(times)) {
+    indexcol <- seq(ncol(object$surv))
+    times    <- object$times
+  } else {
+    if (!is.numeric(times))
+      stop("'times' must be numeric or NULL\n")
+    if (extend) {
+      indexcol <- predictCumhaz(c(0, object$times), times, return.index = TRUE)
+    } else {
+      indexcol <- predictCumhaz(object$times, times, return.index = TRUE)
+      times[indexcol == 0] <- NA
+      if (any(indexcol == 0))
+        warning("Some requested times are before the first event time, returning NA\n")
+    }
+  }
 
-	if (is.null(np)) {
-              ids <- seq(nrow(object$surv)) 
-       } else {
-           if (!is.numeric(np)) stop("must be row-ids, or number of subjects displayed in summary, or NULL (all rows)\n")
-           if (length(np) > 1)               ids <- np                        # specific row ids
-           else if (np >= nrow(object$surv)) ids <- seq(nrow(object$surv))   # np larger than data
-           else                               ids <- seq(np)                   # first np rows
-        }
+  # ---- resolve subject (row) indices --------------------------------
+  n_subj <- nrow(object[[type[1]]])
+  if (is.null(np)) {
+    ids <- seq(n_subj)
+  } else {
+    if (!is.numeric(np))
+      stop("'np' must be row ids, a count, or NULL\n")
+    if (length(np) > 1)       ids <- np           # explicit ids
+    else if (np >= n_subj)    ids <- seq(n_subj)  # np >= data size
+    else                      ids <- seq(np)       # first np rows
+  }
 
+  # ---- extract the requested quantity --------------------------------
+  qty <- type[1]
+  if (is.null(object[[qty]]))
+    stop(sprintf("Type '%s' not found in predict object\n", qty))
 
-	if (is.null(object[[type[1]]])) stop("type '", type[1], "' not found in predict object\n")
-        out <- object[[type[1]]]
-	nlower <- paste(type[1],".lower",sep="")
-	nupper <- paste(type[1],".upper",sep="")
-	lower <- object[[nlower]]
-	upper <- object[[nupper]]
-	nse <-  paste("se.",type[1],sep="")
-	se.out  <- object[[paste("se.",type[1],sep="")]]
-	if (extend) {
-	if (type[1]=="surv") {
-		out <- cbind(1,out) 
-		if (!is.null(se.out)) se.out <- cbind(0,se.out)
-		if (!is.null(lower)) lower <- cbind(1,lower) 
-		if (!is.null(upper)) upper <- cbind(1,upper) 
-	} else { 
-		out <- cbind(0,out)
-		if (!is.null(se.out)) se.out <- cbind(0,se.out)
-		if (!is.null(lower)) lower <- cbind(0,lower) 
-		if (!is.null(upper)) upper <- cbind(0,upper) 
-	}
-	}
-	if (length(lower)>1) { se <- 1; } else  { se <- 0; lower <- upper <- NULL}
+  mat      <- object[[qty]]
+  lower    <- object[[paste0(qty, ".lower")]]
+  upper    <- object[[paste0(qty, ".upper")]]
+  se.out   <- object[[paste0("se.", qty)]]
 
-	if (!is.null(lower)) out <- list(pred=out[ids,indexcol],
-					 se.pred=se.out[ids,indexcol],
-					 lower=lower[ids,indexcol],
-					 upper=upper[ids,indexcol],
-					 times=times,rows=ids)
-	else  out <- list(pred=out[ids,indexcol],times=times,rows=ids)
-	out$call.times <- call.times
-return(out)
-}# }}}
+  # ---- extend with time-0 boundary if requested ---------------------
+  if (extend) {
+    boundary <- if (qty == "surv") 1 else 0
+    mat    <- cbind(boundary, mat)
+    se.out <- if (!is.null(se.out)) cbind(0, se.out) else NULL
+    lower  <- if (!is.null(lower))  cbind(boundary, lower)  else NULL
+    upper  <- if (!is.null(upper))  cbind(boundary, upper)  else NULL
+  }
+
+  # ---- slice and return ---------------------------------------------
+  has_ci <- length(lower) > 1
+  if (has_ci) {
+    out <- list(
+      pred    = mat[ids, indexcol, drop = FALSE],
+      se.pred = se.out[ids, indexcol, drop = FALSE],
+      lower   = lower[ids, indexcol, drop = FALSE],
+      upper   = upper[ids, indexcol, drop = FALSE],
+      times   = times,
+      rows    = ids
+    )
+  } else {
+    out <- list(
+      pred  = mat[ids, indexcol, drop = FALSE],
+      times = times,
+      rows  = ids
+    )
+  }
+
+  out$call.times <- call.times
+  out$type       <- qty
+  class(out)     <- "summary.predictphreg"
+  out
+} ## }}} 
+
 
 ##' @export
-print.predictphreg <- function(x,...) {# {{{
-   out <- summary(x,...)
-   cat("Predictions displayed, for rows:\n")
-   print(out$rows)
-   if (!is.null(out$call.times))  {
-   cat("Predictions based on predict object, for times:\n")
-   print(out$times)
-   }
-print(out)
-}# }}}
+print.predictphreg <- function(x, type = c("surv", "cumhaz", "cif")[1],
+                               times = NULL, np = 10, digits = 4, ...) { ## {{{ 
+  # Run summary to get the sliced data
+  s <- summary(x, type = type[1], times = times, np = np, ...)
+
+  n_subj  <- nrow(x[[type[1]]])
+  n_times <- ncol(x[[type[1]]])
+  has_ci  <- !is.null(s$lower)
+
+  cat(sprintf("Predictions of type '%s'\n", type[1]))
+  cat(sprintf("  Subjects: %d total, showing %d\n", n_subj,  length(s$rows)))
+  cat(sprintf("  Times:    %d total, showing %d\n", n_times, length(s$times)))
+  if (has_ci) cat("  Confidence intervals available\n")
+  cat("\n")
+
+  # Build a long-format data frame: one row per (subject, time)
+  rows <- s$rows
+  tms  <- round(s$times, digits)
+  pred <- s$pred
+
+  df_list <- vector("list", length(rows))
+  for (i in seq_along(rows)) {
+    entry <- data.frame(
+      subject = rows[i],
+      time    = tms,
+      pred    = round(pred[i, ], digits)
+    )
+    names(entry)[3] <- type[1]
+    if (has_ci) {
+      entry$lower <- round(s$lower[i, ], digits)
+      entry$upper <- round(s$upper[i, ], digits)
+      entry$se    <- round(s$se.pred[i, ], digits)
+    }
+    df_list[[i]] <- entry
+  }
+  out_df <- do.call(rbind, df_list)
+  rownames(out_df) <- NULL
+
+  print(out_df, row.names = FALSE)
+  invisible(x)
+} ## }}} 
+
 
 ##' @export
 plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL,col=NULL,type=c("surv","cumhaz","cif"),ylab=NULL,xlab=NULL,
