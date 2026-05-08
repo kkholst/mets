@@ -1244,11 +1244,13 @@ sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
   } else ctime <- rep(maxtime,n)
 
   ## hazards out of 1 and out of 2
-###  chaz1 <- cumss[1:3]; rr1 <- cbind(rr,rd)
-###  chaz2 <- cumss[4:5]; rr2 <- cbind(rd2)
+###  chaz1 <- cumss[1:3]; 
+###  chaz2 <- cumss[4:5]; 
   idx1 <- 1:(1 + length(death.cumhaz))
   idx2 <- (max(idx1) + 1):(max(idx1) + length(death.cumhaz2))
   chaz1 <- cumss[idx1]; chaz2 <- cumss[idx2]
+  rr1 <- cbind(rr,rd)
+  rr2 <- cbind(rd2)
 
   ## time out of state 1 
   tall <- rchazl(chaz1,rr1,causes=c(2,3,4))

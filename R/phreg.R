@@ -657,8 +657,10 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
 
   if (!is.null(x$propodds))  stop("Only for Cox model")
   ### sets fixbeta based on  wheter xr has been optimized in beta (so cox case)
-  if (is.null(fixbeta))
-  if ((x$no.opt) | is.null(x$coef)) fixbeta<- 1 else fixbeta <- 0
+  if (is.null(fixbeta)) {
+    fixbeta <- if ((x$no.opt) | is.null(x$coef)) 1 else 0
+ }
+
 
   xx <- x$cox.prep
   btimexx <- c(1*(xx$time < time))
@@ -666,7 +668,7 @@ iidBaseline.phreg <- function(object,time=NULL,ft=NULL,fixbeta=NULL,beta.iid=NUL
   S0i2 <- S0i <- rep(0,length(xx$strata))
   S0i[xx$jumps+1] <- 1/x$S0
   ww <- xx$caseweights*xx$weights
-  S0i2[xx$jumps+1] <- 1/(x$S0^2*ww[xx$jump+1])
+  S0i2[xx$jumps+1] <- 1/(x$S0^2*ww[xx$jumps+1])
   Z <- xx$X
   U <- E <- matrix(0,nrow(xx$X),x$p)
   E[xx$jumps+1,] <- x$E
@@ -790,6 +792,7 @@ if (is.null(x$propodds)) { # {{{ cox model
 	  cumhazm <- cumhazA$lagsum
           ###
 	  EdLam0 <- apply(E*S0i,2,cumsumstrata,xx$strata,xx$nstrata)
+	  Z <- xx$X
 	  rr <- c(xx$sign*exp(Z %*% coef(x) + xx$offset))
 	  rro <- c(exp(Z %*% coef(x) + xx$offset))
           S0star <- revcumsumstrata(rr/(1+rro*cumhazm),xx$strata,xx$nstrata)
@@ -982,10 +985,10 @@ print.summary.phreg  <- function(x,max.strata=5,...) { ## {{{
   print(nn,quote=FALSE)
   if (!is.null(x$ncluster)) cat("\n ", x$ncluster, " clusters\n",sep="")
   if (!is.null(x$coef)) {
-    cat("coeffients:\n")
+    cat("coefficients:\n")
     printCoefmat(x$coef,...)
     cat("\n")
-    cat("exp(coeffients):\n")
+    cat("exp(coefficients):\n")
     printCoefmat(x$exp.coef,...)
   }
   cat("\n")
@@ -1154,7 +1157,7 @@ baseplot  <- function(x,se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NULL,
             xx <- conftype(cumhazard[,2],cumhazard[,3],conf.type=conf.type[1],restrict=restrict[1],conf.int=level)
             nl <- cbind(cumhazard[,1],xx$lower); ul <- cbind(cumhazard[,1],xx$upper)
 	      if (!polygon) {
-		  lines(nl,type="s",lty=ltys[j,2],col=cols[j,2],lwd=lwds[i,2],...)
+		  lines(nl,type="s",lty=ltys[j,2],col=cols[j,2],lwd=lwds[j,2],...)
 		  lines(ul,type="s",lty=ltys[j,3],col=cols[j,3],lwd=lwds[j,3],...)
 	      } else plotConfRegion(nl[,1],cbind(nl[,2],ul[,2]),col=cols[j,1])
         }
@@ -2034,7 +2037,7 @@ estimate.resmean_phreg <- function(x,cause=1,...)
 ##' @export
 rmst_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
-out <- resmean_phreg(x,times=NULL,covs=NULL,...)
+out <- resmean_phreg(x,times=times,covs=covs,...)
 return(out)
 }# }}}
 
@@ -2567,6 +2570,7 @@ phreg_IPTW <- function (formula, data,treat.model = NULL, treat.var = NULL,weigh
  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
 
  ## take offset and weight first from formula, but then from arguments
+ offset <- NULL
   if (is.null(des.offset)) {
 	  if (is.null(offset)) offset <- rep(0,length(exit))
   } else offset <- des.offset
@@ -2942,8 +2946,8 @@ if (same.data) {
    vv <- crossprod(risk.iid)
 } else {
    predictAiid <- matrix(0,ndata,ncol(risks))
-   for (a in seq_along(nlevels))  {
-	risk.iid[,a] <- risk.iid[,a]
+   for (a in seq_along(Alevels))  {
+###	risk.iid[,a] <- risk.iid[,a]
 	predictAiid[,a] <- coxiid %*% DariskG[[a]]/ndata
    }
    risk.iid <- rbind(risk.iid,predictAiid)
@@ -2967,7 +2971,7 @@ out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,
 }
 
 class(out) <- "survivalG"
-attr(out,"levels") <- nlevels
+attr(out,"levels") <- Alevels
 return(out)
 } ## }}}
 
@@ -3040,12 +3044,12 @@ if (is.null(time)) {
        if (!is.null(n)) time <- seq(rr[1],rr[2],length=n) else time <- x$cumhaz[,1]
 }
 
-survivalG <- risk <- difference <- ratio <- survival.ratio <- c()
+survivalGt <- risk <- difference <- ratio <- survival.ratio <- c()
 
 for (tt in time) {
   Gt <- survivalG(x,data,time=tt,...)
   strata <- strata(rownames(Gt$risk$coefmat))
-  survivalG <- rbind(survivalG,cbind(tt,Gt$survivalG$coefmat))
+  survivalGt <- rbind(survivalGt,cbind(tt,Gt$survivalG$coefmat))
   risk <- rbind(risk,cbind(tt,Gt$risk$coefmat))
   difference <- rbind(difference,cbind(tt,Gt$difference$coefmat))
   ratio <- rbind(ratio,cbind(tt,exp(Gt$ratio$coefmat)))
@@ -3059,7 +3063,7 @@ for (tt in time) {
   if (!is.null(survival.ratio))
   colnames(survival.ratio)[1] <- "time"
   strata <- strata(rownames(risk))
-out <- list(time=time,survivalG=survivalG,risk=risk,difference=difference,
+out <- list(time=time,survivalG=survivalGt,risk=risk,difference=difference,
 	    ratio=ratio,survival.ratio=survival.ratio,strata=strata)
 
 class(out) <- "survivalGtime"
