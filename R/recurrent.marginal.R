@@ -1,76 +1,89 @@
 
-##' Fast recurrent marginal mean estimation when death is possible
+##' Marginal mean estimation for recurrent events with a terminal event
 ##'
-##' Computes fast marginal means of recurrent events using the Ghosh and Lin (2000) 
-##' robust standard error methodology. The method fits two separate models—one for death 
-##' (terminating event) and one for recurrent events—which are then combined to produce 
-##' the estimator:
-##' \deqn{ \int_0^t S(u-) dR(u) }
-##' where this represents the mean number of recurrent events (or cumulative incidence). 
-##' Here, \deqn{S(u)} is the probability of survival for the baseline group, and 
-##' \deqn{dR(u)} is the hazard rate of an event among survivors for the baseline.
-##' 
-##' The function assumes no ties in the sense that jump times need to be unique, 
-##' which is particularly important for the stratified version.
+##' Estimates the marginal mean number of recurrent events over time in the
+##' presence of a competing terminal event (e.g. death), using the nonparametric
+##' estimator of Ghosh and Lin (2000). Two proportional hazards models are fitted
+##' internally—one for the recurrent event rate and one for the terminal
+##' event—and combined to form the estimator
+##' \deqn{\mu(t) = \int_0^t S(u-)\,dR(u),}
+##' where \eqn{S(u)} is the marginal survival probability at the baseline covariate
+##' level and \eqn{dR(u)} is the baseline recurrent event rate among survivors.
+##' Robust (sandwich) standard errors are computed via the influence-function
+##' approach of Ghosh and Lin (2000).
 ##'
-##' @param formula Formula with \code{Event} object specifying entry time, exit time, 
-##'   and status. Can include \code{cluster()} for subject-level clustering and 
-##'   \code{strata()} for stratified analysis.
-##' @param data Data frame containing all variables referenced in the formula.
-##' @param cause Numeric code(s) for the event of interest (default is 1).
-##' @param death.code Numeric code(s) for death/terminating event (default is 2).
-##' @param test Logical; if TRUE, computes a logrank-type test for two-group comparisons.
-##' @param ... Additional arguments passed to lower-level functions (e.g., \code{phreg}).
-##' @return An object of class \code{"recurrent"} containing the marginal mean (\code{mu}), standard errors (\code{se.mu}), times, survival probabilities (\code{St}), and cumulative hazards. Attributes include the logrank test result (if \code{test=TRUE}), cause, and death code.
+##' Jump times must be unique within each stratum. If ties are present, use
+##' \code{\link{tie_breaker}} to resolve them before calling this function.
+##'
+##' @param formula A formula with an \code{\link{Event}} response on the left-hand
+##'   side, specifying entry time, exit time, and event status. The right-hand side
+##'   may include \code{cluster()} to identify subjects and \code{strata()} for a
+##'   stratified analysis. A \code{cluster()} term is required.
+##' @param data A data frame containing all variables in \code{formula}.
+##' @param cause Integer code(s) for the recurrent event of interest. Default is
+##'   \code{1}.
+##' @param death.code Integer code(s) for the terminal event. Default is \code{2}.
+##' @param test Logical. If \code{TRUE}, a logrank-type test comparing strata is
+##'   computed and stored as an attribute of the result. Default is \code{FALSE}.
+##' @param ... Further arguments passed to \code{\link{phreg}}.
+##'
+##' @return An object of class \code{"recurrent"} with the following components:
+##'   \item{mu}{Estimated marginal mean \eqn{\mu(t)} at each jump time.}
+##'   \item{se.mu}{Robust standard error of \code{mu}.}
+##'   \item{times}{Jump times at which estimates are computed.}
+##'   \item{St}{Marginal survival estimate \eqn{S(t)} at each jump time.}
+##'   \item{cumhaz}{Two-column matrix of \code{(time, mu)}, suitable for plotting.}
+##'   \item{se.cumhaz}{Two-column matrix of \code{(time, se.mu)}.}
+##'   The object carries three attributes: \code{"logrank"} (the test result when
+##'   \code{test = TRUE}, otherwise \code{NULL}), \code{"cause"}, and
+##'   \code{"death.code"}.
+##'
 ##' @author Thomas Scheike
-##' 
-##' @references 
-##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
-##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+##'
+##' @seealso \code{\link{test_logrankRecurrent}}, \code{\link{tie_breaker}},
+##'   \code{\link{prob_exceed_recurrent}}
+##'
+##' @references
+##' Cook, R. J. and Lawless, J. F. (1997). Marginal analysis of recurrent events
+##' and a terminating event. \emph{Statistics in Medicine}, 16, 911--924.
+##'
+##' Ghosh, D. and Lin, D. Y. (2000). Nonparametric analysis of recurrent events
+##' and death. \emph{Biometrics}, 56, 554--562.
+##'
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
-##' hf$x <- as.numeric(hf$treatment) 
+##' hf$x <- as.numeric(hf$treatment)
 ##'
-##' ##  to fit non-parametric models with just a baseline 
-##' xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
-##' dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
-##' par(mfrow=c(1,3))
-##' plot(dr,se=TRUE)
-##' title(main="death")
-##' plot(xr,se=TRUE)
-##' ### robust standard errors 
-##' rxr <-  robust_phreg(xr,fixbeta=1)
-##' plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
-##' 
-##' ## marginal mean of expected number of recurrent events 
-##' ## out <- recurrentMarginalPhreg(xr,dr)
-##' ## summary(out,times=1:5) 
-##' 
-##' ## marginal mean using formula  
-##' outN <- recurrent_marginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
-##' plot(outN,se=TRUE,col=2,add=TRUE)
-##' summary(outN,times=1:5) 
-##' 
-##' ########################################################################
-##' ###   with strata     ##################################################
-##' ########################################################################
-##' out <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-##'                          data=hf,cause=1,death.code=2,test=TRUE)
-##' plot(out,se=TRUE,ylab="marginal mean",col=1:2)
-##' 
-##' attr(out,"logrank")
-##' 
-##' summary(out,times=1:5) 
-##' ########################################################################
-##' ### iid decomposition based on influence functions from Ghosh Lin (2000)
-##' ########################################################################
-##' head(iid(outN,time=3))
+##' ## Fit nonparametric baseline models for recurrent events and death
+##' xr <- phreg(Surv(entry, time, status == 1) ~ cluster(id), data = hf)
+##' dr <- phreg(Surv(entry, time, status == 2) ~ cluster(id), data = hf)
 ##'
-##' @aliases recurrent_marginalAIPCW  recurrentMarginalPhreg iidRecurrent
-##' @references 
-##' Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
-##' Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+##' par(mfrow = c(1, 3))
+##' plot(dr, se = TRUE); title(main = "Death")
+##' plot(xr, se = TRUE); title(main = "Recurrent events")
+##'
+##' ## Compare naive and robust standard errors for the recurrent event rate
+##' rxr <- robust_phreg(xr, fixbeta = 1)
+##' plot(rxr, se = TRUE, robust = TRUE, add = TRUE, col = 4)
+##'
+##' ## Marginal mean via formula interface
+##' outN <- recurrent_marginal(Event(entry, time, status) ~ cluster(id),
+##'                            data = hf, cause = 1, death.code = 2)
+##' plot(outN, se = TRUE, col = 2, add = TRUE)
+##' summary(outN, times = 1:5)
+##'
+##' ## Stratified analysis with logrank test
+##' out <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + cluster(id),
+##'                           data = hf, cause = 1, death.code = 2, test = TRUE)
+##' plot(out, se = TRUE, ylab = "Marginal mean", col = 1:2)
+##' attr(out, "logrank")
+##' summary(out, times = 1:5)
+##'
+##' ## Influence-function (iid) decomposition at a fixed time point
+##' head(iid(outN, time = 3))
+##'
+##' @aliases recurrent_marginalAIPCW recurrentMarginalPhreg iidRecurrent
 ##' @export
 recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
 {# {{{
@@ -433,74 +446,79 @@ ic <- iid*nrow(iid)
 return(ic)
 } ## }}}
 
-##' Logrank-type test for recurrent marginal mean or cumulative incidence
+##' Logrank-type test for comparing recurrent event marginal means between groups
 ##'
-##' Computes a logrank-type test statistic for comparing recurrent marginal means 
-##' or cumulative incidence functions between groups, extending the standard logrank 
-##' test to settings with recurrent events and a terminating event (death).
-##' 
-##' The test statistic is defined as:
-##' \deqn{ z_1 = \int_0^t w(s) [ d \hat m_1(s) - d \hat m_2(s) ] }
-##' where \eqn{w(s)} are weights and \eqn{\hat m_j(s)} are the estimated marginal 
-##' means for group \eqn{j}. The variance is estimated robustly using influence 
-##' functions derived from the Ghosh and Lin (2000) methodology.
-##' 
-##' The function supports various weighting schemes:
-##' \itemize{
-##'   \item \code{"I"}: \eqn{w(t) = R_1 R_2 / (R_1 + R_2)}, where \eqn{R_j(t) = Y_j(t)/\hat S_j(t-)} 
-##'     and \eqn{Y_j} is the number at risk, \eqn{\hat S_j} is the Kaplan-Meier survival estimate.
-##'   \item \code{"II"}: \eqn{w(t) = Y_1 Y_2 / (Y_1 + Y_2)}, standard logrank weights based on numbers at risk.
-##'   \item \code{"III"}: Weights corresponding to Gray's test for cumulative incidence, 
-##'     involving subdistribution hazards.
+##' Tests whether the marginal mean number of recurrent events differs across
+##' groups (strata), extending the classical logrank test to the setting of
+##' recurrent events with a competing terminal event. The test statistic is
+##' \deqn{z = \int_0^\tau w(s)\bigl[d\hat\mu_1(s) - d\hat\mu_2(s)\bigr],}
+##' where \eqn{w(s)} is a weight function and \eqn{\hat\mu_j(s)} is the estimated
+##' marginal mean for group \eqn{j}. Variance is estimated robustly via the
+##' influence functions of Ghosh and Lin (2000).
+##'
+##' Three weight schemes are available:
+##' \describe{
+##'   \item{\code{"I"}}{(Default) \eqn{w(t) = R_1(t) R_2(t) / (R_1(t) + R_2(t))},
+##'     where \eqn{R_j(t) = Y_j(t) / \hat S_j(t-)}. Analogous to the standard
+##'     logrank weight.}
+##'   \item{\code{"II"}}{\eqn{w(t) = Y_j(t)}, the raw risk-set size. Equivalent
+##'     to using observed counts without survival adjustment.}
+##'   \item{\code{"III"}}{A modified weight incorporating the cumulative incidence,
+##'     analogous to Gray's test for competing risks.}
 ##' }
-##' The test works for recurrent events, cumulative incidence, and handles delayed entry.
 ##'
-##' @param recurrent A \code{phreg} object for the recurrent events model, or an object 
-##'   of class \code{"recurrent"} (output from \code{recurrent_marginal}).
-##' @param death A \code{phreg} object for the death (terminating event) model.
-##' @param weight Character string specifying the weighting scheme: \code{"I"}, \code{"II"}, 
-##'   or \code{"III"} (default is \code{"I"}).
-##' @param km Logical; if TRUE, uses Kaplan-Meier estimates for survival probabilities 
-##'   in the weights; if FALSE, uses \eqn{\exp(-\text{cumulative hazard})}.
-##' @param start Numeric; start time for the integral (default 0).
-##' @param stop Numeric; stop time for the integral. If NULL, defaults to the maximum 
-##'   jump time in the recurrent event model.
-##' @param at.risk Numeric; if > 0, the test only uses time points where the minimum 
-##'   number of subjects at risk in any group is greater than this value.
-##' @param cluster.id Optional vector of cluster IDs to combine IID representations 
-##'   (useful for GEE-style clustering).
-##' @param ... Additional arguments (currently unused).
-##' @return An object of class \code{"estimate"} (from the \code{lava} package) containing:
-##'   \item{coef}{The test statistic (difference in weighted marginal means).}
-##'   \item{se}{The robust standard error of the test statistic.}
-##'   \item{lower, upper}{Lower and upper bounds of the confidence interval.}
-##'   \item{p.value}{Two-sided p-value for the test.}
-##'   \item{iid}{The influence function (IID) decomposition of the test statistic, 
-##'     useful for further variance calculations or combining with other estimators.}
-##'   
-##' The object also includes attributes for the weights used and the time range.
+##' @param recurrent Either a \code{"recurrent"} object returned by
+##'   \code{\link{recurrent_marginal}}, or a \code{"phreg"} object for the
+##'   recurrent event model (in which case \code{death} must also be supplied).
+##' @param death A \code{"phreg"} object for the terminal event model. Required
+##'   when \code{recurrent} is a \code{"phreg"} object; ignored otherwise.
+##' @param weight Character string specifying the weight scheme: \code{"I"},
+##'   \code{"II"}, or \code{"III"}. Default is \code{"I"}.
+##' @param km Logical. If \code{TRUE} (default), the Kaplan-Meier estimator is
+##'   used for the survival probability \eqn{S(t)}; otherwise the Nelson-Aalen
+##'   estimator is used.
+##' @param start Left truncation time for the integration. Default is \code{0}.
+##' @param stop Right truncation time for the integration. Defaults to the last
+##'   observed jump time.
+##' @param at.risk Minimum combined risk-set size below which the weight is set
+##'   to zero. Default is \code{5}.
+##' @param cluster.id Optional vector of cluster identifiers for aggregating
+##'   influence functions across clusters before forming the test statistic.
+##' @param ... Currently unused.
+##'
+##' @return An object of class \code{"estimate"} (from the \pkg{lava} package)
+##'   with the following components:
+##'   \item{coef}{The weighted difference in marginal means between groups.}
+##'   \item{se}{Robust standard error of the test statistic.}
+##'   \item{lower, upper}{95\% confidence interval bounds.}
+##'   \item{p.value}{Two-sided p-value for the null hypothesis of no difference.}
+##'   The object also carries an \code{iid} attribute containing the
+##'   subject-level influence function decomposition of the test statistic,
+##'   which can be used for further inference or combination with other estimators.
+##'
 ##' @author Thomas Scheike
-##' 
-##' @references 
-##' Ghosh, D. and Lin, D. Y. (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 58, 554--562.
-##' 
+##'
 ##' @seealso \code{\link{recurrent_marginal}}, \code{\link{logrankRecurrentBase}}
+##'
+##' @references
+##' Ghosh, D. and Lin, D. Y. (2000). Nonparametric analysis of recurrent events
+##' and death. \emph{Biometrics}, 56, 554--562.
+##'
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##'
-##' ## Fit separate models for recurrent events and death
-##' xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-##' dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
-##'
-##' ## Compute logrank test for recurrent marginal means
-##' out <- test_logrankRecurrent(xr, dr, stop=5)
+##' ## Test using two separate phreg models
+##' xr <- phreg(Surv(entry, time, status == 1) ~ strata(treatment) + cluster(id), data = hf)
+##' dr <- phreg(Surv(entry, time, status == 2) ~ strata(treatment) + cluster(id), data = hf)
+##' out <- test_logrankRecurrent(xr, dr, stop = 5)
 ##' summary(out)
 ##'
-##' ## Alternatively, using the recurrent_marginal object directly
-##' outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-##'                            data=hf,cause=1,death.code=2)
+##' ## Equivalently, using a recurrent_marginal object directly
+##' outN <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + cluster(id),
+##'                            data = hf, cause = 1, death.code = 2)
 ##' test_logrankRecurrent(outN)
+##'
 ##' @aliases logrankRecurrentBase
 ##' @export
 test_logrankRecurrent <- function(recurrent,death,
@@ -1006,128 +1024,258 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
  return(list(cov=cov12,cov12A=cov12A*mu,covbeta=cov12aa*mu))
 } # }}}
 
+##' Break ties in event times for recurrent event data
+##'
+##' Resolves tied event times in a counting-process dataset by adding a small
+##' random perturbation to duplicated exit times of event rows. This is a
+##' preprocessing step required by \code{\link{recurrent_marginal}} and related
+##' functions, which assume unique jump times within each stratum.
+##'
+##' A tie is defined as an event exit time (rows where \code{status} is a cause
+##' code) that coincides with another exit time in the dataset. When
+##' \code{exit.unique = TRUE} (default), a tie is flagged whenever an event time
+##' also appears among any other exit times (censored or event). When
+##' \code{exit.unique = FALSE}, only exact ties between two event rows are
+##' resolved.
+##'
+##' Tied event times are perturbed by adding \eqn{U \cdot \delta} where
+##' \eqn{U \sim \text{Uniform}(0, 1)} and \eqn{\delta} is \code{ddt} (defaulting
+##' to half the smallest observed positive gap between consecutive exit times).
+##' When subject IDs are provided via \code{id}, the corresponding interval start
+##' time of the immediately following row for the same subject is updated to
+##' maintain a valid counting-process structure, and a logical \code{tiebreaker}
+##' column is added to flag affected rows.
+##'
+##' @param data A data frame in counting-process format, sorted by subject and
+##'   time.
+##' @param stop Name of the column containing interval exit (stop) times.
+##'   Default is \code{"time"}.
+##' @param start Name of the column containing interval entry (start) times,
+##'   used to update the following row when \code{id} is supplied. Default is
+##'   \code{"entry"}.
+##' @param status Name of the column containing event status codes. Default is
+##'   \code{"status"}.
+##' @param id Name of the column containing subject identifiers. If supplied,
+##'   the start time of the next interval for the same subject is adjusted to
+##'   match the perturbed stop time, preserving interval continuity. Default is
+##'   \code{NULL} (no adjustment made).
+##' @param ddt Maximum perturbation size. Tied event times are shifted by a
+##'   uniform draw on \eqn{[0, \text{ddt}]}. If \code{NULL} (default), \code{ddt}
+##'   is set to half the smallest positive gap between any two consecutive exit
+##'   times in the data.
+##' @param exit.unique Logical. If \code{TRUE} (default), an event time is
+##'   considered tied whenever it coincides with \emph{any} exit time in the
+##'   data (including censored rows). If \code{FALSE}, only ties among event rows
+##'   are resolved.
+##' @param cause Integer vector of status codes that identify events (non-censored
+##'   rows). If \code{NULL} (default), all non-censoring status values are treated
+##'   as events.
+##' @param cens.code Integer code(s) for censoring. Rows with this status are
+##'   never perturbed. Default is \code{0}.
+##'
+##' @return The input data frame \code{data} with tied event exit times
+##'   perturbed. If \code{id} is supplied, an additional logical column
+##'   \code{tiebreaker} marks rows whose start time was adjusted as a consequence
+##'   of a perturbation in the preceding row.
+##'
+##' @author Thomas Scheike
+##'
+##' @seealso \code{\link{recurrent_marginal}}, \code{\link{test_logrankRecurrent}}
+##'
+##' @examples
+##' data(hfactioncpx12)
+##' hf <- hfactioncpx12
+##'
+##' ## Check for ties in event exit times
+##' ev <- hf[hf$status == 1, ]
+##' any(duplicated(ev$time))
+##'
+##' ## Resolve ties before fitting the marginal mean model
+##' hf_clean <- tie_breaker(hf, stop = "time", start = "entry",
+##'                          status = "status", id = "id",
+##'                          cause = 1, cens.code = 0)
+##'
+##' out <- recurrent_marginal(Event(entry, time, status) ~ cluster(id),
+##'                            data = hf_clean, cause = 1, death.code = 2)
+##' summary(out, times = 1:5)
+##'
 ##' @export
-tie_breaker <- function(data,stop="time",start="entry",status="status",id=NULL,ddt=NULL,exit.unique=TRUE,cause=NULL,cens.code=0)
+tie_breaker <- function(data, stop = "time", start = "entry", status = "status",
+                        id = NULL, cause = NULL, cens.code = 0,
+                        exit.unique = TRUE, ddt = NULL, seed = NULL)
 {# {{{
+   id.col <- id
+   if (!is.null(id)) id <- data[, id]
+   ord  <- 1:nrow(data)
+   stat <- data[, status]
+   time <- data[, stop]
 
-   if (!is.null(id)) id <- data[,id]
-   ord <- 1:nrow(data)
-   stat <- data[,status]
-   time <- data[,stop]
+   ## determine event codes, excluding censoring
    if (is.null(cause)) cause <- unique(stat)
    type0 <- which(cause %in% cens.code)
-   if (length(type0)>0) cause <- cause[-type0]
+   if (length(type0) > 0) cause <- cause[-type0]
    jumps <- stat %in% cause
-   dupexit <- duplicated(time)
-   time1 <- data[jumps,stop]
-   time0 <- data[!jumps,stop]
-   lt0 <- length(time0)
-   ddp <- duplicated(c(time0,time1))
-   if (exit.unique) ties <-ddp[(lt0+1):nrow(data)] else ties <- duplicated(c(time1))
-   if (length(ties)>0) nties <- sum(ties) else nties <- 0
-   if (nties>1) {
-	   ordties <- ord[jumps][ties]
-	   if (is.null(ddt)) {
-		   abd <- abs(diff(data[,stop]))
-		   abd <- min(abd[abd>0])
-		   ddt <- abd*0.5
-	   }
-	   time[ordties] <- time[ordties]+runif(nties)*ddt
 
-	   data[ordties,stop] <- time[ordties]
-	   ties <- (ord %in% ordties)
-	   if (!is.null(id)) {
-	   lagties <- dlag(ties)
-	   ### also move next start time if id the same 
-	   change.start <- lagties==TRUE & id==dlag(id)
-	   change.start[is.na(change.start)] <- FALSE
-	   ocs <- ord[change.start]
-	   data[ocs,start] <- data[ocs-1,stop]
-	   data[,"tiebreaker"] <- FALSE
-	   data[ocs,"tiebreaker"] <- TRUE
-	   }
+   ## detect tied event times
+   time1 <- data[jumps,  stop]
+   time0 <- data[!jumps, stop]
+   lt0   <- length(time0)
+   ddp   <- duplicated(c(time0, time1))
+   if (exit.unique)
+     ties <- ddp[(lt0 + 1):nrow(data)]
+   else
+     ties <- duplicated(c(time1))
+
+   nties <- sum(ties)
+
+   ## initialise tiebreaker column unconditionally
+   data[, "tiebreaker"] <- FALSE
+
+   if (nties >= 1) {
+     message(nties, " tied event time(s) found and perturbed.")
+
+     ordties <- ord[jumps][ties]
+
+     ## compute ddt from sorted unique event-time gaps, not row differences
+     if (is.null(ddt)) {
+       ut  <- sort(unique(time[jumps]))
+       gaps <- diff(ut)
+       ddt <- min(gaps[gaps > 0]) * 0.5
+     }
+
+     ## apply reproducible perturbation
+     if (!is.null(seed)) set.seed(seed)
+     time[ordties] <- time[ordties] + runif(nties) * ddt
+     data[ordties, stop] <- time[ordties]
+
+     ## mark perturbed rows
+     data[ordties, "tiebreaker"] <- TRUE
+
+     ## when id is available, propagate stop -> start for the next interval
+     ## of the same subject to maintain a valid counting-process structure
+     if (!is.null(id.col)) {
+       ties_flag  <- ord %in% ordties
+       lagties    <- dlag(ties_flag)
+       change.start <- lagties == TRUE & id == dlag(id)
+       change.start[is.na(change.start)] <- FALSE
+       ocs <- ord[change.start]
+       data[ocs, start] <- data[ocs - 1, stop]
+     }
    }
-   
+
    return(data)
  } # }}}
 
 
-##' Simulation of recurrent events data based on cumulative hazards with two
-##' types of recurrent events
+##' Simulate recurrent events with two event types and a terminal event
 ##'
-##' Simulation of recurrent events data based on cumulative hazards 
+##' Simulates recurrent event data with up to two distinct event types and an
+##' optional terminal event (death), based on user-supplied cumulative hazard
+##' functions. Dependence between processes can be introduced via shared or
+##' correlated gamma-distributed frailties.
 ##'
-##' Must give cumulative hazard of death and possibly two recurrent events. 
-##' Their dependence can be specified via random 
-##' effects but the two recurrent events need to share the random effect, and can also be
-##' specified via zzr. 
-##' The terminal event may share this random effect (dependence=1) or not 
-##' (dependence=4) and can be specified via zzr.
+##' The simulation proceeds by sequentially drawing the next event time from the
+##' specified cumulative hazards, taking the minimum of the two recurrent event
+##' times, and stopping each subject at death or administrative censoring.
 ##'
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of recurrent events 
-##' @param cumhaz2  cumulative hazard of recurrent events  of type 2
-##' @param death.cumhaz cumulative hazard of death 
-##' @param r1 potential relative risk adjustment of rate 
-##' @param r2 potential relative risk adjustment of rate
-##' @param rd potential relative risk adjustment of rate
-##' @param rc potential relative risk adjustment of rate
-##' @param gap.time if true simulates gap-times with specified cumulative hazard
-##' @param max.recurrent limits number recurrent events to 100
-##' @param dependence 0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death  
-##' @param var.z variance of random effects 
-##' @param cor.mat correlation matrix for var.z variance of random effects 
-##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to sim_recurrent_list
+##' Dependence between processes is controlled by \code{dependence}:
+##' \describe{
+##'   \item{\code{0}}{Independence: all subjects have frailty fixed at 1.}
+##'   \item{\code{1}}{Shared frailty: all processes share a single
+##'     gamma-distributed random effect with mean 1 and variance \code{var.z}.}
+##'   \item{\code{4}}{Recurrent-event frailty only: the two recurrent event
+##'     processes share a gamma frailty but the terminal event is independent.}
+##' }
+##' For more complex correlation structures across two event types and death, use
+##' \code{\link{sim_recurrentTS}}.
+##'
+##' @param n Number of subjects to simulate.
+##' @param cumhaz Two-column matrix \code{(time, cumhaz)} giving the cumulative
+##'   hazard of the first type of recurrent event.
+##' @param cumhaz2 Two-column matrix \code{(time, cumhaz)} giving the cumulative
+##'   hazard of the second type of recurrent event.
+##' @param death.cumhaz Two-column matrix \code{(time, cumhaz)} giving the
+##'   cumulative hazard of the terminal event. If \code{NULL}, no terminal event
+##'   is simulated and follow-up ends at the end of \code{cumhaz}.
+##' @param r1 Optional numeric vector of length \code{n} with subject-specific
+##'   relative risk multipliers for the first event type.
+##' @param r2 Optional numeric vector of length \code{n} with subject-specific
+##'   relative risk multipliers for the second event type.
+##' @param rd Optional numeric vector of length \code{n} with subject-specific
+##'   relative risk multipliers for the terminal event.
+##' @param rc Optional numeric vector of length \code{n} with subject-specific
+##'   multipliers for the exponential censoring rate.
+##' @param gap.time Logical. If \code{TRUE}, event times are drawn as gap times
+##'   (time since the last event) rather than calendar times. Default is
+##'   \code{FALSE}.
+##' @param max.recurrent Maximum number of recurrent events allowed per subject.
+##'   Default is \code{100}.
+##' @param dependence Integer specifying the frailty structure. One of \code{0}
+##'   (independence), \code{1} (shared gamma frailty), or \code{4} (shared frailty
+##'   for recurrent events only). See Details.
+##' @param var.z Variance of the gamma-distributed frailty. Default is \code{1}.
+##' @param cor.mat Correlation matrix for the random effects. Used when
+##'   \code{dependence = 2} (in \code{\link{sim_recurrent_list}}).
+##' @param cens Rate of exponential censoring. If \code{NULL} (default), no
+##'   additional censoring is applied.
+##' @param ... Further arguments passed to \code{\link{sim_recurrent_list}}.
+##'
+##' @return A data frame in counting-process format (one row per event interval
+##'   per subject) with columns:
+##'   \item{id}{Subject identifier.}
+##'   \item{start, entry}{Interval start time.}
+##'   \item{stop, time}{Interval end time (event or censoring time).}
+##'   \item{status}{Event type at \code{stop}: \code{1} or \code{2} for a
+##'     recurrent event of the corresponding type, \code{0} for censoring.}
+##'   \item{death}{Indicator for a terminal event (\code{1}) or censoring/survival
+##'     (\code{0}).}
+##'   Attributes \code{"cumhaz"}, \code{"death.cumhaz"}, \code{"rr"}, and
+##'   \code{"rd"} store the inputs used for simulation.
+##'
 ##' @author Thomas Scheike
+##'
+##' @seealso \code{\link{sim_recurrent}}, \code{\link{sim_recurrent_list}},
+##'   \code{\link{sim_recurrentTS}}
+##'
 ##' @examples
-##' ########################################
-##' ## getting some rates to mimick 
-##' ########################################
 ##' data(CPH_HPN_CRBSI)
-##' dr <- CPH_HPN_CRBSI$terminal
-##' base1 <- CPH_HPN_CRBSI$crbsi 
+##' dr    <- CPH_HPN_CRBSI$terminal
+##' base1 <- CPH_HPN_CRBSI$crbsi
 ##' base4 <- CPH_HPN_CRBSI$mechanical
 ##'
-##'######################################################################
-##' ### simulating simple model that mimicks data 
-##'######################################################################
-##' rr <- sim_recurrent(5,base1)
-##' dlist(rr,.~id,n=0)
-##' rr <- sim_recurrent(5,base1,death.cumhaz=dr)
-##' dlist(rr,.~id,n=0)
+##' ## Single recurrent event type, with and without terminal event
+##' rr <- sim_recurrent(5, base1)
+##' dlist(rr, . ~ id, n = 0)
 ##'
-##' rr <- sim_recurrent(100,base1,death.cumhaz=dr)
-##' par(mfrow=c(1,3))
-##' mets:::showfitsim(causes=1,rr,dr,base1,base1)
-##' ######################################################################
-##' ### simulating simple model 
-##' ### random effect for all causes (Z shared for death and recurrent) 
-##' ######################################################################
-##' rr <- sim_recurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
-##' dtable(rr,~death+status)
+##' rr <- sim_recurrent(5, base1, death.cumhaz = dr)
+##' dlist(rr, . ~ id, n = 0)
 ##'
-##' ######################################################################
-##' ### now with two event types and second type has same rate as death rate
-##' ######################################################################
+##' ## Verify that estimated rates recover the true baselines (increase n for precision)
+##' rr <- sim_recurrent(100, base1, death.cumhaz = dr)
+##' par(mfrow = c(1, 3))
+##' mets:::showfitsim(causes = 1, rr, dr, base1, base1)
+##'
+##' ## Shared frailty across all processes
+##' rr <- sim_recurrent(100, base1, death.cumhaz = dr, dependence = 1, var.z = 0.4)
+##' dtable(rr, ~death + status)
+##'
+##' ## Two event types; second type uses the mechanical complication rate
 ##' set.seed(100)
-##' rr <- sim_recurrentII(100,base1,base4,death.cumhaz=dr)
-##' dtable(rr,~death+status)
-##' par(mfrow=c(2,2))
-##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
+##' rr <- sim_recurrentII(100, base1, base4, death.cumhaz = dr)
+##' dtable(rr, ~death + status)
+##' par(mfrow = c(2, 2))
+##' mets:::showfitsim(causes = 2, rr, dr, base1, base4)
 ##'
-##' ######################################################################
-##' ### now with three event types and two causes of death 
-##' ######################################################################
+##' ## Three event types and two causes of death via sim_recurrent_list
 ##' set.seed(100)
-##' cumhaz <- list(base1,base1,base4)
-##' drl <- list(dr,base4)
-##' rr <- sim_recurrent_list(100,cumhaz,death.cumhaz=drl,dependence=0)
-##' dtable(rr,~death+status)
-##' mets:::showfitsimList(rr,cumhaz,drl) 
+##' cumhaz <- list(base1, base1, base4)
+##' drl    <- list(dr, base4)
+##' rr     <- sim_recurrent_list(100, cumhaz, death.cumhaz = drl, dependence = 0)
+##' dtable(rr, ~death + status)
+##' mets:::showfitsimList(rr, cumhaz, drl)
 ##'
 ##' @export
-##' @aliases sim_recurrentII sim_recurrent_list 
+##' @aliases sim_recurrentII sim_recurrent_list
 sim_recurrentII <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,r1=NULL,r2=NULL,rd=NULL,rc=NULL,dependence=0,var.z=1,
 			   cor.mat=NULL,cens=NULL,gap.time=FALSE,max.recurrent=100,...) 
 {# {{{
@@ -1145,15 +1293,28 @@ data <-     sim_recurrent_list(n,cumhazL,death.cumhaz=death.cumhaz,rr=rr,
 return(data)
 }# }}}
 
-##' @title Simulation of recurrent events data based on cumulative hazards for event and death process
+##' Simulate recurrent events with a single event type and a terminal event
+##'
+##' A convenience wrapper around \code{\link{sim_recurrentII}} for the common
+##' case of a single recurrent event type. Frailty and censoring options are
+##' passed through to \code{\link{sim_recurrent_list}}.
+##'
 ##' @inherit sim_recurrentII examples author
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of recurrent events 
-##' @param death.cumhaz cumulative hazard of death 
-##' @param r1 potential relative risk adjustment of rate 
-##' @param rd potential relative risk adjustment of rate
-##' @param rc potential relative risk adjustment of rate
-##' @param ... Additional arguments to sim_recurrent_list
+##' @param n Number of subjects to simulate.
+##' @param cumhaz Two-column matrix \code{(time, cumhaz)} giving the cumulative
+##'   hazard of the recurrent event.
+##' @param death.cumhaz Two-column matrix \code{(time, cumhaz)} giving the
+##'   cumulative hazard of the terminal event. If \code{NULL}, no terminal event
+##'   is included.
+##' @param r1 Optional numeric vector of length \code{n} of subject-specific
+##'   relative risks for the recurrent event.
+##' @param rd Optional numeric vector of length \code{n} of subject-specific
+##'   relative risks for the terminal event.
+##' @param rc Optional numeric vector of length \code{n} of subject-specific
+##'   multipliers for the exponential censoring rate.
+##' @param ... Further arguments passed to \code{\link{sim_recurrent_list}},
+##'   including \code{dependence}, \code{var.z}, \code{gap.time}, and
+##'   \code{max.recurrent}.
 ##' @export
 sim_recurrent <- function(n,cumhaz,death.cumhaz=NULL,r1=NULL,rd=NULL,rc=NULL,...) 
 {# {{{
@@ -1333,44 +1494,95 @@ if (3 %in% which) {
 }
 }# }}}
 
-##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##' Simulate recurrent events from a two-stage Cox or Ghosh-Lin model
 ##'
-##' Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure 
+##' Simulates recurrent event data from a fitted two-stage model, where the
+##' recurrent event process and the terminal event are each described by a
+##' separate fitted model. The recurrent event model may be either a Cox
+##' proportional hazards model (\code{phreg}) or a Ghosh-Lin marginal rate model
+##' (\code{recreg}); the terminal event model must be a Cox model (\code{phreg}).
 ##'
-##' Must specify two phreg objects, or a phreg and a recreg object, then simulates data from two-stage model
+##' Covariates are drawn by bootstrap from \code{data} (if supplied), and
+##' subject-specific relative risks and strata are derived from the fitted
+##' model objects. Stratified baselines are fully supported. When
+##' \code{dependence} is \code{NULL} (default), the simulation uses the
+##' two-stage structure from \code{\link{sim_GLcox}}; setting \code{dependence}
+##' to an integer falls back to \code{\link{sim_recurrent_list}} with the
+##' corresponding frailty model.
 ##'
-##' @param cox1 cox/ghosh-lin for recurrent events 
-##' @param coxd cox for terminal event (phreg)
-##' @param n number of id's 
-##' @param data on which the models are fitted (to draw covariates) 
-##' @param type to specify type of simulation, if not default
-##' @param id name of id variable
-##' @param varz dependence frailty 
-##' @param share to fit patly shared random effects model
-##' @param cens censoring rate for exponential censoring
-##' @param scale1 to scale baseline of recurrent events model
-##' @param scaled to scale baseline of terminal event
-##' @param dependence if dependence different from NULL, then uses sim_recurrent_list based on models given 
-##' @param r1 relative risk for cox1 baseline, then data is not needed
-##' @param rd relative risk for coxd baseline, then data is not needed
-##' @param rc relative risk for exponential censoring 
-##' @param strata1 strata variable for cox1 baseline, then data is not needed
-##' @param stratad strata variable for coxd baseline, then data is not needed
-##' @param death.code code for death (default is 3) in status variable, events are coded as 1
-##' @param ... Additional arguments to sim_GLcox, nmin, nmax regulates linear approximation grid 
+##' @param cox1 A fitted \code{phreg} object for the recurrent event rate, or a
+##'   fitted \code{recreg} (Ghosh-Lin) object. The model type is detected
+##'   automatically from the class.
+##' @param coxd A fitted \code{phreg} object for the terminal event. May be
+##'   \code{NULL} if no terminal event is modelled.
+##' @param n Number of subjects to simulate. Default is \code{1}.
+##' @param data The data frame on which \code{cox1} and \code{coxd} were fitted,
+##'   used to draw covariate values for the simulated subjects. If \code{NULL},
+##'   covariates must be supplied via \code{r1}, \code{rd}, \code{strata1}, and
+##'   \code{stratad}.
+##' @param type Simulation type: \code{"default"} (auto-detected from class of
+##'   \code{cox1}), \code{"cox-cox"}, or \code{"gl-cox"}.
+##' @param id Name of the subject identifier variable in \code{data}. Default is
+##'   \code{"id"}.
+##' @param varz Variance of the frailty distribution in the two-stage model.
+##'   Default is \code{1}.
+##' @param share Proportion of the shared frailty assigned to the recurrent event
+##'   process in the partial-sharing model. Default is \code{1}.
+##' @param cens Rate of exponential censoring. Default is \code{0.001}.
+##' @param scale1 Scalar multiplier for the baseline cumulative hazard of the
+##'   recurrent event process. Default is \code{1}.
+##' @param scaled Scalar multiplier for the baseline cumulative hazard of the
+##'   terminal event. Default is \code{1}.
+##' @param dependence If non-\code{NULL}, falls back to
+##'   \code{\link{sim_recurrent_list}} with this frailty structure (see
+##'   \code{\link{sim_recurrentII}} for valid values). Default is \code{NULL}.
+##' @param r1 Optional numeric vector of length \code{n} of subject-specific
+##'   relative risks for the recurrent event, used when \code{data = NULL}.
+##' @param rd Optional numeric vector of length \code{n} of subject-specific
+##'   relative risks for the terminal event, used when \code{data = NULL}.
+##' @param rc Optional numeric vector of length \code{n} of subject-specific
+##'   censoring rate multipliers.
+##' @param strata1 Optional integer vector of length \code{n} specifying the
+##'   stratum index (0-based) for the recurrent event model, used when
+##'   \code{data = NULL}.
+##' @param stratad Optional integer vector of length \code{n} specifying the
+##'   stratum index (0-based) for the terminal event model, used when
+##'   \code{data = NULL}.
+##' @param death.code Integer status code used for the terminal event in the
+##'   output \code{status} column. Default is \code{3}.
+##' @param ... Further arguments passed to \code{\link{sim_GLcox}}, including
+##'   \code{nmin} and \code{nmax} for the linear approximation grid.
+##'
+##' @return A data frame in counting-process format with one row per event
+##'   interval per subject. Column names match those in the original model
+##'   formula (entry, exit, and status variables). Additional columns include
+##'   \code{id} and the covariates drawn from \code{data} (if supplied). The
+##'   terminal event is coded as \code{death.code} in the status variable;
+##'   recurrent events are coded as \code{1}.
+##'
 ##' @author Thomas Scheike
-##' @references 
-##' Scheike (2024), Twostage recurrent events models, under review.
+##'
+##' @seealso \code{\link{recurrent_marginal}}, \code{\link{sim_recurrent_list}},
+##'   \code{\link{sim_GLcox}}
+##'
+##' @references
+##' Scheike, T. H. (2026). Two-stage recurrent events random effects models.
+##' \emph{Lifetime Data Analysis}.
+##'
 ##' @examples
 ##' data(hfactioncpx12)
-##' hf <- hfactioncpx12
-##' hf$x <- as.numeric(hf$treatment)
-##' n <- 100
-##' xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
-##' dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-##' simcoxcox <- sim_recurrent_ts(xr,dr,n=n,data=hf,death.code=2)
-##' recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
-##' simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
+##' hf    <- hfactioncpx12
+##' hf$x  <- as.numeric(hf$treatment)
+##' n     <- 100
+##'
+##' ## Cox-Cox two-stage model
+##' xr <- phreg(Surv(entry, time, status == 1) ~ x + cluster(id), data = hf)
+##' dr <- phreg(Surv(entry, time, status == 2) ~ x + cluster(id), data = hf)
+##' simcoxcox <- sim_recurrent_ts(xr, dr, n = n, data = hf, death.code = 2)
+##'
+##' ## Ghosh-Lin/Cox two-stage model
+##' recGL  <- recreg(Event(entry, time, status) ~ x + cluster(id), hf, death.code = 2)
+##' simglcox <- sim_recurrent_ts(recGL, dr, n = n, data = hf, death.code = 2)
 ##'
 #' @export sim_recurrent_ts
 sim_recurrent_ts <- function(cox1,coxd=NULL,
@@ -1576,49 +1788,68 @@ sim_RecurrentIIHist <- function(n,cumhaz,death.cumhaz,cens=NULL,rr=NULL,rc=NULL,
   return(tall)
   }# }}}
 
-##' Simulation of recurrent events data based on cumulative hazards: Two-stage model  
+##' Simulate recurrent events from a two-stage model with structured gamma frailties
 ##'
-##' Simulation of recurrent events data based on cumulative hazards 
+##' Simulates recurrent event data with two event types and a terminal event,
+##' using a parametric two-stage frailty model. The construction ensures that the
+##' marginal rates are approximately correct: conditional on survival,
+##' \eqn{E(dN_j \mid D > t) \approx} \code{cumhazj}, and the hazard of death
+##' equals \code{death.cumhaz}.
 ##'
-##' Model is constructed such that marginals are on specified form by linear approximations
-##' of cumulative hazards that are on a specific form to make them equivalent to marginals
-##' after integrating out over survivors. Therefore E(dN_1 | D>t) = cumhaz, 
-##' E(dN_2 | D>t) = cumhaz2,  and hazard of death is death.cumhazard 
+##' The frailty structure uses three gamma random variables \eqn{Z_{d1}},
+##' \eqn{Z_{d2}}, \eqn{Z_{12}} to induce dependence:
+##' \deqn{Z_\text{death} = Z_{d1} + Z_{d2}, \quad
+##'       Z_1 = Z_{d1}^{\nu_1} Z_{12}, \quad
+##'       Z_2 = Z_{d2}^{\nu_2} Z_{12}^{\nu_3}.}
+##' The parameters \code{share1} and \code{vargamD} control how the death frailty
+##' splits between the two components, and \code{vargam12} controls the shared
+##' recurrent-event frailty. Setting \eqn{\nu = (1,1,1)} with \code{share1 = 0.5}
+##' gives a symmetric structure; varying \eqn{\nu} allows asymmetric dependence.
 ##'
-##' Must give hazard of death and two recurrent events.  Hazard of death is death.cumhazard  two
-##' event types and their dependence can be specified but the two recurrent events need
-##' to share random effect. 
-##' 
-##' Random effect for  death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
-##' \deqn{Z.death=Zd1+Zd2}  gamma distributions 
-##' \deqn{Zdj}  gamma distribution  with mean parameters (sharej), vargamD,  share2=1-share1
-##' \deqn{Z12}  gamma distribution with mean 1 and variance vargam12
-##' 
-##' @param n number of id's 
-##' @param cumhaz  cumulative hazard of recurrent events 
-##' @param cumhaz2  cumulative hazard of recurrent events  of type 2
-##' @param death.cumhaz cumulative hazard of death 
-##' @param gap.time if true simulates gap-times with specified cumulative hazard
-##' @param max.recurrent limits number recurrent events to 100
-##' @param nu powers of random effects where nu > -1/shape 
-##' @param share1 how random effect for death splits into two parts 
-##' @param vargamD variance of random effect  for death 
-##' @param vargam12 shared random effect for N1 and N2 
-##' @param cens rate of censoring exponential distribution
-##' @param ... Additional arguments to lower level funtions
+##' @param n Number of subjects to simulate.
+##' @param cumhaz Two-column matrix \code{(time, cumhaz)} giving the target
+##'   marginal cumulative rate of the first recurrent event type.
+##' @param cumhaz2 Two-column matrix \code{(time, cumhaz)} giving the target
+##'   marginal cumulative rate of the second recurrent event type.
+##' @param death.cumhaz Two-column matrix \code{(time, cumhaz)} giving the
+##'   cumulative hazard of the terminal event.
+##' @param nu Numeric vector of length 3: the powers \eqn{(\nu_1, \nu_2, \nu_3)}
+##'   applied to the frailty components (see Details). Must satisfy
+##'   \eqn{\nu_j > -1/\text{shape}}. Default is \code{rep(1, 3)}.
+##' @param share1 Proportion of the total death frailty variance assigned to the
+##'   first component \eqn{Z_{d1}}. The remainder goes to \eqn{Z_{d2}}. Must be
+##'   in \eqn{(0, 1)}. Default is \code{0.3}.
+##' @param vargamD Total variance of the death frailty \eqn{Z_\text{death}}.
+##'   Default is \code{2}.
+##' @param vargam12 Variance of the shared recurrent-event frailty \eqn{Z_{12}}.
+##'   Default is \code{0.5}.
+##' @param gap.time Logical. If \code{TRUE}, event times are drawn as gap times
+##'   rather than calendar times. Default is \code{FALSE}.
+##' @param max.recurrent Maximum number of recurrent events per subject. Default
+##'   is \code{100}.
+##' @param cens Rate of exponential censoring. If \code{NULL} (default), no
+##'   administrative censoring is applied.
+##' @param ... Further arguments passed to lower-level simulation functions.
+##'
+##' @return A data frame in counting-process format (one row per event interval
+##'   per subject) with columns \code{id}, \code{start}, \code{stop},
+##'   \code{entry}, \code{time}, \code{status}, and \code{death}. Attributes
+##'   store the (possibly adjusted) cumulative hazards used in simulation and
+##'   the frailty parameters.
+##'
 ##' @author Thomas Scheike
+##'
+##' @seealso \code{\link{sim_recurrentII}}, \code{\link{sim_recurrent_ts}}
+##'
 ##' @examples
-##' ########################################
-##' ## getting some rates to mimick 
-##' ########################################
 ##' data(CPH_HPN_CRBSI)
-##' dr <- CPH_HPN_CRBSI$terminal
-##' base1 <- CPH_HPN_CRBSI$crbsi 
+##' dr    <- CPH_HPN_CRBSI$terminal
+##' base1 <- CPH_HPN_CRBSI$crbsi
 ##' base4 <- CPH_HPN_CRBSI$mechanical
 ##'
-##' rr <- sim_recurrentTS(1000,base1,base4,death.cumhaz=dr)
-##' dtable(rr,~death+status)
-##' mets:::showfitsim(causes=2,rr,dr,base1,base4)
+##' rr <- sim_recurrentTS(1000, base1, base4, death.cumhaz = dr)
+##' dtable(rr, ~death + status)
+##' mets:::showfitsim(causes = 2, rr, dr, base1, base4)
 ##'
 ##' @export
 sim_recurrentTS <- function(n,cumhaz,cumhaz2,death.cumhaz=NULL,
@@ -1764,30 +1995,58 @@ zs <- cbind(z1,z2,zd)
   return(tall)
   }# }}}
 
-##' Count previous events for recurrent event processes
+##' Compute cumulative event counts as time-dependent covariates
 ##'
-##' Calculates the cumulative count of previous events of specific types for each 
-##' subject up to each time point. Useful for creating time-dependent covariates 
-##' representing the history of recurrent events.
+##' For each subject and each row of \code{data}, counts the number of prior
+##' events of specified types in the recurrent event history. The resulting
+##' count columns can be used as time-dependent covariates in subsequent models,
+##' e.g. to capture event-history dependence in the recurrent event rate.
 ##'
-##' @param data Data frame containing the event history.
-##' @param status Name of the column containing event status codes.
-##' @param id Name of the column containing subject IDs.
-##' @param types Numeric vector of status codes to count (e.g., \code{c(1, 2)}).
-##' @param names.count Prefix for the new count columns (e.g., "Count").
-##' @param lag Logical; if TRUE, counts events strictly before the current time 
-##'   (lagged); if FALSE, counts events up to and including the current time.
-##' @param multitype Logical; if TRUE, counts events where status is \code{in} \code{types}; 
-##'   if FALSE, counts events for each value in \code{types} separately.
-##' @param marks Values associated with events (used if \code{multitype=TRUE}).
-##' @return The input data frame with new columns added containing the event counts.
+##' When \code{lag = TRUE} (default), the count at each row reflects events that
+##' occurred strictly before the current time point (i.e. \eqn{N(t-)}), making
+##' it suitable as a left-continuous covariate in counting-process models.
+##'
+##' @param data A data frame in counting-process format, with one row per event
+##'   interval per subject.
+##' @param status Name of the column containing event status codes. Default is
+##'   \code{"status"}.
+##' @param id Name of the column containing subject identifiers. Default is
+##'   \code{"id"}.
+##' @param types Integer vector of status codes to count. Each value in
+##'   \code{types} generates one new count column (when \code{multitype = FALSE})
+##'   or contributes to a single combined count (when \code{multitype = TRUE}).
+##'   Default is \code{1}.
+##' @param names.count Prefix for the names of the new count columns. The
+##'   status code is appended, e.g. \code{"Count1"}, \code{"Count2"}.
+##'   Default is \code{"Count"}.
+##' @param lag Logical. If \code{TRUE} (default), the count at each row is the
+##'   number of events strictly before the current time (\eqn{N(t-)}). If
+##'   \code{FALSE}, events at the current time are included (\eqn{N(t)}).
+##' @param multitype Logical. If \code{TRUE}, events with status in \code{types}
+##'   are aggregated into a single count column, optionally weighted by
+##'   \code{marks}. If \code{FALSE} (default), a separate count column is created
+##'   for each value in \code{types}.
+##' @param marks Optional numeric vector of weights applied to events when
+##'   \code{multitype = TRUE}. If \code{NULL} (default), each event has weight 1.
+##'
+##' @return The input data frame \code{data} with one or more new integer columns
+##'   appended. With \code{multitype = FALSE}, columns are named
+##'   \code{paste0(names.count, k)} for each \code{k} in \code{types}; with
+##'   \code{multitype = TRUE}, a single column named
+##'   \code{paste0(names.count, types[1])} is added. An internal bookkeeping
+##'   column \code{lbnr__id} is also added.
+##'
 ##' @author Thomas Scheike
+##'
 ##' @examples
 ##' data(hfactioncpx12)
 ##' hf <- hfactioncpx12
 ##' dtable(hf, ~status)
-##' rr <- count_history(hf, types=1:2, id="id", status="status")
-##' dtable(rr, ~"Count*"+status, level=1)
+##'
+##' ## Separate counts for event types 1 and 2
+##' rr <- count_history(hf, types = 1:2, id = "id", status = "status")
+##' dtable(rr, ~"Count*" + status, level = 1)
+##'
 ##' @export
 count_history <- function(data,status="status",id="id",types=1,names.count="Count",lag=TRUE,multitype=FALSE,marks=NULL)
 {# {{{
@@ -1853,49 +2112,80 @@ data[,names.count] <-
 return(data)
 }# }}}
 
-##' Probability of exceeding k recurrent events
+##' Estimate the probability of exceeding k recurrent events by time t
 ##'
-##' Estimates the probability that the number of recurrent events exceeds a 
-##' specified threshold \eqn{k} by time \eqn{t}, in the presence of a terminal 
-##' event (death). The estimator is based on the cumulative incidence of 
-##' exceeding \eqn{k} events.
-##' 
-##' The method calculates \eqn{P(N(t) > k)} by treating the event "reaching k+1 
-##' events" as the primary event of interest and using IPCW (Inverse Probability 
-##' of Censoring Weighting) to handle censoring and death.
+##' Estimates \eqn{P(N(t) \geq k)} as a function of time \eqn{t}, for a range of
+##' thresholds \eqn{k}, in the presence of a terminal event (death). The estimator
+##' is based on the cumulative incidence of "reaching \eqn{k} events", treating
+##' death as a competing risk. Confidence intervals are computed on the log or
+##' plain scale.
 ##'
-##' @param formula Formula with \code{Event} object.
-##' @param data Data frame.
-##' @param cause Cause of interest (default 1).
-##' @param death.code Code for death (default 2).
-##' @param cens.code Code for censoring (default 0).
-##' @param exceed Vector of thresholds \eqn{k} to evaluate. If NULL, uses all 
-##'   observed event counts.
-##' @param marks Marks for events (optional).
-##' @param all.cifs Logical; if TRUE, returns a list of all fitted CIF objects.
-##' @param return.data Logical; if TRUE, returns the data used for fitting each threshold.
-##' @param conf.type Type of confidence interval: \code{"log"} or \code{"plain"}.
-##' @param level Confidence level (default 0.95).
-##' @param ... Additional arguments.
-##' @return An object of class \code{"exceed"} containing:
-##'   \item{time}{Time points.}
-##'   \item{prob}{Array of probabilities for each threshold and time.}
-##'   \item{se.prob}{Standard errors.}
-##'   \item{lower, upper}{Confidence intervals.}
-##'   \item{meanN, meanN2, varN}{Mean, second moment, and variance of the event count.}
-##'   \item{exceed}{Thresholds evaluated.}
-##'   \item{cif.exceed}{List of CIF objects (if \code{all.cifs=TRUE}).}
-##'   \item{dataList}{List of datasets (if \code{return.data=TRUE}).}
+##' For each threshold \eqn{k} in \code{exceed}, the function identifies the
+##' first time each subject reaches \eqn{k} events, then fits a competing risks
+##' model (\code{\link{cif}}) with "reaching \eqn{k} events" as the event of
+##' interest and death as the competing event. Strata are supported. When
+##' \code{marks} is \code{NULL}, each event contributes equally; otherwise events
+##' are weighted by their mark values before cumulative counts are formed.
+##'
+##' @param formula A formula with an \code{\link{Event}} response giving the
+##'   exit time and status (and optionally entry time). The right-hand side may
+##'   include \code{cluster()} and \code{strata()}.
+##' @param data A data frame containing all variables in \code{formula}.
+##' @param cause Integer code for the recurrent event of interest. Default is
+##'   \code{1}.
+##' @param death.code Integer code for the terminal event. Default is \code{2}.
+##' @param cens.code Integer code for censoring. Default is \code{0}.
+##' @param exceed Integer vector of thresholds \eqn{k} to evaluate. If
+##'   \code{NULL} (default), all observed cumulative counts are used.
+##' @param marks Optional numeric vector of event weights. If non-\code{NULL},
+##'   cumulative counts are formed as weighted sums of events rather than simple
+##'   counts. Must have the same length as \code{nrow(data)}.
+##' @param all.cifs Logical. If \code{TRUE}, the fitted \code{cif} object for
+##'   each threshold is returned in \code{cif.exceed}. Default is \code{FALSE}.
+##' @param return.data Logical. If \code{TRUE}, the constructed dataset for each
+##'   threshold is returned in \code{dataList}. Default is \code{FALSE}.
+##' @param conf.type Type of confidence interval transformation: \code{"log"}
+##'   (default) or \code{"plain"}.
+##' @param level Confidence level. Default is \code{0.95}.
+##' @param ... Further arguments passed to \code{\link{cif}}.
+##'
+##' @return An object of class \code{"exceed"} with the following components:
+##'   \item{time}{Vector of evaluation time points.}
+##'   \item{prob}{Array of dimension \code{(length(time), length(exceed) + 1,
+##'     nstrata)} containing \eqn{P(N(t) \geq k)} for each threshold and stratum.
+##'     The first column gives \eqn{P(N(t) < \text{exceed}[1])}.}
+##'   \item{se.prob}{Standard errors of \code{prob}.}
+##'   \item{lower, upper}{Pointwise confidence interval bounds.}
+##'   \item{meanN}{Estimated mean number of events \eqn{E(N(t))} (single stratum
+##'     only; \code{NULL} for stratified analyses).}
+##'   \item{meanN2, varN}{Second moment and variance of \eqn{N(t)} (single
+##'     stratum only).}
+##'   \item{exceed}{Thresholds evaluated (excluding zero).}
+##'   \item{cif.exceed}{List of fitted \code{cif} objects (if
+##'     \code{all.cifs = TRUE}).}
+##'   \item{dataList}{List of datasets for each threshold (if
+##'     \code{return.data = TRUE}).}
+##'   \item{nstrata, strata.levels, strata.name}{Stratification information.}
+##'   Use \code{plot()} and \code{summary()} methods for visualisation and
+##'   tabulation.
+##'
 ##' @author Thomas Scheike
-##' @references 
-##' Scheike, T. H., Eriksson, L., & Tribler, P. (2019). The mean, variance and correlation for bivariate recurrent events with a terminal event. JRSS-C.
+##'
+##' @seealso \code{\link{recurrent_marginal}}, \code{\link{cif}}
+##'
+##' @references
+##' Scheike, T. H., Eriksson, L., and Tribler, P. (2019). The mean, variance and
+##' correlation for bivariate recurrent events with a terminal event.
+##' \emph{Journal of the Royal Statistical Society, Series C}, 68(5).
+##'
 ##' @examples
 ##' data(hfactioncpx12)
 ##' dtable(hfactioncpx12, ~status)
-##' oo <- prob_exceed_recurrent(Event(entry,time,status)~cluster(id),
-##'         hfactioncpx12, cause=1, death.code=2)
+##'
+##' oo <- prob_exceed_recurrent(Event(entry, time, status) ~ cluster(id),
+##'                              hfactioncpx12, cause = 1, death.code = 2)
 ##' plot(oo)
-##' summary(oo, times=c(1, 2, 5))
+##' summary(oo, times = c(1, 2, 5))
 ##' @export
 prob_exceed_recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0, exceed=NULL,marks=NULL,all.cifs=FALSE,
 				  return.data=FALSE,conf.type=c("log","plain"),level=0.95,...)

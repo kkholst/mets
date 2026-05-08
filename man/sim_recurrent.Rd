@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{sim_recurrent}
 \alias{sim_recurrent}
-\title{Simulation of recurrent events data based on cumulative hazards for event and death process}
+\title{Simulate recurrent events with a single event type and a terminal event}
 \usage{
 sim_recurrent(
   n,
@@ -15,68 +15,69 @@ sim_recurrent(
 )
 }
 \arguments{
-\item{n}{number of id's}
+\item{n}{Number of subjects to simulate.}
 
-\item{cumhaz}{cumulative hazard of recurrent events}
+\item{cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the cumulative
+hazard of the recurrent event.}
 
-\item{death.cumhaz}{cumulative hazard of death}
+\item{death.cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the
+cumulative hazard of the terminal event. If \code{NULL}, no terminal event
+is included.}
 
-\item{r1}{potential relative risk adjustment of rate}
+\item{r1}{Optional numeric vector of length \code{n} of subject-specific
+relative risks for the recurrent event.}
 
-\item{rd}{potential relative risk adjustment of rate}
+\item{rd}{Optional numeric vector of length \code{n} of subject-specific
+relative risks for the terminal event.}
 
-\item{rc}{potential relative risk adjustment of rate}
+\item{rc}{Optional numeric vector of length \code{n} of subject-specific
+multipliers for the exponential censoring rate.}
 
-\item{...}{Additional arguments to sim_recurrent_list}
+\item{...}{Further arguments passed to \code{\link{sim_recurrent_list}},
+including \code{dependence}, \code{var.z}, \code{gap.time}, and
+\code{max.recurrent}.}
 }
 \description{
-Simulation of recurrent events data based on cumulative hazards for event and death process
+A convenience wrapper around \code{\link{sim_recurrentII}} for the common
+case of a single recurrent event type. Frailty and censoring options are
+passed through to \code{\link{sim_recurrent_list}}.
 }
 \examples{
-########################################
-## getting some rates to mimick 
-########################################
 data(CPH_HPN_CRBSI)
-dr <- CPH_HPN_CRBSI$terminal
-base1 <- CPH_HPN_CRBSI$crbsi 
+dr    <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi
 base4 <- CPH_HPN_CRBSI$mechanical
 
-######################################################################
-### simulating simple model that mimicks data 
-######################################################################
-rr <- sim_recurrent(5,base1)
-dlist(rr,.~id,n=0)
-rr <- sim_recurrent(5,base1,death.cumhaz=dr)
-dlist(rr,.~id,n=0)
+## Single recurrent event type, with and without terminal event
+rr <- sim_recurrent(5, base1)
+dlist(rr, . ~ id, n = 0)
 
-rr <- sim_recurrent(100,base1,death.cumhaz=dr)
-par(mfrow=c(1,3))
-mets:::showfitsim(causes=1,rr,dr,base1,base1)
-######################################################################
-### simulating simple model 
-### random effect for all causes (Z shared for death and recurrent) 
-######################################################################
-rr <- sim_recurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
-dtable(rr,~death+status)
+rr <- sim_recurrent(5, base1, death.cumhaz = dr)
+dlist(rr, . ~ id, n = 0)
 
-######################################################################
-### now with two event types and second type has same rate as death rate
-######################################################################
+## Verify that estimated rates recover the true baselines (increase n for precision)
+rr <- sim_recurrent(100, base1, death.cumhaz = dr)
+par(mfrow = c(1, 3))
+mets:::showfitsim(causes = 1, rr, dr, base1, base1)
+
+## Shared frailty across all processes
+rr <- sim_recurrent(100, base1, death.cumhaz = dr, dependence = 1, var.z = 0.4)
+dtable(rr, ~death + status)
+
+## Two event types; second type uses the mechanical complication rate
 set.seed(100)
-rr <- sim_recurrentII(100,base1,base4,death.cumhaz=dr)
-dtable(rr,~death+status)
-par(mfrow=c(2,2))
-mets:::showfitsim(causes=2,rr,dr,base1,base4)
+rr <- sim_recurrentII(100, base1, base4, death.cumhaz = dr)
+dtable(rr, ~death + status)
+par(mfrow = c(2, 2))
+mets:::showfitsim(causes = 2, rr, dr, base1, base4)
 
-######################################################################
-### now with three event types and two causes of death 
-######################################################################
+## Three event types and two causes of death via sim_recurrent_list
 set.seed(100)
-cumhaz <- list(base1,base1,base4)
-drl <- list(dr,base4)
-rr <- sim_recurrent_list(100,cumhaz,death.cumhaz=drl,dependence=0)
-dtable(rr,~death+status)
-mets:::showfitsimList(rr,cumhaz,drl) 
+cumhaz <- list(base1, base1, base4)
+drl    <- list(dr, base4)
+rr     <- sim_recurrent_list(100, cumhaz, death.cumhaz = drl, dependence = 0)
+dtable(rr, ~death + status)
+mets:::showfitsimList(rr, cumhaz, drl)
 
 }
 \author{

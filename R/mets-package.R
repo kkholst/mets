@@ -229,7 +229,6 @@ NULL
 ##' rmst_phreg rr_cif ‘sim_binClaytonOakes_pairs’ sim_bptwin    
 ##' sim_Compete_twin_ace ‘sim_nordictwin’ simrchaz 
 ##' ace_family_design ascertained_pairs summaryTimeobject 
-##' tie_breaker    
 ##' ace_family_design ascertained_pairs 
 ##' coarse_clust concordanceTwinACE concordanceTwostage
 ##' fast.cluster force_same_cens ilap

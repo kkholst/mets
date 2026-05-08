@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{prob_exceed_recurrent}
 \alias{prob_exceed_recurrent}
-\title{Probability of exceeding k recurrent events}
+\title{Estimate the probability of exceeding k recurrent events by time t}
 \usage{
 prob_exceed_recurrent(
   formula,
@@ -20,63 +20,91 @@ prob_exceed_recurrent(
 )
 }
 \arguments{
-\item{formula}{Formula with \code{Event} object.}
+\item{formula}{A formula with an \code{\link{Event}} response giving the
+exit time and status (and optionally entry time). The right-hand side may
+include \code{cluster()} and \code{strata()}.}
 
-\item{data}{Data frame.}
+\item{data}{A data frame containing all variables in \code{formula}.}
 
-\item{cause}{Cause of interest (default 1).}
+\item{cause}{Integer code for the recurrent event of interest. Default is
+\code{1}.}
 
-\item{death.code}{Code for death (default 2).}
+\item{death.code}{Integer code for the terminal event. Default is \code{2}.}
 
-\item{cens.code}{Code for censoring (default 0).}
+\item{cens.code}{Integer code for censoring. Default is \code{0}.}
 
-\item{exceed}{Vector of thresholds \eqn{k} to evaluate. If NULL, uses all 
-observed event counts.}
+\item{exceed}{Integer vector of thresholds \eqn{k} to evaluate. If
+\code{NULL} (default), all observed cumulative counts are used.}
 
-\item{marks}{Marks for events (optional).}
+\item{marks}{Optional numeric vector of event weights. If non-\code{NULL},
+cumulative counts are formed as weighted sums of events rather than simple
+counts. Must have the same length as \code{nrow(data)}.}
 
-\item{all.cifs}{Logical; if TRUE, returns a list of all fitted CIF objects.}
+\item{all.cifs}{Logical. If \code{TRUE}, the fitted \code{cif} object for
+each threshold is returned in \code{cif.exceed}. Default is \code{FALSE}.}
 
-\item{return.data}{Logical; if TRUE, returns the data used for fitting each threshold.}
+\item{return.data}{Logical. If \code{TRUE}, the constructed dataset for each
+threshold is returned in \code{dataList}. Default is \code{FALSE}.}
 
-\item{conf.type}{Type of confidence interval: \code{"log"} or \code{"plain"}.}
+\item{conf.type}{Type of confidence interval transformation: \code{"log"}
+(default) or \code{"plain"}.}
 
-\item{level}{Confidence level (default 0.95).}
+\item{level}{Confidence level. Default is \code{0.95}.}
 
-\item{...}{Additional arguments.}
+\item{...}{Further arguments passed to \code{\link{cif}}.}
 }
 \value{
-An object of class \code{"exceed"} containing:
-  \item{time}{Time points.}
-  \item{prob}{Array of probabilities for each threshold and time.}
-  \item{se.prob}{Standard errors.}
-  \item{lower, upper}{Confidence intervals.}
-  \item{meanN, meanN2, varN}{Mean, second moment, and variance of the event count.}
-  \item{exceed}{Thresholds evaluated.}
-  \item{cif.exceed}{List of CIF objects (if \code{all.cifs=TRUE}).}
-  \item{dataList}{List of datasets (if \code{return.data=TRUE}).}
+An object of class \code{"exceed"} with the following components:
+  \item{time}{Vector of evaluation time points.}
+  \item{prob}{Array of dimension \code{(length(time), length(exceed) + 1,
+    nstrata)} containing \eqn{P(N(t) \geq k)} for each threshold and stratum.
+    The first column gives \eqn{P(N(t) < \text{exceed}[1])}.}
+  \item{se.prob}{Standard errors of \code{prob}.}
+  \item{lower, upper}{Pointwise confidence interval bounds.}
+  \item{meanN}{Estimated mean number of events \eqn{E(N(t))} (single stratum
+    only; \code{NULL} for stratified analyses).}
+  \item{meanN2, varN}{Second moment and variance of \eqn{N(t)} (single
+    stratum only).}
+  \item{exceed}{Thresholds evaluated (excluding zero).}
+  \item{cif.exceed}{List of fitted \code{cif} objects (if
+    \code{all.cifs = TRUE}).}
+  \item{dataList}{List of datasets for each threshold (if
+    \code{return.data = TRUE}).}
+  \item{nstrata, strata.levels, strata.name}{Stratification information.}
+  Use \code{plot()} and \code{summary()} methods for visualisation and
+  tabulation.
 }
 \description{
-Estimates the probability that the number of recurrent events exceeds a 
-specified threshold \eqn{k} by time \eqn{t}, in the presence of a terminal 
-event (death). The estimator is based on the cumulative incidence of 
-exceeding \eqn{k} events.
+Estimates \eqn{P(N(t) \geq k)} as a function of time \eqn{t}, for a range of
+thresholds \eqn{k}, in the presence of a terminal event (death). The estimator
+is based on the cumulative incidence of "reaching \eqn{k} events", treating
+death as a competing risk. Confidence intervals are computed on the log or
+plain scale.
 }
 \details{
-The method calculates \eqn{P(N(t) > k)} by treating the event "reaching k+1 
-events" as the primary event of interest and using IPCW (Inverse Probability 
-of Censoring Weighting) to handle censoring and death.
+For each threshold \eqn{k} in \code{exceed}, the function identifies the
+first time each subject reaches \eqn{k} events, then fits a competing risks
+model (\code{\link{cif}}) with "reaching \eqn{k} events" as the event of
+interest and death as the competing event. Strata are supported. When
+\code{marks} is \code{NULL}, each event contributes equally; otherwise events
+are weighted by their mark values before cumulative counts are formed.
 }
 \examples{
 data(hfactioncpx12)
 dtable(hfactioncpx12, ~status)
-oo <- prob_exceed_recurrent(Event(entry,time,status)~cluster(id),
-        hfactioncpx12, cause=1, death.code=2)
+
+oo <- prob_exceed_recurrent(Event(entry, time, status) ~ cluster(id),
+                             hfactioncpx12, cause = 1, death.code = 2)
 plot(oo)
-summary(oo, times=c(1, 2, 5))
+summary(oo, times = c(1, 2, 5))
 }
 \references{
-Scheike, T. H., Eriksson, L., & Tribler, P. (2019). The mean, variance and correlation for bivariate recurrent events with a terminal event. JRSS-C.
+Scheike, T. H., Eriksson, L., and Tribler, P. (2019). The mean, variance and
+correlation for bivariate recurrent events with a terminal event.
+\emph{Journal of the Royal Statistical Society, Series C}, 68(5).
+}
+\seealso{
+\code{\link{recurrent_marginal}}, \code{\link{cif}}
 }
 \author{
 Thomas Scheike

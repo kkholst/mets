@@ -3,8 +3,7 @@
 \name{sim_recurrentII}
 \alias{sim_recurrentII}
 \alias{sim_recurrent_list}
-\title{Simulation of recurrent events data based on cumulative hazards with two
-types of recurrent events}
+\title{Simulate recurrent events with two event types and a terminal event}
 \usage{
 sim_recurrentII(
   n,
@@ -25,93 +24,127 @@ sim_recurrentII(
 )
 }
 \arguments{
-\item{n}{number of id's}
+\item{n}{Number of subjects to simulate.}
 
-\item{cumhaz}{cumulative hazard of recurrent events}
+\item{cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the cumulative
+hazard of the first type of recurrent event.}
 
-\item{cumhaz2}{cumulative hazard of recurrent events  of type 2}
+\item{cumhaz2}{Two-column matrix \code{(time, cumhaz)} giving the cumulative
+hazard of the second type of recurrent event.}
 
-\item{death.cumhaz}{cumulative hazard of death}
+\item{death.cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the
+cumulative hazard of the terminal event. If \code{NULL}, no terminal event
+is simulated and follow-up ends at the end of \code{cumhaz}.}
 
-\item{r1}{potential relative risk adjustment of rate}
+\item{r1}{Optional numeric vector of length \code{n} with subject-specific
+relative risk multipliers for the first event type.}
 
-\item{r2}{potential relative risk adjustment of rate}
+\item{r2}{Optional numeric vector of length \code{n} with subject-specific
+relative risk multipliers for the second event type.}
 
-\item{rd}{potential relative risk adjustment of rate}
+\item{rd}{Optional numeric vector of length \code{n} with subject-specific
+relative risk multipliers for the terminal event.}
 
-\item{rc}{potential relative risk adjustment of rate}
+\item{rc}{Optional numeric vector of length \code{n} with subject-specific
+multipliers for the exponential censoring rate.}
 
-\item{dependence}{0:independence; 1:all share same random effect with variance var.z; 2:random effect exp(normal) with correlation structure from cor.mat; 3:additive gamma distributed random effects, z1= (z11+ z12)/2 such that mean is 1 , z2= (z11^cor.mat(1,2)+ z13)/2, z3= (z12^(cor.mat(2,3)+z13^cor.mat(1,3))/2, with z11 z12 z13 are gamma with mean and variance 1 , first random effect is z1 and for N1 second random effect is z2 and for N2 third random effect is for death}
+\item{dependence}{Integer specifying the frailty structure. One of \code{0}
+(independence), \code{1} (shared gamma frailty), or \code{4} (shared frailty
+for recurrent events only). See Details.}
 
-\item{var.z}{variance of random effects}
+\item{var.z}{Variance of the gamma-distributed frailty. Default is \code{1}.}
 
-\item{cor.mat}{correlation matrix for var.z variance of random effects}
+\item{cor.mat}{Correlation matrix for the random effects. Used when
+\code{dependence = 2} (in \code{\link{sim_recurrent_list}}).}
 
-\item{cens}{rate of censoring exponential distribution}
+\item{cens}{Rate of exponential censoring. If \code{NULL} (default), no
+additional censoring is applied.}
 
-\item{gap.time}{if true simulates gap-times with specified cumulative hazard}
+\item{gap.time}{Logical. If \code{TRUE}, event times are drawn as gap times
+(time since the last event) rather than calendar times. Default is
+\code{FALSE}.}
 
-\item{max.recurrent}{limits number recurrent events to 100}
+\item{max.recurrent}{Maximum number of recurrent events allowed per subject.
+Default is \code{100}.}
 
-\item{...}{Additional arguments to sim_recurrent_list}
+\item{...}{Further arguments passed to \code{\link{sim_recurrent_list}}.}
+}
+\value{
+A data frame in counting-process format (one row per event interval
+  per subject) with columns:
+  \item{id}{Subject identifier.}
+  \item{start, entry}{Interval start time.}
+  \item{stop, time}{Interval end time (event or censoring time).}
+  \item{status}{Event type at \code{stop}: \code{1} or \code{2} for a
+    recurrent event of the corresponding type, \code{0} for censoring.}
+  \item{death}{Indicator for a terminal event (\code{1}) or censoring/survival
+    (\code{0}).}
+  Attributes \code{"cumhaz"}, \code{"death.cumhaz"}, \code{"rr"}, and
+  \code{"rd"} store the inputs used for simulation.
 }
 \description{
-Simulation of recurrent events data based on cumulative hazards
+Simulates recurrent event data with up to two distinct event types and an
+optional terminal event (death), based on user-supplied cumulative hazard
+functions. Dependence between processes can be introduced via shared or
+correlated gamma-distributed frailties.
 }
 \details{
-Must give cumulative hazard of death and possibly two recurrent events. 
-Their dependence can be specified via random 
-effects but the two recurrent events need to share the random effect, and can also be
-specified via zzr. 
-The terminal event may share this random effect (dependence=1) or not 
-(dependence=4) and can be specified via zzr.
+The simulation proceeds by sequentially drawing the next event time from the
+specified cumulative hazards, taking the minimum of the two recurrent event
+times, and stopping each subject at death or administrative censoring.
+
+Dependence between processes is controlled by \code{dependence}:
+\describe{
+  \item{\code{0}}{Independence: all subjects have frailty fixed at 1.}
+  \item{\code{1}}{Shared frailty: all processes share a single
+    gamma-distributed random effect with mean 1 and variance \code{var.z}.}
+  \item{\code{4}}{Recurrent-event frailty only: the two recurrent event
+    processes share a gamma frailty but the terminal event is independent.}
+}
+For more complex correlation structures across two event types and death, use
+\code{\link{sim_recurrentTS}}.
 }
 \examples{
-########################################
-## getting some rates to mimick 
-########################################
 data(CPH_HPN_CRBSI)
-dr <- CPH_HPN_CRBSI$terminal
-base1 <- CPH_HPN_CRBSI$crbsi 
+dr    <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi
 base4 <- CPH_HPN_CRBSI$mechanical
 
-######################################################################
-### simulating simple model that mimicks data 
-######################################################################
-rr <- sim_recurrent(5,base1)
-dlist(rr,.~id,n=0)
-rr <- sim_recurrent(5,base1,death.cumhaz=dr)
-dlist(rr,.~id,n=0)
+## Single recurrent event type, with and without terminal event
+rr <- sim_recurrent(5, base1)
+dlist(rr, . ~ id, n = 0)
 
-rr <- sim_recurrent(100,base1,death.cumhaz=dr)
-par(mfrow=c(1,3))
-mets:::showfitsim(causes=1,rr,dr,base1,base1)
-######################################################################
-### simulating simple model 
-### random effect for all causes (Z shared for death and recurrent) 
-######################################################################
-rr <- sim_recurrent(100,base1,death.cumhaz=dr,dependence=1,var.z=0.4)
-dtable(rr,~death+status)
+rr <- sim_recurrent(5, base1, death.cumhaz = dr)
+dlist(rr, . ~ id, n = 0)
 
-######################################################################
-### now with two event types and second type has same rate as death rate
-######################################################################
+## Verify that estimated rates recover the true baselines (increase n for precision)
+rr <- sim_recurrent(100, base1, death.cumhaz = dr)
+par(mfrow = c(1, 3))
+mets:::showfitsim(causes = 1, rr, dr, base1, base1)
+
+## Shared frailty across all processes
+rr <- sim_recurrent(100, base1, death.cumhaz = dr, dependence = 1, var.z = 0.4)
+dtable(rr, ~death + status)
+
+## Two event types; second type uses the mechanical complication rate
 set.seed(100)
-rr <- sim_recurrentII(100,base1,base4,death.cumhaz=dr)
-dtable(rr,~death+status)
-par(mfrow=c(2,2))
-mets:::showfitsim(causes=2,rr,dr,base1,base4)
+rr <- sim_recurrentII(100, base1, base4, death.cumhaz = dr)
+dtable(rr, ~death + status)
+par(mfrow = c(2, 2))
+mets:::showfitsim(causes = 2, rr, dr, base1, base4)
 
-######################################################################
-### now with three event types and two causes of death 
-######################################################################
+## Three event types and two causes of death via sim_recurrent_list
 set.seed(100)
-cumhaz <- list(base1,base1,base4)
-drl <- list(dr,base4)
-rr <- sim_recurrent_list(100,cumhaz,death.cumhaz=drl,dependence=0)
-dtable(rr,~death+status)
-mets:::showfitsimList(rr,cumhaz,drl) 
+cumhaz <- list(base1, base1, base4)
+drl    <- list(dr, base4)
+rr     <- sim_recurrent_list(100, cumhaz, death.cumhaz = drl, dependence = 0)
+dtable(rr, ~death + status)
+mets:::showfitsimList(rr, cumhaz, drl)
 
+}
+\seealso{
+\code{\link{sim_recurrent}}, \code{\link{sim_recurrent_list}},
+  \code{\link{sim_recurrentTS}}
 }
 \author{
 Thomas Scheike

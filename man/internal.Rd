@@ -45,7 +45,6 @@
 \alias{ace_family_design}
 \alias{ascertained_pairs}
 \alias{summaryTimeobject}
-\alias{tie_breaker}
 \alias{coarse_clust}
 \alias{concordanceTwinACE}
 \alias{concordanceTwostage}

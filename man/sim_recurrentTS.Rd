@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{sim_recurrentTS}
 \alias{sim_recurrentTS}
-\title{Simulation of recurrent events data based on cumulative hazards: Two-stage model}
+\title{Simulate recurrent events from a two-stage model with structured gamma frailties}
 \usage{
 sim_recurrentTS(
   n,
@@ -20,61 +20,80 @@ sim_recurrentTS(
 )
 }
 \arguments{
-\item{n}{number of id's}
+\item{n}{Number of subjects to simulate.}
 
-\item{cumhaz}{cumulative hazard of recurrent events}
+\item{cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the target
+marginal cumulative rate of the first recurrent event type.}
 
-\item{cumhaz2}{cumulative hazard of recurrent events  of type 2}
+\item{cumhaz2}{Two-column matrix \code{(time, cumhaz)} giving the target
+marginal cumulative rate of the second recurrent event type.}
 
-\item{death.cumhaz}{cumulative hazard of death}
+\item{death.cumhaz}{Two-column matrix \code{(time, cumhaz)} giving the
+cumulative hazard of the terminal event.}
 
-\item{nu}{powers of random effects where nu > -1/shape}
+\item{nu}{Numeric vector of length 3: the powers \eqn{(\nu_1, \nu_2, \nu_3)}
+applied to the frailty components (see Details). Must satisfy
+\eqn{\nu_j > -1/\text{shape}}. Default is \code{rep(1, 3)}.}
 
-\item{share1}{how random effect for death splits into two parts}
+\item{share1}{Proportion of the total death frailty variance assigned to the
+first component \eqn{Z_{d1}}. The remainder goes to \eqn{Z_{d2}}. Must be
+in \eqn{(0, 1)}. Default is \code{0.3}.}
 
-\item{vargamD}{variance of random effect  for death}
+\item{vargamD}{Total variance of the death frailty \eqn{Z_\text{death}}.
+Default is \code{2}.}
 
-\item{vargam12}{shared random effect for N1 and N2}
+\item{vargam12}{Variance of the shared recurrent-event frailty \eqn{Z_{12}}.
+Default is \code{0.5}.}
 
-\item{gap.time}{if true simulates gap-times with specified cumulative hazard}
+\item{gap.time}{Logical. If \code{TRUE}, event times are drawn as gap times
+rather than calendar times. Default is \code{FALSE}.}
 
-\item{max.recurrent}{limits number recurrent events to 100}
+\item{max.recurrent}{Maximum number of recurrent events per subject. Default
+is \code{100}.}
 
-\item{cens}{rate of censoring exponential distribution}
+\item{cens}{Rate of exponential censoring. If \code{NULL} (default), no
+administrative censoring is applied.}
 
-\item{...}{Additional arguments to lower level funtions}
+\item{...}{Further arguments passed to lower-level simulation functions.}
+}
+\value{
+A data frame in counting-process format (one row per event interval
+  per subject) with columns \code{id}, \code{start}, \code{stop},
+  \code{entry}, \code{time}, \code{status}, and \code{death}. Attributes
+  store the (possibly adjusted) cumulative hazards used in simulation and
+  the frailty parameters.
 }
 \description{
-Simulation of recurrent events data based on cumulative hazards
+Simulates recurrent event data with two event types and a terminal event,
+using a parametric two-stage frailty model. The construction ensures that the
+marginal rates are approximately correct: conditional on survival,
+\eqn{E(dN_j \mid D > t) \approx} \code{cumhazj}, and the hazard of death
+equals \code{death.cumhaz}.
 }
 \details{
-Model is constructed such that marginals are on specified form by linear approximations
-of cumulative hazards that are on a specific form to make them equivalent to marginals
-after integrating out over survivors. Therefore E(dN_1 | D>t) = cumhaz, 
-E(dN_2 | D>t) = cumhaz2,  and hazard of death is death.cumhazard 
-
-Must give hazard of death and two recurrent events.  Hazard of death is death.cumhazard  two
-event types and their dependence can be specified but the two recurrent events need
-to share random effect. 
-
-Random effect for  death Z.death=(Zd1+Zd2), Z1=(Zd1^nu1) Z12,  Z2=(Zd2^nu2) Z12^nu3
-\deqn{Z.death=Zd1+Zd2}  gamma distributions 
-\deqn{Zdj}  gamma distribution  with mean parameters (sharej), vargamD,  share2=1-share1
-\deqn{Z12}  gamma distribution with mean 1 and variance vargam12
+The frailty structure uses three gamma random variables \eqn{Z_{d1}},
+\eqn{Z_{d2}}, \eqn{Z_{12}} to induce dependence:
+\deqn{Z_\text{death} = Z_{d1} + Z_{d2}, \quad
+      Z_1 = Z_{d1}^{\nu_1} Z_{12}, \quad
+      Z_2 = Z_{d2}^{\nu_2} Z_{12}^{\nu_3}.}
+The parameters \code{share1} and \code{vargamD} control how the death frailty
+splits between the two components, and \code{vargam12} controls the shared
+recurrent-event frailty. Setting \eqn{\nu = (1,1,1)} with \code{share1 = 0.5}
+gives a symmetric structure; varying \eqn{\nu} allows asymmetric dependence.
 }
 \examples{
-########################################
-## getting some rates to mimick 
-########################################
 data(CPH_HPN_CRBSI)
-dr <- CPH_HPN_CRBSI$terminal
-base1 <- CPH_HPN_CRBSI$crbsi 
+dr    <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi
 base4 <- CPH_HPN_CRBSI$mechanical
 
-rr <- sim_recurrentTS(1000,base1,base4,death.cumhaz=dr)
-dtable(rr,~death+status)
-mets:::showfitsim(causes=2,rr,dr,base1,base4)
+rr <- sim_recurrentTS(1000, base1, base4, death.cumhaz = dr)
+dtable(rr, ~death + status)
+mets:::showfitsim(causes = 2, rr, dr, base1, base4)
 
+}
+\seealso{
+\code{\link{sim_recurrentII}}, \code{\link{sim_recurrent_ts}}
 }
 \author{
 Thomas Scheike

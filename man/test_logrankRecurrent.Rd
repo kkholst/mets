@@ -3,7 +3,7 @@
 \name{test_logrankRecurrent}
 \alias{test_logrankRecurrent}
 \alias{logrankRecurrentBase}
-\title{Logrank-type test for recurrent marginal mean or cumulative incidence}
+\title{Logrank-type test for comparing recurrent event marginal means between groups}
 \usage{
 test_logrankRecurrent(
   recurrent,
@@ -18,82 +18,84 @@ test_logrankRecurrent(
 )
 }
 \arguments{
-\item{recurrent}{A \code{phreg} object for the recurrent events model, or an object 
-of class \code{"recurrent"} (output from \code{recurrent_marginal}).}
+\item{recurrent}{Either a \code{"recurrent"} object returned by
+\code{\link{recurrent_marginal}}, or a \code{"phreg"} object for the
+recurrent event model (in which case \code{death} must also be supplied).}
 
-\item{death}{A \code{phreg} object for the death (terminating event) model.}
+\item{death}{A \code{"phreg"} object for the terminal event model. Required
+when \code{recurrent} is a \code{"phreg"} object; ignored otherwise.}
 
-\item{weight}{Character string specifying the weighting scheme: \code{"I"}, \code{"II"}, 
-or \code{"III"} (default is \code{"I"}).}
+\item{weight}{Character string specifying the weight scheme: \code{"I"},
+\code{"II"}, or \code{"III"}. Default is \code{"I"}.}
 
-\item{km}{Logical; if TRUE, uses Kaplan-Meier estimates for survival probabilities 
-in the weights; if FALSE, uses \eqn{\exp(-\text{cumulative hazard})}.}
+\item{km}{Logical. If \code{TRUE} (default), the Kaplan-Meier estimator is
+used for the survival probability \eqn{S(t)}; otherwise the Nelson-Aalen
+estimator is used.}
 
-\item{start}{Numeric; start time for the integral (default 0).}
+\item{start}{Left truncation time for the integration. Default is \code{0}.}
 
-\item{stop}{Numeric; stop time for the integral. If NULL, defaults to the maximum 
-jump time in the recurrent event model.}
+\item{stop}{Right truncation time for the integration. Defaults to the last
+observed jump time.}
 
-\item{at.risk}{Numeric; if > 0, the test only uses time points where the minimum 
-number of subjects at risk in any group is greater than this value.}
+\item{at.risk}{Minimum combined risk-set size below which the weight is set
+to zero. Default is \code{5}.}
 
-\item{cluster.id}{Optional vector of cluster IDs to combine IID representations 
-(useful for GEE-style clustering).}
+\item{cluster.id}{Optional vector of cluster identifiers for aggregating
+influence functions across clusters before forming the test statistic.}
 
-\item{...}{Additional arguments (currently unused).}
+\item{...}{Currently unused.}
 }
 \value{
-An object of class \code{"estimate"} (from the \code{lava} package) containing:
-  \item{coef}{The test statistic (difference in weighted marginal means).}
-  \item{se}{The robust standard error of the test statistic.}
-  \item{lower, upper}{Lower and upper bounds of the confidence interval.}
-  \item{p.value}{Two-sided p-value for the test.}
-  \item{iid}{The influence function (IID) decomposition of the test statistic, 
-    useful for further variance calculations or combining with other estimators.}
-  
-The object also includes attributes for the weights used and the time range.
+An object of class \code{"estimate"} (from the \pkg{lava} package)
+  with the following components:
+  \item{coef}{The weighted difference in marginal means between groups.}
+  \item{se}{Robust standard error of the test statistic.}
+  \item{lower, upper}{95\% confidence interval bounds.}
+  \item{p.value}{Two-sided p-value for the null hypothesis of no difference.}
+  The object also carries an \code{iid} attribute containing the
+  subject-level influence function decomposition of the test statistic,
+  which can be used for further inference or combination with other estimators.
 }
 \description{
-Computes a logrank-type test statistic for comparing recurrent marginal means 
-or cumulative incidence functions between groups, extending the standard logrank 
-test to settings with recurrent events and a terminating event (death).
+Tests whether the marginal mean number of recurrent events differs across
+groups (strata), extending the classical logrank test to the setting of
+recurrent events with a competing terminal event. The test statistic is
+\deqn{z = \int_0^\tau w(s)\bigl[d\hat\mu_1(s) - d\hat\mu_2(s)\bigr],}
+where \eqn{w(s)} is a weight function and \eqn{\hat\mu_j(s)} is the estimated
+marginal mean for group \eqn{j}. Variance is estimated robustly via the
+influence functions of Ghosh and Lin (2000).
 }
 \details{
-The test statistic is defined as:
-\deqn{ z_1 = \int_0^t w(s) [ d \hat m_1(s) - d \hat m_2(s) ] }
-where \eqn{w(s)} are weights and \eqn{\hat m_j(s)} are the estimated marginal 
-means for group \eqn{j}. The variance is estimated robustly using influence 
-functions derived from the Ghosh and Lin (2000) methodology.
-
-The function supports various weighting schemes:
-\itemize{
-  \item \code{"I"}: \eqn{w(t) = R_1 R_2 / (R_1 + R_2)}, where \eqn{R_j(t) = Y_j(t)/\hat S_j(t-)} 
-    and \eqn{Y_j} is the number at risk, \eqn{\hat S_j} is the Kaplan-Meier survival estimate.
-  \item \code{"II"}: \eqn{w(t) = Y_1 Y_2 / (Y_1 + Y_2)}, standard logrank weights based on numbers at risk.
-  \item \code{"III"}: Weights corresponding to Gray's test for cumulative incidence, 
-    involving subdistribution hazards.
+Three weight schemes are available:
+\describe{
+  \item{\code{"I"}}{(Default) \eqn{w(t) = R_1(t) R_2(t) / (R_1(t) + R_2(t))},
+    where \eqn{R_j(t) = Y_j(t) / \hat S_j(t-)}. Analogous to the standard
+    logrank weight.}
+  \item{\code{"II"}}{\eqn{w(t) = Y_j(t)}, the raw risk-set size. Equivalent
+    to using observed counts without survival adjustment.}
+  \item{\code{"III"}}{A modified weight incorporating the cumulative incidence,
+    analogous to Gray's test for competing risks.}
 }
-The test works for recurrent events, cumulative incidence, and handles delayed entry.
 }
 \examples{
 data(hfactioncpx12)
 hf <- hfactioncpx12
 
-## Fit separate models for recurrent events and death
-xr <- phreg(Surv(entry,time,status==1)~strata(treatment)+cluster(id),data=hf)
-dr <- phreg(Surv(entry,time,status==2)~strata(treatment)+cluster(id),data=hf)
-
-## Compute logrank test for recurrent marginal means
-out <- test_logrankRecurrent(xr, dr, stop=5)
+## Test using two separate phreg models
+xr <- phreg(Surv(entry, time, status == 1) ~ strata(treatment) + cluster(id), data = hf)
+dr <- phreg(Surv(entry, time, status == 2) ~ strata(treatment) + cluster(id), data = hf)
+out <- test_logrankRecurrent(xr, dr, stop = 5)
 summary(out)
 
-## Alternatively, using the recurrent_marginal object directly
-outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-                           data=hf,cause=1,death.code=2)
+## Equivalently, using a recurrent_marginal object directly
+outN <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + cluster(id),
+                           data = hf, cause = 1, death.code = 2)
 test_logrankRecurrent(outN)
+
 }
 \references{
-Ghosh, D. and Lin, D. Y. (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 58, 554--562.
+Ghosh, D. and Lin, D. Y. (2000). Nonparametric analysis of recurrent events
+and death. \emph{Biometrics}, 56, 554--562.
 }
 \seealso{
 \code{\link{recurrent_marginal}}, \code{\link{logrankRecurrentBase}}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{count_history}
 \alias{count_history}
-\title{Count previous events for recurrent event processes}
+\title{Compute cumulative event counts as time-dependent covariates}
 \usage{
 count_history(
   data,
@@ -16,38 +16,64 @@ count_history(
 )
 }
 \arguments{
-\item{data}{Data frame containing the event history.}
+\item{data}{A data frame in counting-process format, with one row per event
+interval per subject.}
 
-\item{status}{Name of the column containing event status codes.}
+\item{status}{Name of the column containing event status codes. Default is
+\code{"status"}.}
 
-\item{id}{Name of the column containing subject IDs.}
+\item{id}{Name of the column containing subject identifiers. Default is
+\code{"id"}.}
 
-\item{types}{Numeric vector of status codes to count (e.g., \code{c(1, 2)}).}
+\item{types}{Integer vector of status codes to count. Each value in
+\code{types} generates one new count column (when \code{multitype = FALSE})
+or contributes to a single combined count (when \code{multitype = TRUE}).
+Default is \code{1}.}
 
-\item{names.count}{Prefix for the new count columns (e.g., "Count").}
+\item{names.count}{Prefix for the names of the new count columns. The
+status code is appended, e.g. \code{"Count1"}, \code{"Count2"}.
+Default is \code{"Count"}.}
 
-\item{lag}{Logical; if TRUE, counts events strictly before the current time 
-(lagged); if FALSE, counts events up to and including the current time.}
+\item{lag}{Logical. If \code{TRUE} (default), the count at each row is the
+number of events strictly before the current time (\eqn{N(t-)}). If
+\code{FALSE}, events at the current time are included (\eqn{N(t)}).}
 
-\item{multitype}{Logical; if TRUE, counts events where status is \code{in} \code{types}; 
-if FALSE, counts events for each value in \code{types} separately.}
+\item{multitype}{Logical. If \code{TRUE}, events with status in \code{types}
+are aggregated into a single count column, optionally weighted by
+\code{marks}. If \code{FALSE} (default), a separate count column is created
+for each value in \code{types}.}
 
-\item{marks}{Values associated with events (used if \code{multitype=TRUE}).}
+\item{marks}{Optional numeric vector of weights applied to events when
+\code{multitype = TRUE}. If \code{NULL} (default), each event has weight 1.}
 }
 \value{
-The input data frame with new columns added containing the event counts.
+The input data frame \code{data} with one or more new integer columns
+  appended. With \code{multitype = FALSE}, columns are named
+  \code{paste0(names.count, k)} for each \code{k} in \code{types}; with
+  \code{multitype = TRUE}, a single column named
+  \code{paste0(names.count, types[1])} is added. An internal bookkeeping
+  column \code{lbnr__id} is also added.
 }
 \description{
-Calculates the cumulative count of previous events of specific types for each 
-subject up to each time point. Useful for creating time-dependent covariates 
-representing the history of recurrent events.
+For each subject and each row of \code{data}, counts the number of prior
+events of specified types in the recurrent event history. The resulting
+count columns can be used as time-dependent covariates in subsequent models,
+e.g. to capture event-history dependence in the recurrent event rate.
+}
+\details{
+When \code{lag = TRUE} (default), the count at each row reflects events that
+occurred strictly before the current time point (i.e. \eqn{N(t-)}), making
+it suitable as a left-continuous covariate in counting-process models.
 }
 \examples{
 data(hfactioncpx12)
 hf <- hfactioncpx12
 dtable(hf, ~status)
-rr <- count_history(hf, types=1:2, id="id", status="status")
-dtable(rr, ~"Count*"+status, level=1)
+
+## Separate counts for event types 1 and 2
+rr <- count_history(hf, types = 1:2, id = "id", status = "status")
+dtable(rr, ~"Count*" + status, level = 1)
+
 }
 \author{
 Thomas Scheike

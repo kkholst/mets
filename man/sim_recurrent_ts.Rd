@@ -2,7 +2,7 @@
 % Please edit documentation in R/recurrent.marginal.R
 \name{sim_recurrent_ts}
 \alias{sim_recurrent_ts}
-\title{Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure}
+\title{Simulate recurrent events from a two-stage Cox or Ghosh-Lin model}
 \usage{
 sim_recurrent_ts(
   cox1,
@@ -27,64 +27,114 @@ sim_recurrent_ts(
 )
 }
 \arguments{
-\item{cox1}{cox/ghosh-lin for recurrent events}
+\item{cox1}{A fitted \code{phreg} object for the recurrent event rate, or a
+fitted \code{recreg} (Ghosh-Lin) object. The model type is detected
+automatically from the class.}
 
-\item{coxd}{cox for terminal event (phreg)}
+\item{coxd}{A fitted \code{phreg} object for the terminal event. May be
+\code{NULL} if no terminal event is modelled.}
 
-\item{n}{number of id's}
+\item{n}{Number of subjects to simulate. Default is \code{1}.}
 
-\item{data}{on which the models are fitted (to draw covariates)}
+\item{data}{The data frame on which \code{cox1} and \code{coxd} were fitted,
+used to draw covariate values for the simulated subjects. If \code{NULL},
+covariates must be supplied via \code{r1}, \code{rd}, \code{strata1}, and
+\code{stratad}.}
 
-\item{type}{to specify type of simulation, if not default}
+\item{type}{Simulation type: \code{"default"} (auto-detected from class of
+\code{cox1}), \code{"cox-cox"}, or \code{"gl-cox"}.}
 
-\item{id}{name of id variable}
+\item{id}{Name of the subject identifier variable in \code{data}. Default is
+\code{"id"}.}
 
-\item{varz}{dependence frailty}
+\item{varz}{Variance of the frailty distribution in the two-stage model.
+Default is \code{1}.}
 
-\item{share}{to fit patly shared random effects model}
+\item{share}{Proportion of the shared frailty assigned to the recurrent event
+process in the partial-sharing model. Default is \code{1}.}
 
-\item{cens}{censoring rate for exponential censoring}
+\item{cens}{Rate of exponential censoring. Default is \code{0.001}.}
 
-\item{scale1}{to scale baseline of recurrent events model}
+\item{scale1}{Scalar multiplier for the baseline cumulative hazard of the
+recurrent event process. Default is \code{1}.}
 
-\item{scaled}{to scale baseline of terminal event}
+\item{scaled}{Scalar multiplier for the baseline cumulative hazard of the
+terminal event. Default is \code{1}.}
 
-\item{dependence}{if dependence different from NULL, then uses sim_recurrent_list based on models given}
+\item{dependence}{If non-\code{NULL}, falls back to
+\code{\link{sim_recurrent_list}} with this frailty structure (see
+\code{\link{sim_recurrentII}} for valid values). Default is \code{NULL}.}
 
-\item{r1}{relative risk for cox1 baseline, then data is not needed}
+\item{r1}{Optional numeric vector of length \code{n} of subject-specific
+relative risks for the recurrent event, used when \code{data = NULL}.}
 
-\item{rd}{relative risk for coxd baseline, then data is not needed}
+\item{rd}{Optional numeric vector of length \code{n} of subject-specific
+relative risks for the terminal event, used when \code{data = NULL}.}
 
-\item{rc}{relative risk for exponential censoring}
+\item{rc}{Optional numeric vector of length \code{n} of subject-specific
+censoring rate multipliers.}
 
-\item{strata1}{strata variable for cox1 baseline, then data is not needed}
+\item{strata1}{Optional integer vector of length \code{n} specifying the
+stratum index (0-based) for the recurrent event model, used when
+\code{data = NULL}.}
 
-\item{stratad}{strata variable for coxd baseline, then data is not needed}
+\item{stratad}{Optional integer vector of length \code{n} specifying the
+stratum index (0-based) for the terminal event model, used when
+\code{data = NULL}.}
 
-\item{death.code}{code for death (default is 3) in status variable, events are coded as 1}
+\item{death.code}{Integer status code used for the terminal event in the
+output \code{status} column. Default is \code{3}.}
 
-\item{...}{Additional arguments to sim_GLcox, nmin, nmax regulates linear approximation grid}
+\item{...}{Further arguments passed to \code{\link{sim_GLcox}}, including
+\code{nmin} and \code{nmax} for the linear approximation grid.}
+}
+\value{
+A data frame in counting-process format with one row per event
+  interval per subject. Column names match those in the original model
+  formula (entry, exit, and status variables). Additional columns include
+  \code{id} and the covariates drawn from \code{data} (if supplied). The
+  terminal event is coded as \code{death.code} in the status variable;
+  recurrent events are coded as \code{1}.
 }
 \description{
-Simulation of two-stage recurrent events data based on Cox/Cox or Cox/Ghosh-Lin structure
+Simulates recurrent event data from a fitted two-stage model, where the
+recurrent event process and the terminal event are each described by a
+separate fitted model. The recurrent event model may be either a Cox
+proportional hazards model (\code{phreg}) or a Ghosh-Lin marginal rate model
+(\code{recreg}); the terminal event model must be a Cox model (\code{phreg}).
 }
 \details{
-Must specify two phreg objects, or a phreg and a recreg object, then simulates data from two-stage model
+Covariates are drawn by bootstrap from \code{data} (if supplied), and
+subject-specific relative risks and strata are derived from the fitted
+model objects. Stratified baselines are fully supported. When
+\code{dependence} is \code{NULL} (default), the simulation uses the
+two-stage structure from \code{\link{sim_GLcox}}; setting \code{dependence}
+to an integer falls back to \code{\link{sim_recurrent_list}} with the
+corresponding frailty model.
 }
 \examples{
 data(hfactioncpx12)
-hf <- hfactioncpx12
-hf$x <- as.numeric(hf$treatment)
-n <- 100
-xr <- phreg(Surv(entry,time,status==1)~x+cluster(id),data=hf)
-dr <- phreg(Surv(entry,time,status==2)~x+cluster(id),data=hf)
-simcoxcox <- sim_recurrent_ts(xr,dr,n=n,data=hf,death.code=2)
-recGL <- recreg(Event(entry,time,status)~x+cluster(id),hf,death.code=2)
-simglcox <- sim_recurrent_ts(recGL,dr,n=n,data=hf,death.code=2)
+hf    <- hfactioncpx12
+hf$x  <- as.numeric(hf$treatment)
+n     <- 100
+
+## Cox-Cox two-stage model
+xr <- phreg(Surv(entry, time, status == 1) ~ x + cluster(id), data = hf)
+dr <- phreg(Surv(entry, time, status == 2) ~ x + cluster(id), data = hf)
+simcoxcox <- sim_recurrent_ts(xr, dr, n = n, data = hf, death.code = 2)
+
+## Ghosh-Lin/Cox two-stage model
+recGL  <- recreg(Event(entry, time, status) ~ x + cluster(id), hf, death.code = 2)
+simglcox <- sim_recurrent_ts(recGL, dr, n = n, data = hf, death.code = 2)
 
 }
 \references{
-Scheike (2024), Twostage recurrent events models, under review.
+Scheike, T. H. (2026). Two-stage recurrent events random effects models.
+\emph{Lifetime Data Analysis}.
+}
+\seealso{
+\code{\link{recurrent_marginal}}, \code{\link{sim_recurrent_list}},
+  \code{\link{sim_GLcox}}
 }
 \author{
 Thomas Scheike

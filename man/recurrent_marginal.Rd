@@ -5,89 +5,100 @@
 \alias{recurrent_marginalAIPCW}
 \alias{recurrentMarginalPhreg}
 \alias{iidRecurrent}
-\title{Fast recurrent marginal mean estimation when death is possible}
+\title{Marginal mean estimation for recurrent events with a terminal event}
 \usage{
 recurrent_marginal(formula, data, cause = 1, ..., death.code = 2, test = FALSE)
 }
 \arguments{
-\item{formula}{Formula with \code{Event} object specifying entry time, exit time, 
-and status. Can include \code{cluster()} for subject-level clustering and 
-\code{strata()} for stratified analysis.}
+\item{formula}{A formula with an \code{\link{Event}} response on the left-hand
+side, specifying entry time, exit time, and event status. The right-hand side
+may include \code{cluster()} to identify subjects and \code{strata()} for a
+stratified analysis. A \code{cluster()} term is required.}
 
-\item{data}{Data frame containing all variables referenced in the formula.}
+\item{data}{A data frame containing all variables in \code{formula}.}
 
-\item{cause}{Numeric code(s) for the event of interest (default is 1).}
+\item{cause}{Integer code(s) for the recurrent event of interest. Default is
+\code{1}.}
 
-\item{...}{Additional arguments passed to lower-level functions (e.g., \code{phreg}).}
+\item{...}{Further arguments passed to \code{\link{phreg}}.}
 
-\item{death.code}{Numeric code(s) for death/terminating event (default is 2).}
+\item{death.code}{Integer code(s) for the terminal event. Default is \code{2}.}
 
-\item{test}{Logical; if TRUE, computes a logrank-type test for two-group comparisons.}
+\item{test}{Logical. If \code{TRUE}, a logrank-type test comparing strata is
+computed and stored as an attribute of the result. Default is \code{FALSE}.}
 }
 \value{
-An object of class \code{"recurrent"} containing the marginal mean (\code{mu}), standard errors (\code{se.mu}), times, survival probabilities (\code{St}), and cumulative hazards. Attributes include the logrank test result (if \code{test=TRUE}), cause, and death code.
+An object of class \code{"recurrent"} with the following components:
+  \item{mu}{Estimated marginal mean \eqn{\mu(t)} at each jump time.}
+  \item{se.mu}{Robust standard error of \code{mu}.}
+  \item{times}{Jump times at which estimates are computed.}
+  \item{St}{Marginal survival estimate \eqn{S(t)} at each jump time.}
+  \item{cumhaz}{Two-column matrix of \code{(time, mu)}, suitable for plotting.}
+  \item{se.cumhaz}{Two-column matrix of \code{(time, se.mu)}.}
+  The object carries three attributes: \code{"logrank"} (the test result when
+  \code{test = TRUE}, otherwise \code{NULL}), \code{"cause"}, and
+  \code{"death.code"}.
 }
 \description{
-Computes fast marginal means of recurrent events using the Ghosh and Lin (2000) 
-robust standard error methodology. The method fits two separate models—one for death 
-(terminating event) and one for recurrent events—which are then combined to produce 
-the estimator:
-\deqn{ \int_0^t S(u-) dR(u) }
-where this represents the mean number of recurrent events (or cumulative incidence). 
-Here, \deqn{S(u)} is the probability of survival for the baseline group, and 
-\deqn{dR(u)} is the hazard rate of an event among survivors for the baseline.
+Estimates the marginal mean number of recurrent events over time in the
+presence of a competing terminal event (e.g. death), using the nonparametric
+estimator of Ghosh and Lin (2000). Two proportional hazards models are fitted
+internally—one for the recurrent event rate and one for the terminal
+event—and combined to form the estimator
+\deqn{\mu(t) = \int_0^t S(u-)\,dR(u),}
+where \eqn{S(u)} is the marginal survival probability at the baseline covariate
+level and \eqn{dR(u)} is the baseline recurrent event rate among survivors.
+Robust (sandwich) standard errors are computed via the influence-function
+approach of Ghosh and Lin (2000).
 }
 \details{
-The function assumes no ties in the sense that jump times need to be unique, 
-which is particularly important for the stratified version.
+Jump times must be unique within each stratum. If ties are present, use
+\code{\link{tie_breaker}} to resolve them before calling this function.
 }
 \examples{
 data(hfactioncpx12)
 hf <- hfactioncpx12
-hf$x <- as.numeric(hf$treatment) 
+hf$x <- as.numeric(hf$treatment)
 
-##  to fit non-parametric models with just a baseline 
-xr <- phreg(Surv(entry,time,status==1)~cluster(id),data=hf)
-dr <- phreg(Surv(entry,time,status==2)~cluster(id),data=hf)
-par(mfrow=c(1,3))
-plot(dr,se=TRUE)
-title(main="death")
-plot(xr,se=TRUE)
-### robust standard errors 
-rxr <-  robust_phreg(xr,fixbeta=1)
-plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
+## Fit nonparametric baseline models for recurrent events and death
+xr <- phreg(Surv(entry, time, status == 1) ~ cluster(id), data = hf)
+dr <- phreg(Surv(entry, time, status == 2) ~ cluster(id), data = hf)
 
-## marginal mean of expected number of recurrent events 
-## out <- recurrentMarginalPhreg(xr,dr)
-## summary(out,times=1:5) 
+par(mfrow = c(1, 3))
+plot(dr, se = TRUE); title(main = "Death")
+plot(xr, se = TRUE); title(main = "Recurrent events")
 
-## marginal mean using formula  
-outN <- recurrent_marginal(Event(entry,time,status)~cluster(id),hf,cause=1,death.code=2)
-plot(outN,se=TRUE,col=2,add=TRUE)
-summary(outN,times=1:5) 
+## Compare naive and robust standard errors for the recurrent event rate
+rxr <- robust_phreg(xr, fixbeta = 1)
+plot(rxr, se = TRUE, robust = TRUE, add = TRUE, col = 4)
 
-########################################################################
-###   with strata     ##################################################
-########################################################################
-out <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),
-                         data=hf,cause=1,death.code=2,test=TRUE)
-plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+## Marginal mean via formula interface
+outN <- recurrent_marginal(Event(entry, time, status) ~ cluster(id),
+                           data = hf, cause = 1, death.code = 2)
+plot(outN, se = TRUE, col = 2, add = TRUE)
+summary(outN, times = 1:5)
 
-attr(out,"logrank")
+## Stratified analysis with logrank test
+out <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + cluster(id),
+                          data = hf, cause = 1, death.code = 2, test = TRUE)
+plot(out, se = TRUE, ylab = "Marginal mean", col = 1:2)
+attr(out, "logrank")
+summary(out, times = 1:5)
 
-summary(out,times=1:5) 
-########################################################################
-### iid decomposition based on influence functions from Ghosh Lin (2000)
-########################################################################
-head(iid(outN,time=3))
+## Influence-function (iid) decomposition at a fixed time point
+head(iid(outN, time = 3))
 
 }
 \references{
-Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
-Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+Cook, R. J. and Lawless, J. F. (1997). Marginal analysis of recurrent events
+and a terminating event. \emph{Statistics in Medicine}, 16, 911--924.
 
-Cook, R. J. and Lawless, J. F. (1997) Marginal analysis of recurrent events and a terminating event. Statist. Med., 16, 911–924.
-Ghosh and Lin (2002) Nonparametric Analysis of Recurrent events and death, Biometrics, 554--562.
+Ghosh, D. and Lin, D. Y. (2000). Nonparametric analysis of recurrent events
+and death. \emph{Biometrics}, 56, 554--562.
+}
+\seealso{
+\code{\link{test_logrankRecurrent}}, \code{\link{tie_breaker}},
+  \code{\link{prob_exceed_recurrent}}
 }
 \author{
 Thomas Scheike
