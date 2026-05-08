@@ -816,7 +816,6 @@ Frailty models (simulations based on the rates/intensities)
  n <- 400
  rr <- sim_recurrent(n,base1,death.cumhaz=dr)
  ###
- par(mfrow=c(1,3))
  mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 
  rr <- sim_recurrentII(n,base1,base4,death.cumhaz=dr)
