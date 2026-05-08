@@ -10,6 +10,7 @@ inst/README.md
 inst/README.tex
 inst/man
 huskCompile
+test-Rd.R
 docs
 *.gcno
 TAGS
