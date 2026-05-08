@@ -1626,6 +1626,30 @@ summary.predictphreg <- function(object, type = c("surv", "cumhaz", "cif")[1],
   out
 } ## }}} 
 
+##' @export
+print.summary.predictphreg <- function(x, digits = 4, ...) { ## {{{
+  has_ci <- !is.null(x$lower)
+  cat(sprintf("Predictions of type '%s'\n", x$type))
+  cat(sprintf("  Showing subjects: %s\n",
+              paste(x$rows, collapse = ", ")))
+  cat(sprintf("  Showing times:    %s\n\n",
+              paste(round(x$times, digits), collapse = ", ")))
+
+  for (i in seq_along(x$rows)) {
+    cat(sprintf("-- Subject %d --\n", x$rows[i]))
+    entry <- data.frame(time = round(x$times, digits),
+                        pred = round(x$pred[i, ], digits))
+    names(entry)[2] <- x$type
+    if (has_ci) {
+      entry$se    <- round(x$se.pred[i, ], digits)
+      entry$lower <- round(x$lower[i, ],   digits)
+      entry$upper <- round(x$upper[i, ],   digits)
+    }
+    print(entry, row.names = FALSE)
+    cat("\n")
+  }
+  invisible(x)
+} ## }}} 
 
 ##' @export
 print.predictphreg <- function(x, type = c("surv", "cumhaz", "cif")[1],
