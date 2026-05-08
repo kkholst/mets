@@ -52,6 +52,8 @@ are resolved.}
 uniform draw on \eqn{[0, \text{ddt}]}. If \code{NULL} (default), \code{ddt}
 is set to half the smallest positive gap between any two consecutive exit
 times in the data.}
+
+\item{seed}{Seed for random perturbations.}
 }
 \value{
 The input data frame \code{data} with tied event exit times

@@ -1072,6 +1072,7 @@ covIntH1dM1IntH2dM2 <- function(square1,square2,fixbeta=1,mu=NULL)
 ##'   as events.
 ##' @param cens.code Integer code(s) for censoring. Rows with this status are
 ##'   never perturbed. Default is \code{0}.
+##' @param seed Seed for random perturbations. 
 ##'
 ##' @return The input data frame \code{data} with tied event exit times
 ##'   perturbed. If \code{id} is supplied, an additional logical column
