@@ -6,15 +6,7 @@
 \alias{lin_approx}
 \title{Simulation of Piecewise Constant Hazard Model (Cox)}
 \usage{
-rchaz(
-  cumhazard,
-  rr,
-  n = NULL,
-  entry = NULL,
-  cum.hazard = TRUE,
-  cause = 1,
-  extend = FALSE
-)
+rchaz(cumhazard, rr, n = NULL, entry = NULL, cause = 1, extend = FALSE)
 }
 \arguments{
 \item{cumhazard}{Cumulative hazard matrix (columns: time, cumulative hazard), or 
@@ -26,9 +18,6 @@ specify \code{n}.}
 \item{n}{Number of simulations if \code{rr} not given.}
 
 \item{entry}{Delayed entry time for simulations (optional).}
-
-\item{cum.hazard}{Specifies whether input is cumulative hazard (\code{TRUE}) or rates 
-(\code{FALSE}).}
 
 \item{cause}{Name/code of the event cause (default 1).}
 

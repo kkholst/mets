@@ -19,8 +19,6 @@
 ##'   specify \code{n}.
 ##' @param n Number of simulations if \code{rr} not given.
 ##' @param entry Delayed entry time for simulations (optional).
-##' @param cum.hazard Specifies whether input is cumulative hazard (\code{TRUE}) or rates 
-##'   (\code{FALSE}).
 ##' @param cause Name/code of the event cause (default 1).
 ##' @param extend To extend piecewise constant with constant rate beyond the last break point. 
 ##'   Default is \code{FALSE}. If \code{TRUE}, extends with average rate over time from 
@@ -49,18 +47,14 @@
 ##' pctimecox <- rchaz(cumhaz,rrcox,entry=runif(n))
 #' @export 
 #' @aliases sim_rchaz lin_approx 
-rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=FALSE)
+rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cause=1,extend=FALSE)
 {# {{{
   if (!is.null(n)) rr <- rep(1,n)
   n <- length(rr)
 
   breaks <- cumhazard[,1]
-  rates <- cumhazard[,2][-1]
   mm <- tail(breaks,1)
-  if (cum.hazard==FALSE) {
-        cumh <- cumsum(c(0,diff(breaks)*rates))
-        cumhazard <- cbind(breaks,cumh)
-  } else cumh <- cumhazard[,2] 
+  cumh <- cumhazard[,2] 
    ttt <- rexp(n)/rr
    if (cumhazard[1,2]>0)  { ## start cumulative hazard with a 0
 ###   warning("Safest to start with cumulative hazard 0 to avoid problems\n"); 
@@ -69,7 +63,7 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
    }
    ###
    if (!is.null(entry)) {
-	   if (length(entry)==1) entry <- rep(entry,n) else entry <- entry
+	   if (length(entry)==1) entry <- rep(entry,n) 
 	   cumentry <- lin_approx(entry,cumhazard,x=1)
 	   if (any(entry>tail(breaks,1)))  stop("Some entry times further out than last cumulative hazard time\n"); 
    } else { entry <- cumentry <- rep(0,n) }
@@ -120,7 +114,9 @@ rchazl <- function (cumhaz, rr, causes=NULL,...)
     if (l >= 2)
         for (i in 2:l) {
             tall2 <- rchaz(cumhaz[[i]], rr[, i], ...)
-            tall$status <- ifelse(tall$time < tall2$time, tall$status, i * tall2$status)
+###            tall$status <- ifelse(tall$time < tall2$time, tall$status, i * tall2$status)
+	    tall$status <- ifelse(tall$time < tall2$time, tall$status,
+                      ifelse(tall2$status == 0, 0, i))
             tall$time <- pmin(tall$time, tall2$time)
         }
  if (!is.null(causes)) {
@@ -182,7 +178,7 @@ restore <- function(flat, lengths) {
  mm <- which.max(maxx)
  haza <- NULL
  if (is.numeric(extend)) 
- if (length(extend)!=length(cumA)) haza <- rep(extend,length(cumA)) 
+    haza <- rep(extend, length.out = length(cumA))
 
  ## extend all that are not at maxtime
 for (i in seq(length(cumA))[-mm]) {
@@ -292,18 +288,31 @@ simCens <- function(cens,rrc=NULL,n=NULL,entry=NULL,...)
 #' @export 
 rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 		  cens=NULL,rrc=NULL,extend=TRUE,causes=NULL,...)
-{#'# {{{
+{# {{{
 	if (!is.null(cumB)) {
 		cumA <- list(cumA,cumB);
-		rr <- cbind(rr1,rr2);
-	} else cumA <- c(cumA,cumB)
+	} else if (!is.list(cumA)) cumA <- list(cumA)
+	l <- length(cumA)
 
-	if (!is.null(n)) {
-		rr <- matrix(1,n,length(cumA));
-	} else {
-		n <- length(rr1);
-		rr <- cbind(rr1,rr2)
-	}
+    ## --- resolve n and build rr matrix -------------------------------
+    ## collect any supplied rr vectors into a list, dropping NULLs
+    rr_supplied <- Filter(Negate(is.null), list(rr1, rr2))
+
+    if (length(rr_supplied) == 0) {
+        ## no rr given: need n explicitly
+        if (is.null(n)) stop("supply 'n' or at least one of 'rr1', 'rr2'\n")
+        rr <- matrix(1, n, l)
+    } else {
+        ## derive n from the first supplied rr
+        n <- length(rr_supplied[[1]])
+        ## build matrix: supplied columns first, remainder filled with 1
+        rr_cols <- vector("list", l)
+        rr_cols[[1]] <- if (!is.null(rr1)) rr1 else rep(1, n)
+        rr_cols[[2]] <- if (!is.null(rr2)) rr2 else rep(1, n)
+        if (l > 2)
+            for (i in seq(3, l)) rr_cols[[i]] <- rep(1, n)
+        rr <- do.call(cbind, rr_cols)
+    }
 
 	if (!is.null(extend))  cumA <- extendCums(cumA,NULL,extend=extend)
 
@@ -1235,8 +1244,11 @@ sim_multistateII <- function(cumhaz,death.cumhaz,death.cumhaz2,n=NULL,
   } else ctime <- rep(maxtime,n)
 
   ## hazards out of 1 and out of 2
-  chaz1 <- cumss[1:3]; rr1 <- cbind(rr,rd)
-  chaz2 <- cumss[4:5]; rr2 <- cbind(rd2)
+###  chaz1 <- cumss[1:3]; rr1 <- cbind(rr,rd)
+###  chaz2 <- cumss[4:5]; rr2 <- cbind(rd2)
+  idx1 <- 1:(1 + length(death.cumhaz))
+  idx2 <- (max(idx1) + 1):(max(idx1) + length(death.cumhaz2))
+  chaz1 <- cumss[idx1]; chaz2 <- cumss[idx2]
 
   ## time out of state 1 
   tall <- rchazl(chaz1,rr1,causes=c(2,3,4))
@@ -1340,7 +1352,7 @@ sim_multistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
      } else if (dependence==1) {
 	      z <- rgamma(n,1/var.z[1])*var.z[1]
 ###	      z <- exp(rnorm(n,1)*var.z[1]^.5)
-	      z1 <- z; z2 <- z; zd <- z
+	      zd2 <- z; z1 <- z; z2 <- z; zd <- z
 	      if (!is.null(cor.mat)) { zd <- rep(1,n); }
       } else if (dependence==2) {
               stdevs <- var.z^.5
@@ -1348,24 +1360,21 @@ sim_multistate <- function(n,cumhaz,cumhaz2,death.cumhaz,death.cumhaz2,
               covv  <- b * cor.mat  
 	      z <- matrix(rnorm(3*n),n,3)
 	      z <- exp(z%*% chol(covv))
-###	      print(summary(z))
-###	      print(cor(z))
-	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; 
+	      z1 <- z[,1]; z2 <- z[,2]; zd <- z[,3]; zd2 <- z[,3]; 
       } else if (dependence==3) {
-	      z <- matrix(rgamma(3*n,1),n,3)
-              z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3])
-              z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3])
-              zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3])
-	      z <- cbind(z1,z2,zd)
-###	      print(summary(z))
-###	      print(cor(z))
+	      z <- matrix(rgamma(4*n,1),n,4)
+              z1 <- (z[,1]^cor.mat[1,1]+z[,2]^cor.mat[1,2]+z[,3]^cor.mat[1,3]+z[,4]^cor.mat[1,4])
+              z2 <- (z[,1]^cor.mat[2,1]+z[,2]^cor.mat[2,2]+z[,3]^cor.mat[2,3]+z[,4]^cor.mat[2,4])
+              zd <- (z[,1]^cor.mat[3,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3]+z[,4]^cor.mat[3,4])
+              zd2<- (z[,4]^cor.mat[4,1]+z[,2]^cor.mat[3,2]+z[,3]^cor.mat[3,3]+z[,4]^cor.mat[4,4])
+	      z <- cbind(z1,z2,zd,zd2)
       } else stop("dependence 0-3"); # }}}
 
   ## covariate adjustment 
   if (is.null(rr12))  rr12 <- z1  else rr12 <- rr12*z1
-  if (is.null(rr21)) rr21 <- z2 else rr21 <- rr21*z2
-  if (is.null(rd13))  rd13  <- zd else rd13 <- rd13*zd
-  if (is.null(rd23)) rd23 <- zd2 else rd23 <- rd23*zd2
+  if (is.null(rr21))  rr21 <- z2  else rr21 <- rr21*z2
+  if (is.null(rd13))  rd13 <- zd  else rd13 <- rd13*zd
+  if (is.null(rd23))  rd23 <- zd2 else rd23 <- rd23*zd2
 
   ll <- nrow(cumhaz)
   ### extend of cumulatives
