@@ -1002,13 +1002,13 @@ predict.recreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { 
 
 ##' @export
 summary.predictrecreg <- function(object,type=c("cif","cumhaz","surv")[2],...) { ## {{{
-   mets:::summary.predictphreg(object,type=type[1],...)
+   summary.predictphreg(object,type=type[1],...)
 } ## }}}
 
 ##' @export
 print.predictrecreg <- function(x,type=c("cif","cumhaz","surv")[2],...) 
 { ## }}}
- mets:::print.predictphreg(x,type=type[1],...)
+ print.predictphreg(x,type=type[1],...)
 } ## }}}
 
 

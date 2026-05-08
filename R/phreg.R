@@ -3056,7 +3056,7 @@ for (tt in time) {
   if (!is.null(Gt$survival.ratio$coefmat))
   survival.ratio <- rbind(survival.ratio,cbind(tt,exp(Gt$survival.ratio$coefmat)))
 }
-  colnames(survivalG)[1] <- "time"
+  colnames(survivalGt)[1] <- "time"
   colnames(risk)[1] <- "time"
   colnames(difference)[1] <- "time"
   colnames(ratio)[1] <- "time"
