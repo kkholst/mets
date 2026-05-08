@@ -12,7 +12,7 @@ sim_phreg(
   rr = NULL,
   strata = NULL,
   entry = NULL,
-  extend = NULL,
+  extend = TRUE,
   cens = NULL,
   rrc = NULL,
   ...

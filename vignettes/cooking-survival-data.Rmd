@@ -100,24 +100,6 @@ the Cox model to data yields a piecewise constant cumulative hazard and regressi
 with these in hand we can approximate the piecewise constant Breslow estimator
 by simply connecting the jump points with straight lines.
 
-# Delayed entry 
-
-If $T$ given $X$ have hazard  on Cox form 
-$$
-  \lambda_0(t) \exp( X^T \beta)
-$$
-and we wish to generate data according to this hazard for those that are alive at time $s$, that is 
-draw from the distribution of $T$ given $T>s$ (all given $X$ ), then we note that  
-$$
-\Lambda_0^{-1}( \Lambda_0(s) + E/HR)) 
-$$
-with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distribution we are after. 
-
-This is again a consequence of a simple calculation
-$$
-  P_X(\Lambda^{-1}(\Lambda(s)+ E/HR) > t) = P_X(E > HR( \Lambda(t) - \Lambda(s)) ) = P_X(T>t | T>s)
-$$
-
 The engine is to simulate data with a given linear cumulative hazard. First generating survival data based on
 the cumulative hazard `cumhaz`:
 
@@ -249,9 +231,6 @@ The following example includes stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
- - `sim_phreg`: simulates from a single `phreg` model, supports stratified baselines
- - `sim_phregs`: simulates cause-specific hazards from a list of `phreg` models
-
 One further example, again fully nonparametric:
 
 ```{r}
@@ -276,6 +255,67 @@ One further example, again fully nonparametric:
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
  plot(scox2,col=2); plot(cox2,add=TRUE,col=1)
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
+```
+
+**Summary of simulation functions**
+
+| Function      | Purpose                                                     |
+|---------------|-------------------------------------------------------------|
+| `sim_phreg`   | Single `phreg` model; supports stratified baselines         |
+| `sim_phregs`  | List of cause-specific `phreg` models; draws covariates automatically |
+
+
+# Delayed entry
+
+If $T$ given $X$ have hazard  on Cox form 
+$$
+  \lambda_0(t) \exp( X^T \beta)
+$$
+and we wish to generate data according to this hazard for those that are alive at time $s$, that is 
+draw from the distribution of $T$ given $T>s$ (all given $X$ ), then we note that  
+$$
+\Lambda_0^{-1}( \Lambda_0(s) + E/HR)) 
+$$
+with $HR=\exp(X^T \beta))$ and with $E \sim Exp(1)$ has the distribution we are after. 
+
+This is again a consequence of a simple calculation
+$$
+P_X\!\left(\Lambda^{-1}\!\left(\Lambda(s) + E/HR\right) > t\right)
+= P_X\!\left(E > HR\!\left(\Lambda(t) - \Lambda(s)\right)\right)
+= P_X(T > t \mid T > s).
+$$
+
+We here illustrate how to simulate from a competing risks model based on 
+Cox hazards. 
+
+```{r sim-phregs, label="entry-stratified"}
+data(bmt)
+cox0 <- phreg(Surv(time, cause == 0) ~ tcell + platelet+age,          data = bmt)
+cox1 <- phreg(Surv(time, cause == 1) ~ tcell + platelet+age,          data = bmt)
+cox2 <- phreg(Surv(time, cause == 2) ~ strata(tcell) + platelet+age,  data = bmt)
+
+nsim <- 800
+entry <- rbinom(nsim, 1, 0.5) * runif(nsim) * 60
+
+dd <- sim_phreg(cox0,nsim, data = bmt,entry=entry)
+scox0 <- phreg(Surv(entry,time, cause == 1) ~ tcell + platelet+age,         data = dd)
+cbind(cox0$coef, scox0$coef)
+par(mfrow = c(2, 2))
+plot(cox0); plot(scox0, add = TRUE, col = 2)
+
+dd <- sim_phregs(list(cox0, cox1, cox2), nsim, data = bmt,entry=entry)
+
+scox0 <- phreg(Surv(entry,time, cause == 1) ~ tcell + platelet+age,         data = dd)
+scox1 <- phreg(Surv(entry,time, cause == 2) ~ tcell + platelet+age,         data = dd)
+scox2 <- phreg(Surv(entry,time, cause == 3) ~ strata(tcell) + platelet+age, data = dd)
+
+cbind(cox0$coef, scox0$coef)
+cbind(cox1$coef, scox1$coef)
+cbind(cox2$coef, scox2$coef)
+
+plot(cox0); plot(scox0, add = TRUE, col = 2)
+plot(cox1); plot(scox1, add = TRUE, col = 2)
+plot(cox2); plot(scox2, add = TRUE, col = 2)
 ```
 
 # Parametric hazard models

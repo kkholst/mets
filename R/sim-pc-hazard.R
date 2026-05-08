@@ -71,6 +71,7 @@ rchaz <- function(cumhazard,rr,n=NULL,entry=NULL,cum.hazard=TRUE,cause=1,extend=
    if (!is.null(entry)) {
 	   if (length(entry)==1) entry <- rep(entry,n) else entry <- entry
 	   cumentry <- lin_approx(entry,cumhazard,x=1)
+	   if (any(entry>tail(breaks,1)))  stop("Some entry times further out than last cumulative hazard time\n"); 
    } else { entry <- cumentry <- rep(0,n) }
    ###
    ttte <- ttt+cumentry
@@ -361,7 +362,7 @@ rcrisk <-function(cumA,cumB,rr1=NULL,rr2=NULL,n=NULL,
 #' 
 #' @export sim_phreg 
 sim_phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
-		      entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+		      entry=NULL,extend=TRUE,cens=NULL,rrc=NULL,...)
 {# {{{
 	if  (!is.null(data)) {
 		scox1 <- draw_phreg(cox,n,data=data,onlyX=TRUE,...)
@@ -396,7 +397,8 @@ sim_phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 	for (i in unique(strata)) {
 		whichi <- which(strata==i)
 		cumhazj <- rbind(0,cumhaz[[i+1]])
-		if (!is.null(entry)) lentry <- entry[whichi]
+		if (!is.null(entry)) 
+			lentry <- entry[whichi]
 		simj <- rchaz(cumhazj,rr[whichi],entry=lentry) 
 		simj$id <- ids[whichi]
 		ptt  <-  rbind(ptt,simj)
@@ -412,10 +414,13 @@ sim_phreg <- function(cox,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
 ##### add correct names to entry,time,status
 if (inherits(cox,"phreg"))  {
 varsY <- all.vars(update(drop.specials(cox$formula,"cluster"),.~1)) 
-if (length(varsY)==2) 
-ptt[,varsY] <- cbind(ptt$time,ptt$status)
-if (length(varsY)==3) 
-ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+if (length(varsY)==3) ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+if (length(varsY)==2)  {
+	if (!is.null(entry)) { 
+		varsY <- c("entry",varsY);  
+	        ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status) 
+	} else ptt[,varsY] <- cbind(ptt$time,ptt$status)
+}
 ptt <- dkeep(ptt,varsY)
 }
 
@@ -542,7 +547,7 @@ setup_phreg  <- function(cumhazard,coef,Znames=NULL,strata=NULL)
 #' 
 #' @export sim_phregs
 sim_phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
-                       entry=NULL,extend=NULL,cens=NULL,rrc=NULL,...)
+                       entry=NULL,extend=TRUE,cens=NULL,rrc=NULL,...)
 {# {{{
    out <- draw_phregs(coxs,n,data)
    if (is.null(rr)) rr <- out$rr
@@ -576,8 +581,13 @@ sim_phregs <- function(coxs,n,data=NULL,rr=NULL,strata=NULL,
 ##### add correct names to entry,time,status
 if (inherits(coxs[[1]],"phreg"))  {
 varsY <- all.vars(update(drop.specials(coxs[[1]]$formula,"cluster"),.~1)) 
-if (length(varsY)==2) ptt[,varsY] <- cbind(ptt$time,ptt$status)
 if (length(varsY)==3) ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status)
+if (length(varsY)==2)  {
+	if (!is.null(entry)) { 
+		varsY <- c("entry",varsY);  
+	        ptt[,varsY] <- cbind(ptt$entry,ptt$time,ptt$status) 
+	} else ptt[,varsY] <- cbind(ptt$time,ptt$status)
+}
 ptt <- dkeep(ptt,varsY)
 }
 
