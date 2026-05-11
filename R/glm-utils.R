@@ -212,10 +212,9 @@ summaryGLM <- function(object,id=NULL,fun=NULL,...) {# {{{
 
 f <- function(p) exp(p)
 
-if (!is.null(id)) coef <- estimate(object,id=id,...) else coef <- estimate(object,...)
-
-if (!is.null(id)) resl <- estimate(object,id=id,...) else resl <- estimate(object,...)
-res <- exp(resl$coefmat[,c(1,3,4)]) 
+est <- if (!is.null(id)) estimate(object, id=id, ...) else estimate(object, ...)
+coef <- est
+res  <- exp(est$coefmat[, c(1, 3, 4)])
 
 if (!is.null(fun))  {
 if (!is.null(id)) resl <- estimate(object,id=id,f=fun,...) else resl <- estimate(object,f=fun,...)
