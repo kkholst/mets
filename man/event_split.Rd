@@ -36,7 +36,7 @@ event_split(
 \item{time.group}{make variable "before"."cut" that keeps track of wether start,stop is before (1) or after cut (0).}
 }
 \description{
-contstructs start stop formulation of event time data after a variable in
+Constructs start stop formulation of event time data after a variable in
 the data.set. Similar to SurvSplit of the survival package but can also
 split after random time given in data frame.
 }
