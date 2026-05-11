@@ -90,6 +90,9 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
     des.offset  <- des$offset
     id      <- des$cluster
 
+    ## must be a factor 
+    if (!is.factor(des$y)) stop("The response variable must be a factor.")
+
  ## take offset and weight first from formula, but then from arguments
   if (is.null(des.offset)) {
 	  if (is.null(offset)) offset <- rep(0,nrow(X)) 
@@ -101,7 +104,7 @@ mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
    strata.name <- NULL
 
-  res <- mlogit01(X,Y,id=id,strata=strata,offset=offset,weights=weights,strata.name=strata.name,
+  res <- mlogit01(X,Y,id=id,strata=NULL,offset=offset,weights=weights,strata.name=strata.name,
 		  fix.X=fix.X,formula.call=formula,...) 
   res$design <- des
   return(res)
@@ -155,14 +158,15 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
      for (i in nrefs) { XX <- cbind(XX,cbind(X[,1]*(strat==i))); 
                         nn<-c(nn, paste(namesX[1],i,sep=".")) 
      }  
+     if (fix.X && ncol(X) < 2) stop("fix.X=TRUE requires at least one covariate beyond the intercept.")
      ### same covariate effects 
      XX<- cbind(XX,X[,-1]*(strat!=1))
      nn <- c(nn,colnames(X[,-1]))
      colnames(XX) <- nn; 
   }
   rownames(XX) <- NULL
-  namesXX <- paste("names",1:ncol(XX),sep="")
 
+  ###  namesXX <- paste("names",1:ncol(XX),sep="")
   namesXXX <- gsub("\\)","", gsub("\\(","",nn))
   namesXXX <- gsub("\\.","", gsub("\\.","",namesXXX))
   namesXXX <- gsub("\\:","", gsub("\\:","",namesXXX))
@@ -218,7 +222,6 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 ##' @author Thomas Scheike
 ##' @seealso \code{\link{mlogit}}
 ##' @export
-##' @export
 predict.mlogit <- function (object, newdata , se = TRUE, response=TRUE , Y=NULL,level=0.95,...)
 {# {{{
 
@@ -253,7 +256,7 @@ predict.mlogit <- function (object, newdata , se = TRUE, response=TRUE , Y=NULL,
   pp <- ppp/spp
   colnames(pp) <- ylev
   alpha <- 1-level
-  crit <- -qnorm(1-alpha/2)
+  crit <- qnorm(1-alpha/2)
 
   if (!is.null(Y)) {
 	  Yg2 <- 1*(Y>=2)
@@ -263,7 +266,8 @@ predict.mlogit <- function (object, newdata , se = TRUE, response=TRUE , Y=NULL,
 	     Dppy <-  (spp*Yg2-pppy) 
 	     Dp <- c()
              for (i in nrefs) Dp <- cbind(Dp,X*ppp[,i+1]*Dppy/spp^2);  
-             if (is.null(object$var)) covv <- vcov(object) else covv <- object$var
+             covv <- if (!is.null(object$var)) object$var else vcov(object)
+             if (is.null(covv)) stop("No variance-covariance matrix available.")
 	     se <-  apply((Dp %*% covv) * Dp,1,sum)^.5
 	     cmat <- data.frame(pred = p, se = se, lower = p - crit * se, upper = p + crit * se)
              names(cmat)[1:4] <- c("pred", "se", "lower", "upper")

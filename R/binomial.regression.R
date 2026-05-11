@@ -130,7 +130,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 {# {{{
 	monotone <- TRUE
 cl <- match.call()# {{{
-    m <- match.call(expand.dots = TRUE)[1:3]
+###    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -189,7 +189,7 @@ cl <- match.call()# {{{
 
  nevent <- sum((status %in% cause)*(exit<=time))
  ## if event before time or alive, then uncensored, equality for both censored and events  
- obs <- (exit<=time & (!statusC)) | (exit>=time)
+ obs <- (exit<=time & (statusC==0)) | (exit>=time)
 
   if (is.null(cens.weights))  { ## {{{
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
@@ -554,11 +554,13 @@ predict.binreg <- function(object,newdata=NULL,se=TRUE,pred.iid=FALSE,level=0.95
   lp <- c(Z %*% object$coef)
   p <- expit(lp)
   preds <- p
+  alpha <- 1-level
 
   if (se) {
      if (is.null(object$var)) covv <- vcov(object)  else covv <- object$var
      Dpv <- Z*exp(-lp)*p^2
      se <- apply((Dpv %*% covv)* Dpv,1,sum)^.5
+     crit <- qnorm(1-alpha/2)
      cmat <- data.frame(pred=p,se=se,lower=p-1.96*se,upper=p+1.96*se)
      names(cmat)[1:4] <- c("pred","se","lower","upper")
      preds <- cmat
@@ -606,7 +608,7 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   kaplan.meier=TRUE,cens.code=0,no.opt=FALSE,method="nr",augmentation=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-    m <- match.call(expand.dots = TRUE)[1:3]
+###    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -657,8 +659,6 @@ binregt <- function(formula,data,cause=1,time=NULL,beta=NULL,
   statusE <- (status %in% cause)*outer(exit,time,"<=") 
   if (any(apply(statusE,2,sum))==0) stop("No events of type 1 before time \n"); 
   kmt <- kaplan.meier
-
-  statusC <- (status %in% cens.code) 
   data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -806,7 +806,7 @@ gradient <- apply(Dlogl,2,sum)+augmentation
   val$MGciid <- MGCiid
   val$call.id <- call.id
   val$name.id <- name.id
-  val$.id <- orig.id
+  val$id <- orig.id
   val$nid <- nid
   val$iid.naive <- val$iid 
   if (se) val$iid  <- val$iid+(MGCiid %*% val$ihessian) else val$iid  <- val$iid
@@ -832,7 +832,7 @@ logitIPCW <- function(formula,data,cause=1,time=NULL,beta=NULL,
 	   outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-  m <- match.call(expand.dots = TRUE)[1:3]
+###  m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -1043,6 +1043,7 @@ if (length(dots)==0) {
     val$name.id <- name.id
     val$nid <- nid
     val$iid.naive <- val$iid 
+    if (se)
     val$iid  <- val$iid+(MGCiid %*% val$ihessian)
     if (!is.null(call.id)) val$iid <- nameme(val$iid,name.id)
     val$naive.var <- val$var
@@ -1165,7 +1166,7 @@ binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,c
    outcome=c("cif","rmst","rmtl"),model=c("default","logit","exp","lin"),Ydirect=NULL,typeATE="II",...)
 {# {{{
   cl <- match.call()# {{{
-  m <- match.call(expand.dots = TRUE)[1:3]
+###  m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -2074,8 +2075,8 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
 
 ### DR-estimator ; G -estimator sort after namid; also outcome model
 if (!is.null(call.id)) {
-    val$riskDR.iid < nameme(iidrisk,name.id)
-    val$riskG.iid <- nameme(riskG.iid,name.id)
+    val$riskDR.iid <- nameme(iidrisk,name.id)
+    val$riskG.iid  <- nameme(riskG.iid,name.id)
     val$iid <-       nameme(val$iid,name.id)
 }
 ## }}}

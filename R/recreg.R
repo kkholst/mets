@@ -42,7 +42,6 @@
 ##'
 ##' @author Thomas Scheike
 ##' @seealso \code{\link{recregIPCW}} 
-##' @aliases marks GLprediid IIDrecreg 
 ##' @examples
 ##' ## data with no ties
 ##' data(hfactioncpx12)
@@ -96,7 +95,7 @@ marks <- function(x) x
 recregBN <- function(formula,data=data,cause=c(1),death.code=c(2),cens.code=c(0),cens.model=~1,weights=NULL,offset=NULL,Gc=NULL,wcomp=NULL,marks=NULL,...)
 { ## {{{
 cl <- match.call()
-    m <- match.call(expand.dots = TRUE)[1:3]
+###    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,
@@ -307,7 +306,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 			xx2$sign   <- xx2$sign[-fentry]
 			xx2$X      <- xx2$X[-fentry,,drop=FALSE]
 			xx2$XX     <- xx2$XX[-fentry,,drop=FALSE]
-			if (nrow(xx2$ZX)==nrow(xx2$X)) xx$ZX <- xx2$ZX[-fentry,,drop=FALSE]
+			if (nrow(xx2$ZX)==nrow(xx2$X)) xx2$ZX <- xx2$ZX[-fentry,,drop=FALSE]
 			xx2$Z      <- xx2$Z[-fentry,,drop=FALSE]
 			xx2$offset <-xx2$offset[-fentry]
 			xx2$weights <-xx2$weights[-fentry]
@@ -354,18 +353,10 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 
 		rr2 <- c(xx2$sign*exp(xx2$X %*% pp + xx2$offset)*xx2$weights)
 		rr2now <- c(xx2$sign*exp(xx2$X %*% pp + xx2$offset))
-
-		###     S0ooN <-   .Call("_mets_S0_FG_GcR",rr2,Gcxx2,typexx2-1,c(xx2$status),xx2$strata,xx2$nstrata,strataCxx2,nCstrata,Gstart)
-
-		###     S0ooA <-   .Call("_mets_S0_FGRN",rr2,typexx2-1,c(xx2$status),xx2$strata,xx2$nstrata,strataCxx2,nCstrata,Gts)
 		S0oo <-   .Call("_mets_S0_FGRN",rr2,typexx2-1,c(xx2$status),xx2$strata,xx2$nstrata,strataCxx2,nCstrata,Gts)$S0
-
 		f  <-  function(x) {
 			ll <-   .Call("_mets_S0_FGRN",x,typexx2-1,c(xx2$status),xx2$strata,xx2$nstrata,strataCxx2,nCstrata,Gts)$S0
 		}
-		###	f  <-  function(x) {
-		###           ll <-   .Call("_mets_S0_FG_GcR",x,Gcxx2,typexx2-1,c(xx2$status),xx2$strata,xx2$nstrata,strataCxx2,nCstrata,Gstart)$S0
-		###	}
 
 		S1oo  <- apply(xx2$X*rr2,2,f)
 		S2oo  <- apply(xx2$XX*rr2,2,f)
@@ -723,7 +714,7 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 		Gcxx2 <- exp(cumsumstrata(log(1-S0iC),strataCxx2,nCstrata))
 		Gstart <- rep(1,nCstrata)
 		Gjumps <- Gcxx2[jumps]
-	} else  Gcxx2 <- rep(1,length(xx2$stata))
+	} else  Gcxx2 <- rep(1,length(xx2$strata))
 	### all administrative censoring, or no censoring at all 
 	if (!anyC) typexx2 <- 1
 
@@ -792,12 +783,9 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	   if (!is.null(time) ) {
 	   HBt <- cumsum2strata(Gcxx2,S0i2*btimexx,strataCxx2,nCstrata,xx2$strata,xx2$nstrata,Gstart)
 	   HBtinf <- HBt$res[lastt][dstrata]-HBt$res
-###	   if ( is.null(adm.cens)) {
 		## baseline
 		MGAiid2 <- -HBt$res*c(rrw2)
 		MGAiid <- MGAiid+MGAiid2
-###		MGAiid <- apply(MGAiid,2,sumstrata,xx2$id,mid+1)
-###	   }
 	   }
 	   if ( ((!is.null(beta.iid)) | fixbeta==0) ) {
 		Htinf <- GdL[lastt][dstrata]-GdL
@@ -826,16 +814,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
 	 	   GdLast <- GdL[lastid][xx2$id+1]
 		   EGdLast <- EGdL[lastid,,drop=FALSE][xx2$id+1,,drop=FALSE]
                         
-###		   GadmXE2 <- apply(GdLast*Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-###		   XE2 <- apply(Z*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-###		   EGadmRR2 <- apply(EGdLast*rrw2,2,revcumsumstrata,strataCxx2,nCstrata)
-###		   RR2 <- revcumsumstrata(rrw2,strataCxx2,nCstrata)
-###
-###		   q11 <- GadmXE2-XE2*GdL
-###		   q21 <- EGadmRR2-c(RR2)*EGdL
-###                   ###
-###		   qq <- q11-q21
-
                    rrw2j <- -c(rrw2*(xx2$sign==-1))
 		   Xos <- Z*rrw2j
                    rrsx <- cumsumstrata(rrw2j,strataCxx2,nCstrata)
@@ -848,8 +826,6 @@ IIDrecreg <- function(coxprep,x,time=NULL,cause=1,cens.code=0,death.code=2,fixbe
                    if ( (!is.null(beta.iid)) | fixbeta==0) q2 <- qq
                    if (!is.null(time))  {
 		       HBlast <- HBt$res[lastid][xx2$id+1]
-
-###	               HBadmRR2 <- revcumsumstrata(HBlast*rrw2,strataCxx2,nCstrata)
 	               HBadmRR2 <- cumsumstrata(HBlast*rrw2j,strataCxx2,nCstrata)
 		       qB2 <- (HBadmRR2-HBt$res*c(rrsx))
                    }
@@ -1129,7 +1105,6 @@ predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALS
 ##' @author Thomas Scheike
 ##' @seealso \code{\link{recreg}} 
 ##' @export
-##' @export
 recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 		       cens.model=~1,km=TRUE,times=NULL,beta=NULL,offset=NULL,type=c("II","I"),
 		       marks=NULL,weights=NULL,model=c("exp","lin"),no.opt=FALSE,augmentation=NULL,method="nr",se=TRUE,...)
@@ -1183,6 +1158,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
   if (!is.null(des.marks) & is.null(marks))  marks <- des.marks
   if (is.null(marks)) marks <- rep(1,length(id))
 # }}}
+
+        if (length(times) > 1) stop("recregIPCW currently supports only a single time point.")
 
 	### setting up with artificial names
 	data$status__ <-  status 
@@ -1361,8 +1338,7 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	if (p > 0) {
 		if (no.opt == FALSE) {
 			if (tolower(method) == "nr") {
-				tim <- system.time(opt <- lava::NR(beta, obj,control=control))
-				opt$timing <- tim
+				opt <- lava::NR(beta, obj,control=control)
 				opt$estimate <- opt$par
 			}
 			else {
@@ -1432,10 +1408,10 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 		MGCiid <- MGCiid %*% val$ihessian 
 		val$iid <- val$iid + MGCiid
 	} else val$MGCiid <- MGCiid 
+	oid <- order(name.id)  
 	if (is.matrix(val$iid)) 
 		if (length(name.id)==nrow(val$iid)) {
 			rownames(val$iid) <- name.id
-			oid <- order(name.id)  
 			val$iid <- val$iid[oid,,drop=FALSE]
 		}
 	if (is.matrix(val$MGCiid))  {
@@ -1543,7 +1519,8 @@ sim_GLcox <- function(n,base1,drcumhaz,var.z=0,r1=NULL,rd=NULL,rc=NULL,fz=NULL,f
 		} 
 	}  else fzz <- z <- z1 <- rep(1,n)
 
-	if (var.z[1]==0) model <- "frailty"
+	if (isTRUE(var.z[1] == 0)) model <- "frailty"
+
 	if (is.null(type)) 
 		if (model[1]=="twostage") type <- 2 else type <- 1
 	## for frailty setting we also consider any function of z 

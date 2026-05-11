@@ -98,7 +98,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","I
 	   outcome=c("rmtl","cif"),model=c("logit","exp","lin"),Ydirect=NULL,...)
 {# {{{
   cl <- match.call()# {{{
-    m <- match.call(expand.dots = TRUE)[1:3]
+###    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula, data = data, specials = c("offset", "weights", "cluster"),
         intercept = TRUE
@@ -153,7 +153,7 @@ binregRatio <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("III","I
 
  nevent <- sum((status %in% cause)*(exit<=time))
  ## if event before time or alive, then uncensored, equality for both censored and events  
- obs <- (exit<=time & (!statusC)) | (exit>=time)
+ obs <- (exit<=time & (statusC==0)) | (exit>=time)
 
   if (is.null(cens.weights))  {
       formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
@@ -221,7 +221,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   
 
   ## first run without pseudo-value augmentation
-  p <- ncol(X)
+###  p <- ncol(X)
   opt <- NULL
   if (no.opt==FALSE) {
       if (tolower(method)=="nr") {
@@ -335,7 +335,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
 	  opt$timing <- tim
 	  opt$estimate <- opt$par
       } else {
-	  opt <- nlm(obj,beta,...)
+	  opt <- nlm(obj,coefI,...)
 	  opt$method <- "nlm"
       }
       cc <- opt$estimate; 
@@ -375,7 +375,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$model <- model[1]
   val$outcome <- outcome[1]
   val$Yipcw <- Yipcw
-  val$cenw.weights <- cens.weights.origsort 
+  val$cens.weights <- cens.weights.origsort 
   val$Causes <- Causes
   val$nevent <- nevent
 

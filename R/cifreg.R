@@ -203,7 +203,7 @@ else {
 
 ##' @export
 predict.cifreg <- function(object,newdata=NULL,se=FALSE,times=NULL,np=50,...) { ## {{{
-if (!is.null(object$propodds) & se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
+if (isTRUE(object$propodds==1) && se) {se <- FALSE; warning("standard errors not computed for logit link\n"); }
 if (!se) out <- predict.phreg(object,newdata,se=se,times=times,...)
 else {
   out <- predictrecreg(object,newdata,times=times,np=np,...)
@@ -241,11 +241,11 @@ plot.predictcifreg <- function(x,se=FALSE,ylab=NULL,type="cif",...)
 ##' @export
 gofFG <- function(formula,data,cause=1,cens.code=0,cens.model=NULL,...)
 {# {{{
-fgform <- update(formula, paste("Surv(fgstart, fgstop, fgstatus) ~ .+cluster(id)"))
+fgform <- update(formula, paste("Surv(fgstart, fgstop, fgstatus) ~ .+cluster(id__)"))
 ## assumes simple Surv(time,status) is given 
 vars <- all.vars(formula)
-data$id <- 1:nrow(data)
-formid <- update.formula(formula,paste(".~.+id"))
+data$id__ <- 1:nrow(data)
+formid <- update.formula(formula,paste(".~.+id__"))
 
 ## process types to get type of interst and other types 
 status <- data[,vars[2]]
@@ -253,6 +253,7 @@ types <- unique(status)
 mm <- match(c(cens.code,cause),types)
 mm <- mm[!is.na(mm)]
 statusS <- status
+if (length(types[-mm]) == 0) stop("No competing risk codes found; gofFG requires at least one competing event.")
 statusS[!(status %in% c(cens.code,cause))] <- types[-mm][1]
 typesF <- c(cens.code,cause,types[-mm][1])
 ###
@@ -261,10 +262,10 @@ data[,vars[2]] <- factor(statusS,typesF,typesF)
 
 Xs <- vars[-(1:2)]
 modP <- paste(Xs,collapse="+") 
-formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+id"))
+formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+id__"))
 if (!is.null(cens.model)) {
 Cstrata <- as.character(cens.model)
-formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+",Cstrata[2],"+id"))
+formid <- as.formula(paste("Surv(",vars[1],",",vars[2],")~",modP,"+",Cstrata[2],"+id__"))
 }
 
 fgdata <- finegray(formid,data=data)
@@ -292,6 +293,7 @@ indexstratarightR <- function(timeo,stratao,jump,js,nstrata,type="right")# {{{
     reso <- which(res==0) 
     if (length(reso)>0) {
        jso <- js[reso]
+        # strata indices from C are 0-based, so compare against s-1
        for (s in 1:nstrata) if (length(jso)>0) res[reso[jso==s-1]] <- ires$maxmin[s] 
     }
     return(res)
@@ -311,7 +313,6 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model
 ###  des <- readPhreg(iidBase,newdata)
   strata <- strataNew
 
-
   if (!is.null(iidBase$beta.iid))  { 
 	  fixbeta <- 0; beta.iid <- iidBase$beta.iid; X <- des$X; p <- ncol(beta.iid); 
   } else { fixbeta <- 1; beta.iid <- 0; X <- matrix(0,1,1); p <- 1 }
@@ -319,7 +320,7 @@ FGprediid <- function(iidBase,newdata,conf.type=c("log","cloglog","plain"),model
   sus <- sort(unique(strata))
   At <- iidBase$cumhaz.time[match(sus,iidBase$strata.time)]
 
-   if (missing(X)) X <- matrix(0,1,p)
+   if (nrow(X)==0) X <- matrix(0,1,p)
    if (ncol(X)!=p) stop("X and coef does not match \n"); 
 
    Ft <- function(coef,Xi=rep(0,length(p)),type="log") {

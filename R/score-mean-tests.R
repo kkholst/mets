@@ -79,7 +79,7 @@
 ##' @export
 test_marginalMean <- function(formula,data,cause=1,cens.code=0,...,death.code=2,death.code.prop=NULL,time=NULL,beta=NULL) { ## {{{ 
 cl <- match.call()
-m <- match.call(expand.dots = TRUE)[1:3]
+###m <- match.call(expand.dots = TRUE)[1:3]
 des <- proc_design(formula, data = data, specials = c("offset","weights","cluster","strata","marks"), intercept = FALSE)
 Y <- des$y
 if (!inherits(Y, c("Event", "Surv"))) {
@@ -141,7 +141,9 @@ score.test <- estimate(coef=gradient,IC=iidU0,null=0)
 ### score.test <- list(logrank.robust=logrank.robust,p.logrank.robust=p.logrank.robust,
 ###		    test.statistic=gradient,iid=iidU0)
 
-if (is.null(time)) time <- max(exit[status %in% cause])
+ev_times <- exit[status %in% cause]
+if (length(ev_times) == 0) stop("No events of the specified cause found; cannot determine time.")
+if (is.null(time)) time <- max(ev_times)
 
 ## {{{ pepe-mori test 
 
@@ -272,14 +274,14 @@ colnames(p.values) <- "p-value"
 rownames(p.values) <- c("time","Pepe-Mori","Ratio-AUC","Proportionality","Proportionality-score-test")
 
 res <- p.values
-class(res) <- "summary.maginalTest"
+class(res) <- "summary.marginalTest"
 return(res)
 }# }}}
 
 ##' @export
 print.summary.marginalTest <- function(x,...) { ## {{{
   cat("coeffients:\n")
-  printCoefmat(x$coef,...)
+  printCoefmat(x,...)
   cat("\n")
 } ## }}}
 

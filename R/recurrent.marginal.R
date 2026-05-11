@@ -148,15 +148,17 @@ recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
   data$statusD__ <- statusD
   data$strata__  <- strata
 
+  if (is.null(call.id))  stop("must specify 'cluster()'\n"); 
   ### setting up formulae for the two phreg (cause of interest and death)
-  if (is.null(call.id)) { 
-     stop("must give id\n"); 
-     formid <- update.formula(formula,~.+cluster(id)) 
-     data$id <- id
-     tt <- terms(formid)
-     tt <- delete.response(tt)
-     formid <- formula(tt)
-  }  else formid <- formula
+###  if (is.null(call.id)) { 
+###     stop("must give id\n"); 
+###     formid <- update.formula(formula,~.+cluster(id)) 
+###     data$id <- id
+###     tt <- terms(formid)
+###     tt <- delete.response(tt)
+###     formid <- formula(tt)
+###  }  else 
+  formid <- formula
   tt <- terms(formid)
   tt <- delete.response(tt)
   formid <- formula(tt)
@@ -529,6 +531,7 @@ test_logrankRecurrent <- function(recurrent,death,
 		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,
 		cluster.id=cluster.id))
      } 
+     return(NULL)
   } else if (inherits(recurrent,"recurrent")) { # Fall-back to recurrentMarginalPhreg
         return(logrankRecurrentBase(attr(recurrent,"recurrent"),attr(recurrent,"death"),
 		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,cluster.id=cluster.id))
@@ -613,7 +616,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
 } ## }}} 
 
 ##' @export
-recurrent_marginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
+recurrent_marginalAIPCW <- function(formula,data=NULL,cause=1,cens.code=0,death.code=2,
 	  cens.model=~1,km=TRUE,times=NULL,augment.model=~Nt,...)
 {# {{{
     cl <- match.call()# {{{
@@ -702,7 +705,7 @@ recurrent_marginalAIPCW <- function(formula,data=data,cause=1,cens.code=0,death.
     cumhazD <- c(cumsumstratasum(S0i,xx$strata,xx$nstrata)$lagsum)
     St      <- exp(-cumhazD)
   } else St <- c(exp(cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)$lagsum))
-  } else  St <- rep(1,nrow(xx$strata))
+  } else  St <- rep(1,length(xx$strata))
   Gc <- St
   ## }}}
 
@@ -802,7 +805,7 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
      gamma <- .Call("CubeVec",matrix(c(varZ),nrow=1),matrix(apply(covts/Gctb,2,sum),nrow=1),1,PACKAGE="mets")$XXbeta
      gamma <- c(gamma)
      gamma[is.na(gamma)] <- 0
-     gamma[gamma=Inf] <- 0
+     gamma[gamma==Inf] <- 0
      augment <- sum(apply(gamma*t(cr2$U[timeb,1+1:nterms,drop=FALSE])/Gctb,2,sum))/nid
      ###
      muPA[i] <- muP.times[i]+augment
@@ -819,25 +822,25 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
 }# }}}
 
 ##' @export
-summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",...) {# {{{
+summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",level=0.95,...) {# {{{
  if (is.null(times)) times <- mutimes
 
  where <- fast.approx(c(0,mutimes),times,type="left")
 
+ crit <- qnorm(1-(1-level)/2)
  ##  see if object is vector or matrix
  if (is.matrix(mu)) mu <- rbind(0,mu)[where,] else mu <- c(0,mu)[where]
  if (!is.null(se.mu)) {
      if (is.matrix(se.mu)) se.mu <- rbind(0,se.mu)[where,] else se.mu <- c(0,se.mu)[where]
  se.logmu=se.mu/mu
  if (type=="log") {
- lower <- exp(log(mu) - 1.96*se.logmu)
- upper <- exp(log(mu) + 1.96*se.logmu)
+ lower <- exp(log(mu) - crit*se.logmu)
+ upper <- exp(log(mu) + crit*se.logmu)
  } else {
- lower <- mu - 1.96*se.mu
- upper <- mu + 1.96*se.mu
+ lower <- mu - crit*se.mu
+ upper <- mu + crit*se.mu
  }
  } else {se.mu <- se.logmu <- lower <- upper <- NA}
-
 
  out <- data.frame(times=times,mu=mu,se.mu=se.mu,lower=lower,upper=upper)
  names(out) <- c("times","mean","se-mean","CI-2.5%","CI-97.5%")
@@ -902,7 +905,7 @@ squareintHdM <- function(phreg,ft=NULL,fixbeta=NULL,beta.iid=NULL,...)
  
   S0i2 <- S0i <- rep(0,length(xx$strata))
   S0i[xx$jumps+1] <-  1/x$S0
-  S0i2[xx$jumps+1] <- 1/(x$S0^2*ww[xx$jump+1])
+  S0i2[xx$jumps+1] <- 1/(x$S0^2*ww[xx$jumps+1])
   Z <- xx$X
   U <- E <- matrix(0,nrow(xx$X),x$p)
   E[xx$jumps+1,] <- x$E
@@ -2224,10 +2227,8 @@ prob_exceed_recurrent <- function(formula,data,cause=1,death.code=2,cens.code=0,
     strata <- des$strata
     if (!is.null(strata))  {
       ns <- grep("strata",names(des$levels))
-      strata.name  <-  names(des$levels)[1]
+      strata.name  <-  names(des$levels)[ns]
     } else strata.name <- NULL
-    id      <- des$cluster
-    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
     ## no use of 
     pos.cluster <- pos.strata <- NULL
 

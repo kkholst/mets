@@ -3,9 +3,9 @@
 \name{recreg}
 \alias{recreg}
 \alias{marks}
+\alias{scalecumhaz}
 \alias{GLprediid}
 \alias{IIDrecreg}
-\alias{scalecumhaz}
 \title{Recurrent Events Regression with Terminal Event}
 \usage{
 recreg(

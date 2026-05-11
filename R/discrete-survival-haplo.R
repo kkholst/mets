@@ -134,7 +134,7 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
   yn <- match(y,names(Xhap))
   Xhap <- Xhap[,-yn]
 
-  mm <-  grep("haplo*",names(Xhap))
+  mm <- grep("^haplo", names(Xhap))
   Xhaps <- Xhap[,mm]
   if (!is.null(designfunc)) {
 	  Xo <- X <- as.matrix(apply(Xhap[,mm],1,designfunc))
@@ -203,6 +203,7 @@ if (!is.null(Haplos)) { ## with haplo-types {{{
 	id <- designMatrix[,id]
         iiid <- unique(id)-1
 
+	if (is.null(idhap)) stop("'idhap' must be supplied when 'designMatrix' is provided.")
         stratidhap <- designMatrix[,idhap]
         nidhap <- length(unique(stratidhap))
         nid <- length(iiid)
@@ -278,8 +279,7 @@ if (!design.only) {
 	  if (p>0) {
 	  if (no.opt==FALSE) {
 	      if (tolower(method)=="nr") {
-		  tim <- system.time(opt <- lava::NR(beta,obj,...))
-		  opt$timing <- tim
+		  opt <- lava::NR(beta,obj,...)
 		  opt$estimate <- opt$par
 	      } else {
 		  opt <- nlm(obj,beta,...)

@@ -60,7 +60,6 @@
 ##' ttpd <- dfactor(ttpd,fentry~entry)
 ##' out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 ##' summary(out)
-##' @export
 ##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd predictSurvd plotSurvd 
 ##' @export
 interval_logitsurv_discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
@@ -135,7 +134,7 @@ interval_logitsurv_discrete <- function (formula,data,beta=NULL,no.opt=FALSE,met
   ## design for ]t_l,t_r], for t_l=0 row is  0
   if (increment==0) {
 	  tL <- matdoubleindex(tL,1:n,entrytime,rep(1,n))
-	  tR <- matdoubleindex(tL,1:n,time2,rep(1,n))
+	  tR <- matdoubleindex(tR,1:n,time2,rep(1,n))
   } else {
      for (i in 1:mutimes) {
         tL[,i] <- (i <= entrytime) 
@@ -283,7 +282,7 @@ hessian <- D2log
       beta.iid <- apply(beta.iid,2,sumstrata,id,nid)
       robvar <- crossprod(beta.iid)
       val <- list(par=pp,ploglik=ploglik,gradient=gradient,hessian=hessian,ihessian=ihess,
-		  iid=beta.iid,robvar=robvar,var=robvar,ihessian=ihess,id=id,
+		  iid=beta.iid,robvar=robvar,var=robvar,id=id,
 		  se=diag(robvar)^.5,coef=pp,se.coef=diag(robvar)^.5)
       return(val)
   }  
@@ -374,7 +373,7 @@ Interval <- function (time, time2 , ...)
 ##' @export
 dInterval <- function (time, time2 ,cuts=NULL,cut.first=0,show=FALSE, ...) 
 {# {{{
-if (is.null(cuts)) cuts <-  sort(unique(time,time2))
+if (is.null(cuts)) cuts <-  sort(unique(c(time,time2)))
 if (min(cuts)> 0)  cuts <- c(cut.first,cuts)
 ###
 lleft <- fast.approx(cuts,time,type="left")
@@ -513,7 +512,7 @@ sim_TTP <- function(coef=NULL,n=100,Xglm=NULL,times=NULL)
   data <- count_history(data,status="y",id="id",types=1)
   data <- subset(data,data$Count1<=0)
 
-  attr(data,"coef") <- beta
+  attr(data,"coef") <- coef
   return(data)
  }# }}}
 
@@ -572,7 +571,7 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
 	  p <- c(expit(as.matrix(Z) %*% ccc))
 
 	  preds <- data.frame(p=p,id=data$id,times=data$times)
-	  survt <- exp(cumsumstrata(log(1-preds$p),data$id-1,6))
+	  survt <- exp(cumsumstrata(log(1-preds$p),data$id-1,max(data$id)))
 	  if (type=="prob") pred <- 1-survt
 	  if (type=="surv") pred <- survt
 	  if (type=="hazard") pred <- p
@@ -604,7 +603,8 @@ predictSurvd <- function(ds,Z,times=1:6,se=FALSE,type="prob")
      Zi <- data.frame(Z[i,,drop=FALSE])
      data <- Zi
      if (!is.null(times)) {
-        timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
+        timesf <- data.frame(times=times, id=rep(i, length(times)))
+###        timesf <- data.frame(times=rep(times,n),id=rep(1:n,each=length(times)))
         data <- merge(data,timesf,by.x="id",by.y="id")
         mt <- model.matrix(~factor(times),data)
         nm <- match(c("id","times"),names(data))
