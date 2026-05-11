@@ -1,6 +1,6 @@
 #' event_split (SurvSplit).
 #' 
-#' contstructs start stop formulation of event time data after a variable in
+#' Constructs start stop formulation of event time data after a variable in
 #' the data.set. Similar to SurvSplit of the survival package but can also
 #' split after random time given in data frame.
 #' 
@@ -78,7 +78,7 @@ event_split <- function(data,
       new.start <- data[,name.start]
     } else new.start <- rep(0,n)
 
-    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n"); 
+    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n")
 
     if ((name.id %in% names(data))) idl <- data[,name.id] else {
 	    idl <- 1:n
@@ -212,7 +212,6 @@ event_split2 <- function(data,
     splits <- which(new.cuts<new.gaptime & new.gapstart<new.cuts)
 
     if (length(splits)) {
-        nord <- c(1:n,(1:n)[splits]+0.1)
 	rows  <- c(1:n,splits)
 	new.gaptime <-   c(new.gaptime,new.gaptime[splits])
         new.gapstart <-  c(new.gapstart,new.cuts[splits])
