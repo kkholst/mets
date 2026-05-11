@@ -91,7 +91,7 @@ if (estpr[1]==1) {
    iidalpha0 <- fitt$iidalpha
 } else {
    ## assumes constant fixed prob over groups
-   pi0 <- rep(pi0,treats$nlev)
+   wPA <- ifelse(treats$ntreatvar==2,pi0[1],1-pi0[1])         
 }
 
 wPA <- c(1/fitt$pA)
