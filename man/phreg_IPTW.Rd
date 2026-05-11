@@ -55,7 +55,9 @@ Recurrent events can be considered with a start-stop structure, requiring \code{
 Robust standard errors are computed in all cases.
 
 Time-dependent propensity score weights can be computed when \code{treat.var} is used. This weight
-time of 2nd randomization.
+be 1 at the time of first (A_0) and 2nd treatment (A_1), then uses weights \deqn{w_0(A_0) * w_1(A_1)^{t>T_r}} where \deqn{T_r} is
+time of 2nd randomization. The weights are constructed using a \code{glm} or \code{mlogit} model based on the data where 
+\code{treat.var=1}. The propensity score can be constructed for any number of treatments in a similar manner.
 }
 \examples{
 data <- mets:::simLT(0.7, 100, beta = 0.3, betac = 0, ce = 1, betao = 0.3)
