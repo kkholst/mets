@@ -66,7 +66,7 @@ covariate on the right-hand side.}
 
 \item{cens.model}{Censoring model formula (default is \code{~strata(treatment)}).}
 
-\item{estpr}{Logical; estimate propensity scores (default TRUE).}
+\item{estpr}{Numeric code (1/0); estimate propensity scores or not (default TRUE).}
 
 \item{pi0}{Fixed propensity scores for randomizations (if not estimating).}
 

@@ -32,7 +32,7 @@
 ##' @param km Logical; use Kaplan-Meier for censoring weights (stratified on treatment).
 ##' @param level Confidence level for intervals (default 0.95).
 ##' @param cens.model Censoring model formula (default is \code{~strata(treatment)}).
-##' @param estpr Logical; estimate propensity scores (default TRUE).
+##' @param estpr Numeric code (1/0); estimate propensity scores or not (default TRUE).
 ##' @param pi0 Fixed propensity scores for randomizations (if not estimating).
 ##' @param base.augment Logical; covariate augment baselines (only for R0 augmentation).
 ##' @param return.augmentR0 Logical; return augmentation data.
@@ -110,7 +110,7 @@ lhs <- update(formula,.~+1)
 rhs <- update(formula,-1~.)
 if (all.vars(lhs)[1]==".") 
    formula <- update.formula(formula,as.formula(paste(vars,"~.")))
-res <- list(formula=formula,lhs=lhs,rhs=rhs)
+return(list(formula=formula,lhs=lhs,rhs=rhs))
 }
 # }}}
 
@@ -163,8 +163,10 @@ if (nlev==2 & !mlogit) {
    pA <- c(mdi(pal, 1:length(ntreatvar), ntreatvar))
    pppy <- c(mdi(ppp,1:length(ntreatvar), ntreatvar))
    Dppy <-  (spp*tvg2-pppy) 
-   DpA <- c()
-   for (i in seq(nlev-1)) DpA <- cbind(DpA,Xtreat*ppp[,i+1]*Dppy/spp^2);  
+   DpA <- matrix(0, nrow(Xtreat), (nlev - 1) * ncol(Xtreat))
+   for (i in seq(nlev - 1))
+   DpA[, ((i-1)*ncol(Xtreat) + 1):(i*ncol(Xtreat))] <- Xtreat * ppp[,i+1] * Dppy / spp^2
+###   for (i in seq(nlev-1)) DpA <- cbind(DpA,Xtreat*ppp[,i+1]*Dppy/spp^2);  
    DPai <- -1*DpA/pA^2
 
    ## Dp binomial
@@ -486,7 +488,7 @@ pXXA <- ncol(XXA)
 gammat <-  -.Call("CubeMattime",hesst,covXsYs,pXXA,pXXA,pXXA,p,1,0,0,PACKAGE="mets")$XXX
 ### solve(matrix(hesst[1,],3,3)) %*% matrix(covXsYs[1,],3,2)
 gammat[is.na(gammat)] <- 0
-gammat[gammat==Inf] <- 0
+gammat[!is.infinite(gammat)] <- 0
 augmentt <- .Call("CubeMattime",gammat,UA,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
 AugCdyn <-  apply(augmentt,2,sum)
 gain.times <- .Call("CubeMattime",covXsYs,gammat,pXXA,p,pXXA,p,0,1,0,PACKAGE="mets")$XXX
@@ -511,7 +513,8 @@ varZdN <- matrix(apply(hesst/c(Gcj^2),2,sum),pXXA,pXXA)
 covXYdN <- matrix(apply(covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE) 
 gamma <- -1*.Call("CubeMattime",matrix(varZdN,nrow=1),matrix(covXYdN,nrow=1),pXXA,pXXA,p,pXXA,1,0,1,PACKAGE="mets")$XXX
 gamma <- matrix(gamma,p,pXXA,byrow=TRUE)
-gamma[is.na(gamma)] <- 0; gamma[gamma==Inf] <- 0
+gamma[is.na(gamma)] <- 0; 
+gamma[!is.infinite(gamma)] <- 0
 augment <- c(gamma %*% apply(UA/c(Gcj),2,sum))
 var.Clt.improve <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
@@ -573,7 +576,7 @@ if (length(typesRR)==0) { typesRR <- "none" }
 
 baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL
 iidn <- c()
-varbeta <- iid <- fitt <- list(); j <- 0
+varbeta <- iid <- fitt_list <- list(); j <- 0
 for (typeR in typesRR) 
 for (typeC in typesCC) {# {{{
 if (typeR!=typeC) {
@@ -599,7 +602,7 @@ if (typeR!=typeC) {
    else fitts <- fit0
 
    ## only baseline augment with R0 augmentation
-   if (base.augment & typeR=="R0" & (typeC!="dync" | typeC!="C")) { ## {{{
+   if (base.augment & typeR == "R0" & (typeC != "dynC" & typeC != "C")) { ## {{{
       xxx <- fitts$cox.prep
       xx <- crossprod(XR0pi)
       xxi <- pinv(xx)
@@ -611,15 +614,16 @@ if (typeR!=typeC) {
       S0i2 <- S0i <- rep(0,nrow(xxx$X))
       jumps <- xxx$jumps+1
       S0i[jumps] <- 1/fitts$S0
-      ww <- xxx$caseweights*xxx$weights
-      S0i2[jumps] <- 1/(fitts$S0^2*ww[xxx$jumps+1])
+      ww_base <- xxx$caseweights*xxx$weights
+      S0i2[jumps] <- 1/(fitts$S0^2*ww_base[xxx$jumps+1])
       ###
       U <- matrix(0,nrow(XRE),ncol(XRE))
       U[jumps,] <- XRpit[jumps,]*S0i[jumps]
       NXRE <- apply(U,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       XREdLam0 <- apply(XRE*S0i2,2,cumsumstrata,xxx$strata,xxx$nstrata)[jumps,]
       ns <- c(sumstrata(rep(1,nid),xxx$strata[headstrata(xxx$id,nid)],xxx$nstrata))[xxx$strata[jumps,]+1]
-      if (RCT) covBase <- (NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
+###      if (RCT) covBase <- (NXRE-XREdLam0) else covBase <- (NXRE-XREdLam0)
+      covBase <- (NXRE-XREdLam0) 
 
       gamR0Base <- (covBase) %*% xxi
       XRs <- apply(XR0pi,2,sum)
@@ -647,16 +651,6 @@ if (typeR!=typeC) {
 }
 names(iid) <- iidn
 # }}}
-
-namesortme <- function(iid,name.id) { ## {{{
-if (is.matrix(iid))  
-	if (nrow(iid)==length(name.id)) {
-		rownames(iid) <- name.id
-		oid <- order(name.id)
-		iid <- iid[oid,]
-}
-return(iid)
-} ## }}}
 
 ### sort iid after name.id and put as rownames
 if (!is.null(call.id)) {
