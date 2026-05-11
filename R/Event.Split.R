@@ -172,7 +172,7 @@ event_split2 <- function(data,
     } else new.start <- rep(0,n)
     nnstart <- new.start
 
-    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n"); 
+    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n")
 
     if ((name.id %in% names(data))) idl <- data[,name.id] else {
 	    idl <- 1:n
