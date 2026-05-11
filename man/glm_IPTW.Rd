@@ -2,7 +2,7 @@
 % Please edit documentation in R/glm-utils.R
 \name{glm_IPTW}
 \alias{glm_IPTW}
-\title{IPTW GLM, Inverse Probaibilty of Treatment Weighted GLM}
+\title{IPTW GLM, Inverse Probabibilty of Treatment Weighted GLM}
 \usage{
 glm_IPTW(
   formula,
