@@ -488,7 +488,7 @@ pXXA <- ncol(XXA)
 gammat <-  -.Call("CubeMattime",hesst,covXsYs,pXXA,pXXA,pXXA,p,1,0,0,PACKAGE="mets")$XXX
 ### solve(matrix(hesst[1,],3,3)) %*% matrix(covXsYs[1,],3,2)
 gammat[is.na(gammat)] <- 0
-gammat[!is.infinite(gammat)] <- 0
+gammat[!is.finite(gammat)] <- 0
 augmentt <- .Call("CubeMattime",gammat,UA,pXXA,p,pXXA,1,0,1,0,PACKAGE="mets")$XXX
 AugCdyn <-  apply(augmentt,2,sum)
 gain.times <- .Call("CubeMattime",covXsYs,gammat,pXXA,p,pXXA,p,0,1,0,PACKAGE="mets")$XXX
@@ -514,7 +514,7 @@ covXYdN <- matrix(apply(covXsYs/c(Gcj),2,sum),p,pXXA,byrow=TRUE)
 gamma <- -1*.Call("CubeMattime",matrix(varZdN,nrow=1),matrix(covXYdN,nrow=1),pXXA,pXXA,p,pXXA,1,0,1,PACKAGE="mets")$XXX
 gamma <- matrix(gamma,p,pXXA,byrow=TRUE)
 gamma[is.na(gamma)] <- 0; 
-gamma[!is.infinite(gamma)] <- 0
+gamma[!is.finite(gamma)] <- 0
 augment <- c(gamma %*% apply(UA/c(Gcj),2,sum))
 var.Clt.improve <-  gamma %*% t(covXYdN) ###  /(nid^2)
 
