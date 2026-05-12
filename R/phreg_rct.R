@@ -54,7 +54,7 @@
 ##' @references 
 ##' Lu, T. and Tsiatis, A. A. (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 95, 679--694.
 ##' 
-##' Scheike, T. H., Nerstroem, E. and Martinussen, T. (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST.
+##' Scheike, T. H., Nerstroem, C. and Martinussen, T. (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST.
 ##' @examples
 ##' ## Lu, Tsiatis simulation
 ##' data <- mets:::simLT(0.7,100)
@@ -645,7 +645,7 @@ if (typeR!=typeC) {
      iidn <- c(iidn,nnn)
      rownames(coeffitt) <- paste(nnn,var.names,sep=":")
      coefs <- rbind(coefs,coeffitt)
-     if (!is.null(augmentC)) iid[[j]] <- iid[[j]] - AugC.iid%*% fit0$ihessian
+     if (!is.null(augmentC)) iid[[j]] <- iid[[j]] + AugC.iid%*% fit0$ihessian
    }
    } 
 }
