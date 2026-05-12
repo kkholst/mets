@@ -116,7 +116,7 @@ summary(out)
 \references{
 Lu, T. and Tsiatis, A. A. (2008), Improving the efficiency of the log-rank test using auxiliary covariates, Biometrika, 95, 679--694.
 
-Scheike, T. H., Nerstroem, E. and Martinussen, T. (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST.
+Scheike, T. H., Nerstroem, C. and Martinussen, T. (2026), Randomized clinical trials and the proportional hazards model for recurrent events, TEST.
 }
 \author{
 Thomas Scheike
