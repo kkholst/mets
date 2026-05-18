@@ -37,10 +37,10 @@
 \alias{twin.polygen.design}
 \alias{rmst_phreg}
 \alias{rr_cif}
-\alias{‘sim_binClaytonOakes_pairs’}
+\alias{sim_binClaytonOakes_pairs’}
 \alias{sim_bptwin}
 \alias{sim_Compete_twin_ace}
-\alias{‘sim_nordictwin’}
+\alias{sim_nordictwin’}
 \alias{simrchaz}
 \alias{ace_family_design}
 \alias{ascertained_pairs}

@@ -4,8 +4,9 @@
 #'
 #' ... content for details
 #'
-#' @aliases Event as.character.Event as.matrix.Event [.Event format.Event
-#' print.Event rbind.Event summary.Event
+#' @aliases Event as.character.Event as.matrix.Event
+#' @aliases [.Event format.Event
+#' @aliases print.Event rbind.Event summary.Event
 #' @param time Time
 #' @param time2 Time 2
 #' @param cause Cause

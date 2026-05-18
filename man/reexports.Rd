@@ -18,8 +18,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{lava}{\code{\link[lava:estimate.default]{estimate}}, \code{\link[lava]{gof}}, \code{\link[lava:IC.default]{IC}}, \code{\link[lava]{iid}}, \code{\link[lava]{twostage}}}
+  \item{lava}{\code{\link[lava:estimate]{estimate()}}, \code{\link[lava:gof]{gof()}}, \code{\link[lava:IC]{IC()}}, \code{\link[lava:iid]{iid()}}, \code{\link[lava:twostage]{twostage()}}}
 
-  \item{survival}{\code{\link[survival]{cluster}}, \code{\link[survival]{strata}}, \code{\link[survival]{Surv}}}
+  \item{survival}{\code{\link[survival:cluster]{cluster()}}, \code{\link[survival:strata]{strata()}}, \code{\link[survival:Surv]{Surv()}}}
 }}
 

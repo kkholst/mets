@@ -12,16 +12,16 @@
 ##' @useDynLib mets, .registration=TRUE
 ##' @import stats splines Rcpp mvtnorm
 ##' @importFrom lava iid estimate bootstrap compare score information
-##'   twostage %++% %ni% addvar<- blockdiag cancel Col confband constrain<-
-##'   constraints covariance covariance<- coxWeibull.lvm devcoords
-##'   distribution<- endogenous eventTime Expand getoutcome gof intercept<-
-##'   Inverse kill<- latent latent<- lava.options lvm Model multigroup
-##'   parameter<- pars regression regression<- revdiag trim IC expit logit
+##' @importFrom lava twostage %++% %ni% addvar<- blockdiag cancel Col confband constrain<-
+##' @importFrom lava constraints covariance covariance<- coxWeibull.lvm devcoords
+##' @importFrom lava distribution<- endogenous eventTime Expand getoutcome gof intercept<-
+##' @importFrom lava Inverse kill<- latent latent<- lava.options lvm Model multigroup
+##' @importFrom lava parameter<- pars regression regression<- revdiag trim IC expit logit
 ##' @importFrom survival Surv is.Surv concordance strata cluster finegray
 ##' @importFrom timereg two.stage predict.two.stage
 ##' @importFrom utils head tail getS3method glob2rx capture.output
 ##' @importFrom graphics matplot lines plot polygon par points abline title
-##'   matlines legend mtext layout axis barplot mosaicplot
+##' @importFrom graphics matlines legend mtext layout axis barplot mosaicplot
 ##' @importFrom methods hasArg
 ##' @importFrom RcppArmadillo armadillo_set_number_of_omp_threads
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
@@ -218,32 +218,25 @@ NULL
 ##' @keywords utilities
 ##' @export
 ##' @aliases plotcr npc nonparcuminc sim_nordic corsim_prostate
-##'  alpha2kendall alpha2spear coefmat piecewise_twostage surv_boxarea
-##'  faster.reshape piecewise_data
-##'  sim_BinPlack sim_BinFam sim_BinFam2 sim_SurvFam corsim_prostate_random
-##' sim_nordic_random sim_Cox sim
-##' grouptable jumptimes folds
-##' casewise_bin force.same.cens or_cif 
-##' Grandom.cif conftype kendall.ClaytonOakes.twin.ace random.cif
-##' recurrentMarginal summarybase.phreg survival.twostage twin.polygen.design
-##' rmst_phreg rr_cif ‘sim_binClaytonOakes_pairs’ sim_bptwin    
-##' sim_Compete_twin_ace ‘sim_nordictwin’ simrchaz 
-##' ace_family_design ascertained_pairs summaryTimeobject 
-##' ace_family_design ascertained_pairs 
-##' coarse_clust concordanceTwinACE concordanceTwostage
-##' fast.cluster force_same_cens ilap
-##' kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace
-##' make_pairwise_design make_pairwise_design_competing
-##' matplot.mets.twostage object.defined p11.binomial.twostage.RV
-##' predictPairPlack sim_binClaytonOakes_family_ace
-##' sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
-##' sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
-##' sim_binClaytonOakes_pairs sim_nordictwin   
-##'  sim_Compete_simple simCompete_twin_ace twin_polygen_design
-##'  procform procform3 procformdata drop.specials
-##'  cumsumstrata matdoubleindex mdi revcumsum revcumsumstrata                                                                             
-##'  robust.basehaz.phreg sumstrata                                          
-##' strataAugment predicttime
+##' @aliases alpha2kendall alpha2spear coefmat piecewise_twostage surv_boxarea
+##' @aliases faster.reshape piecewise_data sim_BinPlack sim_BinFam sim_BinFam2
+##' @aliases sim_SurvFam corsim_prostate_random sim_nordic_random sim_Cox sim
+##' @aliases grouptable jumptimes folds casewise_bin force.same.cens or_cif Grandom.cif
+##' @aliases conftype kendall.ClaytonOakes.twin.ace random.cif recurrentMarginal
+##' @aliases summarybase.phreg survival.twostage twin.polygen.design rmst_phreg rr_cif
+##' @aliases sim_binClaytonOakes_pairs’ sim_bptwin sim_Compete_twin_ace
+##' @aliases sim_nordictwin’ simrchaz ace_family_design ascertained_pairs
+##' @aliases summaryTimeobject ace_family_design ascertained_pairs coarse_clust
+##' @aliases concordanceTwinACE concordanceTwostage fast.cluster force_same_cens ilap
+##' @aliases kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace make_pairwise_design
+##' @aliases make_pairwise_design_competing matplot.mets.twostage object.defined
+##' @aliases p11.binomial.twostage.RV predictPairPlack sim_binClaytonOakes_family_ace
+##' @aliases sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
+##' @aliases sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
+##' @aliases sim_binClaytonOakes_pairs sim_nordictwin sim_Compete_simple
+##' @aliases simCompete_twin_ace twin_polygen_design procform procform3 procformdata
+##' @aliases drop.specials cumsumstrata matdoubleindex mdi revcumsum revcumsumstrata
+##' @aliases  robust.basehaz.phreg sumstrata strataAugment predicttime
 NULL
 
 
