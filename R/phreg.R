@@ -2850,7 +2850,8 @@ return(phw)
 ##' dfactor(bmt) <- tcell.f ~ tcell
 ##'
 ##' # Fine-Gray model
-##' fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt, cause = 1, cox.prep = TRUE, propodds = NULL)
+##' fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt,
+##'               cause = 1, cox.prep = TRUE, propodds = NULL)
 ##' summary(survivalG(fg1, bmt, 50))
 ##'
 ##' # Cox model
@@ -3157,7 +3158,10 @@ for (ss in us[-1]) {
 ##' summary(out)
 ##'
 ##' ## Comparison with timereg::aalen
-##' ## out2 <- timereg::aalen(Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age), data = bmt)
+##' ## out2 <- timereg::aalen(
+##' ##   Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age),
+##' ##   data = bmt
+##' ## )
 ##' ## summary(out2)
 ##' @export
 aalenMets <- function(formula,data=data,no.baseline=FALSE,...)

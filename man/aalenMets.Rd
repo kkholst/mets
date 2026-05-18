@@ -38,7 +38,10 @@ out <- aalenMets(Surv(time, cause == 1) ~ tcell + platelet + age, data = bmt)
 summary(out)
 
 ## Comparison with timereg::aalen
-## out2 <- timereg::aalen(Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age), data = bmt)
+## out2 <- timereg::aalen(
+##   Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age),
+##   data = bmt
+## )
 ## summary(out2)
 }
 \author{
