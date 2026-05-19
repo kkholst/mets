@@ -33,7 +33,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Klaus K. Holst \email{klaus@holst.it}
   \item Thomas Scheike
 }
 
