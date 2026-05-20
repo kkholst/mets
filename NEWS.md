@@ -1,16 +1,18 @@
 # mets 1.3.10
-
-    Development version
-
-  - Changed the naming of some functions for RMTL and RMST `resmean.phreg` ->  `resmean_phreg` and  `cif.yearslost` ->  `cif_yearslost`  
+  - Changed the naming of some functions for RMTL and RMST `resmean.phreg` to
+    `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`  
   - Cumulative incidence simulation with delayed entry `simul.cifs`, `sim.cif`, `sim.cifs`   
-  - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray (cloglog) model) to deal with administrative censoring and additional random censoring.
-  - iid and IC methods for `recurrentMarginal`
-  - pepe-mori, score test, proportionality test based on IPCW formulation for right-censored data in `test_marginalMean` 
-  - logrank test for `recurrentMarginal` based on influence-functions and robust standard errors `logrankRecurrent` works for cumulative incidence and recurrent events (also Gray's test option for cumulative incidence)
+  - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray
+    (cloglog) model) to deal with administrative censoring and additional random
+    censoring.
+  - `iid` and `IC` methods for `recurrentMarginal`
+  - pepe-mori, score test, proportionality test based on IPCW formulation for
+    right-censored data in `test_marginalMean`
+  - logrank test for `recurrentMarginal` based on influence-functions and robust
+    standard errors `logrankRecurrent` works for cumulative incidence and
+    recurrent events (also Gray's test option for cumulative incidence)
 
-# mets 1.3.9
-  
+# mets 1.3.9  
   - Vignette updates
   - `phreg_weibull`: allows for regression design on both rate and shape parameter. Replaces `phreg.par`
   - `Event` methods updated
