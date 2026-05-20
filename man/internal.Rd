@@ -4,8 +4,6 @@
 \alias{npc}
 \alias{plotcr}
 \alias{nonparcuminc}
-\alias{sim_nordic}
-\alias{corsim_prostate}
 \alias{alpha2kendall}
 \alias{alpha2spear}
 \alias{coefmat}
@@ -13,14 +11,6 @@
 \alias{surv_boxarea}
 \alias{faster.reshape}
 \alias{piecewise_data}
-\alias{sim_BinPlack}
-\alias{sim_BinFam}
-\alias{sim_BinFam2}
-\alias{sim_SurvFam}
-\alias{corsim_prostate_random}
-\alias{sim_nordic_random}
-\alias{sim_Cox}
-\alias{sim}
 \alias{grouptable}
 \alias{jumptimes}
 \alias{folds}
@@ -37,11 +27,6 @@
 \alias{twin.polygen.design}
 \alias{rmst_phreg}
 \alias{rr_cif}
-\alias{sim_binClaytonOakes_pairs’}
-\alias{sim_bptwin}
-\alias{sim_Compete_twin_ace}
-\alias{sim_nordictwin’}
-\alias{simrchaz}
 \alias{ace_family_design}
 \alias{ascertained_pairs}
 \alias{summaryTimeobject}
@@ -59,20 +44,7 @@
 \alias{object.defined}
 \alias{p11.binomial.twostage.RV}
 \alias{predictPairPlack}
-\alias{sim_binClaytonOakes_family_ace}
-\alias{sim_binClaytonOakes.pairs}
-\alias{sim_binClaytonOakes_twin_ace}
-\alias{sim_ClaytonOakes_family_ace}
-\alias{sim_ClaytonOakes_twin_ace}
-\alias{sim_Frailty_simple}
-\alias{sim_binClaytonOakes_pairs}
-\alias{sim_nordictwin}
-\alias{sim_Compete_simple}
-\alias{simCompete_twin_ace}
 \alias{twin_polygen_design}
-\alias{procform}
-\alias{procform3}
-\alias{procformdata}
 \alias{drop.specials}
 \alias{cumsumstrata}
 \alias{matdoubleindex}
@@ -88,6 +60,6 @@
 For internal use
 }
 \author{
-Klaus K. Holst
+Klaus K. Holst, Thomas Scheike
 }
 \keyword{utilities}

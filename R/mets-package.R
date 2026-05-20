@@ -214,29 +214,30 @@ NULL
 ##' @title For internal use
 ##' @name npc
 ##' @rdname internal
-##' @author Klaus K. Holst
+##' @author Klaus K. Holst, Thomas Scheike
 ##' @keywords utilities
 ##' @export
-##' @aliases plotcr npc nonparcuminc sim_nordic corsim_prostate
-##' @aliases alpha2kendall alpha2spear coefmat piecewise_twostage surv_boxarea
-##' @aliases faster.reshape piecewise_data sim_BinPlack sim_BinFam sim_BinFam2
-##' @aliases sim_SurvFam corsim_prostate_random sim_nordic_random sim_Cox sim
-##' @aliases grouptable jumptimes folds casewise_bin force.same.cens or_cif Grandom.cif
+##' @aliases plotcr npc nonparcuminc
+##' @aliases alpha2kendall alpha2spear coefmat
+##' @aliases piecewise_twostage surv_boxarea
+##' @aliases faster.reshape piecewise_data
+##' @aliases grouptable jumptimes folds casewise_bin force.same.cens
+##' @aliases or_cif Grandom.cif
 ##' @aliases conftype kendall.ClaytonOakes.twin.ace random.cif recurrentMarginal
-##' @aliases summarybase.phreg survival.twostage twin.polygen.design rmst_phreg rr_cif
-##' @aliases sim_binClaytonOakes_pairs’ sim_bptwin sim_Compete_twin_ace
-##' @aliases sim_nordictwin’ simrchaz ace_family_design ascertained_pairs
+##' @aliases summarybase.phreg survival.twostage twin.polygen.design
+##' @aliases rmst_phreg rr_cif
+##' @aliases ace_family_design ascertained_pairs
 ##' @aliases summaryTimeobject ace_family_design ascertained_pairs coarse_clust
-##' @aliases concordanceTwinACE concordanceTwostage fast.cluster force_same_cens ilap
-##' @aliases kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace make_pairwise_design
+##' @aliases concordanceTwinACE concordanceTwostage fast.cluster force_same_cens
+##' @aliases ilap
+##' @aliases kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace
+##' @aliases make_pairwise_design
 ##' @aliases make_pairwise_design_competing matplot.mets.twostage object.defined
-##' @aliases p11.binomial.twostage.RV predictPairPlack sim_binClaytonOakes_family_ace
-##' @aliases sim_binClaytonOakes.pairs sim_binClaytonOakes_twin_ace
-##' @aliases sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace sim_Frailty_simple
-##' @aliases sim_binClaytonOakes_pairs sim_nordictwin sim_Compete_simple
-##' @aliases simCompete_twin_ace twin_polygen_design procform procform3 procformdata
-##' @aliases drop.specials cumsumstrata matdoubleindex mdi revcumsum revcumsumstrata
-##' @aliases  robust.basehaz.phreg sumstrata strataAugment predicttime
+##' @aliases p11.binomial.twostage.RV predictPairPlack
+##' @aliases twin_polygen_design
+##' @aliases drop.specials cumsumstrata matdoubleindex mdi
+##' @aliases revcumsum revcumsumstrata
+##' @aliases robust.basehaz.phreg sumstrata strataAugment predicttime
 NULL
 
 
