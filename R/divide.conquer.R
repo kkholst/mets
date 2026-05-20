@@ -1,3 +1,10 @@
+##' Generate Random Fold Indices for Cross-Validation
+##'
+##' Splits \code{n} observations into random folds for cross-validation.
+##'
+##' @param n number of observations.
+##' @param folds number of folds (default 10).
+##' @return A list of integer vectors, each containing indices for one fold.
 ##' @export
 folds<- function (n, folds = 10) 
 { ## {{{ 

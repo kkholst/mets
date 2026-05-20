@@ -142,13 +142,15 @@ ACE, ADE model for survival data. In this case, the \code{random.design}
 specifies the random effects for each subject within a cluster. This is a
 matrix of 1's and 0's with dimension \eqn{n \times d} (for \eqn{d} random effects).
 
-For a cluster with two subjects, the \code{random.design} rows are \eqn{v_1} and \eqn{v_2}.
-Such that the random effect for subject 1 is \deqn{v_1^T (Z_1,...,Z_d)}, for \eqn{d} random effects.
-Each random effect has an associated parameter \eqn{(\lambda_1,...,\lambda_d)}.
-By construction, subject 1's random effect is Gamma distributed with
-mean \eqn{\lambda_j/v_1^T \lambda} and variance \eqn{\lambda_j/(v_1^T \lambda)^2}.
-Note that the random effect \eqn{v_1^T (Z_1,...,Z_d)} has mean 1 and variance \eqn{1/(v_1^T \lambda)}.
-It is assumed that \eqn{lamtot=v_1^T \lambda} is fixed within clusters as it would be for the ACE model.
+For a cluster with two subjects, the \code{random.design} rows are \eqn{v_1}
+and \eqn{v_2}. Such that the random effect for subject 1 is \deqn{v_1^T
+(Z_1,...,Z_d)}, for \eqn{d} random effects. Each random effect has an
+associated parameter \eqn{(\lambda_1,...,\lambda_d)}. By construction,
+subject 1's random effect is Gamma distributed with mean
+\eqn{\lambda_j/v_1^T \lambda} and variance \eqn{\lambda_j/(v_1^T
+\lambda)^2}. Note that the random effect \eqn{v_1^T (Z_1,...,Z_d)} has mean
+1 and variance \eqn{1/(v_1^T \lambda)}. It is assumed that \eqn{lamtot=v_1^T
+\lambda} is fixed within clusters as it would be for the ACE model.
 
 Based on these parameters, the relative contribution (the heritability, \eqn{h}) is
 equivalent to the expected values of the random effects: \eqn{\lambda_j/v_1^T \lambda}.
@@ -158,10 +160,11 @@ The DEFAULT parametrization (\code{var.par=1}) uses the variances of the random 
 For alternative parametrizations, specify how the parameters relate to \eqn{\lambda_j}
 with the argument \code{var.par=0}.
 
-For both types of models, the basic model assumptions are that given the random effects
-of the clusters, the survival distributions within a cluster are independent and on the form:
-\deqn{ P(T > t| x,z) = \exp( -Z \cdot \text{Laplace}^{-1}(lamtot,lamtot,S(t|x)) ) }
-with the inverse Laplace of the gamma distribution with mean 1 and variance \eqn{1/lamtot}.
+For both types of models, the basic model assumptions are that given the
+random effects of the clusters, the survival distributions within a cluster
+are independent and on the form: \deqn{ P(T > t| x,z) = \exp( -Z \cdot
+\text{Laplace}^{-1}(lamtot,lamtot,S(t|x)) ) } with the inverse Laplace of
+the gamma distribution with mean 1 and variance \eqn{1/lamtot}.
 
 The parameters \eqn{(\lambda_1,...,\lambda_d)} are related to the parameters of the model
 by a regression construction \code{pard} (\eqn{d \times k}), that links the \eqn{d}

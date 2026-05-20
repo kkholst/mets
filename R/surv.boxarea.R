@@ -1,5 +1,4 @@
-#####' @export
-###surv.boxarea <- function(left.trunc,right.cens,data,timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1,boxtimevar="boxtime")
+### surv.boxarea <- function(left.trunc,right.cens,data,timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1,boxtimevar="boxtime")
 ###{ ## {{{
 ###  if (is.null(data[,id])) stop("Wrong cluster variable")
 ###  if (is.null(data[,timevar])) stop("Wrong time variable")
@@ -76,6 +75,24 @@
 ###  return(structure(lr.data,num=num,time=boxtimevar,status=status,covars=covars,id=id,left=left))
 ###} ## }}}
 
+##' Bivariate Survival Data on Rectangular Regions
+##'
+##' Restricts bivariate survival data to a rectangular time region defined
+##' by left-truncation and right-censoring boundaries, for use with
+##' piecewise twostage models.
+##'
+##' @param left.trunc vector of length 2 giving left truncation times.
+##' @param right.cens vector of length 2 giving right censoring times.
+##' @param data a data.frame with the survival data.
+##' @param timevar name of the time variable.
+##' @param status name of the status variable.
+##' @param id name of the cluster identifier.
+##' @param covars optional covariate names.
+##' @param covars.pairs optional pair-level covariate names.
+##' @param num within-cluster numbering variable name.
+##' @param silent verbosity level (1=silent).
+##' @param boxtimevar name for the created box-time variable.
+##' @return A data.frame in long format restricted to the specified region.
 ##' @export
 surv_boxarea <- function(left.trunc,right.cens,data,timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1,boxtimevar="boxtime")
 { ## {{{

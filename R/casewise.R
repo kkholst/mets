@@ -286,6 +286,15 @@ casewise <- function(conc,marg,cause.marg)
   return(out)
 } ## }}}
 
+##' Casewise Concordance from Concordant/Discordant Counts
+##'
+##' Computes casewise concordance probability and confidence interval from
+##' counts of concordant and discordant pairs using a binomial GLM.
+##'
+##' @param nc number of concordant pairs.
+##' @param nd number of discordant pairs.
+##' @return A list with \code{p.casewise} (estimated probability) and
+##'   \code{ci.casewise} (confidence interval).
 ##' @export
 casewise_bin <- function(nc,nd)
 { ## {{{

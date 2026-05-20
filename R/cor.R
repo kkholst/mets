@@ -561,6 +561,7 @@ cor_cif<-function(cif,data,cause=NULL,times=NULL,
   fit
 } ## }}}
 
+##' @rdname cif-nonpar
 ##' @export
 rr_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
@@ -578,6 +579,7 @@ rr_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
   fit
 } ## }}}
 
+##' @rdname cif-nonpar
 ##' @export
 or_cif<-function(cif,data,cause=NULL,cif2=NULL,times=NULL,
                  cause1=1,cause2=1,cens.code=NULL,cens.model="KM",Nit=40,detail=0,
@@ -690,9 +692,11 @@ random_cif<-function(cif,data,cause=NULL,cif2=NULL,
   fit
 } ## }}}
 
+##' @rdname cif-nonpar
 ##' @export
 random.cif<-function(cif,...) random_cif(cif,...)
 
+##' @rdname cif-nonpar
 ##' @export
 Grandom.cif<-function(cif,...) Grandom_cif(cif,...)
 
@@ -1183,6 +1187,7 @@ plack.cif2 <- function(cif1,cif2,theta)
   return(valr); 
 } ## }}}
 
+##' @rdname cif-nonpar
 ##' @export
 predictPairPlack <- function(cif1,cif2,status1,status2,theta) 
 { ## {{{

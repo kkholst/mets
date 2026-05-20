@@ -26,10 +26,6 @@
 ##' @importFrom RcppArmadillo armadillo_set_number_of_omp_threads
 ##' @importFrom grDevices dev.list devAskNewPage dev.interactive
 ##' @aliases mets mets-package
-##' @examples
-##'
-##' ## To appear
-##'
 NULL
 
 ##' @export
@@ -208,38 +204,6 @@ NULL
 ##' @keywords data
 ##' @source Simulated data
 NULL
-
-##' For internal use
-##'
-##' @title For internal use
-##' @name npc
-##' @rdname internal
-##' @author Klaus K. Holst, Thomas Scheike
-##' @keywords utilities
-##' @export
-##' @aliases plotcr npc nonparcuminc
-##' @aliases alpha2kendall alpha2spear coefmat
-##' @aliases piecewise_twostage surv_boxarea
-##' @aliases faster.reshape piecewise_data
-##' @aliases grouptable jumptimes folds casewise_bin force.same.cens
-##' @aliases or_cif Grandom.cif
-##' @aliases conftype kendall.ClaytonOakes.twin.ace random.cif recurrentMarginal
-##' @aliases summarybase.phreg survival.twostage twin.polygen.design
-##' @aliases rr_cif
-##' @aliases ace_family_design ascertained_pairs
-##' @aliases summaryTimeobject ace_family_design ascertained_pairs coarse_clust
-##' @aliases concordanceTwinACE concordanceTwostage fast.cluster force_same_cens
-##' @aliases ilap
-##' @aliases kendall_ClaytonOakes_twin_ace kendall_normal_twin_ace
-##' @aliases make_pairwise_design
-##' @aliases make_pairwise_design_competing matplot.mets.twostage object.defined
-##' @aliases p11.binomial.twostage.RV predictPairPlack
-##' @aliases twin_polygen_design
-##' @aliases drop.specials cumsumstrata matdoubleindex mdi
-##' @aliases revcumsum revcumsumstrata
-##' @aliases robust.basehaz.phreg sumstrata strataAugment predicttime
-NULL
-
 
 ##' Rates for HPN program for patients of Copenhagen Cohort
 ##'

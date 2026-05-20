@@ -842,6 +842,17 @@ if (is.null(x$propodds)) { # {{{ cox model
   return(out)
 } # }}}
 
+##' Robust Baseline Hazard Standard Errors
+##'
+##' Computes robust (sandwich) standard errors for the cumulative baseline
+##' hazard from a \code{phreg} object.
+##'
+##' @param x a \code{phreg} object.
+##' @param type type of standard error (default \code{"robust"}).
+##' @param fixbeta if non-NULL, fixes beta at given value.
+##' @param ... additional arguments passed to \code{squareintHdM}.
+##' @return A list with \code{cumhaz}, \code{se.cumhaz}, and \code{strata}.
+##' @rdname phreg-helpers
 ##' @export
 robust.basehaz.phreg  <- function(x,type="robust",fixbeta=NULL,...) {# {{{
 
@@ -922,6 +933,16 @@ summary.phreg <- function(object,type=c("robust","martingale"),augment.type=c("v
   res
 } ## }}}
 
+##' Summarize Baseline Hazard from phreg
+##'
+##' Summarizes cumulative baseline hazard estimates from a phreg object,
+##' optionally with robust standard errors.
+##'
+##' @param object a \code{phreg} object.
+##' @param robust logical; if TRUE, uses robust standard errors.
+##' @param ... additional arguments.
+##' @return An object of class \code{"summary.recurrent"}.
+##' @rdname phreg-helpers
 ##' @export
 summarybase.phreg <- function(object,robust=FALSE,...) { ## {{{
   out <- summaryRecurrentobject(object,robust=robust,...)
@@ -1018,6 +1039,19 @@ print.summary.phreg  <- function(x,max.strata=5,...) { ## {{{
 
 ###}}}
 
+##' Confidence Intervals with Transformations
+##'
+##' Computes confidence intervals using log or plain transformations,
+##' with optional restrictions to positive values or probability scale.
+##'
+##' @param x point estimate(s).
+##' @param std.err standard error(s).
+##' @param conf.type type of transformation: \code{"log"} or \code{"plain"}.
+##' @param restrict restriction: \code{"positive"}, \code{"prob"}, or \code{"none"}.
+##' @param conf.int confidence level (default 0.95).
+##' @return A list with \code{upper}, \code{lower}, \code{conf.type}, and \code{conf.int}.
+##' @rdname phreg-helpers
+##' @aliases conftype summarybase.phreg robust.basehaz.phreg
 ##' @export
 conftype <- function(x,std.err,conf.type=c("log","plain"),restrict=c("positive","prob","none"),conf.int=0.95)
 { ## {{{
@@ -3518,6 +3552,26 @@ if (any(res$found<0.5))  { warning("Not all strata found");  cat((1:nstrata)[res
 return(res$where)
 }# }}}
 
+##' Stratified Cumulative and Summary Operations
+##'
+##' Low-level helper functions for computing sums, cumulative sums, and
+##' reverse cumulative sums within strata groups, as well as matrix
+##' double-indexing.
+##'
+##' @name strata-numeric
+##' @param x numeric vector (or matrix for \code{matdoubleindex}).
+##' @param strata integer vector of strata indices (0-based).
+##' @param nstrata number of distinct strata.
+##' @param rows row indices for \code{matdoubleindex}.
+##' @param cols column indices for \code{matdoubleindex}.
+##' @param xvec optional values to assign at indexed positions.
+##' @param ... additional arguments (for \code{mdi}).
+##' @return Numeric vector of the same length as \code{x} (or modified matrix).
+##' @author Klaus K. Holst, Thomas Scheike
+##' @aliases sumstrata cumsumstrata revcumsumstrata revcumsum matdoubleindex mdi
+NULL
+
+##' @rdname strata-numeric
 ##' @export
 sumstrata <- function(x,strata,nstrata)
 {# {{{
@@ -3527,6 +3581,7 @@ res <- .Call("sumstrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
+##' @rdname strata-numeric
 ##' @export
 cumsumstrata <- function(x,strata,nstrata)
 {# {{{
@@ -3545,6 +3600,7 @@ res <- .Call("diffstrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
+##' @rdname strata-numeric
 ##' @export
 revcumsumstrata <- function(x,strata,nstrata)
 {# {{{
@@ -3596,6 +3652,7 @@ res <- .Call("vecAllStrataR",x,strata,nstrata,PACKAGE="mets")$res
 return(res)
 }# }}}
 
+##' @rdname strata-numeric
 ##' @export
 revcumsum <- function(x)
 {# {{{
@@ -3623,6 +3680,7 @@ if (type=="all")    res <- .Call("_mets_cumsumstratasumR",x,strata,nstrata,1)
 return(res)
 }# }}}
 
+##' @rdname strata-numeric
 ##' @export
 matdoubleindex <- function(x,rows,cols,xvec=NULL)
 {# {{{
@@ -3642,6 +3700,7 @@ res <- .Call("Matdoubleindex",x,rows-1,cols-1,length(cols),assign,xvec)$mat
 return(res)
 }# }}}
 
+##' @rdname strata-numeric
 ##' @export
 mdi <- function(x,...) matdoubleindex(x,...)
 

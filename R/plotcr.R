@@ -1,3 +1,10 @@
+##' @rdname cif-nonpar
+##' @param col colors for curves.
+##' @param lty line types for curves.
+##' @param legend logical; if TRUE, add legend.
+##' @param which which plots to show.
+##' @param cause causes to plot.
+##' @param ask logical; if TRUE, prompt before new page.
 ##' @export
 plotcr <- function(x,col,lty,legend=TRUE,which=1:2,cause=1:2,
                    ask = prod(par("mfcol")) < length(which) && dev.interactive(), ...) {

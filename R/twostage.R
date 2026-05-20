@@ -32,13 +32,15 @@
 ##' specifies the random effects for each subject within a cluster. This is a
 ##' matrix of 1's and 0's with dimension \eqn{n \times d} (for \eqn{d} random effects).
 ##'
-##' For a cluster with two subjects, the \code{random.design} rows are \eqn{v_1} and \eqn{v_2}.
-##' Such that the random effect for subject 1 is \deqn{v_1^T (Z_1,...,Z_d)}, for \eqn{d} random effects.
-##' Each random effect has an associated parameter \eqn{(\lambda_1,...,\lambda_d)}.
-##' By construction, subject 1's random effect is Gamma distributed with
-##' mean \eqn{\lambda_j/v_1^T \lambda} and variance \eqn{\lambda_j/(v_1^T \lambda)^2}.
-##' Note that the random effect \eqn{v_1^T (Z_1,...,Z_d)} has mean 1 and variance \eqn{1/(v_1^T \lambda)}.
-##' It is assumed that \eqn{lamtot=v_1^T \lambda} is fixed within clusters as it would be for the ACE model.
+##' For a cluster with two subjects, the \code{random.design} rows are \eqn{v_1}
+##' and \eqn{v_2}. Such that the random effect for subject 1 is \deqn{v_1^T
+##' (Z_1,...,Z_d)}, for \eqn{d} random effects. Each random effect has an
+##' associated parameter \eqn{(\lambda_1,...,\lambda_d)}. By construction,
+##' subject 1's random effect is Gamma distributed with mean
+##' \eqn{\lambda_j/v_1^T \lambda} and variance \eqn{\lambda_j/(v_1^T
+##' \lambda)^2}. Note that the random effect \eqn{v_1^T (Z_1,...,Z_d)} has mean
+##' 1 and variance \eqn{1/(v_1^T \lambda)}. It is assumed that \eqn{lamtot=v_1^T
+##' \lambda} is fixed within clusters as it would be for the ACE model.
 ##'
 ##' Based on these parameters, the relative contribution (the heritability, \eqn{h}) is
 ##' equivalent to the expected values of the random effects: \eqn{\lambda_j/v_1^T \lambda}.
@@ -48,10 +50,11 @@
 ##' For alternative parametrizations, specify how the parameters relate to \eqn{\lambda_j}
 ##' with the argument \code{var.par=0}.
 ##'
-##' For both types of models, the basic model assumptions are that given the random effects
-##' of the clusters, the survival distributions within a cluster are independent and on the form:
-##' \deqn{ P(T > t| x,z) = \exp( -Z \cdot \text{Laplace}^{-1}(lamtot,lamtot,S(t|x)) ) }
-##' with the inverse Laplace of the gamma distribution with mean 1 and variance \eqn{1/lamtot}.
+##' For both types of models, the basic model assumptions are that given the
+##' random effects of the clusters, the survival distributions within a cluster
+##' are independent and on the form: \deqn{ P(T > t| x,z) = \exp( -Z \cdot
+##' \text{Laplace}^{-1}(lamtot,lamtot,S(t|x)) ) } with the inverse Laplace of
+##' the gamma distribution with mean 1 and variance \eqn{1/lamtot}.
 ##'
 ##' The parameters \eqn{(\lambda_1,...,\lambda_d)} are related to the parameters of the model
 ##' by a regression construction \code{pard} (\eqn{d \times k}), that links the \eqn{d}
@@ -546,6 +549,54 @@ if (dep.model==3 & pair.structure==0) {
 
 } # }}}
 
+##' Survival Twostage Helpers
+##'
+##' Helper functions for the twostage survival dependence models.
+##'
+##' \code{survival.twostage} is an alias for \code{survival_twostage}.
+##'
+##' \code{alpha2kendall} converts the Clayton-Oakes alpha parameter to Kendall's tau.
+##'
+##' \code{alpha2spear} converts the Clayton-Oakes alpha parameter to Spearman's rho.
+##'
+##' \code{piecewise_twostage} fits twostage models on piecewise time intervals.
+##'
+##' \code{piecewise_data} prepares data for piecewise twostage analysis.
+##'
+##' \code{matplot.mets.twostage} produces matplot of twostage baseline estimates.
+##'
+##' @name survival-helpers
+##' @param object a twostage model object (for matplot method).
+##' @param data a data.frame with the survival data.
+##' @param id name of the cluster identifier column.
+##' @param cut1 vector of cut points for the first time axis.
+##' @param cut2 vector of cut points for the second time axis.
+##' @param timevar character name of the time variable.
+##' @param status character name of the status variable.
+##' @param covars optional character vector of covariate names.
+##' @param covars.pairs optional covariates at the pair level.
+##' @param num character name of the within-cluster number variable.
+##' @param method optimization method.
+##' @param Nit maximum number of iterations.
+##' @param detail level of detail in output.
+##' @param silent level of verbosity (1=silent).
+##' @param weights optional weights.
+##' @param control optimization control list.
+##' @param theta initial dependence parameter values.
+##' @param theta.des theta design matrix.
+##' @param var.link if 1, log-link for variance parameters.
+##' @param link if 1, parameters are on log scale (for alpha2kendall/alpha2spear).
+##' @param step step size for optimization.
+##' @param model dependence model: \code{"plackett"} or \code{"clayton.oakes"}.
+##' @param data.return if 1, return data with model fits.
+##' @param x a marginal model object (for \code{survival.twostage}).
+##' @param ... additional arguments.
+##' @author Klaus K. Holst, Thomas Scheike
+##' @aliases survival.twostage alpha2kendall alpha2spear
+##' @aliases piecewise_twostage piecewise_data matplot.mets.twostage
+NULL
+
+##' @rdname survival-helpers
 ##' @export 
 survival.twostage <- function(x,...) survival_twostage(x,...)
 
@@ -1210,6 +1261,7 @@ plot.mets.twostage<-function(x,pointwise.ci=1,robust=0,specific.comps=FALSE,
   }
 }  #
 
+##' @rdname survival-helpers
 ##' @export
 matplot.mets.twostage <- function(object,...)
 { #
@@ -1260,6 +1312,9 @@ out=list(St1t2=St1t2,S1=S1,S2=S2,times=times,times2=times2,theta=theta)
 return(out)
 } #
 
+##' @rdname twin-design
+##' @param cr.models formula specifying time and status variables.
+##' @param bin logical; if TRUE uses binary (prevalence) ordering rather than time ordering.
 ##' @export ascertained_pairs
 ascertained_pairs <-function (pairs,data,cr.models,bin=FALSE)
 {
@@ -1282,6 +1337,7 @@ ascertained_pairs <-function (pairs,data,cr.models,bin=FALSE)
       return(pairs)
 } 
 
+##' @rdname survival-helpers
 ##' @export
 alpha2spear <- function(theta,link=1) { #
    if (link==1) theta <- exp(theta)
@@ -1296,12 +1352,14 @@ if (length(theta)>1) {
 return(out)
 } #
 
+##' @rdname survival-helpers
 ##' @export
 alpha2kendall <- function(theta,link=0) {  #
    if (link==1) theta <- exp(theta)
    return(1/(1+2/theta))
 } #
 
+##' @rdname survival-helpers
 ##' @export piecewise_twostage
 piecewise_twostage <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,
             method="optimize",Nit=100,detail=0,silent=1,weights=NULL,
@@ -1395,6 +1453,7 @@ attr(ud, "Type") <- model
 return(ud);
 } #}}}
 
+##' @rdname survival-helpers
 ##' @export piecewise_data
 piecewise_data <- function(cut1,cut2,data=parent.frame(),timevar="time",status="status",id="id",covars=NULL,covars.pairs=NULL,num=NULL,silent=1)
 { #
@@ -1505,6 +1564,56 @@ data.frame(xm=xm,xf=xf,xb1=xb1,xb2=xb2,timem=tm,timef=tf,timeb1=tb1,timeb2=tb2,s
 ###   exists(as.character(substitute(object)))
 ###}
 
+##' Twin and Family Random-Effects Design
+##'
+##' Functions for constructing random-effects design matrices for twin and
+##' family models. These designs specify the genetic (A), dominance (D),
+##' common environment (C), and unique environment (E) variance components.
+##'
+##' \code{twin_polygen_design} creates a polygenic random-effects design for
+##' twin pairs, distinguishing MZ and DZ twins.
+##'
+##' \code{twin.polygen.design} is an alias for \code{twin_polygen_design}.
+##'
+##' \code{ace_family_design} creates designs for nuclear families (mother,
+##' father, children).
+##'
+##' \code{make_pairwise_design} creates pairwise random-effects designs for
+##' arbitrary kinship structures.
+##'
+##' \code{concordanceTwostage} computes concordance probabilities from a
+##' twostage model.
+##'
+##' \code{concordanceTwinACE} computes concordance from a twin ACE model.
+##'
+##' \code{kendall_ClaytonOakes_twin_ace} and \code{kendall_normal_twin_ace}
+##' compute Kendall's tau for Clayton-Oakes and normal-frailty twin ACE models
+##' respectively.
+##'
+##' \code{ascertained_pairs} identifies ascertained (affected) pairs in
+##' clustered survival data.
+##'
+##' \code{p11_binomial_twostage_RV} computes the joint probability P(T1<=t, T2<=t)
+##' for the additive gamma binary random effects model.
+##'
+##' @name twin-design
+##' @param data a data.frame with twin/family data.
+##' @param id character name of the cluster (pair) identifier column.
+##' @param type model type: \code{"ace"}, \code{"ade"}, \code{"ae"}, \code{"de"},
+##'   \code{"dce"}, or \code{"un"}.
+##' @param ... additional arguments.
+##' @return A list with components:
+##'   \item{pardes}{parameter design matrix linking random effects to variance parameters.}
+##'   \item{des.rv}{random-effects design matrix for subjects.}
+##' @author Klaus K. Holst, Thomas Scheike
+##' @aliases twin_polygen_design twin.polygen.design ace_family_design
+##' @aliases make_pairwise_design ascertained_pairs
+##' @aliases concordanceTwostage concordanceTwinACE
+##' @aliases p11_binomial_twostage_RV p11.binomial.twostage.RV
+##' @aliases kendall_ClaytonOakes_twin_ace kendall.ClaytonOakes.twin.ace
+##' @aliases kendall_normal_twin_ace
+NULL
+
 ##' @export
 twin_polygen_design <-function (data,id="id",zyg="DZ",zygname="zyg",type="ace",tv=NULL,...) { #
   ### twin case
@@ -1575,9 +1684,16 @@ return(res)
 } #
 
 
+##' @rdname twin-design
 ##' @export
 twin.polygen.design <-function (x,...) twin_polygen_design(x,...) 
 
+##' @rdname twin-design
+##' @param member character name of the family member type column.
+##' @param mother value identifying mothers in the member column.
+##' @param father value identifying fathers in the member column.
+##' @param child value identifying children in the member column.
+##' @param child1 column name distinguishing first child from second.
 ##' @export
 ace_family_design <-function (data,id="id",member="type",mother="mother",father="father",child="child",child1="child",type="ace",...) {
 #
@@ -1662,6 +1778,9 @@ res <- list(pardes=pard,des.rv=des.rv)
 return(res)
 } #
 
+##' @rdname twin-design
+##' @param pairs matrix of pair indices (n x 2).
+##' @param kinship vector of kinship coefficients for each pair.
 ##' @export
 make_pairwise_design  <- function(pairs,kinship,type="ace")
 { #

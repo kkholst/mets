@@ -172,6 +172,13 @@ return(outk)
 
 lap<-function(theta,t) { return( (1+t/theta)^(-theta)) }
 
+##' Inverse Laplace Transform Helper
+##'
+##' Computes the inverse Laplace transform for gamma frailty simulation.
+##'
+##' @param theta frailty parameter.
+##' @param t value at which to evaluate.
+##' @return Numeric value of the inverse Laplace transform.
 ##' @export 
 ilap<-function(theta,t) {
 	itheta<-1/theta; return((t^(-itheta)-1)/(itheta)) }

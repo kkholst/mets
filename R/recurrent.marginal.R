@@ -196,6 +196,7 @@ recurrent_marginal <- function(formula,data,cause=1,...,death.code=2,test=FALSE)
   return(meano)
 }# }}}
 
+##' @rdname recurrent_marginal
 ##' @export
 recurrentMarginal <- function(formula,data,...) recurrent_marginal(formula,data,...)
 
@@ -821,6 +822,18 @@ form1 <- as.formula(Surv(entry__,exit__,status__cause)~cluster(id__))
   muP=muP.times,semuP=semuP.times, muPAt=muPA.times,semuPAt=semuPA.times, muPA=muPA,semuPA=semuPA))
 }# }}}
 
+##' Summarize a Time-Varying Estimate with Confidence Bands
+##'
+##' Extracts estimates at specified time points with confidence intervals.
+##'
+##' @param mutimes vector of estimation time points.
+##' @param mu vector or matrix of estimates.
+##' @param se.mu vector or matrix of standard errors (optional).
+##' @param times time points at which to evaluate (default: \code{mutimes}).
+##' @param type confidence interval type: \code{"log"} or \code{"plain"}.
+##' @param level confidence level (default 0.95).
+##' @param ... additional arguments.
+##' @return A data.frame with columns: times, mean, se-mean, CI-2.5\%, CI-97.5\%.
 ##' @export
 summaryTimeobject <-function(mutimes,mu,se.mu=NULL,times=NULL,type="log",level=0.95,...) {# {{{
  if (is.null(times)) times <- mutimes

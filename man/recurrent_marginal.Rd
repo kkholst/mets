@@ -5,9 +5,12 @@
 \alias{recurrent_marginalAIPCW}
 \alias{recurrentMarginalPhreg}
 \alias{iidRecurrent}
+\alias{recurrentMarginal}
 \title{Marginal mean estimation for recurrent events with a terminal event}
 \usage{
 recurrent_marginal(formula, data, cause = 1, ..., death.code = 2, test = FALSE)
+
+recurrentMarginal(formula, data, ...)
 }
 \arguments{
 \item{formula}{A formula with an \code{\link{Event}} response on the left-hand

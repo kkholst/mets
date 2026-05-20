@@ -469,6 +469,18 @@ if (pair.structure==1) {
 } ## }}}
 
 
+##' @rdname twin-design
+##' @param theta dependence parameter vector.
+##' @param rv1 random-effects design for subject 1.
+##' @param rv2 random-effects design for subject 2.
+##' @param p1 marginal probability for subject 1.
+##' @param p2 marginal probability for subject 2.
+##' @param pardes parameter design matrix.
+##' @param ags additive gamma sum matrix (optional).
+##' @param link link function indicator (0 = identity, 1 = log).
+##' @param i index for subject 1.
+##' @param j index for subject 2.
+##' @export
 p11_binomial_twostage_RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,i=1,j=1) { ## {{{
 	## computes p11 pij for additive gamma binary random effects model
      if (is.null(ags)) ags <- matrix(1,dim(pardes))
@@ -476,6 +488,20 @@ p11_binomial_twostage_RV <- function(theta,rv1,rv2,p1,p2,pardes,ags=NULL,link=0,
  return(out)
 } ## }}}
 
+##' Concordance Probability from Twostage Model
+##'
+##' Computes concordance probability (joint probability of both subjects
+##' experiencing the event) given dependence parameters and random-effect
+##' variance structures from a twostage model.
+##'
+##' @param p matrix of marginal probabilities (n x 2).
+##' @param theta.des parameter design matrix linking theta to lambda parameters.
+##' @param additive.gamma.sum optional matrix for additive gamma sums.
+##' @param var.par if 1, parameters are rescaled by sum squared.
+##' @return A list of concordance tables, one per pair, each containing
+##'   \code{pmat} (2x2 probability matrix), \code{casewise} (casewise concordance),
+##'   and \code{marg} (marginal probabilities).
+##' @rdname twin-design
 ##' @export
 concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL,link=0,var.par=0,...)
 {# {{{
@@ -508,6 +534,15 @@ concordanceTwostage<- function(theta,p,rv1,rv2,theta.des,additive.gamma.sum=NULL
    return(tabs)
 }	# }}}
 
+##' Concordance for Twin ACE Models
+##'
+##' Computes concordance probabilities for twin ACE/ADE models from a
+##' binomial twostage object.
+##'
+##' @param object a binomial twostage model object.
+##' @param xmarg optional covariate values for marginal probabilities.
+##' @return A list of concordance tables per zygosity group.
+##' @rdname twin-design
 ##' @export
 concordanceTwinACE<- function(object,rv1=NULL,rv2=NULL,xmarg=NULL,type="ace",...)
 {# {{{

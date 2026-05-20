@@ -1,3 +1,18 @@
+##' Extract Event (Jump) Times
+##'
+##' Extracts unique event times from survival data, optionally restricting
+##' to concordant pairs or specific causes.
+##'
+##' @param time vector of event/censoring times.
+##' @param status vector of status indicators (default TRUE = event).
+##' @param id optional cluster identifier for concordant pair times.
+##' @param cause optional cause value to select.
+##' @param sample optional maximum number of time points to return.
+##' @param sample.all logical; if TRUE and sampling, include remaining times.
+##' @param strata not used.
+##' @param num optional within-cluster numbering variable.
+##' @param ... additional arguments.
+##' @return Sorted vector of event times.
 ##' @export
 jumptimes <- function(time, status=TRUE, 
                       id,cause,

@@ -33,6 +33,23 @@ multinomlogit <- function(x,tr=exp,dtr=exp) {
 
 ###{{{ grouptable
 
+##' Create Group Contingency Table from Clustered Data
+##'
+##' Creates a contingency table by group from paired/clustered data,
+##' optionally combining lower and upper triangles.
+##'
+##' @param data a data.frame.
+##' @param id name of the cluster/pair identifier column.
+##' @param group name of the grouping variable (e.g., zygosity).
+##' @param var name of the outcome variable to tabulate.
+##' @param lower logical; if TRUE, fold upper triangle into lower.
+##' @param labels optional labels for levels of \code{var}.
+##' @param order optional ordering of factor levels.
+##' @param group.labels optional labels for the groups.
+##' @param group.order optional ordering of groups.
+##' @param combine separator for combining two groups (default \code{" & "}).
+##' @param ... additional arguments.
+##' @return A table or list of tables.
 ##' @export
 grouptable <- function(data,id,group,var,lower=TRUE,
                        labels,order,

@@ -473,8 +473,15 @@ names(ud)<-c("time","status","x","cluster","zyg","mintime","lefttime","truncated
 return(ud)
 } ## }}} 
 
+##' @rdname twin-design
+##' @param parg genetic variance parameter (gamma shape for genetic component).
+##' @param parc common environment variance parameter (gamma shape for environment).
+##' @param K number of simulated twin pairs (multiplied by 2 internally).
+##' @param test if 1, prints diagnostic correlations.
 ##' @export
 kendall_ClaytonOakes_twin_ace <- function(parg,parc,K=10000,test=0)  ## {{{ 
+
+
 { 
   ## K antal clustre, n=antal i clustre
   ### total variance of gene and env. 
@@ -521,9 +528,13 @@ kendall_ClaytonOakes_twin_ace <- function(parg,parc,K=10000,test=0)  ## {{{
   return(list(mz.kendall=mz.kendall,dz.kendall=dz.kendall))
 } ## }}} 
 
+##' @rdname twin-design
+##' @param x passed as \code{parg} (alias wrapper).
+##' @param y passed as \code{parc} (alias wrapper).
 ##' @export
 kendall.ClaytonOakes.twin.ace <- function(x,y,...) kendall_ClaytonOakes_twin_ace(x,y,...)
 
+##' @rdname twin-design
 ##' @export
 kendall_normal_twin_ace <- function(parg,parc,K=10000)  ## {{{ 
 {

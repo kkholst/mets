@@ -1,8 +1,17 @@
-#####' @export
-###drop.strata <- function(x) {
+### drop.strata <- function(x) {
 ###    drop.specials(x, c('strata', 'strataC'))
-###}
+### }
 
+##' Remove Special Terms from a Formula
+##'
+##' Removes terms such as \code{strata()} or \code{cluster()} from a
+##' formula/terms object.
+##'
+##' @param x a formula object.
+##' @param components character vector of special term names to remove.
+##' @param ... additional arguments passed to \code{lava::Specials}.
+##' @return The updated formula with an attribute \code{"variables"} containing
+##'   the extracted variable names from removed specials.
 ##' @export
 drop.specials <- function(x, components, ...) {
     variables <- c()

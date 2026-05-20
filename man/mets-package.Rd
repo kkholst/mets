@@ -14,11 +14,6 @@ Implementation of various statistical models for multivariate
 event history data. Including multivariate cumulative incidence models,
 and bivariate random effects probit models (Liability models)
 }
-\examples{
-
-## To appear
-
-}
 \seealso{
 Useful links:
 \itemize{

@@ -281,6 +281,13 @@ familyclusterWithProbands_index <- function(clusters,probands,index.type=FALSE,n
     invisible(famc)
 } ## }}}
 
+##' Coarsen Cluster Identifiers
+##'
+##' Reduces the number of unique clusters by binning into quantile groups.
+##'
+##' @param clusters vector of cluster identifiers.
+##' @param max.clust maximum number of coarsened clusters.
+##' @return Integer vector of coarsened cluster indices (0-based).
 ##' @export
 coarse_clust <- function(clusters,max.clust=100)
 { ## {{{ 
@@ -297,6 +304,17 @@ cclusters <-  as.integer(qqc)-1
 return(cclusters)
 } ## }}} 
 
+##' Fast Reshape from Long to Wide Format
+##'
+##' Reshapes clustered long-format data to wide format efficiently using
+##' compiled code.
+##'
+##' @param data a matrix or data.frame to reshape.
+##' @param clusters vector of cluster identifiers, or column name in data.
+##' @param index.type logical; if TRUE, clusters are already 0-based indices.
+##' @param num optional within-cluster numbering variable.
+##' @param Rindex if 1, use R (1-based) indexing.
+##' @return A wide-format matrix.
 ##' @export
 faster.reshape <- function(data,clusters,index.type=FALSE,num=NULL,Rindex=1)
 { ## {{{

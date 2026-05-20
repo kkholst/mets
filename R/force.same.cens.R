@@ -1,4 +1,17 @@
 
+##' Force Same Censoring Within Clusters
+##'
+##' Enforces the same censoring time within clusters (pairs) by censoring
+##' both subjects at the minimum censoring time when censoring occurs first.
+##'
+##' @param data a data.frame in long format.
+##' @param id name of the cluster/pair identifier column.
+##' @param time name of the time variable.
+##' @param cause name of the cause/status variable.
+##' @param entrytime optional name of left-truncation time variable.
+##' @param cens.code value indicating censoring in the cause variable.
+##' @return A data.frame with enforced same censoring.
+##' @aliases force.same.cens force_same_cens
 ##' @export
 force.same.cens <- function(data,id="id", time="time",cause="cause",entrytime=NULL,cens.code=0)
 { ## {{{ 
@@ -55,6 +68,7 @@ force.same.cens <- function(data,id="id", time="time",cause="cause",entrytime=NU
  return(long)
 } ## }}} 
 
+##' @rdname force.same.cens
 ##' @export
 force_same_cens <- function(data,id="id", time="time",cause="cause",entrytime=NULL,cens.code=0)
 { ## {{{ 
