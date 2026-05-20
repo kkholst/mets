@@ -1157,8 +1157,8 @@ if (length(dots)==0) {
 ##' summary(brsi)
 ##' head(brs$riskDR.iid)
 ##' head(brs$riskG.iid)
-##'
-##' @aliases logitIPCWATE logitATE normalATE kumarsim kumarsimRCT 
+##' @seealso [kumarsim()] [kumarsimRCT()]
+##' @aliases logitIPCWATE logitATE normalATE
 ##' @export
 binregATE <- function(formula,data,cause=1,time=NULL,beta=NULL,treat.model=~+1,cens.model=~+1,
    offset=NULL,weights=NULL,cens.weights=NULL,se=TRUE,type=c("II","I"),

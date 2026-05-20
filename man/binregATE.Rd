@@ -5,8 +5,6 @@
 \alias{logitIPCWATE}
 \alias{logitATE}
 \alias{normalATE}
-\alias{kumarsim}
-\alias{kumarsimRCT}
 \title{Average Treatment Effect for Censored Competing Risks Data using Binomial Regression}
 \usage{
 binregATE(
@@ -151,11 +149,12 @@ brsi <- binregATE(Event(time,cause)~tcell.f+tcell.f*platelet+tcell.f*age,bmt,tim
 summary(brsi)
 head(brs$riskDR.iid)
 head(brs$riskG.iid)
-
 }
 \seealso{
 \code{\link{binreg}}, \code{\link{logitIPCWATE}}, \code{\link{logitATE}}, 
   \code{\link{binregG}}
+
+[kumarsim()] [kumarsimRCT()]
 }
 \author{
 Thomas Scheike

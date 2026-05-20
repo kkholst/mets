@@ -4,7 +4,6 @@
 \alias{interval_logitsurv_discrete}
 \alias{Interval}
 \alias{dInterval}
-\alias{simlogitSurvd}
 \alias{predictlogitSurvd}
 \alias{predictSurvd}
 \alias{plotSurvd}

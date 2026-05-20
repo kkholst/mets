@@ -60,7 +60,7 @@
 ##' ttpd <- dfactor(ttpd,fentry~entry)
 ##' out <- cumoddsreg(fentry~X1+X2+X3+X4,ttpd)
 ##' summary(out)
-##' @aliases Interval dInterval simlogitSurvd predictlogitSurvd predictSurvd plotSurvd 
+##' @aliases Interval dInterval predictlogitSurvd predictSurvd plotSurvd
 ##' @export
 interval_logitsurv_discrete <- function (formula,data,beta=NULL,no.opt=FALSE,method="NR",
 	   stderr=TRUE,weights=NULL,offsets=NULL,exp.link=1,increment=1,...)

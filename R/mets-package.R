@@ -225,7 +225,7 @@ NULL
 ##' @aliases or_cif Grandom.cif
 ##' @aliases conftype kendall.ClaytonOakes.twin.ace random.cif recurrentMarginal
 ##' @aliases summarybase.phreg survival.twostage twin.polygen.design
-##' @aliases rmst_phreg rr_cif
+##' @aliases rr_cif
 ##' @aliases ace_family_design ascertained_pairs
 ##' @aliases summaryTimeobject ace_family_design ascertained_pairs coarse_clust
 ##' @aliases concordanceTwinACE concordanceTwostage fast.cluster force_same_cens

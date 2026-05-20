@@ -879,8 +879,9 @@ subdist <- function(F1,times)
 #' plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
 #' # Cause 2:second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 #' plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
-#'    
-#' @aliases sim_cif sim_cifs simul_cifs subdist sim_subdist invsubdist
+#'
+#' @seealso [simul_cifs()]
+#' @aliases sim_cif sim_cifs subdist sim_subdist invsubdist
 #' @export sim_cif
 sim_cif <- function(cif,n,data=NULL,Z=NULL,rr=NULL,strata=NULL,
                     drawZ=TRUE,cens=NULL,rrc=NULL,entry=NULL,Sentry=NULL,

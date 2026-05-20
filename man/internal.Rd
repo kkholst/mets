@@ -25,7 +25,6 @@
 \alias{summarybase.phreg}
 \alias{survival.twostage}
 \alias{twin.polygen.design}
-\alias{rmst_phreg}
 \alias{rr_cif}
 \alias{ace_family_design}
 \alias{ascertained_pairs}

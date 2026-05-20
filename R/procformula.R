@@ -11,7 +11,6 @@ gsub2 <- function(pattern, replacement, x, ...) {
   result
 }
 
-##' @export
 procform <- function(formula=NULL, sep="\\|", nsep=1, return.formula=FALSE, data=NULL,
              no.match=TRUE, regex=FALSE, return.list=TRUE, specials=NULL,...) {# {{{
     res <- NULL
@@ -174,7 +173,6 @@ procform <- function(formula=NULL, sep="\\|", nsep=1, return.formula=FALSE, data
     return(res)
 }
 
-##' @export
 procformdata <- function(formula,data,sep="\\|", na.action=na.pass, do.filter=TRUE, ...) {
     res <- procform(formula,sep=sep,data=data,return.formula=TRUE,...)
     if (inherits(res,"formula")) {
@@ -234,7 +232,6 @@ procform2 <- function(y,x=NULL,z=NULL,...) {# {{{
     return(list(y=y,x=x,z=z))
 }# }}}
 
-##' @export
 procform3 <- function(y,x=NULL,z=NULL,...) {# {{{
     yx <- procform(y,return.formula=FALSE,...)
     x0 <- yx$predictor
@@ -248,7 +245,6 @@ procform3 <- function(y,x=NULL,z=NULL,...) {# {{{
     }
     return(list(y=y,x=x0,z=z))
 }# }}}
-
 
 Specials <- function(f,spec,split1=",",split2=NULL,...) {# {{{
   tt <- terms(f,spec)
@@ -276,7 +272,6 @@ decomp.specials <- function (x, pattern = "[()]", sep = ",", ...)
       st <- rev(unlist(strsplit(st, pattern, ...)))[1]
     unlist(strsplit(st, sep, ...))
   }
-
 
 model.extract2 <- function(frame, component) {
   component <- as.character(substitute(component))

@@ -3,7 +3,6 @@
 \name{sim_cif}
 \alias{sim_cif}
 \alias{sim_cifs}
-\alias{simul_cifs}
 \alias{subdist}
 \alias{sim_subdist}
 \alias{invsubdist}
@@ -113,7 +112,10 @@ par(mfrow=c(1,2))
 plot(cif1); plot(scif1,add=TRUE,col=1:2,lwd=2)
 # Cause 2:second cause is modified with restriction to satisfy F1+F2<= 1, so scaled down     
 plot(cif2); plot(scif2,add=TRUE,col=1:2,lwd=2)
-   
+
+}
+\seealso{
+[simul_cifs()]
 }
 \author{
 Thomas Scheike
