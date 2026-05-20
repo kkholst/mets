@@ -883,12 +883,11 @@ coef.phreg  <- function(object,...) { ## {{{
 
 ##' @export
 vcov.phreg  <- function(object,...) {     ## {{{
+ if (is.null(coef(object))) return(NULL)
  if ((length(class(object))==1) & inherits(object,"phreg")) {
-  res <- object$var  ### objectcrossprod(ii <- iid(object,...))
-###  attributes(res)$ncluster <- attributes(ii)$ncluster
-###  attributes(res)$invhess <- attributes(ii)$invhess
+  res <- object$var
   if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
-} else { ##if ((length(class(object))==2) & class(object)[2]=="cifreg") {
+} else {
   res <- object$var
   if (!is.null(res)) colnames(res) <- rownames(res) <- names(coef(object))
 }
@@ -935,7 +934,29 @@ summarybase.phreg <- function(object,robust=FALSE,...) { ## {{{
 print.phreg  <- function(x,...) { ## {{{
   cat("Call:\n")
   dput(x$call)
-  print(summary(x),...)
+  cat("\n")
+
+  Strata <- levels(x$strata)
+  nn <- cbind(x$n, x$nevent)
+  rownames(nn) <- Strata; colnames(nn) <- c("n","events")
+  if (is.null(rownames(nn))) rownames(nn) <- rep("",NROW(nn))
+  print(nn, quote=FALSE)
+
+  if (!is.null(x$coef) && length(x$coef) > 0) {
+    cat("\ncoefficients:\n")
+    ## V <- x$var
+    ## if (!is.null(V)) {
+    ##   cc <- cbind(coef(x), diag(V)^0.5)
+    ##   cc <- cbind(cc, 2*(pnorm(abs(cc[,1]/cc[,2]), lower.tail=FALSE)))
+    ##   colnames(cc) <- c("Estimate", "S.E.", "P-value")
+    ##   rownames(cc) <- names(coef(x))
+    ##   printCoefmat(cc, P.values=TRUE, has.Pvalue=TRUE, ...)
+    ## } else {
+    print(coef(x))
+    ## }
+  }
+  cat("\n")
+  invisible(x)
 }  ## }}}
 
 ##' Plotting the baselines of stratified Cox
@@ -1848,6 +1869,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' rm1 <- resmean_phreg(out1, times = 40)
 ##' e1 <- estimate(rm1)
 ##' estimate(e1, rbind(c(1, -1, 0, 0)))
+##' @aliases rmst_phreg resmean_phreg
 ##' @export
 resmean_phreg <- function(x,times=NULL,covs=NULL,...)
 {# {{{
@@ -3303,7 +3325,7 @@ return(pres)
 
 ##' @export
 summary.km <- function(object,times=NULL,type=c("cif","cumhaz","surv")[3],...) { ## {{{
-   out <- summary.predictrecreg(object,times=times,type=type[1],...)
+   out <- summary.predictphreg(object,times=times,type=type[1],...)
    return(out)
 } ## }}}
 
