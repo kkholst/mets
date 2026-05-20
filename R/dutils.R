@@ -123,7 +123,7 @@ dcut <- function(data,y=NULL,x=NULL,breaks=4,probs=NULL,equi=FALSE,regex=mets.op
 
         usernames <- FALSE# {{{
 
-        vars <-mets::procform3(y,x,data=data,regex=regex,...)
+        vars <-procform3(y,x,data=data,regex=regex,...)
         x <-  xnames <- vars$x
 
         if (!is.null(vars$y)) {
@@ -309,7 +309,7 @@ drelevel <- function(data,y=NULL,x=NULL,ref=NULL,newlevels=NULL,regex=mets.optio
 
         usernames <- FALSE# {{{
 
-        vars <-mets::procform3(y,x,data=data,regex=regex,...)
+        vars <- procform3(y,x,data=data,regex=regex,...)
         x <-  xnames <- vars$x
 
         if (!is.null(vars$y)) {
@@ -442,7 +442,7 @@ dlevels <- function(data,y=NULL,x=NULL,regex=mets.options()$regex,max.levels=20,
     if (is.data.frame(data)) {
         usernames <- FALSE# {{{
 
-        vars <-mets::procform3(y,x,data=data,regex=regex,...)
+        vars <- procform3(y,x,data=data,regex=regex,...)
         x <-  xnames <- vars$x
 
         if (!is.null(vars$y)) {
@@ -516,7 +516,7 @@ dlev <- function(data,y=NULL,x=NULL,...) dlevels(data,y=y,x=x,...)
 drename <- function(data,y=NULL,x=NULL,fun=base::tolower,...)
 {  # {{{
 
-    vars <-mets::procform3(y,x,data=data,...)
+    vars <- procform3(y,x,data=data,...)
     x <-  xnames <- vars$x
 
     if (!is.null(vars$y)) {
@@ -564,7 +564,7 @@ dfactor <- function(data,y=NULL,x=NULL,regex=mets.options()$regex,sep=NULL,usern
 
         usernames <- FALSE# {{{
 
-        vars <-mets::procform3(y,x,data=data,regex=regex,...)
+        vars <- procform3(y,x,data=data,regex=regex,...)
         x <-  xnames <- vars$x
 
         if (!is.null(vars$y)) {
@@ -653,7 +653,7 @@ dnumeric <- function(data,y=NULL,x=NULL,regex=mets.options()$regex,sep=NULL,all=
 
         usernames <- FALSE# {{{
 
-        vars <-mets::procform3(y,x,data=data,regex=regex,...)
+        vars <- procform3(y,x,data=data,regex=regex,...)
         x <-  xnames <- vars$x
 
         if (!is.null(vars$y)) {
@@ -695,7 +695,7 @@ dnumeric <- function(data,y=NULL,x=NULL,regex=mets.options()$regex,sep=NULL,all=
 ##' @export
 drm <- function(data,x=NULL,regex=mets.options()$regex,...)
 {# {{{
-    vars <-mets::procform(x,data=data,no.match=FALSE,regex=regex,...)
+    vars <- procform(x,data=data,no.match=FALSE,regex=regex,...)
     xnames <- c(vars$predictor,vars$response)
 
     data[,xnames] <- NULL
@@ -708,7 +708,7 @@ drm <- function(data,x=NULL,regex=mets.options()$regex,...)
 ##' @export
 dkeep <- function(data,x=NULL,keep=TRUE,regex=mets.options()$regex,...)
 {  # {{{
-    vars <-mets::procform(x,data=data,no.match=FALSE,regex=regex,...)
+    vars <- procform(x,data=data,no.match=FALSE,regex=regex,...)
     xnames <- c(vars$predictor,vars$response)
     nnames <- match(xnames,names(data))
 
@@ -873,7 +873,7 @@ if (is.data.frame(data)) {# {{{
 
  usernames <- FALSE# {{{
 
-     vars <-mets::procform3(y,x,data=data,regex=regex,...)
+     vars <- procform3(y,x,data=data,regex=regex,...)
      x <-  xnames <- vars$x
 
      if (!is.null(vars$y)) {
