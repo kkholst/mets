@@ -2,6 +2,7 @@
 % Please edit documentation in R/phreg.R
 \name{resmean_phreg}
 \alias{resmean_phreg}
+\alias{rmst_phreg}
 \title{Restricted Mean for Stratified Kaplan-Meier or Cox Model}
 \usage{
 resmean_phreg(x, times = NULL, covs = NULL, ...)
